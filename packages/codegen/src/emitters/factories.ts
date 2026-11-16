@@ -125,6 +125,7 @@ import {
 	collectRefineKindInfos,
 	narrowedLiteralsOf,
 	refineDefaultOf,
+	formDefinedProperties,
 	omittableWithDefault,
 	refineFormTypeName,
 	refineFormFactoryName,
@@ -1137,8 +1138,9 @@ function fieldCarryingBuiltTypeSurface(
 	} else {
 		const configType = surface.configType ?? `T.${node.typeName}.Config`;
 		const registeredHere = new Set(registeredSlots(node));
+		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		setters = [
-			...slots.filter((f) => !registeredHere.has(f)).map((f) => slotSetter(f, configType, nodeMap, kindEntries)),
+			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries)),
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	}
@@ -2061,8 +2063,9 @@ function fieldCarryingFactoryText(
 				body: call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`),
 				reads: optionsArg === '' ? [configAccess] : [configAccess, 'options']
 			});
+		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		for (const f of slots) {
-			if (registeredSet.has(f)) continue;
+			if (registeredSet.has(f) || formDefined.has(f.propertyName)) continue;
 			const method = f.propertyName;
 			const restType = restSetterType(f, configType, nodeMap, kindEntries);
 			if (restType !== undefined) {

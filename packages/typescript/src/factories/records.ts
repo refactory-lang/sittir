@@ -1522,14 +1522,12 @@ function buildUsingDeclaration$patch(
 function buildUsingDeclaration$set(
 	source: object,
 	...[slot, input]:
-		| ['kind', Partial<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>>]
 		| ['variableDeclarators', Partial<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>>]
 		| ['automaticSemicolon', T.UsingDeclaration.Options]
 ): T.UsingDeclaration.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'kind':
 			case 'variableDeclarators':
 				return buildUsingDeclaration$patch(
 					source,
@@ -1545,22 +1543,6 @@ function buildUsingDeclaration$set(
 		}
 	}
 	switch (slot) {
-		case 'kind': {
-			const config = input;
-			const _pinned: Partial<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>> = config;
-			const _kind =
-				_pinned.kind === undefined
-					? (TSKindId.UsingKeyword as const)
-					: kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(_pinned.kind);
-			return setSlot(
-				source,
-				TSKindId.UsingDeclaration as const,
-				'using_declaration',
-				0,
-				'kind',
-				_kind
-			) as unknown as T.UsingDeclaration.Bound;
-		}
 		case 'variableDeclarators': {
 			const config = input;
 			const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
@@ -1595,12 +1577,6 @@ function buildUsingDeclaration$set(
 function withUsingDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'kind':
-			return applySetter(
-				args,
-				(value: Admit<NonNullable<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>>['kind']>) =>
-					rebuilt(node, handle, () => buildUsingDeclaration$set(node, 'kind', { kind: value }))
-			);
 		case 'variableDeclarators':
 			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
 				rebuilt(node, handle, () =>
@@ -6678,14 +6654,12 @@ function buildMemberExpression$set(
 	source: object,
 	...[slot, input]:
 		| ['object', Partial<ConfigOf<T.MemberExpression>>]
-		| ['operator', Partial<ConfigOf<T.MemberExpression>>]
 		| ['property', Partial<ConfigOf<T.MemberExpression>>]
 ): T.MemberExpression.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'object':
-			case 'operator':
 			case 'property':
 				return buildMemberExpression$patch(source, { ...(inputs.config as ConfigOf<T.MemberExpression>), ...input });
 		}
@@ -6706,22 +6680,6 @@ function buildMemberExpression$set(
 				0,
 				'object',
 				_object
-			) as unknown as T.MemberExpression.Bound;
-		}
-		case 'operator': {
-			const config = input;
-			const _pinned: Partial<ConfigOf<T.MemberExpression>> = config;
-			const _operator =
-				_pinned.operator === undefined
-					? (TSKindId.Dot as const)
-					: kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(_pinned.operator);
-			return setSlot(
-				source,
-				TSKindId.MemberExpression as const,
-				'member_expression',
-				1,
-				'operator',
-				_operator
 			) as unknown as T.MemberExpression.Bound;
 		}
 		case 'property': {
@@ -6752,10 +6710,6 @@ function withMemberExpression(node: object, setter: string, args: readonly unkno
 		case 'object':
 			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.MemberExpression>>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression$set(node, 'object', { object: value }))
-			);
-		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.MemberExpression>>['operator']>) =>
-				rebuilt(node, handle, () => buildMemberExpression$set(node, 'operator', { operator: value }))
 			);
 		case 'property':
 			return applySetter(
@@ -16217,37 +16171,16 @@ function buildObjectType$patch(
 }
 function buildObjectType$set(
 	source: object,
-	...[slot, input]:
-		| ['opening', Partial<ConfigOf<T.ObjectType>>]
-		| ['members', Partial<ConfigOf<T.ObjectType>>]
-		| ['closing', Partial<ConfigOf<T.ObjectType>>]
+	...[slot, input]: ['members', Partial<ConfigOf<T.ObjectType>>]
 ): T.ObjectType.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'opening':
 			case 'members':
-			case 'closing':
 				return buildObjectType$patch(source, { ...(inputs.config as ConfigOf<T.ObjectType>), ...input });
 		}
 	}
 	switch (slot) {
-		case 'opening': {
-			const config = input;
-			const _pinned: Partial<ConfigOf<T.ObjectType>> = config;
-			const _opening =
-				_pinned.opening === undefined
-					? (TSKindId.Lbrace as const)
-					: kindIdStorage<NonNullable<T.ObjectType['_opening']>>(_pinned.opening);
-			return setSlot(
-				source,
-				TSKindId.ObjectType as const,
-				'object_type',
-				0,
-				'opening',
-				_opening
-			) as unknown as T.ObjectType.Bound;
-		}
 		case 'members': {
 			const config = input;
 			const _members = config.members;
@@ -16260,31 +16193,11 @@ function buildObjectType$set(
 				_members
 			) as unknown as T.ObjectType.Bound;
 		}
-		case 'closing': {
-			const config = input;
-			const _pinned: Partial<ConfigOf<T.ObjectType>> = config;
-			const _closing =
-				_pinned.closing === undefined
-					? (TSKindId.Rbrace as const)
-					: kindIdStorage<NonNullable<T.ObjectType['_closing']>>(_pinned.closing);
-			return setSlot(
-				source,
-				TSKindId.ObjectType as const,
-				'object_type',
-				2,
-				'closing',
-				_closing
-			) as unknown as T.ObjectType.Bound;
-		}
 	}
 }
 function withObjectType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'opening':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['opening']>) =>
-				rebuilt(node, handle, () => buildObjectType$set(node, 'opening', { opening: value }))
-			);
 		case 'members':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -16294,10 +16207,6 @@ function withObjectType(node: object, setter: string, args: readonly unknown[]):
 						(value?: Admit<T.ObjectTypeContent>) => buildObjectType$set(node, 'members', { members: value })
 					)
 				)
-			);
-		case 'closing':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['closing']>) =>
-				rebuilt(node, handle, () => buildObjectType$set(node, 'closing', { closing: value }))
 			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
@@ -25954,7 +25863,6 @@ function buildForHeaderUsingKind$patch(
 function buildForHeaderUsingKind$set(
 	source: object,
 	...[slot, input]:
-		| ['kind', Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>]
 		| ['left', Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>]
 		| ['operator', Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>]
 		| ['right', Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>]
@@ -25963,7 +25871,6 @@ function buildForHeaderUsingKind$set(
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'kind':
 			case 'left':
 			case 'operator':
 			case 'right':
@@ -25981,22 +25888,6 @@ function buildForHeaderUsingKind$set(
 		}
 	}
 	switch (slot) {
-		case 'kind': {
-			const config = input;
-			const _pinned: Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>> = config;
-			const _kind =
-				_pinned.kind === undefined
-					? (TSKindId.UsingKeyword as const)
-					: kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(_pinned.kind);
-			return setSlot(
-				source,
-				TSKindId.ForHeaderUsingKind as const,
-				'for_header_using_kind',
-				0,
-				'kind',
-				_kind
-			) as unknown as T.ForHeaderUsingKind.Bound;
-		}
 		case 'left': {
 			const config = input;
 			const _left = rejectReservedText(
@@ -26063,12 +25954,6 @@ function buildForHeaderUsingKind$set(
 function withForHeaderUsingKind(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'kind':
-			return applySetter(
-				args,
-				(value: Admit<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['kind']>) =>
-					rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'kind', { kind: value }))
-			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'left', { left: value }))
@@ -30987,37 +30872,16 @@ function buildInterfaceBody$patch(
 }
 function buildInterfaceBody$set(
 	source: object,
-	...[slot, input]:
-		| ['opening', Partial<ConfigOf<T.InterfaceBody>>]
-		| ['members', Partial<ConfigOf<T.InterfaceBody>>]
-		| ['closing', Partial<ConfigOf<T.InterfaceBody>>]
+	...[slot, input]: ['members', Partial<ConfigOf<T.InterfaceBody>>]
 ): T.InterfaceBody.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'opening':
 			case 'members':
-			case 'closing':
 				return buildInterfaceBody$patch(source, { ...(inputs.config as ConfigOf<T.InterfaceBody>), ...input });
 		}
 	}
 	switch (slot) {
-		case 'opening': {
-			const config = input;
-			const _pinned: Partial<ConfigOf<T.InterfaceBody>> = config;
-			const _opening =
-				_pinned.opening === undefined
-					? (TSKindId.Lbrace as const)
-					: kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(_pinned.opening);
-			return setSlot(
-				source,
-				TSKindId.InterfaceBody as const,
-				'interface_body',
-				0,
-				'opening',
-				_opening
-			) as unknown as T.InterfaceBody.Bound;
-		}
 		case 'members': {
 			const config = input;
 			const _members = config.members;
@@ -31030,31 +30894,11 @@ function buildInterfaceBody$set(
 				_members
 			) as unknown as T.InterfaceBody.Bound;
 		}
-		case 'closing': {
-			const config = input;
-			const _pinned: Partial<ConfigOf<T.InterfaceBody>> = config;
-			const _closing =
-				_pinned.closing === undefined
-					? (TSKindId.Rbrace as const)
-					: kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(_pinned.closing);
-			return setSlot(
-				source,
-				TSKindId.InterfaceBody as const,
-				'interface_body',
-				2,
-				'closing',
-				_closing
-			) as unknown as T.InterfaceBody.Bound;
-		}
 	}
 }
 function withInterfaceBody(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'opening':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>) =>
-				rebuilt(node, handle, () => buildInterfaceBody$set(node, 'opening', { opening: value }))
-			);
 		case 'members':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -31064,10 +30908,6 @@ function withInterfaceBody(node: object, setter: string, args: readonly unknown[
 						(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody$set(node, 'members', { members: value })
 					)
 				)
-			);
-		case 'closing':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
-				rebuilt(node, handle, () => buildInterfaceBody$set(node, 'closing', { closing: value }))
 			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);

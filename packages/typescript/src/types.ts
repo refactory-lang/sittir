@@ -3161,7 +3161,6 @@ export interface UsingDeclaration {
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	readonly __slotHints__?: {
-		readonly kind: SlotHint<NonNullable<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>>['kind']>;
 		readonly variableDeclarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
 		readonly automaticSemicolon: SlotHint<NonNullable<T.UsingDeclaration.Options>['automaticSemicolon']>;
 	};
@@ -4309,7 +4308,6 @@ export interface MemberExpression {
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<ConfigOf<T.MemberExpression>>['object']>;
-		readonly operator: SlotHint<NonNullable<ConfigOf<T.MemberExpression>>['operator']>;
 		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	readonly object: () => Expression | PrimaryExpression | TSKindId.Import;
@@ -7457,9 +7455,7 @@ export interface ObjectType {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly opening: SlotHint<NonNullable<ConfigOf<T.ObjectType>>['opening']>;
 		readonly members: SlotHint<T.ObjectTypeContent, true>;
-		readonly closing: SlotHint<NonNullable<ConfigOf<T.ObjectType>>['closing']>;
 		readonly $listSlots: {
 			readonly members: ListSlotHint<
 				| T.ExportStatement
@@ -9600,7 +9596,6 @@ export interface ForHeaderUsingKind {
 			| SequenceExpression;
 	};
 	readonly __slotHints__?: {
-		readonly kind: SlotHint<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['kind']>;
 		readonly left: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
 		readonly operator: SlotHint<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['operator']>;
 		readonly right: SlotHint<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['right']>;
@@ -10674,9 +10669,7 @@ export interface InterfaceBody {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly opening: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>;
 		readonly members: SlotHint<T.ObjectTypeContent, true>;
-		readonly closing: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>;
 		readonly $listSlots: {
 			readonly members: ListSlotHint<
 				| T.ExportStatement

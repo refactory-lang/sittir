@@ -82,6 +82,14 @@ export function refineDefaultOf(nodeMap: NodeMap, kind: string): RefineDefault |
 	return { form, pinned, pinnedProperties: node.slots.filter((slot) => pinned.has(slot.name)).map((slot) => slot.propertyName) };
 }
 
+export function formDefinedProperties(nodeMap: NodeMap, kind: string): ReadonlySet<string> {
+	const forms = nodeMap.refineForms?.get(kind);
+	const node = nodeMap.nodes.get(kind);
+	if (forms === undefined || !(node instanceof AbstractAssembledCompound)) return new Set();
+	const pinned = new Set(forms.flatMap((form) => [...narrowedLiteralsOf({ name: form.name, form, narrowedFields: form.narrowedFields }, nodeMap, kind).keys()]));
+	return new Set(node.slots.filter((slot) => pinned.has(slot.name)).map((slot) => slot.propertyName));
+}
+
 export function omittableWithDefault(fullConfig: string, pinnedProperties: readonly string[]): string {
 	const keys = pinnedProperties.map((name) => JSON.stringify(name)).join(' | ');
 	const refused = pinnedProperties.map((name) => `readonly ${name}?: never`).join('; ');

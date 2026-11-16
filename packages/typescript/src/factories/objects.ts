@@ -1154,7 +1154,6 @@ export function buildUsingDeclaration(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: buildUsingDeclaration$with$kind,
 		variableDeclarators: buildUsingDeclaration$with$variableDeclarators,
 		automaticSemicolon: buildUsingDeclaration$with$automaticSemicolon,
 		[RECEIVER]: node
@@ -1168,12 +1167,6 @@ function buildUsingDeclaration$with(node: Held, setter: string, args: readonly u
 	const config = node[INPUT] as OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>;
 	const options = node[OPTIONS] as T.UsingDeclaration.Options;
 	switch (setter) {
-		case 'kind':
-			return applySetter(
-				args,
-				(value: Admit<NonNullable<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>>['kind']>) =>
-					rebuilt(node, handle, () => buildUsingDeclaration({ ...config, kind: value }, options))
-			);
 		case 'variableDeclarators':
 			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
 				rebuilt(node, handle, () =>
@@ -1186,9 +1179,6 @@ function buildUsingDeclaration$with(node: Held, setter: string, args: readonly u
 			);
 	}
 	throw new Error(`using_declaration has no $with.${setter}`);
-}
-function buildUsingDeclaration$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDeclaration$with(receiverOf(this, '$with.kind'), 'kind', args);
 }
 function buildUsingDeclaration$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildUsingDeclaration$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
@@ -4475,7 +4465,6 @@ export function buildMemberExpression(
 	};
 	node.$with = {
 		object: buildMemberExpression$with$object,
-		operator: buildMemberExpression$with$operator,
 		property: buildMemberExpression$with$property,
 		[RECEIVER]: node
 	};
@@ -4491,10 +4480,6 @@ function buildMemberExpression$with(node: Held, setter: string, args: readonly u
 			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.MemberExpression>>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, object: value }))
 			);
-		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.MemberExpression>>['operator']>) =>
-				rebuilt(node, handle, () => buildMemberExpression({ ...config, operator: value }))
-			);
 		case 'property':
 			return applySetter(
 				args,
@@ -4506,9 +4491,6 @@ function buildMemberExpression$with(node: Held, setter: string, args: readonly u
 }
 function buildMemberExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildMemberExpression$with(receiverOf(this, '$with.object'), 'object', args);
-}
-function buildMemberExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildMemberExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
 function buildMemberExpression$with$property(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildMemberExpression$with(receiverOf(this, '$with.property'), 'property', args);
@@ -10752,12 +10734,7 @@ export function buildObjectType(
 		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		opening: buildObjectType$with$opening,
-		members: buildObjectType$with$members,
-		closing: buildObjectType$with$closing,
-		[RECEIVER]: node
-	};
+	node.$with = { members: buildObjectType$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ObjectType.Bound;
 }
@@ -10766,10 +10743,6 @@ function buildObjectType$with(node: Held, setter: string, args: readonly unknown
 	const handle = node[HANDLE];
 	const config = node[INPUT] as ConfigOf<T.ObjectType>;
 	switch (setter) {
-		case 'opening':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['opening']>) =>
-				rebuilt(node, handle, () => buildObjectType({ ...config, opening: value }))
-			);
 		case 'members':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -10780,21 +10753,11 @@ function buildObjectType$with(node: Held, setter: string, args: readonly unknown
 					)
 				)
 			);
-		case 'closing':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['closing']>) =>
-				rebuilt(node, handle, () => buildObjectType({ ...config, closing: value }))
-			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
 }
-function buildObjectType$with$opening(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildObjectType$with(receiverOf(this, '$with.opening'), 'opening', args);
-}
 function buildObjectType$with$members(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildObjectType$with(receiverOf(this, '$with.members'), 'members', args);
-}
-function buildObjectType$with$closing(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildObjectType$with(receiverOf(this, '$with.closing'), 'closing', args);
 }
 
 export function buildObjectTypeCurly<MembersSlot extends T.ObjectType.Curly.Config['members']>(
@@ -17246,7 +17209,6 @@ export function buildForHeaderUsingKind(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: buildForHeaderUsingKind$with$kind,
 		left: buildForHeaderUsingKind$with$left,
 		terminator: buildForHeaderUsingKind$with$terminator,
 		operator: buildForHeaderUsingKind$with$operator,
@@ -17262,12 +17224,6 @@ function buildForHeaderUsingKind$with(node: Held, setter: string, args: readonly
 	const config = node[INPUT] as OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>;
 	const options = node[OPTIONS] as T.ForHeaderUsingKind.Options;
 	switch (setter) {
-		case 'kind':
-			return applySetter(
-				args,
-				(value: Admit<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['kind']>) =>
-					rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, kind: value }, options))
-			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, left: value }, options))
@@ -17290,9 +17246,6 @@ function buildForHeaderUsingKind$with(node: Held, setter: string, args: readonly
 			);
 	}
 	throw new Error(`for_header_using_kind has no $with.${setter}`);
-}
-function buildForHeaderUsingKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildForHeaderUsingKind$with(receiverOf(this, '$with.kind'), 'kind', args);
 }
 function buildForHeaderUsingKind$with$left(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildForHeaderUsingKind$with(receiverOf(this, '$with.left'), 'left', args);
@@ -20394,12 +20347,7 @@ export function buildInterfaceBody(
 		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		opening: buildInterfaceBody$with$opening,
-		members: buildInterfaceBody$with$members,
-		closing: buildInterfaceBody$with$closing,
-		[RECEIVER]: node
-	};
+	node.$with = { members: buildInterfaceBody$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InterfaceBody.Bound;
 }
@@ -20408,10 +20356,6 @@ function buildInterfaceBody$with(node: Held, setter: string, args: readonly unkn
 	const handle = node[HANDLE];
 	const config = node[INPUT] as ConfigOf<T.InterfaceBody>;
 	switch (setter) {
-		case 'opening':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>) =>
-				rebuilt(node, handle, () => buildInterfaceBody({ ...config, opening: value }))
-			);
 		case 'members':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -20422,21 +20366,11 @@ function buildInterfaceBody$with(node: Held, setter: string, args: readonly unkn
 					)
 				)
 			);
-		case 'closing':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
-				rebuilt(node, handle, () => buildInterfaceBody({ ...config, closing: value }))
-			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);
 }
-function buildInterfaceBody$with$opening(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildInterfaceBody$with(receiverOf(this, '$with.opening'), 'opening', args);
-}
 function buildInterfaceBody$with$members(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildInterfaceBody$with(receiverOf(this, '$with.members'), 'members', args);
-}
-function buildInterfaceBody$with$closing(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildInterfaceBody$with(receiverOf(this, '$with.closing'), 'closing', args);
 }
 
 export function buildInterfaceBodyCurly<MembersSlot extends T.InterfaceBody.Curly.Config['members']>(
