@@ -28,6 +28,10 @@ CLI command reference: [docs/cli-command-glossary.md](docs/cli-command-glossary.
 
 @.claude/coding-standards.md
 
+## Peer sessions
+
+A session named `sittir-<role>` reads [.claude/peers.md](.claude/peers.md), then its spec and plan task, before anything else, on start and after a restart or compaction. The spec and plan are the authority.
+
 ## Detailed instructions
 
 - [Codegen glossary](docs/compiler-phase-glossary.md) — DSL layer + dual-pipeline execution model + compiler-phase narrative, with an index into the per-directory function glossaries (`docs/glossary/`).
