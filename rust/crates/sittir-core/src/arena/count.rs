@@ -35,8 +35,12 @@ pub const SATURATED: u8 = 0x7f;
 /// The fewest words an entry of a word chunk takes: a record's header, or a
 /// run's length and one item.
 pub const ENTRY_MIN_WORDS: u32 = 2;
-/// The bytes of a string chunk's meta: its cell count.
-pub const CELLS_META_BYTES: usize = 4;
+/// The bytes of a string chunk's meta: its cell count, then the bytes
+/// builders wrote into it (`STRINGS_WRITTEN`).
+pub const CELLS_META_BYTES: usize = 8;
+/// The byte of a string chunk's meta the bytes builders wrote into it start
+/// at: the one write position every builder appends at, native or JavaScript.
+pub(super) const STRINGS_WRITTEN: usize = 4;
 const META_HEAD: usize = 8;
 const LIVE: usize = 0;
 const PLACED: usize = 4;
@@ -69,6 +73,13 @@ fn read_u32(bytes: &[u8], at: usize) -> u32 {
 
 fn write_u32(bytes: &mut [u8], at: usize, value: u32) {
     bytes[at..at + 4].copy_from_slice(&value.to_ne_bytes());
+}
+
+/// The bytes builders wrote into the string chunk whose meta is `cells`.
+pub(super) fn strings_written(cells: &ChunkMem<u8>) -> u32 {
+    // SAFETY: the meta is read through the arena's borrow, inside one native
+    // call, and no slice of it that writes is live.
+    read_u32(unsafe { cells.slice() }, STRINGS_WRITTEN)
 }
 
 /// A word chunk's meta, its counts included.
@@ -271,6 +282,31 @@ impl BuiltChunks {
         let bytes = unsafe { cells.slice_mut() };
         write_u32(bytes, 0, read_u32(bytes, 0) + 1);
         Ok(())
+    }
+
+    /// The memory and the meta of the string chunk `chunk`.
+    pub(super) fn strings_of(&self, chunk: u32) -> Option<(&ChunkMem<u8>, &ChunkMem<u8>)> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Bytes { mem, cells })) => Some((&**mem, &**cells)),
+            _ => None,
+        }
+    }
+
+    /// Reserves `size` bytes of the string chunk `chunk` past those builders
+    /// wrote into it, and answers the byte they start at.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for a chunk that holds no strings, and
+    /// `ArenaError::Full` for bytes past its end.
+    pub(super) fn reserve_strings(&mut self, chunk: u32, size: u32) -> Result<u32, ArenaError> {
+        let (mem, cells) = self.strings_of(chunk).ok_or(ArenaError::OutOfBounds { chunk, word: 0, len: size })?;
+        // SAFETY: as `hold_text`.
+        let bytes = unsafe { cells.slice_mut() };
+        let byte = read_u32(bytes, STRINGS_WRITTEN);
+        let end = byte.checked_add(size).filter(|&end| end as usize <= mem.len()).ok_or(ArenaError::Full)?;
+        write_u32(bytes, STRINGS_WRITTEN, end);
+        Ok(byte)
     }
 
     /// One more count of the entry at `at`, whose count byte saturated.

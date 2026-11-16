@@ -695,6 +695,29 @@ impl BuiltChunks {
         Ok(NewChunk { chunk, mem, meta, sealed: None })
     }
 
+    /// The number of the string chunk builders append text to with at least
+    /// `least` bytes past those written into it: the open one while it has
+    /// the room, else a new one, double the last up to `STRING_CHUNK_BYTES`;
+    /// and for text past that, a chunk of its own, which leaves the open one
+    /// open.
+    ///
+    /// # Errors
+    ///
+    /// As `alloc_words`.
+    pub fn open_strings(&mut self, least: u32) -> Result<u32, ArenaError> {
+        if least > STRING_CHUNK_BYTES {
+            return self.alloc_bytes(least).map(|made| made.chunk);
+        }
+        let open = self.open[1].and_then(|chunk| self.strings_of(chunk).map(|(mem, cells)| (chunk, mem.len(), count::strings_written(cells))));
+        match open {
+            Some((chunk, len, written)) if len - written as usize >= least as usize => Ok(chunk),
+            open => {
+                let last = open.and_then(|(_, len, _)| u32::try_from(len).ok());
+                self.alloc_bytes(next_limit(last, FIRST_STRING_BYTES, STRING_CHUNK_BYTES, least)).map(|made| made.chunk)
+            }
+        }
+    }
+
     fn number(&mut self, len: u32) -> Result<u32, ArenaError> {
         if self.released {
             return Err(ARENA_RELEASED);
