@@ -134,8 +134,8 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         }
         *walk = Walked::Entered;
         pending.push(Step::Leave(at, kind));
-        let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
-        SideRecord::read(arena, Address(words[1]))?;
+        arena.words(at, record.built_words.max(HEADER_WORDS))?;
+        SideRecord::read(arena, super::borrowed::side_of(arena, at)?)?;
         for_each_built_cell(arena, at, record, bits, |cell| {
             match cell {
                 Cell::Child { at: child, link: None, .. } if arena.read_record(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
