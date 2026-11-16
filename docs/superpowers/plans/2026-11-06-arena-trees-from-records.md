@@ -329,11 +329,11 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 
 ### Task 6d: One release for parsed and built records
 
-**Status:** ruled 2026-11-16, not designed. A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
+**Status:** ruled 2026-11-16, not designed. **It lands inside Task 6's PR** (the maintainer, 2026-11-16: "all of 6 should be in 1227"). A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
 
 ### Task 6e: One reader for each fact a record's words hold
 
-**Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16; no code until Task 6 merges, since these files change there. The list is re-checked against Task 6 as merged.
+**Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16. **It lands inside Task 6's PR** (the maintainer, 2026-11-16: "all of 6 should be in 1227"), which replaces the earlier "no code until Task 6 merges". It is built on Task 6's branch after Task 6c's steps 3 and 4, which delete some of the functions it lists; a reader in a file those steps don't touch may be added earlier. The list is re-taken on the branch as it stands when the work starts.
 
 A census on Task 6's head (`b30da527d`) found 15 functions in 7 files that read a record's words by hand: a literal index, a shift or a mask, beside the function that already knows that fact. The count first reported from master, 14, was wrong in both directions; several of those read through the views already, or are writers.
 
@@ -347,7 +347,7 @@ None of the 15 can go through a typed, derived view: each walks a record by its 
 Any new `pub` item among these is a row for the maintainer before code.
 
 - [x] **Step 1: The outline.** Accepted 2026-11-16.
-- [ ] **Step 2:** the list re-taken on Task 6 as merged.
+- [ ] **Step 2:** the list re-taken on Task 6's branch after Task 6c's step 4.
 - [ ] **Step 3: Implement,** one commit per reader, then one per file moved onto it, in the order above. Renders and record goldens stay byte-identical.
 - [ ] **Step 4: A guard:** a source scan that fails on a shift or mask against a cell word, a literal index into a record's header, or a cell decode, anywhere outside `cell.rs`, `side.rs`, `borrowed.rs`, the two walkers and the derived views. Its list of exceptions is empty when the task ends.
 - [ ] **Step 5: The three-way verification** and a paired run; a refactor with no behaviour change moves no row.
