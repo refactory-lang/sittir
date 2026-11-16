@@ -331,6 +331,18 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 
 **Status:** ruled 2026-11-16, not designed. A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
 
+### Task 6e: Hand cell decoders go through the views
+
+**Status:** ruled 2026-11-16 ("let's fix the 14 functions"), not started. An outline goes to the maintainer's coordinator before code. It starts from Task 6's branch as merged, since these files change there.
+
+A census on master found 14 functions in 8 files that decode a record's cells directly, beside the derived record views: `admit.rs` (`for_each_built_cell`, `admit`), `count.rs` (`release_held`, `reaches`), `reach.rs` (`slots`, `cell_at`, `row_of`), `built.rs` (`admitted_leaf`), `parsed.rs` (`record_stub`), `borrowed.rs` (`word`, `header_kind`), `hydrate.rs` (`embed`, `parsed_side`), and `prep.rs` (`side`, `items`, `present`, `prepare`, `separators`, `fill_unit`, `render_slot`). They read against the shape tables the derive emits, so none re-derives a layout; the defect is a second way to read a cell.
+
+- [ ] **Step 1: The outline, before code.** Per function: what it reads, the view that already reads the same thing or the view method it needs, and whether it can go through a view at all. A function that must read raw words because it validates bytes no view can trust yet (`admit`) or walks any record without knowing its type (`release_held`) is named with its reason, and reads through one shared untyped reader instead of its own decode.
+- [ ] **Step 2:** the list re-taken on Task 6's merged branch, since the census was on master.
+- [ ] **Step 3: Implement,** one file per commit, renders and record goldens byte-identical.
+- [ ] **Step 4: A guard:** a test that fails when a cell is decoded outside the views and the one untyped reader.
+- [ ] **Step 5: The three-way verification** and a paired run; a no-behaviour-change refactor moves no row.
+
 ### Task 7: The measurements
 
 Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard CI runs on their own PRs.

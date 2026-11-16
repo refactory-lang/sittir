@@ -30,7 +30,11 @@ What that changes:
 
 Open until the count is read: whether the per-call tables share the same allocator or stay on the global one, and the name of the scope type (the approved rows named `Scratch` and `Scope`; the renamed rows go back to the maintainer before code).
 
-## Direction, 2026-11-16: the allocator removes the record encoding
+## Direction, 2026-11-16: the allocator removes the record encoding (closed the same day)
+
+**Closed by the maintainer, 2026-11-16:** "yes let's close it", on the study's result below. Nothing is built for it. Two things come out of it: the 14 hand decoders go through the views (arena plan Task 6e; the maintainer: "let's fix the 14 functions"), and the facts still written twice are tracked as issue 1256's subject, the record constants. No allocator for source text either: a parsed leaf is a span into its source's one string, so a parse makes no text allocation per node, and the one known cost, built text interned from JavaScript, is the arena plan's Task 6b.
+
+What remains of this document's subject is its original question: whether arena storage has enough per-call allocation left, once the placer is deleted, to justify a per-call allocator. The allocation count answers it.
 
 The maintainer, on learning that arena storage makes no typed node: "what the allocator can do here, is handle the record encoding/decoding? i.e. make arena storage look like object storage?", and, asked which aim, "remove the record encoding".
 
