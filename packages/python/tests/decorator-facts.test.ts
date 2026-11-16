@@ -44,7 +44,7 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 	it("reads a setter's return annotation as its return type, never as the property's type, and builds it back", () => {
 		const source = classOf('@x.setter', 'def x(self, v: int) -> None:', '    pass');
 		const member = memberOf(source);
-		expect(member).toMatchObject({ $path: 'declaration.property.setter', returnType: { $path: 'type' } });
+		expect(member).toMatchObject({ $path: 'declaration.property.setter', returnType: { $path: 'literal.null' } });
 		expect(member.type).toBeUndefined();
 		expect(inClass(member)).toBe(source);
 	});

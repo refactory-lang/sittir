@@ -66,7 +66,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a raw string as its path with its content, and builds it back with the shortest hash run its content fits', () => {
-		expect(readFirst('r"x";')).toEqual({ $path: 'statement.expression', value: { $path: 'literal.string.raw', $value: 'x' } });
+		expect(readFirst('r"x";')).toEqual({ $path: 'literal.string.raw', $value: 'x' });
 		expect(roundTrip('r"x";')).toBe('r"x";\n');
 		expect(roundTrip('r##"x"##;')).toBe('r"x";\n');
 		expect(roundTrip('r#"a"b"#;')).toBe('r#"a"b"#;\n');
@@ -153,7 +153,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a call argument with attributes as an argument, one without as its expression, and builds both back', () => {
-		const call = readFirst('f(#[cfg(x)] a, b);').value as Read;
+		const call = readFirst('f(#[cfg(x)] a, b);');
 		expect(call.arguments).toEqual([
 			{ $path: 'argument', attributes: [expect.objectContaining({ $path: 'attribute' })], value: 'a' },
 			'b'

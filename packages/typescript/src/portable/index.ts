@@ -5114,7 +5114,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [407], slots: { '269': 3 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [404], slots: { '269': 3 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.add',
@@ -5350,7 +5350,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '418': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '415': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -5358,7 +5358,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '417': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '414': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -6074,7 +6074,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.yield.delegate',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [415], slots: { '237': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [412], slots: { '237': 0 } } }]
 			}
 		]
 	},
@@ -6238,8 +6238,8 @@ const table: PortableTable = {
 		[TSKindId.PipeRbrace]: '|}',
 		[TSKindId.Comma]: ',',
 		[TSKindId.GlobalKeyword]: 'global',
-		[TSKindId.ExportKeyword]: 'export',
 		[TSKindId.FromKeyword]: 'from',
+		[TSKindId.ExportKeyword]: 'export',
 		[TSKindId.Dquote]: '"',
 		[TSKindId.Squote]: "'",
 		[TSKindId.PlusPlus]: '++',
@@ -6291,11 +6291,11 @@ export const queryFlags: QueryFlags = Object.freeze({
 		async: { op: 'present', slots: { '251': 0 } },
 		generator: { op: 'and', of: [] }
 	},
-	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '418': 0 } } },
-	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '417': 0 } } },
+	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '415': 0 } } },
+	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '414': 0 } } },
 	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', slots: { '198': 0 } } },
-	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '412': 1 } } },
-	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '413': 1 } } },
+	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '409': 1 } } },
+	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '410': 1 } } },
 	[TSKindId.MemberExpression]: {
 		optionalChain: { op: 'is', types: [255], slots: { '259': 1 } },
 		privateName: { op: 'is', types: [128], slots: { '259': 2 } }
@@ -6964,7 +6964,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	383: { returnType: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
 	384: { items: { typeOnly: { types: [], kinds: [194] } } },
-	385: { items: { typeOnly: { types: [], kinds: [417, 418] } } },
+	385: { items: { typeOnly: { types: [], kinds: [414, 415] } } },
 	387: {
 		items: {
 			optional: { types: [329], kinds: [] },
@@ -6985,22 +6985,12 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			optional: { types: [], kinds: [371, 456] },
 			override: { types: [], kinds: [371, 456, 457, 458] },
 			privateName: { types: [], kinds: [371, 456, 457, 458] },
-			readonly: { types: [], kinds: [371, 412, 413, 456] },
+			readonly: { types: [], kinds: [371, 409, 410, 456] },
 			static: { types: [], kinds: [371, 456, 457, 458] },
 			typeOnly: { types: [], kinds: [431] }
 		}
 	},
 	404: {
-		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	407: {
 		left: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
@@ -7018,7 +7008,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	409: {
+	406: {
 		methodDefinition: {
 			async: { types: [], kinds: [453] },
 			computed: { types: [], kinds: [453, 454, 455] },
@@ -7030,7 +7020,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			static: { types: [], kinds: [453, 454, 455] }
 		}
 	},
-	410: {
+	407: {
 		methodSignature: {
 			async: { types: [], kinds: [456] },
 			computed: { types: [], kinds: [456, 457, 458] },
@@ -7042,7 +7032,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			static: { types: [], kinds: [456, 457, 458] }
 		}
 	},
-	411: {
+	408: {
 		member: {
 			abstract: { types: [], kinds: [462] },
 			async: { types: [], kinds: [456] },
@@ -7053,12 +7043,22 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			optional: { types: [], kinds: [456, 459, 462] },
 			override: { types: [], kinds: [456, 457, 458, 459, 460, 461, 462, 463] },
 			privateName: { types: [], kinds: [456, 457, 458, 459, 460, 461, 462, 463] },
-			readonly: { types: [], kinds: [412, 413, 456, 462] },
+			readonly: { types: [], kinds: [409, 410, 456, 462] },
 			static: { types: [], kinds: [456, 457, 458, 462, 463] }
 		}
 	},
-	412: { indexType: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
-	415: {
+	409: { indexType: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
+	412: {
+		expression: {
+			async: { types: [], kinds: [248, 250, 252] },
+			disposable: { types: [], kinds: [262] },
+			generator: { types: [250], kinds: [] },
+			optionalChain: { types: [423], kinds: [259, 260] },
+			prefix: { types: [427], kinds: [] },
+			privateName: { types: [], kinds: [259] }
+		}
+	},
+	416: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
@@ -7069,7 +7069,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	419: {
-		expression: {
+		value: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
@@ -7760,11 +7760,6 @@ declare module '../types.js' {
 				| 'typeOnly';
 		};
 	}
-	interface ExportStatementEqualsExport {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
-	}
 	interface BinaryExpressionIn {
 		readonly __slotFlags__?: {
 			readonly left: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
@@ -7824,6 +7819,11 @@ declare module '../types.js' {
 	interface ParenthesizedExpressionTyped {
 		readonly __slotFlags__?: {
 			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+		};
+	}
+	interface ExportStatementEqualsExport {
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface CallExpressionCall {

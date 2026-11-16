@@ -20,7 +20,7 @@ import type {
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
-import { isNumberSlots, leafSeatOf, numberMembers, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
+import { builtMembers, isNumberSlots, leafSeatOf, numberMembers, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -282,7 +282,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				.find((member) => member.name === name);
 		const spellingText = (fact: PortableSpelledFact, spelling: PortableSpelling, kind: number, seat: PortableSeat): string | undefined => {
 			if (spelling.holes !== undefined) return undefined;
-			if (!spellingTexts.has(spelling)) spellingTexts.set(spelling, spellingOf(kind, fact.name, build(spelling.item, memberAt(seat, fact.member)?.seats).value));
+			if (!spellingTexts.has(spelling)) {
+				const member = memberAt(seat, fact.member);
+				spellingTexts.set(spelling, member === undefined ? undefined : spellingOf(kind, fact.name, element(spelling.item, member, member.seats, 0).value));
+			}
 			return spellingTexts.get(spelling);
 		};
 		const filledAt = (item: PortableStructure, [key, ...rest]: readonly string[], text: string): PortableStructure =>
@@ -557,7 +560,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			const lists = member.seats.filter((seat) => seat.many === true);
 			const placed = (seats: readonly PortableSeat[], i: number): readonly PortableSeat[] =>
 				seats.some((seat) => seat.final === true) ? seats.filter((seat) => (seat.final === true) === (i === value.length - 1)) : seats;
-			const list = lists.find((seat) => value.every((item, i) => seatsIn(placed(extending(member.seats, seat), i), item))) ?? lists[0]!;
+			const fitting = lists.find((seat) => value.every((item, i) => seatsIn(placed(extending(member.seats, seat), i), item)));
+			const single = member.seats.filter((seat) => seat.many !== true);
+			if (fitting === undefined && value.length === 1 && seatsIn(single, value[0])) return element(value[0], member, single, 0);
+			const list = fitting ?? lists[0]!;
 			const depth = within(list).length;
 			const last = value.length - 1;
 			const finals = placed(extending(member.seats, list), last);
@@ -691,11 +697,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			return new Set(shapes[0]!.split(' ').filter((i) => i !== '').map((i) => arm.members[Number(i)]!));
 		};
 		const routesOf = (arm: PortableBuildArm, name: string): readonly PortableMemberStep[] =>
-			arm.members.filter((member, i) => member.name === name && !arm.members.slice(0, i).some((other) => other.name === name && sameSteps(other, member)));
+			builtMembers(arm).filter((member, i, members) => member.name === name && !members.slice(0, i).some((other) => other.name === name && sameSteps(other, member)));
 		const spelledBy = (arm: PortableBuildArm, structure: PortableStructure): boolean =>
-			arm.members.every(({ name }) => {
-				const texts = listOf(structure[name]).filter((item) => typeof item === 'string');
-				return texts.length === 0 || routesOf(arm, name).some((route) => texts.every((text) => seats(route, text)));
+			builtMembers(arm).every((member) => {
+				const texts = listOf(structure[member.name]).filter((item) => typeof item === 'string');
+				if (member === arm.content) return texts.every((text) => member.seats.some((seat) => spells(seat, text)));
+				return texts.length === 0 || routesOf(arm, member.name).some((route) => texts.every((text) => seats(route, text)));
 			});
 		const spell = (template: PortableTemplate, structure: PortableStructure): string => {
 			let at = 0;

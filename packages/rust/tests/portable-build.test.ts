@@ -33,8 +33,9 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'comment.block', $value: ' x ' }))).toBe('/* x */');
 	});
 
-	it('builds an expression statement through the form its content takes', () => {
-		expect(render(runtime.build({ $path: 'statement.expression', value: 'x' }))).toBe('x;');
+	it('builds an expression in a statement list through the statement form its kind takes', () => {
+		const loop = { $path: 'statement.loop', body: { $path: 'statement.block', statements: [] } };
+		expect(render(runtime.build({ $path: 'file', statements: ['x', loop] }))).toBe('x;\nloop {}\n');
 	});
 
 	it("presets an arithmetic refinement's operator, and builds text members through their slot's leaf", () => {

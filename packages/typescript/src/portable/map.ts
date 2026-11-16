@@ -1143,6 +1143,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'comment.block.doc': {
 			readonly $forms: V.Form<'$value'>;
 		};
+		readonly 'comment.html': {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'comment.line': {
 			readonly $forms: V.Form<'$value'>;
 		};
@@ -28177,6 +28180,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly identifier: {
 			readonly $text: PortableTexts['identifier'];
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'identifier.qualified': {
 			readonly name: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
@@ -28246,6 +28250,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly marker: 'E' | 'e' | string;
 			readonly $forms: V.Form<'exponent' | 'integer' | 'marker'>;
 		};
+		readonly 'literal.number.integer': {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'literal.number.integer.big': {
 			readonly content: string;
 			readonly $forms: V.Form<'content'>;
@@ -28300,6 +28307,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly pattern: V.Read<TypeScriptMap, 'literal.regex.pattern'>;
 			readonly $forms: V.Form<'pattern'>;
 		};
+		readonly 'literal.regex.flags': {
+			readonly $forms: V.Form<'$value'>;
+		};
+		readonly 'literal.regex.pattern': {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'literal.string': {
 			readonly elements: V.Read<TypeScriptMap, 'literal.string.escape'> | V.Read<TypeScriptMap, 'literal.string.text'>;
 		};
@@ -28316,6 +28329,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'literal.string.text': {
 			readonly elements: never;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'modifier.visibility': {
 			readonly $text: PortableTexts['modifier.visibility'];

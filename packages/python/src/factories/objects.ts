@@ -10071,112 +10071,6 @@ function buildPrintStatementPlain$with$arguments(this: Received<Held>, ...args: 
 
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
 
-export function buildParenthesizedImportList<V extends Admit<T.ImportList>>(
-	value: V & RefuseUndeclared<V>
-): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildParenthesizedImportList(args[0] as Parameters<typeof _buildParenthesizedImportList>[0]);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
-	return prebuilt
-		? _buildParenthesizedImportList(args[0] as Parameters<typeof _buildParenthesizedImportList>[0])
-		: _buildParenthesizedImportList(
-				(buildImportList as (...a: unknown[]) => unknown)(...args) as Parameters<
-					typeof _buildParenthesizedImportList
-				>[0]
-			);
-}
-function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.ParenthesizedImportList.Bound {
-	const _import_list = hydrateStored(value);
-	const listView = ownerView(_import_list, '_name');
-	if (listView.length === undefined) refuseReadStub('_import_list');
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'parenthesized_import_list', { importList: _import_list });
-	const node = {
-		$type: TSKindId.ParenthesizedImportList as const,
-		_import_list,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		importList: () => hydrateStoredSlot(node, '_import_list'),
-		length: listView.length,
-		at: LIST_METHODS.at,
-		concat: LIST_METHODS.concat,
-		entries: LIST_METHODS.entries,
-		every: LIST_METHODS.every,
-		filter: LIST_METHODS.filter,
-		find: LIST_METHODS.find,
-		findIndex: LIST_METHODS.findIndex,
-		findLast: LIST_METHODS.findLast,
-		findLastIndex: LIST_METHODS.findLastIndex,
-		flat: LIST_METHODS.flat,
-		flatMap: LIST_METHODS.flatMap,
-		forEach: LIST_METHODS.forEach,
-		includes: LIST_METHODS.includes,
-		indexOf: LIST_METHODS.indexOf,
-		join: LIST_METHODS.join,
-		keys: LIST_METHODS.keys,
-		lastIndexOf: LIST_METHODS.lastIndexOf,
-		map: LIST_METHODS.map,
-		reduce: LIST_METHODS.reduce,
-		reduceRight: LIST_METHODS.reduceRight,
-		slice: LIST_METHODS.slice,
-		some: LIST_METHODS.some,
-		toReversed: LIST_METHODS.toReversed,
-		toSorted: LIST_METHODS.toSorted,
-		toLocaleString: LIST_METHODS.toLocaleString,
-		toSpliced: LIST_METHODS.toSpliced,
-		values: LIST_METHODS.values,
-		with: LIST_METHODS.with,
-		delimiter: listOption(listView.list, 'delimiter', undefined),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { importList: buildParenthesizedImportList$with$importList, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	holdListItems(node, heldItems(listView.list));
-	return node as unknown as T.ParenthesizedImportList.Bound;
-}
-
-function buildParenthesizedImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	switch (setter) {
-		case 'importList':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ImportList as const, optional: false, make: buildImportList },
-						(value: Admit<T.ImportList>) => _buildParenthesizedImportList(value)
-					)
-				)
-			);
-	}
-	throw new Error(`parenthesized_import_list has no $with.${setter}`);
-}
-function buildParenthesizedImportList$with$importList(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildParenthesizedImportList$with(receiverOf(this, '$with.importList'), 'importList', args);
-}
-
 export function buildComprehensionClauses<A extends NonEmptyArray<Admit<T.ForInClause | T.IfClause>>>(
 	...children: A & RefuseUndeclared<A>
 ): T.ComprehensionClauses.Bound;
@@ -11938,6 +11832,112 @@ function buildExceptClauseException$with(node: Held, setter: string, args: reado
 }
 function buildExceptClauseException$with$content(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildExceptClauseException$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function buildParenthesizedImportList<V extends Admit<T.ImportList>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildParenthesizedImportList>;
+export function buildParenthesizedImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildParenthesizedImportList>;
+export function buildParenthesizedImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildParenthesizedImportList>;
+export function buildParenthesizedImportList(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildParenthesizedImportList(args[0] as Parameters<typeof _buildParenthesizedImportList>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
+	return prebuilt
+		? _buildParenthesizedImportList(args[0] as Parameters<typeof _buildParenthesizedImportList>[0])
+		: _buildParenthesizedImportList(
+				(buildImportList as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildParenthesizedImportList
+				>[0]
+			);
+}
+function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.ParenthesizedImportList.Bound {
+	const _import_list = hydrateStored(value);
+	const listView = ownerView(_import_list, '_name');
+	if (listView.length === undefined) refuseReadStub('_import_list');
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_import_list', { importList: _import_list });
+	const node = {
+		$type: TSKindId.ParenthesizedImportList as const,
+		_import_list,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		importList: () => hydrateStoredSlot(node, '_import_list'),
+		length: listView.length,
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
+		delimiter: listOption(listView.list, 'delimiter', undefined),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { importList: buildParenthesizedImportList$with$importList, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	holdListItems(node, heldItems(listView.list));
+	return node as unknown as T.ParenthesizedImportList.Bound;
+}
+
+function buildParenthesizedImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'importList':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ImportList as const, optional: false, make: buildImportList },
+						(value: Admit<T.ImportList>) => _buildParenthesizedImportList(value)
+					)
+				)
+			);
+	}
+	throw new Error(`parenthesized_import_list has no $with.${setter}`);
+}
+function buildParenthesizedImportList$with$importList(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParenthesizedImportList$with(receiverOf(this, '$with.importList'), 'importList', args);
 }
 
 export function buildSplatPatternList<V extends Admit<T.Identifier | TSKindId.Underscore>>(
@@ -14086,7 +14086,6 @@ export type FluentKindMap = {
 	print_statement_chevron: T.PrintStatementChevron.Bound;
 	print_statement_plain: T.PrintStatementPlain.Bound;
 	wildcard_pattern: T.WildcardPattern;
-	parenthesized_import_list: T.ParenthesizedImportList.Bound;
 	comprehension_clauses: T.ComprehensionClauses.Bound;
 	integer_hex_long: T.IntegerHexLong.Bound;
 	integer_hex_plain: T.IntegerHexPlain.Bound;
@@ -14114,6 +14113,7 @@ export type FluentKindMap = {
 	simple_pattern_negative: T.SimplePatternNegative.Bound;
 	except_clause_exception_list: T.ExceptClauseExceptionList.Bound;
 	except_clause_exception: T.ExceptClauseException.Bound;
+	parenthesized_import_list: T.ParenthesizedImportList.Bound;
 	splat_pattern_list: T.SplatPatternList.Bound;
 	splat_pattern_dictionary: T.SplatPatternDictionary.Bound;
 	assignment_eq: T.AssignmentEq.Bound;
@@ -14300,7 +14300,6 @@ export const _factoryMap = {
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
 	wildcard_pattern: buildWildcardPattern,
-	parenthesized_import_list: buildParenthesizedImportList,
 	comprehension_clauses: buildComprehensionClauses,
 	integer_hex_long: buildIntegerHexLong,
 	integer_hex_plain: buildIntegerHexPlain,
@@ -14328,6 +14327,7 @@ export const _factoryMap = {
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,
+	parenthesized_import_list: buildParenthesizedImportList,
 	splat_pattern_list: buildSplatPatternList,
 	splat_pattern_dictionary: buildSplatPatternDictionary,
 	assignment_eq: buildAssignmentEq,

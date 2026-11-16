@@ -7834,34 +7834,6 @@
       "type": "STRING",
       "value": "_"
     },
-    "_parenthesized_import_list": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_list"
-          },
-          "named": true,
-          "value": "import_list",
-          "metadata": {
-            "aliasSource": "visible-group"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "comprehension_clauses": {
       "type": "FIELD",
       "name": "content",
@@ -9248,6 +9220,34 @@
     "_kw_trailing_comma": {
       "type": "STRING",
       "value": ","
+    },
+    "_parenthesized_import_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_import_list"
+          },
+          "named": true,
+          "value": "import_list",
+          "metadata": {
+            "aliasSource": "visible-group"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_kw_debug": {
       "type": "STRING",

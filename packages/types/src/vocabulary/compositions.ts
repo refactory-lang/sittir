@@ -318,7 +318,6 @@ export interface TypeScriptFeatures
 		AccessorAnnotations,
 		AccessorSignatures,
 		Annotated,
-		BoundClauses,
 		ClassVisibility,
 		ExternalModules,
 		FieldSignatures,

@@ -9665,104 +9665,6 @@ function wrapPrintStatementPlain$with$arguments(this: Received<Held>, ...args: u
 	return wrapPrintStatementPlain$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
-function wrapParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.importList(), 'names'), undefined);
-}
-export function wrapParenthesizedImportList(
-	data: T.ParenthesizedImportList,
-	tree: TreeHandle
-): T.ParenthesizedImportList.Parsed {
-	const handle = currentHandle();
-	const listView = ownerView(data._import_list, '_name', (list) =>
-		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
-	);
-	const node = {
-		...data,
-		$type: TSKindId.ParenthesizedImportList as const,
-		importList() {
-			return hydrateSlot<T.ImportList>(this, '_import_list', tree);
-		},
-		$with: undefined as unknown as object,
-		length: listView.length,
-		at: LIST_METHODS.at,
-		concat: LIST_METHODS.concat,
-		entries: LIST_METHODS.entries,
-		every: LIST_METHODS.every,
-		filter: LIST_METHODS.filter,
-		find: LIST_METHODS.find,
-		findIndex: LIST_METHODS.findIndex,
-		findLast: LIST_METHODS.findLast,
-		findLastIndex: LIST_METHODS.findLastIndex,
-		flat: LIST_METHODS.flat,
-		flatMap: LIST_METHODS.flatMap,
-		forEach: LIST_METHODS.forEach,
-		includes: LIST_METHODS.includes,
-		indexOf: LIST_METHODS.indexOf,
-		join: LIST_METHODS.join,
-		keys: LIST_METHODS.keys,
-		lastIndexOf: LIST_METHODS.lastIndexOf,
-		map: LIST_METHODS.map,
-		reduce: LIST_METHODS.reduce,
-		reduceRight: LIST_METHODS.reduceRight,
-		slice: LIST_METHODS.slice,
-		some: LIST_METHODS.some,
-		toReversed: LIST_METHODS.toReversed,
-		toSorted: LIST_METHODS.toSorted,
-		toLocaleString: LIST_METHODS.toLocaleString,
-		toSpliced: LIST_METHODS.toSpliced,
-		values: LIST_METHODS.values,
-		with: LIST_METHODS.with,
-		delimiter: listOption(listView.list, 'delimiter', undefined),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { importList: wrapParenthesizedImportList$with$importList, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	holdReadItems(
-		node,
-		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapParenthesizedImportList$listRead)
-	);
-	return node as unknown as T.ParenthesizedImportList.Parsed;
-}
-function wrapParenthesizedImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ParenthesizedImportList;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'importList':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
-						(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
-							wrapParenthesizedImportList(
-								{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
-								tree
-							)
-					)
-				)
-			);
-	}
-	throw new Error(`parenthesized_import_list has no $with.${setter}`);
-}
-function wrapParenthesizedImportList$with$importList(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParenthesizedImportList$with(receiverOf(this, '$with.importList'), 'importList', args);
-}
-
 export function wrapComprehensionClauses(
 	data: T.ComprehensionClauses,
 	tree: TreeHandle
@@ -11307,6 +11209,104 @@ function wrapExceptClauseException$with(node: Held, setter: string, args: readon
 }
 function wrapExceptClauseException$with$content(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapExceptClauseException$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+function wrapParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.importList(), 'names'), undefined);
+}
+export function wrapParenthesizedImportList(
+	data: T.ParenthesizedImportList,
+	tree: TreeHandle
+): T.ParenthesizedImportList.Parsed {
+	const handle = currentHandle();
+	const listView = ownerView(data._import_list, '_name', (list) =>
+		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
+	);
+	const node = {
+		...data,
+		$type: TSKindId.ParenthesizedImportList as const,
+		importList() {
+			return hydrateSlot<T.ImportList>(this, '_import_list', tree);
+		},
+		$with: undefined as unknown as object,
+		length: listView.length,
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
+		delimiter: listOption(listView.list, 'delimiter', undefined),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { importList: wrapParenthesizedImportList$with$importList, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	holdReadItems(
+		node,
+		ownerRead(listView, (value) => hydrate(value, tree), undefined, wrapParenthesizedImportList$listRead)
+	);
+	return node as unknown as T.ParenthesizedImportList.Parsed;
+}
+function wrapParenthesizedImportList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ParenthesizedImportList;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'importList':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
+						(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
+							wrapParenthesizedImportList(
+								{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
+								tree
+							)
+					)
+				)
+			);
+	}
+	throw new Error(`parenthesized_import_list has no $with.${setter}`);
+}
+function wrapParenthesizedImportList$with$importList(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParenthesizedImportList$with(receiverOf(this, '$with.importList'), 'importList', args);
 }
 
 export function wrapSplatPatternList(data: T.SplatPatternList, tree: TreeHandle): T.SplatPatternList.Parsed {
@@ -18801,72 +18801,6 @@ function viewPrintStatementPlain(data: RecordPosition, tree: TreeHandle): T.Prin
 	return node as unknown as T.PrintStatementPlain.Parsed;
 }
 
-function viewParenthesizedImportList$importList(this: RecordHandle) {
-	return viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2);
-}
-function viewParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.importList(), 'names'), undefined);
-}
-function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.ParenthesizedImportList.Parsed {
-	const node = {
-		$type: TSKindId.ParenthesizedImportList as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		importList: viewParenthesizedImportList$importList,
-		length: 0,
-		at: LIST_METHODS.at,
-		concat: LIST_METHODS.concat,
-		entries: LIST_METHODS.entries,
-		every: LIST_METHODS.every,
-		filter: LIST_METHODS.filter,
-		find: LIST_METHODS.find,
-		findIndex: LIST_METHODS.findIndex,
-		findLast: LIST_METHODS.findLast,
-		findLastIndex: LIST_METHODS.findLastIndex,
-		flat: LIST_METHODS.flat,
-		flatMap: LIST_METHODS.flatMap,
-		forEach: LIST_METHODS.forEach,
-		includes: LIST_METHODS.includes,
-		indexOf: LIST_METHODS.indexOf,
-		join: LIST_METHODS.join,
-		keys: LIST_METHODS.keys,
-		lastIndexOf: LIST_METHODS.lastIndexOf,
-		map: LIST_METHODS.map,
-		reduce: LIST_METHODS.reduce,
-		reduceRight: LIST_METHODS.reduceRight,
-		slice: LIST_METHODS.slice,
-		some: LIST_METHODS.some,
-		toReversed: LIST_METHODS.toReversed,
-		toSorted: LIST_METHODS.toSorted,
-		toLocaleString: LIST_METHODS.toLocaleString,
-		toSpliced: LIST_METHODS.toSpliced,
-		values: LIST_METHODS.values,
-		with: LIST_METHODS.with,
-		delimiter: undefined as unknown,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { importList: $with$importList, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
-	node.length = listView.length ?? 0;
-	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
-	holdReadItems(node, viewParenthesizedImportList$listRead);
-	return node as unknown as T.ParenthesizedImportList.Parsed;
-}
-
 function viewComprehensionClauses$contents(this: RecordHandle) {
 	return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 0, 2);
 }
@@ -19647,6 +19581,72 @@ function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.Ex
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ExceptClauseException.Parsed;
+}
+
+function viewParenthesizedImportList$importList(this: RecordHandle) {
+	return viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2);
+}
+function viewParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.importList(), 'names'), undefined);
+}
+function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.ParenthesizedImportList.Parsed {
+	const node = {
+		$type: TSKindId.ParenthesizedImportList as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		importList: viewParenthesizedImportList$importList,
+		length: 0,
+		at: LIST_METHODS.at,
+		concat: LIST_METHODS.concat,
+		entries: LIST_METHODS.entries,
+		every: LIST_METHODS.every,
+		filter: LIST_METHODS.filter,
+		find: LIST_METHODS.find,
+		findIndex: LIST_METHODS.findIndex,
+		findLast: LIST_METHODS.findLast,
+		findLastIndex: LIST_METHODS.findLastIndex,
+		flat: LIST_METHODS.flat,
+		flatMap: LIST_METHODS.flatMap,
+		forEach: LIST_METHODS.forEach,
+		includes: LIST_METHODS.includes,
+		indexOf: LIST_METHODS.indexOf,
+		join: LIST_METHODS.join,
+		keys: LIST_METHODS.keys,
+		lastIndexOf: LIST_METHODS.lastIndexOf,
+		map: LIST_METHODS.map,
+		reduce: LIST_METHODS.reduce,
+		reduceRight: LIST_METHODS.reduceRight,
+		slice: LIST_METHODS.slice,
+		some: LIST_METHODS.some,
+		toReversed: LIST_METHODS.toReversed,
+		toSorted: LIST_METHODS.toSorted,
+		toLocaleString: LIST_METHODS.toLocaleString,
+		toSpliced: LIST_METHODS.toSpliced,
+		values: LIST_METHODS.values,
+		with: LIST_METHODS.with,
+		delimiter: undefined as unknown,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { importList: $with$importList, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
+	node.length = listView.length ?? 0;
+	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
+	holdReadItems(node, viewParenthesizedImportList$listRead);
+	return node as unknown as T.ParenthesizedImportList.Parsed;
 }
 
 function viewSplatPatternList$pattern(this: RecordHandle) {
@@ -21191,8 +21191,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.PrintChevronArguments]: (d, t) => wrapPrintChevronArguments(d as unknown as T.PrintChevronArguments, t),
 	[TSKindId.PrintStatementChevron]: (d, t) => wrapPrintStatementChevron(d as unknown as T.PrintStatementChevron, t),
 	[TSKindId.PrintStatementPlain]: (d, t) => wrapPrintStatementPlain(d as unknown as T.PrintStatementPlain, t),
-	[TSKindId.ParenthesizedImportList]: (d, t) =>
-		wrapParenthesizedImportList(d as unknown as T.ParenthesizedImportList, t),
 	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
 	[TSKindId.IntegerHexLong]: (d, t) => wrapIntegerHexLong(d as unknown as T.IntegerHexLong, t),
 	[TSKindId.IntegerHexPlain]: (d, t) => wrapIntegerHexPlain(d as unknown as T.IntegerHexPlain, t),
@@ -21221,6 +21219,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ExceptClauseExceptionList]: (d, t) =>
 		wrapExceptClauseExceptionList(d as unknown as T.ExceptClauseExceptionList, t),
 	[TSKindId.ExceptClauseException]: (d, t) => wrapExceptClauseException(d as unknown as T.ExceptClauseException, t),
+	[TSKindId.ParenthesizedImportList]: (d, t) =>
+		wrapParenthesizedImportList(d as unknown as T.ParenthesizedImportList, t),
 	[TSKindId.SplatPatternList]: (d, t) => wrapSplatPatternList(d as unknown as T.SplatPatternList, t),
 	[TSKindId.SplatPatternDictionary]: (d, t) => wrapSplatPatternDictionary(d as unknown as T.SplatPatternDictionary, t),
 	[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),
@@ -21395,7 +21395,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.PrintChevronArguments]: viewPrintChevronArguments,
 	[TSKindId.PrintStatementChevron]: viewPrintStatementChevron,
 	[TSKindId.PrintStatementPlain]: viewPrintStatementPlain,
-	[TSKindId.ParenthesizedImportList]: viewParenthesizedImportList,
 	[TSKindId.ComprehensionClauses]: viewComprehensionClauses,
 	[TSKindId.IntegerHexLong]: viewIntegerHexLong,
 	[TSKindId.IntegerHexPlain]: viewIntegerHexPlain,
@@ -21419,6 +21418,7 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.SimplePatternNegative]: viewSimplePatternNegative,
 	[TSKindId.ExceptClauseExceptionList]: viewExceptClauseExceptionList,
 	[TSKindId.ExceptClauseException]: viewExceptClauseException,
+	[TSKindId.ParenthesizedImportList]: viewParenthesizedImportList,
 	[TSKindId.SplatPatternList]: viewSplatPatternList,
 	[TSKindId.SplatPatternDictionary]: viewSplatPatternDictionary,
 	[TSKindId.AssignmentEq]: viewAssignmentEq,

@@ -2176,7 +2176,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [
 						[400, 'doc'],
 						[401, 'doc']
@@ -2188,7 +2193,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [
 						[402, 'doc'],
 						[403, 'doc']
@@ -2200,7 +2210,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [[337, 'content']]
 				},
 				{
@@ -2214,7 +2229,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [[337, 'content']]
 				},
 				{
@@ -2223,7 +2243,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [[340, 'content']]
 				}
 			]
@@ -47029,12 +47054,123 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
+					kind: 484,
+					seated: 'direct',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['$value'],
+							required: []
+						}
+					],
+					holders: [
+						[197, 'name'],
+						[198, 'name'],
+						[202, 'type'],
+						[205, 'type'],
+						[206, 'type'],
+						[207, 'name'],
+						[207, 'value'],
+						[208, 'returnType'],
+						[209, 'returnType'],
+						[212, 'left'],
+						[214, 'name'],
+						[215, 'name'],
+						[216, 'bounds'],
+						[217, 'type'],
+						[218, 'type'],
+						[220, 'type'],
+						[221, 'name'],
+						[221, 'default'],
+						[223, 'type'],
+						[233, 'type'],
+						[237, 'type'],
+						[238, 'type'],
+						[238, 'alias'],
+						[240, 'element'],
+						[242, 'returnType'],
+						[246, 'type'],
+						[247, 'type'],
+						[248, 'left'],
+						[248, 'right'],
+						[251, 'name'],
+						[251, 'type'],
+						[252, 'type'],
+						[255, 'trait'],
+						[256, 'trait'],
+						[264, 'name'],
+						[265, 'name'],
+						[273, 'type'],
+						[282, 'name'],
+						[319, 'type'],
+						[351, 'items'],
+						[352, 'items'],
+						[369, 'returnType'],
+						[375, 'trait'],
+						[376, 'trait'],
+						[377, 'type'],
+						[378, 'type'],
+						[382, 'trait'],
+						[388, 'type'],
+						[389, 'type'],
+						[423, 'name'],
+						[424, 'name'],
+						[425, 'name'],
+						[429, 'content'],
+						[432, 'type'],
+						[433, 'content'],
+						[439, 'type'],
+						[480, 'returnType'],
+						[483, 'returnType']
+					]
+				},
+				{
+					kind: 478,
+					seated: 'direct',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['$value'],
+							required: []
+						}
+					],
+					holders: [
+						[202, 'name'],
+						[285, 'name'],
+						[308, 'property'],
+						[415, 'name']
+					]
+				},
+				{
+					kind: 482,
+					seated: 'direct',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['$value'],
+							required: []
+						}
+					],
+					holders: [[414, 'name']]
+				},
+				{
 					kind: 1,
 					builder: 'identifier',
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [
 						[189, 'content'],
 						[192, 'path'],
@@ -47151,97 +47287,6 @@ export const build: PortableBuildTable = {
 						[480, 'name'],
 						[483, 'name']
 					]
-				},
-				{
-					kind: 484,
-					seated: 'direct',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [
-						[197, 'name'],
-						[198, 'name'],
-						[202, 'type'],
-						[205, 'type'],
-						[206, 'type'],
-						[207, 'name'],
-						[207, 'value'],
-						[208, 'returnType'],
-						[209, 'returnType'],
-						[212, 'left'],
-						[214, 'name'],
-						[215, 'name'],
-						[216, 'bounds'],
-						[217, 'type'],
-						[218, 'type'],
-						[220, 'type'],
-						[221, 'name'],
-						[221, 'default'],
-						[223, 'type'],
-						[233, 'type'],
-						[237, 'type'],
-						[238, 'type'],
-						[238, 'alias'],
-						[240, 'element'],
-						[242, 'returnType'],
-						[246, 'type'],
-						[247, 'type'],
-						[248, 'left'],
-						[248, 'right'],
-						[251, 'name'],
-						[251, 'type'],
-						[252, 'type'],
-						[255, 'trait'],
-						[256, 'trait'],
-						[264, 'name'],
-						[265, 'name'],
-						[273, 'type'],
-						[282, 'name'],
-						[319, 'type'],
-						[351, 'items'],
-						[352, 'items'],
-						[369, 'returnType'],
-						[375, 'trait'],
-						[376, 'trait'],
-						[377, 'type'],
-						[378, 'type'],
-						[382, 'trait'],
-						[388, 'type'],
-						[389, 'type'],
-						[423, 'name'],
-						[424, 'name'],
-						[425, 'name'],
-						[429, 'content'],
-						[432, 'type'],
-						[433, 'content'],
-						[439, 'type'],
-						[480, 'returnType'],
-						[483, 'returnType']
-					]
-				},
-				{
-					kind: 478,
-					seated: 'direct',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [
-						[202, 'name'],
-						[285, 'name'],
-						[308, 'property'],
-						[415, 'name']
-					]
-				},
-				{
-					kind: 482,
-					seated: 'direct',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [[414, 'name']]
 				}
 			]
 		},
@@ -47818,25 +47863,8 @@ export const build: PortableBuildTable = {
 							default: true
 						},
 						{
-							absent: [],
+							absent: ['$value'],
 							required: ['content']
-						}
-					]
-				},
-				{
-					kind: 146,
-					builder: 'charLiteral.empty',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							variant: 'char_literal',
-							value: 146
-						},
-						{
-							absent: ['content'],
-							required: []
 						}
 					]
 				},
@@ -47874,7 +47902,7 @@ export const build: PortableBuildTable = {
 							value: 150
 						},
 						{
-							absent: [],
+							absent: ['$value'],
 							required: ['content']
 						}
 					]
@@ -47913,7 +47941,7 @@ export const build: PortableBuildTable = {
 							value: 147
 						},
 						{
-							absent: [],
+							absent: ['$value'],
 							required: ['content']
 						}
 					]
@@ -47952,7 +47980,7 @@ export const build: PortableBuildTable = {
 							value: 149
 						},
 						{
-							absent: [],
+							absent: ['$value'],
 							required: ['content']
 						}
 					]
@@ -47991,8 +48019,25 @@ export const build: PortableBuildTable = {
 							value: 148
 						},
 						{
-							absent: [],
+							absent: ['$value'],
 							required: ['content']
+						}
+					]
+				},
+				{
+					kind: 146,
+					builder: 'charLiteral.empty',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							variant: 'char_literal',
+							value: 146
+						},
+						{
+							absent: ['content'],
+							required: ['$value']
 						}
 					]
 				}
@@ -48008,7 +48053,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'float',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			],
 			builds: {
@@ -48797,7 +48847,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [[332, 'elements']]
 				},
 				{
@@ -48806,7 +48861,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [[333, 'stringContent']]
 				}
 			]

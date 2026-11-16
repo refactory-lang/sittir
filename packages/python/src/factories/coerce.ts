@@ -421,10 +421,10 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 136, 139, 140, 141, 142, 144, 146,
 		147, 148, 150, 151, 152, 153, 154, 155, 173, 174, 175, 176, 177, 178, 181, 186, 187, 206, 208, 212, 213, 214, 215,
 		218, 219, 222, 225, 226, 227, 229, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252, 253, 262, 265,
-		273, 281, 285, 287, 288, 290, 302, 303, 304, 305, 312, 362
+		273, 281, 285, 287, 288, 299, 302, 303, 304, 305, 312, 362
 	]),
 	import_statement: new Set([142, 187, 362]),
-	future_import_statement: new Set([141, 142, 187, 290]),
+	future_import_statement: new Set([141, 142, 187, 299]),
 	import_list: new Set([142, 187]),
 	print_statement: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 186, 206, 208,
@@ -455,13 +455,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 121, 136, 139, 140, 141, 142, 144,
 		146, 147, 148, 150, 151, 152, 153, 154, 155, 173, 174, 175, 176, 177, 178, 181, 185, 186, 187, 206, 208, 212, 213,
 		214, 215, 218, 219, 222, 225, 226, 227, 229, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252, 253,
-		262, 265, 273, 281, 285, 287, 288, 290, 302, 303, 304, 305, 308, 309, 310, 312, 362
+		262, 265, 273, 281, 285, 287, 288, 299, 302, 303, 304, 305, 308, 309, 310, 312, 362
 	]),
 	finally_clause: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 121, 136, 139, 140, 141, 142, 144,
 		146, 147, 148, 150, 151, 152, 153, 154, 155, 173, 174, 175, 176, 177, 178, 181, 185, 186, 187, 206, 208, 212, 213,
 		214, 215, 218, 219, 222, 225, 226, 227, 229, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252, 253,
-		262, 265, 273, 281, 285, 287, 288, 290, 302, 303, 304, 305, 308, 309, 310, 312, 362
+		262, 265, 273, 281, 285, 287, 288, 299, 302, 303, 304, 305, 308, 309, 310, 312, 362
 	]),
 	with_item: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 186, 206, 208,
@@ -507,11 +507,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	case_pattern: new Set([
 		1, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 188, 189, 190, 191, 192, 193, 194,
-		196, 197, 252, 253, 270, 271, 283, 284, 289, 297, 300, 301
+		196, 197, 252, 253, 270, 271, 283, 284, 289, 296, 300, 301
 	]),
 	_simple_pattern: new Set([
 		1, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 188, 189, 190, 191, 192, 193, 194,
-		196, 197, 252, 253, 270, 271, 283, 284, 289, 297, 300, 301
+		196, 197, 252, 253, 270, 271, 283, 284, 289, 296, 300, 301
 	]),
 	dict_pattern: new Set([1, 193, 271, 300, 301]),
 	parameters_elements: new Set([1, 199, 202, 203, 204, 205, 206, 207, 226, 227, 230, 263, 264, 279]),
@@ -581,7 +581,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 136, 139, 140, 141, 142, 144, 146,
 		147, 148, 150, 151, 152, 153, 154, 155, 173, 174, 175, 176, 177, 178, 181, 186, 187, 206, 208, 212, 213, 214, 215,
 		218, 219, 222, 225, 226, 227, 229, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252, 253, 262, 273,
-		281, 285, 287, 288, 290, 302, 303, 304, 305, 312, 362
+		281, 285, 287, 288, 299, 302, 303, 304, 305, 312, 362
 	]),
 	subjects: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 186, 206, 208,
@@ -605,7 +605,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	list_pattern_case_patterns: new Set([
 		1, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 188, 189, 190, 191, 192, 193, 194,
-		196, 197, 252, 253, 270, 271, 283, 284, 289, 297, 300, 301
+		196, 197, 252, 253, 270, 271, 283, 284, 289, 296, 300, 301
 	]),
 	dict_pattern_elements: new Set([1, 193, 300, 301]),
 	subscripts: new Set([
@@ -628,7 +628,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	tuple_pattern_elements: new Set([1, 199, 202, 203, 206, 226, 227, 279]),
 	case_pattern_list: new Set([
 		1, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 188, 189, 190, 191, 192, 193, 194,
-		196, 197, 252, 253, 270, 271, 283, 284, 289, 297, 300, 301
+		196, 197, 252, 253, 270, 271, 283, 284, 289, 296, 300, 301
 	]),
 	tuple_elements: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 186, 206, 208,
@@ -637,11 +637,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	case_tuple_pattern: new Set([
 		1, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 188, 189, 190, 191, 192, 193, 194,
-		196, 197, 252, 253, 270, 271, 283, 284, 289, 297, 300, 301
+		196, 197, 252, 253, 270, 271, 283, 284, 289, 296, 300, 301
 	]),
 	case_list_pattern: new Set([
 		1, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 188, 189, 190, 191, 192, 193, 194,
-		196, 197, 252, 253, 270, 271, 283, 284, 289, 297, 300, 301
+		196, 197, 252, 253, 270, 271, 283, 284, 289, 296, 300, 301
 	]),
 	print_arguments: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 186, 206, 208,
@@ -658,9 +658,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		212, 213, 214, 215, 218, 219, 225, 226, 227, 229, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252,
 		253, 262, 273, 281, 285, 312
 	]),
-	parenthesized_import_list: new Set([141, 142, 187]),
 	simple_pattern_negative: new Set([90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103]),
-	except_clause_exception: new Set([282, 298]),
+	except_clause_exception: new Set([282, 297]),
+	parenthesized_import_list: new Set([141, 142, 187]),
 	splat_pattern_list: new Set([1]),
 	splat_pattern_dictionary: new Set([1]),
 	expression_statement_tuple: new Set([
@@ -682,7 +682,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 136, 139, 140, 141, 142, 144, 146,
 		147, 148, 150, 151, 152, 153, 154, 155, 173, 174, 175, 176, 177, 178, 181, 186, 187, 206, 208, 212, 213, 214, 215,
 		218, 219, 222, 225, 226, 227, 229, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 251, 252, 253, 262, 265,
-		273, 281, 285, 287, 288, 290, 302, 303, 304, 305, 312, 362
+		273, 281, 285, 287, 288, 299, 302, 303, 304, 305, 312, 362
 	]),
 	suite_block: new Set([185]),
 	suite_empty: new Set([121]),
@@ -923,11 +923,11 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	print_arguments: TSKindId.PrintArguments,
 	print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_plain: TSKindId.PrintStatementPlain,
-	parenthesized_import_list: TSKindId.ParenthesizedImportList,
 	comprehension_clauses: TSKindId.ComprehensionClauses,
 	simple_pattern_negative: TSKindId.SimplePatternNegative,
 	except_clause_exception_list: TSKindId.ExceptClauseExceptionList,
 	except_clause_exception: TSKindId.ExceptClauseException,
+	parenthesized_import_list: TSKindId.ParenthesizedImportList,
 	splat_pattern_list: TSKindId.SplatPatternList,
 	splat_pattern_dictionary: TSKindId.SplatPatternDictionary,
 	expression_statement_tuple: TSKindId.ExpressionStatementTuple,
@@ -995,8 +995,8 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	print_arguments: 'expression',
 	print_chevron_arguments: 'expression',
 	print_statement_plain: 'print_arguments',
-	parenthesized_import_list: 'import_list',
 	except_clause_exception_list: 'expression',
+	parenthesized_import_list: 'import_list',
 	splat_pattern_list: 'identifier',
 	splat_pattern_dictionary: 'identifier',
 	expression_statement_tuple: 'expression',
@@ -1055,9 +1055,9 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'case_tuple_pattern',
 	'case_list_pattern',
 	'print_statement_plain',
-	'parenthesized_import_list',
 	'simple_pattern_negative',
 	'except_clause_exception',
+	'parenthesized_import_list',
 	'splat_pattern_list',
 	'splat_pattern_dictionary',
 	'with_clause_paren',
@@ -1233,8 +1233,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToPrintChevronArguments as (...args: unknown[]) => unknown)(...children);
 		case 'print_statement_plain':
 			return F.buildPrintStatementPlain(children[0] as Parameters<typeof F.buildPrintStatementPlain>[0]);
-		case 'parenthesized_import_list':
-			return F.buildParenthesizedImportList(children[0] as Parameters<typeof F.buildParenthesizedImportList>[0]);
 		case 'comprehension_clauses':
 			return (coerceToComprehensionClauses as (...args: unknown[]) => unknown)(...children);
 		case 'simple_pattern_negative':
@@ -1243,6 +1241,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToExceptClauseExceptionList as (...args: unknown[]) => unknown)(...children);
 		case 'except_clause_exception':
 			return F.buildExceptClauseException(children[0] as Parameters<typeof F.buildExceptClauseException>[0]);
+		case 'parenthesized_import_list':
+			return F.buildParenthesizedImportList(children[0] as Parameters<typeof F.buildParenthesizedImportList>[0]);
 		case 'splat_pattern_list':
 			return F.buildSplatPatternList(children[0] as Parameters<typeof F.buildSplatPatternList>[0]);
 		case 'splat_pattern_dictionary':
@@ -6309,32 +6309,6 @@ export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): typeo
 	return F.buildWildcardPattern;
 }
 
-export function resolveParenthesizedImportList_importList(
-	value: T.ParenthesizedImportList.LooseConfig['importList']
-): Admit<T.ParenthesizedImportList['_import_list']> {
-	return _resolveOneBranch<T.ImportList>(value, 'import_list');
-}
-
-export const coerceToParenthesizedImportList: Seat<
-	T.ImportList.LooseArgs,
-	ReturnType<typeof F.buildParenthesizedImportList>
-> &
-	ConfigSeat<T.ParenthesizedImportList.Loose, ReturnType<typeof F.buildParenthesizedImportList>> = (
-	...args: unknown[]
-): ReturnType<typeof F.buildParenthesizedImportList> => {
-	if (args.length > 1)
-		return F.buildParenthesizedImportList(coerceToImportList(...(args as Parameters<typeof coerceToImportList>)));
-	const input = args[0] as T.ParenthesizedImportList.Loose;
-	if (isNodeOfKind(input, TSKindId.ParenthesizedImportList))
-		return input as unknown as ReturnType<typeof F.buildParenthesizedImportList>;
-	return F.buildParenthesizedImportList(
-		_resolveOneBranch<T.ImportList>(
-			configFieldOr(input, 'importList', () => input, TSKindId.ParenthesizedImportList),
-			'import_list'
-		)
-	);
-};
-
 export const coerceToComprehensionClauses: Seat<
 	T.ComprehensionClauses.LooseArgs,
 	ReturnType<typeof F.buildComprehensionClauses>
@@ -7541,6 +7515,32 @@ export const coerceToExceptClauseException: ConfigSeat<
 	);
 };
 
+export function resolveParenthesizedImportList_importList(
+	value: T.ParenthesizedImportList.LooseConfig['importList']
+): Admit<T.ParenthesizedImportList['_import_list']> {
+	return _resolveOneBranch<T.ImportList>(value, 'import_list');
+}
+
+export const coerceToParenthesizedImportList: Seat<
+	T.ImportList.LooseArgs,
+	ReturnType<typeof F.buildParenthesizedImportList>
+> &
+	ConfigSeat<T.ParenthesizedImportList.Loose, ReturnType<typeof F.buildParenthesizedImportList>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildParenthesizedImportList> => {
+	if (args.length > 1)
+		return F.buildParenthesizedImportList(coerceToImportList(...(args as Parameters<typeof coerceToImportList>)));
+	const input = args[0] as T.ParenthesizedImportList.Loose;
+	if (isNodeOfKind(input, TSKindId.ParenthesizedImportList))
+		return input as unknown as ReturnType<typeof F.buildParenthesizedImportList>;
+	return F.buildParenthesizedImportList(
+		_resolveOneBranch<T.ImportList>(
+			configFieldOr(input, 'importList', () => input, TSKindId.ParenthesizedImportList),
+			'import_list'
+		)
+	);
+};
+
 export function resolveSplatPatternList_pattern(
 	value: T.SplatPatternList.LooseConfig['pattern']
 ): Admit<T.SplatPatternList['_pattern']> {
@@ -8529,7 +8529,6 @@ export interface _FromMap {
 	readonly print_statement_chevron: typeof coerceToPrintStatementChevron;
 	readonly print_statement_plain: typeof coerceToPrintStatementPlain;
 	readonly wildcard_pattern: typeof coerceToWildcardPattern;
-	readonly parenthesized_import_list: typeof coerceToParenthesizedImportList;
 	readonly comprehension_clauses: typeof coerceToComprehensionClauses;
 	readonly integer_hex_long: typeof coerceToIntegerHexLong;
 	readonly integer_hex_plain: typeof coerceToIntegerHexPlain;
@@ -8557,6 +8556,7 @@ export interface _FromMap {
 	readonly simple_pattern_negative: typeof coerceToSimplePatternNegative;
 	readonly except_clause_exception_list: typeof coerceToExceptClauseExceptionList;
 	readonly except_clause_exception: typeof coerceToExceptClauseException;
+	readonly parenthesized_import_list: typeof coerceToParenthesizedImportList;
 	readonly splat_pattern_list: typeof coerceToSplatPatternList;
 	readonly splat_pattern_dictionary: typeof coerceToSplatPatternDictionary;
 	readonly assignment_eq: typeof coerceToAssignmentEq;
@@ -8739,7 +8739,6 @@ export const _fromMap: _FromMap = {
 	print_statement_chevron: coerceToPrintStatementChevron,
 	print_statement_plain: coerceToPrintStatementPlain,
 	wildcard_pattern: coerceToWildcardPattern,
-	parenthesized_import_list: coerceToParenthesizedImportList,
 	comprehension_clauses: coerceToComprehensionClauses,
 	integer_hex_long: coerceToIntegerHexLong,
 	integer_hex_plain: coerceToIntegerHexPlain,
@@ -8767,6 +8766,7 @@ export const _fromMap: _FromMap = {
 	simple_pattern_negative: coerceToSimplePatternNegative,
 	except_clause_exception_list: coerceToExceptClauseExceptionList,
 	except_clause_exception: coerceToExceptClauseException,
+	parenthesized_import_list: coerceToParenthesizedImportList,
 	splat_pattern_list: coerceToSplatPatternList,
 	splat_pattern_dictionary: coerceToSplatPatternDictionary,
 	assignment_eq: coerceToAssignmentEq,

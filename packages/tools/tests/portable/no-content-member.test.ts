@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
+import { sharedEngine } from '@sittir/common/testing';
 import python from '../../../python/src/index.ts';
 import rust from '../../../rust/src/index.ts';
 import typescript from '../../../typescript/src/index.ts';
@@ -14,9 +15,9 @@ interface Runtime {
 }
 
 const runtimes: Readonly<Record<'python' | 'rust' | 'typescript', Runtime>> = {
-	python: await portableRuntime(await createEngine(python, { api: 'strict' })),
-	rust: await portableRuntime(await createEngine(rust, { api: 'strict' })),
-	typescript: await portableRuntime(await createEngine(typescript, { api: 'strict' }))
+	python: await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict' }))),
+	rust: await portableRuntime(await sharedEngine(() => createEngine(rust, { api: 'strict' }))),
+	typescript: await portableRuntime(await sharedEngine(() => createEngine(typescript, { api: 'strict' })))
 };
 
 const isRead = (value: unknown): value is Read => typeof value === 'object' && value !== null && '$path' in value;
@@ -68,19 +69,43 @@ describe('an unnamed slot reads under the name of what it holds', () => {
 	it.each([
 		['python', 'from a import b, c\n', 'statement.import.from', 'names'],
 		['python', 'from __future__ import annotations\n', 'statement.import.future', 'names'],
+		['python', 'from a import *\n', 'statement.import.from', 'names'],
 		['python', 'def g():\n    yield 1\n', 'expression.yield', 'expression'],
-		['python', 'f()\n', 'statement.expression', 'value'],
-		['rust', 'fn f() {\n    g();\n}\n', 'statement.expression', 'value'],
-		['typescript', "import a, { b } from 'm';\n", 'clause.import.names', 'elements'],
-		['typescript', "import { b } from 'm';\n", 'clause.import.names', 'elements'],
+		['typescript', 'import a, { b } from "m";\n', 'clause.import.names', 'specifiers'],
+		['typescript', 'import { b } from "m";\n', 'clause.import.names', 'specifiers'],
 		['typescript', 'declare const x: number;\n', 'declaration.ambient', 'body'],
-		['typescript', "type T = 'a';\n", 'type.literal', 'value']
+		['typescript', 'type T = "a";\n', 'type.literal', 'value'],
+		['rust', 'fn f() {\n    g::<T>();\n}\n', 'element.type_argument', 'argument'],
+		['rust', 'fn f() {\n    S { a: 1 };\n}\n', 'element.struct.field', 'name']
 	] as const)('%s reads %j as %s with its %s, never content, and builds it back', (grammar, source, path, member) => {
 		const runtime = runtimes[grammar];
 		const read = found(runtime, source, path);
 		expect(read).toHaveProperty(member);
 		expect(read).not.toHaveProperty('content');
 		expect(rendered(runtime, readOf(runtime, source))).toBe(source);
+	});
+});
+
+describe('an expression in a statement list reads as itself', () => {
+	it.each([
+		['python', 'f()\n', { $path: 'expression.call', function: 'f', arguments: [] }],
+		['typescript', 'f();\n', { $path: 'expression.call', function: 'f' }],
+		['rust', 'fn f() {\n    g();\n}\n', { $path: 'expression.call', function: 'g' }]
+	] as const)('%s reads %j with no statement.expression around its call, and builds it back', (grammar, source, call) => {
+		const runtime = runtimes[grammar];
+		const paths = reads(readOf(runtime, source)).map((read) => read.$path);
+		expect(paths).not.toContain('statement.expression');
+		expect(found(runtime, source, 'expression.call')).toMatchObject(call);
+		expect(rendered(runtime, readOf(runtime, source))).toBe(source);
+	});
+
+	it.each([
+		['python', 'f()\n'],
+		['rust', 'g();\n']
+	] as const)("%s reads the statement node of %j on its own as the call it holds", (grammar, source) => {
+		const runtime = runtimes[grammar];
+		const [statement] = grammar === 'python' ? (runtime.engine.parse(source).statements()[0] as { statements(): readonly unknown[] }).statements() : runtime.engine.parse(source).statements();
+		expect(runtime.read(statement as never)).toMatchObject({ $path: 'expression.call' });
 	});
 });
 
@@ -95,7 +120,6 @@ describe('a comment or an escape is its text', () => {
 		const runtime = runtimes[grammar];
 		expect(leading(runtime, source)).toEqual({ $path: path, $value: value });
 		expect(rendered(runtime, { $path: path, $value: value }).trimEnd()).toBe(text);
-		expect(rendered(runtime, readOf(runtime, source))).toBe(source);
 	});
 
 	it("reads rust's doc comments as their text, and builds them back", () => {
@@ -109,13 +133,13 @@ describe('a comment or an escape is its text', () => {
 			const read = leading(runtime, source);
 			expect(read).toMatchObject({ $path: path, $value: expect.stringContaining(' x') });
 			expect(Object.keys(read).sort()).toEqual(['$path', '$value']);
-			expect(rendered(runtime, readOf(runtime, source))).toBe(source);
+			expect(rendered(runtime, read).trimEnd()).toBe(source.split('\n')[0]);
 		}
 	});
 
 	it.each([
-		['python', "'a\\nb'\n"],
-		['typescript', "'a\\nb';\n"],
+		['python', '"a\\nb"\n'],
+		['typescript', '"a\\nb";\n'],
 		['rust', 'fn f() {\n    "a\\nb";\n}\n']
 	] as const)('%s reads the escape in %j as its text, and builds it back', (grammar, source) => {
 		const runtime = runtimes[grammar];

@@ -30025,7 +30025,7 @@
                                       "$type": 1
                                     },
                                     "_clauses": {
-                                      "$type": 291,
+                                      "$type": 290,
                                       "_content": [
                                         {
                                           "$type": 249,
@@ -30227,7 +30227,7 @@
                                   "$type": 1
                                 },
                                 "_clauses": {
-                                  "$type": 291,
+                                  "$type": 290,
                                   "_content": [
                                     {
                                       "$type": 249,
@@ -30452,7 +30452,7 @@
                                 "$type": 1
                               },
                               "_clauses": {
-                                "$type": 291,
+                                "$type": 290,
                                 "_content": [
                                   {
                                     "$type": 249,
@@ -30639,7 +30639,7 @@
                               "$type": 1
                             },
                             "_clauses": {
-                              "$type": 291,
+                              "$type": 290,
                               "_content": [
                                 {
                                   "$type": 249,
@@ -30922,7 +30922,7 @@
                           "$type": 1
                         },
                         "_clauses": {
-                          "$type": 291,
+                          "$type": 290,
                           "_content": [
                             {
                               "$type": 249,
@@ -31189,7 +31189,7 @@
                         "$type": 1
                       },
                       "_clauses": {
-                        "$type": 291,
+                        "$type": 290,
                         "_content": [
                           {
                             "$type": 249,
@@ -31427,7 +31427,7 @@
                     "$type": 1
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -31642,7 +31642,7 @@
                   "$type": 1
                 },
                 "_clauses": {
-                  "$type": 291,
+                  "$type": 290,
                   "_content": [
                     {
                       "$type": 249,
@@ -31723,7 +31723,7 @@
             "$type": 1
           },
           "_clauses": {
-            "$type": 291,
+            "$type": 290,
             "_content": [
               {
                 "$type": 249,
@@ -31876,7 +31876,7 @@
                 "$type": 1
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -31954,7 +31954,7 @@
           "$type": 1
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -32033,7 +32033,7 @@
               "$type": 1
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -32108,7 +32108,7 @@
         "$type": 1
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -32174,7 +32174,7 @@
     "expectedOutput": "for x in range(1, 10)",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -37518,7 +37518,7 @@
                                     "$type": 1
                                   },
                                   "_clauses": {
-                                    "$type": 291,
+                                    "$type": 290,
                                     "_content": [
                                       {
                                         "$type": 249,
@@ -37636,7 +37636,7 @@
                                 "$type": 1
                               },
                               "_clauses": {
-                                "$type": 291,
+                                "$type": 290,
                                 "_content": [
                                   {
                                     "$type": 249,
@@ -37898,7 +37898,7 @@
                               "$type": 1
                             },
                             "_clauses": {
-                              "$type": 291,
+                              "$type": 290,
                               "_content": [
                                 {
                                   "$type": 249,
@@ -37979,7 +37979,7 @@
                       "$type": 1
                     },
                     "_clauses": {
-                      "$type": 291,
+                      "$type": 290,
                       "_content": [
                         {
                           "$type": 249,
@@ -38054,7 +38054,7 @@
                             "$type": 1
                           },
                           "_clauses": {
-                            "$type": 291,
+                            "$type": 290,
                             "_content": [
                               {
                                 "$type": 249,
@@ -38132,7 +38132,7 @@
                     "$type": 1
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -38203,7 +38203,7 @@
                         "$type": 1
                       },
                       "_clauses": {
-                        "$type": 291,
+                        "$type": 290,
                         "_content": [
                           {
                             "$type": 249,
@@ -38276,7 +38276,7 @@
                 "$type": 1
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -38335,7 +38335,7 @@
               "$type": 1
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -38389,7 +38389,7 @@
           "$type": 1
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -38439,7 +38439,7 @@
         "$type": 1
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -38482,7 +38482,7 @@
     "expectedOutput": "async for f in g",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -72399,7 +72399,7 @@
                     }
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -72451,7 +72451,7 @@
                     "$type": 1
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -72526,7 +72526,7 @@
                     }
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -72634,7 +72634,7 @@
                     "$type": 1
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -72722,7 +72722,7 @@
                 }
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -72796,7 +72796,7 @@
                 "$type": 1
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -72893,7 +72893,7 @@
                 }
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -73023,7 +73023,7 @@
                 "$type": 1
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -73107,7 +73107,7 @@
               }
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -73178,7 +73178,7 @@
               "$type": 1
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -73272,7 +73272,7 @@
               }
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -73399,7 +73399,7 @@
               "$type": 1
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -73478,7 +73478,7 @@
           }
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -73543,7 +73543,7 @@
           "$type": 1
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -73631,7 +73631,7 @@
           }
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -73752,7 +73752,7 @@
           "$type": 1
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -73827,7 +73827,7 @@
         }
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -73889,7 +73889,7 @@
         "$type": 1
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -73974,7 +73974,7 @@
         }
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -74092,7 +74092,7 @@
         "$type": 1
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -74186,7 +74186,7 @@
     "expectedOutput": "for (a, b) in items",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -74241,7 +74241,7 @@
     "expectedOutput": "for b in c for a in b",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -74298,7 +74298,7 @@
     "expectedOutput": "for x in [1,2,3] for y in [1,2,3] if True",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -74409,7 +74409,7 @@
     "expectedOutput": "for a in lambda: True, lambda: False if a()",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -77674,7 +77674,7 @@
                     }
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -77730,7 +77730,7 @@
                     }
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -77815,7 +77815,7 @@
                 }
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -77893,7 +77893,7 @@
                 }
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -77974,7 +77974,7 @@
               }
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -78049,7 +78049,7 @@
               }
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -78125,7 +78125,7 @@
           }
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -78194,7 +78194,7 @@
           }
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -78266,7 +78266,7 @@
         }
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -78332,7 +78332,7 @@
         }
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -78456,7 +78456,7 @@
     "expectedOutput": "for a, b in items",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -78508,7 +78508,7 @@
     "expectedOutput": "for c in d for e in items",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -79349,7 +79349,7 @@
                     }
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -79402,7 +79402,7 @@
                     "$type": 1
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -79506,7 +79506,7 @@
                 }
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -79581,7 +79581,7 @@
                 "$type": 1
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -79681,7 +79681,7 @@
               }
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -79753,7 +79753,7 @@
               "$type": 1
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -79848,7 +79848,7 @@
           }
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -79914,7 +79914,7 @@
           "$type": 1
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -80005,7 +80005,7 @@
         }
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -80068,7 +80068,7 @@
         "$type": 1
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -80281,7 +80281,7 @@
     "expectedOutput": "for a, b, c in items",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -80337,7 +80337,7 @@
     "expectedOutput": "for s in qs for n in ms",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -81529,7 +81529,7 @@
                     }
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -81597,7 +81597,7 @@
                       }
                     },
                     "_clauses": {
-                      "$type": 291,
+                      "$type": 290,
                       "_content": [
                         {
                           "$type": 249,
@@ -81651,7 +81651,7 @@
                     "$type": 1
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -81705,7 +81705,7 @@
                     "$type": 1
                   },
                   "_clauses": {
-                    "$type": 291,
+                    "$type": 290,
                     "_content": [
                       {
                         "$type": 249,
@@ -81814,7 +81814,7 @@
                 }
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -81904,7 +81904,7 @@
                   }
                 },
                 "_clauses": {
-                  "$type": 291,
+                  "$type": 290,
                   "_content": [
                     {
                       "$type": 249,
@@ -81980,7 +81980,7 @@
                 "$type": 1
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -82056,7 +82056,7 @@
                 "$type": 1
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -82161,7 +82161,7 @@
               }
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -82248,7 +82248,7 @@
                 }
               },
               "_clauses": {
-                "$type": 291,
+                "$type": 290,
                 "_content": [
                   {
                     "$type": 249,
@@ -82321,7 +82321,7 @@
               "$type": 1
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -82394,7 +82394,7 @@
               "$type": 1
             },
             "_clauses": {
-              "$type": 291,
+              "$type": 290,
               "_content": [
                 {
                   "$type": 249,
@@ -82494,7 +82494,7 @@
           }
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -82575,7 +82575,7 @@
             }
           },
           "_clauses": {
-            "$type": 291,
+            "$type": 290,
             "_content": [
               {
                 "$type": 249,
@@ -82642,7 +82642,7 @@
           "$type": 1
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -82709,7 +82709,7 @@
           "$type": 1
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -82805,7 +82805,7 @@
         }
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -82881,7 +82881,7 @@
         }
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -82940,7 +82940,7 @@
         "$type": 1
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -83004,7 +83004,7 @@
         "$type": 1
       },
       "_clauses": {
-        "$type": 291,
+        "$type": 290,
         "_content": [
           {
             "$type": 249,
@@ -83222,7 +83222,7 @@
     "expectedOutput": "for a, b, c in items",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -83278,7 +83278,7 @@
     "expectedOutput": "for a, b in d",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -83330,7 +83330,7 @@
     "expectedOutput": "for b in c for d in e,",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -83387,7 +83387,7 @@
     "expectedOutput": "for x in range(1, 10)",
     "grammar": "python",
     "input": {
-      "$type": 291,
+      "$type": 290,
       "_content": [
         {
           "$type": 249,
@@ -83775,7 +83775,7 @@
           }
         },
         "_clauses": {
-          "$type": 291,
+          "$type": 290,
           "_content": [
             {
               "$type": 249,
@@ -113452,7 +113452,7 @@
                         "$type": 100
                       },
                       "_right": {
-                        "$type": 297,
+                        "$type": 296,
                         "_value": {
                           "$text": "3",
                           "$type": 100
@@ -113622,7 +113622,7 @@
                         "_integer": "1"
                       },
                       "_right": {
-                        "$type": 297,
+                        "$type": 296,
                         "_value": {
                           "$type": 101,
                           "_fraction": "0",
@@ -113769,7 +113769,7 @@
                     "$type": 100
                   },
                   "_right": {
-                    "$type": 297,
+                    "$type": 296,
                     "_value": {
                       "$text": "3",
                       "$type": 100
@@ -113939,7 +113939,7 @@
                     "_integer": "1"
                   },
                   "_right": {
-                    "$type": 297,
+                    "$type": 296,
                     "_value": {
                       "$type": 101,
                       "_fraction": "0",
@@ -114117,7 +114117,7 @@
                   "$type": 100
                 },
                 "_right": {
-                  "$type": 297,
+                  "$type": 296,
                   "_value": {
                     "$text": "3",
                     "$type": 100
@@ -114287,7 +114287,7 @@
                   "_integer": "1"
                 },
                 "_right": {
-                  "$type": 297,
+                  "$type": 296,
                   "_value": {
                     "$type": 101,
                     "_fraction": "0",
@@ -114416,7 +114416,7 @@
               "$type": 100
             },
             "_right": {
-              "$type": 297,
+              "$type": 296,
               "_value": {
                 "$text": "3",
                 "$type": 100
@@ -114661,7 +114661,7 @@
               "_integer": "1"
             },
             "_right": {
-              "$type": 297,
+              "$type": 296,
               "_value": {
                 "$type": 101,
                 "_fraction": "0",
@@ -114818,7 +114818,7 @@
             "$type": 100
           },
           "_right": {
-            "$type": 297,
+            "$type": 296,
             "_value": {
               "$text": "3",
               "$type": 100
@@ -115000,7 +115000,7 @@
             "_integer": "1"
           },
           "_right": {
-            "$type": 297,
+            "$type": 296,
             "_value": {
               "$type": 101,
               "_fraction": "0",
@@ -115112,7 +115112,7 @@
           "$type": 100
         },
         "_right": {
-          "$type": 297,
+          "$type": 296,
           "_value": {
             "$text": "3",
             "$type": 100
@@ -115285,7 +115285,7 @@
           "_integer": "1"
         },
         "_right": {
-          "$type": 297,
+          "$type": 296,
           "_value": {
             "$type": 101,
             "_fraction": "0",
@@ -115388,7 +115388,7 @@
         "$type": 100
       },
       "_right": {
-        "$type": 297,
+        "$type": 296,
         "_value": {
           "$text": "3",
           "$type": 100
@@ -115428,7 +115428,7 @@
         "_integer": "1"
       },
       "_right": {
-        "$type": 297,
+        "$type": 296,
         "_value": {
           "$type": 101,
           "_fraction": "0",
@@ -115492,7 +115492,7 @@
     "expectedOutput": "-3",
     "grammar": "python",
     "input": {
-      "$type": 297,
+      "$type": 296,
       "_value": {
         "$text": "3",
         "$type": 100
@@ -115524,7 +115524,7 @@
     "expectedOutput": "-1.0",
     "grammar": "python",
     "input": {
-      "$type": 297,
+      "$type": 296,
       "_value": {
         "$type": 101,
         "_fraction": "0",
@@ -169769,10 +169769,6 @@
                   "_name": [
                     {
                       "$type": 142,
-                      "_alias": {
-                        "$text": "d",
-                        "$type": 1
-                      },
                       "_name": {
                         "$type": 187,
                         "_name": {
@@ -169786,6 +169782,10 @@
                             "$type": 1
                           }
                         }
+                      },
+                      "_rename": {
+                        "$text": "d",
+                        "$type": 1
                       }
                     }
                   ]
@@ -169845,7 +169845,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier name: (identifier)) name: (qualified_identifier name: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier qualifier: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) name: (identifier))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier name: (identifier)) name: (qualified_identifier name: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier qualifier: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) name: (identifier))))) (newline)))",
     "expectedSourceOut": "\nimport a, b\nimport b.c as d\nimport a.b.c\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -169925,10 +169925,6 @@
               "_name": [
                 {
                   "$type": 142,
-                  "_alias": {
-                    "$text": "d",
-                    "$type": 1
-                  },
                   "_name": {
                     "$type": 187,
                     "_name": {
@@ -169942,6 +169938,10 @@
                         "$type": 1
                       }
                     }
+                  },
+                  "_rename": {
+                    "$text": "d",
+                    "$type": 1
                   }
                 }
               ]
@@ -169960,7 +169960,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))))) (newline))",
     "expectedSourceOut": "import b.c as d\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170096,10 +170096,6 @@
             "_name": [
               {
                 "$type": 142,
-                "_alias": {
-                  "$text": "d",
-                  "$type": 1
-                },
                 "_name": {
                   "$type": 187,
                   "_name": {
@@ -170113,6 +170109,10 @@
                       "$type": 1
                     }
                   }
+                },
+                "_rename": {
+                  "$text": "d",
+                  "$type": 1
                 }
               }
             ]
@@ -170130,7 +170130,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier)))))",
     "expectedSourceOut": "import b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170253,10 +170253,6 @@
         "_name": [
           {
             "$type": 142,
-            "_alias": {
-              "$text": "d",
-              "$type": 1
-            },
             "_name": {
               "$type": 187,
               "_name": {
@@ -170270,6 +170266,10 @@
                   "$type": 1
                 }
               }
+            },
+            "_rename": {
+              "$text": "d",
+              "$type": 1
             }
           }
         ]
@@ -170285,7 +170285,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))))",
+    "expectedReparseTree": "(import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))))",
     "expectedSourceOut": "import b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170397,10 +170397,6 @@
       "_name": [
         {
           "$type": 142,
-          "_alias": {
-            "$text": "d",
-            "$type": 1
-          },
           "_name": {
             "$type": 187,
             "_name": {
@@ -170414,6 +170410,10 @@
                 "$type": 1
               }
             }
+          },
+          "_rename": {
+            "$text": "d",
+            "$type": 1
           }
         }
       ]
@@ -170428,7 +170428,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier)))",
+    "expectedReparseTree": "(names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier)))",
     "expectedSourceOut": "b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170722,10 +170722,6 @@
     "grammar": "python",
     "input": {
       "$type": 142,
-      "_alias": {
-        "$text": "d",
-        "$type": 1
-      },
       "_name": {
         "$type": 187,
         "_name": {
@@ -170739,6 +170735,10 @@
             "$type": 1
           }
         }
+      },
+      "_rename": {
+        "$text": "d",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -170751,7 +170751,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))",
+    "expectedReparseTree": "(aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))",
     "expectedSourceOut": "b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170828,7 +170828,7 @@
               {
                 "$type": 140,
                 "_content": {
-                  "$type": 290,
+                  "$type": 299,
                   "_import_list": {
                     "$type": 141,
                     "_delimiter": 0,
@@ -171185,7 +171185,7 @@
           {
             "$type": 140,
             "_content": {
-              "$type": 290,
+              "$type": 299,
               "_import_list": {
                 "$type": 141,
                 "_delimiter": 0,
@@ -171642,7 +171642,7 @@
         {
           "$type": 140,
           "_content": {
-            "$type": 290,
+            "$type": 299,
             "_import_list": {
               "$type": 141,
               "_delimiter": 0,
@@ -172067,7 +172067,7 @@
     "input": {
       "$type": 140,
       "_content": {
-        "$type": 290,
+        "$type": 299,
         "_import_list": {
           "$type": 141,
           "_delimiter": 0,
@@ -173074,7 +173074,7 @@
     "expectedOutput": "(b, c)",
     "grammar": "python",
     "input": {
-      "$type": 290,
+      "$type": 299,
       "_import_list": {
         "$type": 141,
         "_delimiter": 0,
@@ -173325,7 +173325,7 @@
               {
                 "$type": 139,
                 "_content": {
-                  "$type": 290,
+                  "$type": 299,
                   "_import_list": {
                     "$type": 141,
                     "_delimiter": 0,
@@ -173515,7 +173515,7 @@
           {
             "$type": 139,
             "_content": {
-              "$type": 290,
+              "$type": 299,
               "_import_list": {
                 "$type": 141,
                 "_delimiter": 0,
@@ -173695,7 +173695,7 @@
         {
           "$type": 139,
           "_content": {
-            "$type": 290,
+            "$type": 299,
             "_import_list": {
               "$type": 141,
               "_delimiter": 0,
@@ -173858,7 +173858,7 @@
     "input": {
       "$type": 139,
       "_content": {
-        "$type": 290,
+        "$type": 299,
         "_import_list": {
           "$type": 141,
           "_delimiter": 0,
@@ -174280,7 +174280,7 @@
     "expectedOutput": "(absolute_import, division, print_function,\n                        unicode_literals)",
     "grammar": "python",
     "input": {
-      "$type": 290,
+      "$type": 299,
       "_import_list": {
         "$type": 141,
         "_delimiter": 0,
@@ -186750,7 +186750,7 @@
                 }
               },
               "_exception": {
-                "$type": 299,
+                "$type": 298,
                 "_content": {
                   "$type": 282,
                   "_value": {
@@ -186788,7 +186788,7 @@
                 }
               },
               "_exception": {
-                "$type": 299,
+                "$type": 298,
                 "_content": {
                   "$type": 282,
                   "_alias": {
@@ -186830,9 +186830,9 @@
                 }
               },
               "_exception": {
-                "$type": 299,
+                "$type": 298,
                 "_content": {
-                  "$type": 298,
+                  "$type": 297,
                   "_value": [
                     {
                       "$text": "g",
@@ -187008,7 +187008,7 @@
                 }
               },
               "_exception": {
-                "$type": 299,
+                "$type": 298,
                 "_content": {
                   "$type": 282,
                   "_value": {
@@ -187136,7 +187136,7 @@
                 }
               },
               "_exception": {
-                "$type": 299,
+                "$type": 298,
                 "_content": {
                   "$type": 282,
                   "_value": {
@@ -187174,7 +187174,7 @@
                 }
               },
               "_exception": {
-                "$type": 299,
+                "$type": 298,
                 "_content": {
                   "$type": 282,
                   "_alias": {
@@ -187272,7 +187272,7 @@
             }
           },
           "_exception": {
-            "$type": 299,
+            "$type": 298,
             "_content": {
               "$type": 282,
               "_value": {
@@ -187310,7 +187310,7 @@
             }
           },
           "_exception": {
-            "$type": 299,
+            "$type": 298,
             "_content": {
               "$type": 282,
               "_alias": {
@@ -187352,9 +187352,9 @@
             }
           },
           "_exception": {
-            "$type": 299,
+            "$type": 298,
             "_content": {
-              "$type": 298,
+              "$type": 297,
               "_value": [
                 {
                   "$text": "g",
@@ -187548,7 +187548,7 @@
             }
           },
           "_exception": {
-            "$type": 299,
+            "$type": 298,
             "_content": {
               "$type": 282,
               "_value": {
@@ -187694,7 +187694,7 @@
             }
           },
           "_exception": {
-            "$type": 299,
+            "$type": 298,
             "_content": {
               "$type": 282,
               "_value": {
@@ -187732,7 +187732,7 @@
             }
           },
           "_exception": {
-            "$type": 299,
+            "$type": 298,
             "_content": {
               "$type": 282,
               "_alias": {
@@ -190828,7 +190828,7 @@
         }
       },
       "_exception": {
-        "$type": 299,
+        "$type": 298,
         "_content": {
           "$type": 282,
           "_value": {
@@ -190891,7 +190891,7 @@
         }
       },
       "_exception": {
-        "$type": 299,
+        "$type": 298,
         "_content": {
           "$type": 282,
           "_alias": {
@@ -190958,9 +190958,9 @@
         }
       },
       "_exception": {
-        "$type": 299,
+        "$type": 298,
         "_content": {
-          "$type": 298,
+          "$type": 297,
           "_value": [
             {
               "$text": "g",
@@ -191096,7 +191096,7 @@
         }
       },
       "_exception": {
-        "$type": 299,
+        "$type": 298,
         "_content": {
           "$type": 282,
           "_value": {
@@ -191159,7 +191159,7 @@
         }
       },
       "_exception": {
-        "$type": 299,
+        "$type": 298,
         "_content": {
           "$type": 282,
           "_value": {
@@ -191222,7 +191222,7 @@
         }
       },
       "_exception": {
-        "$type": 299,
+        "$type": 298,
         "_content": {
           "$type": 282,
           "_alias": {
@@ -191263,7 +191263,7 @@
     "expectedOutput": "b",
     "grammar": "python",
     "input": {
-      "$type": 299,
+      "$type": 298,
       "_content": {
         "$type": 282,
         "_value": {
@@ -191298,7 +191298,7 @@
     "expectedOutput": "d as e",
     "grammar": "python",
     "input": {
-      "$type": 299,
+      "$type": 298,
       "_content": {
         "$type": 282,
         "_alias": {
@@ -191337,9 +191337,9 @@
     "expectedOutput": "g, h",
     "grammar": "python",
     "input": {
-      "$type": 299,
+      "$type": 298,
       "_content": {
-        "$type": 298,
+        "$type": 297,
         "_value": [
           {
             "$text": "g",
@@ -191378,7 +191378,7 @@
     "expectedOutput": "b",
     "grammar": "python",
     "input": {
-      "$type": 299,
+      "$type": 298,
       "_content": {
         "$type": 282,
         "_value": {
@@ -191413,7 +191413,7 @@
     "expectedOutput": "b",
     "grammar": "python",
     "input": {
-      "$type": 299,
+      "$type": 298,
       "_content": {
         "$type": 282,
         "_value": {
@@ -191448,7 +191448,7 @@
     "expectedOutput": "d as e",
     "grammar": "python",
     "input": {
-      "$type": 299,
+      "$type": 298,
       "_content": {
         "$type": 282,
         "_alias": {
@@ -191655,7 +191655,7 @@
     "expectedOutput": "g, h",
     "grammar": "python",
     "input": {
-      "$type": 298,
+      "$type": 297,
       "_value": [
         {
           "$text": "g",
@@ -200275,7 +200275,7 @@
                               "_item": [
                                 {
                                   "$type": 181,
-                                  "_content": {
+                                  "_expression": {
                                     "$type": 173,
                                     "_expression": {
                                       "$text": "a",
@@ -200313,9 +200313,9 @@
                               "_item": [
                                 {
                                   "$type": 181,
-                                  "_content": {
+                                  "_expression": {
                                     "$type": 181,
-                                    "_content": {
+                                    "_expression": {
                                       "$type": 173,
                                       "_expression": {
                                         "$text": "a",
@@ -200428,7 +200428,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (tuple elements: (tuple_elements item: (identifier) item: (identifier))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (map_rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (nonlocal_statement names: (identifier))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier) item: (positional_separator) item: (identifier) item: (keyword_separator) item: (default_parameter name: (identifier) default: (integer_decimal_plain)) item: (map_rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (expression_list elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier)))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
+    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (tuple elements: (tuple_elements item: (identifier) item: (identifier))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (map_rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (nonlocal_statement names: (identifier))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier) item: (positional_separator) item: (identifier) item: (keyword_separator) item: (default_parameter name: (identifier) default: (integer_decimal_plain)) item: (map_rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (expression_list elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier)))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
     "expectedSourceOut": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\\\n\\\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -200922,7 +200922,7 @@
                           "_item": [
                             {
                               "$type": 181,
-                              "_content": {
+                              "_expression": {
                                 "$type": 173,
                                 "_expression": {
                                   "$text": "a",
@@ -200960,9 +200960,9 @@
                           "_item": [
                             {
                               "$type": 181,
-                              "_content": {
+                              "_expression": {
                                 "$type": 181,
-                                "_content": {
+                                "_expression": {
                                   "$type": 173,
                                   "_expression": {
                                     "$text": "a",
@@ -201020,7 +201020,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent))))",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent))))",
     "expectedSourceOut": "def h(*a):\n  i((*a))\n  j(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202069,7 +202069,7 @@
                         "_item": [
                           {
                             "$type": 181,
-                            "_content": {
+                            "_expression": {
                               "$type": 173,
                               "_expression": {
                                 "$text": "a",
@@ -202107,9 +202107,9 @@
                         "_item": [
                           {
                             "$type": 181,
-                            "_content": {
+                            "_expression": {
                               "$type": 181,
-                              "_content": {
+                              "_expression": {
                                 "$type": 173,
                                 "_expression": {
                                   "$text": "a",
@@ -202146,7 +202146,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent)))",
     "expectedSourceOut": "i((*a))\n  j(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202493,7 +202493,7 @@
                       "_item": [
                         {
                           "$type": 181,
-                          "_content": {
+                          "_expression": {
                             "$type": 173,
                             "_expression": {
                               "$text": "a",
@@ -202531,9 +202531,9 @@
                       "_item": [
                         {
                           "$type": 181,
-                          "_content": {
+                          "_expression": {
                             "$type": 181,
-                            "_content": {
+                            "_expression": {
                               "$type": 173,
                               "_expression": {
                                 "$text": "a",
@@ -202569,7 +202569,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent))",
     "expectedSourceOut": "i((*a))\nj(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202885,7 +202885,7 @@
                   "_item": [
                     {
                       "$type": 181,
-                      "_content": {
+                      "_expression": {
                         "$type": 173,
                         "_expression": {
                           "$text": "a",
@@ -202918,7 +202918,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline))",
+    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline))",
     "expectedSourceOut": "i((*a))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202948,9 +202948,9 @@
                   "_item": [
                     {
                       "$type": 181,
-                      "_content": {
+                      "_expression": {
                         "$type": 181,
-                        "_content": {
+                        "_expression": {
                           "$type": 173,
                           "_expression": {
                             "$text": "a",
@@ -202984,7 +202984,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline))",
+    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline))",
     "expectedSourceOut": "j(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -203278,7 +203278,7 @@
                 "_item": [
                   {
                     "$type": 181,
-                    "_content": {
+                    "_expression": {
                       "$type": 173,
                       "_expression": {
                         "$text": "a",
@@ -203310,7 +203310,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))",
     "expectedSourceOut": "i((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -203338,9 +203338,9 @@
                 "_item": [
                   {
                     "$type": 181,
-                    "_content": {
+                    "_expression": {
                       "$type": 181,
-                      "_content": {
+                      "_expression": {
                         "$type": 173,
                         "_expression": {
                           "$text": "a",
@@ -203373,7 +203373,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))))",
     "expectedSourceOut": "j(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204046,7 +204046,7 @@
             "_item": [
               {
                 "$type": 181,
-                "_content": {
+                "_expression": {
                   "$type": 173,
                   "_expression": {
                     "$text": "a",
@@ -204076,7 +204076,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))",
     "expectedSourceOut": "i((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204100,9 +204100,9 @@
             "_item": [
               {
                 "$type": 181,
-                "_content": {
+                "_expression": {
                   "$type": 181,
-                  "_content": {
+                  "_expression": {
                     "$type": 173,
                     "_expression": {
                       "$text": "a",
@@ -204133,7 +204133,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))",
     "expectedSourceOut": "j(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204155,7 +204155,7 @@
           "_item": [
             {
               "$type": 181,
-              "_content": {
+              "_expression": {
                 "$type": 173,
                 "_expression": {
                   "$text": "a",
@@ -204184,7 +204184,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier))))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))",
     "expectedSourceOut": "i((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204206,9 +204206,9 @@
           "_item": [
             {
               "$type": 181,
-              "_content": {
+              "_expression": {
                 "$type": 181,
-                "_content": {
+                "_expression": {
                   "$type": 173,
                   "_expression": {
                     "$text": "a",
@@ -204238,7 +204238,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))",
     "expectedSourceOut": "j(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204258,7 +204258,7 @@
         "_item": [
           {
             "$type": 181,
-            "_content": {
+            "_expression": {
               "$type": 173,
               "_expression": {
                 "$text": "a",
@@ -204282,7 +204282,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))",
     "expectedSourceOut": "((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204302,9 +204302,9 @@
         "_item": [
           {
             "$type": 181,
-            "_content": {
+            "_expression": {
               "$type": 181,
-              "_content": {
+              "_expression": {
                 "$type": 173,
                 "_expression": {
                   "$text": "a",
@@ -204329,7 +204329,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))",
     "expectedSourceOut": "(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204347,7 +204347,7 @@
       "_item": [
         {
           "$type": 181,
-          "_content": {
+          "_expression": {
             "$type": 173,
             "_expression": {
               "$text": "a",
@@ -204370,7 +204370,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier))))",
+    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier))))",
     "expectedSourceOut": "(*a)",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204388,9 +204388,9 @@
       "_item": [
         {
           "$type": 181,
-          "_content": {
+          "_expression": {
             "$type": 181,
-            "_content": {
+            "_expression": {
               "$type": 173,
               "_expression": {
                 "$text": "a",
@@ -204414,7 +204414,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier)))))",
+    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))",
     "expectedSourceOut": "((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204428,7 +204428,7 @@
     "grammar": "python",
     "input": {
       "$type": 181,
-      "_content": {
+      "_expression": {
         "$type": 173,
         "_expression": {
           "$text": "a",
@@ -204449,7 +204449,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(parenthesized_list_splat content: (list_splat expression: (identifier)))",
+    "expectedReparseTree": "(parenthesized_list_splat expression: (list_splat expression: (identifier)))",
     "expectedSourceOut": "(*a)",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204463,9 +204463,9 @@
     "grammar": "python",
     "input": {
       "$type": 181,
-      "_content": {
+      "_expression": {
         "$type": 181,
-        "_content": {
+        "_expression": {
           "$type": 173,
           "_expression": {
             "$text": "a",
@@ -204487,7 +204487,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))",
+    "expectedReparseTree": "(parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))",
     "expectedSourceOut": "((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204501,7 +204501,7 @@
     "grammar": "python",
     "input": {
       "$type": 181,
-      "_content": {
+      "_expression": {
         "$type": 173,
         "_expression": {
           "$text": "a",
@@ -204522,7 +204522,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(parenthesized_list_splat content: (list_splat expression: (identifier)))",
+    "expectedReparseTree": "(parenthesized_list_splat expression: (list_splat expression: (identifier)))",
     "expectedSourceOut": "(*a)",
     "grammar": "python",
     "kind": "roundtrip",

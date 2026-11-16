@@ -876,6 +876,7 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'clause.import.relative.prefix': {
 			readonly dots: never;
 			readonly name: never;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'clause.import.wildcard': {
 			readonly $text: PortableTexts['clause.import.wildcard'];
@@ -13683,6 +13684,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly expression: never;
 			readonly formatSpecifier: never;
 			readonly typeConversion: never;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'expression.interpolation.format': {
 			readonly elements: V.Read<PythonMap, 'expression.interpolation'> | string | T.FormatExpression.Parsed;
@@ -15546,6 +15548,9 @@ export interface PythonMap extends V.GrammarMap {
 				| T.IfStatement.Parsed
 				| T.WhileStatement.Parsed;
 		};
+		readonly identifier: {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'identifier.qualified': {
 			readonly name: V.Read<PythonMap, 'identifier'>;
 			readonly qualifier:
@@ -15771,6 +15776,9 @@ export interface PythonMap extends V.GrammarMap {
 			readonly marker: 'E' | 'e' | string;
 			readonly $forms: V.Form<'exponent' | 'integer' | 'marker'>;
 		};
+		readonly 'literal.number.integer': {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'literal.number.integer.big': {
 			readonly content: string;
 			readonly marker: 'L' | 'l' | string;
@@ -15803,6 +15811,9 @@ export interface PythonMap extends V.GrammarMap {
 			readonly content: string;
 			readonly radixPrefix: '0X' | '0x' | string;
 			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+		};
+		readonly 'literal.number.integer.imaginary': {
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.octal': {
 			readonly content: string;
@@ -15933,6 +15944,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'literal.string.text': {
 			readonly elements: never;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string.unicode': {
 			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';

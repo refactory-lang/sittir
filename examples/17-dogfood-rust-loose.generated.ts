@@ -220,13 +220,13 @@ export function rebuildSpliceLoose() {
 											name: "InvalidRange",
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
-											field: "start",
+											name: "start",
 											value: rs.build.fieldExpression({
 												object: "e",
 												property: "start_pos",
 											}),
 										}), rs.build.fieldInitializer({
-											field: "end",
+											name: "end",
 											value: rs.build.fieldExpression({
 												object: "e",
 												property: "end_pos",
@@ -256,13 +256,13 @@ export function rebuildSpliceLoose() {
 											name: "OutOfBounds",
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
-											field: "end",
+											name: "end",
 											value: rs.build.fieldExpression({
 												object: "e",
 												property: "end_pos",
 											}),
 										}), rs.build.shorthandFieldInitializer({
-											field: "source_len",
+											name: "source_len",
 										})),
 									}),
 								})))],
@@ -312,13 +312,13 @@ export function rebuildSpliceLoose() {
 											name: "NonCharBoundary",
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
-											field: "start",
+											name: "start",
 											value: rs.build.fieldExpression({
 												object: "e",
 												property: "start_pos",
 											}),
 										}), rs.build.fieldInitializer({
-											field: "end",
+											name: "end",
 											value: rs.build.fieldExpression({
 												object: "e",
 												property: "end_pos",

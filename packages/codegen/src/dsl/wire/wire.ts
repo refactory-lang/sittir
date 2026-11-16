@@ -1120,8 +1120,9 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	const edits = cfg.edits ?? {};
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
-	composeOrSynthesizePatchedParents(outRules, edits, context);
+	const mintEdits = composeOrSynthesizePatchedParents(outRules, edits, context);
 	injectPlaceholderHiddenRules(outRules, edits, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
+	for (const [kind, entry] of mintEdits) outRules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), undefined, context);
 	for (const name of context.textTokens.keys()) outRules[name] ??= makeDeferredContentFn(context, name);
 	for (const baseName of Object.keys(context.baseRuleBodies)) {
 		if (!(baseName in outRules)) outRules[baseName] = passthroughBaseRuleFn;
@@ -1525,12 +1526,18 @@ function composeOrSynthesizePatchedParents(
 	rules: Record<string, RuleFn>,
 	edits: EditsConfig,
 	context: WireContext
-): void {
+): [string, NonNullable<EditsConfig[string]>][] {
+	const mintEdits: [string, NonNullable<EditsConfig[string]>][] = [];
 	for (const [kind, entry] of Object.entries(edits)) {
 		if (!entry) continue;
-		if (!(kind in rules) && !(kind in context.baseRuleBodies)) context.editedMints.add(kind);
+		if (!(kind in rules) && !(kind in context.baseRuleBodies)) {
+			context.editedMints.add(kind);
+			mintEdits.push([kind, entry]);
+			continue;
+		}
 		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
 	}
+	return mintEdits;
 }
 
 function buildPatchedParentFn(

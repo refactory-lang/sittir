@@ -12,12 +12,12 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 	});
 
 	it.each([
-		['type = 1\n', '{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"declaration.variable","name":"type","value":{"$path":"literal.number.integer","$value":1}}}]}'],
-		['type(x)\n', '{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"expression.call","function":"type","arguments":["x"]}}]}'],
+		['type = 1\n', '{"$path":"file","statements":[{"$path":"declaration.variable","name":"type","value":{"$path":"literal.number.integer","$value":1}}]}'],
+		['type(x)\n', '{"$path":"file","statements":[{"$path":"expression.call","function":"type","arguments":["x"]}]}'],
 		['print(type)\n', '{"$path":"file","statements":[{"$path":"statement.print","arguments":[{"$path":"expression.parenthesized","expression":"type"}]}]}'],
 		[
 			'x: type[int]\n',
-			'{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"type","typeArguments":["int"]}}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"type","typeArguments":["int"]}}]}'
 		]
 	])('keeps the soft keyword in %j', (source, read) => {
 		expect(readOf(source)).toBe(read);
@@ -25,7 +25,7 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 
 	it('reads a generic type\'s arguments as typeArguments', () => {
 		expect(readOf('x: dict[str, int] = {}\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"dict","typeArguments":["str","int"]},"value":{"$path":"expression.collection.map","elements":[]}}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"dict","typeArguments":["str","int"]},"value":{"$path":"expression.collection.map","elements":[]}}]}'
 		);
 	});
 

@@ -221,8 +221,8 @@ export type LeafStringMap = {
 	[TSKindId.PipeRbrace]: '|}';
 	[TSKindId.Comma]: ',';
 	[TSKindId.GlobalKeyword]: 'global';
-	[TSKindId.ExportKeyword]: 'export';
 	[TSKindId.FromKeyword]: 'from';
+	[TSKindId.ExportKeyword]: 'export';
 	[TSKindId.Dquote]: '"';
 	[TSKindId.Squote]: "'";
 	[TSKindId.PlusPlus]: '++';
@@ -651,25 +651,25 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, 'ambient_declaration_global'],
 	[400, 'ambient_declaration_module'],
 	[401, 'object_type_content'],
-	[402, 'export_statement_default'],
-	[403, 'export_statement_namespace_export'],
-	[404, 'export_statement_equals_export'],
-	[405, 'literal_type_negative_number'],
-	[406, 'number_bigint'],
-	[407, 'binary_expression_in'],
-	[408, 'empty_member'],
-	[409, 'class_body_member_method'],
-	[410, 'class_body_member_method_sig'],
-	[411, 'class_body_member_declaration'],
-	[412, 'index_signature_colon'],
-	[413, 'index_signature_mapped_type_clause'],
-	[414, 'import_statement_clause_from'],
-	[415, 'yield_expression_delegate'],
-	[416, 'optional_chain_marker'],
-	[417, 'import_specifier_name'],
-	[418, 'import_specifier_as'],
-	[419, 'parenthesized_expression_typed'],
-	[420, 'parenthesized_expression_sequence'],
+	[402, 'literal_type_negative_number'],
+	[403, 'number_bigint'],
+	[404, 'binary_expression_in'],
+	[405, 'empty_member'],
+	[406, 'class_body_member_method'],
+	[407, 'class_body_member_method_sig'],
+	[408, 'class_body_member_declaration'],
+	[409, 'index_signature_colon'],
+	[410, 'index_signature_mapped_type_clause'],
+	[411, 'import_statement_clause_from'],
+	[412, 'yield_expression_delegate'],
+	[413, 'optional_chain_marker'],
+	[414, 'import_specifier_name'],
+	[415, 'import_specifier_as'],
+	[416, 'parenthesized_expression_typed'],
+	[417, 'parenthesized_expression_sequence'],
+	[418, 'export_statement_default'],
+	[419, 'export_statement_equals_export'],
+	[420, 'export_statement_namespace_export'],
 	[421, 'call_expression_call'],
 	[422, 'call_expression_template_call'],
 	[423, 'call_expression_member'],
@@ -1161,25 +1161,25 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, 'ambient_declaration_global'],
 	[400, 'ambient_declaration_module'],
 	[401, 'object_type_content'],
-	[402, 'export_statement_default'],
-	[403, 'export_statement_namespace_export'],
-	[404, 'export_statement_equals_export'],
-	[405, 'literal_type_negative_number'],
-	[406, 'number_bigint'],
-	[407, 'binary_expression_in'],
-	[408, 'empty_member'],
-	[409, 'class_body_member_method'],
-	[410, 'class_body_member_method_sig'],
-	[411, 'class_body_member_declaration'],
-	[412, 'index_signature_colon'],
-	[413, 'index_signature_mapped_type_clause'],
-	[414, 'import_statement_clause_from'],
-	[415, 'yield_expression_delegate'],
-	[416, 'optional_chain_marker'],
-	[417, 'import_specifier_name'],
-	[418, 'import_specifier_as'],
-	[419, 'parenthesized_expression_typed'],
-	[420, 'parenthesized_expression_sequence'],
+	[402, 'literal_type_negative_number'],
+	[403, 'number_bigint'],
+	[404, 'binary_expression_in'],
+	[405, 'empty_member'],
+	[406, 'class_body_member_method'],
+	[407, 'class_body_member_method_sig'],
+	[408, 'class_body_member_declaration'],
+	[409, 'index_signature_colon'],
+	[410, 'index_signature_mapped_type_clause'],
+	[411, 'import_statement_clause_from'],
+	[412, 'yield_expression_delegate'],
+	[413, 'optional_chain_marker'],
+	[414, 'import_specifier_name'],
+	[415, 'import_specifier_as'],
+	[416, 'parenthesized_expression_typed'],
+	[417, 'parenthesized_expression_sequence'],
+	[418, 'export_statement_default'],
+	[419, 'export_statement_equals_export'],
+	[420, 'export_statement_namespace_export'],
 	[421, 'call_expression_call'],
 	[422, 'call_expression_template_call'],
 	[423, 'call_expression_member'],
@@ -2078,12 +2078,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.AmbientDeclarationModule;
 		case 'object_type_content':
 			return TSKindId.ObjectTypeContent;
-		case 'export_statement_default':
-			return TSKindId.ExportStatementDefault;
-		case 'export_statement_namespace_export':
-			return TSKindId.ExportStatementNamespaceExport;
-		case 'export_statement_equals_export':
-			return TSKindId.ExportStatementEqualsExport;
 		case 'literal_type_negative_number':
 			return TSKindId.LiteralTypeNegativeNumber;
 		case 'number_bigint':
@@ -2116,6 +2110,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ParenthesizedExpressionTyped;
 		case 'parenthesized_expression_sequence':
 			return TSKindId.ParenthesizedExpressionSequence;
+		case 'export_statement_default':
+			return TSKindId.ExportStatementDefault;
+		case 'export_statement_equals_export':
+			return TSKindId.ExportStatementEqualsExport;
+		case 'export_statement_namespace_export':
+			return TSKindId.ExportStatementNamespaceExport;
 		case 'call_expression_call':
 			return TSKindId.CallExpressionCall;
 		case 'call_expression_template_call':
@@ -2852,16 +2852,16 @@ export enum EnumBodyElementKind {
 	EnumAssignment = 'enum_assignment'
 }
 
-export enum ExportStatementDefaultKind {
-	ExportStatementDefaultFrom = 'export_statement_default_from',
-	ExportStatementDefaultDeclaration = 'export_statement_default_declaration'
-}
-
 export enum NumberBigintKind {
 	NumberBigintHex = 'number_bigint_hex',
 	NumberBigintBinary = 'number_bigint_binary',
 	NumberBigintOctal = 'number_bigint_octal',
 	NumberBigintDecimal = 'number_bigint_decimal'
+}
+
+export enum ExportStatementDefaultKind {
+	ExportStatementDefaultFrom = 'export_statement_default_from',
+	ExportStatementDefaultDeclaration = 'export_statement_default_declaration'
 }
 
 export enum LayoutKind {
@@ -8380,55 +8380,6 @@ export interface ObjectTypeContent {
 	>;
 }
 
-export interface ExportStatementNamespaceExport {
-	readonly $type: TSKindId.ExportStatementNamespaceExport;
-	readonly _name: Identifier;
-	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	readonly __slotNames__?: {
-		readonly _name: 'name';
-		readonly _terminator: 'terminator';
-	};
-	readonly __inputHints__?: {
-		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
-	};
-	readonly __slotHints__?: {
-		readonly name: SlotHint<T.Identifier>;
-		readonly terminator: SlotHint<NonNullable<T.ExportStatementNamespaceExport.Options>['terminator']>;
-	};
-	readonly name: () => Identifier;
-	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
-}
-
-export interface ExportStatementEqualsExport {
-	readonly $type: TSKindId.ExportStatementEqualsExport;
-	readonly _value: Expression;
-	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	readonly __slotNames__?: {
-		readonly _value: 'value';
-		readonly _terminator: 'terminator';
-	};
-	readonly __inputHints__?: {
-		readonly value:
-			| KindEnum<
-					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
-					| TSKindId.Undefined
-					| TSKindId.ThisKeyword
-					| TSKindId.SuperKeyword
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.NullKeyword
-			  >
-			| Expression;
-		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
-	};
-	readonly __slotHints__?: {
-		readonly value: SlotHint<NonNullable<T.Expression>>;
-		readonly terminator: SlotHint<NonNullable<T.ExportStatementEqualsExport.Options>['terminator']>;
-	};
-	readonly value: () => Expression;
-	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
-}
-
 export interface CommentLine {
 	readonly $type: TSKindId.CommentLine;
 	readonly _content: string;
@@ -8977,6 +8928,55 @@ export interface ParenthesizedExpressionSequence {
 		readonly sequenceExpression: SlotHint<T.SequenceExpression>;
 	};
 	readonly sequenceExpression: () => SequenceExpression;
+}
+
+export interface ExportStatementEqualsExport {
+	readonly $type: TSKindId.ExportStatementEqualsExport;
+	readonly _value: Expression;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+		readonly _terminator: 'terminator';
+	};
+	readonly __inputHints__?: {
+		readonly value:
+			| KindEnum<
+					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
+					| TSKindId.Undefined
+					| TSKindId.ThisKeyword
+					| TSKindId.SuperKeyword
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.NullKeyword
+			  >
+			| Expression;
+		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.Expression>>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementEqualsExport.Options>['terminator']>;
+	};
+	readonly value: () => Expression;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
+}
+
+export interface ExportStatementNamespaceExport {
+	readonly $type: TSKindId.ExportStatementNamespaceExport;
+	readonly _name: Identifier;
+	readonly _terminator: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _terminator: 'terminator';
+	};
+	readonly __inputHints__?: {
+		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementNamespaceExport.Options>['terminator']>;
+	};
+	readonly name: () => Identifier;
+	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi;
 }
 
 export interface CallExpressionCall {
@@ -10916,9 +10916,9 @@ export type ClassBodyMember =
 
 export type EnumBodyElement = EnumBodyElementName | EnumAssignment;
 
-export type ExportStatementDefault = ExportStatementDefaultFrom | ExportStatementDefaultDeclaration;
-
 export type NumberBigint = NumberBigintHex | NumberBigintBinary | NumberBigintOctal | NumberBigintDecimal;
+
+export type ExportStatementDefault = ExportStatementDefaultFrom | ExportStatementDefaultDeclaration;
 
 export type Layout = Tight | Space | Tab | Newline | Blankline | DoubleBlankline | Indent | Dedent;
 
@@ -11078,16 +11078,16 @@ export namespace EnumBodyElement {
 	export type Parsed = SupertypeSurface<EnumBodyElement, ParsedByKindId>;
 }
 
-export namespace ExportStatementDefault {
-	export type Kind = 'export_statement_default';
-	export type Bound = SupertypeSurface<ExportStatementDefault, BoundByKindId>;
-	export type Parsed = SupertypeSurface<ExportStatementDefault, ParsedByKindId>;
-}
-
 export namespace NumberBigint {
 	export type Kind = 'number_bigint';
 	export type Bound = SupertypeSurface<NumberBigint, BoundByKindId>;
 	export type Parsed = SupertypeSurface<NumberBigint, ParsedByKindId>;
+}
+
+export namespace ExportStatementDefault {
+	export type Kind = 'export_statement_default';
+	export type Bound = SupertypeSurface<ExportStatementDefault, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ExportStatementDefault, ParsedByKindId>;
 }
 
 export namespace Layout {
@@ -11262,8 +11262,6 @@ export interface OptionsHintMap {
 	ambientDeclarationGlobal: AmbientDeclarationGlobal.Hints;
 	ambientDeclarationModule: AmbientDeclarationModule.Hints;
 	objectTypeContent: ObjectTypeContent.Hints;
-	exportStatementNamespaceExport: ExportStatementNamespaceExport.Hints;
-	exportStatementEqualsExport: ExportStatementEqualsExport.Hints;
 	literalTypeNegativeNumber: LiteralTypeNegativeNumber.Hints;
 	binaryExpressionIn: BinaryExpressionIn.Hints;
 	classBodyMemberMethod: ClassBodyMemberMethod.Hints;
@@ -11277,6 +11275,8 @@ export interface OptionsHintMap {
 	importSpecifierAs: ImportSpecifierAs.Hints;
 	parenthesizedExpressionTyped: ParenthesizedExpressionTyped.Hints;
 	parenthesizedExpressionSequence: ParenthesizedExpressionSequence.Hints;
+	exportStatementEqualsExport: ExportStatementEqualsExport.Hints;
+	exportStatementNamespaceExport: ExportStatementNamespaceExport.Hints;
 	callExpressionCall: CallExpressionCall.Hints;
 	callExpressionTemplateCall: CallExpressionTemplateCall.Hints;
 	callExpressionMember: CallExpressionMember.Hints;
@@ -13559,33 +13559,6 @@ export namespace ObjectTypeContent {
 	}
 }
 
-export namespace ExportStatementNamespaceExport {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly asKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly before?: LayoutKindId;
-			readonly exportKeyword?: { readonly after?: LayoutKindId };
-			readonly namespaceKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly semi?: { readonly before?: LayoutKindId };
-			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-		};
-	}
-}
-
-export namespace ExportStatementEqualsExport {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly exportKeyword?: { readonly after?: LayoutKindId };
-			readonly semi?: { readonly before?: LayoutKindId };
-			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-		};
-	}
-}
-
 export namespace LiteralTypeNegativeNumber {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -13735,6 +13708,33 @@ export namespace ParenthesizedExpressionSequence {
 			readonly before?: LayoutKindId;
 			readonly lparen?: { readonly after?: LayoutKindId };
 			readonly rparen?: { readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace ExportStatementEqualsExport {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly exportKeyword?: { readonly after?: LayoutKindId };
+			readonly semi?: { readonly before?: LayoutKindId };
+			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
+		};
+	}
+}
+
+export namespace ExportStatementNamespaceExport {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly asKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly before?: LayoutKindId;
+			readonly exportKeyword?: { readonly after?: LayoutKindId };
+			readonly namespaceKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly semi?: { readonly before?: LayoutKindId };
+			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 		};
 	}
 }
@@ -16549,34 +16549,6 @@ export interface ObjectTypeContentNs extends NodeNs<
 	readonly BuildArgs: ObjectTypeContent.BuildArgs;
 	readonly LooseArgs: ObjectTypeContent.LooseArgs;
 }
-export interface ExportStatementNamespaceExportNs extends NodeNs<
-	ExportStatementNamespaceExport,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ExportStatementNamespaceExport.Bound,
-	'name',
-	TSKindId.ExportStatementNamespaceExport,
-	ExportStatementNamespaceExport.Parsed,
-	never
-> {
-	readonly BuildArgs: ExportStatementNamespaceExport.BuildArgs;
-	readonly LooseArgs: ExportStatementNamespaceExport.LooseArgs;
-}
-export interface ExportStatementEqualsExportNs extends NodeNs<
-	ExportStatementEqualsExport,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ExportStatementEqualsExport.Bound,
-	'value',
-	TSKindId.ExportStatementEqualsExport,
-	ExportStatementEqualsExport.Parsed,
-	never
-> {
-	readonly BuildArgs: ExportStatementEqualsExport.BuildArgs;
-	readonly LooseArgs: ExportStatementEqualsExport.LooseArgs;
-}
 export interface CommentLineNs extends NodeNs<
 	CommentLine,
 	LeafScalarMap,
@@ -16941,6 +16913,34 @@ export interface ParenthesizedExpressionSequenceNs extends NodeNs<
 > {
 	readonly BuildArgs: ParenthesizedExpressionSequence.BuildArgs;
 	readonly LooseArgs: ParenthesizedExpressionSequence.LooseArgs;
+}
+export interface ExportStatementEqualsExportNs extends NodeNs<
+	ExportStatementEqualsExport,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ExportStatementEqualsExport.Bound,
+	'value',
+	TSKindId.ExportStatementEqualsExport,
+	ExportStatementEqualsExport.Parsed,
+	never
+> {
+	readonly BuildArgs: ExportStatementEqualsExport.BuildArgs;
+	readonly LooseArgs: ExportStatementEqualsExport.LooseArgs;
+}
+export interface ExportStatementNamespaceExportNs extends NodeNs<
+	ExportStatementNamespaceExport,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ExportStatementNamespaceExport.Bound,
+	'name',
+	TSKindId.ExportStatementNamespaceExport,
+	ExportStatementNamespaceExport.Parsed,
+	never
+> {
+	readonly BuildArgs: ExportStatementNamespaceExport.BuildArgs;
+	readonly LooseArgs: ExportStatementNamespaceExport.LooseArgs;
 }
 export interface CallExpressionCallNs extends NodeNs<
 	CallExpressionCall,
@@ -17852,8 +17852,6 @@ export interface NamespaceMap {
 	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobalNs;
 	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModuleNs;
 	[TSKindId.ObjectTypeContent]: ObjectTypeContentNs;
-	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExportNs;
-	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
 	[TSKindId.CommentLine]: CommentLineNs;
 	[TSKindId.CommentBlock]: CommentBlockNs;
 	[TSKindId.LiteralTypeNegativeNumber]: LiteralTypeNegativeNumberNs;
@@ -17880,6 +17878,8 @@ export interface NamespaceMap {
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAsNs;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTypedNs;
 	[TSKindId.ParenthesizedExpressionSequence]: ParenthesizedExpressionSequenceNs;
+	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
+	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExportNs;
 	[TSKindId.CallExpressionCall]: CallExpressionCallNs;
 	[TSKindId.CallExpressionTemplateCall]: CallExpressionTemplateCallNs;
 	[TSKindId.CallExpressionMember]: CallExpressionMemberNs;
@@ -18133,8 +18133,6 @@ export interface BoundByKindId {
 	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobal.Bound;
 	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModule.Bound;
 	[TSKindId.ObjectTypeContent]: ObjectTypeContent.Bound;
-	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExport.Bound;
-	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExport.Bound;
 	[TSKindId.CommentLine]: CommentLine.Bound;
 	[TSKindId.CommentBlock]: CommentBlock.Bound;
 	[TSKindId.LiteralTypeNegativeNumber]: LiteralTypeNegativeNumber.Bound;
@@ -18161,6 +18159,8 @@ export interface BoundByKindId {
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAs.Bound;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTyped.Bound;
 	[TSKindId.ParenthesizedExpressionSequence]: ParenthesizedExpressionSequence.Bound;
+	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExport.Bound;
+	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExport.Bound;
 	[TSKindId.CallExpressionCall]: CallExpressionCall.Bound;
 	[TSKindId.CallExpressionTemplateCall]: CallExpressionTemplateCall.Bound;
 	[TSKindId.CallExpressionMember]: CallExpressionMember.Bound;
@@ -18386,8 +18386,6 @@ export interface ParsedByKindId {
 	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobal.Parsed;
 	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModule.Parsed;
 	[TSKindId.ObjectTypeContent]: ObjectTypeContent.Parsed;
-	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExport.Parsed;
-	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExport.Parsed;
 	[TSKindId.CommentLine]: CommentLine.Parsed;
 	[TSKindId.CommentBlock]: CommentBlock.Parsed;
 	[TSKindId.LiteralTypeNegativeNumber]: LiteralTypeNegativeNumber.Parsed;
@@ -18414,6 +18412,8 @@ export interface ParsedByKindId {
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAs.Parsed;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTyped.Parsed;
 	[TSKindId.ParenthesizedExpressionSequence]: ParenthesizedExpressionSequence.Parsed;
+	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExport.Parsed;
+	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExport.Parsed;
 	[TSKindId.CallExpressionCall]: CallExpressionCall.Parsed;
 	[TSKindId.CallExpressionTemplateCall]: CallExpressionTemplateCall.Parsed;
 	[TSKindId.CallExpressionMember]: CallExpressionMember.Parsed;
@@ -18636,8 +18636,8 @@ export type FixedTextKindId =
 	| TSKindId.PipeRbrace
 	| TSKindId.Comma
 	| TSKindId.GlobalKeyword
-	| TSKindId.ExportKeyword
 	| TSKindId.FromKeyword
+	| TSKindId.ExportKeyword
 	| TSKindId.Dquote
 	| TSKindId.Squote
 	| TSKindId.PlusPlus
@@ -18815,8 +18815,6 @@ export interface TypeKeyOf {
 	[TSKindId.AmbientDeclarationGlobal]: 'ambientDeclarationGlobal';
 	[TSKindId.AmbientDeclarationModule]: 'ambientDeclarationModule';
 	[TSKindId.ObjectTypeContent]: 'objectTypeContent';
-	[TSKindId.ExportStatementNamespaceExport]: 'exportStatementNamespaceExport';
-	[TSKindId.ExportStatementEqualsExport]: 'exportStatementEqualsExport';
 	[TSKindId.CommentLine]: 'commentLine';
 	[TSKindId.CommentBlock]: 'commentBlock';
 	[TSKindId.LiteralTypeNegativeNumber]: 'literalTypeNegativeNumber';
@@ -18843,6 +18841,8 @@ export interface TypeKeyOf {
 	[TSKindId.ImportSpecifierAs]: 'importSpecifierAs';
 	[TSKindId.ParenthesizedExpressionTyped]: 'parenthesizedExpressionTyped';
 	[TSKindId.ParenthesizedExpressionSequence]: 'parenthesizedExpressionSequence';
+	[TSKindId.ExportStatementEqualsExport]: 'exportStatementEqualsExport';
+	[TSKindId.ExportStatementNamespaceExport]: 'exportStatementNamespaceExport';
 	[TSKindId.CallExpressionCall]: 'callExpressionCall';
 	[TSKindId.CallExpressionTemplateCall]: 'callExpressionTemplateCall';
 	[TSKindId.CallExpressionMember]: 'callExpressionMember';
@@ -23738,61 +23738,6 @@ export namespace ObjectTypeContent {
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
-export namespace ExportStatementNamespaceExport {
-	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
-	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Bound extends BoundOf<T.ExportStatementNamespaceExport, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ExportStatementNamespaceExport['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.ExportStatementNamespaceExport, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ExportStatementNamespaceExport['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ExportStatementNamespaceExport['$type']>;
-	}
-	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
-	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
-	export type BuildArgs = [value: Admit<T.Identifier>, options?: T.ExportStatementNamespaceExport.Options];
-	export type LooseArgs = [
-		value: T.ExportStatementNamespaceExport.Loose,
-		options?: T.ExportStatementNamespaceExport.Options
-	];
-	export type Kind = TSKindId.ExportStatementNamespaceExport;
-}
-export namespace ExportStatementEqualsExport {
-	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
-	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Bound extends BoundOf<T.ExportStatementEqualsExport, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ExportStatementEqualsExport['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.ExportStatementEqualsExport, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ExportStatementEqualsExport['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ExportStatementEqualsExport['$type']>;
-	}
-	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
-	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
-	export type BuildArgs = [value: Admit<T.Expression>, options?: T.ExportStatementEqualsExport.Options];
-	export type LooseArgs = [value: T.ExportStatementEqualsExport.Loose, options?: T.ExportStatementEqualsExport.Options];
-	export type Kind = TSKindId.ExportStatementEqualsExport;
-}
 export namespace CommentLine {
 	export type Config = ConfigFor<TSKindId.CommentLine>;
 	export interface Bound extends BoundOf<T.CommentLine, BoundByKindId>, NodeMethods, HoldsSource {
@@ -24551,6 +24496,61 @@ export namespace ParenthesizedExpressionSequence {
 	export type BuildArgs = [value: Admit<T.SequenceExpression>] | T.SequenceExpression.BuildArgs;
 	export type LooseArgs = [value: T.ParenthesizedExpressionSequence.Loose] | T.SequenceExpression.LooseArgs;
 	export type Kind = TSKindId.ParenthesizedExpressionSequence;
+}
+export namespace ExportStatementEqualsExport {
+	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
+	export interface Bound extends BoundOf<T.ExportStatementEqualsExport, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ExportStatementEqualsExport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ExportStatementEqualsExport, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ExportStatementEqualsExport['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ExportStatementEqualsExport['$type']>;
+	}
+	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
+	export type BuildArgs = [value: Admit<T.Expression>, options?: T.ExportStatementEqualsExport.Options];
+	export type LooseArgs = [value: T.ExportStatementEqualsExport.Loose, options?: T.ExportStatementEqualsExport.Options];
+	export type Kind = TSKindId.ExportStatementEqualsExport;
+}
+export namespace ExportStatementNamespaceExport {
+	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
+	export interface Bound extends BoundOf<T.ExportStatementNamespaceExport, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ExportStatementNamespaceExport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ExportStatementNamespaceExport, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ExportStatementNamespaceExport['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ExportStatementNamespaceExport['$type']>;
+	}
+	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
+	export type BuildArgs = [value: Admit<T.Identifier>, options?: T.ExportStatementNamespaceExport.Options];
+	export type LooseArgs = [
+		value: T.ExportStatementNamespaceExport.Loose,
+		options?: T.ExportStatementNamespaceExport.Options
+	];
+	export type Kind = TSKindId.ExportStatementNamespaceExport;
 }
 export namespace CallExpressionCall {
 	export type Config = ConfigFor<TSKindId.CallExpressionCall>;

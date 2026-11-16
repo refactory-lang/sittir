@@ -154,7 +154,6 @@ export const buildPrintChevronArguments = dispatched(() => backend().buildPrintC
 export const buildPrintStatementChevron = dispatched(() => backend().buildPrintStatementChevron);
 export const buildPrintStatementPlain = dispatched(() => backend().buildPrintStatementPlain);
 export const buildWildcardPattern = O.buildWildcardPattern;
-export const buildParenthesizedImportList = dispatched(() => backend().buildParenthesizedImportList);
 export const buildComprehensionClauses = dispatched(() => backend().buildComprehensionClauses);
 export const buildIntegerHexLong = dispatched(() => backend().buildIntegerHexLong);
 export const buildIntegerHexPlain = dispatched(() => backend().buildIntegerHexPlain);
@@ -182,6 +181,7 @@ export const buildLineContinuationNul = O.buildLineContinuationNul;
 export const buildSimplePatternNegative = dispatched(() => backend().buildSimplePatternNegative);
 export const buildExceptClauseExceptionList = dispatched(() => backend().buildExceptClauseExceptionList);
 export const buildExceptClauseException = dispatched(() => backend().buildExceptClauseException);
+export const buildParenthesizedImportList = dispatched(() => backend().buildParenthesizedImportList);
 export const buildSplatPatternList = dispatched(() => backend().buildSplatPatternList);
 export const buildSplatPatternDictionary = dispatched(() => backend().buildSplatPatternDictionary);
 export const buildAssignmentEq = dispatched(() => backend().buildAssignmentEq);
@@ -369,7 +369,6 @@ export const _factoryMap = {
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
 	wildcard_pattern: buildWildcardPattern,
-	parenthesized_import_list: buildParenthesizedImportList,
 	comprehension_clauses: buildComprehensionClauses,
 	integer_hex_long: buildIntegerHexLong,
 	integer_hex_plain: buildIntegerHexPlain,
@@ -397,6 +396,7 @@ export const _factoryMap = {
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,
+	parenthesized_import_list: buildParenthesizedImportList,
 	splat_pattern_list: buildSplatPatternList,
 	splat_pattern_dictionary: buildSplatPatternDictionary,
 	assignment_eq: buildAssignmentEq,

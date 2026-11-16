@@ -4371,8 +4371,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	282: { value: { privateName: { types: [], kinds: [226] } }, alias: { privateName: { types: [], kinds: [226] } } },
 	285: { items: { privateName: { types: [], kinds: [226] } } },
 	286: { items: { privateName: { types: [], kinds: [226] } } },
-	291: { contents: { async: { types: [], kinds: [249] }, trailingComma: { types: [], kinds: [249] } } },
-	298: { values: { privateName: { types: [], kinds: [226] } } },
+	290: { contents: { async: { types: [], kinds: [249] }, trailingComma: { types: [], kinds: [249] } } },
+	297: { values: { privateName: { types: [], kinds: [226] } } },
 	302: {
 		name: { privateName: { types: [], kinds: [226] } },
 		value: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } }

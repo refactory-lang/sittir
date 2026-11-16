@@ -13,7 +13,7 @@ describe('a starred type is the rest type, and only * stars a type, as CPython r
 
 	it('reads a starred type argument as type.rest', () => {
 		expect(readOf('x: tuple[*Ts]\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"tuple","typeArguments":[{"$path":"type.rest","type":"Ts"}]}}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"tuple","typeArguments":[{"$path":"type.rest","type":"Ts"}]}}]}'
 		);
 	});
 

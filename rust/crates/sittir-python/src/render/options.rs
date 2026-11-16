@@ -2348,8 +2348,8 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: Some(SiteId(166)), after: Some(SiteId(167)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(757)), after: Some(SiteId(758)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(760)), after: Some(SiteId(761)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(681)), after: Some(SiteId(682)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(796)), after: Some(SiteId(797)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(681)), after: Some(SiteId(682)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(781)), after: Some(SiteId(783)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(620)), after: Some(SiteId(622)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(83)), after: Some(SiteId(84)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
@@ -2389,7 +2389,7 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     Some(EdgeRow(77)), Some(EdgeRow(78)), Some(EdgeRow(79)), Some(EdgeRow(80)), Some(EdgeRow(81)), Some(EdgeRow(82)), Some(EdgeRow(83)), Some(EdgeRow(84)), None, Some(EdgeRow(85)), Some(EdgeRow(86)), Some(EdgeRow(87)), Some(EdgeRow(88)), Some(EdgeRow(89)), None, Some(EdgeRow(90)),
     None, None, None, Some(EdgeRow(91)), None, None, Some(EdgeRow(92)), None, None, None, None, None, None, None, None, None,
     None, None, Some(EdgeRow(93)), None, None, Some(EdgeRow(94)), None, None, None, None, Some(EdgeRow(95)), Some(EdgeRow(96)), Some(EdgeRow(97)), None, None, Some(EdgeRow(98)),
-    Some(EdgeRow(99)), None, Some(EdgeRow(100)), None, None, None, None, None, None, Some(EdgeRow(101)), None, None, Some(EdgeRow(102)), Some(EdgeRow(103)), Some(EdgeRow(104)), Some(EdgeRow(105)),
+    Some(EdgeRow(99)), None, None, None, None, None, None, None, Some(EdgeRow(100)), None, None, Some(EdgeRow(101)), Some(EdgeRow(102)), Some(EdgeRow(103)), Some(EdgeRow(104)), Some(EdgeRow(105)),
     Some(EdgeRow(106)), None, None, Some(EdgeRow(107)), Some(EdgeRow(108)), Some(EdgeRow(109)), None, Some(EdgeRow(110)), Some(EdgeRow(111)), Some(EdgeRow(112)), Some(EdgeRow(113)), Some(EdgeRow(114)), Some(EdgeRow(115)), None, Some(EdgeRow(116)), Some(EdgeRow(117)),
     Some(EdgeRow(118)),
 ];
@@ -4330,7 +4330,7 @@ pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content),
+    None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content),
 ];
 
 /// Per kind id of a list, the site its items' separator reads.

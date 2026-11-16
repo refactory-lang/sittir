@@ -1,4 +1,10 @@
+import type * as V from '../../types/src/vocabulary/index.ts';
+import type { TypeScriptMap } from '../src/portable/map.ts';
 import type { At, In } from './build-forms.portable.test-d.ts';
+
+declare const qualifiedRead: At<'identifier.qualified'>;
+// @ts-expect-error a class's name reads only as an identifier, never a qualified name
+export const qualifiedClassName: V.BuildInput<TypeScriptMap, 'declaration.class'>['name'] = qualifiedRead;
 
 declare const sequence: At<'expression.sequence'>;
 declare const type: NonNullable<At<'expression.parenthesized'>['type']>;

@@ -1617,6 +1617,9 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'comment.line.doc.inner': {
 			readonly $forms: V.Form<'$value'>;
 		};
+		readonly 'comment.text': {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'declaration.constant': {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
@@ -29504,6 +29507,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly identifier: {
 			readonly $text: PortableTexts['identifier'];
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'identifier.label': {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
@@ -29593,7 +29597,10 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'literal.character': {
 			readonly content: string;
-			readonly $forms: V.Form<'content'> | V.Form<never, 'content'>;
+			readonly $forms: V.Form<'content', '$value'> | V.Form<'$value', 'content'>;
+		};
+		readonly 'literal.number.float': {
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer': {
 			readonly content: string;
@@ -29712,6 +29719,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'literal.string.text': {
 			readonly elements: never;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'modifier.extern': {
 			readonly abi:

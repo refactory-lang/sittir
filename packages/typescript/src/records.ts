@@ -754,18 +754,6 @@ export const records = {
 		terminator: { word: 11, width: 1, forms: 18, built: 4 }
 	},
 	ObjectTypeContentNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	ExportStatementNamespaceExportNode: {
-		words: 6,
-		builtWords: 4,
-		name: { word: 2, width: 3, forms: 1, built: 2 },
-		terminator: { word: 5, width: 1, forms: 2, built: 3 }
-	},
-	ExportStatementEqualsExportNode: {
-		words: 7,
-		builtWords: 4,
-		value: { word: 2, width: 4, forms: 3, built: 2 },
-		terminator: { word: 6, width: 1, forms: 2, built: 3 }
-	},
 	CommentLineNode: {
 		words: 6,
 		builtWords: 4,
@@ -935,6 +923,18 @@ export const records = {
 		words: 5,
 		builtWords: 3,
 		sequence_expression: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
+	},
+	ExportStatementEqualsExportNode: {
+		words: 7,
+		builtWords: 4,
+		value: { word: 2, width: 4, forms: 3, built: 2 },
+		terminator: { word: 6, width: 1, forms: 2, built: 3 }
+	},
+	ExportStatementNamespaceExportNode: {
+		words: 6,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		terminator: { word: 5, width: 1, forms: 2, built: 3 }
 	},
 	CallExpressionCallNode: {
 		words: 14,
