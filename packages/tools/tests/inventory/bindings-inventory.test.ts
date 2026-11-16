@@ -165,10 +165,9 @@ describe('deriveVocabulary', () => {
 		expect(levelMembers(d, 'type.rest.map').has('operator')).toBe(false);
 	});
 	it('keeps bounds introducers out of the portable members without losing the bounds', () => {
-		const bounds = levelMembers(d, 'clause.bounds');
-		expect(bounds.has('bounds')).toBe(true);
-		for (const grammar of ['rust', 'typescript']) expect(bounds.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
-		expect(bounds.has('content')).toBe(false);
+		expect([...levelMembers(d, 'clause.bounds').keys()]).toEqual([]);
+		const parameter = levelMembers(d, 'declaration.type_parameter');
+		for (const grammar of ['rust', 'typescript']) expect(parameter.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
 	});
 	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
 		const argument = d.members.get('element.type_argument');
@@ -177,7 +176,7 @@ describe('deriveVocabulary', () => {
 		expect(argument?.get('bounds')?.kinds.has('clause.bounds')).toBe(false);
 		expect(argument?.get('bounds')?.multiple).toBe(true);
 		expect(argument?.get('bounds')?.optional).toBe(true);
-		expect(argument?.get('value')?.kinds.has('element.type_binding')).toBe(true);
+		expect(argument?.get('argument')?.kinds.has('element.type_binding')).toBe(true);
 		expect(d.members.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
 			new Set(['element.type_argument'])
 		);

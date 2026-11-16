@@ -3771,8 +3771,8 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_name', tree);
 		},
-		alias() {
-			return hydrateSlot<T.Identifier>(this, '_alias', tree);
+		rename() {
+			return hydrateSlot<T.Identifier>(this, '_rename', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -3789,7 +3789,7 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { name: wrapUseAsClause$with$name, alias: wrapUseAsClause$with$alias, [RECEIVER]: node };
+	node.$with = { name: wrapUseAsClause$with$name, rename: wrapUseAsClause$with$rename, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UseAsClause.Parsed;
 }
@@ -3804,10 +3804,10 @@ function wrapUseAsClause$with(node: Held, setter: string, args: readonly unknown
 					wrapUseAsClause({ ...$edited(data), _name: admitSlot(handle, 'use_as_clause', 'name', v) }, tree)
 				)
 			);
-		case 'alias':
-			return applySetter(args, (v: NonNullable<T.UseAsClause['_alias']>) =>
+		case 'rename':
+			return applySetter(args, (v: NonNullable<T.UseAsClause['_rename']>) =>
 				rebuilt(node, handle, () =>
-					wrapUseAsClause({ ...$edited(data), _alias: admitSlot(handle, 'use_as_clause', 'alias', v) }, tree)
+					wrapUseAsClause({ ...$edited(data), _rename: admitSlot(handle, 'use_as_clause', 'rename', v) }, tree)
 				)
 			);
 	}
@@ -3816,8 +3816,8 @@ function wrapUseAsClause$with(node: Held, setter: string, args: readonly unknown
 function wrapUseAsClause$with$name(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapUseAsClause$with(receiverOf(this, '$with.name'), 'name', args);
 }
-function wrapUseAsClause$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUseAsClause$with(receiverOf(this, '$with.alias'), 'alias', args);
+function wrapUseAsClause$with$rename(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUseAsClause$with(receiverOf(this, '$with.rename'), 'rename', args);
 }
 
 export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWildcard.Parsed {
@@ -6879,8 +6879,8 @@ export function wrapShorthandFieldInitializer(
 		attributes() {
 			return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 		},
-		field() {
-			return hydrateSlot<T.Identifier>(this, '_field', tree);
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -6899,7 +6899,7 @@ export function wrapShorthandFieldInitializer(
 	};
 	node.$with = {
 		attributes: wrapShorthandFieldInitializer$with$attributes,
-		field: wrapShorthandFieldInitializer$with$field,
+		name: wrapShorthandFieldInitializer$with$name,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6922,11 +6922,11 @@ function wrapShorthandFieldInitializer$with(node: Held, setter: string, args: re
 					)
 				)
 			);
-		case 'field':
-			return applySetter(args, (v: NonNullable<T.ShorthandFieldInitializer['_field']>) =>
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.ShorthandFieldInitializer['_name']>) =>
 				rebuilt(node, handle, () =>
 					wrapShorthandFieldInitializer(
-						{ ...$edited(data), _field: admitSlot(handle, 'shorthand_field_initializer', 'field', v) },
+						{ ...$edited(data), _name: admitSlot(handle, 'shorthand_field_initializer', 'name', v) },
 						tree
 					)
 				)
@@ -6937,8 +6937,8 @@ function wrapShorthandFieldInitializer$with(node: Held, setter: string, args: re
 function wrapShorthandFieldInitializer$with$attributes(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapShorthandFieldInitializer$with(receiverOf(this, '$with.attributes'), 'attributes', args);
 }
-function wrapShorthandFieldInitializer$with$field(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapShorthandFieldInitializer$with(receiverOf(this, '$with.field'), 'field', args);
+function wrapShorthandFieldInitializer$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapShorthandFieldInitializer$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle): T.FieldInitializer.Parsed {
@@ -6949,8 +6949,8 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 		attributes() {
 			return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 		},
-		field() {
-			return hydrateSlot<T.FieldIdentifier | T.IntegerLiteral>(this, '_field', tree);
+		name() {
+			return hydrateSlot<T.FieldIdentifier | T.IntegerLiteral>(this, '_name', tree);
 		},
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
@@ -6972,7 +6972,7 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 	};
 	node.$with = {
 		attributes: wrapFieldInitializer$with$attributes,
-		field: wrapFieldInitializer$with$field,
+		name: wrapFieldInitializer$with$name,
 		value: wrapFieldInitializer$with$value,
 		[RECEIVER]: node
 	};
@@ -6996,10 +6996,10 @@ function wrapFieldInitializer$with(node: Held, setter: string, args: readonly un
 					)
 				)
 			);
-		case 'field':
-			return applySetter(args, (v: NonNullable<T.FieldInitializer['_field']>) =>
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.FieldInitializer['_name']>) =>
 				rebuilt(node, handle, () =>
-					wrapFieldInitializer({ ...$edited(data), _field: admitSlot(handle, 'field_initializer', 'field', v) }, tree)
+					wrapFieldInitializer({ ...$edited(data), _name: admitSlot(handle, 'field_initializer', 'name', v) }, tree)
 				)
 			);
 		case 'value':
@@ -7014,8 +7014,8 @@ function wrapFieldInitializer$with(node: Held, setter: string, args: readonly un
 function wrapFieldInitializer$with$attributes(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFieldInitializer$with(receiverOf(this, '$with.attributes'), 'attributes', args);
 }
-function wrapFieldInitializer$with$field(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapFieldInitializer$with(receiverOf(this, '$with.field'), 'field', args);
+function wrapFieldInitializer$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapFieldInitializer$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function wrapFieldInitializer$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFieldInitializer$with(receiverOf(this, '$with.value'), 'value', args);
@@ -20272,7 +20272,7 @@ function viewUseAsClause$name(this: RecordHandle) {
 		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 	>(this, 2, 4, 3, 0, 2);
 }
-function viewUseAsClause$alias(this: RecordHandle) {
+function viewUseAsClause$rename(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 6, 3, 1, 0, 3);
 }
 function viewUseAsClause(data: RecordPosition, tree: TreeHandle): T.UseAsClause.Parsed {
@@ -20284,7 +20284,7 @@ function viewUseAsClause(data: RecordPosition, tree: TreeHandle): T.UseAsClause.
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		name: viewUseAsClause$name,
-		alias: viewUseAsClause$alias,
+		rename: viewUseAsClause$rename,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -20295,7 +20295,7 @@ function viewUseAsClause(data: RecordPosition, tree: TreeHandle): T.UseAsClause.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { name: $with$name, alias: $with$alias, [RECEIVER]: node };
+	node.$with = { name: $with$name, rename: $with$rename, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.UseAsClause.Parsed;
 }
@@ -21941,7 +21941,7 @@ function viewFieldInitializerList(data: RecordPosition, tree: TreeHandle): T.Fie
 function viewShorthandFieldInitializer$attributes(this: RecordHandle) {
 	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
 }
-function viewShorthandFieldInitializer$field(this: RecordHandle) {
+function viewShorthandFieldInitializer$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewShorthandFieldInitializer(data: RecordPosition, tree: TreeHandle): T.ShorthandFieldInitializer.Parsed {
@@ -21953,7 +21953,7 @@ function viewShorthandFieldInitializer(data: RecordPosition, tree: TreeHandle): 
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		attributes: viewShorthandFieldInitializer$attributes,
-		field: viewShorthandFieldInitializer$field,
+		name: viewShorthandFieldInitializer$name,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -21964,7 +21964,7 @@ function viewShorthandFieldInitializer(data: RecordPosition, tree: TreeHandle): 
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { attributes: $with$attributes, field: $with$field, [RECEIVER]: node };
+	node.$with = { attributes: $with$attributes, name: $with$name, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ShorthandFieldInitializer.Parsed;
 }
@@ -21972,7 +21972,7 @@ function viewShorthandFieldInitializer(data: RecordPosition, tree: TreeHandle): 
 function viewFieldInitializer$attributes(this: RecordHandle) {
 	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
 }
-function viewFieldInitializer$field(this: RecordHandle) {
+function viewFieldInitializer$name(this: RecordHandle) {
 	return viewSlot<T.FieldIdentifier | T.IntegerLiteral>(this, 3, 8, 8, 8, 3);
 }
 function viewFieldInitializer$value(this: RecordHandle) {
@@ -21987,7 +21987,7 @@ function viewFieldInitializer(data: RecordPosition, tree: TreeHandle): T.FieldIn
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		attributes: viewFieldInitializer$attributes,
-		field: viewFieldInitializer$field,
+		name: viewFieldInitializer$name,
 		value: viewFieldInitializer$value,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -21999,7 +21999,7 @@ function viewFieldInitializer(data: RecordPosition, tree: TreeHandle): T.FieldIn
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { attributes: $with$attributes, field: $with$field, value: $with$value, [RECEIVER]: node };
+	node.$with = { attributes: $with$attributes, name: $with$name, value: $with$value, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FieldInitializer.Parsed;
 }
@@ -28019,9 +28019,6 @@ function $with$expression(this: Received<RecordPosition>, ...args: unknown[]): u
 function $with$externModifier(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.externModifier'), _wrap, 'externModifier', args);
 }
-function $with$field(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.field'), _wrap, 'field', args);
-}
 function $with$fieldDeclaration(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.fieldDeclaration'), _wrap, 'fieldDeclaration', args);
 }
@@ -28137,6 +28134,9 @@ function $with$receiver(this: Received<RecordPosition>, ...args: unknown[]): unk
 }
 function $with$reference(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.reference'), _wrap, 'reference', args);
+}
+function $with$rename(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.rename'), _wrap, 'rename', args);
 }
 function $with$returnType(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.returnType'), _wrap, 'returnType', args);

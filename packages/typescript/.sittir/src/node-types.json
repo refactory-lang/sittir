@@ -2473,7 +2473,7 @@
     "type": "constraint",
     "named": true,
     "fields": {
-      "bounds": {
+      "type": {
         "multiple": false,
         "required": true,
         "types": [

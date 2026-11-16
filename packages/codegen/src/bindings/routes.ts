@@ -103,6 +103,7 @@ export interface ContainerUnwrap {
 	readonly terminals: readonly string[];
 	readonly list: boolean;
 	readonly members?: readonly ContainerDataMember[];
+	readonly flags?: readonly string[];
 	readonly refined?: true;
 	readonly named?: true;
 }
@@ -358,6 +359,19 @@ function containerDataMembers(input: GrammarInput, node: ModelNode, vocabOf: Rea
 		}
 	}
 	return [...members.values()];
+}
+
+function containerFlags(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): readonly string[] {
+	const flags = new Set<string>();
+	for (const container of declaredContainersOf(input, node)) {
+		const resolved = containerMembers(input, container, vocabOf);
+		if (resolved.targets.length === 0) continue;
+		for (const { capture, name, slot, flag } of resolved.members) {
+			const spelled = slot === undefined || (slot.required && slot.kinds.length === 0 && slot.terminals.every((terminal) => terminal === capture.token));
+			if (flag && spelled) flags.add(name);
+		}
+	}
+	return [...flags];
 }
 
 function declaredListAt(vocabulary: Vocabulary, kind: string, targets: readonly string[], name: string): boolean | undefined {
@@ -986,7 +1000,8 @@ function membersOf(
 				: pin !== undefined
 					? { ...rest, required: true, terminals: rest.terminals.filter((t) => t === pin), kinds: concreteKinds(input.model, rest.kinds).filter((k) => textOfKind(input.model, k) === pin) }
 					: undefined;
-		const name = textual && !captured ? VALUE : memberNameOf(slotNames, slot.name, slot.propertyName);
+		const named = memberNameOf(slotNames, slot.name, slot.propertyName);
+		const name = textual && (!captured || !input.vocabulary.members(entry.vocab).has(named)) ? VALUE : named;
 		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
 		if (captured && flag.flag !== true && !slot.multiple && (pin ?? onlyTextOf(input.model, guaranteed.present(pathTo(slot)) ?? [])) !== undefined) {
 			unrouted(slot, 'is pinned to one fixed text by the same claim', capturesOf(slot).filter((m) => m.claims?.includes(entry.index) === true));
@@ -1506,11 +1521,12 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		const unwrap = containerOf(input, node);
 		if (unwrap === undefined) continue;
 		const members = containerDataMembers(input, node, vocabOf);
+		const flags = containerFlags(input, node, vocabOf);
 		const isRefined = refined.has(node.kind);
 		const separated = (readEntries.get(node.kind) ?? []).some((entry) => entry.separated === true);
 		if (isRefined && unwrap.list && !separated)
 			throw new Error(`bindings: ${node.kind} is claimed and also unwraps to its elements, a list; only a list claimed by its own separator holds one element when the claim fails`);
-		containers.set(node.kind, { ...unwrap, ...(isRefined && separated ? { list: false } : {}), ...(members.length === 0 ? {} : { members }), ...(isRefined ? { refined: true as const } : {}) });
+		containers.set(node.kind, { ...unwrap, ...(isRefined && separated ? { list: false } : {}), ...(members.length === 0 ? {} : { members }), ...(flags.length === 0 ? {} : { flags }), ...(isRefined ? { refined: true as const } : {}) });
 	}
 
 	const placed = new Set([...readEntries.values()].flatMap((entries) => entries.map((entry) => entry.claim)));

@@ -3,7 +3,7 @@ import type { Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace Parameter {
-		export interface Default<G extends GrammarMap, K extends Under<'declaration.parameter.default'> = 'declaration.parameter.default'> {
+		export interface Defaulted<G extends GrammarMap, K extends Under<'declaration.parameter.defaulted'> = 'declaration.parameter.defaulted'> {
 			readonly default: Slot<
 				G,
 				K,

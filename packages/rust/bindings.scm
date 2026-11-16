@@ -228,8 +228,7 @@
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @statement.use.public.internal
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @statement.use.public.parent
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @statement.use.public.restricted
-(expression_statement) @statement.expression
-(expression_statement (_) @expression)
+(expression_statement (_) @element)
 (empty_statement) @statement.empty
 (break_expression) @statement.break
 (continue_expression) @statement.continue
@@ -249,16 +248,16 @@
 ((last_match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm trailing_comma: _ @dropped) (#set! reason "the last arm's optional comma is a position, not a fact"))
 (use_as_clause) @clause.import.alias
+(use_as_clause alias: (_) @rename)
 (use_as_clause path: (_) @name)
 (use_list) @clause.import.list
 (scoped_use_list) @clause.import.list.scoped
 (use_wildcard) @clause.import.wildcard
 (macro_rule) @clause.macro.rule
-(trait_bounds) @clause.bounds
 (higher_ranked_trait_bound) @clause.bounds.higher_ranked
 (removed_trait_bound) @clause.bounds.removed
 (use_bounds) @clause.bounds.use
-(for_lifetimes) @clause.lifetimes
+(for_lifetimes (lifetimes) @element)
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 ((argument (attribute_item) (_) @value) @argument (#set! claim argument))
@@ -270,8 +269,9 @@
 (attributed_element (attribute_item)* @attributes)
 (field_initializer) @element.struct.field
 (field_initializer (attribute_item)* @attributes)
+(field_initializer field: (_) @name)
 (shorthand_field_initializer) @element.struct.field
-(shorthand_field_initializer name: (_) @field)
+(shorthand_field_initializer name: (_) @name)
 (base_field_initializer) @element.struct.base
 (type_binding) @element.type_binding
 (token_tree) @element.macro.token_tree
@@ -314,8 +314,8 @@
 (binary_expression operator: "&") @expression.binary.bitwise.and
 (binary_expression operator: "|") @expression.binary.bitwise.or
 (binary_expression operator: "^") @expression.binary.bitwise.xor
-(binary_expression operator: "<<") @expression.binary.shift.left
-(binary_expression operator: ">>") @expression.binary.shift.right
+(binary_expression left: (_) @operand operator: "<<" right: (_) @count) @expression.binary.shift.left
+(binary_expression left: (_) @operand operator: ">>" right: (_) @count) @expression.binary.shift.right
 (binary_expression operator: "&&") @expression.binary.logical.and
 (binary_expression operator: "||") @expression.binary.logical.or
 (unary_expression (_) @argument) @expression.unary
@@ -415,7 +415,7 @@
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
 (type_argument) @element.type_argument
-(type_argument . (_) @value)
+(type_argument . (_) @argument)
 (type_argument (trait_bounds bounds: (_) @bounds))
 (reference_type) @type.reference
 (reference_type (mutable_specifier) @exclusive)
@@ -444,9 +444,9 @@
 ((string_literal string_open: (_) @_open) @literal.string (#eq? @_open "\""))
 ((string_literal string_open: (_) @_open) @literal.string.bytes (#eq? @_open "b\""))
 ((string_literal string_open: (_) @_open) @literal.string.c (#eq? @_open "c\""))
-(raw_string_literal string_content: (string_content) @content) @literal.string.raw
-((raw_string_literal (raw_string_literal_start) @_p string_content: (string_content) @content) @literal.string.bytes.raw (#match? @_p "^br"))
-((raw_string_literal (raw_string_literal_start) @_p string_content: (string_content) @content) @literal.string.c.raw (#match? @_p "^cr"))
+(raw_string_literal) @literal.string.raw
+((raw_string_literal (raw_string_literal_start) @_p) @literal.string.bytes.raw (#match? @_p "^br"))
+((raw_string_literal (raw_string_literal_start) @_p) @literal.string.c.raw (#match? @_p "^cr"))
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
 (string_content) @literal.string.text
@@ -488,7 +488,7 @@
 ; ── attribute ──────────────────────────────────────────────────────────────────
 (attribute_item (attribute) @element)
 (inner_attribute_item "!" @inner (attribute) @element)
-(attribute) @attribute.content
+(attribute) @attribute
 (attribute input: (attribute_input value: (_) @input))
 (attribute input: (attribute_input arguments: (_) @input))
 

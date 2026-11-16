@@ -16817,23 +16817,23 @@ export function buildConstraint(
 		['extends', TSKindId.ExtendsKeyword] as const,
 		[':', TSKindId.Colon] as const
 	]);
-	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
+	const _type = admitAliasContent<NonNullable<T.Constraint['_type']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
-			'Constraint.bounds',
+			kindIdStorage<NonNullable<T.Constraint['_type']>>(value),
+			'Constraint.type',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, bounds: _bounds });
+	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, type: _type });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Constraint as const, { _operator, _bounds });
+	handle?.verifyStored?.(TSKindId.Constraint as const, { _operator, _type });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Constraint as const);
 		storeCell(arena, record, 2, 2, _operator);
-		storeCell(arena, record, 3, 3, _bounds);
+		storeCell(arena, record, 3, 3, _type);
 		const node = arena.view(record);
 		return node as unknown as T.Constraint.Bound;
 	});
@@ -16848,51 +16848,51 @@ function buildConstraint$patch(
 		['extends', TSKindId.ExtendsKeyword] as const,
 		[':', TSKindId.Colon] as const
 	]);
-	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
+	const _type = admitAliasContent<NonNullable<T.Constraint['_type']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
-			'Constraint.bounds',
+			kindIdStorage<NonNullable<T.Constraint['_type']>>(value),
+			'Constraint.type',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, bounds: _bounds });
+	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, type: _type });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Constraint as const, { _operator, _bounds });
+	handle?.verifyStored?.(TSKindId.Constraint as const, { _operator, _type });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Constraint as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'bounds', _bounds));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.Constraint.Bound;
 	});
 }
 function buildConstraint$set(
 	source: object,
-	...[slot, input]: ['bounds', Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>] | ['operator', T.Constraint.Options]
+	...[slot, input]: ['type', Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>] | ['operator', T.Constraint.Options]
 ): T.Constraint.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'bounds':
+			case 'type':
 				return buildConstraint$patch(source, input, inputs.options as T.Constraint.Options);
 			case 'operator':
 				return buildConstraint$patch(
 					source,
-					inputs.config['bounds'] as Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>,
+					inputs.config['type'] as Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>,
 					{ ...(inputs.options as T.Constraint.Options), ...input }
 				);
 		}
 	}
 	switch (slot) {
-		case 'bounds': {
+		case 'type': {
 			const value = input;
-			const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
+			const _type = admitAliasContent<NonNullable<T.Constraint['_type']>>(
 				rejectReservedText(
-					kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
-					'Constraint.bounds',
+					kindIdStorage<NonNullable<T.Constraint['_type']>>(value),
+					'Constraint.type',
 					TSKindId.Identifier,
 					_reservedWords_buildIdentifier
 				),
@@ -16903,8 +16903,8 @@ function buildConstraint$set(
 				TSKindId.Constraint as const,
 				'constraint',
 				1,
-				'bounds',
-				_bounds
+				'type',
+				_type
 			) as unknown as T.Constraint.Bound;
 		}
 		case 'operator': {
@@ -16931,9 +16931,9 @@ function withConstraint(node: object, setter: string, args: readonly unknown[]):
 			return applySetter(args, (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
 				rebuilt(node, handle, () => buildConstraint$set(node, 'operator', { operator: spelling }))
 			);
-		case 'bounds':
+		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
-				rebuilt(node, handle, () => buildConstraint$set(node, 'bounds', value))
+				rebuilt(node, handle, () => buildConstraint$set(node, 'type', value))
 			);
 	}
 	throw new Error(`constraint has no $with.${setter}`);

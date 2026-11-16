@@ -2581,7 +2581,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "field"
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -6565,7 +6565,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "field"
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -8531,7 +8531,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "alias"
+			"name": "rename"
 		},
 		{
 			"kind": "seam",

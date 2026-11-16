@@ -5375,10 +5375,10 @@ export interface UseList {
 export interface UseAsClause {
 	readonly $type: TSKindId.UseAsClause;
 	readonly _name: TSKindId.SelfModule | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
-	readonly _alias: Identifier;
+	readonly _rename: Identifier;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
-		readonly _alias: 'alias';
+		readonly _rename: 'rename';
 	};
 	readonly __inputHints__?: {
 		readonly name:
@@ -5389,7 +5389,7 @@ export interface UseAsClause {
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.UseAsClause.Config>['name']>;
-		readonly alias: SlotHint<T.Identifier>;
+		readonly rename: SlotHint<T.Identifier>;
 	};
 	readonly name: () =>
 		| TSKindId.SelfModule
@@ -5398,7 +5398,7 @@ export interface UseAsClause {
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier;
-	readonly alias: () => Identifier;
+	readonly rename: () => Identifier;
 }
 
 export interface UseWildcard {
@@ -7114,27 +7114,27 @@ export interface FieldInitializerList {
 export interface ShorthandFieldInitializer {
 	readonly $type: TSKindId.ShorthandFieldInitializer;
 	readonly _attributes: readonly AttributeItem[];
-	readonly _field: Identifier;
+	readonly _name: Identifier;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
-		readonly _field: 'field';
+		readonly _name: 'name';
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
-		readonly field: SlotHint<T.Identifier>;
+		readonly name: SlotHint<T.Identifier>;
 	};
 	readonly attributes: () => readonly AttributeItem[];
-	readonly field: () => Identifier;
+	readonly name: () => Identifier;
 }
 
 export interface FieldInitializer {
 	readonly $type: TSKindId.FieldInitializer;
 	readonly _attributes: readonly AttributeItem[];
-	readonly _field: FieldIdentifier | IntegerLiteral;
+	readonly _name: FieldIdentifier | IntegerLiteral;
 	readonly _value: Expression;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
-		readonly _field: 'field';
+		readonly _name: 'name';
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
@@ -7144,11 +7144,11 @@ export interface FieldInitializer {
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
-		readonly field: SlotHint<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>;
+		readonly name: SlotHint<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>;
 		readonly value: SlotHint<NonNullable<T.FieldInitializer.Config>['value']>;
 	};
 	readonly attributes: () => readonly AttributeItem[];
-	readonly field: () => FieldIdentifier | IntegerLiteral;
+	readonly name: () => FieldIdentifier | IntegerLiteral;
 	readonly value: () => Expression;
 }
 

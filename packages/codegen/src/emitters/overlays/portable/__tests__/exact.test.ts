@@ -64,7 +64,7 @@ describe('exactSlotsOf', () => {
 	});
 
 	it("keeps the preset reason where the build picks a form the read doesn't record", () => {
-		expect(reasonsAt(exact, 'clause.bounds', 'bounds', 'function_type')).toContain('preset');
+		expect(reasonsAt(exact, 'clause.where.predicate', 'bounds', 'function_type')).toContain('preset');
 	});
 
 	it("narrows a member to the kinds its claim's tests guarantee: a conformance's trait clause is the positive one, which implements reads, so the member holds nothing", () => {

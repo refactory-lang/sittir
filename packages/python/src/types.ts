@@ -2226,17 +2226,17 @@ export interface ImportList {
 export interface AliasedImport {
 	readonly $type: TSKindId.AliasedImport;
 	readonly _name: DottedName;
-	readonly _alias: Identifier;
+	readonly _rename: Identifier;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
-		readonly _alias: 'alias';
+		readonly _rename: 'rename';
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.DottedName>;
-		readonly alias: SlotHint<T.Identifier>;
+		readonly rename: SlotHint<T.Identifier>;
 	};
 	readonly name: () => DottedName;
-	readonly alias: () => Identifier;
+	readonly rename: () => Identifier;
 }
 
 export interface PrintStatement {

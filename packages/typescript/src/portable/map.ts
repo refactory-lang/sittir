@@ -8,7 +8,7 @@ import type { PortableTexts } from './index.js';
 export interface TypeScriptMap extends V.GrammarMap {
 	readonly features: V.TypeScriptFeatures;
 	readonly overrides: {
-		readonly 'attribute.content.call': {
+		readonly 'attribute.call': {
 			readonly arguments:
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
@@ -115,7 +115,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this';
 			readonly function:
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly typeArguments:
@@ -166,9 +166,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
-		readonly 'attribute.content.member': {
+		readonly 'attribute.member': {
 			readonly object:
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier.super'>
@@ -176,65 +176,13 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly property: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
 			readonly $forms: V.Form<'object' | 'property'>;
 		};
-		readonly 'attribute.content.parenthesized': {
+		readonly 'attribute.parenthesized': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly $forms: V.Form<'expression'>;
-		};
-		readonly 'clause.bounds': {
-			readonly bounds:
-				| V.Read<TypeScriptMap, 'identifier'>
-				| V.Text<TypeScriptMap, 'identifier'>
-				| V.Read<TypeScriptMap, 'identifier.qualified'>
-				| V.Read<TypeScriptMap, 'type.array'>
-				| V.Read<TypeScriptMap, 'type.conditional'>
-				| V.Text<TypeScriptMap, 'type.existential'>
-				| V.Read<TypeScriptMap, 'type.function'>
-				| V.Read<TypeScriptMap, 'type.function.constructor'>
-				| V.Read<TypeScriptMap, 'type.generic'>
-				| V.Read<TypeScriptMap, 'type.import'>
-				| V.Read<TypeScriptMap, 'type.index_query'>
-				| V.Read<TypeScriptMap, 'type.infer'>
-				| V.Read<TypeScriptMap, 'type.intersection'>
-				| V.Read<TypeScriptMap, 'type.literal'>
-				| V.Read<TypeScriptMap, 'type.lookup'>
-				| V.Read<TypeScriptMap, 'type.nullable'>
-				| V.Read<TypeScriptMap, 'type.object'>
-				| V.Read<TypeScriptMap, 'type.parenthesized'>
-				| V.Text<TypeScriptMap, 'type.primitive.boolean'>
-				| V.Text<TypeScriptMap, 'type.primitive.floating.float64'>
-				| V.Text<TypeScriptMap, 'type.primitive.never'>
-				| V.Text<TypeScriptMap, 'type.primitive.object'>
-				| V.Text<TypeScriptMap, 'type.primitive.string'>
-				| V.Text<TypeScriptMap, 'type.primitive.symbol'>
-				| V.Text<TypeScriptMap, 'type.primitive.unchecked'>
-				| V.Text<TypeScriptMap, 'type.primitive.unknown'>
-				| V.Text<TypeScriptMap, 'type.primitive.void'>
-				| V.Read<TypeScriptMap, 'type.query'>
-				| V.Read<TypeScriptMap, 'type.readonly'>
-				| V.Text<TypeScriptMap, 'type.receiver'>
-				| V.Read<TypeScriptMap, 'type.template'>
-				| V.Read<TypeScriptMap, 'type.tuple'>
-				| V.Read<TypeScriptMap, 'type.union'>
-				| '*'
-				| 'any'
-				| 'boolean'
-				| 'never'
-				| 'number'
-				| 'object'
-				| 'string'
-				| 'symbol'
-				| 'this'
-				| 'unique symbol'
-				| 'unknown'
-				| 'void'
-				| T.LiteralType.Parsed
-				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
-				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
-			readonly $forms: V.Form<'bounds'>;
 		};
 		readonly 'clause.case.default': {
 			readonly bodies:
@@ -251,6 +199,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -259,7 +307,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -275,9 +322,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -297,6 +347,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -305,7 +455,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -321,9 +470,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -586,6 +738,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -594,7 +846,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -610,9 +861,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -745,7 +999,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'clause.import.names': {
 			readonly default: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
-			readonly names:
+			readonly specifiers:
 				| V.Read<TypeScriptMap, 'clause.import.namespace'>
 				| V.Read<TypeScriptMap, 'clause.import.specifier'>
 				| V.Read<TypeScriptMap, 'clause.import.specifier.typeof'>;
@@ -969,9 +1223,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.block.static'>
 				| ';';
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly extends: V.Read<TypeScriptMap, 'clause.extends'>;
@@ -1031,9 +1285,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.constructor': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
@@ -1049,9 +1303,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.constructor.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
@@ -1067,9 +1321,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.constructor.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
@@ -1085,9 +1339,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.constructor.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
@@ -1352,9 +1606,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.field': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -1650,9 +1904,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.field.private': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -1948,9 +2202,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.field.protected': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -2246,9 +2500,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.field.public': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -3358,9 +3612,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.method': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -3537,9 +3791,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.method.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -3716,9 +3970,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.method.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -3895,9 +4149,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.method.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -5540,9 +5794,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.parameter': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
@@ -5740,9 +5994,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.parameter.private': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
@@ -5940,9 +6194,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.parameter.protected': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
@@ -6140,9 +6394,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.parameter.public': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
@@ -6340,9 +6594,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.parameter.receiver': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
@@ -6527,9 +6781,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -6825,9 +7079,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.getter': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -6993,9 +7247,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.getter.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -7161,9 +7415,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.getter.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -7329,9 +7583,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.getter.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -7496,9 +7750,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.private': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -7793,9 +8047,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.protected': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -8090,9 +8344,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.public': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -8388,9 +8642,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.setter': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -8514,9 +8768,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.setter.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -8640,9 +8894,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.setter.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -8766,9 +9020,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.setter.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -8891,9 +9145,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.signature.abstract': {
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
@@ -21557,7 +21811,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 		};
 		readonly 'expression.binary.shift.left': {
-			readonly left:
+			readonly count:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21690,7 +21944,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly right:
+			readonly operand:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21825,7 +22079,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 		};
 		readonly 'expression.binary.shift.right': {
-			readonly left:
+			readonly count:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21958,7 +22212,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly right:
+			readonly operand:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22093,7 +22347,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 		};
 		readonly 'expression.binary.shift.right_unsigned': {
-			readonly left:
+			readonly count:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22226,7 +22480,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly right:
+			readonly operand:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23928,9 +24182,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.block.static'>
 				| ';';
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly extends: V.Read<TypeScriptMap, 'clause.extends'>;
@@ -27788,6 +28042,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -27796,7 +28150,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -27812,9 +28165,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -27943,14 +28299,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly flags: V.Read<TypeScriptMap, 'literal.regex.flags'>;
 			readonly pattern: V.Read<TypeScriptMap, 'literal.regex.pattern'>;
 			readonly $forms: V.Form<'pattern'>;
-		};
-		readonly 'literal.regex.flags': {
-			readonly flags: never;
-			readonly pattern: never;
-		};
-		readonly 'literal.regex.pattern': {
-			readonly flags: never;
-			readonly pattern: never;
 		};
 		readonly 'literal.string': {
 			readonly elements: V.Read<TypeScriptMap, 'literal.string.escape'> | V.Read<TypeScriptMap, 'literal.string.text'>;
@@ -28449,6 +28797,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -28457,7 +28905,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -28473,9 +28920,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -28513,9 +28963,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
 				| V.Unmapped<'typescript:using_declaration'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly exportClause: V.Read<TypeScriptMap, 'clause.export'> | V.Read<TypeScriptMap, 'clause.export.namespace'>;
@@ -28687,9 +29137,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
 				| V.Unmapped<'typescript:using_declaration'>;
 			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly exportClause: never;
@@ -28829,8 +29279,23 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 		};
-		readonly 'statement.expression': {
-			readonly expression:
+		readonly 'statement.if': {
+			readonly alternative: V.Read<TypeScriptMap, 'clause.else'>;
+			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
+			readonly consequence:
+				| V.Read<TypeScriptMap, 'declaration.ambient'>
+				| V.Read<TypeScriptMap, 'declaration.class'>
+				| V.Read<TypeScriptMap, 'declaration.enum'>
+				| V.Read<TypeScriptMap, 'declaration.function'>
+				| V.Read<TypeScriptMap, 'declaration.function.signature'>
+				| V.Read<TypeScriptMap, 'declaration.interface'>
+				| V.Read<TypeScriptMap, 'declaration.module'>
+				| V.Read<TypeScriptMap, 'declaration.module.external'>
+				| V.Read<TypeScriptMap, 'declaration.type_alias'>
+				| V.Read<TypeScriptMap, 'declaration.variable'>
+				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
+				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
+				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -28931,59 +29396,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'literal.regex'>
 				| V.Read<TypeScriptMap, 'literal.string'>
 				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
-				| 'import.meta'
-				| 'new.target'
-				| 'super'
-				| 'this'
-				| T.Array.Parsed
-				| T.ArrowFunction.Parsed
-				| T.AsExpression.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.AugmentedAssignmentExpression.Parsed
-				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.CallExpressionCall.Parsed
-				| T.CallExpressionMember.Parsed
-				| T.CallExpressionTemplateCall.Parsed
-				| T.InstantiationExpression.Parsed
-				| T.MemberExpression.Parsed
-				| T.NewExpression.Parsed
-				| T.NonNullExpression.Parsed
-				| T.NumberFloatLeadingPoint.Parsed
-				| T.NumberFloatPoint.Parsed
-				| T.NumberFloatScientific.Parsed
-				| T.ParenthesizedExpressionTyped.Parsed
-				| T.SatisfiesExpression.Parsed
-				| T.SequenceExpression.Parsed
-				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed
-				| T.SubscriptExpression.Parsed
-				| T.TemplateString.Parsed
-				| T.TernaryExpression.Parsed
-				| T.TypeAssertion.Parsed
-				| T.UnaryExpression.Parsed
-				| T.UpdateExpressionPostfix.Parsed
-				| T.UpdateExpressionPrefix.Parsed
-				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'expression'>;
-		};
-		readonly 'statement.if': {
-			readonly alternative: V.Read<TypeScriptMap, 'clause.else'>;
-			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
-			readonly consequence:
-				| V.Read<TypeScriptMap, 'declaration.ambient'>
-				| V.Read<TypeScriptMap, 'declaration.class'>
-				| V.Read<TypeScriptMap, 'declaration.enum'>
-				| V.Read<TypeScriptMap, 'declaration.function'>
-				| V.Read<TypeScriptMap, 'declaration.function.signature'>
-				| V.Read<TypeScriptMap, 'declaration.interface'>
-				| V.Read<TypeScriptMap, 'declaration.module'>
-				| V.Read<TypeScriptMap, 'declaration.module.external'>
-				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
-				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
-				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
-				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -28992,7 +29404,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -29008,9 +29419,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -29063,6 +29477,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -29071,7 +29585,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -29087,9 +29600,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -29111,6 +29627,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -29119,7 +29735,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -29135,9 +29750,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -29572,6 +30190,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -29580,7 +30298,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -29596,9 +30313,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -29621,6 +30341,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -29629,7 +30449,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -29645,9 +30464,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -29674,6 +30496,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -29682,7 +30604,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -29698,9 +30619,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -29860,6 +30784,106 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+				| V.Read<TypeScriptMap, 'expression.assignment'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.divide'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.exponent'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.modulo'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.multiply'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.or'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
+				| V.Read<TypeScriptMap, 'expression.await'>
+				| V.Read<TypeScriptMap, 'expression.binary'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.bitwise.xor'>
+				| V.Read<TypeScriptMap, 'expression.binary.coalesce'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.and'>
+				| V.Read<TypeScriptMap, 'expression.binary.logical.or'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.in'>
+				| V.Read<TypeScriptMap, 'expression.binary.membership.instanceof'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.left'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right'>
+				| V.Read<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+				| V.Read<TypeScriptMap, 'expression.call'>
+				| V.Read<TypeScriptMap, 'expression.call.construct'>
+				| V.Read<TypeScriptMap, 'expression.call.construct.bare'>
+				| V.Read<TypeScriptMap, 'expression.call.member'>
+				| V.Read<TypeScriptMap, 'expression.call.template'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion'>
+				| V.Read<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
+				| V.Read<TypeScriptMap, 'expression.cast.satisfies'>
+				| V.Read<TypeScriptMap, 'expression.class'>
+				| V.Read<TypeScriptMap, 'expression.collection.list'>
+				| V.Read<TypeScriptMap, 'expression.collection.object'>
+				| V.Read<TypeScriptMap, 'expression.conditional'>
+				| V.Read<TypeScriptMap, 'expression.function'>
+				| V.Read<TypeScriptMap, 'expression.instantiation'>
+				| V.Read<TypeScriptMap, 'expression.lambda'>
+				| V.Read<TypeScriptMap, 'expression.member'>
+				| V.Text<TypeScriptMap, 'expression.meta'>
+				| V.Read<TypeScriptMap, 'expression.parenthesized'>
+				| V.Read<TypeScriptMap, 'expression.sequence'>
+				| V.Read<TypeScriptMap, 'expression.subscript'>
+				| V.Read<TypeScriptMap, 'expression.unary'>
+				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
+				| V.Read<TypeScriptMap, 'expression.unary.delete'>
+				| V.Read<TypeScriptMap, 'expression.unary.negation'>
+				| V.Read<TypeScriptMap, 'expression.unary.not'>
+				| V.Read<TypeScriptMap, 'expression.unary.plus'>
+				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
+				| V.Read<TypeScriptMap, 'expression.unary.void'>
+				| V.Read<TypeScriptMap, 'expression.update'>
+				| V.Read<TypeScriptMap, 'expression.update.decrement'>
+				| V.Read<TypeScriptMap, 'expression.update.increment'>
+				| V.Read<TypeScriptMap, 'expression.yield'>
+				| V.Read<TypeScriptMap, 'expression.yield.delegate'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier.receiver'>
+				| V.Text<TypeScriptMap, 'identifier.super'>
+				| V.Read<TypeScriptMap, 'literal.boolean.false'>
+				| V.Read<TypeScriptMap, 'literal.boolean.true'>
+				| V.Read<TypeScriptMap, 'literal.null'>
+				| V.Read<TypeScriptMap, 'literal.null.undefined'>
+				| V.Read<TypeScriptMap, 'literal.number.float'>
+				| V.Read<TypeScriptMap, 'literal.number.float.leading_point'>
+				| V.Read<TypeScriptMap, 'literal.number.float.scientific'>
+				| V.Read<TypeScriptMap, 'literal.number.integer'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.big.octal'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
+				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
+				| V.Read<TypeScriptMap, 'literal.regex'>
+				| V.Read<TypeScriptMap, 'literal.string'>
+				| V.Read<TypeScriptMap, 'literal.string.interpolated'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.break'>
 				| V.Read<TypeScriptMap, 'statement.continue'>
@@ -29868,7 +30892,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
 				| V.Read<TypeScriptMap, 'statement.export.default'>
-				| V.Read<TypeScriptMap, 'statement.expression'>
 				| V.Read<TypeScriptMap, 'statement.if'>
 				| V.Read<TypeScriptMap, 'statement.import'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
@@ -29884,9 +30907,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
+				| 'import.meta'
+				| 'new.target'
+				| 'super'
+				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
 				| T.ExportStatementEqualsExport.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
@@ -31388,10 +32414,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 	};
 	readonly nodes: V.NodesOf<
 		{
-			readonly 'attribute.content.call': TSKindId.DecoratorCallExpression;
-			readonly 'attribute.content.member': TSKindId.DecoratorMemberExpression;
-			readonly 'attribute.content.parenthesized': TSKindId.DecoratorParenthesizedExpression;
-			readonly 'clause.bounds': TSKindId.Constraint;
+			readonly 'attribute.call': TSKindId.DecoratorCallExpression;
+			readonly 'attribute.member': TSKindId.DecoratorMemberExpression;
+			readonly 'attribute.parenthesized': TSKindId.DecoratorParenthesizedExpression;
 			readonly 'clause.case.default': TSKindId.SwitchDefault;
 			readonly 'clause.case.switch': TSKindId.SwitchCase;
 			readonly 'clause.catch': TSKindId.CatchClause;
@@ -31662,7 +32687,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| TSKindId.ExportStatementNamespaceExport;
 			readonly 'statement.export.all': TSKindId.ExportStatementDefaultFrom;
 			readonly 'statement.export.default': TSKindId.ExportStatementDefaultDeclaration;
-			readonly 'statement.expression': TSKindId.ExpressionStatement;
 			readonly 'statement.if': TSKindId.IfStatement;
 			readonly 'statement.import': TSKindId.ImportStatement;
 			readonly 'statement.import.alias': TSKindId.ImportAlias;
@@ -31716,10 +32740,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 		T.ParsedByKindId
 	>;
 	readonly flags: {
-		readonly 'attribute.content.call': never;
-		readonly 'attribute.content.member': never;
-		readonly 'attribute.content.parenthesized': never;
-		readonly 'clause.bounds': never;
+		readonly 'attribute.call': never;
+		readonly 'attribute.member': never;
+		readonly 'attribute.parenthesized': never;
 		readonly 'clause.case.default': never;
 		readonly 'clause.case.switch': never;
 		readonly 'clause.catch': never;
@@ -32101,7 +33124,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'statement.export': 'typeOnly';
 		readonly 'statement.export.all': 'typeOnly';
 		readonly 'statement.export.default': never;
-		readonly 'statement.expression': never;
 		readonly 'statement.if': never;
 		readonly 'statement.import': 'typeOnly';
 		readonly 'statement.import.alias': never;

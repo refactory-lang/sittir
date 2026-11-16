@@ -66,7 +66,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a raw string as its path with its content, and builds it back with the shortest hash run its content fits', () => {
-		expect(readFirst('r"x";')).toEqual({ $path: 'statement.expression', content: { $path: 'literal.string.raw', content: 'x' } });
+		expect(readFirst('r"x";')).toEqual({ $path: 'statement.expression', value: { $path: 'literal.string.raw', $value: 'x' } });
 		expect(roundTrip('r"x";')).toBe('r"x";\n');
 		expect(roundTrip('r##"x"##;')).toBe('r"x";\n');
 		expect(roundTrip('r#"a"b"#;')).toBe('r#"a"b"#;\n');
@@ -136,7 +136,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads the attributes of an enum variant and of a field onto the element, and builds them back on their own lines', () => {
-		const attributes = [{ $path: 'attribute', content: { $path: 'attribute.content', path: 'a' } }];
+		const attributes = [{ $path: 'attribute', path: 'a' }];
 		const sources = ['enum E {\n    #[a]\n    V,\n}\n', 'struct S {\n    #[a]\n    f: u8,\n}\n', 'struct S(#[a] u8);\n'];
 		expect(readFirst(sources[0]!)).toMatchObject({ body: [{ $path: 'declaration.enum_member', name: 'V', attributes }] });
 		expect(readFirst(sources[1]!)).toMatchObject({ body: [{ $path: 'declaration.field', name: 'f', attributes }] });
@@ -153,7 +153,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a call argument with attributes as an argument, one without as its expression, and builds both back', () => {
-		const call = readFirst('f(#[cfg(x)] a, b);').content as Read;
+		const call = readFirst('f(#[cfg(x)] a, b);').value as Read;
 		expect(call.arguments).toEqual([
 			{ $path: 'argument', attributes: [expect.objectContaining({ $path: 'attribute' })], value: 'a' },
 			'b'

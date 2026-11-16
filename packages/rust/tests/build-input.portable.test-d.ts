@@ -21,7 +21,10 @@ export const lineComment: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comm
 // @ts-expect-error a line comment builds from its text, never from a content member
 export const lineCommentContent: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comment.line', content: ' x' };
 export const docComment: V.BuildInput<RustMap, 'comment.line.doc'> = { $path: 'comment.line.doc', $value: ' x' };
-// @ts-expect-error a type argument holds its argument as its value, never as content
+export const typeArgument: V.BuildInput<RustMap, 'element.type_argument'>['argument'] = 'u8';
+// @ts-expect-error a type argument holds its argument as its argument, never as content
 export const typeArgumentContent: V.BuildInput<RustMap, 'element.type_argument'>['content'] = 'u8';
-// @ts-expect-error an expression statement holds its expression, never content
-export const statementContent: V.BuildInput<RustMap, 'statement.expression'>['content'] = 'x';
+declare const call: V.Read<RustMap, 'expression.call'>;
+export const statements: V.BuildInput<RustMap, 'statement.block'>['statements'] = [call];
+// @ts-expect-error a statement list holds an expression itself, so no expression statement wraps it
+export const expressionStatement: V.BuildInput<RustMap, 'statement.expression'> = { $path: 'statement.expression' };

@@ -3,14 +3,14 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "bbb38dfedaf01af5e9b75cf72ff858a4c44fa86df2c3654f7f630af343cc2b03";
+export const hash = "20b2dfd5009d13a05781374157061cbc04f6d4f95c47629c10c2e7c8babf935e";
 
 export const renames = {
 	module: "file",
 	function_definition: "function_declaration",
 	class_definition: "class_declaration",
 	typed_parameter: "typed_parameter_declaration",
-	default_parameter: "default_parameter_declaration",
+	default_parameter: "defaulted_parameter_declaration",
 	typed_default_parameter: "typed_default_parameter_declaration",
 	type_param_type_var: "type_parameter_declaration",
 	type_param_type_var_tuple: "variadic_type_parameter_declaration",
@@ -34,7 +34,6 @@ export const renames = {
 	import_prefix: "prefix_relative_import_clause",
 	aliased_import: "alias_import_clause",
 	wildcard_import: "wildcard_import_clause",
-	comprehension_clauses: "comprehension_clause",
 	keyword_argument: "named_argument",
 	pair: "pair_element",
 	list_splat: "spread_element",
@@ -105,7 +104,7 @@ export default grammar(
 			_simple_statements: { "0": field("statements") },
 			_suite: { "-3": alias("block_statement") },
 			_type_param_optional1: { "1": field("bounds") },
-			aliased_import: { "0/0": alias("qualified_identifier") },
+			aliased_import: [{ "2": field("rename") }, { "0/0": alias("qualified_identifier") }],
 			assignment_eq: { "0": field("name"), "1/1": field("value") },
 			assignment_type: { "0": field("name") },
 			assignment_typed: { "0": field("name"), "1/3": field("value") },

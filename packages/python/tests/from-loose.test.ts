@@ -28,10 +28,10 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 	it('aliased_import accepts string for both name and alias', () => {
 		// aliased_import: { name: dotted_name, alias: identifier }
 		// Loose: `name` needs at least one identifier for its dotted_name
-		// field; `alias` is a bare-string leaf field.
+		// field; `rename` is a bare-string leaf field.
 		const result = py.build.aliasedImport({
 			name: { names: ['os'] } as any,
-			alias: 'system' as any
+			rename: 'system' as any
 		}) as any;
 		expect(result.$type).toBe(py.kinds.AliasedImport);
 	});

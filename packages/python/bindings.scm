@@ -25,7 +25,7 @@
 ((method_declaration name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
-(default_parameter value: (_)? @default) @declaration.parameter.default
+(default_parameter value: (_)? @default) @declaration.parameter.defaulted
 (typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
 (type_param_type_var) @declaration.type_parameter
 (type_param_type_var (type) @bounds)
@@ -66,8 +66,7 @@
 (continue_statement) @statement.continue
 (global_statement) @statement.global
 (nonlocal_statement) @statement.nonlocal
-(expression_statement) @statement.expression
-(expression_statement (_) @expression)
+(expression_statement (_) @element)
 (expression_statement_tuple ",") @expression.collection.tuple.bare
 (expression_statement_tuple item: (_) @elements)
 (expression_statement_tuple "," @trailingComma .)
@@ -104,8 +103,9 @@
 (relative_import) @clause.import.relative
 (import_prefix) @clause.import.relative.prefix
 (aliased_import) @clause.import.alias
+(aliased_import alias: (_) @rename)
 (wildcard_import) @clause.import.wildcard
-(comprehension_clauses) @clause.comprehension
+(comprehension_clauses content: (_) @element)
 (lambda_within_for_in_clause) @expression.lambda
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
@@ -133,8 +133,8 @@
 (binary_operator operator: "&") @expression.binary.bitwise.and
 (binary_operator operator: "|") @expression.binary.bitwise.or
 (binary_operator operator: "^") @expression.binary.bitwise.xor
-(binary_operator operator: "<<") @expression.binary.shift.left
-(binary_operator operator: ">>") @expression.binary.shift.right
+(binary_operator left: (_) @operand operator: "<<" right: (_) @count) @expression.binary.shift.left
+(binary_operator left: (_) @operand operator: ">>" right: (_) @count) @expression.binary.shift.right
 (boolean_operator) @expression.binary.logical
 (boolean_operator operator: "and") @expression.binary.logical.and
 (boolean_operator operator: "or") @expression.binary.logical.or

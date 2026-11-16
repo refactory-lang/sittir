@@ -1891,7 +1891,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "bounds",
+			"name": "type",
 			"join": {
 				"previous": false,
 				"next": true

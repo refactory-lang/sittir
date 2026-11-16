@@ -28,7 +28,7 @@ export const records = {
 		words: 8,
 		builtWords: 4,
 		name: { word: 2, width: 3, forms: 1, built: 2 },
-		alias: { word: 5, width: 3, forms: 1, built: 3 }
+		rename: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	PrintStatementNode: { words: 13, builtWords: 3, content: { word: 2, width: 11, inline: 11, forms: 8, built: 2 } },
 	ChevronNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },

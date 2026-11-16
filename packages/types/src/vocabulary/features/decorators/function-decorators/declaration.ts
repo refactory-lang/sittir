@@ -3,7 +3,7 @@ import type { Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
-		readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Content.Call<G> | V.Attribute.Content.Member<G> | V.Attribute.Content.Parenthesized<G>>[];
+		readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
 		// p only
 	}
 }

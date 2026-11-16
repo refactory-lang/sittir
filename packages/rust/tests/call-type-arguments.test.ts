@@ -14,7 +14,7 @@ const expressionOf = (source: string): Read => {
 	return ((body.statements as readonly Read[])[0]!.content ?? (body.statements as readonly Read[])[0]) as Read;
 };
 const roundTrip = (source: string): string => render(runtime.build(runtime.read(runtime.engine.parse(source)) as never));
-const argument = (content: string) => ({ $path: 'element.type_argument', content, bounds: [] });
+const argument = (value: string) => ({ $path: 'element.type_argument', value, bounds: [] });
 const member = { $path: 'expression.member', object: 'x', property: 'f' };
 const qualified = { $path: 'identifier.qualified', qualifier: 'a', name: 'f' };
 

@@ -23,12 +23,23 @@ const typeAt = (map: string, path: string, member: string): string => {
 
 const armsAt = (map: string, path: string, member: string): readonly string[] => typeAt(map, path, member).split(' | ');
 
+const flagsAt = (map: string, path: string): string => {
+	const block = map.slice(map.indexOf('\treadonly flags: {\n'));
+	const line = block.split('\n').find((candidate) => candidate.startsWith(`\t\treadonly "${path}": `));
+	if (line === undefined) throw new Error(`no flags at ${path}`);
+	return line.slice(`\t\treadonly "${path}": `.length, -1);
+};
+
 describe('emitGrammarMap, rust', () => {
 	let map: string;
 
 	beforeAll(async () => {
 		map = await mapOf('rust');
 	}, 120_000);
+
+	it("types a flag a container's own token sets on what it holds: an inner attribute item sets inner on its attribute", () => {
+		expect(flagsAt(map, 'attribute')).toBe('"inner"');
+	});
 
 	it('declares the map over the grammar features and ends by asserting it fits the vocabulary', () => {
 		expect(map).toContain(
@@ -45,7 +56,7 @@ describe('emitGrammarMap, rust', () => {
 	});
 
 	it('overrides a slot holding a supertype with the paths its subtypes read as, never the supertype path no node reads as', () => {
-		const input = armsAt(map, 'attribute.content', 'input');
+		const input = armsAt(map, 'attribute', 'input');
 		expect(input).toContain('V.Read<RustMap, "element.macro.token_tree.delimited.paren">');
 		expect(input).not.toContain('V.Read<RustMap, "element.macro.token_tree.delimited">');
 	});

@@ -37,6 +37,20 @@ describe('readVocabulary', () => {
 		}
 	});
 
+	it('refuses a kind that restates a member it does not declare', async () => {
+		await expect(
+			vocabularyIn(
+				'export interface Declaration<G, K = "declaration"> {',
+				"\treadonly $path: K;",
+				'\treadonly name: string;',
+				'}',
+				'export interface Bare<G, K = "declaration.bare"> extends SubKindOf<V.Declaration<G>, \'name\'> {',
+				"\treadonly $path: K;",
+				'}'
+			)
+		).rejects.toThrow(/Bare restates name, which it does not declare/);
+	});
+
 	it('drops a member a refinement narrows to never from its members, and keeps it on the parent', async () => {
 		const vocabulary = await vocabularyIn(
 			'export interface Declaration<G, K = "declaration"> {',

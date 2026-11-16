@@ -532,7 +532,7 @@ describe('portable is: typescript', async () => {
 		for (const [path, owned] of [
 			['expression.call', Function.prototype.call],
 			['declaration.signature.call', Function.prototype.call],
-			['attribute.content.call', Function.prototype.call],
+			['attribute.call', Function.prototype.call],
 			['declaration.constructor', Function.prototype.constructor],
 			['type.function.constructor', Function.prototype.constructor]
 		] as const) {

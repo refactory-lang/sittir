@@ -7160,7 +7160,7 @@ export const coerceToDefaultType: ConfigSeat<T.DefaultType.Loose, ReturnType<typ
 	);
 };
 
-export function resolveConstraint_bounds(value: T.Constraint.LooseConfig['bounds']): Admit<T.Constraint['_bounds']> {
+export function resolveConstraint_type(value: T.Constraint.LooseConfig['type']): Admit<T.Constraint['_type']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Type>(value, _K41, _K42)),
 		[]
@@ -7179,11 +7179,11 @@ export function coerceToConstraint(
 	return F.buildConstraint(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'bounds', () => input, TSKindId.Constraint),
+				configFieldOr(input, 'type', () => input, TSKindId.Constraint),
 				[],
 				() =>
 					_resolveOne<T.Type>(
-						configFieldOr(input, 'bounds', () => input, TSKindId.Constraint),
+						configFieldOr(input, 'type', () => input, TSKindId.Constraint),
 						_K41,
 						_K42
 					)

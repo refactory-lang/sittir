@@ -20,7 +20,7 @@ import type {
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
-import { isNumberSlots, leafSeatOf, numberMembers, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
+import { isNumberSlots, leafSeatOf, numberMembers, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -303,11 +303,13 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			return [...spelled.flatMap(({ index, item }) => (index === undefined ? [item] : [])), ...items];
 		};
 		const seatOf = (arm: PortableBuildArm, seats: readonly PortableSeat[], structure?: PortableStructure): PortableSeat | undefined => {
-			const fitting = seats.filter(
+			const holding = seats.filter(
 				(seat) =>
 					(arm.holders === undefined || arm.holders.some(([holder, key]) => holder === seat.at[0] && key === seat.at[1])) &&
 					seat.kinds.includes(arm.kind)
 			);
+			const setting = new Set(holding.flatMap(seatSets));
+			const fitting = structure === undefined || setting.size === 0 ? holding : holding.filter((seat) => [...setting].every((flag) => (structure.$flags ?? []).includes(flag) === seatSets(seat).includes(flag)));
 			if (structure === undefined || fitting.length < 2) return fitting[0];
 			const named = [...memberKeys(structure).filter((name) => structure[name] !== undefined), ...factsSet(arm, structure).map((fact) => fact.member)];
 			const stated = named.filter((name) => fitting.some((seat) => ownedBy(seat).has(name)));
@@ -728,7 +730,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			const listed: (readonly [string, PortableFlagStep])[] = [];
 			for (const flag of structure.$flags ?? []) {
 				const steps = arm.flags[flag];
-				if (steps === undefined && facts.some((fact) => fact.flag === flag)) continue;
+				if (steps === undefined && (facts.some((fact) => fact.flag === flag) || (seat !== undefined && seatSets(seat).includes(flag)))) continue;
 				if (steps === undefined && !arm.when.some((test) => 'flag' in test && test.flag === flag && test.set))
 					throw new Error(`portable build: ${structure.$path}: ${flag} is not a flag of ${nameOf(arm.kind)}`);
 				for (const step of steps?.presets ?? []) preset(frame, step, structure.$path);
@@ -773,7 +775,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			const text = takesTextValue(table, arm) && typeof structure.$value === 'string' ? structure.$value : undefined;
 			if (arm.content !== undefined && text === undefined) throw new Error(`portable build: ${structure.$path} takes its ${nameOf(arm.kind)} as a text $value`);
 			if (text !== undefined && arm.content === undefined) frame.input = text;
-			if (text !== undefined && arm.content !== undefined) placeMember(frame, arm.content, text, structure.$path);
+			if (text !== undefined && arm.content !== undefined && (text !== '' || !arm.content.steps.some((step) => step.optional === true))) placeMember(frame, arm.content, text, structure.$path);
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
 				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no member ${name}`);

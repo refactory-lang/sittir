@@ -6278,7 +6278,7 @@ pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     Some(SeatPath::Content), None, None, None, None, None, None, Some(SeatPath::Content), None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Field(FieldId(27))), None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Field(FieldId(26))), None, None,
     None, None, None, None, None, None, None, Some(SeatPath::Content), None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,

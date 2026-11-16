@@ -45,7 +45,7 @@ describe('a wrapper around one member reads as that member', () => {
 		['typescript', '@x\nclass A {}\n', 'declaration.class', { decorators: ['x'] }],
 		['python', 'def f(x: int) -> int:\n    pass\n', 'declaration.function', { returnType: 'int', parameters: [expect.objectContaining({ type: 'int' })] }],
 		['python', 'x: int\n', 'declaration.variable', { type: 'int' }],
-		['rust', 'struct S {\n    #[a]\n    x: u8,\n}\n', 'declaration.field', { attributes: [{ $path: 'attribute.content', path: 'a' }] }]
+		['rust', 'struct S {\n    #[a]\n    x: u8,\n}\n', 'declaration.field', { attributes: [{ $path: 'attribute', path: 'a' }] }]
 	] as const)('%s reads %j as %s holding %j, and builds it back', (grammar, source, path, members) => {
 		const runtime = runtimes[grammar];
 		expect(found(runtime, source, path)).toMatchObject(members);
@@ -57,10 +57,10 @@ describe('a wrapper around one member reads as that member', () => {
 		const { rust: runtime } = runtimes;
 		const source = '#![a]\n#[b]\nfn f() {}\n';
 		const [inner, outer] = readOf(runtime, source).statements as readonly Read[];
-		expect(inner).toEqual({ $path: 'attribute.content', $flags: ['inner'], path: 'a' });
-		expect(outer).toEqual({ $path: 'attribute.content', path: 'b' });
+		expect(inner).toEqual({ $path: 'attribute', $flags: ['inner'], path: 'a' });
+		expect(outer).toEqual({ $path: 'attribute', path: 'b' });
 		expect(rendered(runtime, readOf(runtime, source))).toBe(source);
-		expect(rendered(runtime, { $path: 'attribute.content', $flags: ['inner'], path: 'c' })).toBe('#![c]');
+		expect(rendered(runtime, { $path: 'file', statements: [{ $path: 'attribute', $flags: ['inner'], path: 'c' }] }).trimEnd()).toBe('#![c]');
 	});
 });
 
@@ -69,10 +69,10 @@ describe('an unnamed slot reads under the name of what it holds', () => {
 		['python', 'from a import b, c\n', 'statement.import.from', 'names'],
 		['python', 'from __future__ import annotations\n', 'statement.import.future', 'names'],
 		['python', 'def g():\n    yield 1\n', 'expression.yield', 'expression'],
-		['python', 'f()\n', 'statement.expression', 'expression'],
-		['rust', 'fn f() {\n    g();\n}\n', 'statement.expression', 'expression'],
-		['typescript', "import a, { b } from 'm';\n", 'clause.import.names', 'names'],
-		['typescript', "import { b } from 'm';\n", 'clause.import.names', 'names'],
+		['python', 'f()\n', 'statement.expression', 'value'],
+		['rust', 'fn f() {\n    g();\n}\n', 'statement.expression', 'value'],
+		['typescript', "import a, { b } from 'm';\n", 'clause.import.names', 'elements'],
+		['typescript', "import { b } from 'm';\n", 'clause.import.names', 'elements'],
 		['typescript', 'declare const x: number;\n', 'declaration.ambient', 'body'],
 		['typescript', "type T = 'a';\n", 'type.literal', 'value']
 	] as const)('%s reads %j as %s with its %s, never content, and builds it back', (grammar, source, path, member) => {

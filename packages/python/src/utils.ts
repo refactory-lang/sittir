@@ -184,7 +184,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	141: [['names', 0, undefined, '_name']],
 	142: [
 		['name', 0, undefined, '_name'],
-		['alias', 1, undefined, '_alias']
+		['rename', 1, undefined, '_rename']
 	],
 	144: [['content', 0, undefined, '_content']],
 	145: [['expression', 0, undefined, '_expression']],
@@ -846,17 +846,17 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'aliased_import',
 		required: [
 			['_name', 'name'],
-			['_alias', 'alias']
+			['_rename', 'rename']
 		],
 		single: [
 			['_name', 'AliasedImport.name'],
-			['_alias', 'AliasedImport.alias']
+			['_rename', 'AliasedImport.rename']
 		],
 		nodeOnly: [
 			['_name', 'AliasedImport.name', 'a built DottedName', [187]],
-			['_alias', 'AliasedImport.alias', 'buildIdentifier(…)', [1]]
+			['_rename', 'AliasedImport.rename', 'buildIdentifier(…)', [1]]
 		],
-		config: ['name', 'alias']
+		config: ['name', 'rename']
 	},
 	144: {
 		kind: 'print_statement',

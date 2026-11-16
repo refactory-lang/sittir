@@ -32,9 +32,33 @@ export namespace Expression {
 			}
 		}
 		export namespace Shift {
-			export interface RightUnsigned<G extends GrammarMap, K extends Under<'expression.binary.shift.right_unsigned'> = 'expression.binary.shift.right_unsigned'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+			export interface RightUnsigned<G extends GrammarMap, K extends Under<'expression.binary.shift.right_unsigned'> = 'expression.binary.shift.right_unsigned'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator' | 'left' | 'right'> {
 				readonly $path: K;
 				readonly operator?: never;
+				readonly left?: never;
+				readonly right?: never;
+				readonly operand?: Slot<
+					G,
+					K,
+					'operand',
+					| V.Declaration.Module<G>
+					| V.Expression.Any<G>
+					| V.Identifier.Any<G>
+					| V.Literal.Any<G>
+					| V.Pattern.Any<G>
+					| V.Statement.Any<G>
+				>;
+				readonly count?: Slot<
+					G,
+					K,
+					'count',
+					| V.Declaration.Module<G>
+					| V.Expression.Any<G>
+					| V.Identifier.Any<G>
+					| V.Literal.Any<G>
+					| V.Pattern.Any<G>
+					| V.Statement.Any<G>
+				>;
 			}
 		}
 	}

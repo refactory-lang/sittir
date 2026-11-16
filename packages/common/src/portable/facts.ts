@@ -42,6 +42,25 @@ export const builtFlags = (arm: PortableBuildArm): readonly string[] => [
 	...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])
 ];
 
+export const seatSets = (seat: PortableSeat): readonly string[] => (seat.within ?? []).flatMap((container) => container.sets?.flags ?? []);
+
+export const containerSetFlags = (table: PortableBuildTable): ReadonlyMap<number, ReadonlySet<string>> => {
+	const out = new Map<number, Set<string>>();
+	const visit = (member: PortableMemberStep): void => {
+		for (const seat of member.seats) {
+			const flags = seatSets(seat);
+			for (const kind of flags.length === 0 ? [] : seat.kinds) for (const flag of flags) (out.get(kind) ?? out.set(kind, new Set()).get(kind)!).add(flag);
+			for (const container of seat.within ?? []) (container.members ?? []).forEach(visit);
+		}
+	};
+	for (const { arms } of Object.values(table.paths))
+		for (const arm of arms) {
+			arm.members.forEach(visit);
+			if (arm.content !== undefined) visit(arm.content);
+		}
+	return out;
+};
+
 export const isNumberSlots = (numeric: PortableBuildArm['numeric']): numeric is readonly string[] => Array.isArray(numeric);
 
 export const numericSlots = (arm: PortableBuildArm): readonly string[] =>

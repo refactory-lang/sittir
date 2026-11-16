@@ -2244,9 +2244,9 @@ export function resolveAliasedImport_name(value: T.AliasedImport.LooseConfig['na
 	return _resolveOneBranch<T.DottedName>(value, 'dotted_name');
 }
 
-export function resolveAliasedImport_alias(
-	value: T.AliasedImport.LooseConfig['alias']
-): Admit<T.AliasedImport['_alias']> {
+export function resolveAliasedImport_rename(
+	value: T.AliasedImport.LooseConfig['rename']
+): Admit<T.AliasedImport['_rename']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -2258,7 +2258,7 @@ export const coerceToAliasedImport: ConfigSeat<T.AliasedImport.Loose, ReturnType
 	currentHandle()?.admit(TSKindId.AliasedImport, [input]);
 	return F.buildAliasedImport({
 		name: resolveAliasedImport_name(input.name),
-		alias: resolveAliasedImport_alias(input.alias)
+		rename: resolveAliasedImport_rename(input.rename)
 	});
 };
 

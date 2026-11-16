@@ -27,9 +27,6 @@ export type ExactSlots = ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
 
 const KIND_REASONS: ReadonlySet<RawReason> = new Set<RawReason>(['flags', 'readOnly', 'unread', 'text']);
 
-const lacksContent = ({ content }: PortableBuildArm): boolean =>
-	content !== undefined && (content.steps.some((step) => step.optional === true) || content.seats.some((seat) => seat.within?.some((container) => container.optional === true) === true));
-
 export const rawGroupOf = (reasons: readonly RawReason[]): 'kind' | 'value' => (reasons.some((reason) => KIND_REASONS.has(reason)) ? 'kind' : 'value');
 
 export interface ExactReads {
@@ -210,7 +207,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if (structural.some((arm) => arm.scalar !== undefined && (arm.scalar === 'float' || !totalIntegerReads.has(arm.kind)))) out.push('scalar');
 		const builtWhole = structural.length > 0 && structural.every((arm) => nullaryBuilt(table, arm));
 		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
-		if ((structural.length > 0 && structural.every((arm) => arm.content !== undefined) && structural.some(lacksContent)) || (readsText && !structural.every((arm) => textBuilt(table, arm)))) out.push('text');
+		if (readsText && !structural.every((arm) => textBuilt(table, arm))) out.push('text');
 		const buildable = new Set(structural.flatMap(builtFlags));
 		if ((flags.get(kind) ?? []).some((flag) => !buildable.has(flag))) out.push('flags');
 		const touched = reached(kind);

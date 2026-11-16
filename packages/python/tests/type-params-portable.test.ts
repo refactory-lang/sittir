@@ -12,12 +12,12 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 	});
 
 	it.each([
-		['type = 1\n', '{"$path":"file","statements":[{"$path":"statement.expression","content":{"$path":"declaration.variable","name":"type","value":{"$path":"literal.number.integer","$value":1}}}]}'],
-		['type(x)\n', '{"$path":"file","statements":[{"$path":"statement.expression","content":{"$path":"expression.call","function":"type","arguments":["x"]}}]}'],
+		['type = 1\n', '{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"declaration.variable","name":"type","value":{"$path":"literal.number.integer","$value":1}}}]}'],
+		['type(x)\n', '{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"expression.call","function":"type","arguments":["x"]}}]}'],
 		['print(type)\n', '{"$path":"file","statements":[{"$path":"statement.print","arguments":[{"$path":"expression.parenthesized","expression":"type"}]}]}'],
 		[
 			'x: type[int]\n',
-			'{"$path":"file","statements":[{"$path":"statement.expression","content":{"$path":"declaration.variable","name":"x","type":{"$path":"type","content":{"$path":"type.generic","name":"type","typeArguments":[{"$path":"type","content":"int"}]}}}}]}'
+			'{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"type","typeArguments":["int"]}}}]}'
 		]
 	])('keeps the soft keyword in %j', (source, read) => {
 		expect(readOf(source)).toBe(read);
@@ -25,13 +25,13 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 
 	it('reads a generic type\'s arguments as typeArguments', () => {
 		expect(readOf('x: dict[str, int] = {}\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"statement.expression","content":{"$path":"declaration.variable","name":"x","type":{"$path":"type","content":{"$path":"type.generic","name":"dict","typeArguments":[{"$path":"type","content":"str"},{"$path":"type","content":"int"}]}},"value":{"$path":"expression.collection.map","elements":[]}}}]}'
+			'{"$path":"file","statements":[{"$path":"statement.expression","value":{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"dict","typeArguments":["str","int"]},"value":{"$path":"expression.collection.map","elements":[]}}}]}'
 		);
 	});
 
 	it('reads each declared parameter with its name and bound, and a starred one as variadic or parameters', () => {
 		expect(readOf('def f[T, U: int, V: (str, bytes), *Ts, **P](): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":[{"$path":"type","content":"int"}]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"type","content":{"$path":"expression.collection.tuple","elements":["str","bytes"]}}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":["int"]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"expression.collection.tuple","elements":["str","bytes"]}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
 		);
 	});
 
@@ -65,12 +65,12 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 	it.each([
 		[
 			'type X[T] = list[T]\n',
-			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":{"$path":"type","content":{"$path":"type.generic","name":"list","typeArguments":[{"$path":"type","content":"T"}]}},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":{"$path":"type.generic","name":"list","typeArguments":["T"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}]}]}'
 		],
-		['type X = int\n', '{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":{"$path":"type","content":"int"},"typeParameters":[]}]}'],
+		['type X = int\n', '{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":"int","typeParameters":[]}]}'],
 		[
 			'type X[T: int] = list[T]\n',
-			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":{"$path":"type","content":{"$path":"type.generic","name":"list","typeArguments":[{"$path":"type","content":"T"}]}},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[{"$path":"type","content":"int"}]}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":{"$path":"type.generic","name":"list","typeArguments":["T"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":["int"]}]}]}'
 		]
 	])('reads the alias %j as its name, parameters and value', (source, read) => {
 		expect(readOf(source)).toBe(read);

@@ -13,7 +13,7 @@
 #define ALIAS_COUNT 6
 #define TOKEN_COUNT 133
 #define EXTERNAL_TOKEN_COUNT 17
-#define FIELD_COUNT 68
+#define FIELD_COUNT 69
 #define MAX_ALIAS_SEQUENCE_LENGTH 9
 #define MAX_RESERVED_WORD_SET_SIZE 35
 #define PRODUCTION_ID_COUNT 178
@@ -2655,23 +2655,24 @@ enum ts_field_identifiers {
   field_property = 49,
   field_qualifier = 50,
   field_real = 51,
-  field_return_type = 52,
-  field_right = 53,
-  field_sign = 54,
-  field_start = 55,
-  field_statements = 56,
-  field_step = 57,
-  field_stop = 58,
-  field_string_end = 59,
-  field_string_start = 60,
-  field_subject = 61,
-  field_trailing_comma = 62,
-  field_type = 63,
-  field_type_conversion = 64,
-  field_type_parameter = 65,
-  field_type_parameters = 66,
-  field_value = 67,
-  field_with_clause = 68,
+  field_rename = 52,
+  field_return_type = 53,
+  field_right = 54,
+  field_sign = 55,
+  field_start = 56,
+  field_statements = 57,
+  field_step = 58,
+  field_stop = 59,
+  field_string_end = 60,
+  field_string_start = 61,
+  field_subject = 62,
+  field_trailing_comma = 63,
+  field_type = 64,
+  field_type_conversion = 65,
+  field_type_parameter = 66,
+  field_type_parameters = 67,
+  field_value = 68,
+  field_with_clause = 69,
 };
 
 static const char * const ts_field_names[] = {
@@ -2727,6 +2728,7 @@ static const char * const ts_field_names[] = {
   [field_property] = "property",
   [field_qualifier] = "qualifier",
   [field_real] = "real",
+  [field_rename] = "rename",
   [field_return_type] = "return_type",
   [field_right] = "right",
   [field_sign] = "sign",
@@ -3057,8 +3059,8 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_qualifier, 0},
     {field_qualifier, 1},
   [81] =
-    {field_alias, 2},
     {field_name, 0},
+    {field_rename, 2},
   [83] =
     {field_name, 3, .inherited = true},
   [84] =

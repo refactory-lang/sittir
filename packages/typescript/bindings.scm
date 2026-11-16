@@ -212,7 +212,7 @@
 (export_statement_default_from (export_statement_default_from_clause_from source: (_) @source))
 (export_statement_default_from (export_statement_default_from_ns_from source: (_) @source))
 (export_statement_default_from (export_statement_default_from_star_from source: (_) @source))
-(expression_statement) @statement.expression
+(expression_statement expression: (_) @element)
 (break_statement) @statement.break
 (continue_statement) @statement.continue
 (debugger_statement) @statement.debugger
@@ -238,9 +238,9 @@
 (implements_clause) @clause.implements
 (export_clause) @clause.export
 (import_clause) @clause.import.names
-(import_clause [(namespace_import) (named_imports)] @names)
+(import_clause [(namespace_import) (named_imports)] @specifiers)
 (import_clause (import_clause_default_import (identifier) @default))
-(import_clause (import_clause_default_import (import_clause_group (_) @names)))
+(import_clause (import_clause_default_import (import_clause_group (_) @specifiers)))
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
@@ -256,8 +256,6 @@
 (export_specifier type_keyword: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
-(constraint) @clause.constraint
-(constraint type: (_) @bounds)
 ((constraint ["extends" ":"] @dropped) (#set! reason "the owning grammar rule determines the bounds introducer"))
 (default_type) @clause.default
 
@@ -297,9 +295,9 @@
 (binary_expression operator: "&") @expression.binary.bitwise.and
 (binary_expression operator: "|") @expression.binary.bitwise.or
 (binary_expression operator: "^") @expression.binary.bitwise.xor
-(binary_expression operator: "<<") @expression.binary.shift.left
-(binary_expression operator: ">>") @expression.binary.shift.right
-(binary_expression operator: ">>>") @expression.binary.shift.right_unsigned
+(binary_expression left: (_) @operand operator: "<<" right: (_) @count) @expression.binary.shift.left
+(binary_expression left: (_) @operand operator: ">>" right: (_) @count) @expression.binary.shift.right
+(binary_expression left: (_) @operand operator: ">>>" right: (_) @count) @expression.binary.shift.right_unsigned
 (binary_expression operator: "&&") @expression.binary.logical.and
 (binary_expression operator: "||") @expression.binary.logical.or
 (binary_expression operator: "??") @expression.binary.coalesce
@@ -374,9 +372,9 @@
 (class (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
 (class (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (class (class_heritage (implements_clause type: (_) @implements)))
-(decorator_member_expression) @attribute.content.member
-(decorator_call_expression) @attribute.content.call
-(decorator_parenthesized_expression) @attribute.content.parenthesized
+(decorator_member_expression) @attribute.member
+(decorator_call_expression) @attribute.call
+(decorator_parenthesized_expression) @attribute.parenthesized
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (object_pattern) @pattern.object

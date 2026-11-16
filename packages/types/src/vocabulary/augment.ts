@@ -28,7 +28,6 @@ import type * as blockComments from './features/block-comments/index.ts';
 import type * as boundClauses from './features/parametric-polymorphism/bounded-quantification/bound-clauses/index.ts';
 import type * as boundedQuantification from './features/parametric-polymorphism/bounded-quantification/index.ts';
 import type * as byteStrings from './features/byte-strings/index.ts';
-import type * as cFamilyExpressionStatements from './features/c-family-expression-statements/index.ts';
 import type * as cFamilyUnaryOperators from './features/c-family-unary-operators/index.ts';
 import type * as cStrings from './features/c-strings/index.ts';
 import type * as characters from './features/characters/index.ts';
@@ -203,40 +202,29 @@ declare module './argument.ts' {
 }
 
 declare module './attribute.ts' {
+	interface Attribute<G extends GrammarMap, K extends gate.Under<'attribute'> = 'attribute'> {
+		readonly inner?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute<G, K>['inner']>;
+		readonly input?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute<G, K>['input']>;
+		readonly path?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute<G, K>['path']>;
+	}
 	namespace Attribute {
-		interface Content<
+		interface Call<
 			G extends GrammarMap,
-			K extends gate.Under<'attribute.content'> = 'attribute.content'
-		> extends fieldsAndModifiers.Attribute.Content<G, K> {
-			readonly inner?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['inner']>;
-			readonly input?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['input']>;
-			readonly path?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['path']>;
-		}
-		namespace Content {
-			interface Call<
-				G extends GrammarMap,
-				K extends gate.Under<'attribute.content.call'> = 'attribute.content.call'
-			> extends memberDecorators.Attribute.Content.Call<G, K> {}
-			interface Member<
-				G extends GrammarMap,
-				K extends gate.Under<'attribute.content.member'> = 'attribute.content.member'
-			> extends memberDecorators.Attribute.Content.Member<G, K> {}
-			interface Parenthesized<
-				G extends GrammarMap,
-				K extends gate.Under<'attribute.content.parenthesized'> = 'attribute.content.parenthesized'
-			> extends memberDecorators.Attribute.Content.Parenthesized<G, K> {}
-			type Any<G extends GrammarMap> =
-				| V.Attribute.Content<G>
-				| V.Attribute.Content.Call<G>
-				| V.Attribute.Content.Member<G>
-				| V.Attribute.Content.Parenthesized<G>;
-		}
+			K extends gate.Under<'attribute.call'> = 'attribute.call'
+		> extends memberDecorators.Attribute.Call<G, K> {}
+		interface Member<
+			G extends GrammarMap,
+			K extends gate.Under<'attribute.member'> = 'attribute.member'
+		> extends memberDecorators.Attribute.Member<G, K> {}
+		interface Parenthesized<
+			G extends GrammarMap,
+			K extends gate.Under<'attribute.parenthesized'> = 'attribute.parenthesized'
+		> extends memberDecorators.Attribute.Parenthesized<G, K> {}
 		type Any<G extends GrammarMap> =
 			| V.Attribute<G>
-			| V.Attribute.Content<G>
-			| V.Attribute.Content.Call<G>
-			| V.Attribute.Content.Member<G>
-			| V.Attribute.Content.Parenthesized<G>;
+			| V.Attribute.Call<G>
+			| V.Attribute.Member<G>
+			| V.Attribute.Parenthesized<G>;
 	}
 }
 
@@ -456,10 +444,6 @@ declare module './clause.ts' {
 			> extends letPatterns.Clause.Let.Chain<G, K> {}
 			type Any<G extends GrammarMap> = V.Clause.Let<G> | V.Clause.Let.Chain<G>;
 		}
-		interface Lifetimes<
-			G extends GrammarMap,
-			K extends gate.Under<'clause.lifetimes'> = 'clause.lifetimes'
-		> extends lifetimes.Clause.Lifetimes<G, K> {}
 		interface Macro<
 			G extends GrammarMap,
 			K extends gate.Under<'clause.macro'> = 'clause.macro'
@@ -535,7 +519,6 @@ declare module './clause.ts' {
 			| V.Clause.Import.Wildcard<G>
 			| V.Clause.Let<G>
 			| V.Clause.Let.Chain<G>
-			| V.Clause.Lifetimes<G>
 			| V.Clause.Macro<G>
 			| V.Clause.Macro.Rule<G>
 			| V.Clause.MappedType<G>
@@ -1606,14 +1589,14 @@ declare module './declaration.ts' {
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Parameter<G, K>['type']>;
 		}
 		namespace Parameter {
-			interface Default<
+			interface Defaulted<
 				G extends GrammarMap,
-				K extends gate.Under<'declaration.parameter.default'> = 'declaration.parameter.default'
-			> extends pythonDeclarations.Declaration.Parameter.Default<G, K> {
+				K extends gate.Under<'declaration.parameter.defaulted'> = 'declaration.parameter.defaulted'
+			> extends pythonDeclarations.Declaration.Parameter.Defaulted<G, K> {
 				readonly default: gate.In<
 					G,
 					features.DefaultParameterForms,
-					defaultParameterForms.Declaration.Parameter.Default<G, K>['default']
+					defaultParameterForms.Declaration.Parameter.Defaulted<G, K>['default']
 				>;
 			}
 			interface Private<
@@ -1677,7 +1660,7 @@ declare module './declaration.ts' {
 			}
 			type Any<G extends GrammarMap> =
 				| V.Declaration.Parameter<G>
-				| V.Declaration.Parameter.Default<G>
+				| V.Declaration.Parameter.Defaulted<G>
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
@@ -2508,7 +2491,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Module.Public.Restricted<G>
 			| V.Declaration.ModuleProperty<G>
 			| V.Declaration.Parameter<G>
-			| V.Declaration.Parameter.Default<G>
+			| V.Declaration.Parameter.Defaulted<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
@@ -4506,13 +4489,6 @@ declare module './statement.ts' {
 				| V.Statement.Export.All<G>
 				| V.Statement.Export.Default<G>;
 		}
-		interface Expression<G extends GrammarMap, K extends gate.Under<'statement.expression'> = 'statement.expression'> {
-			readonly expression?: gate.In<
-				G,
-				features.CFamilyExpressionStatements,
-				cFamilyExpressionStatements.Statement.Expression<G, K>['expression']
-			>;
-		}
 		interface Global<
 			G extends GrammarMap,
 			K extends gate.Under<'statement.global'> = 'statement.global'
@@ -4727,7 +4703,6 @@ declare module './statement.ts' {
 			| V.Statement.Export<G>
 			| V.Statement.Export.All<G>
 			| V.Statement.Export.Default<G>
-			| V.Statement.Expression<G>
 			| V.Statement.Global<G>
 			| V.Statement.If<G>
 			| V.Statement.Import<G>
@@ -5043,14 +5018,9 @@ declare module './map.ts' {
 		readonly argument: V.Argument<G>;
 		readonly 'argument.named': gate.In<G, features.NamedArguments, V.Argument.Named<G>>;
 		readonly attribute: V.Attribute<G>;
-		readonly 'attribute.content': gate.In<G, features.FieldsAndModifiers, V.Attribute.Content<G>>;
-		readonly 'attribute.content.call': gate.In<G, features.MemberDecorators, V.Attribute.Content.Call<G>>;
-		readonly 'attribute.content.member': gate.In<G, features.MemberDecorators, V.Attribute.Content.Member<G>>;
-		readonly 'attribute.content.parenthesized': gate.In<
-			G,
-			features.MemberDecorators,
-			V.Attribute.Content.Parenthesized<G>
-		>;
+		readonly 'attribute.call': gate.In<G, features.MemberDecorators, V.Attribute.Call<G>>;
+		readonly 'attribute.member': gate.In<G, features.MemberDecorators, V.Attribute.Member<G>>;
+		readonly 'attribute.parenthesized': gate.In<G, features.MemberDecorators, V.Attribute.Parenthesized<G>>;
 		readonly clause: V.Clause<G>;
 		readonly 'clause.bounds': gate.In<G, features.BoundClauses, V.Clause.Bounds<G>>;
 		readonly 'clause.bounds.higher_ranked': gate.In<
@@ -5102,7 +5072,6 @@ declare module './map.ts' {
 		readonly 'clause.import.wildcard': gate.In<G, features.WildcardImports, V.Clause.Import.Wildcard<G>>;
 		readonly 'clause.let': gate.In<G, features.LetPatterns, V.Clause.Let<G>>;
 		readonly 'clause.let.chain': gate.In<G, features.LetPatterns, V.Clause.Let.Chain<G>>;
-		readonly 'clause.lifetimes': gate.In<G, features.Lifetimes, V.Clause.Lifetimes<G>>;
 		readonly 'clause.macro': gate.In<G, features.SyntacticMetaprogramming, V.Clause.Macro<G>>;
 		readonly 'clause.macro.rule': gate.In<G, features.SyntacticMetaprogramming, V.Clause.Macro.Rule<G>>;
 		readonly 'clause.mapped_type': gate.In<G, features.TypeAlgebra, V.Clause.MappedType<G>>;
@@ -5477,10 +5446,10 @@ declare module './map.ts' {
 		>;
 		readonly 'declaration.module_property': gate.In<G, features.AmbientDeclarations, V.Declaration.ModuleProperty<G>>;
 		readonly 'declaration.parameter': V.Declaration.Parameter<G>;
-		readonly 'declaration.parameter.default': gate.In<
+		readonly 'declaration.parameter.defaulted': gate.In<
 			G,
 			features.PythonDeclarations,
-			V.Declaration.Parameter.Default<G>
+			V.Declaration.Parameter.Defaulted<G>
 		>;
 		readonly 'declaration.parameter.private': gate.In<G, features.ClassVisibility, V.Declaration.Parameter.Private<G>>;
 		readonly 'declaration.parameter.protected': gate.In<
@@ -6409,7 +6378,6 @@ declare module './map.ts' {
 		readonly 'statement.export': gate.In<G, features.JavaScriptModules, V.Statement.Export<G>>;
 		readonly 'statement.export.all': gate.In<G, features.JavaScriptModules, V.Statement.Export.All<G>>;
 		readonly 'statement.export.default': gate.In<G, features.JavaScriptModules, V.Statement.Export.Default<G>>;
-		readonly 'statement.expression': V.Statement.Expression<G>;
 		readonly 'statement.global': gate.In<G, features.ScopeDeclarations, V.Statement.Global<G>>;
 		readonly 'statement.if': V.Statement.If<G>;
 		readonly 'statement.import': gate.In<G, features.Modules, V.Statement.Import<G>>;
@@ -6536,10 +6504,10 @@ declare module './map.ts' {
 
 declare module './utils.ts' {
 	interface FlagFeatures {
-		readonly 'attribute.content': { readonly inner: features.RustDeclarations };
-		readonly 'attribute.content.call': { readonly inner: features.RustDeclarations };
-		readonly 'attribute.content.member': { readonly inner: features.RustDeclarations };
-		readonly 'attribute.content.parenthesized': { readonly inner: features.RustDeclarations };
+		readonly attribute: { readonly inner: features.RustDeclarations };
+		readonly 'attribute.call': { readonly inner: features.RustDeclarations };
+		readonly 'attribute.member': { readonly inner: features.RustDeclarations };
+		readonly 'attribute.parenthesized': { readonly inner: features.RustDeclarations };
 		readonly 'clause.catch': { readonly group: object };
 		readonly 'clause.comprehension.for': { readonly async: features.AsyncContexts; readonly trailingComma: object };
 		readonly 'clause.export.specifier': { readonly typeOnly: features.TypeOnlyImports };
@@ -7024,7 +6992,7 @@ declare module './utils.ts' {
 			readonly override: features.MemberOverrides;
 			readonly readonly: features.ReadonlyMembers;
 		};
-		readonly 'declaration.parameter.default': {
+		readonly 'declaration.parameter.defaulted': {
 			readonly mutable: features.RustDeclarations;
 			readonly optional: features.OptionalMembers;
 			readonly override: features.MemberOverrides;

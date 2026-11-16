@@ -11020,25 +11020,25 @@ export function buildConstraint(
 		['extends', TSKindId.ExtendsKeyword] as const,
 		[':', TSKindId.Colon] as const
 	]);
-	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
+	const _type = admitAliasContent<NonNullable<T.Constraint['_type']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
-			'Constraint.bounds',
+			kindIdStorage<NonNullable<T.Constraint['_type']>>(value),
+			'Constraint.type',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, bounds: _bounds });
+	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, type: _type });
 	const node = {
 		$type: TSKindId.Constraint as const,
 		_operator,
-		_bounds,
+		_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		operator: () => _operator,
-		bounds: () => hydrateStoredSlot(node, '_bounds'),
+		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11050,7 +11050,7 @@ export function buildConstraint(
 		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { operator: buildConstraint$with$operator, bounds: buildConstraint$with$bounds, [RECEIVER]: node };
+	node.$with = { operator: buildConstraint$with$operator, type: buildConstraint$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Constraint.Bound;
 }
@@ -11064,7 +11064,7 @@ function buildConstraint$with(node: Held, setter: string, args: readonly unknown
 			return applySetter(args, (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
 				rebuilt(node, handle, () => buildConstraint(value, { ...options, operator: spelling }))
 			);
-		case 'bounds':
+		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildConstraint(value, options))
 			);
@@ -11074,8 +11074,8 @@ function buildConstraint$with(node: Held, setter: string, args: readonly unknown
 function buildConstraint$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildConstraint$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function buildConstraint$with$bounds(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildConstraint$with(receiverOf(this, '$with.bounds'), 'bounds', args);
+function buildConstraint$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstraint$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildConstructSignature<

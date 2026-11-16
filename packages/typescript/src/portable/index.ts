@@ -10,16 +10,11 @@ export interface PortableIds {
 		| TSKindId.DecoratorCallExpression
 		| TSKindId.DecoratorMemberExpression
 		| TSKindId.DecoratorParenthesizedExpression;
-	'attribute.content':
-		| TSKindId.DecoratorCallExpression
-		| TSKindId.DecoratorMemberExpression
-		| TSKindId.DecoratorParenthesizedExpression;
-	'attribute.content.call': TSKindId.DecoratorCallExpression;
-	'attribute.content.member': TSKindId.DecoratorMemberExpression;
-	'attribute.content.parenthesized': TSKindId.DecoratorParenthesizedExpression;
+	'attribute.call': TSKindId.DecoratorCallExpression;
+	'attribute.member': TSKindId.DecoratorMemberExpression;
+	'attribute.parenthesized': TSKindId.DecoratorParenthesizedExpression;
 	clause:
 		| TSKindId.CatchClause
-		| TSKindId.Constraint
 		| TSKindId.DefaultType
 		| TSKindId.ElseClause
 		| TSKindId.ExportClause
@@ -38,7 +33,6 @@ export interface PortableIds {
 		| TSKindId.NamespaceImport
 		| TSKindId.SwitchCase
 		| TSKindId.SwitchDefault;
-	'clause.bounds': TSKindId.Constraint;
 	'clause.case': TSKindId.SwitchCase | TSKindId.SwitchDefault;
 	'clause.case.default': TSKindId.SwitchDefault;
 	'clause.case.switch': TSKindId.SwitchCase;
@@ -592,7 +586,6 @@ export interface PortableIds {
 		| TSKindId.ExportStatementDefaultFrom
 		| TSKindId.ExportStatementEqualsExport
 		| TSKindId.ExportStatementNamespaceExport
-		| TSKindId.ExpressionStatement
 		| TSKindId.ForInStatement
 		| TSKindId.ForStatement
 		| TSKindId.IfStatement
@@ -619,7 +612,6 @@ export interface PortableIds {
 		| TSKindId.ExportStatementNamespaceExport;
 	'statement.export.all': TSKindId.ExportStatementDefaultFrom;
 	'statement.export.default': TSKindId.ExportStatementDefaultDeclaration;
-	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.if': TSKindId.IfStatement;
 	'statement.import': TSKindId.ImportAlias | TSKindId.ImportStatement;
 	'statement.import.alias': TSKindId.ImportAlias;
@@ -722,12 +714,10 @@ export interface PortableIds {
 
 export interface PortableTexts {
 	attribute: never;
-	'attribute.content': never;
-	'attribute.content.call': never;
-	'attribute.content.member': never;
-	'attribute.content.parenthesized': never;
+	'attribute.call': never;
+	'attribute.member': never;
+	'attribute.parenthesized': never;
 	clause: never;
-	'clause.bounds': never;
 	'clause.case': never;
 	'clause.case.default': never;
 	'clause.case.switch': never;
@@ -988,7 +978,6 @@ export interface PortableTexts {
 	'statement.export': never;
 	'statement.export.all': never;
 	'statement.export.default': never;
-	'statement.expression': never;
 	'statement.if': never;
 	'statement.import': never;
 	'statement.import.alias': never;
@@ -1066,19 +1055,17 @@ export interface PortableTexts {
 }
 
 export interface PortableKindsAt {
-	attribute: { readonly $path: 'attribute'; readonly content: PortableKindsAt['attribute.content'] };
-	'attribute.content': {
-		readonly $path: 'attribute.content';
-		readonly call: PortableKindsAt['attribute.content.call'];
-		readonly member: PortableKindsAt['attribute.content.member'];
-		readonly parenthesized: PortableKindsAt['attribute.content.parenthesized'];
+	attribute: {
+		readonly $path: 'attribute';
+		readonly call: PortableKindsAt['attribute.call'];
+		readonly member: PortableKindsAt['attribute.member'];
+		readonly parenthesized: PortableKindsAt['attribute.parenthesized'];
 	};
-	'attribute.content.call': { readonly $path: 'attribute.content.call' };
-	'attribute.content.member': { readonly $path: 'attribute.content.member' };
-	'attribute.content.parenthesized': { readonly $path: 'attribute.content.parenthesized' };
+	'attribute.call': { readonly $path: 'attribute.call' };
+	'attribute.member': { readonly $path: 'attribute.member' };
+	'attribute.parenthesized': { readonly $path: 'attribute.parenthesized' };
 	clause: {
 		readonly $path: 'clause';
-		readonly bounds: PortableKindsAt['clause.bounds'];
 		readonly case: PortableKindsAt['clause.case'];
 		readonly catch: PortableKindsAt['clause.catch'];
 		readonly default: PortableKindsAt['clause.default'];
@@ -1090,7 +1077,6 @@ export interface PortableKindsAt {
 		readonly import: PortableKindsAt['clause.import'];
 		readonly mapped_type: PortableKindsAt['clause.mapped_type'];
 	};
-	'clause.bounds': { readonly $path: 'clause.bounds' };
 	'clause.case': {
 		readonly $path: 'clause.case';
 		readonly default: PortableKindsAt['clause.case.default'];
@@ -1721,7 +1707,6 @@ export interface PortableKindsAt {
 		readonly debugger: PortableKindsAt['statement.debugger'];
 		readonly empty: PortableKindsAt['statement.empty'];
 		readonly export: PortableKindsAt['statement.export'];
-		readonly expression: PortableKindsAt['statement.expression'];
 		readonly if: PortableKindsAt['statement.if'];
 		readonly import: PortableKindsAt['statement.import'];
 		readonly labeled: PortableKindsAt['statement.labeled'];
@@ -1745,7 +1730,6 @@ export interface PortableKindsAt {
 	};
 	'statement.export.all': { readonly $path: 'statement.export.all' };
 	'statement.export.default': { readonly $path: 'statement.export.default' };
-	'statement.expression': { readonly $path: 'statement.expression' };
 	'statement.if': { readonly $path: 'statement.if' };
 	'statement.import': {
 		readonly $path: 'statement.import';
@@ -1855,38 +1839,29 @@ export interface PortableKindsAt {
 
 export interface PortableIsAt {
 	attribute: PortableGuard<PortableIds['attribute'], TypescriptNode, TSKindId, PortableTexts['attribute']> & {
-		readonly content: PortableIsAt['attribute.content'];
+		readonly call: PortableIsAt['attribute.call'];
+		readonly member: PortableIsAt['attribute.member'];
+		readonly parenthesized: PortableIsAt['attribute.parenthesized'];
 	};
-	'attribute.content': PortableGuard<
-		PortableIds['attribute.content'],
+	'attribute.call': PortableGuard<
+		PortableIds['attribute.call'],
 		TypescriptNode,
 		TSKindId,
-		PortableTexts['attribute.content']
-	> & {
-		readonly call: PortableIsAt['attribute.content.call'];
-		readonly member: PortableIsAt['attribute.content.member'];
-		readonly parenthesized: PortableIsAt['attribute.content.parenthesized'];
-	};
-	'attribute.content.call': PortableGuard<
-		PortableIds['attribute.content.call'],
-		TypescriptNode,
-		TSKindId,
-		PortableTexts['attribute.content.call']
+		PortableTexts['attribute.call']
 	> & {};
-	'attribute.content.member': PortableGuard<
-		PortableIds['attribute.content.member'],
+	'attribute.member': PortableGuard<
+		PortableIds['attribute.member'],
 		TypescriptNode,
 		TSKindId,
-		PortableTexts['attribute.content.member']
+		PortableTexts['attribute.member']
 	> & {};
-	'attribute.content.parenthesized': PortableGuard<
-		PortableIds['attribute.content.parenthesized'],
+	'attribute.parenthesized': PortableGuard<
+		PortableIds['attribute.parenthesized'],
 		TypescriptNode,
 		TSKindId,
-		PortableTexts['attribute.content.parenthesized']
+		PortableTexts['attribute.parenthesized']
 	> & {};
 	clause: PortableGuard<PortableIds['clause'], TypescriptNode, TSKindId, PortableTexts['clause']> & {
-		readonly bounds: PortableIsAt['clause.bounds'];
 		readonly case: PortableIsAt['clause.case'];
 		readonly catch: PortableIsAt['clause.catch'];
 		readonly default: PortableIsAt['clause.default'];
@@ -1898,12 +1873,6 @@ export interface PortableIsAt {
 		readonly import: PortableIsAt['clause.import'];
 		readonly mapped_type: PortableIsAt['clause.mapped_type'];
 	};
-	'clause.bounds': PortableGuard<
-		PortableIds['clause.bounds'],
-		TypescriptNode,
-		TSKindId,
-		PortableTexts['clause.bounds']
-	> & {};
 	'clause.case': PortableGuard<PortableIds['clause.case'], TypescriptNode, TSKindId, PortableTexts['clause.case']> & {
 		readonly default: PortableIsAt['clause.case.default'];
 		readonly switch: PortableIsAt['clause.case.switch'];
@@ -3616,7 +3585,6 @@ export interface PortableIsAt {
 		readonly debugger: PortableIsAt['statement.debugger'];
 		readonly empty: PortableIsAt['statement.empty'];
 		readonly export: PortableIsAt['statement.export'];
-		readonly expression: PortableIsAt['statement.expression'];
 		readonly if: PortableIsAt['statement.if'];
 		readonly import: PortableIsAt['statement.import'];
 		readonly labeled: PortableIsAt['statement.labeled'];
@@ -3683,12 +3651,6 @@ export interface PortableIsAt {
 		TypescriptNode,
 		TSKindId,
 		PortableTexts['statement.export.default']
-	> & {};
-	'statement.expression': PortableGuard<
-		PortableIds['statement.expression'],
-		TypescriptNode,
-		TSKindId,
-		PortableTexts['statement.expression']
 	> & {};
 	'statement.if': PortableGuard<
 		PortableIds['statement.if'],
@@ -4039,21 +4001,12 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'attribute.content': {
-			ids: [
-				TSKindId.DecoratorCallExpression,
-				TSKindId.DecoratorMemberExpression,
-				TSKindId.DecoratorParenthesizedExpression
-			],
-			exact: true
-		},
-		'attribute.content.call': { ids: [TSKindId.DecoratorCallExpression], exact: true },
-		'attribute.content.member': { ids: [TSKindId.DecoratorMemberExpression], exact: true },
-		'attribute.content.parenthesized': { ids: [TSKindId.DecoratorParenthesizedExpression], exact: true },
+		'attribute.call': { ids: [TSKindId.DecoratorCallExpression], exact: true },
+		'attribute.member': { ids: [TSKindId.DecoratorMemberExpression], exact: true },
+		'attribute.parenthesized': { ids: [TSKindId.DecoratorParenthesizedExpression], exact: true },
 		clause: {
 			ids: [
 				TSKindId.CatchClause,
-				TSKindId.Constraint,
 				TSKindId.DefaultType,
 				TSKindId.ElseClause,
 				TSKindId.ExportClause,
@@ -4075,7 +4028,6 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'clause.bounds': { ids: [TSKindId.Constraint], exact: true },
 		'clause.case': { ids: [TSKindId.SwitchCase, TSKindId.SwitchDefault], exact: true },
 		'clause.case.default': { ids: [TSKindId.SwitchDefault], exact: true },
 		'clause.case.switch': { ids: [TSKindId.SwitchCase], exact: true },
@@ -4819,7 +4771,6 @@ const table: PortableTable = {
 				TSKindId.ExportStatementDefaultFrom,
 				TSKindId.ExportStatementEqualsExport,
 				TSKindId.ExportStatementNamespaceExport,
-				TSKindId.ExpressionStatement,
 				TSKindId.ForInStatement,
 				TSKindId.ForStatement,
 				TSKindId.IfStatement,
@@ -4853,7 +4804,6 @@ const table: PortableTable = {
 		},
 		'statement.export.all': { ids: [TSKindId.ExportStatementDefaultFrom], exact: false },
 		'statement.export.default': { ids: [TSKindId.ExportStatementDefaultDeclaration], exact: false },
-		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
 		'statement.import': { ids: [TSKindId.ImportAlias, TSKindId.ImportStatement], exact: true },
 		'statement.import.alias': { ids: [TSKindId.ImportAlias], exact: true },
@@ -5147,6 +5097,21 @@ const table: PortableTable = {
 		[TSKindId.BinaryExpression]: [
 			{ path: 'expression.binary', within: [], test: [] },
 			{
+				path: 'expression.binary.shift.left',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '269': 1 } } }]
+			},
+			{
+				path: 'expression.binary.shift.right',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '269': 1 } } }]
+			},
+			{
+				path: 'expression.binary.shift.right_unsigned',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', slots: { '269': 1 } } }]
+			},
+			{
 				path: 'expression.binary.membership.in',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [407], slots: { '269': 3 } } }]
@@ -5237,21 +5202,6 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '269': 1 } } }]
 			},
 			{
-				path: 'expression.binary.shift.left',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '269': 1 } } }]
-			},
-			{
-				path: 'expression.binary.shift.right',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '269': 1 } } }]
-			},
-			{
-				path: 'expression.binary.shift.right_unsigned',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', slots: { '269': 1 } } }]
-			},
-			{
 				path: 'expression.binary.logical.and',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', slots: { '269': 1 } } }]
@@ -5302,7 +5252,6 @@ const table: PortableTable = {
 		],
 		[TSKindId.CommentLine]: [{ path: 'comment.line', within: [], test: [] }],
 		[TSKindId.ConditionalType]: [{ path: 'type.conditional', within: [], test: [] }],
-		[TSKindId.Constraint]: [{ path: 'clause.bounds', within: [], test: [] }],
 		[TSKindId.ConstructSignature]: [{ path: 'declaration.signature.construct', within: [], test: [] }],
 		[TSKindId.ConstructorDeclaration]: [
 			{ path: 'declaration.constructor', within: [], test: [] },
@@ -5334,9 +5283,9 @@ const table: PortableTable = {
 		[TSKindId.ConstructorType]: [{ path: 'type.function.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],
 		[TSKindId.DebuggerStatement]: [{ path: 'statement.debugger', within: [], test: [] }],
-		[TSKindId.DecoratorCallExpression]: [{ path: 'attribute.content.call', within: [], test: [] }],
-		[TSKindId.DecoratorMemberExpression]: [{ path: 'attribute.content.member', within: [], test: [] }],
-		[TSKindId.DecoratorParenthesizedExpression]: [{ path: 'attribute.content.parenthesized', within: [], test: [] }],
+		[TSKindId.DecoratorCallExpression]: [{ path: 'attribute.call', within: [], test: [] }],
+		[TSKindId.DecoratorMemberExpression]: [{ path: 'attribute.member', within: [], test: [] }],
+		[TSKindId.DecoratorParenthesizedExpression]: [{ path: 'attribute.parenthesized', within: [], test: [] }],
 		[TSKindId.DefaultKeyword]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.DefaultType]: [{ path: 'clause.default', within: [], test: [] }],
 		[TSKindId.DoStatement]: [{ path: 'statement.loop.do_while', within: [], test: [] }],
@@ -5374,7 +5323,6 @@ const table: PortableTable = {
 		],
 		[TSKindId.ExportStatementEqualsExport]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementNamespaceExport]: [{ path: 'statement.export', within: [], test: [] }],
-		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
 		[TSKindId.ExtendsClause]: [{ path: 'clause.extends', within: [], test: [] }],
 		[TSKindId.ExtendsTypeClause]: [{ path: 'clause.extends.type', within: [], test: [] }],
 		[TSKindId.False]: [{ path: 'literal.boolean.false', within: [], test: [] }],
@@ -7003,7 +6951,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	365: { type: { unique: { types: [144], kinds: [] } } },
 	366: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
 	374: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
-	375: { bounds: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
+	375: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
 	378: { type: { unique: { types: [144], kinds: [] } } },
 	380: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
 	381: {
@@ -7759,7 +7707,7 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface Constraint {
-		readonly __slotFlags__?: { readonly bounds: 'abstract' | 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface ArrayType {
 		readonly __slotFlags__?: { readonly type: 'unique' };

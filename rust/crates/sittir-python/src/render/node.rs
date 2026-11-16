@@ -15873,9 +15873,9 @@ pub struct AliasedImportNode {
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<DottedNameNode>,
-    #[wire(key = "_alias")]
-    #[slot(field = field::ALIAS, word = 5, width = 3, forms = 1, built = 3)]
-    pub alias: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_rename")]
+    #[slot(field = field::RENAME, word = 5, width = 3, forms = 1, built = 3)]
+    pub rename: ::sittir_core::SlotValue<IdentifierNode>,
 }
 
 impl ::sittir_core::view::KindOf for AliasedImportNode {
@@ -15940,7 +15940,7 @@ fn prepare_aliased_import<N: AliasedImportPrepare + ?Sized>(node: &mut N, overla
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(142), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.alias, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.rename, overlay, ctx)?;
     Ok(())
 }
 
@@ -36328,14 +36328,14 @@ fn render_import_list<N: ImportListFields + ?Sized>(node: &N, w: &mut dyn ::sitt
 }
 
 fn render_aliased_import<N: AliasedImportFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alias = node.alias();
     let name = node.name();
+    let rename = node.rename();
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_rename", ::sittir_core::types::ItemIndex(0), w, |w| rename.render(w))?;
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }

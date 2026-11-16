@@ -842,7 +842,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.useAsClause({
 				name: TSKindId.SelfModule as never,
-				alias: { $type: TSKindId.Identifier, text: 'test' } as never
+				rename: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.UseAsClause);
 			expectBuiltNode(node);
@@ -850,7 +850,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.useAsClause({
 				name: TSKindId.SelfModule as never,
-				alias: { $type: TSKindId.Identifier, text: 'test' } as never
+				rename: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1719,12 +1719,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('shorthand_field_initializer', () => {
 		it('factory produces correct type', () => {
-			const node = ir.shorthandFieldInitializer({ field: { $type: TSKindId.Identifier, text: 'test' } as never });
+			const node = ir.shorthandFieldInitializer({ name: { $type: TSKindId.Identifier, text: 'test' } as never });
 			expect(node.$type).toBe(TSKindId.ShorthandFieldInitializer);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.shorthandFieldInitializer({ field: { $type: TSKindId.Identifier, text: 'test' } as never });
+			const node = ir.shorthandFieldInitializer({ name: { $type: TSKindId.Identifier, text: 'test' } as never });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -1733,7 +1733,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('field_initializer', () => {
 		it('factory produces correct type', () => {
 			const node = ir.fieldInitializer({
-				field: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
+				name: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
 				value: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.FieldInitializer);
@@ -1741,7 +1741,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.fieldInitializer({
-				field: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
+				name: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
 				value: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			const rendered = node.$render!();
@@ -2784,7 +2784,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.ShorthandFieldInitializer,
 						attributes: [],
-						field: { $type: TSKindId.Identifier, text: 'test' } as never
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
 					} as never
 				]
 			);
@@ -2797,7 +2797,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.ShorthandFieldInitializer,
 						attributes: [],
-						field: { $type: TSKindId.Identifier, text: 'test' } as never
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
 					} as never
 				]
 			);

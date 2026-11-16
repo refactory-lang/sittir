@@ -12742,13 +12742,13 @@
         },
         {
           "type": "FIELD",
-          "name": "bounds",
+          "name": "type",
           "content": {
             "type": "SYMBOL",
             "name": "type"
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         }
       ]

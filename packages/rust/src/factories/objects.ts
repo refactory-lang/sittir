@@ -4138,8 +4138,8 @@ function buildUseList$with$useClauses(this: Received<Held>, ...args: unknown[]):
 
 export function buildUseAsClause<
 	NameSlot extends T.UseAsClause.Config['name'],
-	AliasSlot extends T.UseAsClause.Config['alias']
->(config: RefusingConfig<T.UseAsClause.Config, { name: NameSlot; alias: AliasSlot }>): T.UseAsClause.Bound;
+	RenameSlot extends T.UseAsClause.Config['rename']
+>(config: RefusingConfig<T.UseAsClause.Config, { name: NameSlot; rename: RenameSlot }>): T.UseAsClause.Bound;
 export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bound {
 	currentHandle()?.admit(TSKindId.UseAsClause, [config]);
 	const _name = rejectKeywordText(
@@ -4148,17 +4148,17 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
-	const _alias = config.alias;
+	const _rename = config.rename;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name, alias: _alias });
+	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name, rename: _rename });
 	const node = {
 		$type: TSKindId.UseAsClause as const,
 		_name,
-		_alias,
+		_rename,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		alias: () => hydrateStoredSlot(node, '_alias'),
+		rename: () => hydrateStoredSlot(node, '_rename'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -4169,7 +4169,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { name: buildUseAsClause$with$name, alias: buildUseAsClause$with$alias, [RECEIVER]: node };
+	node.$with = { name: buildUseAsClause$with$name, rename: buildUseAsClause$with$rename, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UseAsClause.Bound;
 }
@@ -4182,9 +4182,9 @@ function buildUseAsClause$with(node: Held, setter: string, args: readonly unknow
 			return applySetter(args, (value: Admit<NonNullable<T.UseAsClause.Config>['name']>) =>
 				rebuilt(node, handle, () => buildUseAsClause({ ...config, name: value }))
 			);
-		case 'alias':
+		case 'rename':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildUseAsClause({ ...config, alias: value }))
+				rebuilt(node, handle, () => buildUseAsClause({ ...config, rename: value }))
 			);
 	}
 	throw new Error(`use_as_clause has no $with.${setter}`);
@@ -4192,8 +4192,8 @@ function buildUseAsClause$with(node: Held, setter: string, args: readonly unknow
 function buildUseAsClause$with$name(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildUseAsClause$with(receiverOf(this, '$with.name'), 'name', args);
 }
-function buildUseAsClause$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUseAsClause$with(receiverOf(this, '$with.alias'), 'alias', args);
+function buildUseAsClause$with$rename(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUseAsClause$with(receiverOf(this, '$with.rename'), 'rename', args);
 }
 
 export function buildUseWildcard<V extends Admit<T.UseWildcardGroup>>(
@@ -7243,27 +7243,27 @@ function buildFieldInitializerList$with$initializers(this: Received<Held>, ...ar
 
 export function buildShorthandFieldInitializer<
 	AttributesSlot extends T.ShorthandFieldInitializer.Config['attributes'],
-	FieldSlot extends T.ShorthandFieldInitializer.Config['field']
+	NameSlot extends T.ShorthandFieldInitializer.Config['name']
 >(
-	config: RefusingConfig<T.ShorthandFieldInitializer.Config, { attributes: AttributesSlot; field: FieldSlot }>
+	config: RefusingConfig<T.ShorthandFieldInitializer.Config, { attributes: AttributesSlot; name: NameSlot }>
 ): T.ShorthandFieldInitializer.Bound;
 export function buildShorthandFieldInitializer(
 	config: T.ShorthandFieldInitializer.Config
 ): T.ShorthandFieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
-	const _field = config.field;
+	const _name = config.name;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, field: _field });
+		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, name: _name });
 	const node = {
 		$type: TSKindId.ShorthandFieldInitializer as const,
 		_attributes,
-		_field,
+		_name,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
-		field: () => hydrateStoredSlot(node, '_field'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7276,7 +7276,7 @@ export function buildShorthandFieldInitializer(
 	};
 	node.$with = {
 		attributes: buildShorthandFieldInitializer$with$attributes,
-		field: buildShorthandFieldInitializer$with$field,
+		name: buildShorthandFieldInitializer$with$name,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7293,9 +7293,9 @@ function buildShorthandFieldInitializer$with(node: Held, setter: string, args: r
 					buildShorthandFieldInitializer({ ...config, attributes: restItems('attributes', values) })
 				)
 			);
-		case 'field':
+		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildShorthandFieldInitializer({ ...config, field: value }))
+				rebuilt(node, handle, () => buildShorthandFieldInitializer({ ...config, name: value }))
 			);
 	}
 	throw new Error(`shorthand_field_initializer has no $with.${setter}`);
@@ -7303,36 +7303,36 @@ function buildShorthandFieldInitializer$with(node: Held, setter: string, args: r
 function buildShorthandFieldInitializer$with$attributes(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildShorthandFieldInitializer$with(receiverOf(this, '$with.attributes'), 'attributes', args);
 }
-function buildShorthandFieldInitializer$with$field(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildShorthandFieldInitializer$with(receiverOf(this, '$with.field'), 'field', args);
+function buildShorthandFieldInitializer$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildShorthandFieldInitializer$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
 export function buildFieldInitializer<
 	AttributesSlot extends T.FieldInitializer.Config['attributes'],
-	FieldSlot extends T.FieldInitializer.Config['field'],
+	NameSlot extends T.FieldInitializer.Config['name'],
 	ValueSlot extends T.FieldInitializer.Config['value']
 >(
-	config: RefusingConfig<T.FieldInitializer.Config, { attributes: AttributesSlot; field: FieldSlot; value: ValueSlot }>
+	config: RefusingConfig<T.FieldInitializer.Config, { attributes: AttributesSlot; name: NameSlot; value: ValueSlot }>
 ): T.FieldInitializer.Bound;
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.FieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(config.attributes ?? []);
-	const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
+	const _name = admitAliasContent<NonNullable<T.FieldInitializer['_name']>>(config.name, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
 	const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_initializer', { attributes: _attributes, field: _field, value: _value });
+		admitChildren(handle, 'field_initializer', { attributes: _attributes, name: _name, value: _value });
 	const node = {
 		$type: TSKindId.FieldInitializer as const,
 		_attributes,
-		_field,
+		_name,
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
-		field: () => hydrateStoredSlot(node, '_field'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7346,7 +7346,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 	};
 	node.$with = {
 		attributes: buildFieldInitializer$with$attributes,
-		field: buildFieldInitializer$with$field,
+		name: buildFieldInitializer$with$name,
 		value: buildFieldInitializer$with$value,
 		[RECEIVER]: node
 	};
@@ -7362,9 +7362,9 @@ function buildFieldInitializer$with(node: Held, setter: string, args: readonly u
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () => buildFieldInitializer({ ...config, attributes: restItems('attributes', values) }))
 			);
-		case 'field':
+		case 'name':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldInitializer({ ...config, field: value }))
+				rebuilt(node, handle, () => buildFieldInitializer({ ...config, name: value }))
 			);
 		case 'value':
 			return applySetter(args, (value: Admit<NonNullable<T.FieldInitializer.Config>['value']>) =>
@@ -7376,8 +7376,8 @@ function buildFieldInitializer$with(node: Held, setter: string, args: readonly u
 function buildFieldInitializer$with$attributes(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildFieldInitializer$with(receiverOf(this, '$with.attributes'), 'attributes', args);
 }
-function buildFieldInitializer$with$field(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildFieldInitializer$with(receiverOf(this, '$with.field'), 'field', args);
+function buildFieldInitializer$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildFieldInitializer$with(receiverOf(this, '$with.name'), 'name', args);
 }
 function buildFieldInitializer$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildFieldInitializer$with(receiverOf(this, '$with.value'), 'value', args);

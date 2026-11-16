@@ -71,13 +71,13 @@
           ]
         },
         {
-          "name": "alias",
+          "name": "rename",
           "route": "slot",
-          "slot": "alias",
+          "slot": "rename",
           "path": [
             {
               "owner": "aliased_import",
-              "slot": "alias"
+              "slot": "rename"
             }
           ]
         }
@@ -825,6 +825,56 @@
       "vocab": "expression.binary",
       "read": [
         {
+          "vocab": "expression.binary.shift.left",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "<<"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<<",
+                "slots": {
+                  "214": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.shift.right",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": ">>"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">>",
+                "slots": {
+                  "214": 1
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.binary.arithmetic.add",
           "toplevel": true,
           "within": [],
@@ -1100,56 +1150,6 @@
           ]
         },
         {
-          "vocab": "expression.binary.shift.left",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": "<<"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "<<",
-                "slots": {
-                  "214": 1
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "expression.binary.shift.right",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": ">>"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": ">>",
-                "slots": {
-                  "214": 1
-                }
-              }
-            }
-          ]
-        },
-        {
           "vocab": "expression.binary",
           "toplevel": true,
           "within": [],
@@ -1171,6 +1171,28 @@
         },
         {
           "name": "right",
+          "route": "slot",
+          "slot": "right",
+          "path": [
+            {
+              "owner": "binary_operator",
+              "slot": "right"
+            }
+          ]
+        },
+        {
+          "name": "operand",
+          "route": "slot",
+          "slot": "left",
+          "path": [
+            {
+              "owner": "binary_operator",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "count",
           "route": "slot",
           "slot": "right",
           "path": [
@@ -2633,29 +2655,6 @@
       ]
     },
     "comprehension_clauses": {
-      "vocab": "clause.comprehension",
-      "read": [
-        {
-          "vocab": "clause.comprehension",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "contents",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "comprehension_clauses",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "content",
         "kinds": [
@@ -2933,10 +2932,10 @@
       }
     },
     "default_parameter": {
-      "vocab": "declaration.parameter.default",
+      "vocab": "declaration.parameter.defaulted",
       "read": [
         {
-          "vocab": "declaration.parameter.default",
+          "vocab": "declaration.parameter.defaulted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3647,29 +3646,6 @@
       }
     },
     "expression_statement": {
-      "vocab": "statement.expression",
-      "read": [
-        {
-          "vocab": "statement.expression",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "expression_statement",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "content",
         "kinds": [
@@ -8820,15 +8796,15 @@
       },
       {
         "depth": 2,
-        "paths": 77,
-        "kinds": 80,
+        "paths": 76,
+        "kinds": 78,
         "refinements": 1
       },
       {
         "depth": 3,
         "paths": 67,
         "kinds": 58,
-        "refinements": 43
+        "refinements": 41
       },
       {
         "depth": 4,

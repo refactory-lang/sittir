@@ -34833,9 +34833,9 @@ pub struct ConstraintNode {
     #[wire(key = "_operator")]
     #[slot(word = 2, width = 1, forms = 2, built = 2, defaulted)]
     pub operator: Option<::sittir_core::SlotValue<ConstraintOperatorNodeSlot>>,
-    #[wire(key = "_bounds")]
-    #[slot(field = field::BOUNDS, word = 3, width = 4, forms = 3, built = 3)]
-    pub bounds: ::sittir_core::SlotValue<TypeNode>,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE, word = 3, width = 4, forms = 3, built = 3)]
+    pub type_: ::sittir_core::SlotValue<TypeNode>,
 }
 
 impl ::sittir_core::view::KindOf for ConstraintNode {
@@ -34901,7 +34901,7 @@ fn prepare_constraint<N: ConstraintPrepare + ?Sized>(node: &mut N, overlay: &mut
     { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(375), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(375), arms, ctx); }
     ::sittir_core::prepare::UnitSlot::fill_unit(&mut parts.operator, overlay, ctx.options.site_arm(options::SITE_CONSTRAINT_OPERATOR).arm);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.bounds, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
     Ok(())
 }
 
@@ -53795,8 +53795,8 @@ fn render_default_type<N: DefaultTypeFields + ?Sized>(node: &N, w: &mut dyn ::si
 }
 
 fn render_constraint<N: ConstraintFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let bounds = node.bounds();
     let operator = View::new(node.operator(), "{}");
+    let type_ = node.type_();
     w.edge(::sittir_core::types::KindId(375), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(70)]) { w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_BEFORE); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(55)]) { w.site_at(options::SITE_CONSTRAINT_COLON_BEFORE); }
@@ -53804,7 +53804,7 @@ fn render_constraint<N: ConstraintFields + ?Sized>(node: &N, w: &mut dyn ::sitti
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(70)]) { w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(55)]) { w.site_at(options::SITE_CONSTRAINT_COLON_AFTER); }
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_bounds", ::sittir_core::types::ItemIndex(0), w, |w| bounds.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(375), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }

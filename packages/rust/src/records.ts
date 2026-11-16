@@ -229,7 +229,7 @@ export const records = {
 		words: 9,
 		builtWords: 4,
 		name: { word: 2, width: 4, forms: 3, built: 2 },
-		alias: { word: 6, width: 3, forms: 1, built: 3 }
+		rename: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	UseWildcardNode: {
 		words: 8,
@@ -417,13 +417,13 @@ export const records = {
 		words: 6,
 		builtWords: 4,
 		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		field: { word: 3, width: 3, forms: 1, built: 3 }
+		name: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	FieldInitializerNode: {
 		words: 15,
 		builtWords: 5,
 		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		field: { word: 3, width: 8, inline: 8, forms: 8, built: 3 },
+		name: { word: 3, width: 8, inline: 8, forms: 8, built: 3 },
 		value: { word: 11, width: 4, forms: 3, built: 4 }
 	},
 	BaseFieldInitializerNode: { words: 6, builtWords: 3, value: { word: 2, width: 4, forms: 3, built: 2 } },

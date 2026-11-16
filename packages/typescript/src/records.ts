@@ -697,7 +697,7 @@ export const records = {
 		words: 7,
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
-		bounds: { word: 3, width: 4, forms: 3, built: 3 }
+		type_: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	ConstructSignatureNode: {
 		words: 14,

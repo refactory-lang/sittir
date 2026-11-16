@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "0373e09c5d17a536241c09466ee9fb20be39a86e61eac25a0cda52cb18afc1b2";
+export const hash = "078ffb1b87c068b53965edfa1477e0e62b399952dc851622e838c769a35a9470";
 
 export const renames = {
 	program: "file",
@@ -50,7 +50,6 @@ export const renames = {
 	import_alias: "alias_import_statement",
 	namespace_export: "namespace_export_clause",
 	export_specifier: "specifier_export_clause",
-	constraint: "bounds_clause",
 	default_type: "default_clause",
 	pair: "pair_element",
 	tuple_parameter: "member_tuple_element",
@@ -72,9 +71,9 @@ export const renames = {
 	import: "import_call_expression",
 	meta_property: "meta_expression",
 	class: "class_expression",
-	decorator_member_expression: "member_content_attribute",
-	decorator_call_expression: "call_content_attribute",
-	decorator_parenthesized_expression: "parenthesized_content_attribute",
+	decorator_member_expression: "member_attribute",
+	decorator_call_expression: "call_attribute",
+	decorator_parenthesized_expression: "parenthesized_attribute",
 	object_assignment_pattern: "assignment_object_pattern",
 	pair_pattern: "pair_object_pattern",
 	array_pattern: "list_pattern",
@@ -131,7 +130,6 @@ export default grammar(
 			as_expression: { "2": field("type") },
 			assignment_expression: { "0/0": field("disposable") },
 			call_expression_member: { "1": field("optional_chain") },
-			constraint: { "1": field("bounds") },
 			export_clause: { "1/0": field("export_specifiers") },
 			export_statement_default_from: { "1": field("type_only") },
 			export_statement_equals_export: { "2": field("value") },

@@ -24,6 +24,10 @@ export namespace Statement {
 			| V.Attribute.Any<G>
 			| V.Declaration.Any<G>
 			| V.Expression.Call.Macro<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
 			| V.Statement.Any<G>
 		>[];
 	}
@@ -37,10 +41,6 @@ export namespace Statement {
 	}
 	// claimed by prt
 	export type Empty<G extends GrammarMap> = Text<G, 'statement.empty'>;
-	export interface Expression<G extends GrammarMap, K extends Under<'statement.expression'> = 'statement.expression'> extends SubKindOf<V.Statement<G, K>> {
-		// claimed by prt
-		readonly $path: K;
-	}
 	export interface If<G extends GrammarMap, K extends Under<'statement.if'> = 'statement.if'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
 		readonly $path: K;
@@ -55,24 +55,24 @@ export namespace Statement {
 			| V.Clause.Let.Any<G>
 			| V.Statement.Any<G>
 		>;
-		readonly consequence: Slot<G, K, 'consequence', V.Declaration.Any<G> | V.Statement.Any<G>>;
+		readonly consequence: Slot<G, K, 'consequence', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
 	}
 	export interface Loop<G extends GrammarMap, K extends Under<'statement.loop'> = 'statement.loop'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
 		// prt only
 	}
 	export namespace Loop {
 		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> extends SubKindOf<V.Statement.Loop<G, K>> {
 			// claimed by prt
 			readonly $path: K;
-			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
 		}
 		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> extends SubKindOf<V.Statement.Loop<G, K>> {
 			// claimed by prt
 			readonly $path: K;
-			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
 			readonly condition: Slot<
 				G,
 				K,
