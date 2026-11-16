@@ -9,7 +9,10 @@
 // parse's records live until their engine is disposed. A profiler samples only
 // while a timed batch runs the phase: when PERF_CTL and PERF_ACK name perf
 // record's control and ack fifos (perf record --delay=-1 --control
-// fifo:<ctl>,<ack>), its events are enabled; when JS_PROFILE names a file, the
+// fifo:<ctl>,<ack>), its events are enabled; when ALLOC_COUNT names the
+// allocation counter (alloc-count.c, preloaded into this process), it counts,
+// and its table goes to ALLOC_COUNT_OUT with each return address resolved;
+// when JS_PROFILE names a file, the
 // inspector's Profiler (JS_PROFILE_INTERVAL_US between samples) is started,
 // and the windows' profiles are merged into one there, their timelines
 // concatenated, less the samples taken inside the profiler's own start and
@@ -19,6 +22,7 @@
 // kept and dropped.
 import assert from 'node:assert/strict';
 import { constants, existsSync, openSync, readFileSync, readSync, writeFileSync, writeSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { Session } from 'node:inspector/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
@@ -123,7 +127,28 @@ async function inspectorWindow(file) {
   };
 }
 
-const sampler = process.env.PERF_CTL ? perfWindow() : process.env.JS_PROFILE ? await inspectorWindow(process.env.JS_PROFILE) : undefined;
+function allocWindow(library, file) {
+  const counter = createRequire(import.meta.url)(library);
+  counter.take();
+  return {
+    open: () => counter.start(),
+    close: () => counter.stop(),
+    finish() {
+      const taken = counter.take();
+      const ips = [...new Set(taken.stacks.flatMap((stack) => stack.ips))];
+      writeFileSync(file, JSON.stringify({ ...taken, frames: Object.fromEntries(counter.resolve(ips).map((frame, index) => [ips[index], frame])) }));
+      return { file, stacks: taken.stacks.length, dropped: taken.dropped };
+    }
+  };
+}
+
+const sampler = process.env.PERF_CTL
+  ? perfWindow()
+  : process.env.ALLOC_COUNT
+    ? allocWindow(process.env.ALLOC_COUNT, process.env.ALLOC_COUNT_OUT)
+    : process.env.JS_PROFILE
+      ? await inspectorWindow(process.env.JS_PROFILE)
+      : undefined;
 
 const mappedImages = () =>
   existsSync('/proc/self/maps')

@@ -73,8 +73,15 @@ assert STORAGE in ('arena', 'object'), f'STORAGE {STORAGE} is not arena or objec
 MEASURE = os.environ.get('MEASURE') or 'samples'
 assert MEASURE in ('samples', 'allocs'), f'MEASURE {MEASURE} is not samples or allocs'
 ALLOCS = MEASURE == 'allocs'
+ALLOC_COUNTER = os.environ.get('ALLOC_COUNTER') or 'uprobes'
+assert ALLOC_COUNTER in ('uprobes', 'interposer'), f'ALLOC_COUNTER {ALLOC_COUNTER} is not uprobes or interposer'
+INTERPOSER = ALLOCS and ALLOC_COUNTER == 'interposer'
 NATIVE = ALLOCS or PHASE == 'render'
 PERF = os.environ.get('PERF', 'perf')
+PERF_RECORD = NATIVE and not INTERPOSER
+for llvm in (os.environ.get('LLVM_BIN'), '/opt/homebrew/opt/llvm/bin', '/usr/local/opt/llvm/bin'):
+    if shutil.which('llvm-symbolizer') is None and llvm and Path(llvm, 'llvm-symbolizer').exists():
+        os.environ['PATH'] = f'{llvm}{os.pathsep}{os.environ["PATH"]}'
 WARMUP, BATCHES, PER_ENGINE = (10, 20, 50) if ALLOCS else (100, 2000, 50)
 PERIOD_NS = 100_000
 JS_INTERVAL_US = 50
@@ -92,6 +99,7 @@ EVENT = re.compile(r'^(.*?)\s+probe_libc:(\w+):\s*\([0-9a-f]+\)\s*(.*)$')
 SITTIR = re.compile(r'^<?sittir')
 BUCKETS = [(rule['bucket'], re.compile(rule['match'])) for rule in json.loads((here / 'alloc-buckets.json').read_text())]
 UNMATCHED = 'no bucket matches'
+TABLE_FULL = 'not placed: the table was full'
 JS_LINE = re.compile(r':\d+\)$')
 failures = []
 
@@ -141,6 +149,15 @@ def clean(name, tree):
     return withoutGenerics(name).replace(';', ':')
 
 
+def addonCopy(tree, grammar):
+    if not INTERPOSER:
+        return unstrippedCopy(tree, grammar)
+    try:
+        return unstrippedCopy(tree, grammar)
+    except subprocess.CalledProcessError:
+        return None
+
+
 def unstrippedCopy(tree, grammar):
     script = ('const [root, grammar] = process.argv.slice(1); '
               f'const stamps = await import(`${{root}}/{FRESHNESS}`); '
@@ -149,13 +166,29 @@ def unstrippedCopy(tree, grammar):
     return Path(found.stdout.strip()).resolve()
 
 
+def buildCounter():
+    node = Path(shutil.which('node')).resolve()
+    include = node.parent.parent / 'include' / 'node'
+    built = Path(tempfile.mkdtemp(prefix='alloc-count-')) / 'alloc-count.node'
+    flags = ['-undefined', 'dynamic_lookup'] if sys.platform == 'darwin' else []
+    run(['cc', '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror', '-fPIC', '-shared', *flags, f'-I{include}', '-o', str(built), str(here / 'alloc-count.c')])
+    return built
+
+
 def record(grammar, name, tree, copy):
     label = f'{grammar}-{name}'
     receipt = out / f'{label}.json'
     driver = [str(here / 'phase-profile.mjs'), str(tree), grammar, PHASE, str(receipt), str(WARMUP), str(BATCHES), str(PER_ENGINE)]
     env = dict(os.environ, NODE_ENV='production', STORAGE=STORAGE)
     with tempfile.TemporaryDirectory() as fifos:
-        if NATIVE:
+        if INTERPOSER:
+            profile = out / f'{label}.allocs.json'
+            argv = ['node', *driver]
+            preload = 'DYLD_INSERT_LIBRARIES' if sys.platform == 'darwin' else 'LD_PRELOAD'
+            env.update({preload: str(COUNTER), 'ALLOC_COUNT': str(COUNTER), 'ALLOC_COUNT_OUT': str(profile)})
+            if copy is not None:
+                env['NAPI_RS_NATIVE_LIBRARY_PATH'] = str(copy)
+        elif NATIVE:
             profile = out / f'{label}.perf.data'
             ctl, ack = Path(fifos) / 'ctl', Path(fifos) / 'ack'
             os.mkfifo(ctl)
@@ -171,14 +204,14 @@ def record(grammar, name, tree, copy):
             argv = ['node', *driver]
             env.update(JS_PROFILE=str(profile), JS_PROFILE_INTERVAL_US=str(JS_INTERVAL_US))
         done = subprocess.run(argv, cwd=tree, env=env, capture_output=True, text=True)
-    if ALLOCS:
+    if ALLOCS and not INTERPOSER:
         run(['sudo', '-n', 'chown', '-R', f'{os.getuid()}:{os.getgid()}', str(out)])
     print(label, done.returncode, done.stdout.strip()[-600:], flush=True)
     if done.returncode or not receipt.exists():
         sys.stderr.write(done.stderr[-6000:])
         raise SystemExit(done.returncode or 1)
     facts = json.loads(receipt.read_text())
-    if NATIVE and str(copy) not in facts['mapped']:
+    if copy is not None and sys.platform == 'linux' and str(copy) not in facts['mapped']:
         failures.append(f'{label}: the process mapped {facts["mapped"]}, not the unstripped copy {copy}')
     return profile, facts
 
@@ -277,6 +310,21 @@ def jsStacks(path, tree):
     return folded
 
 
+def interposed(path):
+    taken = json.loads(path.read_text())
+    frames = {int(ip): frame for ip, frame in taken['frames'].items()}
+    counts, weights = Counter(), Counter()
+    for stack in taken['stacks']:
+        resolved = [frames.get(int(ip), {}) for ip in stack['ips']]
+        while resolved and resolved[0].get('image') == str(COUNTER):
+            resolved.pop(0)
+        key = ('node', tuple((f"{frame['symbol']}+0x{int(frame['symbolOffset']):x}" if 'symbol' in frame else '[unknown]', frame.get('image', '[unknown]'), int(frame['offset']) if 'offset' in frame else None)
+                             for frame in resolved))
+        counts[key] += int(stack['count'])
+        weights[key] += int(stack['bytes'])
+    return counts, weights, Counter({kind: int(n) for kind, n in taken['kinds'].items()}), taken['dropped']
+
+
 def symbolOffset(symoff):
     match = OFFSET.match(symoff)
     return (match[1], int(match[2], 16)) if match else (symoff, 0)
@@ -292,19 +340,21 @@ def fold(counts, tree, images, weights=None):
                 table.setdefault(parts[2], int(parts[0], 16))
         tables[image] = table
 
-    def address(symoff, dso, depth):
-        symbol, offset = symbolOffset(symoff)
-        start = tables.get(dso, {}).get(symbol)
+    def address(frame, depth):
+        if len(frame) == 3:
+            return None if frame[2] is None or frame[1] not in tables else frame[2] - 1
+        symbol, offset = symbolOffset(frame[0])
+        start = tables.get(frame[1], {}).get(symbol)
         return None if start is None else start + offset - (1 if depth else 0)
 
     wanted, mangled = defaultdict(set), set()
     for (_, frames) in counts:
-        for depth, (symoff, dso) in enumerate(frames):
-            symbol = symbolOffset(symoff)[0]
+        for depth, frame in enumerate(frames):
+            symbol = symbolOffset(frame[0])[0]
             if symbol.startswith(('_Z', '_R')):
                 mangled.add(symbol)
-            if (at := address(symoff, dso, depth)) is not None:
-                wanted[dso].add(at)
+            if (at := address(frame, depth)) is not None:
+                wanted[frame[1]].add(at)
     order = sorted(mangled)
     demangled = dict(zip(order, run(['llvm-cxxfilt'], input=''.join(f'{s}\n' for s in order)).splitlines())) if order else {}
     inlined = {}
@@ -323,9 +373,10 @@ def fold(counts, tree, images, weights=None):
     expanded, plain, coverage, expandedWeights = Counter(), Counter(), Counter(), Counter()
     for (comm, frames), count in counts.items():
         leafFirst, perfLeafFirst = [], []
-        for depth, (symoff, dso) in enumerate(frames):
-            perfLeafFirst.append(perfName(symoff, dso))
-            names = inlined.get((dso, address(symoff, dso, depth)), [])
+        for depth, frame in enumerate(frames):
+            dso = frame[1]
+            perfLeafFirst.append(perfName(frame[0], dso))
+            names = inlined.get((dso, address(frame, depth)), [])
             leafFirst += [clean(n, tree) for n in names] if names else [perfLeafFirst[-1]]
             if dso in tables:
                 coverage['frames'] += count
@@ -405,6 +456,12 @@ def allocReport(grammar, names, results):
                      f'{"same as " + first if facts["texts"] == firstFacts["texts"] else "differs from " + first} | {perBatch(kinds["realloc"])} | {perBatch(kinds["calloc"])} | '
                      f'{perBatch(kinds["posix_memalign"] + kinds["aligned_alloc"] + kinds["memalign"])} | {perBatch(kinds["free"])} | {perBatch(analysis["events"] - kinds["free"])} |')
     lines.append('')
+    for name in names:
+        dropped = results[name][1].get('dropped')
+        if dropped is not None:
+            lines.append(f'- {name}: ' + (f'{perBatch(dropped["count"])} allocations per batch ({dropped["bytes"] / BATCHES:.0f} bytes) found no free slot in the table: they are in the totals and the bucket `{TABLE_FULL}`.'
+                                         if dropped['count'] else 'every allocation found a slot in the table.'))
+    lines.append('')
 
     def comparison(heading, key, limit, floor=0):
         tables = {name: results[name][1][key] for name in names}
@@ -449,7 +506,18 @@ def functionTables(heading, intro, inclusive, own, samples):
 code = lambda name: '`' + name.replace('|', '\\|') + '`'
 perBatch = lambda n: f'{n / BATCHES:.2f}'
 lines = [(out.parent / 'build-path.md').read_text().strip() if (out.parent / 'build-path.md').exists() else '', '']
-if ALLOCS:
+if INTERPOSER:
+    COUNTER = buildCounter()
+    lines += [f'{STORAGE.capitalize()} {PHASE} allocations ({platform.system()} {platform.machine()}, node {run(["node", "--version"]).strip()}): '
+              f'alloc-count.c stands in for libc\'s {", ".join(ALLOC_FUNCTIONS)} and free in the benchmark\'s node process alone, '
+              f'counting only on the JavaScript thread between a timed batch\'s start and stop, each allocation placed by its frame-pointer call chain in a fixed table; '
+              f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}.', '',
+              'It sees every libc allocation on that thread, with or without an addon frame, including the native memory JavaScript objects hold: '
+              'array buffer backing stores and the addon\'s external chunks are allocated by malloc, so they are in this table, not in the JavaScript engine\'s heap. '
+              'It misses the JavaScript engine\'s own heap (objects V8 allocates in its pages) and any private malloc zone. '
+              'Bytes are the sizes requested. A free is counted, not placed. Names come from the addon\'s unstripped copy when its build kept one, '
+              'with inlined functions expanded where the image carries line tables, else from its symbol table.', '']
+elif ALLOCS:
     installProbes()
     lines += [f'{STORAGE.capitalize()} {PHASE} allocations: uprobes on libc\'s {", ".join(ALLOC_FUNCTIONS)} ({run([PERF, "--version"]).strip()}), enabled only while a timed batch runs the phase, with frame-pointer call chains '
               f'(the frame that called libc is not in a call chain taken at a function\'s entry); {BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. '
@@ -462,9 +530,16 @@ for grammar in grammars:
     for name in names:
         tree = trees[name]
         label = f'{grammar}-{name}'
-        copy = unstrippedCopy(tree, grammar) if NATIVE else None
+        copy = addonCopy(tree, grammar) if NATIVE else None
         profile, facts = record(grammar, name, tree, copy)
-        if NATIVE:
+        dropped = None
+        if INTERPOSER:
+            counts, weights, kinds, dropped = interposed(profile)
+            root = str(copy.parent) if copy is not None else str(tree)
+            images = sorted({frame[1] for (_, frames) in counts for frame in frames if frame[1].startswith(root)})
+            expanded, plain, coverage, expandedWeights = fold(counts, tree, images, weights)
+            writeFolded(out / f'{label}.bytes.collapsed.gz', expandedWeights)
+        elif NATIVE:
             images = sorted(str(p.resolve()) for p in copy.parent.iterdir() if p.is_file() and re.search(r'\.node$|\.so(\.|$)', p.name))
             counts, weights, kinds = stacks(profile, label)
             expanded, plain, coverage, expandedWeights = fold(counts, tree, images, weights)
@@ -477,6 +552,11 @@ for grammar in grammars:
         writeFolded(out / f'{label}.collapsed.gz', expanded)
         if ALLOCS:
             allocs = allocAnalysis(expanded, expandedWeights, kinds)
+            allocs['dropped'] = dropped
+            if dropped and dropped['count']:
+                allocs['events'] += int(dropped['count'])
+                allocs['bytes'] += int(dropped['bytes'])
+                allocs['buckets'][TABLE_FULL] = [int(dropped['count']), int(dropped['bytes'])]
             if not allocs['events']:
                 failures.append(f'{label}: no allocation was recorded; read {label}.perf-script.head and {label}.perf-script.err')
             elif not any(CALLBACK.search(frame) for frame in allocs['inclusive']):
