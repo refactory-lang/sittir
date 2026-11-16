@@ -19,6 +19,7 @@ Each is the maintainer's, and where it disagrees with a sentence below, it wins 
   - **Example:** `engine.parse(source, { adoptStyle: true })` on a source indented by two spaces with no trailing newline leaves the engine at indent two and no trailing newline, and a statement rebuilt in that tree is written at two. `engine.parse(source)` leaves the engine's options alone, and the rebuilt statement is written at the engine's unit.
   - **Who passes it:** the validators, tools and tests that relied on the automatic layer.
   - **A threaded batch** must not adopt: it would change engine state from inside a call.
+  - **Built with this design's branch** ("Approve all six", 2026-11-16), since the stored source record and the per-render resolution it removes exist only there. What changes: `ParseOptions` gains `adoptStyle`, and the native parse entries take the options; the detector's result stays and its resolution over a table and its JSON forms go; the stored source record holds its text and line-break fact only; a parsed tree keeps no inferred options and reads the engine's table; a parse reply carries no `options` key, and the three TypeScript declarations of that key go with it; the engine keeps `createEngine`'s unresolved options privately, and an adoption resolves the grammar's defaults, then the adopted keys, then those.
 - **Reads share one open words chunk,** as the cap paragraph says and the code does. "In whole chunks of its own" under "A parsed node lives in the same storage as a built node" is wrong and is read as that.
 
 ## Why
