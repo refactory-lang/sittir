@@ -82,7 +82,7 @@ describe.each(['object', 'arena'] as const)('a line continuation written onto a 
 		});
 
 		for (const [donor, source] of Object.entries(DONORS) as [keyof typeof DONORS, string][]) {
-			const test = KEEPS_ITS_READ_RUNS[donor].includes(row.position) ? it.fails : it;
+			const test = nodeStorage === 'object' && KEEPS_ITS_READ_RUNS[donor].includes(row.position) ? it.fails : it;
 			test(`renders a parsed entry from ${donor} as the built entry renders`, async () => {
 				expect(written(await engine, (e) => parsedContinuation(e, source), row)).toBe(row.expected);
 			});

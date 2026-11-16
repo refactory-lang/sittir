@@ -275,16 +275,28 @@ impl TriviaText {
     }
 }
 
+impl TriviaText {
+    /// Write an entry of `kind` with `text` and no adjacency, as a written
+    /// entry renders: an `ERROR` verbatim, any other between its kind's
+    /// edges, holding the line end its kind leaves.
+    pub(crate) fn write(kind: KindId, text: &str, bytes: Option<crate::types::Span>, w: &mut dyn RenderSink) -> RenderResult {
+        if kind == KindId::ERROR {
+            return w.verbatim(None, text, None, bytes);
+        }
+        w.edge(kind, Side::Before, None);
+        w.text(text)?;
+        w.edge(kind, Side::After, None);
+        w.end_line_after(kind);
+        Ok(())
+    }
+}
+
 impl Render for TriviaText {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         if self.verbatim() {
             return w.verbatim(self.before.as_deref(), &self.text, self.after.as_deref(), self.bytes);
         }
-        w.edge(self.kind, Side::Before, None);
-        w.text(&self.text)?;
-        w.edge(self.kind, Side::After, None);
-        w.end_line_after(self.kind);
-        Ok(())
+        Self::write(self.kind, &self.text, self.bytes, w)
     }
 }
 
