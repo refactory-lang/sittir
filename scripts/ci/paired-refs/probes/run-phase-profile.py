@@ -395,7 +395,7 @@ def allocReport(grammar, names, results):
     firstFacts, firstAnalysis = results[first][0], results[first][1]
     perRoot = lambda n, facts: f'{n / BATCHES / facts["entries"]:.2f}'
     lines = [f'### {grammar} ({firstFacts["cpu"]}, {firstFacts["entries"]} roots per batch)', '',
-             f'| tree | commit | allocations per batch | per root | × {first} | bytes per batch | × {first} | {PHASE} text | reallocs | callocs | aligned | frees per batch | allocations less frees |',
+             f'| tree | commit | allocations per batch | per root | × {first} | bytes per batch | × {first} | {PHASE} text | reallocs | callocs | aligned | frees per batch (counted, not by site) | allocations less frees, a net per batch |',
              '|---|---|---|---|---|---|---|---|---|---|---|---|---|']
     for name in names:
         facts, analysis, commit = results[name][:3]
