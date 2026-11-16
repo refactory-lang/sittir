@@ -24,7 +24,9 @@
 # batch runs the phase, with frame-pointer call chains, and fewer batches (the
 # probes slow the phase). A stack at a function's entry lacks the frame that
 # called it, so the frame that called libc is absent. Folding and naming are
-# the render profile's. Each allocation is put in the first bucket of
+# the render profile's. `free` is probed too but only counted: allocations less
+# frees in the window is a net, not a pairing (a free of memory from before the
+# window counts, and a block still live at its end does not). Each allocation is put in the first bucket of
 # alloc-buckets.json (rules in order, each a pattern on a function's name) that
 # a frame matches, looking from the allocation outward; the site is the nearest
 # sittir function. Writes <phase>-allocs.md: per tree the allocations and bytes
@@ -80,6 +82,8 @@ OFFSET = re.compile(r'^(.*)\+0x([0-9a-f]+)$')
 LEGACY_ESCAPE = re.compile(r'\$(?:SP|BP|RF|LT|GT|LP|RP|C|u[0-9a-f]+)\$')
 LEGACY = {'$SP$': '@', '$BP$': '*', '$RF$': '&', '$LT$': '<', '$GT$': '>', '$LP$': '(', '$RP$': ')', '$C$': ','}
 ALLOC_FUNCTIONS = ['malloc', 'calloc', 'realloc', 'posix_memalign', 'aligned_alloc', 'memalign']
+PROBED = [*ALLOC_FUNCTIONS, 'free']
+DECODED = re.compile(r'^<(.+?) as (?:[\w:]*::)?FromNapiValue>::')
 EVENT = re.compile(r'^(.*?)\s+probe_libc:(\w+):\s*\([0-9a-f]+\)\s*(.*)$')
 SITTIR = re.compile(r'^<?sittir')
 BUCKETS = [(rule['bucket'], re.compile(rule['match'])) for rule in json.loads((here / 'alloc-buckets.json').read_text())]
@@ -152,7 +156,7 @@ def record(grammar, name, tree, copy):
             ctl, ack = Path(fifos) / 'ctl', Path(fifos) / 'ack'
             os.mkfifo(ctl)
             os.mkfifo(ack)
-            events = [arg for fn in ALLOC_FUNCTIONS for arg in ('-e', f'probe_libc:{fn}')] if ALLOCS else ['-e', 'cpu-clock', '-c', str(PERIOD_NS)]
+            events = [arg for fn in PROBED for arg in ('-e', f'probe_libc:{fn}')] if ALLOCS else ['-e', 'cpu-clock', '-c', str(PERIOD_NS)]
             argv = [PERF, 'record', *events, '--call-graph', 'fp', '--delay=-1', '--control', f'fifo:{ctl},{ack}', '-o', str(profile), '--',
                     shutil.which('node') if ALLOCS else 'node', '--perf-basic-prof', *driver]
             if ALLOCS:
@@ -188,8 +192,8 @@ def installProbes():
     registers = {'aarch64': ('x0', 'x1', 'x2'), 'x86_64': ('di', 'si', 'dx')}[platform.machine()]
     first, second, third = (f'%{r}' for r in registers)
     arguments = {'malloc': f'size={first}', 'calloc': f'nmemb={first} size={second}', 'realloc': f'size={second}',
-                 'posix_memalign': f'size={third}', 'aligned_alloc': f'size={second}', 'memalign': f'size={second}'}
-    assert set(arguments) == set(ALLOC_FUNCTIONS)
+                 'posix_memalign': f'size={third}', 'aligned_alloc': f'size={second}', 'memalign': f'size={second}', 'free': f'ptr={first}'}
+    assert set(arguments) == set(PROBED)
     libc = libcPath()
     subprocess.run(['sudo', '-n', PERF, 'probe', '-x', libc, '-d', 'probe_libc:*'], capture_output=True)
     for function, args in arguments.items():
@@ -218,9 +222,11 @@ def stacks(data, label):
         counts, weights, kinds, comm, frames, size, kind = Counter(), Counter(), Counter(), None, [], 0, None
 
         def finish():
+            kinds[kind] += 1
+            if kind == 'free':
+                return
             counts[(comm, tuple(frames))] += 1
             weights[(comm, tuple(frames))] += size
-            kinds[kind] += 1
 
         for number, line in enumerate(script.stdout):
             if ALLOCS and number < 60:
@@ -356,7 +362,7 @@ def bucketOf(frames):
 
 def allocAnalysis(folded, weights, kinds):
     result = {'events': 0, 'bytes': 0, 'kinds': kinds, 'buckets': defaultdict(lambda: [0, 0]), 'sites': defaultdict(lambda: [0, 0]),
-              'callbacks': defaultdict(lambda: [0, 0]), 'inclusive': defaultdict(lambda: [0, 0])}
+              'callbacks': defaultdict(lambda: [0, 0]), 'inclusive': defaultdict(lambda: [0, 0]), 'decoded': defaultdict(lambda: [0, 0])}
     for stack, count in folded.items():
         size, frames = weights.get(stack, 0), stack[1:]
         result['events'] += count
@@ -369,6 +375,10 @@ def allocAnalysis(folded, weights, kinds):
         for frame in set(frames):
             result['inclusive'][frame][0] += count
             result['inclusive'][frame][1] += size
+        decoded = next((match[1] for frame in reversed(frames) if (match := DECODED.match(frame))), None)
+        if decoded:
+            result['decoded'][decoded][0] += count
+            result['decoded'][decoded][1] += size
     return result
 
 
@@ -377,15 +387,15 @@ def allocReport(grammar, names, results):
     firstFacts, firstAnalysis = results[first][0], results[first][1]
     perRoot = lambda n, facts: f'{n / BATCHES / facts["entries"]:.2f}'
     lines = [f'### {grammar} ({firstFacts["cpu"]}, {firstFacts["entries"]} roots per batch)', '',
-             f'| tree | commit | allocations per batch | per root | × {first} | bytes per batch | × {first} | {PHASE} text | reallocs | callocs | aligned |',
-             '|---|---|---|---|---|---|---|---|---|---|---|']
+             f'| tree | commit | allocations per batch | per root | × {first} | bytes per batch | × {first} | {PHASE} text | reallocs | callocs | aligned | frees per batch | allocations less frees |',
+             '|---|---|---|---|---|---|---|---|---|---|---|---|---|']
     for name in names:
         facts, analysis, commit = results[name][:3]
         kinds = analysis['kinds']
         lines.append(f'| {name} | `{commit}` | {perBatch(analysis["events"])} | {perRoot(analysis["events"], facts)} | ×{analysis["events"] / max(firstAnalysis["events"], 1):.3f} | '
                      f'{analysis["bytes"] / BATCHES:.0f} | ×{analysis["bytes"] / max(firstAnalysis["bytes"], 1):.3f} | '
                      f'{"same as " + first if facts["texts"] == firstFacts["texts"] else "differs from " + first} | {perBatch(kinds["realloc"])} | {perBatch(kinds["calloc"])} | '
-                     f'{perBatch(kinds["posix_memalign"] + kinds["aligned_alloc"] + kinds["memalign"])} |')
+                     f'{perBatch(kinds["posix_memalign"] + kinds["aligned_alloc"] + kinds["memalign"])} | {perBatch(kinds["free"])} | {perBatch(analysis["events"] - kinds["free"])} |')
     lines.append('')
 
     def comparison(heading, key, limit, floor=0):
@@ -405,6 +415,7 @@ def allocReport(grammar, names, results):
 
     lines += comparison('allocations by bucket (the nearest frame to the allocation that a rule of `alloc-buckets.json` names)', 'buckets', 20)
     lines += comparison('allocations by native callback (the stack\'s outermost `*_c_callback` frame)', 'callbacks', 20)
+    lines += comparison('allocations under a decode from JavaScript, by the type decoded (the nearest `FromNapiValue` implementor on the stack)', 'decoded', 40)
     lines += comparison('allocations by site (the nearest sittir function to the allocation)', 'sites', 60, 0.002)
     lines += comparison('allocations by function, inclusive (every function on the stack)', 'inclusive', 60, 0.01)
     return lines
