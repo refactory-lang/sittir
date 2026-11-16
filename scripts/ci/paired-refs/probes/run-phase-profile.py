@@ -22,8 +22,9 @@
 # perf record (under sudo, which uprobes need) with uprobes on libc's malloc,
 # calloc, realloc, posix_memalign, aligned_alloc and memalign (the arguments by
 # register, so the size asked for is recorded), enabled only while a timed
-# batch runs the phase, with frame-pointer call chains, and fewer batches (the
-# probes slow the phase). A stack at a function's entry lacks the frame that
+# batch runs the phase, with frame-pointer call chains (none for free, which
+# is only counted), and 20 batches: an allocation count needs no more, and
+# every event's call chain is recorded and folded. A stack at a function's entry lacks the frame that
 # called it, so the frame that called libc is absent. Folding and naming are
 # the render profile's. `free` is probed too but only counted: allocations less
 # frees in the window is a net, not a pairing (a free of memory from before the
@@ -74,7 +75,7 @@ assert MEASURE in ('samples', 'allocs'), f'MEASURE {MEASURE} is not samples or a
 ALLOCS = MEASURE == 'allocs'
 NATIVE = ALLOCS or PHASE == 'render'
 PERF = os.environ.get('PERF', 'perf')
-WARMUP, BATCHES, PER_ENGINE = (50, 200, 50) if ALLOCS else (100, 2000, 50)
+WARMUP, BATCHES, PER_ENGINE = (10, 20, 50) if ALLOCS else (100, 2000, 50)
 PERIOD_NS = 100_000
 JS_INTERVAL_US = 50
 FRESHNESS = 'packages/codegen/src/scripts/native-binary-freshness.ts'
@@ -159,7 +160,7 @@ def record(grammar, name, tree, copy):
             ctl, ack = Path(fifos) / 'ctl', Path(fifos) / 'ack'
             os.mkfifo(ctl)
             os.mkfifo(ack)
-            events = [arg for fn in PROBED for arg in ('-e', f'probe_libc:{fn}')] if ALLOCS else ['-e', 'cpu-clock', '-c', str(PERIOD_NS)]
+            events = [arg for fn in PROBED for arg in ('-e', f'probe_libc:{fn}' + ('/call-graph=no/' if fn == 'free' else ''))] if ALLOCS else ['-e', 'cpu-clock', '-c', str(PERIOD_NS)]
             argv = [PERF, 'record', *events, '--call-graph', 'fp', '--delay=-1', '--control', f'fifo:{ctl},{ack}', '-o', str(profile), '--',
                     shutil.which('node') if ALLOCS else 'node', '--perf-basic-prof', *driver]
             if ALLOCS:
@@ -239,6 +240,10 @@ def stacks(data, label):
                     finish()
                 comm, frames = None, []
             elif comm is None:
+                comm, size, kind = header(line)
+            elif ALLOCS and EVENT.match(line.strip()):
+                finish()
+                frames = []
                 comm, size, kind = header(line)
             elif match := FRAME.match(line.rstrip('\n')):
                 frames.append((match[1], match[2]))
