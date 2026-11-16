@@ -80,6 +80,7 @@ ALLOC_COUNTER = os.environ.get('ALLOC_COUNTER') or 'uprobes'
 assert ALLOC_COUNTER in ('uprobes', 'interposer'), f'ALLOC_COUNTER {ALLOC_COUNTER} is not uprobes or interposer'
 INTERPOSER = ALLOCS and ALLOC_COUNTER == 'interposer'
 REUSE = INTERPOSER and os.environ.get('REUSE') == '1'
+V8_INTERVAL = int(os.environ.get('V8_HEAP_INTERVAL') or 256)
 NATIVE = ALLOCS or PHASE == 'render'
 PERF = os.environ.get('PERF', 'perf')
 PERF_RECORD = NATIVE and not INTERPOSER
@@ -179,10 +180,59 @@ def buildCounter():
     return built
 
 
+def driverArgv(tree, grammar, receipt):
+    return [str(here / 'phase-profile.mjs'), str(tree), grammar, PHASE, str(receipt), str(WARMUP), str(BATCHES), str(PER_ENGINE)]
+
+
+def heapPass(grammar, name, tree, copy):
+    label = f'{grammar}-{name}'
+    profile, receipt = out / f'{label}.v8-heap.json', out / f'{label}.v8-heap-receipt.json'
+    env = dict(os.environ, NODE_ENV='production', STORAGE=STORAGE, V8_HEAP_PROFILE=str(profile), V8_HEAP_INTERVAL=str(V8_INTERVAL))
+    if copy is not None:
+        env['NAPI_RS_NATIVE_LIBRARY_PATH'] = str(copy)
+    done = subprocess.run(['node', *driverArgv(tree, grammar, receipt)], cwd=tree, env=env, capture_output=True, text=True)
+    print(f'{label} (V8 heap)', done.returncode, done.stdout.strip()[-300:], flush=True)
+    if done.returncode or not profile.exists():
+        sys.stderr.write(done.stderr[-6000:])
+        raise SystemExit(done.returncode or 1)
+    return json.loads(profile.read_text())
+
+
+def packageOf(url):
+    if not url or url.startswith('node:'):
+        return 'node and V8 built-ins'
+    if '/scripts/ci/' in url:
+        return "the benchmark's own code"
+    if '/packages/common/' in url:
+        return '@sittir/common: wrap layer and runtime'
+    if re.search(r'/packages/[^/]+/(dist|src)/factories/', url):
+        return 'generated factories'
+    if re.search(r'/packages/[^/]+/(dist|src)/', url):
+        return 'generated grammar package'
+    if '/node_modules/' in url:
+        return 'dependencies'
+    return 'other'
+
+
+def heapAnalysis(heap, tree):
+    result = {'bytes': 0, 'samples': 0, 'packages': defaultdict(lambda: [0, 0]), 'functions': defaultdict(lambda: [0, 0])}
+    for entry in heap['functions']:
+        url = entry['url']
+        for root in (f'file://{tree}/', f'file://{checkout}/'):
+            url = url.removeprefix(root)
+        name = f"{entry['functionName'] or '(anonymous)'} ({url}:{entry['line']})" if url else (entry['functionName'] or '(anonymous)')
+        for table, key in ((result['packages'], packageOf(entry['url'])), (result['functions'], name)):
+            table[key][0] += entry['bytes']
+            table[key][1] += entry['samples']
+        result['bytes'] += entry['bytes']
+        result['samples'] += entry['samples']
+    return result
+
+
 def record(grammar, name, tree, copy):
     label = f'{grammar}-{name}'
     receipt = out / f'{label}.json'
-    driver = [str(here / 'phase-profile.mjs'), str(tree), grammar, PHASE, str(receipt), str(WARMUP), str(BATCHES), str(PER_ENGINE)]
+    driver = driverArgv(tree, grammar, receipt)
     env = dict(os.environ, NODE_ENV='production', STORAGE=STORAGE)
     with tempfile.TemporaryDirectory() as fifos:
         if INTERPOSER:
@@ -470,6 +520,8 @@ def allocReport(grammar, names, results):
                      f'{perBatch(kinds["posix_memalign"] + kinds["aligned_alloc"] + kinds["memalign"])} | {perBatch(kinds["free"])} | {perBatch(analysis["events"] - kinds["free"])} |')
     lines.append('')
     for name in names:
+        if 'names' in results[name][0]:
+            lines.append(f'- {name}: native names from {results[name][0]["names"]}.')
         dropped = results[name][1].get('dropped')
         if dropped is not None:
             lines.append(f'- {name}: ' + (f'{perBatch(dropped["count"])} allocations per batch ({dropped["bytes"] / BATCHES:.0f} bytes) found no free slot in the table: they are in the totals and the bucket `{TABLE_FULL}`.'
@@ -496,7 +548,42 @@ def allocReport(grammar, names, results):
     lines += comparison('allocations under a decode from JavaScript, by the type decoded (the nearest `FromNapiValue` implementor on the stack)', 'decoded', 40)
     lines += comparison('allocations by site (the nearest sittir function to the allocation)', 'sites', 60, 0.002)
     lines += comparison('allocations by function, inclusive (every function on the stack)', 'inclusive', 60, 0.01)
+    if INTERPOSER:
+        lines += heapReport(grammar, names, results)
     return lines
+
+
+def heapReport(grammar, names, results):
+    first = names[0]
+    median = lambda values: sorted(values)[len(values) >> 1] if values else None
+    lines = [f'#### {grammar}: the JavaScript engine\'s heap', '',
+             f'Counter: V8\'s cumulative `total_allocated_bytes`, read around each timed phase in the counting run, less what reading it allocates. '
+             f'It is V8\'s own count, comparable between trees, not a sum of the objects\' sizes. '
+             f'Sampled: the inspector\'s sampling heap profiler in a second run of the same batches, a sample every {V8_INTERVAL} bytes on average, '
+             f'objects collected before the window ended kept, each sample\'s bytes attributed to the function that allocated it.', '',
+             f'| tree | counter bytes per batch, median | mean | × {first} | sampled bytes per batch | sampled ÷ counter mean | samples per batch |', '|---|---|---|---|---|---|---|']
+    exact = {}
+    for name in names:
+        facts, analysis = results[name][0], results[name][1]
+        heap, measured = analysis['heap'], (facts.get('heapAllocated') or {}).get('perBatch')
+        exact[name] = median(measured) if measured else None
+        mean = sum(measured) / len(measured) if measured else None
+        sampled = heap['bytes'] / BATCHES
+        lines.append(f'| {name} | ' + (f'{exact[name]:.0f} | {mean:.0f} | ' if measured else 'not reported by this node | — | ')
+                     + (f'×{exact[name] / exact[first]:.3f}' if measured and exact.get(first) else '—')
+                     + f' | {sampled:.0f} | ' + (f'{sampled / mean:.3f}' if measured and mean else '—') + f' | {heap["samples"] / BATCHES:.1f} |')
+    lines.append('')
+
+    def table(heading, key, limit):
+        tables = {name: results[name][1]['heap'][key] for name in names}
+        keys = sorted({k for t in tables.values() for k in t}, key=lambda k: -max(t[k][0] for t in tables.values() if k in t))[:limit]
+        rows = [f'#### {grammar}: V8 heap by {heading}', '', 'Sampled bytes and samples per batch.', '',
+                '| | ' + ' | '.join(f'{name} bytes | {name} samples' for name in names) + ' |', '|---|' + '---|---|' * len(names)]
+        for k in keys:
+            rows.append(f'| {code(k)} | ' + ' | '.join(f'{tables[n][k][0] / BATCHES:.0f} | {tables[n][k][1] / BATCHES:.1f}' if k in tables[n] else '— | —' for n in names) + ' |')
+        return rows + ['']
+
+    return lines + table('package', 'packages', 10) + table('function', 'functions', 40)
 
 
 def withoutLines(folded):
@@ -548,12 +635,13 @@ for grammar in grammars:
         reused = REUSE and kept.exists()
         if reused:
             saved = json.loads(kept.read_text())
-            facts, kinds, dropped, commit = saved['facts'], Counter(saved['kinds']), saved['dropped'], saved['commit']
+            facts, kinds, dropped, commit, heap = saved['facts'], Counter(saved['kinds']), saved['dropped'], saved['commit'], saved['heap']
             expanded, expandedWeights = readFolded(out / f'{label}.collapsed.gz'), readFolded(out / f'{label}.bytes.collapsed.gz')
             print(f'{label}: the counts kept from {commit}', flush=True)
         else:
             commit = run(['git', '-C', str(tree), 'rev-parse', '--short=9', 'HEAD']).strip()
             copy = addonCopy(tree, grammar) if NATIVE else None
+            facts_names = 'its unstripped copy' if copy is not None else 'the shipped binary, its build stamp naming no current unstripped copy'
             profile, facts = record(grammar, name, tree, copy)
         if INTERPOSER and not reused:
             counts, weights, kinds, dropped = interposed(profile)
@@ -561,7 +649,9 @@ for grammar in grammars:
             images = sorted({frame[1] for (_, frames) in counts for frame in frames if frame[1].startswith(root)})
             expanded, plain, coverage, expandedWeights = fold(counts, tree, images, weights)
             writeFolded(out / f'{label}.bytes.collapsed.gz', expandedWeights)
-            kept.write_text(json.dumps({'facts': facts, 'kinds': kinds, 'dropped': dropped, 'commit': commit}))
+            heap = heapPass(grammar, name, tree, copy)
+            facts['names'] = facts_names
+            kept.write_text(json.dumps({'facts': facts, 'kinds': kinds, 'dropped': dropped, 'commit': commit, 'heap': heap}))
         elif NATIVE and not INTERPOSER:
             images = sorted(str(p.resolve()) for p in copy.parent.iterdir() if p.is_file() and re.search(r'\.node$|\.so(\.|$)', p.name))
             counts, weights, kinds = stacks(profile, label)
@@ -576,13 +666,15 @@ for grammar in grammars:
         if ALLOCS:
             allocs = allocAnalysis(expanded, expandedWeights, kinds)
             allocs['dropped'] = dropped
+            if INTERPOSER:
+                allocs['heap'] = heapAnalysis(heap, tree)
             if dropped and dropped['count']:
                 allocs['events'] += int(dropped['count'])
                 allocs['bytes'] += int(dropped['bytes'])
                 allocs['buckets'][TABLE_FULL] = [int(dropped['count']), int(dropped['bytes'])]
             if not allocs['events']:
                 failures.append(f'{label}: no allocation was recorded; read {label}.perf-script.head and {label}.perf-script.err')
-            elif not any(CALLBACK.search(frame) for frame in allocs['inclusive']):
+            elif PHASE == 'render' and not any(CALLBACK.search(frame) for frame in allocs['inclusive']):
                 failures.append(f'{label}: no allocation stack reaches a `*_c_callback` frame; read {label}.collapsed.gz')
             results[name] = (facts, allocs, commit)
             continue
