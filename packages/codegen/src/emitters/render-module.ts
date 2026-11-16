@@ -2872,12 +2872,12 @@ function renderTriviaNodeSupport(
 	lines.push('        None', '    }', '}', '');
 
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaNode {');
-	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');
+	lines.push('    fn seam_gap(&self) -> Option<::sittir_core::layout_kinds::LayoutKinds> {');
 	lines.push('        match self {');
 	for (const node of extrasNodes) {
 		if (!whitespaceKinds.has(node.kind)) continue;
 		const unit = fixedLiteralOf(fixed, node.kind);
-		lines.push(`            TriviaNode::${unit.variant} => Some((${layoutKindsOfText(unit.text)}, None)),`);
+		lines.push(`            TriviaNode::${unit.variant} => Some(${layoutKindsOfText(unit.text)}),`);
 	}
 	lines.push('            _ => None,');
 	lines.push('        }');

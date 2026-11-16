@@ -635,8 +635,7 @@ pub trait RenderSink {
     fn layout_depth(&mut self, delta: i32) {
         let _ = delta;
     }
-    fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
-        let _ = text;
+    fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds) {
         self.seam(gap);
     }
     /// A join between trivia entries, or between an entry and its owner: a
@@ -644,7 +643,7 @@ pub trait RenderSink {
     /// so beside verbatim text it yields to the source's adjacency as a
     /// template's seam does (`verbatim`).
     fn trivia_join(&mut self, gap: crate::layout_kinds::LayoutKinds) {
-        self.trivia_seam(gap, None);
+        self.trivia_seam(gap);
     }
     /// Write the bytes a coordinate names, from the tree table this writer
     /// holds, and move the depth as the node's template would
@@ -795,13 +794,12 @@ pub trait RenderSink {
     fn seat_trailing(&mut self) -> RenderResult;
 }
 
-/// A seam set aside from the sink: its text, the strength it holds, the
+/// A seam set aside from the sink: its kinds, the strength it holds, the
 /// whitespace token that wrote it, if any, and whether a list flank wrote it.
 #[derive(Debug, Clone)]
 pub struct HeldSeam {
     pub kinds: crate::layout_kinds::LayoutKinds,
     pub pick: crate::layout_kinds::LayoutKinds,
-    pub cont: String,
     pub strength: crate::spacing::SeamStrength,
     pub token: Option<crate::spacing::SeamToken>,
     pub flank: bool,
