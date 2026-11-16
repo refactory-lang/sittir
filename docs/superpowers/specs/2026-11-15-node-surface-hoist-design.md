@@ -8,7 +8,7 @@
 - **"Here this has to be client side only"** (2026-11-15). This is the constraint §2 states.
 - **"the portable api and bindings.scm should flatten scenarios like expression.expression"** (2026-11-15). That is the portable layer's counterpart, written in the bindings spec §6, rule 6. See §4.
 - **A field a refine form pins has no setter: "the form defines"** (2026-11-15). See §8.
-- **"Approve the list"** (2026-11-15). The holder slots in §5 and §6 are the approved change to the node surface.
+- **"Approve the list"** (2026-11-15), then **"Approve all 55 and the setter read"** (2026-11-16). The 276 slots in §5 and §6 are the approved change to the node surface: 221 first, then 37 more slots, 18 chain hops, and the setter signatures reading their one parameter (§7).
 - **"Set through the existing wrapper"** (2026-11-15). The setter replaces what the wrapper already there holds, so the wrapper's own facts stay, and it builds a wrapper only when the holder has none. See §3.
 - **"Hoist all that meet the rule"** (2026-11-15). No wrapper that meets the rule is held back, including the polymorphs that hold their own forms, the parameter lists with a receiver form, and the wrappers that are the thing read. See §5 and §7.
 - **"Through the tree only"** (2026-11-15). A wrapper node is reached through the tree, with no second getter. See §3.
@@ -72,8 +72,9 @@ The two layers apply the same idea on their own terms. The portable layer flatte
 
 Master's models. The holder slots are named `Type.getter`. The rule holds at 276 slots: python 71, rust 103 and typescript 102.
 
-- **221 are approved.** Python 44 go through 17 wrappers, rust 85 through 23, and typescript 92 through 22. This section lists their single wrappers, §6 their chains, and rows marked §7 have their exact reads and setters there. Three of them, the typescript setter signatures, read differently from the row first approved (§7).
-- **55 are not yet approved**, listed at the end of this section. Of these, 37 slots are in no approved row, and 18 are chain hops, a wrapper's own slot on an approved chain (§3).
+- **221 are outermost holder slots listed by wrapper.** Python 44 go through 17 wrappers, rust 85 through 23, and typescript 92 through 22. This section lists their single wrappers, §6 their chains, and rows marked §7 have their exact reads and setters there.
+- **37 are listed by holder slot** at the end of this section, most of them the slot of a wrapper that hoists nowhere itself.
+- **18 are chain hops**, a wrapper's own slot on a chain (§3), listed after them.
 
 `sittir tool hoist-census` prints these tables from the stamp (§3), and a test pins the counts.
 
@@ -137,11 +138,11 @@ Master's models. The holder slots are named `Type.getter`. The rule holds at 276
 
 A polymorph that holds its own forms reads as the form. Each such wrapper is a choice of forms with no token of its own, and its slot is required. Three of them have optional holders: rust's `visibility_modifier` (`fn f()` has none), typescript's `class_heritage` (`class A {}`) and python's `except_clause_exception` (a bare `except:`). The hoisted value is absent exactly when the wrapper is, and a set on a holder without one builds it. Python's `simple_pattern` is an alias site of the hidden `_simple_pattern`, and it reads as it does today.
 
-### Not yet approved
+### Slots listed by holder
 
-The rule holds at these slots too. The user hasn't seen them yet. A ⚑ marks a list with an optional trailing separator, which stays on the wrapper (§1).
+A ⚑ marks a list with an optional trailing separator, which stays on the wrapper (§1).
 
-These 37 are in no approved row. In most, the holder is a wrapper that hoists at none of its holders, because their slots admit other kinds (§3). `PrintStatementChevron.arguments` is a multi-slot holder whose list spells a comma before each item (§1).
+In most of these 37, the holder is a wrapper that hoists at none of its holders, because their slots admit other kinds (§3). `PrintStatementChevron.arguments` is a multi-slot holder whose list spells a comma before each item (§1).
 
 | holder slot | grammar | chain | before → after |
 |---|---|---|---|
@@ -183,7 +184,9 @@ These 37 are in no approved row. In most, the holder is a wrapper that hoists at
 | `ParenthesizedExpressionSequence.sequenceExpression` | t | `sequence_expression` | `SequenceExpression` → `Expression[]` |
 | `TupleType.tupleTypeMembers` | t | `tuple_type_members` | `TupleTypeMembers` → `(OptionalTupleParameter \| OptionalType \| RestType \| TupleParameter \| Type)[]` ⚑ |
 
-These 18 are chain hops. The wrapper hoists at its holders under an approved row, and its own slot reads through the rest of the chain when the wrapper is reached through the tree (§3).
+### Chain hops
+
+In these 18, the wrapper hoists at its holders under a row above, and its own slot reads through the rest of the chain when the wrapper is reached through the tree (§3).
 
 | wrapper slot | grammar | chain | before → after |
 |---|---|---|---|
@@ -238,7 +241,7 @@ These five read something other than a plain list or a single node, so their get
 
 **Typescript `formal_parameters`** (16 holder slots, all required). The node is `seq('(', optional(elements: formal_parameters_elements | formal_parameters_elements_receiver), ')')`. At 13 holder slots its slot admits two kinds, so the chain stops there, and the read is a list node, not an array.
 
-The other three are the setter signatures: `MethodDefinitionSetter`, `MethodSignatureSetter` and `AbstractMethodSignatureSetter`. Each reaches `formal_parameters` as the hidden `_formal_parameters_set_accessor_signature`. Its one slot admits only a `formal_parameters_elements` that holds exactly one parameter (§1, aliases), so the chain continues. `set x(v) {}` reads `parameters()` as the `SetterParameter` `v`, and `$with.parameters(w)` replaces it inside the parentheses already there. The read changes from the row first approved, which showed the list node.
+The other three are the setter signatures: `MethodDefinitionSetter`, `MethodSignatureSetter` and `AbstractMethodSignatureSetter`. Each reaches `formal_parameters` as the hidden `_formal_parameters_set_accessor_signature`. Its one slot admits only a `formal_parameters_elements` that holds exactly one parameter (§1, aliases), so the chain continues. `set x(v) {}` reads `parameters()` as the `SetterParameter` `v`, and `$with.parameters(w)` replaces it inside the parentheses already there.
 
 The 13 other holder slots read as follows:
 
