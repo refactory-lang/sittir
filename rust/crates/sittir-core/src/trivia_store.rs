@@ -40,6 +40,10 @@ pub enum Place {
     /// the tree its coordinates name, and where its records keep it.
     #[cfg(feature = "arena")]
     Read { tree: TreeId, site: crate::arena::NodeSite },
+    /// A node of a read, as `Read` names it, for the side its parse placed
+    /// its source's extras on.
+    #[cfg(feature = "arena")]
+    Placed { tree: TreeId, site: crate::arena::NodeSite },
 }
 
 #[cfg(feature = "arena")]

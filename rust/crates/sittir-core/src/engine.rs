@@ -2762,6 +2762,28 @@ impl<G: EngineGrammar> Engine<G> {
         }
     }
 
+    #[cfg(feature = "arena")]
+    /// Writes each side a parse placed its source's extras on, as its
+    /// entries in document order: each extra the coordinate that names its
+    /// record.
+    fn place_extras(&self, tree: crate::types::TreeId, placed: Vec<crate::arena::Placed>) {
+        type Side<T> = ((crate::arena::NodeSite, TriviaSide), Vec<TriviaEntry<T>>);
+        let mut sides: Vec<Side<G::Trivia>> = Vec::new();
+        for extra in placed {
+            let name = crate::types::NodeName { node: crate::types::NodeId(extra.extra.0), site: None };
+            let carried = Some(Box::new(crate::slot::CoordinateCarried { changed: crate::slot::ChangedEdges::default(), name: Some(name) }));
+            let coord = crate::slot::NodeCoordinate { tree, index: crate::types::NodeIndex(0), end: crate::types::NodeIndex(0), span: extra.span, kind: Some(extra.kind), edges: None, carried };
+            let entry = TriviaEntry::new(SlotValue::Coord(coord));
+            match sides.iter_mut().find(|(key, _)| *key == (extra.site, extra.side)) {
+                Some((_, entries)) => entries.push(entry),
+                None => sides.push(((extra.site, extra.side), vec![entry])),
+            }
+        }
+        for ((site, side), entries) in sides {
+            self.written.write_side(crate::trivia_store::Place::Placed { tree, site }, side, entries);
+        }
+    }
+
     /// Parses `source` and reads the whole tree as `N` into the engine's
     /// built arena, in one walk, then drops the tree: what is left is the
     /// source's entry and the records, each naming that entry.
@@ -2795,7 +2817,11 @@ impl<G: EngineGrammar> Engine<G> {
             crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
-            crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
+            let mut placed = Vec::new();
+            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built), &mut placed).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+            drop(built);
+            self.place_extras(crate::types::TreeId(entry.0), placed);
+            root
         };
         Ok(ParsedRecords { root, source: entry, options, errors })
     }
