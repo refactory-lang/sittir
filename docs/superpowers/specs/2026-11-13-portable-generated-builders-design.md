@@ -42,7 +42,7 @@ The same calls against typescript give `get x() {\n  return 1;\n}`. A portable g
 - **What a projection holds:**
   - every node a path claims, as its structure;
   - a node it can't express, kept in place as the node itself: the node a parse error sits on, an unclaimed kind, a flag no arm builds. The member's node arm types it (decision 2), `engine.isNode` tells it apart, and a build passes it through. Probed: python `x = = 1` keeps its `1` as an `integer_decimal_plain` node.
-  - no comments, as today's read.
+  - no comments, as today's read, so a whole-program round trip through the projection drops them.
 - **What `project(node)` is for:**
   - a node the engine built: `engine.project(getter)` gives its structure;
   - a node from a low-level engine of the same language, such as a subtree a tool already holds;
@@ -193,6 +193,8 @@ if (engine.isNode(value)) return value.$type === TSKindId.Block ? b.suiteBlock(v
 
 A keyword flag is a boolean on the loose surface (`static: …includes('static')`), not a token id.
 
+A flag a container sets on what it unwraps is among its element path's flags. Rust's `expression.call.macro` has `'terminated'`, which an expression statement sets on the macro call it unwraps: `a!();` reads `{ $path: 'expression.call.macro', $flags: ['terminated'], … }`, and an item macro (`foo! { }`) reads with no flags (the user, 2026-11-16: "Flag `terminated` on the macro call"). The build takes the expression-statement seat for a flagged macro call and the item seat for an unflagged one, so both round-trip (bindings spec §9).
+
 ### 4. Lists
 
 **The case.** The loose list builders, measured:
@@ -208,6 +210,7 @@ A keyword flag is a boolean on the loose surface (`static: …includes('static')
 - The emitter spreads a typed array for a list that may be empty.
 - For a non-empty list it writes `f(first), ...rest.map(f)`. When the list's container is optional, it guards with `first === undefined`.
 - It returns `null` only from members whose list takes holes (typescript `Elisions`).
+- A one-item list that no list seat takes builds in the member's single seat: python's `from a import *` reads `names: ['*']`, and the build writes the wildcard (the user, 2026-11-16: "Approve all listed").
 
 ```ts
 const [first, ...rest] = input.parameters ?? [];
@@ -225,11 +228,11 @@ parameters: first === undefined ? b.parameters() : b.parameters(b.parametersElem
 - Every arm function is annotated with its kind's node type, and every member function with its seats' node union. That breaks the recursion.
 - Named per-path interfaces were tried and rejected: a path with several build forms isn't an object type (TS2312 on python `expression.lambda`, `expression.collection.tuple.bare` and two octal integers).
 
-The largest member in any grammar is python `statement.expression` → `content`: 107 paths, 25 raw node kinds and one unmapped kind (typescript's largest: 104; rust's: 96). Its generated signature, measured:
+The largest member measured holds the expressions a python statement can be: 107 paths, 25 raw node kinds and one unmapped kind (typescript's largest: 104; rust's: 96). Python's statement lists hold those expressions beside the statements themselves (bindings spec §6, rule 6). The member's generated signature, measured:
 
 ```ts
 type Item = string | BuildInput<PythonMap, 'expression.assignment'> | … /* 107 paths */ | T.Attribute.Bound | T.Attribute.Parsed | … /* 25 kinds */ | V.Unmapped<'python:as_pattern'>;
-const statement_expression_content = (value: Item): T.ExpressionStatement.Bound | … => {
+const expression_item = (value: Item): T.ExpressionStatement.Bound | … => {
 	if (typeof value === 'string') return …;
 	if (engine.isNode(value)) return value;
 	switch (value.$path) { case 'expression.assignment': return …; /* 107 cases */ }
@@ -299,7 +302,7 @@ if (typeof value === 'string') return b.identifier(value);
 - A path that a grammar builds from text alone declares `readonly $value: string`. Those paths are `identifier`, `literal.string.text`, `comment.text`, `comment.html`, `literal.regex.flags`, `literal.regex.pattern`, `clause.import.relative.prefix` and `expression.interpolation.conversion`. Rust's `identifier.metavariable` (`$x`) builds from its name's text too, through a content arm, so it keeps the `$value` it inherits from `identifier`.
 - A node whose one slot holds a text-built kind is built from text too. Its content arm names that slot, and the build makes the child from the text, then the node around it. A lexed token whose only slot is its interior text is the simplest case. These paths therefore declare `$value: string` too, and lose `content` (the user, 2026-11-15):
   - the comment paths: `comment.line`, `.block`, `.block.doc`, `.line.doc`, `.line.doc.inner` and `.block.doc.inner`;
-  - rust's and typescript's `literal.string.escape`;
+  - `literal.string.escape` in every grammar: an escape reads `$value` (bindings spec §9);
   - rust's `literal.string.raw`, `.bytes.raw` and `.c.raw`.
 
   Rust's `//x` reads `{ $path: 'comment.line', $value: 'x' }`, and its `r"a"` reads `{ $path: 'literal.string.raw', $value: 'a' }`.
@@ -309,7 +312,9 @@ if (typeof value === 'string') return b.identifier(value);
 - `Read<G, P>`, `InputOf` and a slot's default all add the bare text for such a path. The reader is unchanged.
 - The identifier subkinds that are structures (`identifier.qualified`, `.label`, `.lifetime`) restate `$value` away.
 - The fixed-word text paths keep `{ $path }`, because every grammar builds them from it: `statement.break`, `statement.continue`, `modifier.visibility.*`, `expression.meta` and `clause.import.wildcard`.
-- A path whose text arm sits beside structural arms (python `literal.string.escape`, rust `literal.character`), or whose `$value` is a number (python `literal.number.integer`, rust `literal.number.float`, typescript `literal.number`), is left out. Its input needs forms, each stating either `$value` or the members.
+- A path whose text arm sits beside structural arms (rust `literal.character`), or whose `$value` is a number (python `literal.number.integer`, rust `literal.number.float`, typescript `literal.number`), is left out. Its input needs forms, each stating either `$value` or the members. Its text form requires `$value`: rust's `literal.character` is `V.Form<'content', '$value'> | V.Form<'$value', 'content'>` (the user, 2026-11-16: "Approve all listed").
+- A text-built arm requires `$value` in its pick tests, so the map types every text-built path's input as `$forms: V.Form<'$value'>` (the user, 2026-11-16).
+- A negative check on a build form runs in the TypeScript 6 lane (`*.portable.ts6.test-d.ts`). A tsrs or TS7 program that has already related a map's reads to its inputs can skip a later negative check on a build form, so typescript's qualified name passed as a class `name` is refused there (the user, 2026-11-16).
 
 | input | before | after |
 |---|---|---|
@@ -374,11 +379,11 @@ Table 4. The same path in different slots: `expression.binary.arithmetic.add`'s 
 | slot | also admits `expression.assignment.compound.add` | tail |
 |---|---|---|
 | python `statement.return.expression` | no | `add` |
-| python `statement.expression.content` | yes | `arithmetic.add` |
+| python `file.statements` | yes | `arithmetic.add` |
 | rust `statement.return.expression` | yes | `arithmetic.add` |
 | typescript `statement.return.expression` | yes | `arithmetic.add` |
 
-Python's tail is `add` in 148 slots and `arithmetic.add` in 1. Rust and typescript need `arithmetic.add` in all of theirs (143 and 187 slots).
+Python's tail is `add` in 171 slots and `arithmetic.add` in 2, its statement lists (`file.statements` and `statement.block.statements`). Rust and typescript need `arithmetic.add` in all of theirs (144 and 198 slots).
 
 ## Diagnostics and the MVP sets
 
