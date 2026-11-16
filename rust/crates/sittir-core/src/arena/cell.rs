@@ -171,6 +171,20 @@ impl CellWord {
         }
         Ok(CellWord(u32::from(kind.0) << 2))
     }
+
+    /// The address of what this cell names: a record, a run or a leaf
+    /// entry, or in chunk 0 a unit's kind; address 0 for an unset cell.
+    #[must_use]
+    pub(crate) const fn address(self) -> Address {
+        Address(self.0 >> 2)
+    }
+
+    /// The edges its site marks, as the word holds them: leading 1,
+    /// trailing 2.
+    #[must_use]
+    pub(crate) const fn edges(self) -> u32 {
+        self.0 & 3
+    }
 }
 
 impl Cell {
@@ -196,13 +210,14 @@ impl Cell {
     /// `ArenaError::OutOfBounds` for an address in no chunk, or words or
     /// bytes past what the arena wrote; `ArenaError::Malformed` for any word
     /// no writer writes.
-    pub fn decode_built(CellWord(word): CellWord, arena: &dyn ArenaRead, bits: u32) -> Result<Cell, ArenaError> {
+    pub fn decode_built(cell: CellWord, arena: &dyn ArenaRead, bits: u32) -> Result<Cell, ArenaError> {
+        let CellWord(word) = cell;
         if word == 0 {
             return Ok(Cell::Absent);
         }
-        let edges = word & 3;
+        let edges = cell.edges();
         let changed = read_changed(edges)?;
-        let at = Address(word >> 2);
+        let at = cell.address();
         if at.chunk() == 0 {
             if edges != 0 {
                 return Err(malformed("unit cell edges", word));
@@ -453,14 +468,15 @@ impl ListCell {
     /// What reading the run's length refuses, and `ArenaError::Malformed` for
     /// changed edges on a list cell, a run of no items, or one that names no
     /// word after its length.
-    pub fn of_word(CellWord(word): CellWord, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
+    pub fn of_word(cell: CellWord, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
+        let CellWord(word) = cell;
         if word == 0 {
             return Ok(ListCell::EMPTY);
         }
-        if word & 3 != 0 {
+        if cell.edges() != 0 {
             return Err(malformed("list cell edges", word));
         }
-        let run = Address(word >> 2);
+        let run = cell.address();
         let len = arena.word(run)?;
         if len == 0 {
             return Err(malformed("list length", len));
@@ -492,6 +508,18 @@ mod tests {
     use crate::arena::Arena;
 
     const BITS: u32 = 9;
+
+    #[test]
+    fn a_cell_words_address_and_edges_read_back_as_it_was_made() {
+        let at = Address::new(3, 40).expect("an address");
+        let leading = CellWord::of(at, ChangedEdges { leading: true, trailing: false }).expect("a cell");
+        assert_eq!((leading.address(), leading.edges()), (at, 1));
+        let both = CellWord::of(at, ChangedEdges { leading: true, trailing: true }).expect("a cell");
+        assert_eq!((both.address(), both.edges()), (at, 3));
+        let unit = CellWord::unit(KindId(5)).expect("a unit");
+        assert_eq!((unit.address(), unit.edges()), (Address(5), 0));
+        assert_eq!((CellWord(0).address(), CellWord(0).edges()), (Address::NONE, 0));
+    }
 
     fn shape(forms: u8, width: u32) -> CellShape {
         CellShape { word: 0, width, run: None, forms, built: 0, key: "_slot" }
