@@ -60,6 +60,18 @@ describe.each(['object', 'arena'] as const)('a parse that adopts its style, in %
 		expect(swappedRoot(engine)).toBe('\n\nuse y;\nuse x;');
 	});
 
+	it('writes an edit in a tree parsed before it, and a snapshot of that tree, in the adopted style', async () => {
+		using engine = await openEngine(nodeStorage);
+		const earlier = engine.parse(PLAIN, { depth: Infinity });
+		engine.parse(TWO_SPACE, { adoptStyle: true });
+		const fn = earlier.statements()[0] as any;
+		const body = fn.body();
+		const b = engine.build as any;
+		const call = b.expressionStatement(b.callExpression({ function: b.identifier('c'), arguments: b.arguments() }));
+		expect(fn.$with.body(body.$with.statements(...body.statements(), call)).$render()).toBe('fn g() {\n  x();\n  c();\n}');
+		expect(engine.render(earlier.$snapshot()).toString()).toBe('fn g() {\n  x();\n}\n');
+	});
+
 	it('leaves a tree parsed before it rendering its source bytes', async () => {
 		using engine = await openEngine(nodeStorage);
 		const earlier = engine.parse(TABBED);
