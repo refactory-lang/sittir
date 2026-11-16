@@ -293,7 +293,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 
 ### Task 6b: String-pool interning moves native
 
-The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its own PR. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
+The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 as its own PR; the maintainer, 2026-11-16: "let's move 6b to the end, but yes", so **it lands inside Task 6's PR, as its last piece,** after Tasks 6c, 6d and 6e. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
 
 **Facts this task starts from** (measured on Task 5c's head, arena storage):
 - `BuiltArena.entry(kind, text)` (`built-arena.ts`) interns built text in JavaScript: a `Map` lookup per call, and on a miss an encode, a `Chunks.alloc` and a copy into a chunk native handed out whole (`builtBytes`). The write position is JavaScript's.
