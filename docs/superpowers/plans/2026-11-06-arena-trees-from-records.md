@@ -331,17 +331,26 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 
 **Status:** ruled 2026-11-16, not designed. A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
 
-### Task 6e: Hand cell decoders go through the views
+### Task 6e: One reader for each fact a record's words hold
 
-**Status:** ruled 2026-11-16 ("let's fix the 14 functions"), not started. An outline goes to the maintainer's coordinator before code. It starts from Task 6's branch as merged, since these files change there.
+**Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16; no code until Task 6 merges, since these files change there. The list is re-checked against Task 6 as merged.
 
-A census on master found 14 functions in 8 files that decode a record's cells directly, beside the derived record views: `admit.rs` (`for_each_built_cell`, `admit`), `count.rs` (`release_held`, `reaches`), `reach.rs` (`slots`, `cell_at`, `row_of`), `built.rs` (`admitted_leaf`), `parsed.rs` (`record_stub`), `borrowed.rs` (`word`, `header_kind`), `hydrate.rs` (`embed`, `parsed_side`), and `prep.rs` (`side`, `items`, `present`, `prepare`, `separators`, `fill_unit`, `render_slot`). They read against the shape tables the derive emits, so none re-derives a layout; the defect is a second way to read a cell.
+A census on Task 6's head (`b30da527d`) found 16 functions in 7 files that read a record's words by hand: a literal index, a shift or a mask, beside the function that already knows that fact. The count first reported from master, 14, was wrong in both directions; several of those read through the views already, or are writers.
 
-- [ ] **Step 1: The outline, before code.** Per function: what it reads, the view that already reads the same thing or the view method it needs, and whether it can go through a view at all. A function that must read raw words because it validates bytes no view can trust yet (`admit`) or walks any record without knowing its type (`release_held`) is named with its reason, and reads through one shared untyped reader instead of its own decode.
-- [ ] **Step 2:** the list re-taken on Task 6's merged branch, since the census was on master.
-- [ ] **Step 3: Implement,** one file per commit, renders and record goldens byte-identical.
-- [ ] **Step 4: A guard:** a test that fails when a cell is decoded outside the views and the one untyped reader.
-- [ ] **Step 5: The three-way verification** and a paired run; a no-behaviour-change refactor moves no row.
+None of the 16 can go through a typed, derived view: each walks a record by its kind's shape, not as a node type. What each can do is read a fact through the one function that owns it. Three shared untyped readers, plus the existing `parsed_cells`:
+
+1. **`ArenaRead::side_of(at)`,** beside `header_kind` in `borrowed.rs`: the side record's address, header word 1. Replaces the literal `words[1]` or `header[1]` in `admit.rs` `admit`, `count.rs` `release_record`, `run_nodes.rs` `source_of` and `read`, `prep.rs` `SlotAt::of`, and `view.rs` `record_of` and `linked_leaf_place`.
+2. **`CellWord` accessors in `cell.rs`** (`address()`, `edges()`, a constructor from an address or an entry): the built cell word's bits. Replaces `word >> 2`, `word & 3`, `at << 2` and `entry * 4` in `count.rs` `drop_cell`, `release`, `release_record` and `reaches`, and `built.rs` `admitted_leaf`.
+3. **One walker over a built record's cells,** yielding each cell's shape, item and raw word, with decoding left to the caller: `admit.rs` `for_each_built_cell`, moved beside `view.rs` `parsed_cells`. Admission decodes what it yields, since it validates bytes JavaScript wrote before a view may trust them. Release counts the raw words and decodes no text. `count.rs` `reaches` and `release_record` use it in place of their own walks.
+4. **`parsed_cells`,** as it is, for `site.rs` `site_row` and `row_sites`; and `cell.rs` `linked` and `ListCell::items`, as they are, for `count.rs` `release_held`.
+
+Any new `pub` item among these is a row for the maintainer before code.
+
+- [x] **Step 1: The outline.** Accepted 2026-11-16.
+- [ ] **Step 2:** the list re-taken on Task 6 as merged.
+- [ ] **Step 3: Implement,** one commit per reader, then one per file moved onto it, in the order above. Renders and record goldens stay byte-identical.
+- [ ] **Step 4: A guard:** a source scan that fails on a shift or mask against a cell word, a literal index into a record's header, or a cell decode, anywhere outside `cell.rs`, `side.rs`, `borrowed.rs`, the two walkers and the derived views. Its list of exceptions is empty when the task ends.
+- [ ] **Step 5: The three-way verification** and a paired run; a refactor with no behaviour change moves no row.
 
 ### Task 7: The measurements
 
