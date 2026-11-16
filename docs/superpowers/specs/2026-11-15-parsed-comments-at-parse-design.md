@@ -24,7 +24,7 @@
 - **The rule is unchanged.** An extra's owner is the smallest node holding both tokens round its gap. An entry that starts on the previous token's row trails the child before it; the rest lead the child after; with neither beside it, it is the owner's `inner`; a list passes it to the item.
 - **When.** In the hydration walk. The walk meets each extra between its siblings in document order with their rows in hand, so it needs no rank, no token walk and no navigation. This assumes the parser attaches an extra as a child of its gap's owner (an extra never begins or ends a node). The parity test of step 1 proves it on every fixture; where one disagrees, the walk hands the extra up or down to the owner by the two tokens' spans, which it holds.
 - **Where.** In the held-sides store, under the key a parsed node's written side already uses. A parse-placed side and a caller-written side of the same node are then one entry in one store, read by one path, and a write replaces the entry. The store's contract changes with it: written trivia was an overlay over what placement assigned, and with no placement there is nothing underneath.
-- **The line fact stays.** Each entry keeps whether a line break sits before and after it. Without it `// own line\nlet y` could render as `// own line let y`. This is not style.
+- **Line breaks beside a comment.** Today a comment carries no line fact of its own: whether it sits on its own line is held by the whitespace runs beside it, which this design deletes. Parse therefore writes the side as a caller writes one on a built node: the comment's entry, with a line-break member before or after it where the source has a break there, and nothing where it doesn't. One representation serves parsed and built nodes and no field is added. Without it `// own line\nlet y` could render as `// own line let y`; this is not style. To verify on the probe: what the options write after a built node's line comment that has no member beside it. A line comment must never be followed on its line by code, whatever the side holds.
 - **Release.** A parse-placed side is node data with the lifetime of its record. A read's records are freed with the engine's arena, and the store with them; neither is released earlier today. When read records become individually releasable, their entries are dropped in the same callback that drops a built record's sides. To measure on the probe: retained bytes per parse on a comment-heavy file, since they stay as long as the records do.
 - **Cost.** Extras are about 0.1% of record words on the paired corpora (46, 9 and 43 extras in the python, typescript and rust corpora). Parse time and retained bytes on a comment-heavy file are measured on the probe.
 
@@ -69,7 +69,7 @@ Only gaps a rebuilt parent writes change.
 All of it is shared engine code, so both storages change together and no difference between them is introduced.
 
 - The baseline measure, whole: the recorder and its tallies, the recorded render of a region, the gap and depth lookups behind it, and the recording render path of each storage. It exists only to say what the options would write at a gap, so that a deviation can be stored.
-- Layout runs, run excess and the deviation lookup; whitespace as an entry or member of a side.
+- Layout runs, run excess and the deviation lookup; whitespace a parse derives as a deviation from the options. A whitespace member a caller can write on a built node stays, and is the form parse uses for a line break beside a comment.
 - The whitespace half of list slots (the per-side class). The separator half is a preference choice and stays, compared with the options directly.
 - Per-tree placement state, its lock and its published tables in object storage, and the per-call placement table in arena storage.
 - The placer.
@@ -86,9 +86,9 @@ The JavaScript surface that carries layout (the snapshot and slot layouts of a r
 
 ## Order
 
-1. The parse-time comment placement and the side read from the store, with the lazy placer still present. A parity test compares the old and new sides for comments on every fixture.
+1. The parse-time comment placement, with the lazy placer still present and still the only thing a render reads. A side the store holds masks the placer's side, whitespace runs included, so a parse-placed side is not read by a render until step 3; this step changes no output. A parity test compares, per fixture, node and side, the extras and ERRORs the placer assigns (kind and span, in order) with what parse stored, and each extra's line breaks in the source with the members written beside it.
 2. The blank-line flag.
-3. Delete the baseline, deviations and runs, and retake the expectations the ruling changes.
+3. Switch a render to the parse-placed sides, delete the baseline, deviations and runs, and retake the expectations the ruling changes, in one change.
 4. Delete the placer and per-tree placement.
 5. A census of what still reads the plain token rows (6% to 17% of record words). Whether they can go is a separate decision.
 
