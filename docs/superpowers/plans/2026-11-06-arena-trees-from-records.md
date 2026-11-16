@@ -291,6 +291,12 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 - [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
 - [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
 
+**Gates while Task 6's PR is being assembled** (the maintainer, 2026-11-16: "can we bypass the full gates for now?"). Until the PR is ready for its paired run, a commit or a merge into its branch does not wait on the full local three-way verification:
+- **Before each commit or merge into the branch:** the targeted tests of what changed, `cargo check` and clippy on the touched crates, and the type-check. Minutes, not the full suite.
+- **The full gate is CI on each pushed head:** the test shards, cargo, generated-output drift and the validation rows in both storages. Work continues while it runs. A red check stops the work that caused it for review, with the failing state kept, as always.
+- **Push each piece as its own head** (adoptStyle, each placement step, release, the readers, interning), so a red run names one piece.
+- **The full local three-way verification runs once,** on the head that goes to the paired run, and again on any head after it. The landing gates themselves (render, edit, parse plus whole read, object rows) are unchanged.
+
 ### Task 6b: String-pool interning moves native
 
 The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 as its own PR; the maintainer, 2026-11-16: "let's move 6b to the end, but yes", so **it lands inside Task 6's PR, as its last piece,** after Tasks 6c, 6d and 6e. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
