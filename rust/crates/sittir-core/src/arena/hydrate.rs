@@ -155,14 +155,12 @@ pub struct Placed {
     pub span: Span,
 }
 
-type Edges = (super::NodeSite, super::NodeSite);
-
-/// What placing reads of a child a walk met, beside its entry: the rows
-/// its first and last bytes lie on, whether it is named, and for an extra
-/// the kind its coordinate names.
+/// What placing reads of a child a walk met, beside its entry: whether it
+/// is named, and for an extra the kind its coordinate names and whether it
+/// starts on the row the node before it ends on.
 #[derive(Debug, Clone, Copy)]
 struct Beside {
-    rows: (u32, u32),
+    trails: bool,
     kind: KindId,
     named: bool,
     /// Whether the node is an extra or an `ERROR`: an entry of a side, and
@@ -170,14 +168,13 @@ struct Beside {
     aside: bool,
     extra: Option<KindId>,
     span: Span,
-    /// For a child with a record of its own, where the node an extra
-    /// leading it and one trailing it are placed on is kept (`OpenRun::edges`).
-    edges: Option<(super::NodeSite, super::NodeSite)>,
 }
 
 /// The two answers `read::stamp` takes of a grammar: whether a display kind
 /// shows, and whether a grammar kind relaxes to a display kind.
 type Stamp = (fn(KindId) -> bool, fn(KindId, KindId) -> bool);
+
+type Edges = (super::NodeSite, super::NodeSite);
 
 /// What a hydration writes into: the space its records take.
 pub trait HydrateInto: RecordSpace {}
@@ -197,10 +194,14 @@ struct OpenRun {
     entries: Vec<RunEntry>,
     rows: Vec<(usize, u32)>,
     last: Option<(NodeIndex, usize)>,
-    early: Vec<(NodeIndex, Address, Edges)>,
+    early: Vec<(NodeIndex, Address, Option<Edges>)>,
     met: Vec<(NodeIndex, u32)>,
     /// What placing reads of each entry, entry for entry.
     beside: Vec<Beside>,
+    /// For each child that is a list with a record of its own, by its
+    /// entry: where the nodes an extra leading it and one trailing it are
+    /// placed on are kept (`OpenRun::edges`).
+    passes: Vec<(usize, Edges)>,
     /// The levels the node's own kind and the nodes met under it open net
     /// of those they close, and the node's own share of that.
     depth: i32,
@@ -232,8 +233,9 @@ impl OpenRun {
         }
         if let Some(found) = self.early.iter().position(|&(index, ..)| index == kid.index) {
             let (_, at, edges) = self.early.swap_remove(found);
+            self.passes.extend(edges.map(|edges| (self.entries.len(), edges)));
             self.entries.push(RunEntry::Record { at, shared: false });
-            self.beside.push(Beside { edges: Some(edges), ..beside });
+            self.beside.push(beside);
             return;
         }
         self.beside.push(beside);
@@ -252,17 +254,17 @@ impl OpenRun {
     /// `depth` is the child's depth move and `own` its own kind's share,
     /// which this run counted already when it met the child or is the same
     /// node.
-    fn name(&mut self, index: Option<NodeIndex>, at: Address, depth: i32, own: i32, edges: Edges) {
+    fn name(&mut self, index: Option<NodeIndex>, at: Address, depth: i32, own: i32, edges: Option<Edges>) {
         match (index, self.last) {
             (Some(index), _) if self.index == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
-                self.beside.push(Beside { rows: (0, 0), kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, edges: None });
+                self.beside.push(Beside { trails: false, kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 } });
                 self.depth += depth - own;
             }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
                 self.rows.pop_if(|&mut (open, _)| open == entry);
                 self.entries[entry] = RunEntry::Record { at, shared: false };
-                self.beside[entry].edges = Some(edges);
+                self.passes.extend(edges.map(|edges| (entry, edges)));
                 self.depth += depth - own;
             }
             (Some(index), _) => {
@@ -322,8 +324,11 @@ impl OpenRun {
     /// on is kept: the entry's own node, or the item its list passes the
     /// extra to.
     fn target(&self, entry: usize, leading: bool, kinds: Option<crate::trivia_table::SurfaceKinds>) -> super::NodeSite {
-        if let Some((lead, trail)) = self.beside[entry].edges {
+        if let Some(&(_, (lead, trail))) = self.passes.iter().find(|&&(passing, _)| passing == entry) {
             return if leading { lead } else { trail };
+        }
+        if let RunEntry::Record { at, .. } = self.entries[entry] {
+            return super::NodeSite::Record(at);
         }
         let beside = &self.beside[entry];
         match kinds.and_then(|kinds| self.passed(beside.kind, beside.span, &self.children(Some(entry)), leading, kinds)) {
@@ -333,13 +338,17 @@ impl OpenRun {
     }
 
     /// Where the nodes an extra leading the record's node and one trailing
-    /// it are placed on are kept.
-    fn edges(&self, span: Option<Span>, kinds: Option<crate::trivia_table::SurfaceKinds>) -> Edges {
+    /// it are placed on are kept, for a list; none for any other node, which
+    /// takes them itself.
+    fn edges(&self, span: Option<Span>, kinds: Option<crate::trivia_table::SurfaceKinds>) -> Option<Edges> {
+        let (facts, span, kinds) = (self.facts?, span?, kinds?);
+        if !kinds.lists.contains(&facts.kind) {
+            return None;
+        }
         let own = super::NodeSite::Record(self.at);
-        let (Some(facts), Some(span), Some(kinds)) = (self.facts, span, kinds) else { return (own, own) };
         let children = self.children(None);
         let edge = |leading: bool| self.passed(facts.kind, span, &children, leading, kinds).map_or(own, |item| self.target(item, leading, Some(kinds)));
-        (edge(true), edge(false))
+        Some((edge(true), edge(false)))
     }
 
     /// Each extra among the children of the record's node and of the rows
@@ -351,6 +360,9 @@ impl OpenRun {
     /// holds it.
     fn placed(&self, kinds: Option<crate::trivia_table::SurfaceKinds>, out: &mut Vec<Placed>) {
         use crate::trivia_table::TriviaSide;
+        if self.beside.iter().all(|beside| beside.extra.is_none()) {
+            return;
+        }
         let mut open: Vec<(Option<usize>, usize, Vec<usize>)> = vec![(None, self.entries.len(), Vec::new())];
         let close = |holder: Option<usize>, children: &[usize], out: &mut Vec<Placed>| {
             for (position, &child) in children.iter().enumerate() {
@@ -361,7 +373,7 @@ impl OpenRun {
                 let after = children[position + 1..].iter().find(plain).copied();
                 let is_named = |other: usize| self.beside[other].named;
                 let (site, side) = match (before, after) {
-                    (Some(before), _) if is_named(before) && self.beside[child].rows.0 == self.beside[before].rows.1 => (self.target(before, false, kinds), TriviaSide::Trailing),
+                    (Some(before), _) if is_named(before) && self.beside[child].trails => (self.target(before, false, kinds), TriviaSide::Trailing),
                     (_, Some(after)) if is_named(after) => (self.target(after, true, kinds), TriviaSide::Leading),
                     (Some(before), _) if is_named(before) => (self.target(before, false, kinds), TriviaSide::Trailing),
                     _ => match (children[position + 1..].iter().find(named), children[..position].iter().rev().find(named)) {
@@ -477,7 +489,7 @@ impl<'a> Hydration<'a> {
         self.tree.words_mut(at, 1)?[0] = header;
         let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
         let own = entering.map_or(0, |(_, facts)| self.depth_of(facts.kind));
-        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), met: Vec::new(), depth: own, own });
+        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), passes: Vec::new(), met: Vec::new(), depth: own, own });
         Ok(Draft { at, words })
     }
 
@@ -560,8 +572,9 @@ impl<'a> Hydration<'a> {
         let facts = facts_of(&kid, &node);
         let depth = self.depth_of(kid.grammar);
         let stamped = |stamp: Stamp| crate::read::stamp(facts.kind, facts.display(), stamp.0, stamp.1);
-        let layout = self.kinds.is_some_and(|kinds| kinds.layout.contains(&kid.grammar));
-        let beside = Beside { rows: (crate::types::narrow(node.start_position().row), crate::types::narrow(node.end_position().row)), kind: kid.grammar, named: kid.named && kid.start < kid.end, aside: kid.extra || kid.error(), extra: (kid.extra && !kid.error() && !layout).then(|| self.stamp.map_or(facts.kind, stamped)), span: kid.span(), edges: None };
+        let placed = kid.extra && !kid.error() && !self.kinds.is_some_and(|kinds| kinds.layout.contains(&kid.grammar));
+        let trails = placed && node.prev_sibling().is_some_and(|before| before.end_position().row == node.start_position().row);
+        let beside = Beside { trails, kind: kid.grammar, named: kid.named && kid.start < kid.end, aside: kid.extra || kid.error(), extra: placed.then(|| self.stamp.map_or(facts.kind, stamped)), span: kid.span() };
         if let Some(open) = self.open.last_mut() {
             open.meet(&kid, facts, depth, beside);
         }
