@@ -3161,7 +3161,6 @@ export interface UsingDeclaration {
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	readonly __slotHints__?: {
-		readonly kind: SlotHint<NonNullable<T.UsingDeclaration.Config>['kind']>;
 		readonly variableDeclarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
 		readonly automaticSemicolon: SlotHint<NonNullable<T.UsingDeclaration.Options>['automaticSemicolon']>;
 	};
@@ -4308,8 +4307,7 @@ export interface MemberExpression {
 		readonly operator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
 	};
 	readonly __slotHints__?: {
-		readonly object: SlotHint<NonNullable<T.MemberExpression.Config>['object']>;
-		readonly operator: SlotHint<NonNullable<T.MemberExpression.Config>['operator']>;
+		readonly object: SlotHint<NonNullable<ConfigOf<T.MemberExpression>>['object']>;
 		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	readonly object: () => Expression | PrimaryExpression | TSKindId.Import;
@@ -7457,9 +7455,7 @@ export interface ObjectType {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly opening: SlotHint<NonNullable<ConfigOf<T.ObjectType>>['opening']>;
 		readonly members: SlotHint<T.ObjectTypeContent, true>;
-		readonly closing: SlotHint<NonNullable<ConfigOf<T.ObjectType>>['closing']>;
 		readonly $listSlots: {
 			readonly members: ListSlotHint<
 				| T.ExportStatement
@@ -9600,10 +9596,9 @@ export interface ForHeaderUsingKind {
 			| SequenceExpression;
 	};
 	readonly __slotHints__?: {
-		readonly kind: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['kind']>;
 		readonly left: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
-		readonly operator: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['operator']>;
-		readonly right: SlotHint<NonNullable<T.ForHeaderUsingKind.Config>['right']>;
+		readonly operator: SlotHint<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['operator']>;
+		readonly right: SlotHint<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['right']>;
 		readonly terminator: SlotHint<NonNullable<T.ForHeaderUsingKind.Options>['terminator'], true>;
 	};
 	readonly kind: () => TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm;
@@ -10674,9 +10669,7 @@ export interface InterfaceBody {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly opening: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>;
 		readonly members: SlotHint<T.ObjectTypeContent, true>;
-		readonly closing: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>;
 		readonly $listSlots: {
 			readonly members: ListSlotHint<
 				| T.ExportStatement
@@ -19307,7 +19300,58 @@ export namespace LexicalDeclaration {
 	>;
 }
 export namespace UsingDeclaration {
-	export type Config = OmitEach<ConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
+	export namespace Plain {
+		export type Config = OmitEach<Omit<ConfigFor<TSKindId.UsingDeclaration>, 'kind'>, 'automaticSemicolon'>;
+		export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
+		export interface Bound extends BoundOf<T.UsingDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.UsingDeclaration['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed
+			extends ParsedOf<T.UsingDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.UsingDeclaration['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.UsingDeclaration['$type']>;
+		}
+		export type BuildArgs = [config: T.UsingDeclaration.Plain.Config, options?: T.UsingDeclaration.Plain.Options];
+		export type LooseArgs = [config: T.UsingDeclaration.Plain.Config, options?: T.UsingDeclaration.Plain.Options];
+	}
+	export namespace Await {
+		export type Config = OmitEach<Omit<ConfigFor<TSKindId.UsingDeclaration>, 'kind'>, 'automaticSemicolon'>;
+		export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
+		export interface Bound extends BoundOf<T.UsingDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.UsingDeclaration['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed
+			extends ParsedOf<T.UsingDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.UsingDeclaration['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.UsingDeclaration['$type']>;
+		}
+		export type BuildArgs = [config: T.UsingDeclaration.Await.Config, options?: T.UsingDeclaration.Await.Options];
+		export type LooseArgs = [config: T.UsingDeclaration.Await.Config, options?: T.UsingDeclaration.Await.Options];
+	}
+	/** Default form: 'plain' (declared). */
+	export type Config =
+		| (OmitEach<OmitEach<ConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+				readonly kind?: never;
+		  })
+		| OmitEach<ConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
 	export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Bound extends BoundOf<T.UsingDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.UsingDeclaration['$type'];
@@ -19325,10 +19369,22 @@ export namespace UsingDeclaration {
 		>;
 		readonly $snapshot: () => Snapshot<T.UsingDeclaration['$type']>;
 	}
-	export type Loose = OmitEach<LooseFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
-	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
+	export type Loose =
+		| (OmitEach<OmitEach<LooseFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+				readonly kind?: never;
+		  })
+		| OmitEach<LooseFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
+	export type LooseConfig =
+		| (OmitEach<OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+				readonly kind?: never;
+		  })
+		| OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
 	export type BuildArgs = [
-		config: OmitRegistered<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
+		config:
+			| (OmitEach<OmitRegistered<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+					readonly kind?: never;
+			  })
+			| OmitRegistered<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 		options?: T.UsingDeclaration.Options
 	];
 	export type LooseArgs = [config: T.UsingDeclaration.Loose, options?: T.UsingDeclaration.Options];
@@ -20442,7 +20498,54 @@ export namespace AwaitExpression {
 	export type Kind = TSKindId.AwaitExpression;
 }
 export namespace MemberExpression {
-	export type Config = ConfigFor<TSKindId.MemberExpression>;
+	export namespace Dot {
+		export type Config = Omit<ConfigFor<TSKindId.MemberExpression>, 'operator'>;
+		export interface Bound extends BoundOf<T.MemberExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.MemberExpression['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed
+			extends ParsedOf<T.MemberExpression, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.MemberExpression['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.MemberExpression['$type']>;
+		}
+		export type BuildArgs = [config: T.MemberExpression.Dot.Config];
+		export type LooseArgs = [config: T.MemberExpression.Dot.Config];
+	}
+	export namespace Optional {
+		export type Config = Omit<ConfigFor<TSKindId.MemberExpression>, 'operator'>;
+		export interface Bound extends BoundOf<T.MemberExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.MemberExpression['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed
+			extends ParsedOf<T.MemberExpression, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.MemberExpression['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.MemberExpression['$type']>;
+		}
+		export type BuildArgs = [config: T.MemberExpression.Optional.Config];
+		export type LooseArgs = [config: T.MemberExpression.Optional.Config];
+	}
+	/** Default form: 'dot' (declared). */
+	export type Config =
+		| (OmitEach<ConfigFor<TSKindId.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| ConfigFor<TSKindId.MemberExpression>;
 	export interface Bound extends BoundOf<T.MemberExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.MemberExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -20459,9 +20562,17 @@ export namespace MemberExpression {
 		>;
 		readonly $snapshot: () => Snapshot<T.MemberExpression['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.MemberExpression>;
-	export type LooseConfig = LooseConfigFor<TSKindId.MemberExpression>;
-	export type BuildArgs = [config: ConfigOf<T.MemberExpression>];
+	export type Loose =
+		| (OmitEach<LooseFor<TSKindId.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| LooseFor<TSKindId.MemberExpression>;
+	export type LooseConfig =
+		| (OmitEach<LooseConfigFor<TSKindId.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| LooseConfigFor<TSKindId.MemberExpression>;
+	export type BuildArgs = [
+		config:
+			| (OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never })
+			| ConfigOf<T.MemberExpression>
+	];
 	export type LooseArgs = [config: T.MemberExpression.Loose];
 	export type Kind = TSKindId.MemberExpression;
 }
@@ -22698,8 +22809,13 @@ export namespace ObjectType {
 		export type BuildArgs = [config?: T.ObjectType.Flow.Config];
 		export type LooseArgs = [config?: T.ObjectType.Flow.Config];
 	}
-	/** Default form: 'curly' (first-declared). */
-	export type Config = Curly.Config;
+	/** Default form: 'curly' (declared). */
+	export type Config =
+		| (OmitEach<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigFor<TSKindId.ObjectType>;
 	export interface Bound extends BoundOf<T.ObjectType, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ObjectType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -22716,9 +22832,26 @@ export namespace ObjectType {
 		>;
 		readonly $snapshot: () => Snapshot<T.ObjectType['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ObjectType>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ObjectType>;
-	export type BuildArgs = [config: ConfigOf<T.ObjectType>];
+	export type Loose =
+		| (OmitEach<LooseFor<TSKindId.ObjectType>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| LooseFor<TSKindId.ObjectType>;
+	export type LooseConfig =
+		| (OmitEach<LooseConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| LooseConfigFor<TSKindId.ObjectType>;
+	export type BuildArgs = [
+		config:
+			| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & {
+					readonly opening?: never;
+					readonly closing?: never;
+			  })
+			| ConfigOf<T.ObjectType>
+	];
 	export type LooseArgs = [config: T.ObjectType.Loose];
 	export type Kind = TSKindId.ObjectType;
 }
@@ -25179,7 +25312,56 @@ export namespace ForHeaderLetConstKind {
 	export type Kind = TSKindId.ForHeaderLetConstKind;
 }
 export namespace ForHeaderUsingKind {
-	export type Config = OmitEach<ConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
+	export namespace Plain {
+		export type Config = OmitEach<Omit<ConfigFor<TSKindId.ForHeaderUsingKind>, 'kind'>, 'terminator'>;
+		export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | null };
+		export interface Bound extends BoundOf<T.ForHeaderUsingKind, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.ForHeaderUsingKind['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed
+			extends ParsedOf<T.ForHeaderUsingKind, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.ForHeaderUsingKind['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.ForHeaderUsingKind['$type']>;
+		}
+		export type BuildArgs = [config: T.ForHeaderUsingKind.Plain.Config, options?: T.ForHeaderUsingKind.Plain.Options];
+		export type LooseArgs = [config: T.ForHeaderUsingKind.Plain.Config, options?: T.ForHeaderUsingKind.Plain.Options];
+	}
+	export namespace Await {
+		export type Config = OmitEach<Omit<ConfigFor<TSKindId.ForHeaderUsingKind>, 'kind'>, 'terminator'>;
+		export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | null };
+		export interface Bound extends BoundOf<T.ForHeaderUsingKind, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.ForHeaderUsingKind['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed
+			extends ParsedOf<T.ForHeaderUsingKind, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.ForHeaderUsingKind['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.ForHeaderUsingKind['$type']>;
+		}
+		export type BuildArgs = [config: T.ForHeaderUsingKind.Await.Config, options?: T.ForHeaderUsingKind.Await.Options];
+		export type LooseArgs = [config: T.ForHeaderUsingKind.Await.Config, options?: T.ForHeaderUsingKind.Await.Options];
+	}
+	/** Default form: 'plain' (declared). */
+	export type Config =
+		| (OmitEach<OmitEach<ConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<ConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | null };
 	export interface Bound extends BoundOf<T.ForHeaderUsingKind, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ForHeaderUsingKind['$type'];
@@ -25198,10 +25380,18 @@ export namespace ForHeaderUsingKind {
 		>;
 		readonly $snapshot: () => Snapshot<T.ForHeaderUsingKind['$type']>;
 	}
-	export type Loose = OmitEach<LooseFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
-	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
+	export type Loose =
+		| (OmitEach<OmitEach<LooseFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<LooseFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
+	export type LooseConfig =
+		| (OmitEach<OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'> & {
+				readonly kind?: never;
+		  })
+		| OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitRegistered<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
+		config:
+			| (OmitEach<OmitRegistered<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
+			| OmitRegistered<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
 		options?: T.ForHeaderUsingKind.Options
 	];
 	export type LooseArgs = [config: T.ForHeaderUsingKind.Loose, options?: T.ForHeaderUsingKind.Options];
@@ -25854,8 +26044,13 @@ export namespace InterfaceBody {
 		export type BuildArgs = [config?: T.InterfaceBody.Flow.Config];
 		export type LooseArgs = [config?: T.InterfaceBody.Flow.Config];
 	}
-	/** Default form: 'curly' (first-declared). */
-	export type Config = Curly.Config;
+	/** Default form: 'curly' (declared). */
+	export type Config =
+		| (OmitEach<ConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigFor<TSKindId.InterfaceBody>;
 	export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.InterfaceBody['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25872,9 +26067,26 @@ export namespace InterfaceBody {
 		>;
 		readonly $snapshot: () => Snapshot<T.InterfaceBody['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.InterfaceBody>;
-	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
-	export type BuildArgs = [config: ConfigOf<T.InterfaceBody>];
+	export type Loose =
+		| (OmitEach<LooseFor<TSKindId.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| LooseFor<TSKindId.InterfaceBody>;
+	export type LooseConfig =
+		| (OmitEach<LooseConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| LooseConfigFor<TSKindId.InterfaceBody>;
+	export type BuildArgs = [
+		config:
+			| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+					readonly opening?: never;
+					readonly closing?: never;
+			  })
+			| ConfigOf<T.InterfaceBody>
+	];
 	export type LooseArgs = [config: T.InterfaceBody.Loose];
 	export type Kind = TSKindId.InterfaceBody;
 }

@@ -31,6 +31,8 @@ import {
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
 
+const USING_FORMS = { plain: { 'kind:': 'using' }, await: { 'kind:': 'await using' } } as const;
+
 const AUTO_ACCESSOR_RULING = 'An auto-accessor takes no declare, readonly or ?: its arm admits an accessibility modifier, static, abstract and override, then accessor.';
 
 const PUBLIC_FIELD_DEFINITION_ACCEPTED = [
@@ -445,8 +447,12 @@ export default grammar(enrich(base), wire({
 		},
 
 		member_expression: {
-			1: field('operator')
+			1: field('operator'),
+			'.': refine({ dot: { 'operator:': '.' }, optional: { 'operator:': '?.' } }, { default: 'dot' })
 		},
+
+		using_declaration: { '.': refine(USING_FORMS, { default: 'plain' }) },
+		for_header_using_kind: { '.': refine(USING_FORMS, { default: 'plain' }) },
 
 		property_signature: {
 			'2/0': field('override'),
@@ -850,7 +856,8 @@ export default grammar(enrich(base), wire({
 				{
 					curly: { 'opening:': '{', 'closing:': '}' },
 					flow: { 'opening:': '{|', 'closing:': '|}' }
-				}
+				},
+				{ default: 'curly' }
 			)
 		),
 
