@@ -12,7 +12,7 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 
 describe('the portable read', () => {
 	it.each(['true;', 'a;', '1;', 'a!();'])('reads the statement node of %j on its own as the file read reads it, a unit literal included', (source) => {
-		expect(readFirst(`${source}\n`)).toEqual((runtime.read(runtime.engine.parse(`${source}\n`)) as Read).statements![0]);
+		expect(readFirst(`${source}\n`)).toEqual(((runtime.read(runtime.engine.parse(`${source}\n`)) as Read).statements as readonly Read[])[0]);
 	});
 
 	it.each([
