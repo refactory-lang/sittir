@@ -7,6 +7,7 @@
 - **"Lazy placement means we're storing a side channel for extra data we don't need... We are giving too much up just to preserve whitespace.... I don't think it's worth it"** (2026-11-15). This returns to the 2026-11-05 rulings "comments (nontrivial trivia) is important, but whitespace really isn't" and "addition by subtraction — simply remove the logic that creates the gaps table".
 - **A parsed node does not behave differently from a built node** (2026-11-15, said while reading the render numbers).
 - **Comments are placed "during parse for sure"** (2026-11-15).
+- **How a placed side is stored: "it would be whatever matches built nodes"** (2026-11-16). Where this design leaves a form open, the form a built node already uses decides it.
 - **Blank lines: "Yes, on list items only"** (2026-11-15). One fact, kept only for items of a list slot.
 - **A list broken across lines: "Accept: options decide"** (2026-11-15).
 - **Indentation: "We need a generic way to enforce this"**, with nothing specific to one grammar (2026-11-15).
