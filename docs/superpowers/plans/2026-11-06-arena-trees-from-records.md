@@ -251,7 +251,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
-**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. Head `b3dd0c4ad` (2026-11-15) takes the side reads off the edit path, as the spec's Decided section records; its paired run is pending.
+**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. On `6664f9dbe` (paired run, Rust 1.100.0): parse plus whole read is ×0.63–0.70 of object, so that gate holds; render is ×1.31–1.46 of master's arena, so that gate does not. The render gap is placement-time navigation, which Task 6c's steps 3 and 4 delete. **Ruled 2026-11-16: "Keep the gate; fold placement into #1227".** Task 6c is built on this branch and the two land as one PR when render and edit meet the gate. Head `b30da527d` carries the edit fix; its paired run is in progress.
 
 This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
@@ -317,7 +317,7 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 
 ### Task 6c: A parse places comments; whitespace placement is deleted
 
-**Status:** step 1 in progress on `feat/comments-at-parse` (cut from Task 6's branch), 2026-11-16. Approved by the maintainer 2026-11-15.
+**Status:** step 1 committed locally on `feat/comments-at-parse` (cut from Task 6's branch), 2026-11-16. Approved by the maintainer 2026-11-15. **It lands inside Task 6's PR** (ruled 2026-11-16), not after it: its steps 3 and 4 are what bring Task 6's render under its gate.
 
 **Spec:** `docs/superpowers/specs/2026-11-15-parsed-comments-at-parse-design.md`. Its "Order" section is this task's step list, and each step is measured on a paired run against master's arena before the next.
 
