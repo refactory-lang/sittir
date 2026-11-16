@@ -11,11 +11,13 @@ For every peer:
 3. **A finding that contradicts a sentence** in your spec or plan is reported to `sittir-brainstorm` as a row that quotes the sentence. Don't build past it.
 4. **Your plan task's Status line is the tracker.** A PR ticks its task and updates that line.
 
+5. **A table that compares alternatives bolds the winning cell in each row** (lowest for time, memory and failures; highest for passes; every tied cell on a tie), in reports, PR bodies, specs and plans.
+
 For `sittir-brainstorm`:
 
-5. **A ruling goes into the spec first,** and the plan task if it changes the work. The message to a peer then cites the path and section; it doesn't carry the ruling as its only copy.
-6. **A new design that changes an existing spec** amends that spec, or is linked from it with the superseded sentences named.
-7. **This table changes with the work.** A row is updated in the same commit that hands a peer a new task.
+6. **A ruling goes into the spec first,** and the plan task if it changes the work. The message to a peer then cites the path and section; it doesn't carry the ruling as its only copy.
+7. **A new design that changes an existing spec** amends that spec, or is linked from it with the superseded sentences named.
+8. **This table changes with the work.** A row is updated in the same commit that hands a peer a new task.
 
 ## Bindings
 
