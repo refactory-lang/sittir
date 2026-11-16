@@ -153,7 +153,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 			const kind = facts?.kindName(node.$type) ?? String(node.$type);
 			throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 		}
-		const trivia = writtenSides(node);
+		const trivia = isReadRecord(node) ? undefined : writtenSides(node);
 		if (inner.length > 0) writeTrivia(result, { ...trivia, inner: [] });
 		else if (trivia !== undefined) writeTrivia(result, trivia);
 		return handle === undefined ? result : handle.settle(result);
@@ -262,10 +262,14 @@ export function writeUnitSides(node: object, units: readonly UnitSidesWire[]): v
 	holdSideEntries(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
 }
 
+function isReadRecord(node: object): boolean {
+	const built = builtRefOf(node);
+	return built?.at !== undefined && built.arena.reads(built.at);
+}
+
 function carryUnitSides(from: object, to: object): void {
 	const built = builtRefOf(to);
-	const source = builtRefOf(from);
-	if (built?.at !== undefined && (source === undefined || (source.at !== undefined && source.arena.reads(source.at)))) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
+	if (built?.at !== undefined && (builtRefOf(from) === undefined || isReadRecord(from))) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
 	else carryUnitSidesNow(from, to);
 }
 
