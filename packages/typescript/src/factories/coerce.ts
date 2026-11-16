@@ -6955,7 +6955,7 @@ export const coerceToObjectType: ConfigSeat<T.ObjectType.Loose, ReturnType<typeo
 	const _config = {
 		members: resolveObjectType_members(input.members)
 	};
-	return input.opening === undefined
+	return input.opening === undefined && input.closing === undefined
 		? F.buildObjectType(_config)
 		: F.buildObjectType({
 				..._config,
@@ -11045,7 +11045,7 @@ export const coerceToInterfaceBody: ConfigSeat<T.InterfaceBody.Loose, ReturnType
 	const _config = {
 		members: resolveInterfaceBody_members(input.members)
 	};
-	return input.opening === undefined
+	return input.opening === undefined && input.closing === undefined
 		? F.buildInterfaceBody(_config)
 		: F.buildInterfaceBody({
 				..._config,

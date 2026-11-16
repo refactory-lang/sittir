@@ -585,8 +585,8 @@ function emitBranchFrom(
 				body.push('  const _config = {');
 				for (const f of slots) if (!pinnedByDefault.has(f.propertyName)) body.push(`    ${entryOf(f)},`);
 				body.push('  };');
-				const probe = `${cfg}${inputOptional ? '?' : ''}.${pinnedSlots[0]!.propertyName}`;
-				body.push(`  return ${probe} === undefined`);
+				const unpinned = pinnedSlots.map((f) => `${cfg}${inputOptional ? '?' : ''}.${f.propertyName} === undefined`).join(' && ');
+				body.push(`  return ${unpinned}`);
 				body.push(`    ? ${factory}(_config${optionsArg})`);
 				body.push(`    : ${factory}({ ..._config, ${pinnedSlots.map(entryOf).join(', ')} }${optionsArg});`);
 			}

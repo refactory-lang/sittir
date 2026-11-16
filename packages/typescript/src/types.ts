@@ -19355,7 +19355,9 @@ export namespace UsingDeclaration {
 	}
 	/** Default form: 'plain' (declared). */
 	export type Config =
-		| OmitEach<OmitEach<ConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+				readonly kind?: never;
+		  })
 		| OmitEach<ConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
 	export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Bound extends BoundOf<T.UsingDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -19375,13 +19377,20 @@ export namespace UsingDeclaration {
 		readonly $snapshot: () => Snapshot<T.UsingDeclaration['$type']>;
 	}
 	export type Loose =
-		| OmitEach<OmitEach<LooseFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'>
+		| (OmitEach<OmitEach<LooseFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+				readonly kind?: never;
+		  })
 		| OmitEach<LooseFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
-	export type LooseConfig = Omit<OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> &
-		Partial<Pick<OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'>>;
+	export type LooseConfig =
+		| (OmitEach<OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+				readonly kind?: never;
+		  })
+		| OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
 	export type BuildArgs = [
 		config:
-			| OmitEach<OmitRegistered<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'>
+			| (OmitEach<OmitRegistered<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & {
+					readonly kind?: never;
+			  })
 			| OmitRegistered<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 		options?: T.UsingDeclaration.Options
 	];
@@ -20542,7 +20551,7 @@ export namespace MemberExpression {
 	}
 	/** Default form: 'dot' (declared). */
 	export type Config =
-		| OmitEach<ConfigFor<TSKindId.MemberExpression>, 'operator'>
+		| (OmitEach<ConfigFor<TSKindId.MemberExpression>, 'operator'> & { readonly operator?: never })
 		| ConfigFor<TSKindId.MemberExpression>;
 	export interface Bound extends BoundOf<T.MemberExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.MemberExpression['$type'];
@@ -20560,10 +20569,17 @@ export namespace MemberExpression {
 		>;
 		readonly $snapshot: () => Snapshot<T.MemberExpression['$type']>;
 	}
-	export type Loose = OmitEach<LooseFor<TSKindId.MemberExpression>, 'operator'> | LooseFor<TSKindId.MemberExpression>;
-	export type LooseConfig = Omit<LooseConfigFor<TSKindId.MemberExpression>, 'operator'> &
-		Partial<Pick<LooseConfigFor<TSKindId.MemberExpression>, 'operator'>>;
-	export type BuildArgs = [config: OmitEach<ConfigOf<T.MemberExpression>, 'operator'> | ConfigOf<T.MemberExpression>];
+	export type Loose =
+		| (OmitEach<LooseFor<TSKindId.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| LooseFor<TSKindId.MemberExpression>;
+	export type LooseConfig =
+		| (OmitEach<LooseConfigFor<TSKindId.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| LooseConfigFor<TSKindId.MemberExpression>;
+	export type BuildArgs = [
+		config:
+			| (OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never })
+			| ConfigOf<T.MemberExpression>
+	];
 	export type LooseArgs = [config: T.MemberExpression.Loose];
 	export type Kind = TSKindId.MemberExpression;
 }
@@ -22801,7 +22817,12 @@ export namespace ObjectType {
 		export type LooseArgs = [config?: T.ObjectType.Flow.Config];
 	}
 	/** Default form: 'curly' (declared). */
-	export type Config = OmitEach<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'> | ConfigFor<TSKindId.ObjectType>;
+	export type Config =
+		| (OmitEach<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigFor<TSKindId.ObjectType>;
 	export interface Bound extends BoundOf<T.ObjectType, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ObjectType['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -22818,10 +22839,26 @@ export namespace ObjectType {
 		>;
 		readonly $snapshot: () => Snapshot<T.ObjectType['$type']>;
 	}
-	export type Loose = OmitEach<LooseFor<TSKindId.ObjectType>, 'opening' | 'closing'> | LooseFor<TSKindId.ObjectType>;
-	export type LooseConfig = Omit<LooseConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'> &
-		Partial<Pick<LooseConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'>>;
-	export type BuildArgs = [config: OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> | ConfigOf<T.ObjectType>];
+	export type Loose =
+		| (OmitEach<LooseFor<TSKindId.ObjectType>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| LooseFor<TSKindId.ObjectType>;
+	export type LooseConfig =
+		| (OmitEach<LooseConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| LooseConfigFor<TSKindId.ObjectType>;
+	export type BuildArgs = [
+		config:
+			| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & {
+					readonly opening?: never;
+					readonly closing?: never;
+			  })
+			| ConfigOf<T.ObjectType>
+	];
 	export type LooseArgs = [config: T.ObjectType.Loose];
 	export type Kind = TSKindId.ObjectType;
 }
@@ -25330,7 +25367,7 @@ export namespace ForHeaderUsingKind {
 	}
 	/** Default form: 'plain' (declared). */
 	export type Config =
-		| OmitEach<OmitEach<ConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<ConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | null };
 	export interface Bound extends BoundOf<T.ForHeaderUsingKind, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -25351,13 +25388,16 @@ export namespace ForHeaderUsingKind {
 		readonly $snapshot: () => Snapshot<T.ForHeaderUsingKind['$type']>;
 	}
 	export type Loose =
-		| OmitEach<OmitEach<LooseFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'>
+		| (OmitEach<OmitEach<LooseFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<LooseFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
-	export type LooseConfig = Omit<OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'> &
-		Partial<Pick<OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'>>;
+	export type LooseConfig =
+		| (OmitEach<OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>, 'kind'> & {
+				readonly kind?: never;
+		  })
+		| OmitEach<LooseConfigFor<TSKindId.ForHeaderUsingKind>, 'terminator'>;
 	export type BuildArgs = [
 		config:
-			| OmitEach<OmitRegistered<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'>
+			| (OmitEach<OmitRegistered<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
 			| OmitRegistered<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
 		options?: T.ForHeaderUsingKind.Options
 	];
@@ -26013,7 +26053,10 @@ export namespace InterfaceBody {
 	}
 	/** Default form: 'curly' (declared). */
 	export type Config =
-		| OmitEach<ConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'>
+		| (OmitEach<ConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
 		| ConfigFor<TSKindId.InterfaceBody>;
 	export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.InterfaceBody['$type'];
@@ -26032,12 +26075,24 @@ export namespace InterfaceBody {
 		readonly $snapshot: () => Snapshot<T.InterfaceBody['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.InterfaceBody>, 'opening' | 'closing'>
+		| (OmitEach<LooseFor<TSKindId.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
 		| LooseFor<TSKindId.InterfaceBody>;
-	export type LooseConfig = Omit<LooseConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'> &
-		Partial<Pick<LooseConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'>>;
+	export type LooseConfig =
+		| (OmitEach<LooseConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| LooseConfigFor<TSKindId.InterfaceBody>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> | ConfigOf<T.InterfaceBody>
+		config:
+			| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+					readonly opening?: never;
+					readonly closing?: never;
+			  })
+			| ConfigOf<T.InterfaceBody>
 	];
 	export type LooseArgs = [config: T.InterfaceBody.Loose];
 	export type Kind = TSKindId.InterfaceBody;

@@ -3,8 +3,6 @@ import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL, REPEAT } from '../../types
 import type { RawGrammar, RefineForm } from '../../compiler/types.ts';
 import { assemblePredicted, linkPredicted, rawIdTablesOf, withFixtureLexicalRanks } from '../../__tests__/helpers/linked.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import { normalizeGrammar } from '../../compiler/normalize.ts';
-import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
@@ -68,7 +66,7 @@ describe('refine() declares a default form', () => {
 	it('types the namespace config as the full config with the pinned fields omittable together, and names the default', () => {
 		const { typesSrc } = emit(bracesRaw(FORMS, 'curly'));
 		expect(typesSrc).toMatch(/Default form: 'curly' \(declared\)/);
-		expect(typesSrc).toMatch(/export type Config = OmitEach<[^;]*"opening" \| "closing">[^;]*\|[^;]*;/);
+		expect(typesSrc).toMatch(/export type Config = \(OmitEach<[^;]*"opening" \| "closing"> & \{ readonly opening\?: never; readonly closing\?: never \}\) \| [^;]*;/);
 	});
 
 	it('builds the default when the pinned fields are omitted, uses them when given, and refuses part of them', () => {
@@ -79,10 +77,10 @@ describe('refine() declares a default form', () => {
 });
 
 describe('a declared default reaches every emitted surface', () => {
-	it('types the loose config with the pinned fields individually optional and builds the default when they are omitted', () => {
+	it('types the loose config with the pinned fields omittable together and builds the default only when none is given', () => {
 		const { typesSrc, fromSrc } = emit(bracesRaw(FORMS, 'curly'));
-		expect(typesSrc).toMatch(/export type LooseConfig = [^;]*Partial<Pick<[^;]*"opening" \| "closing">>/);
-		expect(fromSrc).toMatch(/const _config = \{[\s\S]*?\};\s+return input\.opening === undefined\s+\? F\.buildBraces\(_config[^)]*\)\s+: F\.buildBraces\(\{ \.\.\._config, opening: [^}]*closing: [^}]*\}/);
+		expect(typesSrc).toMatch(/export type LooseConfig = \(OmitEach<[^;]*"opening" \| "closing"> & \{ readonly opening\?: never; readonly closing\?: never \}\) \| [^;]*;/);
+		expect(fromSrc).toMatch(/const _config = \{[\s\S]*?\};\s+return input\.opening === undefined && input\.closing === undefined\s+\? F\.buildBraces\(_config[^)]*\)\s+: F\.buildBraces\(\{ \.\.\._config, opening: [^}]*closing: [^}]*\}/);
 	});
 });
 

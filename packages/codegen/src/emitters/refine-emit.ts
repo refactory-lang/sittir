@@ -83,5 +83,7 @@ export function refineDefaultOf(nodeMap: NodeMap, kind: string): RefineDefault |
 }
 
 export function omittableWithDefault(fullConfig: string, pinnedProperties: readonly string[]): string {
-	return `OmitEach<${fullConfig}, ${pinnedProperties.map((name) => JSON.stringify(name)).join(' | ')}> | ${fullConfig}`;
+	const keys = pinnedProperties.map((name) => JSON.stringify(name)).join(' | ');
+	const refused = pinnedProperties.map((name) => `readonly ${name}?: never`).join('; ');
+	return `(OmitEach<${fullConfig}, ${keys}> & { ${refused} }) | ${fullConfig}`;
 }

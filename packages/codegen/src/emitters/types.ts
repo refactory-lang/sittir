@@ -1383,9 +1383,8 @@ function emitNamespaceSugarBlock(
 	lines.push(
 		`  export type Loose = ${looseHead}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`}${bareEnvelope === undefined ? '' : ` | ${bareEnvelope}`};`
 	);
-	const pinnedKeys = declaredDefault?.pinnedProperties.map((name) => JSON.stringify(name)).join(' | ');
 	lines.push(
-		`  export type LooseConfig = ${pinnedKeys === undefined ? widenedLooseConfig : `Omit<${widenedLooseConfig}, ${pinnedKeys}> & Partial<Pick<${widenedLooseConfig}, ${pinnedKeys}>>`};`
+		`  export type LooseConfig = ${declaredDefault === undefined ? widenedLooseConfig : omittableWithDefault(widenedLooseConfig, declaredDefault.pinnedProperties)};`
 	);
 	if (surface !== undefined) {
 		const rows = seatedRowsOf(node, wires, surface) ?? surface;

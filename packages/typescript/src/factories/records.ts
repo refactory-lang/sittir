@@ -1437,7 +1437,7 @@ export function buildUsingDeclaration<
 	VariableDeclaratorsSlot extends OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>['variableDeclarators']
 >(
 	config: RefusingConfig<
-		| OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 		{ variableDeclarators: VariableDeclaratorsSlot }
 	>,
@@ -1445,7 +1445,7 @@ export function buildUsingDeclaration<
 ): T.UsingDeclaration.Bound;
 export function buildUsingDeclaration(
 	config:
-		| OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 	options?: T.UsingDeclaration.Options
 ): T.UsingDeclaration.Bound {
@@ -1484,7 +1484,7 @@ export function buildUsingDeclaration(
 function buildUsingDeclaration$patch(
 	source: object,
 	config:
-		| OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 	options?: T.UsingDeclaration.Options
 ): T.UsingDeclaration.Bound {
@@ -6598,12 +6598,14 @@ export function buildMemberExpression<
 	PropertySlot extends ConfigOf<T.MemberExpression>['property']
 >(
 	config: RefusingConfig<
-		OmitEach<ConfigOf<T.MemberExpression>, 'operator'> | ConfigOf<T.MemberExpression>,
+		(OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never }) | ConfigOf<T.MemberExpression>,
 		{ object: ObjectSlot; property: PropertySlot }
 	>
 ): T.MemberExpression.Bound;
 export function buildMemberExpression(
-	config: OmitEach<ConfigOf<T.MemberExpression>, 'operator'> | ConfigOf<T.MemberExpression>
+	config:
+		| (OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| ConfigOf<T.MemberExpression>
 ): T.MemberExpression.Bound {
 	currentHandle()?.admit(TSKindId.MemberExpression, [config]);
 	const _pinned: Partial<ConfigOf<T.MemberExpression>> = config;
@@ -6638,7 +6640,9 @@ export function buildMemberExpression(
 
 function buildMemberExpression$patch(
 	source: object,
-	config: OmitEach<ConfigOf<T.MemberExpression>, 'operator'> | ConfigOf<T.MemberExpression>
+	config:
+		| (OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| ConfigOf<T.MemberExpression>
 ): T.MemberExpression.Bound {
 	currentHandle()?.admit(TSKindId.MemberExpression, [config]);
 	const _pinned: Partial<ConfigOf<T.MemberExpression>> = config;
@@ -16134,12 +16138,15 @@ function withTypeArguments(node: object, setter: string, args: readonly unknown[
 
 export function buildObjectType<MembersSlot extends ConfigOf<T.ObjectType>['members']>(
 	config: RefusingConfig<
-		OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> | ConfigOf<T.ObjectType>,
+		| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & { readonly opening?: never; readonly closing?: never })
+		| ConfigOf<T.ObjectType>,
 		{ members: MembersSlot }
 	>
 ): T.ObjectType.Bound;
 export function buildObjectType(
-	config: OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> | ConfigOf<T.ObjectType>
+	config:
+		| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & { readonly opening?: never; readonly closing?: never })
+		| ConfigOf<T.ObjectType>
 ): T.ObjectType.Bound {
 	currentHandle()?.admit(TSKindId.ObjectType, [config]);
 	const _pinned: Partial<ConfigOf<T.ObjectType>> = config;
@@ -16174,7 +16181,9 @@ export function buildObjectType(
 
 function buildObjectType$patch(
 	source: object,
-	config: OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> | ConfigOf<T.ObjectType>
+	config:
+		| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & { readonly opening?: never; readonly closing?: never })
+		| ConfigOf<T.ObjectType>
 ): T.ObjectType.Bound {
 	currentHandle()?.admit(TSKindId.ObjectType, [config]);
 	const _pinned: Partial<ConfigOf<T.ObjectType>> = config;
@@ -25832,7 +25841,7 @@ export function buildForHeaderUsingKind<
 	RightSlot extends OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>['right']
 >(
 	config: RefusingConfig<
-		| OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
 		{ left: LeftSlot; right: RightSlot }
 	>,
@@ -25840,7 +25849,7 @@ export function buildForHeaderUsingKind<
 ): T.ForHeaderUsingKind.Bound;
 export function buildForHeaderUsingKind(
 	config:
-		| OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
 	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound {
@@ -25893,7 +25902,7 @@ export function buildForHeaderUsingKind(
 function buildForHeaderUsingKind$patch(
 	source: object,
 	config:
-		| OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'>
+		| (OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
 		| OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
 	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound {
@@ -30890,12 +30899,21 @@ function withTypeIdentifier(node: object, setter: string, args: readonly unknown
 
 export function buildInterfaceBody<MembersSlot extends ConfigOf<T.InterfaceBody>['members']>(
 	config: RefusingConfig<
-		OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> | ConfigOf<T.InterfaceBody>,
+		| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigOf<T.InterfaceBody>,
 		{ members: MembersSlot }
 	>
 ): T.InterfaceBody.Bound;
 export function buildInterfaceBody(
-	config: OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> | ConfigOf<T.InterfaceBody>
+	config:
+		| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigOf<T.InterfaceBody>
 ): T.InterfaceBody.Bound {
 	currentHandle()?.admit(TSKindId.InterfaceBody, [config]);
 	const _pinned: Partial<ConfigOf<T.InterfaceBody>> = config;
@@ -30930,7 +30948,12 @@ export function buildInterfaceBody(
 
 function buildInterfaceBody$patch(
 	source: object,
-	config: OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> | ConfigOf<T.InterfaceBody>
+	config:
+		| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigOf<T.InterfaceBody>
 ): T.InterfaceBody.Bound {
 	currentHandle()?.admit(TSKindId.InterfaceBody, [config]);
 	const _pinned: Partial<ConfigOf<T.InterfaceBody>> = config;
