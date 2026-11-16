@@ -22,6 +22,8 @@ export const buildExpressionStatement = dispatched(() => backend().buildExpressi
 export const buildVariableDeclaration = dispatched(() => backend().buildVariableDeclaration);
 export const buildLexicalDeclaration = dispatched(() => backend().buildLexicalDeclaration);
 export const buildUsingDeclaration = dispatched(() => backend().buildUsingDeclaration);
+export const buildUsingDeclarationPlain = dispatched(() => backend().buildUsingDeclarationPlain);
+export const buildUsingDeclarationAwait = dispatched(() => backend().buildUsingDeclarationAwait);
 export const buildStatementBlock = dispatched(() => backend().buildStatementBlock);
 export const buildElseClause = dispatched(() => backend().buildElseClause);
 export const buildIfStatement = dispatched(() => backend().buildIfStatement);
@@ -64,6 +66,8 @@ export const buildOptionalChain = O.buildOptionalChain;
 export const buildNewExpression = dispatched(() => backend().buildNewExpression);
 export const buildAwaitExpression = dispatched(() => backend().buildAwaitExpression);
 export const buildMemberExpression = dispatched(() => backend().buildMemberExpression);
+export const buildMemberExpressionDot = dispatched(() => backend().buildMemberExpressionDot);
+export const buildMemberExpressionOptional = dispatched(() => backend().buildMemberExpressionOptional);
 export const buildSubscriptExpression = dispatched(() => backend().buildSubscriptExpression);
 export const buildLhsExpression = dispatched(() => backend().buildLhsExpression);
 export const buildAssignmentExpression = dispatched(() => backend().buildAssignmentExpression);
@@ -261,6 +265,8 @@ export const buildForHeaderLhs = dispatched(() => backend().buildForHeaderLhs);
 export const buildForHeaderVarKind = dispatched(() => backend().buildForHeaderVarKind);
 export const buildForHeaderLetConstKind = dispatched(() => backend().buildForHeaderLetConstKind);
 export const buildForHeaderUsingKind = dispatched(() => backend().buildForHeaderUsingKind);
+export const buildForHeaderUsingKindPlain = dispatched(() => backend().buildForHeaderUsingKindPlain);
+export const buildForHeaderUsingKindAwait = dispatched(() => backend().buildForHeaderUsingKindAwait);
 export const buildFormalParametersGetAccessorSignature = O.buildFormalParametersGetAccessorSignature;
 export const buildFormalParametersSetAccessorSignature = dispatched(
 	() => backend().buildFormalParametersSetAccessorSignature

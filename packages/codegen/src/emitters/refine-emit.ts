@@ -73,14 +73,15 @@ export interface RefineDefault {
 
 export function refineDefaultOf(nodeMap: NodeMap, kind: string): RefineDefault | undefined {
 	const defaultName = nodeMap.refineDefaults?.get(kind);
+	if (defaultName === undefined) return undefined;
 	const form = nodeMap.refineForms?.get(kind)?.find((candidate) => candidate.name === defaultName);
 	const node = nodeMap.nodes.get(kind);
 	if (form === undefined || !(node instanceof AbstractAssembledCompound)) return undefined;
 	const pinned = narrowedLiteralsOf({ name: form.name, form, narrowedFields: form.narrowedFields }, nodeMap, kind);
-	if (pinned.size === 0) return undefined;
+	if (pinned.size === 0) throw emitShapeFailure({ code: 'refine-config-invalid', ownerKind: kind, slotName: defaultName, message: `refine(${kind}): default '${defaultName}' pins no field` });
 	return { form, pinned, pinnedProperties: node.slots.filter((slot) => pinned.has(slot.name)).map((slot) => slot.propertyName) };
 }
 
 export function omittableWithDefault(fullConfig: string, pinnedProperties: readonly string[]): string {
-	return `Omit<${fullConfig}, ${pinnedProperties.map((name) => JSON.stringify(name)).join(' | ')}> | ${fullConfig}`;
+	return `OmitEach<${fullConfig}, ${pinnedProperties.map((name) => JSON.stringify(name)).join(' | ')}> | ${fullConfig}`;
 }

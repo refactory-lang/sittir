@@ -87,6 +87,7 @@ import {
 	storageCallExpr
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
+import { refineDefaultOf } from './refine-emit.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -568,13 +569,27 @@ function emitBranchFrom(
 			const guardedCall = directDefault ? `${call} ?? ${directDefault}` : call;
 			body.push(`  return ${factory}(${guardedCall}${callOptions})${spelledType === undefined ? '' : ` as ${spelledType}`};`);
 		} else {
-			body.push(`  return ${factory}({`);
-			for (const f of slots) {
-				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.propertyName}`);
+			const pinnedByDefault = new Set(refineDefaultOf(nodeMap, node.kind)?.pinnedProperties);
+			const entryOf = (f: AssembledNonterminal): string => {
+				const access = `${cfg}${inputOptional ? '?' : ''}.${f.propertyName}`;
+				const call = fieldValue(f, access);
 				const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
-				body.push(`    ${f.propertyName}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call},`);
+				return `${f.propertyName}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call}`;
+			};
+			if (pinnedByDefault.size === 0) {
+				body.push(`  return ${factory}({`);
+				for (const f of slots) body.push(`    ${entryOf(f)},`);
+				body.push(`  }${optionsArg});`);
+			} else {
+				const pinnedSlots = slots.filter((f) => pinnedByDefault.has(f.propertyName));
+				body.push('  const _config = {');
+				for (const f of slots) if (!pinnedByDefault.has(f.propertyName)) body.push(`    ${entryOf(f)},`);
+				body.push('  };');
+				const probe = `${cfg}${inputOptional ? '?' : ''}.${pinnedSlots[0]!.propertyName}`;
+				body.push(`  return ${probe} === undefined`);
+				body.push(`    ? ${factory}(_config${optionsArg})`);
+				body.push(`    : ${factory}({ ..._config, ${pinnedSlots.map(entryOf).join(', ')} }${optionsArg});`);
 			}
-			body.push(`  }${optionsArg});`);
 		}
 	} else {
 		emitBranchUntypedNodePassthrough(body, inputOptional, returnType, typeName);

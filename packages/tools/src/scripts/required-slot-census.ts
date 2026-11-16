@@ -16,6 +16,7 @@ export const admittingSlots = async (
 ): Promise<{ strict: string[]; loose: string[] }> => {
 	const { AbstractAssembledCompound, AssembledLexedPattern, isRequired, slotFilledWhenOmitted } = await load('modelNodeMap');
 	const { lexedContentSlot } = await load('emittersShared');
+	const { refineDefaultOf } = await load('emittersRefine');
 	const nodeMap = await compileNodeMap(grammar);
 	const configPath = resolve(root, `packages/${grammar}/tsconfig.json`);
 	const parsed = ts.parseJsonConfigFileContent(
@@ -55,8 +56,9 @@ export const admittingSlots = async (
 		if (builder === undefined || param === undefined || !(node instanceof AbstractAssembledCompound)) continue;
 		const paramType = checker.getTypeAtLocation(param);
 		const callerSlots = node.configSlots;
+		const defaulted = new Set(refineDefaultOf(nodeMap, node.kind)?.pinnedProperties);
 		for (const slot of callerSlots) {
-			if (!isRequired(slot) || slotFilledWhenOmitted(slot, nodeMap)) continue;
+			if (!isRequired(slot) || slotFilledWhenOmitted(slot, nodeMap) || defaulted.has(slot.propertyName)) continue;
 			const property = checker.getPropertyOfType(checker.getNonNullableType(paramType), slot.propertyName);
 			const label = `${node.kind}.${slot.propertyName}`;
 			if (property === undefined) {

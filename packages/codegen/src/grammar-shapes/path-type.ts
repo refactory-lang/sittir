@@ -9,6 +9,7 @@ import type { RegexPlaceholder } from '../dsl/primitives/regex.ts';
 import type { LeadPlaceholder } from '../dsl/primitives/lead.ts';
 import type { NarrowPlaceholder } from '../dsl/primitives/narrow.ts';
 import type { RenamePlaceholder } from '../dsl/primitives/rename.ts';
+import type { RefinePlaceholder } from '../dsl/primitives/refine.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 import type { ReplacingFn } from '../dsl/transform/transform.ts';
 
@@ -137,6 +138,7 @@ export type TransformPatchValue =
 	| NarrowPlaceholder
 	| LeadPlaceholder
 	| RenamePlaceholder
+	| RefinePlaceholder
 	| ReplacingFn;
 
 export type TransformPatchMap = Partial<Record<string, TransformPatchValue>>;

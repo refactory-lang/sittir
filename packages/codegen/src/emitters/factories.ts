@@ -2152,7 +2152,8 @@ function fieldCarryingFactoryText(
 			const cases = copied.map(({ slot, ...set }): SetCase => {
 				const head = slotHeads.get(slot.storageKey);
 				if (head === undefined) throw new Error(`setTwinLines: ${node.kind}.${slot.name} has no builder lines`);
-				return { ...set, slots: [slot.propertyName], lines: [...head, ...parts.slotTail(slot.storageKey)] };
+				const pinned = pinnedByDefault !== undefined && head.some((line) => line.includes('_pinned.')) ? [`  const _pinned: Partial<${configType}> = config;`] : [];
+				return { ...set, slots: [slot.propertyName], lines: [...pinned, ...head, ...parts.slotTail(slot.storageKey)] };
 			});
 			after.push(...setTwinLines({ fn: setFn, builtName, held, params: patchParams, cases }));
 		}
@@ -2516,7 +2517,7 @@ function resolveRefineFormConfigOptional(
 }
 
 function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): string {
-	if (hasRefineForms) return `ConfigOf<T.${node.typeName}>`;
+	if (hasRefineForms) return omitRegistered(`ConfigOf<T.${node.typeName}>`, node);
 	return `T.${node.typeName}.Config`;
 }
 
@@ -3444,4 +3445,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 const OBJECT_MEMBER_VALUES = ['HANDLE', 'INPUT', 'OPTIONS', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing', 'handleSave'];
 const OBJECT_MEMBER_TYPES = ['Held', 'Received'];
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenSlots'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'OmitEach', 'RefuseUndeclared', 'RefusingConfig', 'WidenSlots'];

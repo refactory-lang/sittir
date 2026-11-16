@@ -1342,20 +1342,18 @@ function emitNamespaceSugarBlock(
 ): void {
 	lines.push(`export namespace ${node.typeName} {`);
 	const declaredDefault = refineDefaultOf(nodeMap, kind);
+	const fullConfig = widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap);
 	if (refineInfo && refineInfo.forms.length > 0) {
 		emitRefineFormSubNamespaces(lines, node, refineInfo, nsKey, nodeMap, kindEntries);
 		if (declaredDefault !== undefined) {
-			const fullConfig = widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap);
 			lines.push(`  /** Default form: '${declaredDefault.form.name}' (declared). */`);
 			lines.push(`  export type Config = ${omittableWithDefault(fullConfig, declaredDefault.pinnedProperties)};`);
 		} else {
-			const defaultForm = refineInfo.forms[0]!;
-			const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
-			lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
-			lines.push(`  export type Config = ${defaultShortName}.Config;`);
+			lines.push('  /** No default form: every form field is required. */');
+			lines.push(`  export type Config = ${fullConfig};`);
 		}
 	} else {
-		lines.push(`  export type Config = ${widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap)};`);
+		lines.push(`  export type Config = ${fullConfig};`);
 	}
 	const spelling = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spelling !== undefined) lines.push(`  export type Options = ${spelling};`);
@@ -1385,7 +1383,10 @@ function emitNamespaceSugarBlock(
 	lines.push(
 		`  export type Loose = ${looseHead}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`}${bareEnvelope === undefined ? '' : ` | ${bareEnvelope}`};`
 	);
-	lines.push(`  export type LooseConfig = ${widenedLooseConfig};`);
+	const pinnedKeys = declaredDefault?.pinnedProperties.map((name) => JSON.stringify(name)).join(' | ');
+	lines.push(
+		`  export type LooseConfig = ${pinnedKeys === undefined ? widenedLooseConfig : `Omit<${widenedLooseConfig}, ${pinnedKeys}> & Partial<Pick<${widenedLooseConfig}, ${pinnedKeys}>>`};`
+	);
 	if (surface !== undefined) {
 		const rows = seatedRowsOf(node, wires, surface) ?? surface;
 		lines.push(`  export type BuildArgs = ${rows.buildArgs};`);
