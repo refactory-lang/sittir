@@ -26,7 +26,6 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--roundtrip` — Run validator probes after generation
 - `--post-generate-only` — Run only the post-generate fixtures and probes
 - `--native-only` — Rebuild only the N-API binding from the generated sources, then run post-generate
-- `--node-api-level <level>` — The Node-API level the workspace builds with, read once by a multi-grammar driver
 - `--no-build-native` — Skip the post-regen N-API rebuild
 - `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
@@ -530,6 +529,20 @@ Run pre-codegen grammar diagnostics
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool grammar-diagnostics [options]
+```
+
+### `tool hoist-census`
+
+List every holder slot that reads through a wrapper, grouped by wrapper chain
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool hoist-census [options]
 ```
 
 ### `tool hoisted-census`
