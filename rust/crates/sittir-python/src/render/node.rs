@@ -2338,8 +2338,6 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaNode {
 impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
     fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
         match self {
-            TriviaNode::LineContinuationNewline(t) if !t.verbatim() => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some(&t.text))),
-            TriviaNode::LineContinuationNul => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\u{0}"))),
             TriviaNode::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
             TriviaNode::Space => Some((::sittir_core::layout_kinds::LayoutKinds::SPACE, None)),
             TriviaNode::Tab => Some((::sittir_core::layout_kinds::LayoutKinds::TAB, None)),
