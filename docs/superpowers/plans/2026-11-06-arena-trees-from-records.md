@@ -335,9 +335,9 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 
 **Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16; no code until Task 6 merges, since these files change there. The list is re-checked against Task 6 as merged.
 
-A census on Task 6's head (`b30da527d`) found 16 functions in 7 files that read a record's words by hand: a literal index, a shift or a mask, beside the function that already knows that fact. The count first reported from master, 14, was wrong in both directions; several of those read through the views already, or are writers.
+A census on Task 6's head (`b30da527d`) found 15 functions in 7 files that read a record's words by hand: a literal index, a shift or a mask, beside the function that already knows that fact. The count first reported from master, 14, was wrong in both directions; several of those read through the views already, or are writers.
 
-None of the 16 can go through a typed, derived view: each walks a record by its kind's shape, not as a node type. What each can do is read a fact through the one function that owns it. Three shared untyped readers, plus the existing `parsed_cells`:
+None of the 15 can go through a typed, derived view: each walks a record by its kind's shape, not as a node type. What each can do is read a fact through the one function that owns it. Three shared untyped readers, plus the existing `parsed_cells`:
 
 1. **`ArenaRead::side_of(at)`,** beside `header_kind` in `borrowed.rs`: the side record's address, header word 1. Replaces the literal `words[1]` or `header[1]` in `admit.rs` `admit`, `count.rs` `release_record`, `run_nodes.rs` `source_of` and `read`, `prep.rs` `SlotAt::of`, and `view.rs` `record_of` and `linked_leaf_place`.
 2. **`CellWord` accessors in `cell.rs`** (`address()`, `edges()`, a constructor from an address or an entry): the built cell word's bits. Replaces `word >> 2`, `word & 3`, `at << 2` and `entry * 4` in `count.rs` `drop_cell`, `release`, `release_record` and `reaches`, and `built.rs` `admitted_leaf`.
