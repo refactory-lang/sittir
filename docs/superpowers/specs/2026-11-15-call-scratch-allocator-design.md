@@ -12,6 +12,18 @@ What that changes:
 
 - **Its first consumer is the typed nodes a call creates,** since `Vec` and `Box` are exactly what stable Rust lets an allocator back. The draft below aimed first at the navigation table and the placer's lists; those come second, if the count still shows them after the placer is deleted.
 - **Where typed nodes are made is not yet established for arena storage,** and an earlier version of this section asserted it wrongly. What the code's own headers say: a typed node is made by the typed read (`ReadNode`), which is object storage's read; arena storage's read is direct hydration, "with no native node made first"; an arena build is written by JavaScript's builders straight into the built chunks; and the native record writer (`arena/write.rs`) "writes built records from native nodes, as the record fuzz and the render parity tests build them". A build does not go through an edit. So in arena storage there may be few typed nodes to allocate at all, and the storage where they are made is the one the 2026-11-15 ruling excluded. The allocation count's decode table settles which calls make them; nothing is designed until it is read.
+- **Verified at the call sites, 2026-11-16** (master 42b8d6814; from code, to be confirmed by the count):
+
+  | operation | arena storage | object storage |
+  |---|---|---|
+  | parse | no typed node | no typed node |
+  | read (one node, or whole) | no typed node: record reads return addresses and words | `read_node` builds a typed node, encodes it to a JavaScript object, and drops it when the call ends |
+  | factory build | no typed node: JavaScript writes words into the built chunks | no typed node: a JavaScript object |
+  | `$with` on a parsed or built node | no typed node: JavaScript writes a built record | no typed node until it is rendered |
+  | render of a parsed root | from the record at an address | from the tree's source tables, no typed tree decoded |
+  | render of a built or edited root | from the record at an address | the JavaScript node is decoded into a typed node for the call, rendered and dropped |
+
+  So arena storage makes no typed node in any call, and the native record writer (`write_record`, the `WriteCell` derive) is reached only from tests. Typed nodes are made in object storage, by a read and by the render of a built or edited root, and in both they live for one call. A `NodeAllocator` for nodes therefore has consumers only in object storage, which the 2026-11-15 ruling put out of scope. That ruling and this one cannot both stand as written; the maintainer decides which gives, with the count in hand.
 - **There is no allocator for source text.** The string pool's chunks are native memory JavaScript reads in place, as the record arena's are, and stay as they are.
 - **What it cannot back, in arena storage:** a node that lasts. A parsed or built node is a record in the chunked arena, which JavaScript views and counts, and no Rust allocator owns that memory. So "whenever a node is created" can only mean whenever a call makes a typed node natively.
 - **Object storage is still out,** as ruled on 2026-11-15: its typed nodes live as long as their tree, so a per-call allocator cannot hold them.
