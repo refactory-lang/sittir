@@ -35,6 +35,9 @@
 # per batch, per root, and by bucket, native callback, site and function, each
 # tree beside the first, and, per tree, <grammar>-<name>.bytes.collapsed.gz
 # (the bytes asked for, folded the same way) and the head of perf's output.
+# With ALLOC_COUNTER=interposer, a tree's counts are kept folded with its
+# commit (<grammar>-<name>.kept.json); REUSE=1 reads a tree's kept counts
+# instead of counting it again, so one checkout can hold each tree in turn.
 # Writes, per grammar and tree:
 #   <grammar>-<name>.json               the driver's receipt
 #   <grammar>-<name>.collapsed.gz       folded stacks (render: the thread's name at the root, inlined frames expanded)
@@ -62,7 +65,7 @@ trees = {}
 for arg in sys.argv[3:]:
     name, spec = arg.split('=', 1)
     tree = Path(spec.partition('@')[0]).resolve()
-    if tree not in trees.values():
+    if tree not in trees.values() or os.environ.get('REUSE') == '1':
         trees[name] = tree
 names = list(trees)
 out.mkdir(parents=True, exist_ok=True)
@@ -76,6 +79,7 @@ ALLOCS = MEASURE == 'allocs'
 ALLOC_COUNTER = os.environ.get('ALLOC_COUNTER') or 'uprobes'
 assert ALLOC_COUNTER in ('uprobes', 'interposer'), f'ALLOC_COUNTER {ALLOC_COUNTER} is not uprobes or interposer'
 INTERPOSER = ALLOCS and ALLOC_COUNTER == 'interposer'
+REUSE = INTERPOSER and os.environ.get('REUSE') == '1'
 NATIVE = ALLOCS or PHASE == 'render'
 PERF = os.environ.get('PERF', 'perf')
 PERF_RECORD = NATIVE and not INTERPOSER
@@ -387,6 +391,15 @@ def fold(counts, tree, images, weights=None):
     return expanded, plain, coverage, expandedWeights
 
 
+def readFolded(path):
+    folded = Counter()
+    with gzip.open(path, 'rt') as f:
+        for line in f:
+            stack, _, count = line.rstrip('\n').rpartition(' ')
+            folded[tuple(stack.split(';'))] += int(count)
+    return folded
+
+
 def writeFolded(path, folded):
     with gzip.open(path, 'wt') as f:
         for stack, count in sorted(folded.items(), key=lambda kv: -kv[1]):
@@ -530,16 +543,26 @@ for grammar in grammars:
     for name in names:
         tree = trees[name]
         label = f'{grammar}-{name}'
-        copy = addonCopy(tree, grammar) if NATIVE else None
-        profile, facts = record(grammar, name, tree, copy)
+        kept = out / f'{label}.kept.json'
         dropped = None
-        if INTERPOSER:
+        reused = REUSE and kept.exists()
+        if reused:
+            saved = json.loads(kept.read_text())
+            facts, kinds, dropped, commit = saved['facts'], Counter(saved['kinds']), saved['dropped'], saved['commit']
+            expanded, expandedWeights = readFolded(out / f'{label}.collapsed.gz'), readFolded(out / f'{label}.bytes.collapsed.gz')
+            print(f'{label}: the counts kept from {commit}', flush=True)
+        else:
+            commit = run(['git', '-C', str(tree), 'rev-parse', '--short=9', 'HEAD']).strip()
+            copy = addonCopy(tree, grammar) if NATIVE else None
+            profile, facts = record(grammar, name, tree, copy)
+        if INTERPOSER and not reused:
             counts, weights, kinds, dropped = interposed(profile)
             root = str(copy.parent) if copy is not None else str(tree)
             images = sorted({frame[1] for (_, frames) in counts for frame in frames if frame[1].startswith(root)})
             expanded, plain, coverage, expandedWeights = fold(counts, tree, images, weights)
             writeFolded(out / f'{label}.bytes.collapsed.gz', expandedWeights)
-        elif NATIVE:
+            kept.write_text(json.dumps({'facts': facts, 'kinds': kinds, 'dropped': dropped, 'commit': commit}))
+        elif NATIVE and not INTERPOSER:
             images = sorted(str(p.resolve()) for p in copy.parent.iterdir() if p.is_file() and re.search(r'\.node$|\.so(\.|$)', p.name))
             counts, weights, kinds = stacks(profile, label)
             expanded, plain, coverage, expandedWeights = fold(counts, tree, images, weights)
@@ -547,7 +570,7 @@ for grammar in grammars:
             writeFolded(out / f'{label}.perf.collapsed.gz', plain)
             if ALLOCS:
                 writeFolded(out / f'{label}.bytes.collapsed.gz', expandedWeights)
-        else:
+        elif not NATIVE:
             expanded, coverage = jsStacks(profile, tree), None
         writeFolded(out / f'{label}.collapsed.gz', expanded)
         if ALLOCS:
@@ -561,7 +584,7 @@ for grammar in grammars:
                 failures.append(f'{label}: no allocation was recorded; read {label}.perf-script.head and {label}.perf-script.err')
             elif not any(CALLBACK.search(frame) for frame in allocs['inclusive']):
                 failures.append(f'{label}: no allocation stack reaches a `*_c_callback` frame; read {label}.collapsed.gz')
-            results[name] = (facts, allocs, run(['git', '-C', str(tree), 'rev-parse', '--short=9', 'HEAD']).strip())
+            results[name] = (facts, allocs, commit)
             continue
         analysis = analyse(expanded)
         compared = analysis if NATIVE else analyse(withoutLines(expanded))
@@ -569,7 +592,7 @@ for grammar in grammars:
             failures.append(f'{label}: no stack reaches a `*_c_callback` frame; read {label}.collapsed.gz')
         if not NATIVE and not any(f.startswith(f'{PHASE}Phase ') for f in analysis['inclusive']):
             failures.append(f'{label}: no stack reaches {PHASE}Phase; read {label}.collapsed.gz')
-        results[name] = (facts, analysis, run(['git', '-C', str(tree), 'rev-parse', '--short=9', 'HEAD']).strip(), coverage, compared)
+        results[name] = (facts, analysis, commit, coverage, compared)
     first = names[0]
     firstFacts = results[first][0]
     if ALLOCS:
