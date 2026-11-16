@@ -13081,150 +13081,6 @@ function buildObjectTypeContent$with$delimiter(this: Received<Held>, ...args: un
 	return buildObjectTypeContent$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
-export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
-	value: V & RefuseUndeclared<V>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound;
-export function buildExportStatementNamespaceExport(
-	value: Admit<T.Identifier>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound {
-	const _name = rejectReservedText(
-		value,
-		'ExportStatementNamespaceExport.name',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
-	const node = {
-		$type: TSKindId.ExportStatementNamespaceExport as const,
-		_name,
-		_terminator,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		name: () => hydrateStoredSlot(node, '_name'),
-		terminator: () => _terminator,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[INPUT]: value,
-		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		name: buildExportStatementNamespaceExport$with$name,
-		terminator: buildExportStatementNamespaceExport$with$terminator,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ExportStatementNamespaceExport.Bound;
-}
-
-function buildExportStatementNamespaceExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const value = node[INPUT] as Admit<T.Identifier>;
-	const options = node[OPTIONS] as T.ExportStatementNamespaceExport.Options;
-	switch (setter) {
-		case 'name':
-			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling }))
-			);
-	}
-	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
-}
-function buildExportStatementNamespaceExport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildExportStatementNamespaceExport$with(receiverOf(this, '$with.name'), 'name', args);
-}
-function buildExportStatementNamespaceExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildExportStatementNamespaceExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
-}
-
-export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound;
-export function buildExportStatementEqualsExport(
-	value: Admit<T.Expression>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound {
-	const _value = rejectReservedText(
-		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
-		'ExportStatementEqualsExport.value',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
-	const node = {
-		$type: TSKindId.ExportStatementEqualsExport as const,
-		_value,
-		_terminator,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		value: () => hydrateStoredSlot(node, '_value'),
-		terminator: () => _terminator,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[INPUT]: value,
-		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		value: buildExportStatementEqualsExport$with$value,
-		terminator: buildExportStatementEqualsExport$with$terminator,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ExportStatementEqualsExport.Bound;
-}
-
-function buildExportStatementEqualsExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const value = node[INPUT] as Admit<NonNullable<T.Expression>>;
-	const options = node[OPTIONS] as T.ExportStatementEqualsExport.Options;
-	switch (setter) {
-		case 'value':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, options))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, { ...options, terminator: spelling }))
-			);
-	}
-	throw new Error(`export_statement_equals_export has no $with.${setter}`);
-}
-function buildExportStatementEqualsExport$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildExportStatementEqualsExport$with(receiverOf(this, '$with.value'), 'value', args);
-}
-function buildExportStatementEqualsExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildExportStatementEqualsExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
-}
-
 export function buildCommentLine(content: string, affix?: true): T.CommentLine.Bound;
 export function buildCommentLine(text: `//${string}`, affix: false): T.CommentLine.Bound;
 export function buildCommentLine(input: string, affix: boolean = true): T.CommentLine.Bound {
@@ -15192,6 +15048,150 @@ function buildParenthesizedExpressionSequence$with$sequenceExpression(
 		'sequenceExpression',
 		args
 	);
+}
+
+export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound;
+export function buildExportStatementEqualsExport(
+	value: Admit<T.Expression>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound {
+	const _value = rejectReservedText(
+		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
+		'ExportStatementEqualsExport.value',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
+	const node = {
+		$type: TSKindId.ExportStatementEqualsExport as const,
+		_value,
+		_terminator,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		value: () => hydrateStoredSlot(node, '_value'),
+		terminator: () => _terminator,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		value: buildExportStatementEqualsExport$with$value,
+		terminator: buildExportStatementEqualsExport$with$terminator,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ExportStatementEqualsExport.Bound;
+}
+
+function buildExportStatementEqualsExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<NonNullable<T.Expression>>;
+	const options = node[OPTIONS] as T.ExportStatementEqualsExport.Options;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`export_statement_equals_export has no $with.${setter}`);
+}
+function buildExportStatementEqualsExport$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementEqualsExport$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function buildExportStatementEqualsExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementEqualsExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+
+export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound;
+export function buildExportStatementNamespaceExport(
+	value: Admit<T.Identifier>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound {
+	const _name = rejectReservedText(
+		value,
+		'ExportStatementNamespaceExport.name',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
+	const node = {
+		$type: TSKindId.ExportStatementNamespaceExport as const,
+		_name,
+		_terminator,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		name: () => hydrateStoredSlot(node, '_name'),
+		terminator: () => _terminator,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: buildExportStatementNamespaceExport$with$name,
+		terminator: buildExportStatementNamespaceExport$with$terminator,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ExportStatementNamespaceExport.Bound;
+}
+
+function buildExportStatementNamespaceExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<T.Identifier>;
+	const options = node[OPTIONS] as T.ExportStatementNamespaceExport.Options;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling }))
+			);
+	}
+	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
+}
+function buildExportStatementNamespaceExport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementNamespaceExport$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildExportStatementNamespaceExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildExportStatementNamespaceExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildCallExpressionCall<
@@ -20093,8 +20093,6 @@ export type FluentKindMap = {
 	ambient_declaration_global: T.AmbientDeclarationGlobal.Bound;
 	ambient_declaration_module: T.AmbientDeclarationModule.Bound;
 	object_type_content: T.ObjectTypeContent.Bound;
-	export_statement_namespace_export: T.ExportStatementNamespaceExport.Bound;
-	export_statement_equals_export: T.ExportStatementEqualsExport.Bound;
 	comment_line: T.CommentLine.Bound;
 	comment_block: T.CommentBlock.Bound;
 	literal_type_negative_number: T.LiteralTypeNegativeNumber.Bound;
@@ -20124,6 +20122,8 @@ export type FluentKindMap = {
 	import_specifier_as: T.ImportSpecifierAs.Bound;
 	parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Bound;
 	parenthesized_expression_sequence: T.ParenthesizedExpressionSequence.Bound;
+	export_statement_equals_export: T.ExportStatementEqualsExport.Bound;
+	export_statement_namespace_export: T.ExportStatementNamespaceExport.Bound;
 	call_expression_call: T.CallExpressionCall.Bound;
 	call_expression_template_call: T.CallExpressionTemplateCall.Bound;
 	call_expression_member: T.CallExpressionMember.Bound;
@@ -20374,8 +20374,6 @@ export const _factoryMap = {
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
-	export_statement_namespace_export: buildExportStatementNamespaceExport,
-	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
 	literal_type_negative_number: buildLiteralTypeNegativeNumber,
@@ -20405,6 +20403,8 @@ export const _factoryMap = {
 	import_specifier_as: buildImportSpecifierAs,
 	parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
+	export_statement_equals_export: buildExportStatementEqualsExport,
+	export_statement_namespace_export: buildExportStatementNamespaceExport,
 	call_expression_call: buildCallExpressionCall,
 	call_expression_template_call: buildCallExpressionTemplateCall,
 	call_expression_member: buildCallExpressionMember,

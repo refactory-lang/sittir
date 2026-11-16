@@ -25,7 +25,7 @@
               "$type": 288,
               "_members": [
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 462,
                     "_abstract": false,
@@ -392,7 +392,7 @@
               "$type": 288,
               "_members": [
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 456,
                     "_async": false,
@@ -445,7 +445,7 @@
                       ]
                     }
                   },
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 462,
                     "_abstract": false,
@@ -469,7 +469,7 @@
                   "_terminator": 22
                 },
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 456,
                     "_async": false,
@@ -610,7 +610,7 @@
                     "_terminator": 0
                   },
                   "_condition": {
-                    "$type": 419,
+                    "$type": 416,
                     "_expression": 281
                   },
                   "_terminator": 22
@@ -678,7 +678,7 @@
                     }
                   },
                   "_condition": {
-                    "$type": 419,
+                    "$type": 416,
                     "_expression": 281
                   },
                   "_consequence": {
@@ -736,7 +736,7 @@
                     ]
                   },
                   "_value": {
-                    "$type": 419,
+                    "$type": 416,
                     "_expression": {
                       "$text": "x",
                       "$type": 1
@@ -849,7 +849,7 @@
           "$type": 288,
           "_members": [
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 462,
                 "_abstract": false,
@@ -1291,7 +1291,7 @@
           "$type": 288,
           "_members": [
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 456,
                 "_async": false,
@@ -1344,7 +1344,7 @@
                   ]
                 }
               },
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 462,
                 "_abstract": false,
@@ -1368,7 +1368,7 @@
               "_terminator": 22
             },
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 456,
                 "_async": false,
@@ -1538,7 +1538,7 @@
                 "_terminator": 0
               },
               "_condition": {
-                "$type": 419,
+                "$type": 416,
                 "_expression": 281
               },
               "_terminator": 22
@@ -1606,7 +1606,7 @@
                 }
               },
               "_condition": {
-                "$type": 419,
+                "$type": 416,
                 "_expression": 281
               },
               "_consequence": {
@@ -1664,7 +1664,7 @@
                 ]
               },
               "_value": {
-                "$type": 419,
+                "$type": 416,
                 "_expression": {
                   "$text": "x",
                   "$type": 1
@@ -1773,7 +1773,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -1842,7 +1842,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_async": false,
@@ -1895,7 +1895,7 @@
                 ]
               }
             },
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -1919,7 +1919,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_async": false,
@@ -2128,7 +2128,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -2185,7 +2185,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_async": false,
@@ -2238,7 +2238,7 @@
               ]
             }
           },
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -2262,7 +2262,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_async": false,
@@ -2313,7 +2313,7 @@
     "expectedOutput": "constructor: Function\n",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -2365,7 +2365,7 @@
     "expectedOutput": "constructor(greeting: string);",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_async": false,
@@ -2433,7 +2433,7 @@
     "expectedOutput": "greeting: string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -2479,7 +2479,7 @@
     "expectedOutput": "showGreeting(): void;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_async": false,
@@ -4765,7 +4765,7 @@
             "_terminator": 0
           },
           "_condition": {
-            "$type": 419,
+            "$type": 416,
             "_expression": 281
           },
           "_terminator": 22
@@ -4833,7 +4833,7 @@
             }
           },
           "_condition": {
-            "$type": 419,
+            "$type": 416,
             "_expression": 281
           },
           "_consequence": {
@@ -4891,7 +4891,7 @@
             ]
           },
           "_value": {
-            "$type": 419,
+            "$type": 416,
             "_expression": {
               "$text": "x",
               "$type": 1
@@ -6089,7 +6089,7 @@
               "_terminator": 0
             },
             "_condition": {
-              "$type": 419,
+              "$type": 416,
               "_expression": 281
             },
             "_terminator": 22
@@ -6157,7 +6157,7 @@
               }
             },
             "_condition": {
-              "$type": 419,
+              "$type": 416,
               "_expression": 281
             },
             "_consequence": {
@@ -6215,7 +6215,7 @@
               ]
             },
             "_value": {
-              "$type": 419,
+              "$type": 416,
               "_expression": {
                 "$text": "x",
                 "$type": 1
@@ -6537,7 +6537,7 @@
         "_terminator": 0
       },
       "_condition": {
-        "$type": 419,
+        "$type": 416,
         "_expression": 281
       },
       "_terminator": 22
@@ -6565,7 +6565,7 @@
     "expectedOutput": "(true)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": 281
     },
     "kind": "render",
@@ -6591,7 +6591,7 @@
     "expectedOutput": "(true)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": 281
     },
     "kind": "render",
@@ -6617,7 +6617,7 @@
     "expectedOutput": "(x)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": {
         "$text": "x",
         "$type": 1
@@ -6786,7 +6786,7 @@
         }
       },
       "_condition": {
-        "$type": 419,
+        "$type": 416,
         "_expression": 281
       },
       "_consequence": {
@@ -6947,7 +6947,7 @@
         ]
       },
       "_value": {
-        "$type": 419,
+        "$type": 416,
         "_expression": {
           "$text": "x",
           "$type": 1
@@ -7744,7 +7744,7 @@
               "$type": 288,
               "_members": [
                 {
-                  "$type": 410,
+                  "$type": 407,
                   "_method_signature": {
                     "$type": 456,
                     "_async": false,
@@ -7771,7 +7771,7 @@
                   "_terminator": 15
                 },
                 {
-                  "$type": 410,
+                  "$type": 407,
                   "_method_signature": {
                     "$type": 456,
                     "_async": false,
@@ -7954,7 +7954,7 @@
           "$type": 288,
           "_members": [
             {
-              "$type": 410,
+              "$type": 407,
               "_method_signature": {
                 "$type": 456,
                 "_async": false,
@@ -7981,7 +7981,7 @@
               "_terminator": 15
             },
             {
-              "$type": 410,
+              "$type": 407,
               "_method_signature": {
                 "$type": 456,
                 "_async": false,
@@ -8978,7 +8978,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 410,
+            "$type": 407,
             "_method_signature": {
               "$type": 456,
               "_async": false,
@@ -9005,7 +9005,7 @@
             "_terminator": 15
           },
           {
-            "$type": 410,
+            "$type": 407,
             "_method_signature": {
               "$type": 456,
               "_async": false,
@@ -9075,7 +9075,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 410,
+          "$type": 407,
           "_method_signature": {
             "$type": 456,
             "_async": false,
@@ -9102,7 +9102,7 @@
           "_terminator": 15
         },
         {
-          "$type": 410,
+          "$type": 407,
           "_method_signature": {
             "$type": 456,
             "_async": false,
@@ -9159,7 +9159,7 @@
     "expectedOutput": "bar(): number,",
     "grammar": "typescript",
     "input": {
-      "$type": 410,
+      "$type": 407,
       "_method_signature": {
         "$type": 456,
         "_async": false,
@@ -9208,7 +9208,7 @@
     "expectedOutput": "baz(): Baz,",
     "grammar": "typescript",
     "input": {
-      "$type": 410,
+      "$type": 407,
       "_method_signature": {
         "$type": 456,
         "_async": false,
@@ -11617,7 +11617,7 @@
               "$type": 288,
               "_members": [
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 462,
                     "_abstract": false,
@@ -11701,7 +11701,7 @@
           "$type": 288,
           "_members": [
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 462,
                 "_abstract": false,
@@ -11781,7 +11781,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -11890,7 +11890,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -11954,7 +11954,7 @@
     "expectedOutput": "static findConfiguration: typeof findConfiguration;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -12177,7 +12177,7 @@
       "$type": 190,
       "_statements": [
         {
-          "$type": 404,
+          "$type": 419,
           "_terminator": 22,
           "_value": {
             "$text": "Linter",
@@ -12185,7 +12185,7 @@
           }
         },
         {
-          "$type": 404,
+          "$type": 419,
           "_terminator": 22,
           "_value": {
             "$type": 238,
@@ -12217,7 +12217,7 @@
     "expectedOutput": "export = Linter;",
     "grammar": "typescript",
     "input": {
-      "$type": 404,
+      "$type": 419,
       "_terminator": 22,
       "_value": {
         "$text": "Linter",
@@ -12247,7 +12247,7 @@
     "expectedOutput": "export = {};",
     "grammar": "typescript",
     "input": {
-      "$type": 404,
+      "$type": 419,
       "_terminator": 22,
       "_value": {
         "$type": 238,
@@ -13262,7 +13262,7 @@
               "$type": 288,
               "_members": [
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 462,
                     "_abstract": false,
@@ -13436,7 +13436,7 @@
           "$type": 288,
           "_members": [
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 462,
                 "_abstract": false,
@@ -14176,7 +14176,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -14250,7 +14250,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -14311,7 +14311,7 @@
     "expectedOutput": "public readonly id = CloningRepositoryID++\n",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -23408,7 +23408,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -23438,7 +23438,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -23477,7 +23477,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -23567,7 +23567,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -23597,7 +23597,7 @@
             "_terminator": 22
           },
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -23636,7 +23636,7 @@
             "_terminator": 22
           },
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -23780,7 +23780,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -23810,7 +23810,7 @@
           "_terminator": 22
         },
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -23849,7 +23849,7 @@
           "_terminator": 22
         },
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -23922,7 +23922,7 @@
     "expectedOutput": "private async() {};",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -23974,7 +23974,7 @@
     "expectedOutput": "get(): Result {};",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -24035,7 +24035,7 @@
     "expectedOutput": "private set(plugin) {};",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -24683,7 +24683,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 456,
                   "_accessibility_modifier": 34,
@@ -24943,7 +24943,7 @@
                     ]
                   }
                 },
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 456,
                   "_accessibility_modifier": 34,
@@ -24987,7 +24987,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 456,
                   "_accessibility_modifier": 35,
@@ -25011,7 +25011,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 456,
                   "_accessibility_modifier": 35,
@@ -25086,7 +25086,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_accessibility_modifier": 34,
@@ -25346,7 +25346,7 @@
                 ]
               }
             },
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_accessibility_modifier": 34,
@@ -25390,7 +25390,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_accessibility_modifier": 35,
@@ -25414,7 +25414,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_accessibility_modifier": 35,
@@ -25804,7 +25804,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_accessibility_modifier": 34,
@@ -26064,7 +26064,7 @@
               ]
             }
           },
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_accessibility_modifier": 34,
@@ -26108,7 +26108,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_accessibility_modifier": 35,
@@ -26132,7 +26132,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_accessibility_modifier": 35,
@@ -26190,7 +26190,7 @@
     "expectedOutput": "public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_accessibility_modifier": 34,
@@ -26465,7 +26465,7 @@
     "expectedOutput": "public readonly async bar?<T>();",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_accessibility_modifier": 34,
@@ -26531,7 +26531,7 @@
     "expectedOutput": "private static bar();",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_accessibility_modifier": 35,
@@ -26577,7 +26577,7 @@
     "expectedOutput": "private static async bar(): T;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_accessibility_modifier": 35,
@@ -29493,7 +29493,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -29521,7 +29521,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -29559,7 +29559,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -29602,7 +29602,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -29644,7 +29644,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -29727,7 +29727,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -29755,7 +29755,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -29793,7 +29793,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -29836,7 +29836,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -29878,7 +29878,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -30073,7 +30073,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -30101,7 +30101,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -30139,7 +30139,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -30182,7 +30182,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -30224,7 +30224,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -30290,7 +30290,7 @@
     "expectedOutput": "static 2: string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -30340,7 +30340,7 @@
     "expectedOutput": "public static 2: string = 'string';",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -30400,7 +30400,7 @@
     "expectedOutput": "public static readonly 'hello'?: int = 'string';",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -30465,7 +30465,7 @@
     "expectedOutput": "static readonly 'hello'?: int = 'string';",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -30529,7 +30529,7 @@
     "expectedOutput": "readonly 'hello'?: int = 'string';",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -31250,7 +31250,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [
                   {
                     "$type": 285,
@@ -31358,7 +31358,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [
               {
                 "$type": 285,
@@ -31520,7 +31520,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [
             {
               "$type": 285,
@@ -31611,7 +31611,7 @@
     "expectedOutput": "@bar<T>()\nmethod() {\n}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [
         {
           "$type": 285,
@@ -32054,7 +32054,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -32097,7 +32097,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$_layout": {
                     "units": [
@@ -32176,7 +32176,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -32233,7 +32233,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [
                   {
                     "$type": 285,
@@ -32406,7 +32406,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -32449,7 +32449,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$_layout": {
                 "units": [
@@ -32528,7 +32528,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -32585,7 +32585,7 @@
             "_terminator": 22
           },
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [
               {
                 "$type": 285,
@@ -33066,7 +33066,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -33109,7 +33109,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$_layout": {
               "units": [
@@ -33188,7 +33188,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -33245,7 +33245,7 @@
           "_terminator": 22
         },
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [
             {
               "$type": 285,
@@ -33376,7 +33376,7 @@
     "expectedOutput": "@foo static 2: string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -33441,7 +33441,7 @@
     "expectedOutput": "@bar.buzz(grue) public static 2: string = 'string';",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$_layout": {
           "units": [
@@ -33542,7 +33542,7 @@
     "expectedOutput": "@readonly readonly 'hello'?: int = 'string';",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -34256,7 +34256,7 @@
     "expectedOutput": "@readonly fooBar(@required param: any, @optional param2?: any) {\n}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [
         {
           "$type": 285,
@@ -34859,7 +34859,7 @@
                     ]
                   }
                 },
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -34890,7 +34890,7 @@
                     ]
                   }
                 },
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -34964,7 +34964,7 @@
                     ]
                   }
                 },
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -35041,7 +35041,7 @@
                     ]
                   }
                 },
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -35194,7 +35194,7 @@
                 ]
               }
             },
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -35225,7 +35225,7 @@
                 ]
               }
             },
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -35299,7 +35299,7 @@
                 ]
               }
             },
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -35376,7 +35376,7 @@
                 ]
               }
             },
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -35837,7 +35837,7 @@
               ]
             }
           },
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -35868,7 +35868,7 @@
               ]
             }
           },
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -35942,7 +35942,7 @@
               ]
             }
           },
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -36019,7 +36019,7 @@
               ]
             }
           },
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -36110,7 +36110,7 @@
     "expectedOutput": "bar = 5;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -36314,7 +36314,7 @@
     "expectedOutput": "static one(a) { return a; };",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -36403,7 +36403,7 @@
     "expectedOutput": "two(b) { return b; }",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -36492,7 +36492,7 @@
     "expectedOutput": "three(c) { return c; }\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -38635,7 +38635,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": true,
@@ -38666,7 +38666,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -38691,7 +38691,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 459,
                   "_generator": false,
@@ -38715,7 +38715,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 460,
                   "_name": {
@@ -38734,7 +38734,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 459,
                   "_accessibility_modifier": 36,
@@ -38759,7 +38759,7 @@
                 "_terminator": 22
               },
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -38949,7 +38949,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": true,
@@ -38980,7 +38980,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -39005,7 +39005,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 459,
               "_generator": false,
@@ -39029,7 +39029,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 460,
               "_name": {
@@ -39048,7 +39048,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 459,
               "_accessibility_modifier": 36,
@@ -39073,7 +39073,7 @@
             "_terminator": 22
           },
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -39373,7 +39373,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": true,
@@ -39404,7 +39404,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -39429,7 +39429,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 459,
             "_generator": false,
@@ -39453,7 +39453,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 460,
             "_name": {
@@ -39472,7 +39472,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 459,
             "_accessibility_modifier": 36,
@@ -39497,7 +39497,7 @@
           "_terminator": 22
         },
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -39634,7 +39634,7 @@
     "expectedOutput": "readonly abstract prop: string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": true,
@@ -39690,7 +39690,7 @@
     "expectedOutput": "requiredProp!: string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -39740,7 +39740,7 @@
     "expectedOutput": "abstract makeSound(): void;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 459,
         "_generator": false,
@@ -39789,7 +39789,7 @@
     "expectedOutput": "abstract get readonlyProp(): string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 460,
         "_name": {
@@ -39833,7 +39833,7 @@
     "expectedOutput": "protected abstract readonlyProp?(): string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 459,
         "_accessibility_modifier": 36,
@@ -40594,7 +40594,7 @@
     "expectedOutput": "move(): void {\n    console.log(\"roaming the earth...\");\n}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -41118,7 +41118,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [
                   {
                     "$type": 285,
@@ -41216,7 +41216,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [
               {
                 "$type": 285,
@@ -41342,7 +41342,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [
             {
               "$type": 285,
@@ -41423,7 +41423,7 @@
     "expectedOutput": "@(super.decorate)\nmethod2() { }\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [
         {
           "$type": 285,
@@ -49569,7 +49569,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -49650,7 +49650,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -49756,7 +49756,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -49820,7 +49820,7 @@
     "expectedOutput": "public bar()\n{\n}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -50040,7 +50040,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 459,
                   "_generator": false,
@@ -50080,7 +50080,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -50168,7 +50168,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 459,
               "_generator": false,
@@ -50286,7 +50286,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 459,
             "_generator": false,
@@ -50337,7 +50337,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -50390,7 +50390,7 @@
     "expectedOutput": "abstract baz(): void;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 459,
         "_generator": false,
@@ -50617,7 +50617,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -50838,7 +50838,7 @@
     "expectedOutput": "override baz() {}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -51018,7 +51018,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 412,
+                      "$type": 409,
                       "_index_type": {
                         "$type": 505,
                         "_content": {
@@ -51085,7 +51085,7 @@
                     "_delimiter": 0,
                     "_item": [
                       {
-                        "$type": 412,
+                        "$type": 409,
                         "_index_type": {
                           "$type": 505,
                           "_content": {
@@ -51132,7 +51132,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 412,
+                      "$type": 409,
                       "_index_type": {
                         "$type": 505,
                         "_content": {
@@ -51263,7 +51263,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -51352,7 +51352,7 @@
                 "_delimiter": 0,
                 "_item": [
                   {
-                    "$type": 412,
+                    "$type": 409,
                     "_index_type": {
                       "$type": 505,
                       "_content": {
@@ -51399,7 +51399,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -51522,7 +51522,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -51607,7 +51607,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -51654,7 +51654,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -51762,7 +51762,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -51840,7 +51840,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -51887,7 +51887,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -51963,7 +51963,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -52059,7 +52059,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -52154,7 +52154,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -52222,7 +52222,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -52277,7 +52277,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -52330,7 +52330,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -52383,7 +52383,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -52432,7 +52432,7 @@
     "expectedOutput": "[t: T]: T",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -52479,7 +52479,7 @@
     "expectedOutput": "[t: T]: T",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -52526,7 +52526,7 @@
     "expectedOutput": "[g: G]: G",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -52899,7 +52899,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 412,
+                      "$type": 409,
                       "_index_type": {
                         "$type": 505,
                         "_content": {
@@ -52966,7 +52966,7 @@
                     "_delimiter": 0,
                     "_item": [
                       {
-                        "$type": 412,
+                        "$type": 409,
                         "_index_type": {
                           "$type": 505,
                           "_content": {
@@ -53013,7 +53013,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 412,
+                      "$type": 409,
                       "_index_type": {
                         "$type": 505,
                         "_content": {
@@ -53144,7 +53144,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -53233,7 +53233,7 @@
                 "_delimiter": 0,
                 "_item": [
                   {
-                    "$type": 412,
+                    "$type": 409,
                     "_index_type": {
                       "$type": 505,
                       "_content": {
@@ -53280,7 +53280,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -53403,7 +53403,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -53488,7 +53488,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -53535,7 +53535,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -53643,7 +53643,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -53721,7 +53721,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -53768,7 +53768,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -53844,7 +53844,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -53940,7 +53940,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -54035,7 +54035,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -54103,7 +54103,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -54158,7 +54158,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -54211,7 +54211,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -54264,7 +54264,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -54313,7 +54313,7 @@
     "expectedOutput": "[t: T]: T",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -54360,7 +54360,7 @@
     "expectedOutput": "[t: T]: T",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -54407,7 +54407,7 @@
     "expectedOutput": "[g: G]: G",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -56690,7 +56690,7 @@
         {
           "$type": 213,
           "_condition": {
-            "$type": 419,
+            "$type": 416,
             "_expression": {
               "$_layout": {
                 "trivia": {
@@ -56787,7 +56787,7 @@
     "input": {
       "$type": 213,
       "_condition": {
-        "$type": 419,
+        "$type": 416,
         "_expression": {
           "$_layout": {
             "trivia": {
@@ -56880,7 +56880,7 @@
     "expectedOutput": "( foo )",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": {
         "$_layout": {
           "trivia": {
@@ -58291,7 +58291,7 @@
                       ]
                     }
                   },
-                  "$type": 419,
+                  "$type": 416,
                   "_expression": {
                     "$text": "foo",
                     "$type": 1
@@ -58320,7 +58320,7 @@
                     ]
                   }
                 },
-                "$type": 419,
+                "$type": 416,
                 "_expression": {
                   "$text": "foo",
                   "$type": 1
@@ -58475,7 +58475,7 @@
                   ]
                 }
               },
-              "$type": 419,
+              "$type": 416,
               "_expression": {
                 "$text": "foo",
                 "$type": 1
@@ -58526,7 +58526,7 @@
                 ]
               }
             },
-            "$type": 419,
+            "$type": 416,
             "_expression": {
               "$text": "foo",
               "$type": 1
@@ -58625,7 +58625,7 @@
                 ]
               }
             },
-            "$type": 419,
+            "$type": 416,
             "_expression": {
               "$text": "foo",
               "$type": 1
@@ -58711,7 +58711,7 @@
               ]
             }
           },
-          "$type": 419,
+          "$type": 416,
           "_expression": {
             "$text": "foo",
             "$type": 1
@@ -58823,7 +58823,7 @@
             ]
           }
         },
-        "$type": 419,
+        "$type": 416,
         "_expression": {
           "$text": "foo",
           "$type": 1
@@ -58862,7 +58862,7 @@
             ]
           }
         },
-        "$type": 419,
+        "$type": 416,
         "_expression": {
           "$text": "foo",
           "$type": 1
@@ -58947,7 +58947,7 @@
               ]
             }
           },
-          "$type": 419,
+          "$type": 416,
           "_expression": {
             "$text": "foo",
             "$type": 1
@@ -58983,7 +58983,7 @@
     "expectedOutput": "(foo)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": {
         "$text": "foo",
         "$type": 1
@@ -59012,7 +59012,7 @@
     "expectedOutput": "(foo)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": {
         "$text": "foo",
         "$type": 1
@@ -70510,7 +70510,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 464,
@@ -70584,7 +70584,7 @@
                 "_terminator": 175
               },
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -70729,7 +70729,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 464,
@@ -70803,7 +70803,7 @@
             "_terminator": 175
           },
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -71128,7 +71128,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 464,
@@ -71202,7 +71202,7 @@
           "_terminator": 175
         },
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -71312,7 +71312,7 @@
     "expectedOutput": "constructor(x: number, y: number) {\n    super(x);\n}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 464,
@@ -71411,7 +71411,7 @@
     "expectedOutput": "public toString() {\n    return super.toString() + \" y=\" + this.y;\n}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -73269,7 +73269,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 412,
+                      "$type": 409,
                       "_index_type": {
                         "$type": 505,
                         "_content": {
@@ -73341,7 +73341,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 412,
+                      "$type": 409,
                       "_index_type": {
                         "$type": 505,
                         "_content": {
@@ -73483,7 +73483,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -74052,7 +74052,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": {
                     "$type": 505,
                     "_content": {
@@ -74478,7 +74478,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -74587,7 +74587,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": {
                   "$type": 505,
                   "_content": {
@@ -74839,7 +74839,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -74913,7 +74913,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": {
                 "$type": 505,
                 "_content": {
@@ -74982,7 +74982,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -75050,7 +75050,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": {
               "$type": 505,
               "_content": {
@@ -75105,7 +75105,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -75158,7 +75158,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": {
             "$type": 505,
             "_content": {
@@ -75207,7 +75207,7 @@
     "expectedOutput": "[key: foo]: bar",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -75254,7 +75254,7 @@
     "expectedOutput": "[key: foo]: bar",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": {
         "$type": 505,
         "_content": {
@@ -76946,7 +76946,7 @@
                     "_delimiter": 0,
                     "_item": [
                       {
-                        "$type": 412,
+                        "$type": 409,
                         "_index_type": 43,
                         "_name": {
                           "$text": "type",
@@ -76996,7 +76996,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 413,
+                  "$type": 410,
                   "_mapped_type_clause": {
                     "$type": 361,
                     "_name": {
@@ -77056,7 +77056,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 413,
+                  "$type": 410,
                   "_mapped_type_clause": {
                     "$type": 361,
                     "_name": {
@@ -77116,7 +77116,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 413,
+                  "$type": 410,
                   "_mapped_type_clause": {
                     "$type": 361,
                     "_name": {
@@ -77305,7 +77305,7 @@
                 "_delimiter": 0,
                 "_item": [
                   {
-                    "$type": 412,
+                    "$type": 409,
                     "_index_type": 43,
                     "_name": {
                       "$text": "type",
@@ -77471,7 +77471,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 412,
+                "$type": 409,
                 "_index_type": 43,
                 "_name": {
                   "$text": "type",
@@ -77672,7 +77672,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": 43,
               "_name": {
                 "$text": "type",
@@ -77867,7 +77867,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": 43,
             "_name": {
               "$text": "type",
@@ -77923,7 +77923,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 413,
+            "$type": 410,
             "_mapped_type_clause": {
               "$type": 361,
               "_name": {
@@ -77994,7 +77994,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 413,
+            "$type": 410,
             "_mapped_type_clause": {
               "$type": 361,
               "_name": {
@@ -78065,7 +78065,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 413,
+            "$type": 410,
             "_mapped_type_clause": {
               "$type": 361,
               "_name": {
@@ -78197,7 +78197,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": 43,
           "_name": {
             "$text": "type",
@@ -78238,7 +78238,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 413,
+          "$type": 410,
           "_mapped_type_clause": {
             "$type": 361,
             "_name": {
@@ -78294,7 +78294,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 413,
+          "$type": 410,
           "_mapped_type_clause": {
             "$type": 361,
             "_name": {
@@ -78350,7 +78350,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 413,
+          "$type": 410,
           "_mapped_type_clause": {
             "$type": 361,
             "_name": {
@@ -78541,7 +78541,7 @@
     "expectedOutput": "[type: string]: string",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": 43,
       "_name": {
         "$text": "type",
@@ -78603,7 +78603,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 413,
+              "$type": 410,
               "_mapped_type_clause": {
                 "$type": 361,
                 "_name": {
@@ -78685,7 +78685,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 413,
+              "$type": 410,
               "_mapped_type_clause": {
                 "$type": 361,
                 "_name": {
@@ -78767,7 +78767,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 413,
+              "$type": 410,
               "_mapped_type_clause": {
                 "$type": 361,
                 "_name": {
@@ -79084,7 +79084,7 @@
     "expectedOutput": "[K in keyof T]-?: any",
     "grammar": "typescript",
     "input": {
-      "$type": 413,
+      "$type": 410,
       "_mapped_type_clause": {
         "$type": 361,
         "_name": {
@@ -79134,7 +79134,7 @@
     "expectedOutput": "[K in keyof T]?: any",
     "grammar": "typescript",
     "input": {
-      "$type": 413,
+      "$type": 410,
       "_mapped_type_clause": {
         "$type": 361,
         "_name": {
@@ -79184,7 +79184,7 @@
     "expectedOutput": "-readonly [K in keyof T]: any",
     "grammar": "typescript",
     "input": {
-      "$type": 413,
+      "$type": 410,
       "_mapped_type_clause": {
         "$type": 361,
         "_name": {
@@ -80427,7 +80427,7 @@
               "_delimiter": 2,
               "_item": [
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": 43,
                   "_name": {
                     "$text": "b",
@@ -80440,7 +80440,7 @@
                   }
                 },
                 {
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": 41,
                   "_name": {
                     "$text": "c",
@@ -80499,7 +80499,7 @@
           "_delimiter": 2,
           "_item": [
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": 43,
               "_name": {
                 "$text": "b",
@@ -80512,7 +80512,7 @@
               }
             },
             {
-              "$type": 412,
+              "$type": 409,
               "_index_type": 41,
               "_name": {
                 "$text": "c",
@@ -80588,7 +80588,7 @@
         "_delimiter": 2,
         "_item": [
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": 43,
             "_name": {
               "$text": "b",
@@ -80601,7 +80601,7 @@
             }
           },
           {
-            "$type": 412,
+            "$type": 409,
             "_index_type": 41,
             "_name": {
               "$text": "c",
@@ -80644,7 +80644,7 @@
       "_delimiter": 2,
       "_item": [
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": 43,
           "_name": {
             "$text": "b",
@@ -80657,7 +80657,7 @@
           }
         },
         {
-          "$type": 412,
+          "$type": 409,
           "_index_type": 41,
           "_name": {
             "$text": "c",
@@ -80694,7 +80694,7 @@
     "expectedOutput": "[b: string]: any",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": 43,
       "_name": {
         "$text": "b",
@@ -80729,7 +80729,7 @@
     "expectedOutput": "readonly [c: number]: string",
     "grammar": "typescript",
     "input": {
-      "$type": 412,
+      "$type": 409,
       "_index_type": 41,
       "_name": {
         "$text": "c",
@@ -80903,7 +80903,7 @@
                       }
                     ]
                   },
-                  "$type": 412,
+                  "$type": 409,
                   "_index_type": 43,
                   "_name": {
                     "$text": "index",
@@ -81035,7 +81035,7 @@
                   }
                 ]
               },
-              "$type": 412,
+              "$type": 409,
               "_index_type": 43,
               "_name": {
                 "$text": "index",
@@ -81184,7 +81184,7 @@
                 }
               ]
             },
-            "$type": 412,
+            "$type": 409,
             "_index_type": 43,
             "_name": {
               "$text": "index",
@@ -81300,7 +81300,7 @@
               }
             ]
           },
-          "$type": 412,
+          "$type": 409,
           "_index_type": 43,
           "_name": {
             "$text": "index",
@@ -81702,7 +81702,7 @@
           }
         ]
       },
-      "$type": 412,
+      "$type": 409,
       "_index_type": 43,
       "_name": {
         "$text": "index",
@@ -87047,7 +87047,7 @@
                   "_object": {
                     "$type": 259,
                     "_object": {
-                      "$type": 419,
+                      "$type": 416,
                       "_expression": {
                         "$text": "document",
                         "$type": 1
@@ -87125,7 +87125,7 @@
               "_object": {
                 "$type": 259,
                 "_object": {
-                  "$type": 419,
+                  "$type": 416,
                   "_expression": {
                     "$text": "document",
                     "$type": 1
@@ -87198,7 +87198,7 @@
           "_object": {
             "$type": 259,
             "_object": {
-              "$type": 419,
+              "$type": 416,
               "_expression": {
                 "$text": "document",
                 "$type": 1
@@ -87261,7 +87261,7 @@
         "_object": {
           "$type": 259,
           "_object": {
-            "$type": 419,
+            "$type": 416,
             "_expression": {
               "$text": "document",
               "$type": 1
@@ -87317,7 +87317,7 @@
       "_object": {
         "$type": 259,
         "_object": {
-          "$type": 419,
+          "$type": 416,
           "_expression": {
             "$text": "document",
             "$type": 1
@@ -87370,7 +87370,7 @@
     "input": {
       "$type": 259,
       "_object": {
-        "$type": 419,
+        "$type": 416,
         "_expression": {
           "$text": "document",
           "$type": 1
@@ -87412,7 +87412,7 @@
     "expectedOutput": "(document: any)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": {
         "$text": "document",
         "$type": 1
@@ -88064,7 +88064,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88084,14 +88084,14 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "UserID",
                         "$type": 1
                       }
                     },
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "User",
                         "$type": 1
@@ -88117,7 +88117,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88137,7 +88137,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "UserID",
                         "$type": 1
@@ -88145,7 +88145,7 @@
                       "_type_keyword": 7
                     },
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "User",
                         "$type": 1
@@ -88171,7 +88171,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88191,7 +88191,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 418,
+                      "$type": 415,
                       "_alias": {
                         "$text": "GuitarT",
                         "$type": 1
@@ -88221,7 +88221,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88249,14 +88249,14 @@
                       "_delimiter": 0,
                       "_item": [
                         {
-                          "$type": 417,
+                          "$type": 414,
                           "_name": {
                             "$text": "addUser",
                             "$type": 1
                           }
                         },
                         {
-                          "$type": 417,
+                          "$type": 414,
                           "_name": {
                             "$text": "removeUser",
                             "$type": 1
@@ -88291,7 +88291,7 @@
           },
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88317,7 +88317,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88345,7 +88345,7 @@
                       "_delimiter": 0,
                       "_item": [
                         {
-                          "$type": 417,
+                          "$type": 414,
                           "_name": {
                             "$text": "addUser",
                             "$type": 1
@@ -88372,7 +88372,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88392,7 +88392,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "type",
                         "$type": 1
@@ -88417,7 +88417,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88437,7 +88437,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 418,
+                      "$type": 415,
                       "_alias": {
                         "$text": "type",
                         "$type": 1
@@ -88466,7 +88466,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88486,7 +88486,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 418,
+                      "$type": 415,
                       "_alias": {
                         "$text": "addUser",
                         "$type": 1
@@ -88515,7 +88515,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88535,14 +88535,14 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "type",
                         "$type": 1
                       }
                     },
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "addUser",
                         "$type": 1
@@ -88567,7 +88567,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88587,14 +88587,14 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "addUser",
                         "$type": 1
                       }
                     },
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "type",
                         "$type": 1
@@ -88619,7 +88619,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -88647,14 +88647,14 @@
                       "_delimiter": 0,
                       "_item": [
                         {
-                          "$type": 417,
+                          "$type": 414,
                           "_name": {
                             "$text": "addUser",
                             "$type": 1
                           }
                         },
                         {
-                          "$type": 417,
+                          "$type": 414,
                           "_name": {
                             "$text": "User",
                             "$type": 1
@@ -88706,7 +88706,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -88726,14 +88726,14 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "UserID",
                     "$type": 1
                   }
                 },
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "User",
                     "$type": 1
@@ -88781,7 +88781,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -88801,7 +88801,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "UserID",
                     "$type": 1
@@ -88809,7 +88809,7 @@
                   "_type_keyword": 7
                 },
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "User",
                     "$type": 1
@@ -88857,7 +88857,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -88877,7 +88877,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 418,
+                  "$type": 415,
                   "_alias": {
                     "$text": "GuitarT",
                     "$type": 1
@@ -88929,7 +88929,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -88957,14 +88957,14 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "addUser",
                         "$type": 1
                       }
                     },
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "removeUser",
                         "$type": 1
@@ -89014,7 +89014,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89062,7 +89062,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89090,7 +89090,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "addUser",
                         "$type": 1
@@ -89139,7 +89139,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89159,7 +89159,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "type",
                     "$type": 1
@@ -89206,7 +89206,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89226,7 +89226,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 418,
+                  "$type": 415,
                   "_alias": {
                     "$text": "type",
                     "$type": 1
@@ -89277,7 +89277,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89297,7 +89297,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 418,
+                  "$type": 415,
                   "_alias": {
                     "$text": "addUser",
                     "$type": 1
@@ -89348,7 +89348,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89368,14 +89368,14 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "type",
                     "$type": 1
                   }
                 },
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "addUser",
                     "$type": 1
@@ -89422,7 +89422,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89442,14 +89442,14 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "addUser",
                     "$type": 1
                   }
                 },
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "type",
                     "$type": 1
@@ -89496,7 +89496,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -89524,14 +89524,14 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "addUser",
                         "$type": 1
                       }
                     },
                     {
-                      "$type": 417,
+                      "$type": 414,
                       "_name": {
                         "$text": "User",
                         "$type": 1
@@ -89579,7 +89579,7 @@
     "expectedOutput": "{UserID, User} from \"./User.js\"",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -89599,14 +89599,14 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "UserID",
                   "$type": 1
                 }
               },
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "User",
                   "$type": 1
@@ -89649,7 +89649,7 @@
     "expectedOutput": "{type UserID, type User} from \"./User.js\"",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -89669,7 +89669,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "UserID",
                   "$type": 1
@@ -89677,7 +89677,7 @@
                 "_type_keyword": 7
               },
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "User",
                   "$type": 1
@@ -89721,7 +89721,7 @@
     "expectedOutput": "{jimiguitar as GuitarT} from \"./User.js\"",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -89741,7 +89741,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 418,
+                "$type": 415,
                 "_alias": {
                   "$text": "GuitarT",
                   "$type": 1
@@ -89788,7 +89788,7 @@
     "expectedOutput": "UserID, {addUser, removeUser} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -89816,14 +89816,14 @@
                 "_delimiter": 0,
                 "_item": [
                   {
-                    "$type": 417,
+                    "$type": 414,
                     "_name": {
                       "$text": "addUser",
                       "$type": 1
                     }
                   },
                   {
-                    "$type": 417,
+                    "$type": 414,
                     "_name": {
                       "$text": "removeUser",
                       "$type": 1
@@ -89868,7 +89868,7 @@
     "expectedOutput": "type from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -89912,7 +89912,7 @@
     "expectedOutput": "type, {addUser} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -89940,7 +89940,7 @@
                 "_delimiter": 0,
                 "_item": [
                   {
-                    "$type": 417,
+                    "$type": 414,
                     "_name": {
                       "$text": "addUser",
                       "$type": 1
@@ -89985,7 +89985,7 @@
     "expectedOutput": "{type} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -90005,7 +90005,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "type",
                   "$type": 1
@@ -90048,7 +90048,7 @@
     "expectedOutput": "{addUser as type} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -90068,7 +90068,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 418,
+                "$type": 415,
                 "_alias": {
                   "$text": "type",
                   "$type": 1
@@ -90115,7 +90115,7 @@
     "expectedOutput": "{type as addUser} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -90135,7 +90135,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 418,
+                "$type": 415,
                 "_alias": {
                   "$text": "addUser",
                   "$type": 1
@@ -90182,7 +90182,7 @@
     "expectedOutput": "{type, addUser} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -90202,14 +90202,14 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "type",
                   "$type": 1
                 }
               },
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "addUser",
                   "$type": 1
@@ -90252,7 +90252,7 @@
     "expectedOutput": "{addUser, type} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -90272,14 +90272,14 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "addUser",
                   "$type": 1
                 }
               },
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "type",
                   "$type": 1
@@ -90322,7 +90322,7 @@
     "expectedOutput": "type, {addUser, type User} from './User.js'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -90350,14 +90350,14 @@
                 "_delimiter": 0,
                 "_item": [
                   {
-                    "$type": 417,
+                    "$type": 414,
                     "_name": {
                       "$text": "addUser",
                       "$type": 1
                     }
                   },
                   {
-                    "$type": 417,
+                    "$type": 414,
                     "_name": {
                       "$text": "User",
                       "$type": 1
@@ -90421,14 +90421,14 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "UserID",
                 "$type": 1
               }
             },
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "User",
                 "$type": 1
@@ -90479,7 +90479,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "UserID",
                 "$type": 1
@@ -90487,7 +90487,7 @@
               "_type_keyword": 7
             },
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "User",
                 "$type": 1
@@ -90539,7 +90539,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 418,
+              "$type": 415,
               "_alias": {
                 "$text": "GuitarT",
                 "$type": 1
@@ -90602,14 +90602,14 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "addUser",
                     "$type": 1
                   }
                 },
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "removeUser",
                     "$type": 1
@@ -90702,7 +90702,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "addUser",
                     "$type": 1
@@ -90755,7 +90755,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "type",
                 "$type": 1
@@ -90806,7 +90806,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 418,
+              "$type": 415,
               "_alias": {
                 "$text": "type",
                 "$type": 1
@@ -90861,7 +90861,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 418,
+              "$type": 415,
               "_alias": {
                 "$text": "addUser",
                 "$type": 1
@@ -90916,14 +90916,14 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "type",
                 "$type": 1
               }
             },
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "addUser",
                 "$type": 1
@@ -90974,14 +90974,14 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "addUser",
                 "$type": 1
               }
             },
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "type",
                 "$type": 1
@@ -91040,14 +91040,14 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "addUser",
                     "$type": 1
                   }
                 },
                 {
-                  "$type": 417,
+                  "$type": 414,
                   "_name": {
                     "$text": "User",
                     "$type": 1
@@ -91099,14 +91099,14 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "UserID",
               "$type": 1
             }
           },
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "User",
               "$type": 1
@@ -91154,7 +91154,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "UserID",
               "$type": 1
@@ -91162,7 +91162,7 @@
             "_type_keyword": 7
           },
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "User",
               "$type": 1
@@ -91211,7 +91211,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 418,
+            "$type": 415,
             "_alias": {
               "$text": "GuitarT",
               "$type": 1
@@ -91263,14 +91263,14 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "addUser",
               "$type": 1
             }
           },
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "removeUser",
               "$type": 1
@@ -91318,7 +91318,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "addUser",
               "$type": 1
@@ -91366,7 +91366,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "type",
               "$type": 1
@@ -91414,7 +91414,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 418,
+            "$type": 415,
             "_alias": {
               "$text": "type",
               "$type": 1
@@ -91466,7 +91466,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 418,
+            "$type": 415,
             "_alias": {
               "$text": "addUser",
               "$type": 1
@@ -91518,14 +91518,14 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "type",
               "$type": 1
             }
           },
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "addUser",
               "$type": 1
@@ -91573,14 +91573,14 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "addUser",
               "$type": 1
             }
           },
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "type",
               "$type": 1
@@ -91628,14 +91628,14 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "addUser",
               "$type": 1
             }
           },
           {
-            "$type": 417,
+            "$type": 414,
             "_name": {
               "$text": "User",
               "$type": 1
@@ -91672,14 +91672,14 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "UserID",
             "$type": 1
           }
         },
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "User",
             "$type": 1
@@ -91714,7 +91714,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "UserID",
             "$type": 1
@@ -91722,7 +91722,7 @@
           "_type_keyword": 7
         },
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "User",
             "$type": 1
@@ -91758,7 +91758,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 418,
+          "$type": 415,
           "_alias": {
             "$text": "GuitarT",
             "$type": 1
@@ -91797,14 +91797,14 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "addUser",
             "$type": 1
           }
         },
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "removeUser",
             "$type": 1
@@ -91839,7 +91839,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "addUser",
             "$type": 1
@@ -91874,7 +91874,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "type",
             "$type": 1
@@ -91909,7 +91909,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 418,
+          "$type": 415,
           "_alias": {
             "$text": "type",
             "$type": 1
@@ -91948,7 +91948,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 418,
+          "$type": 415,
           "_alias": {
             "$text": "addUser",
             "$type": 1
@@ -91987,14 +91987,14 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "type",
             "$type": 1
           }
         },
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "addUser",
             "$type": 1
@@ -92029,14 +92029,14 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "addUser",
             "$type": 1
           }
         },
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "type",
             "$type": 1
@@ -92071,14 +92071,14 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "addUser",
             "$type": 1
           }
         },
         {
-          "$type": 417,
+          "$type": 414,
           "_name": {
             "$text": "User",
             "$type": 1
@@ -92110,7 +92110,7 @@
     "expectedOutput": "UserID",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "UserID",
         "$type": 1
@@ -92139,7 +92139,7 @@
     "expectedOutput": "User",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "User",
         "$type": 1
@@ -92168,7 +92168,7 @@
     "expectedOutput": "type UserID",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "UserID",
         "$type": 1
@@ -92198,7 +92198,7 @@
     "expectedOutput": "type User",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "User",
         "$type": 1
@@ -92228,7 +92228,7 @@
     "expectedOutput": "addUser",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "addUser",
         "$type": 1
@@ -92257,7 +92257,7 @@
     "expectedOutput": "removeUser",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "removeUser",
         "$type": 1
@@ -92286,7 +92286,7 @@
     "expectedOutput": "addUser",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "addUser",
         "$type": 1
@@ -92315,7 +92315,7 @@
     "expectedOutput": "type",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "type",
         "$type": 1
@@ -92344,7 +92344,7 @@
     "expectedOutput": "type",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "type",
         "$type": 1
@@ -92373,7 +92373,7 @@
     "expectedOutput": "addUser",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "addUser",
         "$type": 1
@@ -92402,7 +92402,7 @@
     "expectedOutput": "addUser",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "addUser",
         "$type": 1
@@ -92431,7 +92431,7 @@
     "expectedOutput": "type",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "type",
         "$type": 1
@@ -92460,7 +92460,7 @@
     "expectedOutput": "addUser",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "addUser",
         "$type": 1
@@ -92489,7 +92489,7 @@
     "expectedOutput": "type User",
     "grammar": "typescript",
     "input": {
-      "$type": 417,
+      "$type": 414,
       "_name": {
         "$text": "User",
         "$type": 1
@@ -92612,7 +92612,7 @@
     "expectedOutput": "jimiguitar as GuitarT",
     "grammar": "typescript",
     "input": {
-      "$type": 418,
+      "$type": 415,
       "_alias": {
         "$text": "GuitarT",
         "$type": 1
@@ -92645,7 +92645,7 @@
     "expectedOutput": "addUser as type",
     "grammar": "typescript",
     "input": {
-      "$type": 418,
+      "$type": 415,
       "_alias": {
         "$text": "type",
         "$type": 1
@@ -92678,7 +92678,7 @@
     "expectedOutput": "type as addUser",
     "grammar": "typescript",
     "input": {
-      "$type": 418,
+      "$type": 415,
       "_alias": {
         "$text": "addUser",
         "$type": 1
@@ -92735,14 +92735,14 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "addUser",
                   "$type": 1
                 }
               },
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "removeUser",
                   "$type": 1
@@ -92829,7 +92829,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "addUser",
                   "$type": 1
@@ -92887,14 +92887,14 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "addUser",
                   "$type": 1
                 }
               },
               {
-                "$type": 417,
+                "$type": 414,
                 "_name": {
                   "$text": "User",
                   "$type": 1
@@ -92947,14 +92947,14 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "addUser",
                 "$type": 1
               }
             },
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "removeUser",
                 "$type": 1
@@ -93005,7 +93005,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "addUser",
                 "$type": 1
@@ -93056,14 +93056,14 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "addUser",
                 "$type": 1
               }
             },
             {
-              "$type": 417,
+              "$type": 414,
               "_name": {
                 "$text": "User",
                 "$type": 1
@@ -114687,7 +114687,7 @@
                   "_delimiter": 0,
                   "_item": [
                     {
-                      "$type": 413,
+                      "$type": 410,
                       "_mapped_type_clause": {
                         "$type": 361,
                         "_name": {
@@ -114821,7 +114821,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 413,
+                  "$type": 410,
                   "_mapped_type_clause": {
                     "$type": 361,
                     "_name": {
@@ -114951,7 +114951,7 @@
             "_delimiter": 0,
             "_item": [
               {
-                "$type": 413,
+                "$type": 410,
                 "_mapped_type_clause": {
                   "$type": 361,
                   "_name": {
@@ -115366,7 +115366,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 413,
+              "$type": 410,
               "_mapped_type_clause": {
                 "$type": 361,
                 "_name": {
@@ -115454,7 +115454,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 413,
+            "$type": 410,
             "_mapped_type_clause": {
               "$type": 361,
               "_name": {
@@ -115528,7 +115528,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 413,
+          "$type": 410,
           "_mapped_type_clause": {
             "$type": 361,
             "_name": {
@@ -115596,7 +115596,7 @@
     "expectedOutput": "[K in keyof T]: T[K]",
     "grammar": "typescript",
     "input": {
-      "$type": 413,
+      "$type": 410,
       "_mapped_type_clause": {
         "$type": 361,
         "_name": {
@@ -116337,7 +116337,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 409,
+                "$type": 406,
                 "_decorator": [],
                 "_method_definition": {
                   "$type": 453,
@@ -117373,7 +117373,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 409,
+            "$type": 406,
             "_decorator": [],
             "_method_definition": {
               "$type": 453,
@@ -117732,7 +117732,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 409,
+          "$type": 406,
           "_decorator": [],
           "_method_definition": {
             "$type": 453,
@@ -117799,7 +117799,7 @@
     "expectedOutput": "test(): this is T {}\n",
     "grammar": "typescript",
     "input": {
-      "$type": 409,
+      "$type": 406,
       "_decorator": [],
       "_method_definition": {
         "$type": 453,
@@ -137669,7 +137669,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 413,
+                  "$type": 410,
                   "_mapped_type_clause": {
                     "$type": 361,
                     "_alias": {
@@ -137813,7 +137813,7 @@
               "_delimiter": 0,
               "_item": [
                 {
-                  "$type": 413,
+                  "$type": 410,
                   "_mapped_type_clause": {
                     "$type": 361,
                     "_alias": {
@@ -137978,7 +137978,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 413,
+              "$type": 410,
               "_mapped_type_clause": {
                 "$type": 361,
                 "_alias": {
@@ -138144,7 +138144,7 @@
           "_delimiter": 0,
           "_item": [
             {
-              "$type": 413,
+              "$type": 410,
               "_mapped_type_clause": {
                 "$type": 361,
                 "_alias": {
@@ -138969,7 +138969,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 413,
+            "$type": 410,
             "_mapped_type_clause": {
               "$type": 361,
               "_alias": {
@@ -139104,7 +139104,7 @@
         "_delimiter": 0,
         "_item": [
           {
-            "$type": 413,
+            "$type": 410,
             "_mapped_type_clause": {
               "$type": 361,
               "_alias": {
@@ -139223,7 +139223,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 413,
+          "$type": 410,
           "_mapped_type_clause": {
             "$type": 361,
             "_alias": {
@@ -139343,7 +139343,7 @@
       "_delimiter": 0,
       "_item": [
         {
-          "$type": 413,
+          "$type": 410,
           "_mapped_type_clause": {
             "$type": 361,
             "_alias": {
@@ -139456,7 +139456,7 @@
     "expectedOutput": "[B in keyof C & string as `get${Capitalize<P>}`]: () => A[B]",
     "grammar": "typescript",
     "input": {
-      "$type": 413,
+      "$type": 410,
       "_mapped_type_clause": {
         "$type": 361,
         "_alias": {
@@ -139570,7 +139570,7 @@
     "expectedOutput": "[B in keyof C & string as `${P}1` | `${P}2`]: A[B]",
     "grammar": "typescript",
     "input": {
-      "$type": 413,
+      "$type": 410,
       "_mapped_type_clause": {
         "$type": 361,
         "_alias": {
@@ -146354,7 +146354,7 @@
             "$type": 288,
             "_members": [
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -146482,7 +146482,7 @@
                 "_terminator": 175
               },
               {
-                "$type": 411,
+                "$type": 408,
                 "_member": {
                   "$type": 462,
                   "_abstract": false,
@@ -146588,7 +146588,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -146716,7 +146716,7 @@
             "_terminator": 175
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -146847,7 +146847,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -146975,7 +146975,7 @@
           "_terminator": 175
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -147064,7 +147064,7 @@
     "expectedOutput": "colors: [ { color: \"green\", code: \"#E5F8F2\" } ]\n",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -147214,7 +147214,7 @@
     "expectedOutput": "color: (typeof this.colors)[number] = this.colors[0]\n",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -149554,7 +149554,7 @@
         {
           "$type": 198,
           "_from_clause": {
-            "$type": 414,
+            "$type": 411,
             "_import_clause": {
               "$type": 199,
               "_content": {
@@ -149632,7 +149632,7 @@
     "input": {
       "$type": 198,
       "_from_clause": {
-        "$type": 414,
+        "$type": 411,
         "_import_clause": {
           "$type": 199,
           "_content": {
@@ -149706,7 +149706,7 @@
     "expectedOutput": "something from 'foo.css'",
     "grammar": "typescript",
     "input": {
-      "$type": 414,
+      "$type": 411,
       "_import_clause": {
         "$type": 199,
         "_content": {
@@ -151349,7 +151349,7 @@
               "$type": 288,
               "_members": [
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 462,
                     "_abstract": false,
@@ -151716,7 +151716,7 @@
               "$type": 288,
               "_members": [
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 456,
                     "_async": false,
@@ -151769,7 +151769,7 @@
                       ]
                     }
                   },
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 462,
                     "_abstract": false,
@@ -151793,7 +151793,7 @@
                   "_terminator": 22
                 },
                 {
-                  "$type": 411,
+                  "$type": 408,
                   "_member": {
                     "$type": 456,
                     "_async": false,
@@ -151934,7 +151934,7 @@
                     "_terminator": 0
                   },
                   "_condition": {
-                    "$type": 419,
+                    "$type": 416,
                     "_expression": 281
                   },
                   "_terminator": 22
@@ -152055,7 +152055,7 @@
                     }
                   },
                   "_condition": {
-                    "$type": 419,
+                    "$type": 416,
                     "_expression": 281
                   },
                   "_consequence": {
@@ -152113,7 +152113,7 @@
                     ]
                   },
                   "_value": {
-                    "$type": 419,
+                    "$type": 416,
                     "_expression": {
                       "$text": "x",
                       "$type": 1
@@ -152226,7 +152226,7 @@
           "$type": 288,
           "_members": [
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 462,
                 "_abstract": false,
@@ -152668,7 +152668,7 @@
           "$type": 288,
           "_members": [
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 456,
                 "_async": false,
@@ -152721,7 +152721,7 @@
                   ]
                 }
               },
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 462,
                 "_abstract": false,
@@ -152745,7 +152745,7 @@
               "_terminator": 22
             },
             {
-              "$type": 411,
+              "$type": 408,
               "_member": {
                 "$type": 456,
                 "_async": false,
@@ -152915,7 +152915,7 @@
                 "_terminator": 0
               },
               "_condition": {
-                "$type": 419,
+                "$type": 416,
                 "_expression": 281
               },
               "_terminator": 22
@@ -153036,7 +153036,7 @@
                 }
               },
               "_condition": {
-                "$type": 419,
+                "$type": 416,
                 "_expression": 281
               },
               "_consequence": {
@@ -153094,7 +153094,7 @@
                 ]
               },
               "_value": {
-                "$type": 419,
+                "$type": 416,
                 "_expression": {
                   "$text": "x",
                   "$type": 1
@@ -153203,7 +153203,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -153272,7 +153272,7 @@
         "$type": 288,
         "_members": [
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_async": false,
@@ -153325,7 +153325,7 @@
                 ]
               }
             },
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 462,
               "_abstract": false,
@@ -153349,7 +153349,7 @@
             "_terminator": 22
           },
           {
-            "$type": 411,
+            "$type": 408,
             "_member": {
               "$type": 456,
               "_async": false,
@@ -153558,7 +153558,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -153615,7 +153615,7 @@
       "$type": 288,
       "_members": [
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_async": false,
@@ -153668,7 +153668,7 @@
               ]
             }
           },
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 462,
             "_abstract": false,
@@ -153692,7 +153692,7 @@
           "_terminator": 22
         },
         {
-          "$type": 411,
+          "$type": 408,
           "_member": {
             "$type": 456,
             "_async": false,
@@ -153743,7 +153743,7 @@
     "expectedOutput": "constructor: Function\n",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -153795,7 +153795,7 @@
     "expectedOutput": "constructor(greeting: string);",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_async": false,
@@ -153863,7 +153863,7 @@
     "expectedOutput": "greeting: string;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 462,
         "_abstract": false,
@@ -153909,7 +153909,7 @@
     "expectedOutput": "showGreeting(): void;",
     "grammar": "typescript",
     "input": {
-      "$type": 411,
+      "$type": 408,
       "_member": {
         "$type": 456,
         "_async": false,
@@ -156268,7 +156268,7 @@
             "_terminator": 0
           },
           "_condition": {
-            "$type": 419,
+            "$type": 416,
             "_expression": 281
           },
           "_terminator": 22
@@ -156389,7 +156389,7 @@
             }
           },
           "_condition": {
-            "$type": 419,
+            "$type": 416,
             "_expression": 281
           },
           "_consequence": {
@@ -156447,7 +156447,7 @@
             ]
           },
           "_value": {
-            "$type": 419,
+            "$type": 416,
             "_expression": {
               "$text": "x",
               "$type": 1
@@ -157683,7 +157683,7 @@
               "_terminator": 0
             },
             "_condition": {
-              "$type": 419,
+              "$type": 416,
               "_expression": 281
             },
             "_terminator": 22
@@ -157804,7 +157804,7 @@
               }
             },
             "_condition": {
-              "$type": 419,
+              "$type": 416,
               "_expression": 281
             },
             "_consequence": {
@@ -157862,7 +157862,7 @@
               ]
             },
             "_value": {
-              "$type": 419,
+              "$type": 416,
               "_expression": {
                 "$text": "x",
                 "$type": 1
@@ -158184,7 +158184,7 @@
         "_terminator": 0
       },
       "_condition": {
-        "$type": 419,
+        "$type": 416,
         "_expression": 281
       },
       "_terminator": 22
@@ -158212,7 +158212,7 @@
     "expectedOutput": "(true)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": 281
     },
     "kind": "render",
@@ -158238,7 +158238,7 @@
     "expectedOutput": "(true)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": 281
     },
     "kind": "render",
@@ -158264,7 +158264,7 @@
     "expectedOutput": "(x)",
     "grammar": "typescript",
     "input": {
-      "$type": 419,
+      "$type": 416,
       "_expression": {
         "$text": "x",
         "$type": 1
@@ -158572,7 +158572,7 @@
         }
       },
       "_condition": {
-        "$type": 419,
+        "$type": 416,
         "_expression": 281
       },
       "_consequence": {
@@ -158733,7 +158733,7 @@
         ]
       },
       "_value": {
-        "$type": 419,
+        "$type": 416,
         "_expression": {
           "$text": "x",
           "$type": 1
@@ -159149,7 +159149,7 @@
                     "_right": {
                       "$type": 362,
                       "_content": {
-                        "$type": 405,
+                        "$type": 402,
                         "_value": {
                           "$text": "3",
                           "$type": 160
@@ -159160,7 +159160,7 @@
                   "_right": {
                     "$type": 362,
                     "_content": {
-                      "$type": 405,
+                      "$type": 402,
                       "_value": {
                         "$text": "4",
                         "$type": 160
@@ -159319,7 +159319,7 @@
                 "_right": {
                   "$type": 362,
                   "_content": {
-                    "$type": 405,
+                    "$type": 402,
                     "_value": {
                       "$text": "3",
                       "$type": 160
@@ -159330,7 +159330,7 @@
               "_right": {
                 "$type": 362,
                 "_content": {
-                  "$type": 405,
+                  "$type": 402,
                   "_value": {
                     "$text": "4",
                     "$type": 160
@@ -159521,7 +159521,7 @@
             "_right": {
               "$type": 362,
               "_content": {
-                "$type": 405,
+                "$type": 402,
                 "_value": {
                   "$text": "3",
                   "$type": 160
@@ -159532,7 +159532,7 @@
           "_right": {
             "$type": 362,
             "_content": {
-              "$type": 405,
+              "$type": 402,
               "_value": {
                 "$text": "4",
                 "$type": 160
@@ -159692,7 +159692,7 @@
           "_right": {
             "$type": 362,
             "_content": {
-              "$type": 405,
+              "$type": 402,
               "_value": {
                 "$text": "3",
                 "$type": 160
@@ -159703,7 +159703,7 @@
         "_right": {
           "$type": 362,
           "_content": {
-            "$type": 405,
+            "$type": 402,
             "_value": {
               "$text": "4",
               "$type": 160
@@ -159861,7 +159861,7 @@
     "input": {
       "$type": 362,
       "_content": {
-        "$type": 405,
+        "$type": 402,
         "_value": {
           "$text": "3",
           "$type": 160
@@ -159893,7 +159893,7 @@
     "input": {
       "$type": 362,
       "_content": {
-        "$type": 405,
+        "$type": 402,
         "_value": {
           "$text": "4",
           "$type": 160
@@ -159996,7 +159996,7 @@
         "_right": {
           "$type": 362,
           "_content": {
-            "$type": 405,
+            "$type": 402,
             "_value": {
               "$text": "3",
               "$type": 160
@@ -160007,7 +160007,7 @@
       "_right": {
         "$type": 362,
         "_content": {
-          "$type": 405,
+          "$type": 402,
           "_value": {
             "$text": "4",
             "$type": 160
@@ -160049,7 +160049,7 @@
       "_right": {
         "$type": 362,
         "_content": {
-          "$type": 405,
+          "$type": 402,
           "_value": {
             "$text": "3",
             "$type": 160
@@ -160080,7 +160080,7 @@
     "expectedOutput": "-3",
     "grammar": "typescript",
     "input": {
-      "$type": 405,
+      "$type": 402,
       "_value": {
         "$text": "3",
         "$type": 160
@@ -160109,7 +160109,7 @@
     "expectedOutput": "-4",
     "grammar": "typescript",
     "input": {
-      "$type": 405,
+      "$type": 402,
       "_value": {
         "$text": "4",
         "$type": 160

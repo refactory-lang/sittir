@@ -465,16 +465,16 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'print_statement_chevron'],
 	[288, 'print_statement_plain'],
 	[289, 'wildcard_pattern'],
-	[290, 'parenthesized_import_list'],
-	[291, 'comprehension_clauses'],
-	[292, 'integer_hex'],
-	[293, 'integer_octal'],
-	[294, 'integer_binary'],
-	[295, 'integer_legacy_octal'],
-	[296, 'integer_decimal'],
-	[297, 'simple_pattern_negative'],
-	[298, 'except_clause_exception_list'],
-	[299, 'except_clause_exception'],
+	[290, 'comprehension_clauses'],
+	[291, 'integer_hex'],
+	[292, 'integer_octal'],
+	[293, 'integer_binary'],
+	[294, 'integer_legacy_octal'],
+	[295, 'integer_decimal'],
+	[296, 'simple_pattern_negative'],
+	[297, 'except_clause_exception_list'],
+	[298, 'except_clause_exception'],
+	[299, 'parenthesized_import_list'],
 	[300, 'splat_pattern_list'],
 	[301, 'splat_pattern_dictionary'],
 	[302, 'assignment_eq'],
@@ -834,16 +834,16 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'print_statement_chevron'],
 	[288, 'print_statement_plain'],
 	[289, 'wildcard_pattern'],
-	[290, 'parenthesized_import_list'],
-	[291, 'comprehension_clauses'],
-	[292, 'integer_hex'],
-	[293, 'integer_octal'],
-	[294, 'integer_binary'],
-	[295, 'integer_legacy_octal'],
-	[296, 'integer_decimal'],
-	[297, 'simple_pattern_negative'],
-	[298, 'except_clause_exception_list'],
-	[299, 'except_clause_exception'],
+	[290, 'comprehension_clauses'],
+	[291, 'integer_hex'],
+	[292, 'integer_octal'],
+	[293, 'integer_binary'],
+	[294, 'integer_legacy_octal'],
+	[295, 'integer_decimal'],
+	[296, 'simple_pattern_negative'],
+	[297, 'except_clause_exception_list'],
+	[298, 'except_clause_exception'],
+	[299, 'parenthesized_import_list'],
 	[300, 'rest_pattern'],
 	[301, 'map_rest_pattern'],
 	[302, 'assignment_eq'],
@@ -1493,8 +1493,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PrintStatementPlain;
 		case 'wildcard_pattern':
 			return TSKindId.WildcardPattern;
-		case 'parenthesized_import_list':
-			return TSKindId.ParenthesizedImportList;
 		case 'comprehension_clauses':
 			return TSKindId.ComprehensionClauses;
 		case 'integer_hex':
@@ -1513,6 +1511,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExceptClauseExceptionList;
 		case 'except_clause_exception':
 			return TSKindId.ExceptClauseException;
+		case 'parenthesized_import_list':
+			return TSKindId.ParenthesizedImportList;
 		case 'splat_pattern_list':
 			return TSKindId.SplatPatternList;
 		case 'splat_pattern_dictionary':
@@ -5112,31 +5112,6 @@ export interface PrintStatementPlain {
 	readonly arguments: () => PrintArguments;
 }
 
-export interface ParenthesizedImportList {
-	readonly $type: TSKindId.ParenthesizedImportList;
-	readonly _import_list: ImportList;
-	readonly __slotNames__?: {
-		readonly _import_list: 'importList';
-	};
-	readonly __looseHints__?: {
-		readonly import_list: readonly (DottedName | AliasedImport)[];
-	};
-	readonly __slotHints__?: {
-		readonly importList: SlotHint<T.ImportList>;
-		readonly $listView: ListViewHint<
-			T.DottedName | T.AliasedImport,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
-		>;
-		readonly $listSlots: {
-			readonly importList: ListSlotHint<
-				T.DottedName | T.AliasedImport,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
-		};
-	};
-	readonly importList: () => ImportList;
-}
-
 export interface ComprehensionClauses {
 	readonly $type: TSKindId.ComprehensionClauses;
 	readonly _content: NonEmptyArray<ForInClause | IfClause>;
@@ -5517,6 +5492,31 @@ export interface ExceptClauseException {
 		readonly content: SlotHint<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>;
 	};
 	readonly content: () => ExceptClauseExceptionAs | ExceptClauseExceptionList;
+}
+
+export interface ParenthesizedImportList {
+	readonly $type: TSKindId.ParenthesizedImportList;
+	readonly _import_list: ImportList;
+	readonly __slotNames__?: {
+		readonly _import_list: 'importList';
+	};
+	readonly __looseHints__?: {
+		readonly import_list: readonly (DottedName | AliasedImport)[];
+	};
+	readonly __slotHints__?: {
+		readonly importList: SlotHint<T.ImportList>;
+		readonly $listView: ListViewHint<
+			T.DottedName | T.AliasedImport,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+		readonly $listSlots: {
+			readonly importList: ListSlotHint<
+				T.DottedName | T.AliasedImport,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
+	};
+	readonly importList: () => ImportList;
 }
 
 export interface SplatPatternList {
@@ -6571,10 +6571,10 @@ export interface OptionsHintMap {
 	printChevronArguments: PrintChevronArguments.Hints;
 	printStatementChevron: PrintStatementChevron.Hints;
 	printStatementPlain: PrintStatementPlain.Hints;
-	parenthesizedImportList: ParenthesizedImportList.Hints;
 	comprehensionClauses: ComprehensionClauses.Hints;
 	simplePatternNegative: SimplePatternNegative.Hints;
 	exceptClauseExceptionList: ExceptClauseExceptionList.Hints;
+	parenthesizedImportList: ParenthesizedImportList.Hints;
 	assignmentEq: AssignmentEq.Hints;
 	assignmentType: AssignmentType.Hints;
 	assignmentTyped: AssignmentTyped.Hints;
@@ -8481,17 +8481,6 @@ export namespace PrintStatementPlain {
 	}
 }
 
-export namespace ParenthesizedImportList {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceKindId;
-			readonly before?: WhitespaceKindId;
-			readonly lparen?: { readonly after?: WhitespaceKindId };
-			readonly rparen?: { readonly before?: WhitespaceKindId };
-		};
-	}
-}
-
 export namespace ComprehensionClauses {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -8551,6 +8540,17 @@ export namespace ExceptClauseExceptionList {
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
+		};
+	}
+}
+
+export namespace ParenthesizedImportList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly lparen?: { readonly after?: WhitespaceKindId };
+			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -10608,20 +10608,6 @@ export interface PrintStatementPlainNs extends NodeNs<
 	readonly BuildArgs: PrintStatementPlain.BuildArgs;
 	readonly LooseArgs: PrintStatementPlain.LooseArgs;
 }
-export interface ParenthesizedImportListNs extends NodeNs<
-	ParenthesizedImportList,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ParenthesizedImportList.Bound,
-	'import_list',
-	TSKindId.ParenthesizedImportList,
-	ParenthesizedImportList.Parsed,
-	never
-> {
-	readonly BuildArgs: ParenthesizedImportList.BuildArgs;
-	readonly LooseArgs: ParenthesizedImportList.LooseArgs;
-}
 export interface ComprehensionClausesNs extends NodeNs<
 	ComprehensionClauses,
 	LeafScalarMap,
@@ -10943,6 +10929,20 @@ export interface ExceptClauseExceptionNs extends NodeNs<
 > {
 	readonly BuildArgs: ExceptClauseException.BuildArgs;
 	readonly LooseArgs: ExceptClauseException.LooseArgs;
+}
+export interface ParenthesizedImportListNs extends NodeNs<
+	ParenthesizedImportList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ParenthesizedImportList.Bound,
+	'import_list',
+	TSKindId.ParenthesizedImportList,
+	ParenthesizedImportList.Parsed,
+	never
+> {
+	readonly BuildArgs: ParenthesizedImportList.BuildArgs;
+	readonly LooseArgs: ParenthesizedImportList.LooseArgs;
 }
 export interface SplatPatternListNs extends NodeNs<
 	SplatPatternList,
@@ -11518,7 +11518,6 @@ export interface NamespaceMap {
 	[TSKindId.PrintChevronArguments]: PrintChevronArgumentsNs;
 	[TSKindId.PrintStatementChevron]: PrintStatementChevronNs;
 	[TSKindId.PrintStatementPlain]: PrintStatementPlainNs;
-	[TSKindId.ParenthesizedImportList]: ParenthesizedImportListNs;
 	[TSKindId.ComprehensionClauses]: ComprehensionClausesNs;
 	[TSKindId.IntegerHexLong]: IntegerHexLongNs;
 	[TSKindId.IntegerHexPlain]: IntegerHexPlainNs;
@@ -11542,6 +11541,7 @@ export interface NamespaceMap {
 	[TSKindId.SimplePatternNegative]: SimplePatternNegativeNs;
 	[TSKindId.ExceptClauseExceptionList]: ExceptClauseExceptionListNs;
 	[TSKindId.ExceptClauseException]: ExceptClauseExceptionNs;
+	[TSKindId.ParenthesizedImportList]: ParenthesizedImportListNs;
 	[TSKindId.SplatPatternList]: SplatPatternListNs;
 	[TSKindId.SplatPatternDictionary]: SplatPatternDictionaryNs;
 	[TSKindId.AssignmentEq]: AssignmentEqNs;
@@ -11732,7 +11732,6 @@ export interface BoundByKindId {
 	[TSKindId.PrintChevronArguments]: PrintChevronArguments.Bound;
 	[TSKindId.PrintStatementChevron]: PrintStatementChevron.Bound;
 	[TSKindId.PrintStatementPlain]: PrintStatementPlain.Bound;
-	[TSKindId.ParenthesizedImportList]: ParenthesizedImportList.Bound;
 	[TSKindId.ComprehensionClauses]: ComprehensionClauses.Bound;
 	[TSKindId.IntegerHexLong]: IntegerHexLong.Bound;
 	[TSKindId.IntegerHexPlain]: IntegerHexPlain.Bound;
@@ -11756,6 +11755,7 @@ export interface BoundByKindId {
 	[TSKindId.SimplePatternNegative]: SimplePatternNegative.Bound;
 	[TSKindId.ExceptClauseExceptionList]: ExceptClauseExceptionList.Bound;
 	[TSKindId.ExceptClauseException]: ExceptClauseException.Bound;
+	[TSKindId.ParenthesizedImportList]: ParenthesizedImportList.Bound;
 	[TSKindId.SplatPatternList]: SplatPatternList.Bound;
 	[TSKindId.SplatPatternDictionary]: SplatPatternDictionary.Bound;
 	[TSKindId.AssignmentEq]: AssignmentEq.Bound;
@@ -11925,7 +11925,6 @@ export interface ParsedByKindId {
 	[TSKindId.PrintChevronArguments]: PrintChevronArguments.Parsed;
 	[TSKindId.PrintStatementChevron]: PrintStatementChevron.Parsed;
 	[TSKindId.PrintStatementPlain]: PrintStatementPlain.Parsed;
-	[TSKindId.ParenthesizedImportList]: ParenthesizedImportList.Parsed;
 	[TSKindId.ComprehensionClauses]: ComprehensionClauses.Parsed;
 	[TSKindId.IntegerHexLong]: IntegerHexLong.Parsed;
 	[TSKindId.IntegerHexPlain]: IntegerHexPlain.Parsed;
@@ -11949,6 +11948,7 @@ export interface ParsedByKindId {
 	[TSKindId.SimplePatternNegative]: SimplePatternNegative.Parsed;
 	[TSKindId.ExceptClauseExceptionList]: ExceptClauseExceptionList.Parsed;
 	[TSKindId.ExceptClauseException]: ExceptClauseException.Parsed;
+	[TSKindId.ParenthesizedImportList]: ParenthesizedImportList.Parsed;
 	[TSKindId.SplatPatternList]: SplatPatternList.Parsed;
 	[TSKindId.SplatPatternDictionary]: SplatPatternDictionary.Parsed;
 	[TSKindId.AssignmentEq]: AssignmentEq.Parsed;
@@ -12229,7 +12229,6 @@ export interface TypeKeyOf {
 	[TSKindId.PrintChevronArguments]: 'printChevronArguments';
 	[TSKindId.PrintStatementChevron]: 'printStatementChevron';
 	[TSKindId.PrintStatementPlain]: 'printStatementPlain';
-	[TSKindId.ParenthesizedImportList]: 'parenthesizedImportList';
 	[TSKindId.ComprehensionClauses]: 'comprehensionClauses';
 	[TSKindId.IntegerHexLong]: 'integerHexLong';
 	[TSKindId.IntegerHexPlain]: 'integerHexPlain';
@@ -12253,6 +12252,7 @@ export interface TypeKeyOf {
 	[TSKindId.SimplePatternNegative]: 'simplePatternNegative';
 	[TSKindId.ExceptClauseExceptionList]: 'exceptClauseExceptionList';
 	[TSKindId.ExceptClauseException]: 'exceptClauseException';
+	[TSKindId.ParenthesizedImportList]: 'parenthesizedImportList';
 	[TSKindId.SplatPatternList]: 'splatPatternList';
 	[TSKindId.SplatPatternDictionary]: 'splatPatternDictionary';
 	[TSKindId.AssignmentEq]: 'assignmentEq';
@@ -16397,31 +16397,6 @@ export namespace PrintStatementPlain {
 	export type LooseArgs = [value: T.PrintStatementPlain.Loose] | T.PrintArguments.LooseArgs;
 	export type Kind = TSKindId.PrintStatementPlain;
 }
-export namespace ParenthesizedImportList {
-	export type Config = ConfigFor<TSKindId.ParenthesizedImportList>;
-	export interface Bound extends BoundOf<T.ParenthesizedImportList, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ParenthesizedImportList['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.ParenthesizedImportList, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ParenthesizedImportList['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ParenthesizedImportList['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.ParenthesizedImportList>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedImportList>;
-	export type BuildArgs = [value: Admit<T.ImportList>] | T.ImportList.BuildArgs;
-	export type LooseArgs = [value: T.ParenthesizedImportList.Loose] | T.ImportList.LooseArgs;
-	export type Kind = TSKindId.ParenthesizedImportList;
-}
 export namespace ComprehensionClauses {
 	export type Config = ConfigFor<TSKindId.ComprehensionClauses>;
 	export interface Bound extends BoundOf<T.ComprehensionClauses, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -17179,6 +17154,31 @@ export namespace ExceptClauseException {
 	export type BuildArgs = [value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>];
 	export type LooseArgs = [value: T.ExceptClauseException.Loose];
 	export type Kind = TSKindId.ExceptClauseException;
+}
+export namespace ParenthesizedImportList {
+	export type Config = ConfigFor<TSKindId.ParenthesizedImportList>;
+	export interface Bound extends BoundOf<T.ParenthesizedImportList, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ParenthesizedImportList['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ParenthesizedImportList, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ParenthesizedImportList['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ParenthesizedImportList['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ParenthesizedImportList>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedImportList>;
+	export type BuildArgs = [value: Admit<T.ImportList>] | T.ImportList.BuildArgs;
+	export type LooseArgs = [value: T.ParenthesizedImportList.Loose] | T.ImportList.LooseArgs;
+	export type Kind = TSKindId.ParenthesizedImportList;
 }
 export namespace SplatPatternList {
 	export type Config = ConfigFor<TSKindId.SplatPatternList>;
