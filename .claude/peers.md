@@ -19,7 +19,7 @@ For `sittir-brainstorm`:
 
 ## Bindings
 
-Paths are under `docs/superpowers/`. Worktrees are under `scratchpad/`.
+A path that starts with `specs/` or `plans/` is under `docs/superpowers/`; any other path is from the repo root. Worktrees are under `scratchpad/`.
 
 | peer | works on | spec | plan and task | worktree · branch |
 |---|---|---|---|---|
