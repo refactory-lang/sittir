@@ -314,7 +314,12 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 - Consumes: Task 6's native source write.
 - Produces: the addon's intern call and `BuiltArena.entry`'s new internals. Their API rows go to the maintainer before code.
 
-- [ ] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call (a batch per build, a native build path, or another), with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows.
+- [x] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call (a batch per build, a native build path, or another), with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows. **Ruled 2026-11-16: "A: native writes, JS keeps the map".**
+  - **The shape:** a hit is one JavaScript `Map` lookup and no crossing. A miss is one addon call: native writes the entry (its kind, its length and the UTF-8) into its own open string chunk and returns the address, with any newly opened chunk's views. The pool has one writer and one write position, native's; the map that finds an entry already written stays in JavaScript. This is narrower than the task's title: the writing moves native, the lookup doesn't.
+  - **Counts on Task 6's branch** (arena storage; a miss is an entry not returned before): building 2,000 functions each with its own `x` node, 2,000 calls and 1 miss; editing each name to `g`, 2,000 and 1; building `x0`…`x1999`, 2,000 and 2,000; the corpus parse, render and same-value edit, none. Crossings equal misses.
+  - **Rows, approved with the shape:** the addon's `builtBytes` is removed and `writeBuiltEntry(engine, kind, text)` added; `napi_engine::built_chunk` loses its bytes flag; a new `pub` `napi_engine::write_built_entry`; `BuiltChunks::alloc_bytes` narrows to `pub(crate)` beside a new `pub(crate)` `write_entry`; `BuiltWriter::entry` writes through it; the test-only `Arena::intern` and its tables are removed after a reference check; the addon typing in `@sittir/common` swaps `builtBytes` for `writeBuiltEntry`. `BuiltArena.entry` keeps its signature.
+  - **If the many-names case is slower than before on CI,** the batch-per-build shape comes back to the maintainer; it needs deferred cell words.
+  - **Built in parallel** on a branch cut from Task 6's branch, merged into it last; one paired run on this task alone before that merge, so its effect is separable from placement's.
 - [ ] **Step 2: Failing tests:** the pool's write position is native's alone; a built string interned twice has one entry; a build's text renders byte-identical.
 - [ ] **Step 3:** Run them. They fail.
 - [ ] **Step 4: Implement.**
