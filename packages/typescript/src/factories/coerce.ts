@@ -2708,13 +2708,12 @@ export function coerceToUsingDeclaration(
 	if (!_isLooseConfig<T.UsingDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildUsingDeclaration>;
 	currentHandle()?.admit(TSKindId.UsingDeclaration, [input]);
-	return F.buildUsingDeclaration(
-		{
-			kind: resolveUsingDeclaration_kind(input.kind),
-			variableDeclarators: resolveUsingDeclaration_variableDeclarators(input.variableDeclarators)
-		},
-		options
-	);
+	const _config = {
+		variableDeclarators: resolveUsingDeclaration_variableDeclarators(input.variableDeclarators)
+	};
+	return input.kind === undefined
+		? F.buildUsingDeclaration(_config, options)
+		: F.buildUsingDeclaration({ ..._config, kind: resolveUsingDeclaration_kind(input.kind) }, options);
 }
 
 export const coerceToStatementBlock: EmptyForm<
@@ -3995,11 +3994,13 @@ export const coerceToMemberExpression: ConfigSeat<
 	if (!_isLooseConfig<T.MemberExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMemberExpression>;
 	currentHandle()?.admit(TSKindId.MemberExpression, [input]);
-	return F.buildMemberExpression({
+	const _config = {
 		object: resolveMemberExpression_object(input.object),
-		operator: resolveMemberExpression_operator(input.operator),
 		property: resolveMemberExpression_property(input.property)
-	});
+	};
+	return input.operator === undefined
+		? F.buildMemberExpression(_config)
+		: F.buildMemberExpression({ ..._config, operator: resolveMemberExpression_operator(input.operator) });
 };
 
 export function resolveSubscriptExpression_object(
@@ -6951,11 +6952,16 @@ export const coerceToObjectType: ConfigSeat<T.ObjectType.Loose, ReturnType<typeo
 ): ReturnType<typeof F.buildObjectType> => {
 	if (!_isLooseConfig<T.ObjectType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildObjectType>;
 	currentHandle()?.admit(TSKindId.ObjectType, [input]);
-	return F.buildObjectType({
-		opening: resolveObjectType_opening(input.opening),
-		members: resolveObjectType_members(input.members),
-		closing: resolveObjectType_closing(input.closing)
-	});
+	const _config = {
+		members: resolveObjectType_members(input.members)
+	};
+	return input.opening === undefined && input.closing === undefined
+		? F.buildObjectType(_config)
+		: F.buildObjectType({
+				..._config,
+				opening: resolveObjectType_opening(input.opening),
+				closing: resolveObjectType_closing(input.closing)
+			});
 };
 
 export function resolveCallSignature_typeParameters(
@@ -9657,15 +9663,14 @@ export function coerceToForHeaderUsingKind(
 	if (!_isLooseConfig<T.ForHeaderUsingKind.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForHeaderUsingKind>;
 	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [input]);
-	return F.buildForHeaderUsingKind(
-		{
-			kind: resolveForHeaderUsingKind_kind(input.kind),
-			left: resolveForHeaderUsingKind_left(input.left),
-			operator: resolveForHeaderUsingKind_operator(input.operator),
-			right: resolveForHeaderUsingKind_right(input.right)
-		},
-		options
-	);
+	const _config = {
+		left: resolveForHeaderUsingKind_left(input.left),
+		operator: resolveForHeaderUsingKind_operator(input.operator),
+		right: resolveForHeaderUsingKind_right(input.right)
+	};
+	return input.kind === undefined
+		? F.buildForHeaderUsingKind(_config, options)
+		: F.buildForHeaderUsingKind({ ..._config, kind: resolveForHeaderUsingKind_kind(input.kind) }, options);
 }
 
 export function coerceToFormalParametersGetAccessorSignature(
@@ -11037,11 +11042,16 @@ export const coerceToInterfaceBody: ConfigSeat<T.InterfaceBody.Loose, ReturnType
 	if (!_isLooseConfig<T.InterfaceBody.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInterfaceBody>;
 	currentHandle()?.admit(TSKindId.InterfaceBody, [input]);
-	return F.buildInterfaceBody({
-		opening: resolveInterfaceBody_opening(input.opening),
-		members: resolveInterfaceBody_members(input.members),
-		closing: resolveInterfaceBody_closing(input.closing)
-	});
+	const _config = {
+		members: resolveInterfaceBody_members(input.members)
+	};
+	return input.opening === undefined && input.closing === undefined
+		? F.buildInterfaceBody(_config)
+		: F.buildInterfaceBody({
+				..._config,
+				opening: resolveInterfaceBody_opening(input.opening),
+				closing: resolveInterfaceBody_closing(input.closing)
+			});
 };
 
 export function coerceToThisType(_input?: T.ThisType.Loose): typeof F.buildThisType {

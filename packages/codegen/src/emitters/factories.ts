@@ -125,6 +125,7 @@ import {
 	collectRefineKindInfos,
 	narrowedLiteralsOf,
 	refineDefaultOf,
+	formDefinedProperties,
 	omittableWithDefault,
 	refineFormTypeName,
 	refineFormFactoryName,
@@ -1137,8 +1138,9 @@ function fieldCarryingBuiltTypeSurface(
 	} else {
 		const configType = surface.configType ?? `T.${node.typeName}.Config`;
 		const registeredHere = new Set(registeredSlots(node));
+		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		setters = [
-			...slots.filter((f) => !registeredHere.has(f)).map((f) => slotSetter(f, configType, nodeMap, kindEntries)),
+			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries)),
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	}
@@ -2061,8 +2063,9 @@ function fieldCarryingFactoryText(
 				body: call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`),
 				reads: optionsArg === '' ? [configAccess] : [configAccess, 'options']
 			});
+		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		for (const f of slots) {
-			if (registeredSet.has(f)) continue;
+			if (registeredSet.has(f) || formDefined.has(f.propertyName)) continue;
 			const method = f.propertyName;
 			const restType = restSetterType(f, configType, nodeMap, kindEntries);
 			if (restType !== undefined) {
@@ -2152,7 +2155,8 @@ function fieldCarryingFactoryText(
 			const cases = copied.map(({ slot, ...set }): SetCase => {
 				const head = slotHeads.get(slot.storageKey);
 				if (head === undefined) throw new Error(`setTwinLines: ${node.kind}.${slot.name} has no builder lines`);
-				return { ...set, slots: [slot.propertyName], lines: [...head, ...parts.slotTail(slot.storageKey)] };
+				const pinned = pinnedByDefault !== undefined && head.some((line) => line.includes('_pinned.')) ? [`  const _pinned: Partial<${configType}> = config;`] : [];
+				return { ...set, slots: [slot.propertyName], lines: [...pinned, ...head, ...parts.slotTail(slot.storageKey)] };
 			});
 			after.push(...setTwinLines({ fn: setFn, builtName, held, params: patchParams, cases }));
 		}
@@ -2516,7 +2520,7 @@ function resolveRefineFormConfigOptional(
 }
 
 function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): string {
-	if (hasRefineForms) return `ConfigOf<T.${node.typeName}>`;
+	if (hasRefineForms) return omitRegistered(`ConfigOf<T.${node.typeName}>`, node);
 	return `T.${node.typeName}.Config`;
 }
 
@@ -3444,4 +3448,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 const OBJECT_MEMBER_VALUES = ['HANDLE', 'INPUT', 'OPTIONS', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing', 'handleSave'];
 const OBJECT_MEMBER_TYPES = ['Held', 'Received'];
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenSlots'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'OmitEach', 'RefuseUndeclared', 'RefusingConfig', 'WidenSlots'];

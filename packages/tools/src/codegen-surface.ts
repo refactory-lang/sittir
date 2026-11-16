@@ -53,6 +53,7 @@ const MODULES = {
 	engineLoader: '../../codegen/src/engine-loader.ts',
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	emittersShared: '../../codegen/src/emitters/shared.ts',
+	emittersRefine: '../../codegen/src/emitters/refine-emit.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 	moduleClosure: '../../codegen/src/scripts/module-closure.ts',
 	workspaceCheck: '../../codegen/src/scripts/workspace-check.ts',
@@ -110,6 +111,7 @@ export interface CodegenSurface {
 	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
 	emittersShared: typeof import('../../codegen/src/emitters/shared.ts');
+	emittersRefine: typeof import('../../codegen/src/emitters/refine-emit.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
 	moduleClosure: typeof import('../../codegen/src/scripts/module-closure.ts');
 	workspaceCheck: typeof import('../../codegen/src/scripts/workspace-check.ts');
