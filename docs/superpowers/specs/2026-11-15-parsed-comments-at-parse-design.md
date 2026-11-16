@@ -22,7 +22,7 @@
 ## Comments at parse
 
 - **The rule is unchanged.** An extra's owner is the smallest node holding both tokens round its gap. An entry that starts on the previous token's row trails the child before it; the rest lead the child after; with neither beside it, it is the owner's `inner`; a list passes it to the item.
-- **When.** In the hydration walk. The walk meets each extra between its siblings in document order with their rows in hand, so it needs no rank, no token walk and no navigation.
+- **When.** In the hydration walk. The walk meets each extra between its siblings in document order with their rows in hand, so it needs no rank, no token walk and no navigation. This assumes the parser attaches an extra as a child of its gap's owner (an extra never begins or ends a node). The parity test of step 1 proves it on every fixture; where one disagrees, the walk hands the extra up or down to the owner by the two tokens' spans, which it holds.
 - **Where.** In the held-sides store, under the key a parsed node's written side already uses. A parse-placed side and a caller-written side of the same node are then one entry in one store, read by one path, and a write replaces the entry. The store's contract changes with it: written trivia was an overlay over what placement assigned, and with no placement there is nothing underneath.
 - **The line fact stays.** Each entry keeps whether a line break sits before and after it. Without it `// own line\nlet y` could render as `// own line let y`. This is not style.
 - **Release.** A source's entries go when its records are released. To verify on the probe: parse a comment-heavy file, release it, and the store is back to its size before.
@@ -30,9 +30,10 @@
 
 ## The blank-line fact
 
-A list item that follows a blank line in the source carries one flag. A rebuilt list writes exactly one blank line before such an item, whatever the run's length was.
+A list item after the first that follows a blank line in the source carries one flag. A rebuilt list writes exactly one blank line before such an item, whatever the run's length was.
 
-- It is set only on items of a list slot (statements, members, arguments). A blank line anywhere else, such as before a closing brace, comes from the options.
+- It is set only between items of a list slot (statements, members, arguments). The gap after an opening token and the gap before a closing one belong to the tokens and come from the options, so a list's first item never carries the flag (maintainer, 2026-11-15: "Between items only").
+- With leading comments, the flag is measured from the previous item's end to the start of the item's first leading entry, so `a();\n\n// c\nb();` keeps the blank line above the comment. A blank line between a leading comment and its own item (`// d\n\nc();`) is not kept: the comment's line fact puts it on its own line directly above (maintainer, 2026-11-15: "Above the comment only").
 - It adds no stored word: a record child's run entry has spare bits, and a slot-held row uses a spare bit of an existing count.
 - Parse does one comparison per gap between list items, of two row numbers the walk already holds. Nothing reads the flag unless the list is rebuilt.
 
@@ -40,13 +41,13 @@ A list item that follows a blank line in the source carries one flag. A rebuilt 
 
 One rule, for every grammar:
 
-- A line a rebuilt parent writes is indented with the source's inferred indentation unit. The unit is inferred once per source, for every grammar.
-- An untouched slice moved to another depth has its lines' common source indentation replaced by the unit times the new depth. Lines that begin inside a token, and blank lines, keep their bytes.
+- A line a rebuilt parent writes is indented with the source's inferred indentation unit. The unit is inferred once per source, for every grammar, and kept when it differs from the engine's. To verify on the probe: that every line a rebuilt parent writes uses the inferred unit, with no deviation in play.
+- An untouched slice moved to another depth is re-indented from its first line: each later line that starts with the first line's source indentation has that prefix replaced by the unit times the new depth. A later line indented less than the first, a line that begins inside a token, and a blank line keep their bytes.
 - In a grammar that has depth tokens, the slice's net depth move is applied to the writer. Whether a grammar has depth tokens is a fact of the grammar, never its name.
 
-All three exist in the engine today and stay.
+The second and third exist in the engine today and stay.
 
-What goes is the writer's excess: extra indentation levels the source opened beyond the template's depth, restored per frame. It is a stored whitespace deviation. A block the source indented deeper than its nesting is therefore re-indented to unit times depth once its parent is rebuilt. To verify on the probe: that no depth-token grammar relies on excess for correctness.
+What goes is the writer's excess: extra indentation levels the source opened beyond the template's depth, restored per frame. It is a stored whitespace deviation. It matters only when the over-indented thing is itself a child the rebuilt parent places: that child is re-indented to unit times depth. An over-indented continuation inside an untouched statement (`x = g(\n            1,\n            2)`) is part of a slice and keeps its bytes. To verify on the probe: a measured example of the first case, and that no depth-token grammar relies on excess for correctness.
 
 ## What the output looks like
 
@@ -57,8 +58,10 @@ Only gaps a rebuilt parent writes change.
 | rebuilt root, blank lines between untouched statements | `const   x  =  1;\n\n\nfoo( a,b );   // trail\n// own line\nlet y = [1,2,\n   3];\n` | `const   x  =  1;\n\n\nfoo( a,b ); // trail\n// own line\nlet y = [1,2,\n   3];\n` | `const   x  =  1;\n\nfoo( a,b ); // trail\n// own line\nlet y = [1,2,\n   3];\n` |
 | rebuilt statement over untouched children | `const   x  =  1;` | `const x  =  1;` | the same |
 | rebuilt block | `{\n\n    a();\n\n\n    b();  // why\n}` | `{\n\n    a();\n\n\n    b(); // why\n}` | `{\n    a();\n\n    b(); // why\n}` |
-| rebuilt function over a body indented by eight spaces | `def f():\n        x = 1\n\n        return x  # done\n` | byte-identical | `def f():\n        x = 1\n\n        return x  # done\n` |
-| a call whose argument list was broken across lines, one argument edited | `f(\n  a,\n  b,\n)` | broken as in the source | as the options write that list |
+| rebuilt function over a body indented by eight spaces | `def f():\n        x = 1\n\n        return x  # done\n` | the function's bytes, unchanged (the file's final `\n` is the root's) | the same |
+| a call rebuilt over an untouched broken argument list | `f(\n  a,\n  b,\n)` | `f(\n  a,\n  b,\n)` (the list is a slice) | the same |
+| a broken argument list rebuilt (one argument edited) | `f(\n  a,\n  b,\n)` | `f(\n  a,\n  b,)` (the break before `)` is already lost) | as the options write that list; the trailing comma is kept if the separator preference keeps it (to verify) |
+| comments between list items, parent rebuilt | `a();\n\n// c\nb();\n// d\n\nc();` | byte-identical | `a();\n\n// c\nb();\n// d\nc();` |
 | trailing comment on the same row | `b();  // why` | `b(); // why` | the same |
 
 ## What is deleted
