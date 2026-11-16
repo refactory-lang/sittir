@@ -523,7 +523,7 @@ impl Placement {
             state.published += published.allocation();
             published
         });
-        let counted = nodes.bound().is_some();
+        let counted = nodes.ordered();
         let mut placer = Placer { nodes, lines, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
         f(&mut placer)
     }
@@ -687,7 +687,7 @@ struct Placer<'t, 's, 'n> {
     /// asked at.
     ranks: HashMap<u32, HashMap<NodeIndex, Rank, IndexState>, IndexState>,
     /// Whether the tree numbers its nodes in walk order and counts each
-    /// one's (`Nodes::bound`), so a node's rank is its index and count.
+    /// one's (`Nodes::ordered`), so a node's rank is its index and count.
     counted: bool,
 }
 

@@ -54,7 +54,8 @@ mod mask {
     pub const SOURCE: u32 = 1 << 13;
     pub const DEPTH: u32 = 1 << 14;
     pub const RUN: u32 = 1 << 15;
-    pub const ALL: u32 = (1 << 16) - 1;
+    pub const ORDER: u32 = 1 << 16;
+    pub const ALL: u32 = (1 << 17) - 1;
 }
 
 /// The bits of a node's packed facts that hold its field id.
@@ -239,6 +240,15 @@ impl Sides {
     }
 }
 
+/// A parsed node's place in the walk of its source's tree: its index there,
+/// the root's 0, and the nodes of its subtree, itself among them. A node
+/// with no record takes its place from its holder's run.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Order {
+    pub index: NodeIndex,
+    pub count: u32,
+}
+
 /// A list slot's stored layout and its separator spacing settings, keyed by
 /// its cell's stamped word.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -279,6 +289,8 @@ pub struct SideRecord {
     pub source: Option<u32>,
     /// The levels a parsed node's subtree opens net of those it closes.
     pub depth: i32,
+    /// A parsed node's place in its source's walk.
+    pub order: Option<Order>,
     /// A parsed node's children, in document order.
     pub run: Vec<RunEntry>,
 }
@@ -484,6 +496,10 @@ impl SideRecord {
             flags |= mask::DEPTH;
             words(&[self.depth.cast_unsigned()]);
         }
+        if let Some(Order { index, count }) = self.order {
+            flags |= mask::ORDER;
+            words(&[index.0, count]);
+        }
         if !self.run.is_empty() {
             flags |= mask::RUN;
             let mut entries = Vec::new();
@@ -612,6 +628,13 @@ impl SideRecord {
             }
             record.depth = depth.cast_signed();
         }
+        if has(mask::ORDER) {
+            let [index, count] = fields.array()?;
+            if count == 0 {
+                return Err(malformed("side record order", count));
+            }
+            record.order = Some(Order { index: NodeIndex(index), count });
+        }
         let mut run = None;
         if has(mask::RUN) {
             let [len] = fields.array()?;
@@ -636,11 +659,6 @@ pub(super) struct RunAt {
 }
 
 impl RunAt {
-    /// The run's first entry.
-    pub(super) fn first(self, arena: &dyn ArenaRead) -> Result<RunEntry, ArenaError> {
-        RunEntry::take(arena.words(self.at, self.len)?).map(|(entry, _)| entry)
-    }
-
     /// The run's entries, in document order.
     pub(super) fn entries(self, arena: &dyn ArenaRead) -> Result<Vec<RunEntry>, ArenaError> {
         let mut words = arena.words(self.at, self.len)?;
@@ -694,6 +712,7 @@ mod tests {
             node: Some(NodeFacts { kind: KindId(39), field: Some(FieldId(9)), alias: Some(KindId(40)), named: true, extra: false, missing: false, holds_error: true }),
             source: Some(3),
             depth: -2,
+            order: Some(Order { index: NodeIndex(11), count: 4 }),
             run: vec![
                 RunEntry::Row { facts: plain(5), span: Span { start: 3, end: 4 }, inner: 0 },
                 RunEntry::Record { at: Address(90), shared: false },
@@ -730,9 +749,7 @@ mod tests {
         let (facts, run) = SideRecord::read_facts(&arena, at).expect("its facts");
         let entries = record.run.clone();
         assert_eq!(facts, SideRecord { slots: Vec::new(), run: Vec::new(), ..record });
-        let run = run.expect("a run");
-        assert_eq!(run.first(&arena), Ok(entries[0]));
-        assert_eq!(run.entries(&arena), Ok(entries));
+        assert_eq!(run.expect("a run").entries(&arena), Ok(entries));
         assert_eq!(SideRecord::read_facts(&arena, Address::NONE), Ok((SideRecord::default(), None)));
     }
 

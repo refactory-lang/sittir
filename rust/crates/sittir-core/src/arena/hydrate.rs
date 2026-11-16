@@ -17,7 +17,7 @@
 //! record is written when its record's walk ends. What a refused walk wrote before
 //! it was refused stays written.
 
-use super::side::{NodeFacts, RunEntry};
+use super::side::{NodeFacts, Order, RunEntry};
 use super::{Address, ArenaError, Cell, CellShape, ListCell, RecordSpace, Row, SideRecord};
 use crate::read::{Elided, ReadCtx, ReadError, ReadNode, ReadSlot, SlotSite};
 use crate::record::{stored, Stored, HEADER_WORDS};
@@ -123,9 +123,9 @@ pub struct Hydration<'a> {
     met: Option<NodeFacts>,
     /// The node and its descendant index the walk about to draft a record
     /// stands on (`Hydration::node`).
-    entering: Option<(NodeIndex, NodeFacts)>,
+    entering: Option<(Order, NodeFacts)>,
     /// The descendant index of the node the last `meet` met.
-    met_at: Option<NodeIndex>,
+    met_at: Option<Order>,
     /// The entry of the source the records are read from, which each names.
     source: Option<Address>,
     /// The grammar's depth members, when the walk stamps each record's
@@ -158,7 +158,7 @@ impl HydrateInto for super::ReadWriter<'_> {}
 /// order the walk met them.
 struct OpenRun {
     at: Address,
-    index: Option<NodeIndex>,
+    order: Option<Order>,
     facts: Option<NodeFacts>,
     entries: Vec<RunEntry>,
     rows: Vec<(usize, u32)>,
@@ -172,6 +172,10 @@ struct OpenRun {
 }
 
 impl OpenRun {
+    fn index(&self) -> Option<NodeIndex> {
+        self.order.map(|order| order.index)
+    }
+
     /// Closes each open row whose subtree ends at or before `index`: the
     /// entries after it so far are the ones inside it.
     fn close_to(&mut self, index: u32) {
@@ -191,7 +195,7 @@ impl OpenRun {
     /// already wrote, else its row.
     fn meet(&mut self, kid: &crate::nodes::Kid, facts: NodeFacts, depth: i32) {
         self.close_to(kid.index.get());
-        if self.index == Some(kid.index) {
+        if self.index() == Some(kid.index) {
             return;
         }
         if let Some(found) = self.early.iter().position(|&(index, _)| index == kid.index) {
@@ -216,7 +220,7 @@ impl OpenRun {
     /// node.
     fn name(&mut self, index: Option<NodeIndex>, at: Address, depth: i32, own: i32) {
         match (index, self.last) {
-            (Some(index), _) if self.index == Some(index) => {
+            (Some(index), _) if self.index() == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
                 self.depth += depth - own;
             }
@@ -260,7 +264,7 @@ impl<'a> Hydration<'a> {
     /// Tells the hydration the node `at` the walk about to draft a record
     /// stands on, `node`.
     pub fn node(&mut self, at: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) {
-        self.entering = Some((at.index, facts_of(at, node)));
+        self.entering = Some((Order { index: at.index, count: at.count }, facts_of(at, node)));
     }
 
     /// Writes the record of the extra `kid` the cursor stands on, read whole
@@ -283,8 +287,8 @@ impl<'a> Hydration<'a> {
             return Ok(false);
         }
         let read = walk(cursor, ctx, self, kid)?;
-        if !read && self.met_at == Some(kid.index) {
-            self.entering = self.met.map(|facts| (kid.index, facts));
+        if !read && self.met_at.map(|met| met.index) == Some(kid.index) {
+            self.entering = self.met_at.zip(self.met);
             let kind = ctx.stamped_kind(kid.grammar, kid.display);
             let draft = self.open_record(kind, HEADER_WORDS)?;
             self.errors.push((draft, kid.index.get() + kid.count, Row { kind, span: kid.span() }));
@@ -317,7 +321,7 @@ impl<'a> Hydration<'a> {
         self.tree.words_mut(at, 1)?[0] = header;
         let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
         let own = entering.map_or(0, |(_, facts)| self.depth_of(facts.kind));
-        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), met: Vec::new(), depth: own, own });
+        self.open.push(OpenRun { at, order: entering.map(|(order, _)| order), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), met: Vec::new(), depth: own, own });
         Ok(Draft { at, words })
     }
 
@@ -332,7 +336,7 @@ impl<'a> Hydration<'a> {
         let in_run = |row: NodeIndex| {
             let outside = ArenaError::Malformed { what: "cell row outside its holder's run", word: row.0 };
             let open = self.open.iter().rfind(|open| open.at == draft.at).ok_or(outside.clone())?;
-            if open.index == Some(row) {
+            if open.index() == Some(row) {
                 return Ok(NodeIndex(1));
             }
             let found = open.met.binary_search_by_key(&row, |&(index, _)| index).map_err(|_| outside)?;
@@ -403,9 +407,10 @@ impl<'a> Hydration<'a> {
             open.meet(&kid, facts, depth);
         }
         self.met = Some(facts);
-        self.met_at = Some(kid.index);
+        let order = Order { index: kid.index, count: kid.count };
+        self.met_at = Some(order);
         if kid.error() {
-            self.entering = Some((kid.index, facts));
+            self.entering = Some((order, facts));
             let draft = self.open_record(KindId::ERROR, HEADER_WORDS)?;
             let kind = self.stamp.map_or(facts.kind, |(shows, relaxes)| crate::read::stamp(facts.kind, facts.display(), shows, relaxes));
             self.errors.push((draft, kid.index.get() + kid.count, Row { kind, span: kid.span() }));
@@ -532,9 +537,9 @@ impl<'a> Hydration<'a> {
                 let holder = self.open.last_mut();
                 let parent = holder.as_ref().map(|holder| holder.at);
                 if let Some(holder) = holder {
-                    holder.name(run.index, draft.at, run.depth, run.own);
+                    holder.name(run.index(), draft.at, run.depth, run.own);
                 }
-                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, ..side.clone() }
+                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, order: run.order, run: run.entries, ..side.clone() }
             }
             None => side,
         };

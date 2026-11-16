@@ -167,6 +167,14 @@ pub trait Nodes<'t> {
         Some(self.kid(NodeIndex::ROOT).count)
     }
 
+    /// Whether a node's index is its place in a preorder walk of the tree
+    /// and its count the nodes of its subtree, itself among them, so the
+    /// indexes of a subtree are the `count` from its root's on. A tree that
+    /// counts its nodes is ordered.
+    fn ordered(&mut self) -> bool {
+        self.bound().is_some()
+    }
+
     /// Whether `index` names a node.
     fn names(&mut self, index: NodeIndex) -> bool {
         self.bound().is_some_and(|bound| index.0 < bound)
@@ -478,6 +486,10 @@ impl<'t> Nodes<'t> for Navigation<'t> {
 
     fn bound(&mut self) -> Option<u32> {
         self.nodes().bound()
+    }
+
+    fn ordered(&mut self) -> bool {
+        self.nodes().ordered()
     }
 
     fn names(&mut self, index: NodeIndex) -> bool {

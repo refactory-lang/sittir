@@ -14,23 +14,35 @@ use sittir_core::read::descendant_count;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{fixture_sources, parsed};
 
-/// How many nodes the records of `source` hold, parsed by `engine` as `N`;
-/// 0 for a source that parses to an `ERROR` alone.
-fn nodes_left<G: EngineGrammar, N: HydrateNode>(name: &str, engine: &mut Engine<G>, source: &str) -> u32 {
+/// A node as a walk meets it: its index, the nodes of its subtree, and its
+/// bytes.
+type Met = (u32, u32, u32, u32);
+
+/// The nodes the records of `source` hold, parsed by `engine` as `N`, in
+/// the order a walk from the root meets them; none for a source that
+/// parses to an `ERROR` alone.
+fn nodes_left<G: EngineGrammar, N: HydrateNode>(name: &str, engine: &mut Engine<G>, source: &str) -> Vec<Met> {
     let parse = engine.parse_records::<N>(source).unwrap_or_else(|refusal| panic!("{name} {source:?}: {refusal}"));
     let built = engine.written().built();
     let entry = Source::read(&*built, parse.source).unwrap_or_else(|refusal| panic!("{name} {source:?}: its source entry: {refusal}"));
     assert_eq!(entry.text, source, "{name}: the source reads back from its entry");
     assert_eq!(entry.breaks_lf, !source.contains('\r'), "{name} {source:?}");
-    let Some(root) = parse.root else { return 0 };
+    let Some(root) = parse.root else { return Vec::new() };
     let table = RunTable::default();
     let mut nodes = RunNodes::holding(&*built, entry.text, root, &table).unwrap_or_else(|refusal| panic!("{name} {source:?}: its root: {refusal}"));
-    let mut met = 0;
-    nodes.walk(NodeIndex::ROOT, &mut |step, _| {
-        met += u32::from(step == Step::Meet);
+    let met = met_by(&mut nodes);
+    assert_eq!(nodes.refused(), None, "{name} {source:?}");
+    met
+}
+
+fn met_by<'t>(nodes: &mut impl Nodes<'t>) -> Vec<Met> {
+    let mut met = Vec::new();
+    nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
+        if step == Step::Meet {
+            met.push((kid.index.get(), kid.count, kid.start, kid.end));
+        }
         Visit::Enter
     });
-    assert_eq!(nodes.refused(), None, "{name} {source:?}");
     met
 }
 
@@ -44,9 +56,16 @@ fn every_fixture_is_left_whole<G: EngineGrammar + Copy, N: HydrateNode>(name: &s
         let root = tree.tree().root_node();
         let left = nodes_left::<G, N>(name, &mut engine, source);
         if !root.is_error() {
-            assert_eq!(left, descendant_count(&root), "{name} {source:?}: every node the parser made is in the records");
+            assert_eq!(left.len(), descendant_count(&root) as usize, "{name} {source:?}: every node the parser made is in the records");
+            let whole = |mut met: Vec<Met>| {
+                if let Some(root) = met.first_mut() {
+                    (root.2, root.3) = (0, 0);
+                }
+                met
+            };
+            assert_eq!(whole(left.clone()), whole(met_by(&mut tree.nodes())), "{name} {source:?}: the records number each node and count its subtree as its tree does, the root's bytes apart");
         }
-        nodes += left;
+        nodes += u32::try_from(left.len()).expect("a node count");
     }
     nodes
 }
@@ -80,8 +99,8 @@ fn a_deeply_nested_source_is_read_whole_at_parse() {
         &nested("let x = ", ";\n"),
     );
     let python = nodes_left::<_, sittir_python::render::AnyNode>("python", &mut Engine::new(sittir_python::PythonGrammar, sittir_python::render::options::defaults()).expect("an engine"), &nested("x = ", "\n"));
-    for (name, nodes) in [("rust", rust), ("typescript", typescript), ("python", python)] {
-        assert!(nodes as usize > NESTED, "{name}: {nodes} nodes for {NESTED} levels");
+    for (name, nodes) in [("rust", rust.len()), ("typescript", typescript.len()), ("python", python.len())] {
+        assert!(nodes > NESTED, "{name}: {nodes} nodes for {NESTED} levels");
     }
 }
 
