@@ -12,12 +12,11 @@ impl LayoutKinds {
     pub const NEWLINE: Self = Self(1 << 3);
     pub const BLANKLINE: Self = Self(1 << 4);
     pub const DOUBLE_BLANKLINE: Self = Self(1 << 5);
-    pub const LINE_CONTINUATION: Self = Self(1 << 6);
-    pub const ALL: Self = Self(0x7f);
+    pub const ALL: Self = Self(0x3f);
     /// Every kind that writes text, which a word boundary may be spelled with.
     pub const SEPARATING: Self = Self(0x3e);
     /// The kinds that break the line.
-    pub const BREAKING: Self = Self(0x78);
+    pub const BREAKING: Self = Self(0x38);
 
     #[must_use]
     pub const fn from_bits(bits: u8) -> Self {
@@ -57,7 +56,7 @@ impl LayoutKinds {
     pub fn rank(self) -> usize {
         match self {
             Self::TIGHT => 2,
-            Self::NEWLINE | Self::LINE_CONTINUATION => 3,
+            Self::NEWLINE => 3,
             Self::BLANKLINE => 4,
             Self::DOUBLE_BLANKLINE => 5,
             _ => 1,
@@ -67,7 +66,7 @@ impl LayoutKinds {
     /// Whether the one kind breaks the line.
     #[must_use]
     pub const fn breaks(self) -> bool {
-        self.0 & (Self::BREAKING.0 | Self::LINE_CONTINUATION.0) != 0
+        self.0 & Self::BREAKING.0 != 0
     }
 
     /// The kind with one line break fewer, or none for a kind with one.

@@ -3465,8 +3465,8 @@ mod tests {
     }
 
     impl crate::trivia::TriviaSeam for TestTrivia {
-        fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {
-            matches!(self, TestTrivia::Newline).then_some((crate::layout_kinds::LayoutKinds::NEWLINE, None))
+        fn seam_gap(&self) -> Option<crate::layout_kinds::LayoutKinds> {
+            matches!(self, TestTrivia::Newline).then_some(crate::layout_kinds::LayoutKinds::NEWLINE)
         }
     }
 
