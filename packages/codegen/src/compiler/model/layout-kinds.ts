@@ -183,7 +183,6 @@ const LAYOUT_KINDS_PATH = '::sittir_core::layout_kinds::LayoutKinds';
 export const TIGHT_KINDS = `${LAYOUT_KINDS_PATH}::TIGHT`;
 export const NEWLINE_KINDS = `${LAYOUT_KINDS_PATH}::NEWLINE`;
 export const SEPARATING_KINDS = `${LAYOUT_KINDS_PATH}::SEPARATING`;
-export const CONTINUATION_KINDS = `${LAYOUT_KINDS_PATH}::LINE_CONTINUATION`;
 export const NO_KINDS = `${LAYOUT_KINDS_PATH}::NONE`;
 
 export function layoutKindsOfText(text: string): string {

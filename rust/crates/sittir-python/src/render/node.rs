@@ -2336,16 +2336,14 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaNode {
 }
 
 impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
-    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
+    fn seam_gap(&self) -> Option<::sittir_core::layout_kinds::LayoutKinds> {
         match self {
-            TriviaNode::LineContinuationNewline(t) if !t.verbatim() => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some(&t.text))),
-            TriviaNode::LineContinuationNul => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\u{0}"))),
-            TriviaNode::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
-            TriviaNode::Space => Some((::sittir_core::layout_kinds::LayoutKinds::SPACE, None)),
-            TriviaNode::Tab => Some((::sittir_core::layout_kinds::LayoutKinds::TAB, None)),
-            TriviaNode::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
-            TriviaNode::Blankline => Some((::sittir_core::layout_kinds::LayoutKinds::BLANKLINE, None)),
-            TriviaNode::DoubleBlankline => Some((::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE, None)),
+            TriviaNode::Tight => Some(::sittir_core::layout_kinds::LayoutKinds::TIGHT),
+            TriviaNode::Space => Some(::sittir_core::layout_kinds::LayoutKinds::SPACE),
+            TriviaNode::Tab => Some(::sittir_core::layout_kinds::LayoutKinds::TAB),
+            TriviaNode::Newline => Some(::sittir_core::layout_kinds::LayoutKinds::NEWLINE),
+            TriviaNode::Blankline => Some(::sittir_core::layout_kinds::LayoutKinds::BLANKLINE),
+            TriviaNode::DoubleBlankline => Some(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE),
             _ => None,
         }
     }

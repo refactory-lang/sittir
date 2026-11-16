@@ -109,14 +109,13 @@ impl<T: Render + 'static> Render for TriviaEntry<T> {
 
 /// A trivia value that is whitespace answers its gap kind: it is merged into
 /// the gap it sits in (`RenderSink::trivia_seam`), replacing that gap's
-/// default, instead of being written as a line of its own. A line
-/// continuation also answers the source text it was read with.
+/// default, instead of being written as a line of its own.
 /// A depth member (`indent`, `dedent`) answers the change it makes to the
 /// excess indentation (`RenderSink::layout_depth`) instead, and
 /// `depth_member` is the member that makes the change `delta`'s sign names.
 /// A trivia value holds no sides of its own: an extra gets no extras.
 pub trait TriviaSeam: 'static {
-    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
+    fn seam_gap(&self) -> Option<LayoutKinds> {
         None
     }
 
@@ -134,7 +133,7 @@ pub trait TriviaSeam: 'static {
 }
 
 impl<T: TriviaSeam> TriviaEntry<T> {
-    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
+    fn seam_gap(&self) -> Option<LayoutKinds> {
         match self.value() {
             Some(SlotValue::Node(value)) => value.seam_gap(),
             Some(SlotValue::Coord(_)) | None => None,
@@ -158,7 +157,7 @@ impl<T: TriviaSeam> TriviaEntry<T> {
 
     /// Whether the entry is layout that breaks the line.
     fn breaks(&self) -> bool {
-        self.seam_gap().is_some_and(|(gap, _)| gap.breaks())
+        self.seam_gap().is_some_and(LayoutKinds::breaks)
     }
 }
 
@@ -540,7 +539,7 @@ fn join(gap: LayoutKinds, w: &mut dyn RenderSink) {
         return;
     }
     if keeps_break(gap, true, w) {
-        w.trivia_seam(LayoutKinds::NEWLINE, None);
+        w.trivia_seam(LayoutKinds::NEWLINE);
     } else {
         w.trivia_join(gap);
     }
@@ -549,11 +548,11 @@ fn join(gap: LayoutKinds, w: &mut dyn RenderSink) {
 /// A whitespace entry's text, which replaces the seam at its gap. Right
 /// after an entry (`after_entry`) it is kept to at least the line break that
 /// entry left pending; anywhere else it replaces the gap's seam outright.
-fn whitespace(gap: LayoutKinds, text: Option<&str>, after_entry: bool, w: &mut dyn RenderSink) {
+fn whitespace(gap: LayoutKinds, after_entry: bool, w: &mut dyn RenderSink) {
     if keeps_break(gap, after_entry, w) {
-        w.trivia_seam(LayoutKinds::NEWLINE, None);
+        w.trivia_seam(LayoutKinds::NEWLINE);
     } else {
-        w.trivia_seam(gap, text);
+        w.trivia_seam(gap);
     }
 }
 
@@ -573,8 +572,8 @@ fn render_joined<T: Render + TriviaSeam>(entries: &[TriviaEntry<T>], between: La
             w.layout_depth(entry.depth());
             continue;
         }
-        if let Some((gap, text)) = entry.seam_gap() {
-            whitespace(gap, text, after_entry, w);
+        if let Some(gap) = entry.seam_gap() {
+            whitespace(gap, after_entry, w);
             after_entry = false;
             continue;
         }
