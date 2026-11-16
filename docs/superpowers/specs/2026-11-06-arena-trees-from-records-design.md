@@ -4,6 +4,14 @@
 **Scope:** arena storage's parse, read, render, query and edit paths in `sittir-core`, the engine's tree functions, and the arena tree holder. Object storage keeps its representation.
 **Evidence:** prototype's spike (single cursor pass, token spans, hydrate at parse, tree dropped) and its render profile, both on master 2948b9f1c, release build, local. The spike's machine was loaded, so its timings compare with each other, not as absolutes.
 
+## Rulings since that change this design
+
+Each is the maintainer's, and where it disagrees with a sentence below, it wins until that sentence is rewritten.
+
+- **Trivia placement is not lazy** (2026-11-15). A parse places comments and nothing else, whitespace placement for parsed trees is deleted, and a parsed node's sides are read as a built node's are. The design is [2026-11-15-parsed-comments-at-parse-design.md](2026-11-15-parsed-comments-at-parse-design.md); it supersedes every sentence here that keeps placement lazy, the baseline measure, layout runs and "placement scratch" made per call.
+- **Release is one behaviour** (2026-11-16): "parsed node release vs. built node release really ought to be no different". This reverses "Releasing a parsed root is a no-op: its records stay until the engine's dispose" and the cap paragraph's "no parsed record is released before the engine's dispose". Those two stand as what the code does until the release design is approved; it is proposed before any code, and it replaces them here.
+- **Reads share one open words chunk,** as the cap paragraph says and the code does. "In whole chunks of its own" under "A parsed node lives in the same storage as a built node" is wrong and is read as that.
+
 ## Why
 
 - **Memory.** Tree-sitter's tree costs about 100 bytes per node, and it lives as long as any node of its parse. All of matter.js (2.91M nodes), fully hydrated in arena storage, holds 424 MB today. With the tree dropped it holds 166 MB, 61% less.

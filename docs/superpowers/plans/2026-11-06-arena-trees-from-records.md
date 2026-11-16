@@ -315,6 +315,22 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 - [ ] **Step 5: Run the three-way verification** in arena storage, and the speed gate: arena is not slower on any CI CPU on the rebuilt, codemod and many-names cases.
 - [ ] **Step 6: Commit:** `feat(arena): the string pool is interned natively`.
 
+### Task 6c: A parse places comments; whitespace placement is deleted
+
+**Status:** step 1 in progress on `feat/comments-at-parse` (cut from Task 6's branch), 2026-11-16. Approved by the maintainer 2026-11-15.
+
+**Spec:** `docs/superpowers/specs/2026-11-15-parsed-comments-at-parse-design.md`. Its "Order" section is this task's step list, and each step is measured on a paired run against master's arena before the next.
+
+- [ ] **Step 1:** comments and ERRORs placed in the hydration walk, stored where no render reads them, with the parity test green on every fixture. No output change.
+- [ ] **Step 2:** the blank-line entry between list items. Waits for the maintainer to see parse time and retained bytes.
+- [ ] **Step 3:** a render reads the parse-placed sides; the baseline, deviations and runs are deleted; expectations retaken once.
+- [ ] **Step 4:** the placer and per-tree placement are deleted.
+- [ ] **Step 5:** a census of what still reads the plain token rows.
+
+### Task 6d: One release for parsed and built records
+
+**Status:** ruled 2026-11-16, not designed. A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
+
 ### Task 7: The measurements
 
 Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard CI runs on their own PRs.
