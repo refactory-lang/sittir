@@ -30,6 +30,22 @@ What that changes:
 
 Open until the count is read: whether the per-call tables share the same allocator or stay on the global one, and the name of the scope type (the approved rows named `Scratch` and `Scope`; the renamed rows go back to the maintainer before code).
 
+## Direction, 2026-11-16: the allocator removes the record encoding
+
+The maintainer, on learning that arena storage makes no typed node: "what the allocator can do here, is handle the record encoding/decoding? i.e. make arena storage look like object storage?", and, asked which aim, "remove the record encoding".
+
+So the `NodeAllocator` is not a scratch beside the arena. It is the arena: a typed node is allocated in a chunk, the chunk is what JavaScript views, and there is one representation of a node where today there are two derivations of its shape, the generated typed node and the generated record layout with its cell codec. This is the aim. Nothing below this section is designed for it, and the per-call scratch the rest of this document describes is set aside until the study answers.
+
+**A study comes first, before any design ruling or engine code.** It answers, from the code and one small probe:
+
+1. **What the encoding is today.** A census of every piece: the cell codec, the record and side-record layouts, the generated layouts and views on both sides, the builders that write words from JavaScript, the counts, and what reads each.
+2. **Who writes a node.** JavaScript's builders write records today without a native call. With typed nodes in the chunk, either JavaScript writes Rust's layouts through generated writers, or a build goes through native. `Vec` and `Box` from the standard library have unspecified layouts and carry their allocator, so a layout JavaScript can read or write needs container types of our own with a fixed layout.
+3. **Release.** Records are counted and released one by one, and parsed and built release are to be one behaviour. A bump arena frees all at once. The study says how a typed node in a chunk is counted and freed, or what replaces counting.
+4. **Size.** A cell is one 32-bit word naming a chunk and an offset; a typed node holds pointers. The study gives retained bytes for the same corpus in both forms, against the arena design's memory claim.
+5. **What is deleted and what it costs to get there:** the files and generated outputs that go, the goldens retaken, and an order of work that keeps master green.
+
+The probe: one generated node type with a list slot and a child, laid out with a fixed layout in a chunk, written from native and read from JavaScript by generated offsets, with the bytes compared against today's record for the same node.
+
 ## Why
 
 A native call builds short-lived tables and frees every one before it returns. The render profile of arena storage against master's arena, on python and typescript, shows:
