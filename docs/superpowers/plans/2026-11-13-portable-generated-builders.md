@@ -92,7 +92,7 @@
 
 ### Task 3b: No member is named `content`
 
-**Status:** ruled by the user 2026-11-15. It starts after the route-only exact-set PR and the rust toolchain PR merge, because `validate:native` needs a local native build.
+**Status:** merged as #1259 (<merge sha>), <merge date>.
 
 The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 here, hold the rulings.
 - (a) and (b) are bindings and vocabulary only: container patterns and captures, with no compiler change and no new bindings directive.
@@ -111,16 +111,16 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 - Modify: the interpreter's content arm in `packages/common/src/portable/build.ts`, which makes the child from the text.
 - Test: `packages/{python,rust,typescript}/tests/build-input.portable.test-d.ts`, `packages/tools/tests/portable/text-values.test.ts`, and read and build tests per shape.
 
-- [ ] **Step 1: The failing tests, one per shape:**
+- [x] **Step 1: The failing tests, one per shape:**
   - a decorator reads as its expression in `decorators`;
   - rust's `#![a]` reads as the attribute with `inner`, and builds back;
   - python's `x: int` reads `type: 'int'`;
   - each renamed member reads under its new name, and `content` is refused in the types;
   - python's `# x` (a lexed token) and rust's `//x` and `r"a"` (a node whose one slot holds a text-built kind) read `{ $path, $value }`, and each builds back from `$value` and from bare text.
-- [ ] **Step 2: Run them.** They fail.
-- [ ] **Step 3: Implement.** Bindings and vocabulary for (a) and (b). For (c), widen the content arm in the build table and keep `takesTextValue` the one predicate. The build table is what Task 4's emitter reads, so the widened arm survives the interpreter's removal in Task 6. The interpreter's content arm makes the child from the text until then.
-- [ ] **Step 4: Regenerate.** Run the type tests, the text-values guard, `validate:native` (the rows must hold), validate history and the suite.
-- [ ] **Step 5: Bring the open rows to brainstorm before pushing,** each with before and after:
+- [x] **Step 2: Run them.** They fail.
+- [x] **Step 3: Implement.** Bindings and vocabulary for (a) and (b). For (c), widen the content arm in the build table and keep `takesTextValue` the one predicate. The build table is what Task 4's emitter reads, so the widened arm survives the interpreter's removal in Task 6. The interpreter's content arm makes the child from the text until then.
+- [x] **Step 4: Regenerate.** Run the type tests, the text-values guard, `validate:native` (the rows must hold), validate history and the suite.
+- [x] **Step 5: Bring the open rows to brainstorm before pushing,** each with before and after:
   - whether python's `literal.string.escape` joins the text paths, as the guard decides (if it does, amend decision 8's list);
   - whether the reader and the interpreter keep rust's container-set `inner` (if either drops it, report before fixing);
   - the `attribute.content` path segment rename;
