@@ -2,6 +2,8 @@
 
 **Status:** draft, 2026-11-15. The user asked for a spec on using the allocator trait Rust 1.100.0 stabilized, and ruled three points the same day: arena storage only; our own allocator, not a crate; the arena render's rank fix lands first and this follows it. The draft was then corrected against the engine source by the peer that owns the arena work. It is to be re-read after the rank fix lands, because that fix changes what is left for an allocator to do (see "What the rank fix changes"). Nothing is built.
 
+**Groundwork approved, 2026-11-16** (the maintainer: "Allocator groundwork now"). Two parts depend on nothing in flight and start now: the allocation count by call site (Verification, step 1), and the `Scratch` type of "The allocator" with the tests of "Safety", in a file of its own with no consumer. The rank stamp this draft waited for was measured and dropped; what changes the picture instead is the deletion of the placer, the largest per-call allocator, in the parsed-comments design. So every row of "What moves" waits for that deletion and is re-read against the allocation count taken after it.
+
 ## Why
 
 A native call builds short-lived tables and frees every one before it returns. The render profile of arena storage against master's arena, on python and typescript, shows:
