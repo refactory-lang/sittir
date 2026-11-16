@@ -34,7 +34,9 @@ Open until the count is read: whether the per-call tables share the same allocat
 
 The maintainer, on learning that arena storage makes no typed node: "what the allocator can do here, is handle the record encoding/decoding? i.e. make arena storage look like object storage?", and, asked which aim, "remove the record encoding".
 
-So the `NodeAllocator` is not a scratch beside the arena. It is the arena: a typed node is allocated in a chunk, the chunk is what JavaScript views, and there is one representation of a node where today there are two derivations of its shape, the generated typed node and the generated record layout with its cell codec. This is the aim. Nothing below this section is designed for it, and the per-call scratch the rest of this document describes is set aside until the study answers.
+So the `NodeAllocator` is not a scratch beside the arena. It is the arena: a typed node is allocated in a chunk, the chunk is what JavaScript views, and the cell codec goes. This is the aim.
+
+**What the aim would not buy is a single source for the layout, because that exists.** Codegen places a node's storage slots once (`recordLayoutOf`, in `packages/codegen/src/emitters/record-layout.ts`) and stamps the result on the generated Rust node type and into the generated JavaScript record tables. The derive on that one Rust type writes the typed node, its record view, its hydration walk and its record writer from the same stamps. So a record view and a typed node already describe the same slots at the same words, and native code reads a record through its view with no copy. The maintainer's own check on the aim, the same day: "but that's not possible, right?" and "the views produce the same layout... right". What is left for the study is narrower: whether anything is gained by a typed node being the stored bytes, beyond what the views give. Nothing below this section is designed for it, and the per-call scratch the rest of this document describes is set aside until the study answers.
 
 **A study comes first, before any design ruling or engine code.** It answers, from the code and one small probe:
 
