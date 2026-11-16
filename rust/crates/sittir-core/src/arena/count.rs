@@ -380,7 +380,7 @@ impl BuiltChunks {
         }
         let mut stack = Vec::new();
         if let Held::Text(at) = held {
-            return self.drop_cell(CellWord(at.0 << 2), &mut stack);
+            return self.drop_cell(at, &mut stack);
         }
         if self.read_chunk(held.at().chunk()) {
             return Ok(());
@@ -423,9 +423,8 @@ impl BuiltChunks {
         Ok(())
     }
 
-    fn drop_cell(&mut self, CellWord(word): CellWord, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
-        let at = Address(word >> 2);
-        if word == 0 || at.chunk() == 0 {
+    fn drop_cell(&mut self, at: Address, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
+        if at.chunk() == 0 {
             return Ok(());
         }
         match self.chunks.get_mut(at.chunk() as usize) {
@@ -465,7 +464,7 @@ impl BuiltChunks {
                 let len = self.word(at)?;
                 let items = ArenaRead::words(self, at, len + 1)?[1..].to_vec();
                 for item in items {
-                    self.drop_cell(CellWord(item), stack)?;
+                    self.drop_cell(CellWord(item).address(), stack)?;
                 }
             }
             Held::Side(at) => {
@@ -490,20 +489,21 @@ impl BuiltChunks {
     fn release_record(&mut self, at: Address, kind: KindId, stack: &mut Vec<Held>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
         let shape: RecordShape = (self.shape)(kind).ok_or(malformed("released record kind", u32::from(kind.0)))?;
         let words = ArenaRead::words(self, at, shape.built_words)?.to_vec();
-        if words[1] != 0 {
-            self.drop_count(Held::Side(Address(words[1])), stack)?;
+        let side = super::borrowed::side_of(self, at)?;
+        if side != Address::NONE {
+            self.drop_count(Held::Side(side), stack)?;
         }
         for cell in shape.cells {
-            let word = *words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?;
+            let word = CellWord(*words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?);
             if cell.run.is_some() {
-                if word & 3 != 0 {
-                    return Err(malformed("list cell edges", word));
+                if word.edges() != 0 {
+                    return Err(malformed("list cell edges", word.0));
                 }
-                if word != 0 {
-                    self.drop_count(Held::Run(Address(word >> 2)), stack)?;
+                if word.0 != 0 {
+                    self.drop_count(Held::Run(word.address()), stack)?;
                 }
             } else {
-                self.drop_cell(CellWord(word), stack)?;
+                self.drop_cell(word.address(), stack)?;
             }
         }
         for record in sides(at) {
@@ -539,7 +539,7 @@ impl BuiltChunks {
                     for cell in shape.cells.iter().filter(|cell| cell.run.is_some()) {
                         let word = words[cell.built as usize];
                         if word != 0 {
-                            stack.push(Held::Run(Address(word >> 2)));
+                            stack.push(Held::Run(CellWord(word).address()));
                         }
                     }
                     shape.cells.iter().filter(|cell| cell.run.is_none()).map(|cell| words[cell.built as usize]).collect()
@@ -551,7 +551,7 @@ impl BuiltChunks {
                 Held::Side(_) | Held::Text(_) => continue,
             };
             for word in cells {
-                let at = Address(word >> 2);
+                let at = CellWord(word).address();
                 if at.chunk() != 0 && self.chunk(at.chunk()).is_some() {
                     stack.push(Held::Record(at));
                 }
