@@ -30,7 +30,9 @@
 
 ## The blank-line fact
 
-A list item after the first that follows a blank line in the source carries one flag. A rebuilt list writes exactly one blank line before such an item, whatever the run's length was.
+A list item after the first that follows a blank line in the source carries that fact, and a rebuilt list writes exactly one blank line before such an item, whatever the run's length was.
+
+**Form (maintainer's direction, 2026-11-15: "layout entries can be added to $trivia maybe we ought to use the trivia table here as well").** The fact is a blank-line layout entry, the first entry of the item's leading side, in the same store as its comments: the entry a caller already writes through `$trivia` on a built node. A built item can then carry it too, and one read path serves both. A flag on a parsed record's run entry was the earlier form; it costs no storage but only a parsed node could hold it. The cost of the entry form (a store entry per blank-line gap between list items) is measured on the probe before step 2 is built: gaps per corpus, parse time, retained bytes. The points below on the flag's storage apply only if the measurement sends this back to the flag.
 
 - It is set only between items of a list slot (statements, members, arguments). The gap after an opening token and the gap before a closing one belong to the tokens and come from the options, so a list's first item never carries the flag (maintainer, 2026-11-15: "Between items only").
 - With leading comments, the flag is measured from the previous item's end to the start of the item's first leading entry, so `a();\n\n// c\nb();` keeps the blank line above the comment. A blank line between a leading comment and its own item (`// d\n\nc();`) is not kept: the comment's line fact puts it on its own line directly above (maintainer, 2026-11-15: "Above the comment only").
