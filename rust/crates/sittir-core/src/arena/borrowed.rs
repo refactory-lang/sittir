@@ -80,6 +80,17 @@ pub trait ArenaRead {
     }
 }
 
+/// The address of the side record of the record at `at`: its header's
+/// second word.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for address 0, which names no record, and what
+/// reading a header past the written words refuses.
+pub(crate) fn side_of(arena: &dyn ArenaRead, at: Address) -> Result<Address, ArenaError> {
+    Ok(Address(arena.words(at.record()?, HEADER_WORDS)?[1]))
+}
+
 /// Record and string chunks borrowed for one synchronous call. The owner must
 /// exclude concurrent writes while these slices are borrowed. Word and
 /// string chunks share one numbering, so each table holds an empty slice at
@@ -107,5 +118,28 @@ impl ArenaRead for BorrowedArena<'_> {
 
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
         self.strings.get(n as usize).copied().filter(|chunk| !chunk.is_empty())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{side_of, BorrowedArena};
+    use crate::arena::{Address, ArenaError};
+
+    #[test]
+    fn a_records_side_record_is_its_second_header_word() {
+        let record = [7, 41, 0];
+        let chunks: [&[u32]; 2] = [&[], &record];
+        let arena = BorrowedArena::new(&chunks, &[]).expect("addressable chunks");
+        assert_eq!(side_of(&arena, Address::new(1, 0).expect("an address")).expect("a header"), Address(41));
+    }
+
+    #[test]
+    fn address_0_and_a_header_past_the_written_words_name_no_side_record() {
+        let short = [7];
+        let chunks: [&[u32]; 2] = [&[], &short];
+        let arena = BorrowedArena::new(&chunks, &[]).expect("addressable chunks");
+        assert!(matches!(side_of(&arena, Address::NONE), Err(ArenaError::Malformed { what: "record address", .. })));
+        assert!(matches!(side_of(&arena, Address::new(1, 0).expect("an address")), Err(ArenaError::OutOfBounds { .. })));
     }
 }

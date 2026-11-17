@@ -9,10 +9,12 @@ const rust = (await import(root + '/packages/rust/dist/index.js')).default;
 const engine = await rust.createEngine({ nodeStorage });
 const b = engine.build;
 let sink = 0;
-function build(n, reuse) {
+const nameOf = (many, i) => (many ? `x${i}` : 'x');
+const editedNameOf = (many, i) => (many ? `y${i}` : 'g');
+function build(n, reuse, many = false) {
   const name = reuse ? b.identifier('x') : undefined;
-  const roots = Array.from({ length: n }, () => b.functionItem({ name: name ?? b.identifier('x'), parameters: b.parameters(), body: b.block({ statements: [] }) }));
-  return { roots, name };
+  const roots = Array.from({ length: n }, (_, i) => b.functionItem({ name: name ?? b.identifier(nameOf(many, i)), parameters: b.parameters(), body: b.block({ statements: [] }) }));
+  return { roots, name, many };
 }
 function rendered(roots) {
   return roots.map(node => {
@@ -21,7 +23,7 @@ function rendered(roots) {
   }).join('\n');
 }
 function edit(tree) {
-  return tree.roots.map(node => node.$with.name(b.identifier('g')));
+  return tree.roots.map((node, i) => node.$with.name(b.identifier(editedNameOf(tree.many, i))));
 }
 function release(...lists) {
   for (const list of lists) for (const node of list) node[Symbol.dispose]?.();
@@ -33,7 +35,7 @@ try {
   const warmupStart = performance.now();
   let warmupBatches = 0;
   do {
-    const tree = build(128, Boolean(warmupBatches % 2));
+    const tree = build(128, warmupBatches % 3 === 1, warmupBatches % 3 === 2);
     const changed = edit(tree);
     sink += rendered(tree.roots).length + rendered(changed).length;
     release(tree.roots, changed);
@@ -41,12 +43,12 @@ try {
     await new Promise(setImmediate);
   } while (performance.now() - warmupStart < 2000);
   if (phase === 'timing') {
-    const cases = [{ n: 2000, reuse: false }, { n: 2000, reuse: true }, { n: 8000, reuse: false }, { n: 8000, reuse: true }];
+    const cases = [2000, 8000].flatMap((n) => [{ n, reuse: false, many: false }, { n, reuse: true, many: false }, { n, reuse: false, many: true }]);
     for (let round = 0; round < 7; round++) {
       for (let j = 0; j < cases.length; j++) {
-        const { n, reuse } = cases[(j + round) % cases.length];
+        const { n, reuse, many } = cases[(j + round) % cases.length];
         let start = performance.now();
-        const tree = build(n, reuse);
+        const tree = build(n, reuse, many);
         const buildMs = performance.now() - start;
         start = performance.now();
         const text = rendered(tree.roots);
@@ -58,13 +60,13 @@ try {
         if (reuse && nodeStorage === 'object') assert.equal(tree.roots[0].name(), tree.name);
         if (reuse && nodeStorage !== 'object') assert.equal(rendered([tree.roots[0].name()]), rendered([tree.name]));
         assert.equal(rendered(tree.roots), text);
-        assert.equal(text, Array(n).fill('fn x() {}').join('\n'));
-        assert.equal(edited, Array(n).fill('fn g() {}').join('\n'));
+        assert.equal(text, Array.from({ length: n }, (_, i) => `fn ${nameOf(many, i)}() {}`).join('\n'));
+        assert.equal(edited, Array.from({ length: n }, (_, i) => `fn ${editedNameOf(many, i)}() {}`).join('\n'));
         sink += text.length + edited.length;
         start = performance.now();
         release(tree.roots, changed);
         const releaseMs = performance.now() - start;
-        samples.push({ round, n, reuse, buildMs, renderMs, editMs, releaseMs, pipelineMs: buildMs + renderMs, renderSha256: sha(text), editedSha256: sha(edited) });
+        samples.push({ round, n, reuse, many, buildMs, renderMs, editMs, releaseMs, pipelineMs: buildMs + renderMs, renderSha256: sha(text), editedSha256: sha(edited) });
       }
     }
   } else if (phase === 'memory') {
@@ -78,7 +80,7 @@ try {
     samples.push({ retainedBatches: retained.length, retainedFunctionRoots: 32000, baseline, after, delta: Object.fromEntries(Object.keys(after).map(key => [key, after[key] - baseline[key]])) });
   } else throw new Error('unknown phase');
   const builtMemory = engine.diagnostics.builtMemory?.();
-  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(), mode: { storage: nodeStorage, construction: nodeStorage === 'arena' ? 'record' : 'object' }, protocol: 'Public Rust function builders and name edits, built roots and edit results released after the timed edit (releaseMs); seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, sink };
+  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(), mode: { storage: nodeStorage, construction: nodeStorage === 'arena' ? 'record' : 'object' }, protocol: 'Public Rust function builders and name edits: every function named x (each its own name node, or one shared) and edited to g, or each named x<i> and edited to y<i>, a text no build made before; built roots and edit results released after the timed edit (releaseMs); seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, sink };
   writeFileSync(out, JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify({ phase, samples: samples.length, sink, builtMemory }));
 } finally { retained = undefined; engine.dispose(); }

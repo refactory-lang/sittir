@@ -40,10 +40,14 @@ function arenaEngine() {
 		},
 		entry: (kind: number, text: string) => {
 			const encoded = new TextEncoder().encode(text);
-			const chunk = builtBytes(4 + encoded.length);
-			new DataView(chunk.data.buffer, chunk.data.byteOffset).setUint32(0, (kind + encoded.length * 2 ** format.kindBits) >>> 0, true);
-			chunk.data.set(encoded, 4);
-			return addressOf(chunk.chunk, 0, format);
+			const size = (4 + encoded.length + 3) & ~3;
+			const chunk = builtBytes(size);
+			const marks = new Uint32Array(chunk.meta.buffer, chunk.meta.byteOffset, 2);
+			const at = marks[1]!;
+			new DataView(chunk.data.buffer, chunk.data.byteOffset).setUint32(at, (kind + encoded.length * 2 ** format.kindBits) >>> 0, true);
+			chunk.data.set(encoded, at + 4);
+			marks[1] = at + size;
+			return addressOf(chunk.chunk, at, format);
 		},
 		builtWords,
 		renderBuilt: (address: number) => renderBuilt(native.handle, address, false, false),
@@ -84,6 +88,15 @@ describe('a built arena rendered natively', () => {
 		expect(native.renderBuiltLeaf(TSKindId.Identifier, x)).toBe('x');
 		expect(() => native.renderBuiltLeaf(60000, x)).toThrow(/built leaf kind 60000/);
 		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, x + 64)).toThrow();
+	});
+
+	it('answers the string chunk an entry was written into while it has room, its written mark past that entry', () => {
+		const native = arenaEngine();
+		const first = native.entry(TSKindId.Identifier, 'first');
+		const second = native.entry(TSKindId.Identifier, 'second');
+		expect(second).toBe(first + 12);
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, first)).toBe('first');
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, second)).toBe('second');
 	});
 
 	it('refuses words that are no record it admits', () => {

@@ -7,7 +7,7 @@ use std::sync::Arc;
 use super::cell::{flag, with_kind, CellWord, ListCell, LINK_WORDS};
 use super::count::OWNED;
 use super::memory::{ChunkMem, ChunkUnit};
-use super::{Address, ArenaError, BuiltChunks, CHUNK_WORDS, STRING_CHUNK_BYTES};
+use super::{Address, ArenaError, BuiltChunks, CHUNK_WORDS};
 use crate::types::{KindId, Span};
 
 /// The bytes of a leaf entry's head, its kind and its text's length.
@@ -93,13 +93,13 @@ impl super::RecordSpace for ReadWriter<'_> {
 pub struct BuiltWriter<'a> {
     chunks: &'a mut BuiltChunks,
     words: Option<Open<u32>>,
-    bytes: Option<Open<u8>>,
 }
 
 impl<'a> BuiltWriter<'a> {
-    /// A writer appending to fresh chunks of `chunks`.
+    /// A writer appending records to fresh word chunks of `chunks`, and leaf
+    /// entries to its open string chunk, past what any builder wrote there.
     pub fn new(chunks: &'a mut BuiltChunks) -> Self {
-        Self { chunks, words: None, bytes: None }
+        Self { chunks, words: None }
     }
 
     /// The header word of a record of `kind`, its flags `flags`.
@@ -202,21 +202,95 @@ impl<'a> BuiltWriter<'a> {
         let bits = self.chunks.kind_bits;
         let len = u32::try_from(text.len()).ok().filter(|&len| len < 1 << (32 - bits)).ok_or(ArenaError::Full)?;
         let size = (ENTRY_HEAD_BYTES + len).next_multiple_of(4);
-        if !self.bytes.as_ref().is_some_and(|open| open.fits(size)) {
-            let made = self.chunks.alloc_bytes(size.max(STRING_CHUNK_BYTES))?;
-            self.bytes = Some(Open { chunk: made.chunk, mem: made.mem, used: 0 });
-        }
         let head = with_kind(kind, bits)? | len << bits;
-        let open = self.bytes.as_mut().ok_or(ArenaError::Full)?;
-        let byte = open.used;
-        open.used += size;
+        let open = self.chunks.open_strings(size)?;
+        let byte = self.chunks.reserve_strings(open.chunk, size)?;
         // SAFETY: as `place`.
-        let chunk = unsafe { open.mem.slice_mut() };
+        let out = unsafe { open.mem.slice_mut() };
         let start = byte as usize;
-        chunk[start..start + ENTRY_HEAD_BYTES as usize].copy_from_slice(&head.to_ne_bytes());
-        chunk[start + ENTRY_HEAD_BYTES as usize..start + (ENTRY_HEAD_BYTES + len) as usize].copy_from_slice(text.as_bytes());
+        out[start..start + ENTRY_HEAD_BYTES as usize].copy_from_slice(&head.to_ne_bytes());
+        out[start + ENTRY_HEAD_BYTES as usize..start + (ENTRY_HEAD_BYTES + len) as usize].copy_from_slice(text.as_bytes());
         let at = Address::new(open.chunk, byte).ok_or(ArenaError::Full)?;
         self.chunks.hold_text(at)?;
         Ok(at)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::arena::cell::Cell;
+    use crate::arena::count::{strings_written, STRINGS_WRITTEN};
+    use crate::arena::{ArenaRead, FIRST_STRING_BYTES, STRING_CHUNK_BYTES};
+    use crate::slot::ChangedEdges;
+
+    const BITS: u32 = 9;
+    const NAME: KindId = KindId(16);
+
+    fn store() -> BuiltChunks {
+        BuiltChunks::new(BITS, |_| None)
+    }
+
+    fn written(chunks: &BuiltChunks, chunk: u32) -> u32 {
+        strings_written(chunks.strings_of(chunk).expect("a string chunk").1)
+    }
+
+    fn length(chunks: &BuiltChunks, chunk: u32) -> usize {
+        chunks.strings_of(chunk).expect("a string chunk").0.len()
+    }
+
+    fn write_as_javascript(chunks: &BuiltChunks, chunk: u32, kind: KindId, text: &str) -> Address {
+        let byte = written(chunks, chunk);
+        let len = u32::try_from(text.len()).expect("a short text");
+        let size = (ENTRY_HEAD_BYTES + len).next_multiple_of(4);
+        let (mem, meta) = chunks.strings_of(chunk).expect("a string chunk");
+        // SAFETY: the test holds the only references to the chunk.
+        let (mem, meta) = unsafe { (mem.slice_mut(), meta.slice_mut()) };
+        let start = byte as usize;
+        mem[start..start + 4].copy_from_slice(&(with_kind(kind, BITS).expect("a kind") | len << BITS).to_ne_bytes());
+        mem[start + 4..start + 4 + text.len()].copy_from_slice(text.as_bytes());
+        meta[STRINGS_WRITTEN..STRINGS_WRITTEN + 4].copy_from_slice(&(byte + size).to_ne_bytes());
+        Address::new(chunk, byte).expect("an address")
+    }
+
+    fn text_at(chunks: &BuiltChunks, at: Address) -> (KindId, String) {
+        let cell = CellWord::of(at, ChangedEdges::default()).expect("a cell word");
+        match Cell::decode_built(cell, chunks, BITS).expect("a leaf entry") {
+            Cell::BuiltLeaf { kind, text, .. } => (kind, chunks.text(text).expect("its text").to_owned()),
+            other => panic!("not a leaf entry: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn the_open_string_chunk_is_answered_while_its_written_bytes_leave_room() {
+        let mut chunks = store();
+        let first = chunks.open_strings(8).expect("a chunk").chunk;
+        assert_eq!(length(&chunks, first), FIRST_STRING_BYTES as usize);
+        write_as_javascript(&chunks, first, NAME, "abcd");
+        assert_eq!(chunks.open_strings(8).expect("the open chunk").chunk, first);
+        write_as_javascript(&chunks, first, NAME, &"x".repeat(FIRST_STRING_BYTES as usize - 16));
+        assert_eq!(written(&chunks, first), FIRST_STRING_BYTES - 4);
+        let next = chunks.open_strings(8).expect("the next chunk").chunk;
+        assert_ne!(next, first);
+        assert_eq!(length(&chunks, next), 2 * FIRST_STRING_BYTES as usize);
+        let own = chunks.open_strings(STRING_CHUNK_BYTES + 4).expect("a chunk of its own").chunk;
+        assert_eq!(length(&chunks, own), (STRING_CHUNK_BYTES + 4) as usize);
+        assert_eq!(chunks.open_strings(8).expect("the open chunk").chunk, next, "a chunk of its own leaves the open one open");
+    }
+
+    #[test]
+    fn a_native_entry_lands_past_what_javascript_wrote_and_javascript_appends_past_it() {
+        let mut chunks = store();
+        let open = chunks.open_strings(8).expect("a chunk").chunk;
+        let javascript = write_as_javascript(&chunks, open, NAME, "js");
+        chunks.hold_text(javascript).expect("held");
+        let native = BuiltWriter::new(&mut chunks).entry(NAME, "native").expect("written");
+        assert_eq!(native, Address::new(open, 8).expect("an address"));
+        assert_eq!(chunks.open_strings(8).expect("the open chunk").chunk, open);
+        let after = write_as_javascript(&chunks, open, NAME, "after");
+        assert_eq!(after, Address::new(open, 20).expect("an address"));
+        assert_eq!(text_at(&chunks, javascript), (NAME, "js".to_owned()));
+        assert_eq!(text_at(&chunks, native), (NAME, "native".to_owned()));
+        assert_eq!(text_at(&chunks, after), (NAME, "after".to_owned()));
     }
 }

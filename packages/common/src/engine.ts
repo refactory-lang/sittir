@@ -230,7 +230,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept, with the chunk it sealed and that chunk's meta, now sized for its entries. Present when the addon carries the record codec. */
 	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[]; sealed?: { chunk: number; meta: Uint8Array } };
 	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, its number, and its meta, its cell count. Present when the addon carries the record codec. */
-	builtBytes?(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
+	builtBytes?(least: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
 	/** One more count of the built entry at `address`, whose count saturated. Present when the addon carries the record codec. */
 	builtBump?(address: number): void;
 	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the trees released link and side records named. Present when the addon carries the record codec. */
@@ -856,7 +856,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		owner: engine.handle,
 		kinds,
 		words: (length) => builtWords.call(engine, length),
-		bytes: (length) => builtBytes.call(engine, length),
+		bytes: (least) => builtBytes.call(engine, least),
 		bump: (at) => builtBump.call(engine, at),
 		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
 		read: (chunk) => readWords.call(engine, chunk) ?? undefined,

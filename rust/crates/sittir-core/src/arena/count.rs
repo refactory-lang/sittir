@@ -22,7 +22,7 @@
 
 use std::sync::Arc;
 
-use super::cell::{flag, header_of, CellWord};
+use super::cell::{built_cells, flag, header_of, CellWord, ListCell, Lists};
 use super::memory::ChunkMem;
 use super::side::SideRecord;
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, RecordShape, ARENA_RELEASED};
@@ -35,8 +35,12 @@ pub const SATURATED: u8 = 0x7f;
 /// The fewest words an entry of a word chunk takes: a record's header, or a
 /// run's length and one item.
 pub const ENTRY_MIN_WORDS: u32 = 2;
-/// The bytes of a string chunk's meta: its cell count.
-pub const CELLS_META_BYTES: usize = 4;
+/// The bytes of a string chunk's meta: its cell count, then the bytes
+/// builders wrote into it (`STRINGS_WRITTEN`).
+pub const CELLS_META_BYTES: usize = 8;
+/// The byte of a string chunk's meta the bytes builders wrote into it start
+/// at: the one write position every builder appends at, native or JavaScript.
+pub(super) const STRINGS_WRITTEN: usize = 4;
 const META_HEAD: usize = 8;
 const LIVE: usize = 0;
 const PLACED: usize = 4;
@@ -69,6 +73,13 @@ fn read_u32(bytes: &[u8], at: usize) -> u32 {
 
 fn write_u32(bytes: &mut [u8], at: usize, value: u32) {
     bytes[at..at + 4].copy_from_slice(&value.to_ne_bytes());
+}
+
+/// The bytes builders wrote into the string chunk whose meta is `cells`.
+pub(super) fn strings_written(cells: &ChunkMem<u8>) -> u32 {
+    // SAFETY: the meta is read through the arena's borrow, inside one native
+    // call, and no slice of it that writes is live.
+    read_u32(unsafe { cells.slice() }, STRINGS_WRITTEN)
 }
 
 /// A word chunk's meta, its counts included.
@@ -273,6 +284,31 @@ impl BuiltChunks {
         Ok(())
     }
 
+    /// The memory and the meta of the string chunk `chunk`.
+    pub(super) fn strings_of(&self, chunk: u32) -> Option<(&ChunkMem<u8>, &ChunkMem<u8>)> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Bytes { mem, cells })) => Some((&**mem, &**cells)),
+            _ => None,
+        }
+    }
+
+    /// Reserves `size` bytes of the string chunk `chunk` past those builders
+    /// wrote into it, and answers the byte they start at.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for a chunk that holds no strings, and
+    /// `ArenaError::Full` for bytes past its end.
+    pub(super) fn reserve_strings(&mut self, chunk: u32, size: u32) -> Result<u32, ArenaError> {
+        let (mem, cells) = self.strings_of(chunk).ok_or(ArenaError::OutOfBounds { chunk, word: 0, len: size })?;
+        // SAFETY: as `hold_text`.
+        let bytes = unsafe { cells.slice_mut() };
+        let byte = read_u32(bytes, STRINGS_WRITTEN);
+        let end = byte.checked_add(size).filter(|&end| end as usize <= mem.len()).ok_or(ArenaError::Full)?;
+        write_u32(bytes, STRINGS_WRITTEN, end);
+        Ok(byte)
+    }
+
     /// One more count of the entry at `at`, whose count byte saturated.
     ///
     /// # Errors
@@ -328,10 +364,11 @@ impl BuiltChunks {
     /// count reaches zero releases what it holds, on an explicit stack: a
     /// record each entry its cells name, the cells' string chunks, its side
     /// record, and the records its sides in the store hold, which `sides`
-    /// drops and answers. The tree of each link record and side record
-    /// released is kept for `take_trees`. A sealed chunk left with no live
-    /// entry is freed. A read's record takes no release, as a cell naming
-    /// one drops no count of it: it is freed with its arena.
+    /// drops and answers; a side record its slots' token runs. The tree of
+    /// each link record and side record released is kept for `take_trees`.
+    /// A sealed chunk left with no live entry is freed. A read's record
+    /// takes no release, as a cell naming one drops no count of it: it is
+    /// freed with its arena.
     ///
     /// # Errors
     ///
@@ -344,7 +381,7 @@ impl BuiltChunks {
         }
         let mut stack = Vec::new();
         if let Held::Text(at) = held {
-            return self.drop_cell(CellWord(at.0 << 2), &mut stack);
+            return self.drop_cell(at, &mut stack);
         }
         if self.read_chunk(held.at().chunk()) {
             return Ok(());
@@ -364,7 +401,14 @@ impl BuiltChunks {
     }
 
     fn drop_count(&mut self, held: Held, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
-        let at = held.at();
+        if self.drop_one(held.at())? {
+            stack.push(held);
+        }
+        Ok(())
+    }
+
+    /// Drops one count of the entry at `at`: true when it was the last.
+    fn drop_one(&mut self, at: Address) -> Result<bool, ArenaError> {
         let byte = self.table(at.chunk())?.count(at.word())?;
         let count = *byte & SATURATED;
         if count == 0 {
@@ -376,20 +420,25 @@ impl BuiltChunks {
                 if *more == 0 {
                     self.overflow.remove(&at.0);
                 }
-                return Ok(());
+                return Ok(false);
             }
         }
         let byte = self.table(at.chunk())?.count(at.word())?;
         *byte -= 1;
-        if *byte & SATURATED == 0 {
-            stack.push(held);
+        Ok(*byte & SATURATED == 0)
+    }
+
+    /// Drops the count of the entry at `at` its one holder holds, an entry
+    /// that holds nothing: a side record's token run.
+    fn retire(&mut self, at: Address) -> Result<(), ArenaError> {
+        if self.drop_one(at)? {
+            self.dead(at)?;
         }
         Ok(())
     }
 
-    fn drop_cell(&mut self, CellWord(word): CellWord, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
-        let at = Address(word >> 2);
-        if word == 0 || at.chunk() == 0 {
+    fn drop_cell(&mut self, at: Address, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
+        if at.chunk() == 0 {
             return Ok(());
         }
         match self.chunks.get_mut(at.chunk() as usize) {
@@ -426,48 +475,56 @@ impl BuiltChunks {
                 }
             }
             Held::Run(at) => {
-                let len = self.word(at)?;
-                let items = ArenaRead::words(self, at, len + 1)?[1..].to_vec();
+                let items: Vec<CellWord> = ListCell::of_run(at, self)?.items(self, 1)?.map(|item| CellWord(item[0])).collect();
                 for item in items {
-                    self.drop_cell(CellWord(item), stack)?;
+                    self.drop_cell(item.address(), stack)?;
                 }
             }
             Held::Side(at) => {
-                if let Some(sides) = SideRecord::read(self, at)?.sides {
+                let (side, tokens) = SideRecord::read_held(self, at)?;
+                if let Some(sides) = side.sides {
                     self.trees.push(sides.tree);
+                }
+                for run in tokens {
+                    self.retire(run)?;
                 }
             }
             Held::Text(at) => return Err(malformed("text entry on the release stack", at.0)),
         }
-        let table = self.table(held.at().chunk())?;
+        self.dead(held.at())
+    }
+
+    /// One fewer live entry in the chunk `at` lies in, an entry whose count
+    /// reached zero; a sealed chunk left with none is freed.
+    fn dead(&mut self, at: Address) -> Result<(), ArenaError> {
+        let table = self.table(at.chunk())?;
         let live = table.live();
         if live == 0 {
-            return Err(malformed("released live count", held.at().chunk()));
+            return Err(malformed("released live count", at.chunk()));
         }
         table.set_live(live - 1);
         if live == 1 {
-            self.seal_check(held.at().chunk());
+            self.seal_check(at.chunk());
         }
         Ok(())
     }
 
     fn release_record(&mut self, at: Address, kind: KindId, stack: &mut Vec<Held>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
         let shape: RecordShape = (self.shape)(kind).ok_or(malformed("released record kind", u32::from(kind.0)))?;
-        let words = ArenaRead::words(self, at, shape.built_words)?.to_vec();
-        if words[1] != 0 {
-            self.drop_count(Held::Side(Address(words[1])), stack)?;
+        let mut cells = Vec::with_capacity(shape.cells.len());
+        built_cells(self, at, shape, Lists::Runs, |cell, _, word| {
+            cells.push((cell.run.is_some(), word));
+            Ok(())
+        })?;
+        let side = super::borrowed::side_of(self, at)?;
+        if side != Address::NONE {
+            self.drop_count(Held::Side(side), stack)?;
         }
-        for cell in shape.cells {
-            let word = *words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?;
-            if cell.run.is_some() {
-                if word & 3 != 0 {
-                    return Err(malformed("list cell edges", word));
-                }
-                if word != 0 {
-                    self.drop_count(Held::Run(Address(word >> 2)), stack)?;
-                }
-            } else {
-                self.drop_cell(CellWord(word), stack)?;
+        for (list, word) in cells {
+            match (list, word) {
+                (true, CellWord(0)) => {}
+                (true, run) => self.drop_count(Held::Run(run.address()), stack)?,
+                (false, cell) => self.drop_cell(cell.address(), stack)?,
             }
         }
         for record in sides(at) {
@@ -477,49 +534,34 @@ impl BuiltChunks {
     }
 
     /// Whether the record at `from` reaches the record at `target` through
-    /// its cells, `from` itself included.
+    /// its cells, `from` itself included. A read's record is not walked: its
+    /// cells name only records of its own tree.
     ///
     /// # Errors
     ///
     /// What reading the records refuses.
     pub fn reaches(&self, from: Address, target: Address) -> Result<bool, ArenaError> {
-        let mut stack = vec![Held::Record(from)];
+        let mut stack = vec![from];
         let mut seen = std::collections::HashSet::new();
-        while let Some(held) = stack.pop() {
-            if !seen.insert(held) {
+        while let Some(at) = stack.pop() {
+            if at == target {
+                return Ok(true);
+            }
+            if !seen.insert(at) || self.read_chunk(at.chunk()) {
                 continue;
             }
-            let cells: Vec<u32> = match held {
-                Held::Record(at) => {
-                    if at == target {
-                        return Ok(true);
-                    }
-                    let (kind, flags) = header_of(self.word(at)?, self.kind_bits);
-                    if flags != 0 {
-                        continue;
-                    }
-                    let shape = (self.shape)(kind).ok_or(malformed("record kind", u32::from(kind.0)))?;
-                    let words = ArenaRead::words(self, at, shape.built_words)?;
-                    for cell in shape.cells.iter().filter(|cell| cell.run.is_some()) {
-                        let word = words[cell.built as usize];
-                        if word != 0 {
-                            stack.push(Held::Run(Address(word >> 2)));
-                        }
-                    }
-                    shape.cells.iter().filter(|cell| cell.run.is_none()).map(|cell| words[cell.built as usize]).collect()
-                }
-                Held::Run(at) => {
-                    let len = self.word(at)?;
-                    ArenaRead::words(self, at, len + 1)?[1..].to_vec()
-                }
-                Held::Side(_) | Held::Text(_) => continue,
-            };
-            for word in cells {
-                let at = Address(word >> 2);
-                if at.chunk() != 0 && self.chunk(at.chunk()).is_some() {
-                    stack.push(Held::Record(at));
-                }
+            let (kind, flags) = header_of(self.word(at)?, self.kind_bits);
+            if flags != 0 {
+                continue;
             }
+            let shape = (self.shape)(kind).ok_or(malformed("record kind", u32::from(kind.0)))?;
+            built_cells(self, at, shape, Lists::Items, |_, _, word| {
+                let at = word.address();
+                if at.chunk() != 0 && self.chunk(at.chunk()).is_some() {
+                    stack.push(at);
+                }
+                Ok(())
+            })?;
         }
         Ok(false)
     }
@@ -693,6 +735,25 @@ mod tests {
     }
 
     #[test]
+    fn a_released_side_record_releases_its_slots_token_runs() {
+        use crate::arena::side::SideSlot;
+        let mut built = Builder::new();
+        let mut placed = Vec::new();
+        let slot = SideSlot { word: 2, tokens: vec![Some(LEAF)], ..SideSlot::default() };
+        let side = SideRecord { slots: vec![slot], ..SideRecord::default() }
+            .write(&mut |words| {
+                let at = built.place(words, 1);
+                placed.push(at);
+                Ok(at)
+            })
+            .expect("a side record");
+        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), side.0, 0, 0], OWNED | 1);
+        built.release(root, true).expect("released");
+        assert_eq!(placed.last(), Some(&side));
+        assert!(placed.iter().all(|&at| built.arena.released(at)), "the side record and its token run");
+    }
+
+    #[test]
     fn a_handle_that_holds_no_count_releases_nothing_and_a_count_below_zero_refuses() {
         let mut built = Builder::new();
         let leaf = built.leaf();
@@ -735,6 +796,19 @@ mod tests {
         let link = built.place(&[with_kind(LEAF, BITS).expect("a kind") | flag::LINK << BITS, 0, 4, 1, 2, 0, 0, 3], 1);
         built.release(link, false).expect("released");
         assert_eq!(built.arena.take_trees(), vec![TreeId(4)]);
+    }
+
+    #[test]
+    fn a_read_s_record_a_built_record_names_is_not_walked_as_a_built_one() {
+        use crate::arena::{ReadWriter, RecordSpace};
+        let mut built = Builder::new();
+        let target = built.leaf();
+        let mut reads = ReadWriter::new(&mut built.arena);
+        let child = reads.push(&[with_kind(LEAF, BITS).expect("a kind"), 0]).expect("a read's record");
+        let parsed = reads.push(&[with_kind(PAIR, BITS).expect("a kind"), 0, with_kind(LEAF, BITS).expect("a kind"), child.0, 0, 0]).expect("a read's record");
+        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), 0, parsed.0 << 2, 0], OWNED | 1);
+        assert_eq!(built.arena.reaches(root, target), Ok(false), "a read's record names only records of its own tree");
+        assert_eq!(built.arena.reaches(root, parsed), Ok(true));
     }
 
     #[test]

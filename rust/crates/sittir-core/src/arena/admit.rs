@@ -8,7 +8,7 @@
 
 use super::small::{SmallMap, SmallStack};
 
-use super::{Address, ArenaError, ArenaRead, Cell, CellWord, ListCell, SideRecord};
+use super::{Address, ArenaError, ArenaRead, Cell, SideRecord};
 use crate::record::HEADER_WORDS;
 use crate::types::{KindId, TreeId};
 
@@ -57,23 +57,6 @@ impl RecordCells for crate::verbatim::VerbatimNode {
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
-}
-
-/// Visits each cell of the built record at `at`, of shape `record`: a list
-/// slot's each item.
-pub(super) fn for_each_built_cell(arena: &dyn ArenaRead, at: Address, record: RecordShape, bits: u32, mut visit: impl FnMut(Cell) -> Result<(), ArenaError>) -> Result<(), ArenaError> {
-    let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
-    for cell in record.cells {
-        let word = *words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?;
-        if cell.run.is_none() {
-            visit(Cell::decode_built(CellWord(word), arena, bits)?)?;
-            continue;
-        }
-        for item in ListCell::of_word(CellWord(word), arena)?.items(arena, 1)? {
-            visit(Cell::decode_built(CellWord(item[0]), arena, bits)?)?;
-        }
-    }
-    Ok(())
 }
 
 /// Where the admission walk stands at a record: met, entered while the
@@ -134,10 +117,10 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         }
         *walk = Walked::Entered;
         pending.push(Step::Leave(at, kind));
-        let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
-        SideRecord::read(arena, Address(words[1]))?;
-        for_each_built_cell(arena, at, record, bits, |cell| {
-            match cell {
+        arena.words(at, record.built_words.max(HEADER_WORDS))?;
+        SideRecord::read(arena, super::borrowed::side_of(arena, at)?)?;
+        super::cell::built_cells(arena, at, record, super::cell::Lists::Items, |_, _, word| {
+            match Cell::decode_built(word, arena, bits)? {
                 Cell::Child { at: child, link: None, .. } if arena.read_record(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
                 Cell::Child { kind, at: child, link: None, .. } => pending.push(Step::Enter(child, kind)),
                 Cell::Child { link: Some(tree), .. } | Cell::LinkedLeaf { tree, .. } => linked.push(tree),
