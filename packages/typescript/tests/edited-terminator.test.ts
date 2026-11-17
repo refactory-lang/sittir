@@ -9,15 +9,15 @@ const engines = {
 	object: await sharedEngine(() => createEngine(typescript, { nodeStorage: 'object' }))
 };
 
-describe.each(Object.keys(engines) as (keyof typeof engines)[])('a statement edited inside keeps its source terminator gap (%s storage)', (storage) => {
+describe.each(Object.keys(engines) as (keyof typeof engines)[])("a statement edited inside takes its terminator gap from the options (%s storage)", (storage) => {
 	it.each([
-		['const x = y;\n', 'x'],
-		["foo('a');\n", 'foo'],
-		['export { A };\n', '{ A }'],
-		["export type { A } from './z.ts';\n", '{ A }'],
-		["import { A } from './z.ts';\n", '{ A }'],
-		["import { A } from './z.ts' ;\n", '{ A }']
-	])('%j, edited at %j, renders on source', (source, text) => {
-		expect(editedRender(engines[storage], source, text)).toBe(source);
+		['const x = y;\n', 'x', 'const x = y;\n'],
+		["foo('a');\n", 'foo', "foo('a');\n"],
+		['export { A };\n', '{ A }', 'export { A };\n'],
+		["export type { A } from './z.ts';\n", '{ A }', "export type { A } from './z.ts';\n"],
+		["import { A } from './z.ts';\n", '{ A }', "import { A } from './z.ts';\n"],
+		["import { A } from './z.ts' ;\n", '{ A }', "import { A } from './z.ts';\n"]
+	])('%j, edited at %j, renders %j', (source, text, expected) => {
+		expect(editedRender(engines[storage], source, text)).toBe(expected);
 	});
 });

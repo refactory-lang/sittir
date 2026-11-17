@@ -38,7 +38,7 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() { // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);');
 		expect(render('f(// a\n);')).toBe('f(// a\n);');
-		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok! {\n  // one\n  /* two */\n}\n');
+		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n  // one\n  /* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
@@ -81,15 +81,13 @@ describe('read trivia layout, rendered detached', () => {
 	});
 });
 
-describe('in-line spacing the options do not write is a deviation, rendered detached', () => {
-	it('keeps the spaces inside a rust use list the options write tight', async () => {
-		const source = 'use three::{ dot::{one, four} };\n';
-		expect((await detachedRenderer('rust'))(source)).toBe(source);
+describe('in-line spacing, rendered detached', () => {
+	it('writes a rust use list tight where the options do', async () => {
+		expect((await detachedRenderer('rust'))('use three::{ dot::{one, four} };\n')).toBe('use three::{dot::{one, four}};\n');
 	});
 
-	it('keeps the spaces inside typescript type parameters and formal parameters', async () => {
-		const source = 'let x: new < T1, T2 > ( p1, p2 ) => R;\n';
-		expect((await detachedRenderer('typescript'))(source)).toBe(source);
+	it('writes typescript type parameters and formal parameters tight where the options do', async () => {
+		expect((await detachedRenderer('typescript'))('let x: new < T1, T2 > ( p1, p2 ) => R;\n')).toBe('let x: new <T1, T2>(p1, p2) => R;\n');
 	});
 
 	it('keeps a python line continuation with the source runs on either side of it', async () => {
@@ -104,18 +102,19 @@ describe('in-line spacing the options do not write is a deviation, rendered deta
 		expect(render(source)).toBe(source);
 	});
 
-	it('keeps the layout of a token tree item whose neighbour is a bare token, read live', async () => {
+	it("lays out a token tree item whose neighbour is a bare token with the options' gaps, read live", async () => {
 		const engine = await loadNativeEngine('rust');
 		const readNode = await readNodeOf('rust');
 		const replay = await fixtureReplayOf('rust');
 		const source = "foo!($/';()*()+.);\n";
 		const tree = parseNativeTree(engine, source);
-		expect(replay(materializeDetached(readNode(tree), await loadSlotAccessorOf('rust')) as AnyUntypedNode, source)).toBe(source);
+		expect(replay(materializeDetached(readNode(tree), await loadSlotAccessorOf('rust')) as AnyUntypedNode, source)).toBe("foo!($ /';() *() +.);\n");
 	});
 
-	it('keeps a rust token tree tight where its source is', async () => {
-		const source = "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n";
-		expect((await detachedRenderer('rust'))(source)).toBe(source);
+	it("lays out a rust token tree with the options' gaps where its source is tight", async () => {
+		expect((await detachedRenderer('rust'))("foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n")).toBe(
+			"foo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n"
+		);
 	});
 });
 
@@ -208,9 +207,12 @@ describe('depth is one fact per position', () => {
 		expect(item.$with.body(edited).$render()).toBe(union);
 	});
 
-	it('keeps a macro body and a call whose opener opens no template depth as they are', async () => {
-		for (const source of ['macro_rules! m {\n    () => {};\n    (x) => {};\n}', 'fn f() {\n    add(\n        1i32,\n        2i32\n    );\n}']) {
-			expect(await copy('rust', rust.parse(`${source}\n`).statements()[0])).toBe(source);
+	it("lays out a macro body and a call whose opener opens no template depth with the options' gaps", async () => {
+		for (const [source, expected] of [
+			['macro_rules! m {\n    () => {};\n    (x) => {};\n}', 'macro_rules! m {() => {}; (x) => {};}'],
+			['fn f() {\n    add(\n        1i32,\n        2i32\n    );\n}', 'fn f() {\n    add(1i32, 2i32);\n}']
+		]) {
+			expect(await copy('rust', rust.parse(`${source}\n`).statements()[0])).toBe(expected);
 		}
 	});
 
