@@ -251,7 +251,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
-**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. Head `b3dd0c4ad` (2026-11-15) takes the side reads off the edit path, as the spec's Decided section records; its paired run is pending.
+**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. On `6664f9dbe` (paired run, Rust 1.100.0): parse plus whole read is ×0.63–0.70 of object, so that gate holds; render is ×1.31–1.46 of master's arena, so that gate does not. The render gap is placement-time navigation, which Task 6c's steps 3 and 4 delete. **Ruled 2026-11-16: "Keep the gate; fold placement into #1227".** Task 6c is built on this branch and the two land as one PR when render and edit meet the gate. Head `b30da527d` carries the edit fix; its paired run is in progress.
 
 This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
@@ -291,9 +291,15 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 - [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
 - [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
 
+**Gates while Task 6's PR is being assembled** (the maintainer, 2026-11-16: "can we bypass the full gates for now?"). Until the PR is ready for its paired run, a commit or a merge into its branch does not wait on the full local three-way verification:
+- **Before each commit or merge into the branch:** the targeted tests of what changed, `cargo check` and clippy on the touched crates, and the type-check. Minutes, not the full suite.
+- **The full gate is CI on each pushed head:** the test shards, cargo, generated-output drift and the validation rows in both storages. Work continues while it runs. A red check stops the work that caused it for review, with the failing state kept, as always.
+- **Push each piece as its own head** (adoptStyle, each placement step, release, the readers, interning), so a red run names one piece.
+- **The full local three-way verification runs once,** on the head that goes to the paired run, and again on any head after it. The landing gates themselves (render, edit, parse plus whole read, object rows) are unchanged.
+
 ### Task 6b: String-pool interning moves native
 
-The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its own PR. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
+The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 as its own PR; the maintainer, 2026-11-16: "let's move 6b to the end, but yes", so **it lands inside Task 6's PR, as its last piece,** after Tasks 6c, 6d and 6e. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
 
 **Facts this task starts from** (measured on Task 5c's head, arena storage):
 - `BuiltArena.entry(kind, text)` (`built-arena.ts`) interns built text in JavaScript: a `Map` lookup per call, and on a miss an encode, a `Chunks.alloc` and a copy into a chunk native handed out whole (`builtBytes`). The write position is JavaScript's.
@@ -308,7 +314,18 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 - Consumes: Task 6's native source write.
 - Produces: the addon's intern call and `BuiltArena.entry`'s new internals. Their API rows go to the maintainer before code.
 
-- [ ] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call (a batch per build, a native build path, or another), with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows.
+- [x] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call, with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows.
+  - **Counts on Task 6's branch** (arena storage; a miss is an entry not returned before): building 2,000 functions each with its own `x` node, 2,000 calls and 1 miss; editing each name to `g`, 2,000 and 1; building `x0`…`x1999`, 2,000 and 2,000; the corpus parse, render and same-value edit, none. Today's crossings for strings are whole-chunk fetches (`builtBytes`): 1 for the one-name build, 5 for 2,000 distinct names, 9 for 8,000.
+  - **Ruled 2026-11-16, replacing a shape approved earlier the same day** (one addon call per miss, `writeBuiltEntry`, which would have made 2,000 crossings where today makes 5): "it shouldn't be a call into native, it should be a write into shared memory". A miss writes the entry into the pool's native memory through JavaScript's view of it, with no crossing; a crossing happens only when a chunk has to be opened. Arena storage already refuses a runtime without external array buffers (Electron's memory cage), so this needs no second path.
+  - **Scope, ruled 2026-11-16: "One position for built text; sources keep their own chunks".**
+    - Each string chunk's `used` is a word in its meta, beside the cell count JavaScript already views; the meta grows from 4 bytes to 8 (`count::CELLS_META_BYTES`). Every writer of built text appends at that word.
+    - Which chunk each side appends to is not shared, and no store header is added (approved, then dropped as unneeded once sources were left out): the position is each chunk's `used` word, which both sides view, so two writers can't collide in a chunk. Native keeps its own pointer to its open chunk, and JavaScript its last one; when JavaScript's fills, `builtBytes` hands it native's open chunk if that has room. Native writes no built text in production, only on the test path.
+    - The addon's `builtBytes(engine, least)`: native picks the size by its own growth rule and answers the open chunk when it still has `least` bytes of room. One crossing per chunk, as before. JavaScript's `FIRST_STRING_BYTES` goes; native's rule is the only one.
+    - `BuiltChunks::alloc_bytes` is renamed `open_strings(least)`. The test-path writer's own position goes.
+    - JavaScript encodes straight into the chunk at the position (`encodeInto`), one copy instead of two.
+    - **Sources stay in chunks of their own.** Task 6's "the read leaves the builders' open chunk alone" stands, so a parsed source's bytes are never kept alive by an unrelated built entry.
+    - **Expected effect, measured locally:** little on the many-names case (the single copy is the only gain); this is a cleanup from three write positions for built text to one. The entry format's writer stays in both languages; its constants are the encoding-constants issue's ground.
+  - **Built in parallel** on a branch cut from Task 6's branch, merged into it last; one paired run on this task alone before that merge, so its effect is separable from placement's.
 - [ ] **Step 2: Failing tests:** the pool's write position is native's alone; a built string interned twice has one entry; a build's text renders byte-identical.
 - [ ] **Step 3:** Run them. They fail.
 - [ ] **Step 4: Implement.**
@@ -317,7 +334,19 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 
 ### Task 6c: A parse places comments; whitespace placement is deleted
 
-**Status:** step 1 in progress on `feat/comments-at-parse` (cut from Task 6's branch), 2026-11-16. Approved by the maintainer 2026-11-15.
+**Status:** step 1 committed locally on `feat/comments-at-parse` (cut from Task 6's branch), 2026-11-16. Approved by the maintainer 2026-11-15. **It lands inside Task 6's PR** (ruled 2026-11-16), not after it: its steps 3 and 4 are what bring Task 6's render under its gate.
+
+**Object storage is deferred** (the maintainer, 2026-11-16, asked how object storage places comments once the placer is deleted: "Can we defer this? I don't want to invest too much time in object storage"). Steps 3 and 4 are done for arena storage only. Object storage keeps its placer and its lazy placement untouched; no walk is added to its parse and nothing of its path is rewritten. What that leaves open, to be listed before step 3 is built: where the two storages then render an edited parsed tree differently, and what the validation rows and tests that run in both storages do about it. Three ways to close it later were costed (a walk at object's parse, the shared rule run lazily, the placer kept for comments only); none is chosen.
+
+**Both storages take gaps from options** (the maintainer, 2026-11-16: "Yes, both storages take gaps from options"), so the deferral leaves no difference in output. In the lookup both storages share, an unwritten side stops emitting the source's stored whitespace and keeps only its depth members, and list slots stop storing a source layout. Object storage still places its comments lazily through its placer. It is done before step 3's arena side, so both storages move together and the expectations are retaken once. Until step 2 lands, an edited parsed tree in either storage loses the source's blank lines.
+
+**Step 2's form** (2026-11-16): the entry form stays, on a compact entry built first ("One compact entry, inside #1227 before step 2").
+- **Why:** a store entry is 112 bytes, the width of its widest arm (a typed trivia node holding text), and arena storage does store that arm: layout members and text entries JavaScript writes into a side decode to typed nodes. On a comment-heavy 199 KB rust file step 1's comment sides retain 137 KB.
+- **The entry:** one ordered list per side, as a built node's `$trivia` is; a comment is its record pointer (a kind and an address, 8 bytes; the entry's store handle is already stripped on insert and put back on read), and a layout member is its one-byte kind (they carry no payload, and blank line and double blank line are already among them).
+- **Where:** converted at the store's two boundaries, compact on write and expanded on read, so render and object storage's own side rows don't change.
+- **Rejected:** two tables, one for layout and one for comments. The order has to be stored either way, a side holding both pays two lists and a merge on read, and it stops matching the built sequence.
+- **By arithmetic from measured sizes:** that rust file's comment sides go from 137 KB to about 28 KB, of which 19.5 KB is the 48-byte row per side; step 2's blank lines cost at most 21 KB there in place of 60 KB.
+- **Rows before code:** the store's new entry type, what a plain text entry does in arena storage (kept behind a pointer, or refused), a coordinate refused on insert, and whether object storage's built nodes write the same rows.
 
 **Spec:** `docs/superpowers/specs/2026-11-15-parsed-comments-at-parse-design.md`. Its "Order" section is this task's step list, and each step is measured on a paired run against master's arena before the next.
 
@@ -325,11 +354,64 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 - [ ] **Step 2:** the blank-line entry between list items. Waits for the maintainer to see parse time and retained bytes.
 - [ ] **Step 3:** a render reads the parse-placed sides; the baseline, deviations and runs are deleted; expectations retaken once.
 - [ ] **Step 4:** the placer and per-tree placement are deleted.
-- [ ] **Step 5:** a census of what still reads the plain token rows.
+- [x] **Step 5:** a census of what still reads the plain token rows. Taken 2026-11-17 by the engine-api session (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`): fixed-token rows, classed by role (the rule's own text that no slot holds), are 16.3% of a read's words on matter.js and 13.5% on next.js, and four readers of a fixed token's offsets outlive steps 3 and 4 (spacing boundaries, depth moves, a list's trailing separator, re-indenting inside multi-line tokens). The maintainer, 2026-11-17: "Since we are no longer preserving white space that really needs to go". Removing the rows entirely is specified in `docs/superpowers/specs/2026-11-17-read-without-fixed-token-rows-design.md` and is the next task after this one.
 
 ### Task 6d: One release for parsed and built records
 
-**Status:** ruled 2026-11-16, not designed. A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
+**Status:** ruled 2026-11-16, not designed. **It lands inside Task 6's PR** (the maintainer, 2026-11-16: "all of 6 should be in 1227"). A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
+
+**The proposal, approved 2026-11-16 ("Approve"):** releasing a parsed root behaves as releasing a built one. No parse cost is added, since every read record is already placed with a count at parse.
+
+| what | before | after |
+|---|---|---|
+| releasing a parsed root (`engine.release(root)`, dispose) | not released; its records stay until the engine is disposed | drops the root's count and runs the same cascade as a built record: cells, runs, side record, store entries |
+| a built cell naming a read record | takes a count that is never dropped | the count is dropped when the built record is released |
+| `BuiltChunks::release` | returns at once for a read chunk | no early return |
+| the cascade over a parsed record | none | walks the record's parsed cells, since a parsed record's layout differs from a built one's |
+| a parsed node's placed sides | dropped with the arena | dropped where a built record's sides are |
+| the source entry | held once, freed with the arena | held by the root and by each link record; freed when the last holder goes |
+| read chunks | freed at dispose | freed when their last live entry dies, as built chunks are |
+
+Example: parse a large file, keep one function rebuilt from it, release the root. Before, every read chunk stays until dispose; after, every chunk is freed except those holding the records the kept function names. `Engine.release`'s JSDoc changes with it. No new public item.
+
+**Four corrections found against the code, proposed and not approved.** They were recorded here as approved on a misread reply; the maintainer's "yes" was to having the other model costed first (below), so these are held:
+1. **The source's holders.** The table's "held by the root and by each link record" would free the text under a live record, since a built cell can name a parsed record directly with no link record. Every parsed side record holds the source instead, one count per side record added once at the end of the parse, so the source goes with the last parsed record, whoever held it.
+2. **JavaScript counts a parsed record it names** by writing the count in shared memory: the addon's `read(chunk)` reply carries the chunk's count meta beside its words, as `builtWords` does. No call per hold.
+3. **A link record holds its holder's record,** so a linked leaf still renders after its root is released. The `trees` list a released link record reported (`take_trees`, the release reply) is removed; nothing reads it.
+4. **A parsed root's count is its handle's,** so a second release is a no-op as for a built root, and a builder that puts the root into a built record moves the count. `BuiltChunks::release`'s sides callback also receives a released parsed record's source, so its placed sides are dropped.
+
+**What a build shares and what it copies.** A string argument, and the captured strings of a parsed record being edited, are copied and interned into the built pool. A parsed child record is named by its address and a parsed leaf by a link record; both keep reading spans of the source. **Being costed, not ruled:** the maintainer's model, in which only the parsed tree reads spans and a reference from elsewhere clones the text ("the moment another node wants to reference in, perhaps the gate being that it's attached to a different root, it clones the span"), so that "the lifetime of the source can match the lifetime of the root". Its benefit is a release with no walk over parsed records and no per-record count. What it has to answer: which root, since an edit's new root shares every untouched subtree of the original; where the clone gate can be seen when a build is bottom-up and has no root yet; and what a kept fragment costs without a detached copy. The engine-api session costs it from code before any more of this task is built.
+
+**Held, 2026-11-17: "Hold 6d until the new spec is written".** The models weighed and what was found:
+- **Clone on attachment or at render,** so a source's lifetime could match its root's: an edit makes one built record naming the parsed children and rebuilds nothing above it, a record can later sit under any number of roots, so the clone can't be decided when a record is built; made to work it needs a count per parse, a native deep copier (text is about 5% of what a read holds) and a cell rewritten in place.
+- **No "parse" unit:** the maintainer, "a parse is no longer supposed to be a thing; it's supposed to be dropped, leaving only its source". Records are nodes, counted one at a time; the source is one entry in the string pool.
+- **Counting the source per span** misses the readers that hold no text cell (header-only records, zero-width nodes, an untouched node's one slice); one count per parsed record covers all of them.
+- **A span as a pool entry that carries its source** was measured by a census of every stored coordinate (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`): it costs more words than the inline offsets it replaces, and the source lives as long under it as under one count per record. The census's winner is a different change, a read with one-word parsed cells and no row for a fixed-text token, which gets a spec of its own after this task.
+- **Release is decided with that spec,** since both change what a parsed record holds. Until then a parsed record is released as it is on this branch (with the engine), and the four corrections above stay proposed. The spec is written (`docs/superpowers/specs/2026-11-17-read-without-fixed-token-rows-design.md`) and finds the release rules are the same under the new layout; asked then, the maintainer ruled "Keep holding" (2026-11-17), so release waits until the row removal has landed and been measured, and Task 6's PR lands without this task.
+- **Already built and kept, independent of the model:** the built-cell walker, the reachability fix for a built record naming a parsed one, and the fix for a released side record's token runs.
+
+**Who and where:** built on the branch cut from Task 6's for Tasks 6b and 6e, on Task 6e's `CellWord` accessors and `side_of`; `count.rs` is not touched by Task 6c's steps 3 and 4.
+
+### Task 6e: One reader for each fact a record's words hold
+
+**Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16. **It lands inside Task 6's PR** (the maintainer, 2026-11-16: "all of 6 should be in 1227"), which replaces the earlier "no code until Task 6 merges". It is built on Task 6's branch after Task 6c's steps 3 and 4, which delete some of the functions it lists; a reader in a file those steps don't touch may be added earlier. The list is re-taken on the branch as it stands when the work starts.
+
+A census on Task 6's head (`b30da527d`) found 15 functions in 7 files that read a record's words by hand: a literal index, a shift or a mask, beside the function that already knows that fact. The count first reported from master, 14, was wrong in both directions; several of those read through the views already, or are writers.
+
+None of the 15 can go through a typed, derived view: each walks a record by its kind's shape, not as a node type. What each can do is read a fact through the one function that owns it. Three shared untyped readers, plus the existing `parsed_cells`:
+
+1. **`ArenaRead::side_of(at)`,** beside `header_kind` in `borrowed.rs`: the side record's address, header word 1. Replaces the literal `words[1]` or `header[1]` in `admit.rs` `admit`, `count.rs` `release_record`, `run_nodes.rs` `source_of` and `read`, `prep.rs` `SlotAt::of`, and `view.rs` `record_of` and `linked_leaf_place`.
+2. **`CellWord` accessors in `cell.rs`** (`address()`, `edges()`, a constructor from an address or an entry): the built cell word's bits. Replaces `word >> 2`, `word & 3`, `at << 2` and `entry * 4` in `count.rs` `drop_cell`, `release`, `release_record` and `reaches`, and `built.rs` `admitted_leaf`.
+3. **One walker over a built record's cells,** yielding each cell's shape, item and raw word, with decoding left to the caller: `admit.rs` `for_each_built_cell`, moved to `cell.rs` beside `CellWord` (2026-11-16: `view.rs` is held for Task 6c's steps 3 and 4, and Task 6d's cascade needs the walker before then; it may move beside `view.rs` `parsed_cells` after step 4). Admission decodes what it yields, since it validates bytes JavaScript wrote before a view may trust them. Release counts the raw words and decodes no text. `count.rs` `reaches` and `release_record` use it in place of their own walks.
+4. **`parsed_cells`,** as it is, for `site.rs` `site_row` and `row_sites`; and `cell.rs` `linked` and `ListCell::items`, as they are, for `count.rs` `release_held`.
+
+Any new `pub` item among these is a row for the maintainer before code.
+
+- [x] **Step 1: The outline.** Accepted 2026-11-16.
+- [ ] **Step 2:** the list re-taken on Task 6's branch after Task 6c's step 4.
+- [ ] **Step 3: Implement,** one commit per reader, then one per file moved onto it, in the order above. Renders and record goldens stay byte-identical.
+- [ ] **Step 4: A guard:** a source scan that fails on a shift or mask against a cell word, a literal index into a record's header, or a cell decode, anywhere outside `cell.rs`, `side.rs`, `borrowed.rs`, the two walkers and the derived views. Its list of exceptions is empty when the task ends.
+- [ ] **Step 5: The three-way verification** and a paired run; a refactor with no behaviour change moves no row.
 
 ### Task 7: The measurements
 

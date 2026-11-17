@@ -19,7 +19,7 @@ export namespace Declaration {
 			K,
 			'parameters',
 			| V.Declaration.Parameter<G>
-			| V.Declaration.Parameter.Default<G>
+			| V.Declaration.Parameter.Defaulted<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>

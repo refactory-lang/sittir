@@ -5798,15 +5798,20 @@ export function buildDecorator(
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>
 ): T.Decorator.Bound {
-	const _content = rejectReservedText(value, 'Decorator.content', TSKindId.Identifier, _reservedWords_buildIdentifier);
+	const _expression = rejectReservedText(
+		value,
+		'Decorator.expression',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'decorator', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'decorator', { expression: _expression });
 	const node = {
 		$type: TSKindId.Decorator as const,
-		_content,
+		_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5816,7 +5821,7 @@ export function buildDecorator(
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildDecorator$with$content, [RECEIVER]: node };
+	node.$with = { expression: buildDecorator$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Bound;
 }
@@ -5824,7 +5829,7 @@ export function buildDecorator(
 function buildDecorator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'content':
+		case 'expression':
 			return applySetter(
 				args,
 				(
@@ -5836,8 +5841,8 @@ function buildDecorator$with(node: Held, setter: string, args: readonly unknown[
 	}
 	throw new Error(`decorator has no $with.${setter}`);
 }
-function buildDecorator$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildDecorator$with(receiverOf(this, '$with.content'), 'content', args);
+function buildDecorator$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecorator$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildDecoratorMemberExpression<
@@ -11344,25 +11349,25 @@ export function buildConstraint(
 		['extends', TSKindId.ExtendsKeyword] as const,
 		[':', TSKindId.Colon] as const
 	]);
-	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
+	const _type = admitAliasContent<NonNullable<T.Constraint['_type']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
-			'Constraint.bounds',
+			kindIdStorage<NonNullable<T.Constraint['_type']>>(value),
+			'Constraint.type',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, bounds: _bounds });
+	if (handle !== undefined) admitChildren(handle, 'constraint', { operator: _operator, type: _type });
 	const node = {
 		$type: TSKindId.Constraint as const,
 		_operator,
-		_bounds,
+		_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		operator: () => _operator,
-		bounds: () => hydrateStoredSlot(node, '_bounds'),
+		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11374,7 +11379,7 @@ export function buildConstraint(
 		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { operator: buildConstraint$with$operator, bounds: buildConstraint$with$bounds, [RECEIVER]: node };
+	node.$with = { operator: buildConstraint$with$operator, type: buildConstraint$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Constraint.Bound;
 }
@@ -11388,7 +11393,7 @@ function buildConstraint$with(node: Held, setter: string, args: readonly unknown
 			return applySetter(args, (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
 				rebuilt(node, handle, () => buildConstraint(value, { ...options, operator: spelling }))
 			);
-		case 'bounds':
+		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildConstraint(value, options))
 			);
@@ -11398,8 +11403,8 @@ function buildConstraint$with(node: Held, setter: string, args: readonly unknown
 function buildConstraint$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildConstraint$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function buildConstraint$with$bounds(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildConstraint$with(receiverOf(this, '$with.bounds'), 'bounds', args);
+function buildConstraint$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildConstraint$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function buildConstructSignature<

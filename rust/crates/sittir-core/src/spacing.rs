@@ -197,7 +197,6 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam_strength: SeamStrength,
     seam_set: LayoutKinds,
     seam_pick: LayoutKinds,
-    seam_cont: String,
     seam_token: Option<SeamToken>,
     seam_is_flank: bool,
     seam_is_root: bool,
@@ -348,13 +347,12 @@ impl Glued {
     }
 }
 
-/// What a held seam writes: the kinds valid at its gap, the one kind it
-/// resolved to, and, for a line continuation, the source text it carries.
-#[derive(Clone, Default)]
+/// What a held seam writes: the kinds valid at its gap and the one kind it
+/// resolved to.
+#[derive(Clone, Copy, Default)]
 struct Payload {
     set: LayoutKinds,
     pick: LayoutKinds,
-    cont: String,
 }
 
 struct DeferredRun {
@@ -381,7 +379,6 @@ struct HeldContext {
     seam_strength: SeamStrength,
     seam_set: LayoutKinds,
     seam_pick: LayoutKinds,
-    seam_cont: String,
     seam_token: Option<SeamToken>,
     seam_is_flank: bool,
     seam_is_root: bool,
@@ -406,7 +403,6 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_strength: SeamStrength::Fallback,
             seam_set: LayoutKinds::NONE,
             seam_pick: LayoutKinds::NONE,
-            seam_cont: String::new(),
             seam_token: None,
             seam_is_flank: false,
             seam_is_root: false,
@@ -694,7 +690,6 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_strength: std::mem::replace(&mut self.seam_strength, SeamStrength::Fallback),
             seam_set: std::mem::take(&mut self.seam_set),
             seam_pick: std::mem::take(&mut self.seam_pick),
-            seam_cont: std::mem::take(&mut self.seam_cont),
             seam_token: self.seam_token.take(),
             seam_is_flank: std::mem::replace(&mut self.seam_is_flank, false),
             seam_is_root: std::mem::replace(&mut self.seam_is_root, false),
@@ -713,7 +708,6 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_strength = held.seam_strength;
         self.seam_set = held.seam_set;
         self.seam_pick = held.seam_pick;
-        self.seam_cont = held.seam_cont;
         self.seam_token = held.seam_token;
         self.seam_is_flank = held.seam_is_flank;
         self.seam_is_root = held.seam_is_root;
@@ -766,7 +760,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(());
         };
         if let Some(DeferredRun { end: Some((strength, mut payload)), line_end, .. }) = last {
-            if self.at_line_start() && payload.pick.breaks() && payload.cont.is_empty() {
+            if self.at_line_start() && payload.pick.breaks() {
                 payload.pick = payload.pick.without_first_break();
                 payload.set = payload.pick;
             }
@@ -879,7 +873,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             }
             payload.set = kept;
         }
-        if self.last == Some('\n') && payload.pick.breaks() && payload.pick != LayoutKinds::LINE_CONTINUATION {
+        if self.last == Some('\n') && payload.pick.breaks() {
             payload.pick = payload.pick.without_first_break();
             payload.set = payload.pick;
             if payload.pick.is_empty() {
@@ -889,8 +883,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if template {
             self.flushed_template = Some(payload.set);
         }
-        let text = self.payload_text(&payload);
-        self.write_text(&text)
+        let text = self.payload_text(payload);
+        self.write_text(text)
     }
 
     /// Merges a mark's payload into the held one: a stronger mark replaces a
@@ -902,42 +896,36 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// and the held strength stays; a mark without a line break never
     /// replaces it.
     fn merge_seam(&mut self, kinds: LayoutKinds) -> bool {
-        self.merge_payload(Payload { set: kinds, pick: kinds.narrowest(), cont: String::new() }, SeamStrength::Declared, false)
+        self.merge_payload(Payload { set: kinds, pick: kinds.narrowest() }, SeamStrength::Declared, false)
     }
 
     fn merge_seam_with(&mut self, kinds: LayoutKinds, strength: SeamStrength) {
-        self.merge_payload(Payload { set: kinds, pick: kinds.narrowest(), cont: String::new() }, strength, false);
+        self.merge_payload(Payload { set: kinds, pick: kinds.narrowest() }, strength, false);
     }
 
-    /// The text a payload writes: the grammar's spelling of its picked kind,
-    /// or the source text a line continuation carries.
-    fn payload_text<'p>(&self, payload: &'p Payload) -> std::borrow::Cow<'p, str> {
-        if payload.pick == LayoutKinds::LINE_CONTINUATION {
-            return std::borrow::Cow::Borrowed(&payload.cont);
-        }
-        std::borrow::Cow::Borrowed(match self.table {
+    /// The text a payload writes: the grammar's spelling of its picked kind.
+    fn payload_text(&self, payload: Payload) -> &'static str {
+        match self.table {
             Some(table) => table.text_of_gap(payload.pick),
             None => payload.pick.default_text(),
-        })
+        }
     }
 
     fn held_payload(&self) -> Payload {
-        Payload { set: self.seam_set, pick: self.seam_pick, cont: self.seam_cont.clone() }
+        Payload { set: self.seam_set, pick: self.seam_pick }
     }
 
     fn take_payload(&mut self) -> Payload {
         Payload {
             set: std::mem::take(&mut self.seam_set),
             pick: std::mem::take(&mut self.seam_pick),
-            cont: std::mem::take(&mut self.seam_cont),
         }
     }
 
     fn set_payload(&mut self, payload: Payload) {
-        self.seam = Some(Self::payload_rank(&payload));
+        self.seam = Some(Self::payload_rank(payload));
         self.seam_set = payload.set;
         self.seam_pick = payload.pick;
-        self.seam_cont = payload.cont;
     }
 
     /// Drops the held seam and all it carries: its payload, its strength
@@ -959,18 +947,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam.is_some() && self.seam_strength == SeamStrength::Trivia && !self.seam_is_join
     }
 
-    fn payload_rank(payload: &Payload) -> SeamRank {
-        if payload.pick == LayoutKinds::LINE_CONTINUATION {
-            seam_rank(&payload.cont)
-        } else {
-            payload.pick.rank()
-        }
+    fn payload_rank(payload: Payload) -> SeamRank {
+        payload.pick.rank()
     }
 
     /// Whether the held seam breaks the line.
     fn held_breaks(&self) -> bool {
-        self.seam.is_some()
-            && if self.seam_pick == LayoutKinds::LINE_CONTINUATION { self.seam_cont.contains('\n') } else { self.seam_pick.breaks() }
+        self.seam.is_some() && self.seam_pick.breaks()
     }
 
     /// A spacing site's arm read from the resolved options, written as a
@@ -1057,7 +1040,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if kind == table.indent {
             crate::render::RenderSink::indent(self);
         }
-        self.merge_payload(Payload { set: gap, pick: gap, cont: String::new() }, strength, flank);
+        self.merge_payload(Payload { set: gap, pick: gap }, strength, flank);
     }
 
     /// The grammar root's edge: the render's own flank at its start or its
@@ -1086,13 +1069,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         let end = self.document && side == crate::options::Side::After;
         let floor = self.seam_token == Some(SeamToken::Lexeme) || (!end && self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks());
-        let continuation_held = self.seam.is_some()
-            && self.seam_strength == SeamStrength::Trivia
-            && self.seam_pick == LayoutKinds::LINE_CONTINUATION
-            && self.seam_cont.ends_with('\n')
-            && gap.rank() <= LayoutKinds::NEWLINE.rank();
-        if !(continuation_held || floor && self.seam.is_some_and(|held| held >= gap.rank())) {
-            self.set_payload(Payload { set: gap, pick: gap, cont: String::new() });
+        if !(floor && self.seam.is_some_and(|held| held >= gap.rank())) {
+            self.set_payload(Payload { set: gap, pick: gap });
             self.seam_strength = strength;
             self.seam_is_flank = false;
             self.seam_token = None;
@@ -1106,8 +1084,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if self.seam_is_root {
             return false;
         }
-        let rank = Self::payload_rank(&payload);
-        let breaks = if payload.pick == LayoutKinds::LINE_CONTINUATION { payload.cont.contains('\n') } else { payload.pick.breaks() };
+        let rank = Self::payload_rank(payload);
+        let breaks = payload.pick.breaks();
         if self.glued.is_some_and(|glued| glued.refuses(strength == SeamStrength::Trivia, breaks)) {
             return false;
         }
@@ -1370,19 +1348,8 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
     }
 
-    fn trivia_seam(&mut self, gap: LayoutKinds, text: Option<&str>) {
-        let text = text.map(crate::line_endings::to_internal);
-        let text = text.as_deref();
-        let continues = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia && gap == LayoutKinds::LINE_CONTINUATION;
-        if continues {
-            let held = self.payload_text(&self.held_payload()).into_owned();
-            let payload = Payload { set: gap, pick: gap, cont: held + text.unwrap_or_default() };
-            self.set_payload(payload);
-            self.seam_is_join = false;
-        } else {
-            let payload = Payload { set: gap, pick: gap, cont: text.unwrap_or_default().to_string() };
-            self.merge_payload(payload, SeamStrength::Trivia, false);
-        }
+    fn trivia_seam(&mut self, gap: LayoutKinds) {
+        self.merge_payload(Payload { set: gap, pick: gap }, SeamStrength::Trivia, false);
         self.seam_token = self.seam.is_some().then_some(SeamToken::Whitespace);
     }
 
@@ -1390,7 +1357,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if self.glued.is_some_and(|glued| glued.refuses(false, gap.breaks())) {
             return;
         }
-        let payload = Payload { set: gap, pick: gap, cont: String::new() };
+        let payload = Payload { set: gap, pick: gap };
         if self.merge_payload(payload, SeamStrength::Trivia, false) {
             self.seam_is_join = true;
         }
@@ -1589,7 +1556,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn hold_line_end(&mut self, hold: crate::render::LineHold) {
         if self.at_line_start() {
-            if self.seam.is_some() && self.seam_pick.breaks() && self.seam_pick != LayoutKinds::LINE_CONTINUATION {
+            if self.seam.is_some() && self.seam_pick.breaks() {
                 let rest = self.seam_pick.without_first_break();
                 if rest.is_empty() {
                     self.clear_payload();
@@ -1613,7 +1580,6 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         Some(crate::render::HeldSeam {
             kinds: payload.set,
             pick: payload.pick,
-            cont: payload.cont,
             strength: std::mem::replace(&mut self.seam_strength, SeamStrength::Fallback),
             token: self.seam_token.take(),
             flank: std::mem::replace(&mut self.seam_is_flank, false),
@@ -1622,7 +1588,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn restore_seam(&mut self, mut held: crate::render::HeldSeam) {
-        if self.at_line_start() && held.pick.breaks() && held.pick != LayoutKinds::LINE_CONTINUATION {
+        if self.at_line_start() && held.pick.breaks() {
             held.pick = held.pick.without_first_break();
             held.kinds = held.pick;
             if held.pick.is_empty() {
@@ -1631,9 +1597,9 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         let held_breaks = held.pick.breaks();
         if crate::render::RenderSink::pending_break(self) && held_breaks {
-            let rank = if held.pick == LayoutKinds::LINE_CONTINUATION { seam_rank(&held.cont) } else { held.pick.rank() };
+            let rank = held.pick.rank();
             if self.seam.is_some_and(|current| rank > current) {
-                self.set_payload(Payload { set: held.kinds, pick: held.pick, cont: held.cont });
+                self.set_payload(Payload { set: held.kinds, pick: held.pick });
                 self.seam_is_flank = held.flank;
             }
             self.seam_strength = self.seam_strength.max(held.strength);
@@ -1641,7 +1607,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             return;
         }
         let was = (self.seam, self.seam_strength);
-        self.merge_payload(Payload { set: held.kinds, pick: held.pick, cont: held.cont }, held.strength, held.flank);
+        self.merge_payload(Payload { set: held.kinds, pick: held.pick }, held.strength, held.flank);
         if held.token.is_some() && (self.seam, self.seam_strength) != was {
             self.seam_token = held.token;
         }
@@ -1928,7 +1894,7 @@ mod sink_tests {
             run(|w| {
                 w.text("a").unwrap();
                 w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
-                w.trivia_seam(crate::layout_kinds::LayoutKinds::SPACE, None);
+                w.trivia_seam(crate::layout_kinds::LayoutKinds::SPACE);
                 w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
                 w.text("b").unwrap();
             }),
@@ -1938,7 +1904,7 @@ mod sink_tests {
             run(|w| {
                 w.text("{").unwrap();
                 w.indent();
-                w.trivia_seam(crate::layout_kinds::LayoutKinds::BLANKLINE, None);
+                w.trivia_seam(crate::layout_kinds::LayoutKinds::BLANKLINE);
                 w.dedent(crate::layout_kinds::LayoutKinds::NEWLINE);
                 w.text("}").unwrap();
             }),
@@ -1946,29 +1912,6 @@ mod sink_tests {
         );
     }
 
-    #[test]
-    fn a_trivia_seam_that_starts_with_a_visible_character_extends_the_held_one() {
-        assert_eq!(
-            run(|w| {
-                w.text("a").unwrap();
-                w.seam(crate::layout_kinds::LayoutKinds::SPACE);
-                w.trivia_seam(crate::layout_kinds::LayoutKinds::SPACE, None);
-                w.trivia_seam(crate::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\n"));
-                w.trivia_seam(crate::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\n"));
-                w.text("b").unwrap();
-            }),
-            "a \\\n\\\nb"
-        );
-        assert_eq!(
-            run(|w| {
-                w.text("a").unwrap();
-                w.seam(crate::layout_kinds::LayoutKinds::SPACE);
-                w.trivia_seam(crate::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\n"));
-                w.text("b").unwrap();
-            }),
-            "a\\\nb"
-        );
-    }
 
     #[test]
     fn a_token_seam_coalesces_but_survives_the_end() {
@@ -2321,17 +2264,6 @@ mod sink_tests {
         );
     }
 
-    #[test]
-    fn a_line_continuation_keeps_one_break_spelling() {
-        assert_eq!(
-            run(|w| {
-                w.text("a").unwrap();
-                w.trivia_seam(crate::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\r\n"));
-                w.text("b").unwrap();
-            }),
-            "a\\\nb"
-        );
-    }
 
     #[test]
     fn a_dedent_below_zero_saturates() {

@@ -220,13 +220,13 @@ export function rebuildSpliceGenerated() {
 											name: rs.build.identifier("InvalidRange"),
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
-											field: rs.build.identifier("start"),
+											name: rs.build.identifier("start"),
 											value: rs.build.fieldExpression({
 												object: rs.build.identifier("e"),
 												property: rs.build.identifier("start_pos"),
 											}),
 										}), rs.build.fieldInitializer({
-											field: rs.build.identifier("end"),
+											name: rs.build.identifier("end"),
 											value: rs.build.fieldExpression({
 												object: rs.build.identifier("e"),
 												property: rs.build.identifier("end_pos"),
@@ -256,13 +256,13 @@ export function rebuildSpliceGenerated() {
 											name: rs.build.identifier("OutOfBounds"),
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
-											field: rs.build.identifier("end"),
+											name: rs.build.identifier("end"),
 											value: rs.build.fieldExpression({
 												object: rs.build.identifier("e"),
 												property: rs.build.identifier("end_pos"),
 											}),
 										}), rs.build.shorthandFieldInitializer({
-											field: rs.build.identifier("source_len"),
+											name: rs.build.identifier("source_len"),
 										})),
 									})),
 								})))],
@@ -312,13 +312,13 @@ export function rebuildSpliceGenerated() {
 											name: rs.build.identifier("NonCharBoundary"),
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
-											field: rs.build.identifier("start"),
+											name: rs.build.identifier("start"),
 											value: rs.build.fieldExpression({
 												object: rs.build.identifier("e"),
 												property: rs.build.identifier("start_pos"),
 											}),
 										}), rs.build.fieldInitializer({
-											field: rs.build.identifier("end"),
+											name: rs.build.identifier("end"),
 											value: rs.build.fieldExpression({
 												object: rs.build.identifier("e"),
 												property: rs.build.identifier("end_pos"),

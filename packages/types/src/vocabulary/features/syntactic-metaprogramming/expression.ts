@@ -1,5 +1,5 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf, Under } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Call {
@@ -16,6 +16,7 @@ export namespace Expression {
 				| V.Element.Macro.TokenTree.Delimited.Paren<G>
 			>;
 			readonly function: Slot<G, K, 'function', V.Identifier.Any<G>>;
+			readonly terminated?: Flag;
 		}
 	}
 }

@@ -6,7 +6,7 @@ export namespace Statement {
 		export interface Counted<G extends GrammarMap, K extends Under<'statement.loop.counted'> = 'statement.loop.counted'> extends SubKindOf<V.Statement.Loop<G, K>> {
 			// claimed by t
 			readonly $path: K;
-			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
+			readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
 			readonly condition: Slot<
 				G,
 				K,

@@ -53,6 +53,7 @@
 - [x] **Step 1: The failing case.** A fixture emitter call `t.switchCase({ value, body: [] })` type-checks today, though `body` isn't a key the pinned builder takes: the prototype typed its builders as `Record<string, any>`.
 - [x] **Step 2: Implement.** `sittir bootstrap` writes a tsconfig mapping every `@sittir/*` export of the pinned build to the declaration file its `types` condition names, when the pin built it. It extends codegen's tsconfig, so only `paths` change. The emitter's directory type-checks under it.
   - `paths` only redirects: an unmapped subpath or an unbuilt declaration falls through to the live checkout. So `type-check:emitter` first lists the emitter program's files (`tsc --explainFiles`) and fails on any `@sittir/*` import, the pinned declarations' own included, that resolves outside the pin (`pinned-types-escape`).
+  - One workspace file is admitted, by a relative import: `packages/types/src/portable-build.ts`, the build-table declarations. The emitter reads workspace data, gen's build table, so its input is typed by the workspace's declarations, while the builders it writes through stay pinned. The file imports nothing, and the guard fails once it gains an import, so the allowance can't widen by an edit to that file.
 - [x] **Step 3: Run it.** The fixture is an error (TS2345, "an unknown key: body"), held by `@ts-expect-error`; a correct call under the directive is TS2578. The loose config types refuse unknown keys.
 - [x] **Step 4: Commit.**
 
@@ -92,7 +93,7 @@
 
 ### Task 3b: No member is named `content`
 
-**Status:** ruled by the user 2026-11-15. It starts after the route-only exact-set PR and the rust toolchain PR merge, because `validate:native` needs a local native build.
+**Status:** merged as #1259 (d67a0609516a891a234c3cf988e206754d6fbcf6), 2026-11-16.
 
 The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 here, hold the rulings.
 - (a) and (b) are bindings and vocabulary only: container patterns and captures, with no compiler change and no new bindings directive.
@@ -111,16 +112,16 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 - Modify: the interpreter's content arm in `packages/common/src/portable/build.ts`, which makes the child from the text.
 - Test: `packages/{python,rust,typescript}/tests/build-input.portable.test-d.ts`, `packages/tools/tests/portable/text-values.test.ts`, and read and build tests per shape.
 
-- [ ] **Step 1: The failing tests, one per shape:**
+- [x] **Step 1: The failing tests, one per shape:**
   - a decorator reads as its expression in `decorators`;
   - rust's `#![a]` reads as the attribute with `inner`, and builds back;
   - python's `x: int` reads `type: 'int'`;
   - each renamed member reads under its new name, and `content` is refused in the types;
   - python's `# x` (a lexed token) and rust's `//x` and `r"a"` (a node whose one slot holds a text-built kind) read `{ $path, $value }`, and each builds back from `$value` and from bare text.
-- [ ] **Step 2: Run them.** They fail.
-- [ ] **Step 3: Implement.** Bindings and vocabulary for (a) and (b). For (c), widen the content arm in the build table and keep `takesTextValue` the one predicate. The build table is what Task 4's emitter reads, so the widened arm survives the interpreter's removal in Task 6. The interpreter's content arm makes the child from the text until then.
-- [ ] **Step 4: Regenerate.** Run the type tests, the text-values guard, `validate:native` (the rows must hold), validate history and the suite.
-- [ ] **Step 5: Bring the open rows to brainstorm before pushing,** each with before and after:
+- [x] **Step 2: Run them.** They fail.
+- [x] **Step 3: Implement.** Bindings and vocabulary for (a) and (b). For (c), widen the content arm in the build table and keep `takesTextValue` the one predicate. The build table is what Task 4's emitter reads, so the widened arm survives the interpreter's removal in Task 6. The interpreter's content arm makes the child from the text until then.
+- [x] **Step 4: Regenerate.** Run the type tests, the text-values guard, `validate:native` (the rows must hold), validate history and the suite.
+- [x] **Step 5: Bring the open rows to brainstorm before pushing,** each with before and after:
   - whether python's `literal.string.escape` joins the text paths, as the guard decides (if it does, amend decision 8's list);
   - whether the reader and the interpreter keep rust's container-set `inner` (if either drops it, report before fixing);
   - the `attribute.content` path segment rename;

@@ -169769,10 +169769,6 @@
                   "_name": [
                     {
                       "$type": 142,
-                      "_alias": {
-                        "$text": "d",
-                        "$type": 1
-                      },
                       "_name": {
                         "$type": 187,
                         "_name": {
@@ -169786,6 +169782,10 @@
                             "$type": 1
                           }
                         }
+                      },
+                      "_rename": {
+                        "$text": "d",
+                        "$type": 1
                       }
                     }
                   ]
@@ -169845,7 +169845,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier name: (identifier)) name: (qualified_identifier name: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier qualifier: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) name: (identifier))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier name: (identifier)) name: (qualified_identifier name: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (import_statement (names name: (qualified_identifier qualifier: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) name: (identifier))))) (newline)))",
     "expectedSourceOut": "\nimport a, b\nimport b.c as d\nimport a.b.c\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -169925,10 +169925,6 @@
               "_name": [
                 {
                   "$type": 142,
-                  "_alias": {
-                    "$text": "d",
-                    "$type": 1
-                  },
                   "_name": {
                     "$type": 187,
                     "_name": {
@@ -169942,6 +169938,10 @@
                         "$type": 1
                       }
                     }
+                  },
+                  "_rename": {
+                    "$text": "d",
+                    "$type": 1
                   }
                 }
               ]
@@ -169960,7 +169960,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))))) (newline))",
     "expectedSourceOut": "import b.c as d\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170096,10 +170096,6 @@
             "_name": [
               {
                 "$type": 142,
-                "_alias": {
-                  "$text": "d",
-                  "$type": 1
-                },
                 "_name": {
                   "$type": 187,
                   "_name": {
@@ -170113,6 +170109,10 @@
                       "$type": 1
                     }
                   }
+                },
+                "_rename": {
+                  "$text": "d",
+                  "$type": 1
                 }
               }
             ]
@@ -170130,7 +170130,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier)))))",
     "expectedSourceOut": "import b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170253,10 +170253,6 @@
         "_name": [
           {
             "$type": 142,
-            "_alias": {
-              "$text": "d",
-              "$type": 1
-            },
             "_name": {
               "$type": 187,
               "_name": {
@@ -170270,6 +170266,10 @@
                   "$type": 1
                 }
               }
+            },
+            "_rename": {
+              "$text": "d",
+              "$type": 1
             }
           }
         ]
@@ -170285,7 +170285,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))))",
+    "expectedReparseTree": "(import_statement (names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))))",
     "expectedSourceOut": "import b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170397,10 +170397,6 @@
       "_name": [
         {
           "$type": 142,
-          "_alias": {
-            "$text": "d",
-            "$type": 1
-          },
           "_name": {
             "$type": 187,
             "_name": {
@@ -170414,6 +170410,10 @@
                 "$type": 1
               }
             }
+          },
+          "_rename": {
+            "$text": "d",
+            "$type": 1
           }
         }
       ]
@@ -170428,7 +170428,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier)))",
+    "expectedReparseTree": "(names name: (aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier)))",
     "expectedSourceOut": "b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -170722,10 +170722,6 @@
     "grammar": "python",
     "input": {
       "$type": 142,
-      "_alias": {
-        "$text": "d",
-        "$type": 1
-      },
       "_name": {
         "$type": 187,
         "_name": {
@@ -170739,6 +170735,10 @@
             "$type": 1
           }
         }
+      },
+      "_rename": {
+        "$text": "d",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -170751,7 +170751,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) alias: (identifier))",
+    "expectedReparseTree": "(aliased_import name: (qualified_identifier qualifier: (qualified_identifier name: (identifier)) name: (identifier)) rename: (identifier))",
     "expectedSourceOut": "b.c as d",
     "grammar": "python",
     "kind": "roundtrip",
@@ -200275,7 +200275,7 @@
                               "_item": [
                                 {
                                   "$type": 181,
-                                  "_content": {
+                                  "_expression": {
                                     "$type": 173,
                                     "_expression": {
                                       "$text": "a",
@@ -200313,9 +200313,9 @@
                               "_item": [
                                 {
                                   "$type": 181,
-                                  "_content": {
+                                  "_expression": {
                                     "$type": 181,
-                                    "_content": {
+                                    "_expression": {
                                       "$type": 173,
                                       "_expression": {
                                         "$text": "a",
@@ -200428,7 +200428,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (tuple elements: (tuple_elements item: (identifier) item: (identifier))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (map_rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (nonlocal_statement names: (identifier))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier) item: (positional_separator) item: (identifier) item: (keyword_separator) item: (default_parameter name: (identifier) default: (integer_decimal_plain)) item: (map_rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (expression_list elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier)))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
+    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (tuple elements: (tuple_elements item: (identifier) item: (identifier))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (map_rest_pattern pattern: (identifier)) type: (type (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (nonlocal_statement names: (identifier))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier) item: (positional_separator) item: (identifier) item: (keyword_separator) item: (default_parameter name: (identifier) default: (integer_decimal_plain)) item: (map_rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (expression_list elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier) elements: (identifier)))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
     "expectedSourceOut": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n  pass \\\n\\\n\\\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -200922,7 +200922,7 @@
                           "_item": [
                             {
                               "$type": 181,
-                              "_content": {
+                              "_expression": {
                                 "$type": 173,
                                 "_expression": {
                                   "$text": "a",
@@ -200960,9 +200960,9 @@
                           "_item": [
                             {
                               "$type": 181,
-                              "_content": {
+                              "_expression": {
                                 "$type": 181,
-                                "_content": {
+                                "_expression": {
                                   "$type": 173,
                                   "_expression": {
                                     "$text": "a",
@@ -201020,7 +201020,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent))))",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (rest_pattern pattern: (identifier)))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent))))",
     "expectedSourceOut": "def h(*a):\n  i((*a))\n  j(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202069,7 +202069,7 @@
                         "_item": [
                           {
                             "$type": 181,
-                            "_content": {
+                            "_expression": {
                               "$type": 173,
                               "_expression": {
                                 "$text": "a",
@@ -202107,9 +202107,9 @@
                         "_item": [
                           {
                             "$type": 181,
-                            "_content": {
+                            "_expression": {
                               "$type": 181,
-                              "_content": {
+                              "_expression": {
                                 "$type": 173,
                                 "_expression": {
                                   "$text": "a",
@@ -202146,7 +202146,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent)))",
     "expectedSourceOut": "i((*a))\n  j(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202493,7 +202493,7 @@
                       "_item": [
                         {
                           "$type": 181,
-                          "_content": {
+                          "_expression": {
                             "$type": 173,
                             "_expression": {
                               "$text": "a",
@@ -202531,9 +202531,9 @@
                       "_item": [
                         {
                           "$type": 181,
-                          "_content": {
+                          "_expression": {
                             "$type": 181,
-                            "_content": {
+                            "_expression": {
                               "$type": 173,
                               "_expression": {
                                 "$text": "a",
@@ -202569,7 +202569,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline)) (dedent))",
     "expectedSourceOut": "i((*a))\nj(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202885,7 +202885,7 @@
                   "_item": [
                     {
                       "$type": 181,
-                      "_content": {
+                      "_expression": {
                         "$type": 173,
                         "_expression": {
                           "$text": "a",
@@ -202918,7 +202918,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline))",
+    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))) (newline))",
     "expectedSourceOut": "i((*a))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -202948,9 +202948,9 @@
                   "_item": [
                     {
                       "$type": 181,
-                      "_content": {
+                      "_expression": {
                         "$type": 181,
-                        "_content": {
+                        "_expression": {
                           "$type": 173,
                           "_expression": {
                             "$text": "a",
@@ -202984,7 +202984,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline))",
+    "expectedReparseTree": "(simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))) (newline))",
     "expectedSourceOut": "j(((*a)))\n",
     "grammar": "python",
     "kind": "roundtrip",
@@ -203278,7 +203278,7 @@
                 "_item": [
                   {
                     "$type": 181,
-                    "_content": {
+                    "_expression": {
                       "$type": 173,
                       "_expression": {
                         "$text": "a",
@@ -203310,7 +203310,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))",
     "expectedSourceOut": "i((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -203338,9 +203338,9 @@
                 "_item": [
                   {
                     "$type": 181,
-                    "_content": {
+                    "_expression": {
                       "$type": 181,
-                      "_content": {
+                      "_expression": {
                         "$type": 173,
                         "_expression": {
                           "$text": "a",
@@ -203373,7 +203373,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))))",
     "expectedSourceOut": "j(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204046,7 +204046,7 @@
             "_item": [
               {
                 "$type": 181,
-                "_content": {
+                "_expression": {
                   "$type": 173,
                   "_expression": {
                     "$text": "a",
@@ -204076,7 +204076,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))",
     "expectedSourceOut": "i((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204100,9 +204100,9 @@
             "_item": [
               {
                 "$type": 181,
-                "_content": {
+                "_expression": {
                   "$type": 181,
-                  "_content": {
+                  "_expression": {
                     "$type": 173,
                     "_expression": {
                       "$text": "a",
@@ -204133,7 +204133,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))))",
     "expectedSourceOut": "j(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204155,7 +204155,7 @@
           "_item": [
             {
               "$type": 181,
-              "_content": {
+              "_expression": {
                 "$type": 173,
                 "_expression": {
                   "$text": "a",
@@ -204184,7 +204184,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier))))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))",
     "expectedSourceOut": "i((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204206,9 +204206,9 @@
           "_item": [
             {
               "$type": 181,
-              "_content": {
+              "_expression": {
                 "$type": 181,
-                "_content": {
+                "_expression": {
                   "$type": 173,
                   "_expression": {
                     "$text": "a",
@@ -204238,7 +204238,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))))",
     "expectedSourceOut": "j(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204258,7 +204258,7 @@
         "_item": [
           {
             "$type": 181,
-            "_content": {
+            "_expression": {
               "$type": 173,
               "_expression": {
                 "$text": "a",
@@ -204282,7 +204282,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))",
     "expectedSourceOut": "((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204302,9 +204302,9 @@
         "_item": [
           {
             "$type": 181,
-            "_content": {
+            "_expression": {
               "$type": 181,
-              "_content": {
+              "_expression": {
                 "$type": 173,
                 "_expression": {
                   "$text": "a",
@@ -204329,7 +204329,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))))",
     "expectedSourceOut": "(((*a)))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204347,7 +204347,7 @@
       "_item": [
         {
           "$type": 181,
-          "_content": {
+          "_expression": {
             "$type": 173,
             "_expression": {
               "$text": "a",
@@ -204370,7 +204370,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier))))",
+    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat expression: (list_splat expression: (identifier))))",
     "expectedSourceOut": "(*a)",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204388,9 +204388,9 @@
       "_item": [
         {
           "$type": 181,
-          "_content": {
+          "_expression": {
             "$type": 181,
-            "_content": {
+            "_expression": {
               "$type": 173,
               "_expression": {
                 "$text": "a",
@@ -204414,7 +204414,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier)))))",
+    "expectedReparseTree": "(argument_list_elements item: (parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier)))))",
     "expectedSourceOut": "((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204428,7 +204428,7 @@
     "grammar": "python",
     "input": {
       "$type": 181,
-      "_content": {
+      "_expression": {
         "$type": 173,
         "_expression": {
           "$text": "a",
@@ -204449,7 +204449,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(parenthesized_list_splat content: (list_splat expression: (identifier)))",
+    "expectedReparseTree": "(parenthesized_list_splat expression: (list_splat expression: (identifier)))",
     "expectedSourceOut": "(*a)",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204463,9 +204463,9 @@
     "grammar": "python",
     "input": {
       "$type": 181,
-      "_content": {
+      "_expression": {
         "$type": 181,
-        "_content": {
+        "_expression": {
           "$type": 173,
           "_expression": {
             "$text": "a",
@@ -204487,7 +204487,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))",
+    "expectedReparseTree": "(parenthesized_list_splat expression: (parenthesized_list_splat expression: (list_splat expression: (identifier))))",
     "expectedSourceOut": "((*a))",
     "grammar": "python",
     "kind": "roundtrip",
@@ -204501,7 +204501,7 @@
     "grammar": "python",
     "input": {
       "$type": 181,
-      "_content": {
+      "_expression": {
         "$type": 173,
         "_expression": {
           "$text": "a",
@@ -204522,7 +204522,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(parenthesized_list_splat content: (list_splat expression: (identifier)))",
+    "expectedReparseTree": "(parenthesized_list_splat expression: (list_splat expression: (identifier)))",
     "expectedSourceOut": "(*a)",
     "grammar": "python",
     "kind": "roundtrip",

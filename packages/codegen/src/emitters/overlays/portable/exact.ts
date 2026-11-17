@@ -2,7 +2,7 @@ import { builtFlags, nullaryBuilt, readableEntries, textBuilt, type PortableCarr
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { derive, levelMembers, type Derivation, type Scalar } from '../../../bindings/derive.ts';
-import { concreteKinds, guaranteedBy, modelNode, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
+import { concreteKinds, entryRoutes, guaranteedBy, modelNode, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { findKindEntry, fixedTextKinds } from '../../kind-discriminant.ts';
 import type { PortableTypedInput } from './typed.ts';
@@ -176,7 +176,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 	const reached = (kind: string): ReadonlySet<string> => {
 		const out = new Set<string>();
 		for (const entry of entriesFor(kind) ?? []) {
-			for (const route of entry.members) for (const step of route.path ?? []) if (step.owner === kind) out.add(step.slot);
+			for (const route of entryRoutes(entry)) for (const step of route.path ?? []) if (step.owner === kind) out.add(step.slot);
 			for (const slot of [...entry.pins.map((pin) => pin.slot), ...entry.absent, ...entry.present]) out.add(slot);
 		}
 		return out;
@@ -207,7 +207,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if (structural.some((arm) => arm.scalar !== undefined && (arm.scalar === 'float' || !totalIntegerReads.has(arm.kind)))) out.push('scalar');
 		const builtWhole = structural.length > 0 && structural.every((arm) => nullaryBuilt(table, arm));
 		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
-		if (structural.some((arm) => arm.content !== undefined) || (readsText && !structural.every((arm) => textBuilt(table, arm)))) out.push('text');
+		if (readsText && !structural.every((arm) => textBuilt(table, arm))) out.push('text');
 		const buildable = new Set(structural.flatMap(builtFlags));
 		if ((flags.get(kind) ?? []).some((flag) => !buildable.has(flag))) out.push('flags');
 		const touched = reached(kind);
@@ -256,8 +256,9 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 			const reasons = reasonsOf(kind);
 			return reasons.length === 0 ? [] : [{ kind, reasons }];
 		});
+	const claimed = new Set([...routes.readEntries.values()].flatMap((list) => list.map((entry) => entry.vocab)));
 	const out = new Map<string, Map<string, ExactSet>>();
-	for (const path of [...vocabulary.kinds.keys()].filter((p) => readPaths.has(p)).sort())
+	for (const path of [...vocabulary.kinds.keys()].filter((p) => readPaths.has(p) || claimed.has(p)).sort())
 		for (const [member, declared] of vocabulary.members(path)) {
 			if (declared.flag) continue;
 			const level = memberLevelOf(path, member);

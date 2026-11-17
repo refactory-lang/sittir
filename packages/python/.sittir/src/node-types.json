@@ -531,22 +531,22 @@
     "type": "aliased_import",
     "named": true,
     "fields": {
-      "alias": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
             "type": "qualified_identifier",
+            "named": true
+          }
+        ]
+      },
+      "rename": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -3572,7 +3572,7 @@
     "type": "parenthesized_list_splat",
     "named": true,
     "fields": {
-      "content": {
+      "expression": {
         "multiple": false,
         "required": true,
         "types": [

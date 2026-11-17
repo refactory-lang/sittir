@@ -1,5 +1,5 @@
 // Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <render|edit> <receipt.json> <warmup batches> <batches> <batches per engine>
-// One corpus phase alone, in arena storage, for a profiler. Each batch parses
+// One corpus phase alone, in arena storage (STORAGE=object for object storage), for a profiler. Each batch parses
 // <grammar>'s corpus (corpus-batch.mjs's parsePhase), runs the phase over every
 // parsed root (renderPhase: render, toString, dispose; or editPhase, after an
 // untimed renderPhase as in corpusBatch: a same-value edit of each root's
@@ -9,7 +9,15 @@
 // parse's records live until their engine is disposed. A profiler samples only
 // while a timed batch runs the phase: when PERF_CTL and PERF_ACK name perf
 // record's control and ack fifos (perf record --delay=-1 --control
-// fifo:<ctl>,<ack>), its events are enabled; when JS_PROFILE names a file, the
+// fifo:<ctl>,<ack>), its events are enabled; when ALLOC_COUNT names the
+// allocation counter (alloc-count.c, preloaded into this process), it counts,
+// and its table goes to ALLOC_COUNT_OUT with each return address resolved;
+// when V8_HEAP_PROFILE names a file, the inspector's sampling heap profiler
+// (V8_HEAP_INTERVAL bytes between samples, objects later collected kept) is
+// started, and the windows' samples are summed there by allocating function
+// and script, those whose stack passes through the phase's own function
+// (renderPhase or editPhase) apart from the rest, which are this driver's;
+// when JS_PROFILE names a file, the
 // inspector's Profiler (JS_PROFILE_INTERVAL_US between samples) is started,
 // and the windows' profiles are merged into one there, their timelines
 // concatenated, less the samples taken inside the profiler's own start and
@@ -19,6 +27,7 @@
 // kept and dropped.
 import assert from 'node:assert/strict';
 import { constants, existsSync, openSync, readFileSync, readSync, writeFileSync, writeSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { Session } from 'node:inspector/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
@@ -26,6 +35,8 @@ import { cpuModel } from '../../arena-benchmark-cpu.mjs';
 import { editPhase, hash, parsePhase, renderPhase } from '../corpus-batch.mjs';
 
 const [root, grammar, phase, receipt, warmupArg, batchesArg, perEngineArg] = process.argv.slice(2);
+const storage = process.env.STORAGE ?? 'arena';
+assert.ok(['arena', 'object'].includes(storage), `STORAGE ${storage} is not arena or object`);
 const [warmupBatches, batches, batchesPerEngine] = [warmupArg, batchesArg, perEngineArg].map(Number);
 const here = path.dirname(new URL(import.meta.url).pathname);
 const sources = JSON.parse(readFileSync(path.join(here, '..', `corpus-${grammar}.json`), 'utf8')).map((entry) => entry.source);
@@ -33,8 +44,8 @@ const language = (await import(`${root}/packages/${grammar}/dist/index.js`)).def
 
 let engine;
 const phases = {
-  render: { before() {}, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {} },
-  edit: { before: (roots) => renderPhase(engine, roots), run: editPhase, texts: (changed) => changed.map((node) => node.$render()), release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); } }
+  render: { fn: renderPhase, before() {}, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {} },
+  edit: { fn: editPhase, before: (roots) => renderPhase(engine, roots), run: editPhase, texts: (changed) => changed.map((node) => node.$render()), release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); } }
 };
 const timed = phases[phase];
 assert.ok(timed, `phase ${phase} is not one of ${Object.keys(phases).join(', ')}`);
@@ -121,7 +132,68 @@ async function inspectorWindow(file) {
   };
 }
 
-const sampler = process.env.PERF_CTL ? perfWindow() : process.env.JS_PROFILE ? await inspectorWindow(process.env.JS_PROFILE) : undefined;
+function allocWindow(library, file) {
+  const counter = createRequire(import.meta.url)(library);
+  counter.take();
+  return {
+    open: () => counter.start(),
+    close: () => counter.stop(),
+    finish() {
+      const taken = counter.take();
+      const ips = [...new Set(taken.stacks.flatMap((stack) => stack.ips))];
+      writeFileSync(file, JSON.stringify({ ...taken, frames: Object.fromEntries(counter.resolve(ips).map((frame, index) => [ips[index], frame])) }));
+      return { file, stacks: taken.stacks.length, dropped: taken.dropped };
+    }
+  };
+}
+
+async function heapWindow(file, interval, phaseFrame) {
+  const session = new Session();
+  session.connect();
+  await session.post('HeapProfiler.enable');
+  const functions = new Map();
+  let windows = 0;
+  const add = ({ head, samples }) => {
+    const nodes = new Map();
+    const pending = [[head, false]];
+    while (pending.length) {
+      const [node, below] = pending.pop();
+      const inPhase = below || (node.callFrame.functionName === phaseFrame.functionName && node.callFrame.url === phaseFrame.url);
+      nodes.set(node.id, { callFrame: node.callFrame, inPhase });
+      for (const child of node.children) pending.push([child, inPhase]);
+    }
+    for (const { nodeId, size } of samples) {
+      const { callFrame: { functionName, url }, inPhase } = nodes.get(nodeId) ?? { callFrame: { functionName: '(a node the profile no longer holds)', url: '' }, inPhase: false };
+      const key = `${inPhase}\0${functionName}\0${url}`;
+      const entry = functions.get(key) ?? { functionName, url, inPhase, bytes: 0, samples: 0 };
+      entry.bytes += size;
+      entry.samples += 1;
+      functions.set(key, entry);
+    }
+  };
+  return {
+    open: () => session.post('HeapProfiler.startSampling', { samplingInterval: interval, includeObjectsCollectedByMajorGC: true, includeObjectsCollectedByMinorGC: true }),
+    async close() {
+      add((await session.post('HeapProfiler.stopSampling')).profile);
+      windows += 1;
+    },
+    finish() {
+      session.disconnect();
+      writeFileSync(file, JSON.stringify({ interval, windows, phase: phaseFrame.functionName, functions: [...functions.values()] }));
+      return { file, interval, windows, functions: functions.size };
+    }
+  };
+}
+
+const sampler = process.env.PERF_CTL
+  ? perfWindow()
+  : process.env.ALLOC_COUNT
+    ? allocWindow(process.env.ALLOC_COUNT, process.env.ALLOC_COUNT_OUT)
+    : process.env.V8_HEAP_PROFILE
+      ? await heapWindow(process.env.V8_HEAP_PROFILE, Number(process.env.V8_HEAP_INTERVAL), { functionName: timed.fn.name, url: new URL('../corpus-batch.mjs', import.meta.url).href })
+      : process.env.JS_PROFILE
+        ? await inspectorWindow(process.env.JS_PROFILE)
+        : undefined;
 
 const mappedImages = () =>
   existsSync('/proc/self/maps')
@@ -134,7 +206,7 @@ const phaseMs = [];
 async function batch(index, sampled) {
   if (index % batchesPerEngine === 0) {
     engine?.dispose();
-    engine = await language.createEngine({ nodeStorage: 'arena' });
+    engine = await language.createEngine({ nodeStorage: storage });
     mapped ??= mappedImages();
   }
   const roots = parsePhase(engine, sources);
@@ -161,7 +233,7 @@ try {
   const sampling = sampler?.finish();
   const sorted = [...phaseMs].sort((a, b) => a - b);
   writeFileSync(receipt, JSON.stringify({
-    root, grammar, phase, nodeStorage: 'arena', entries: sources.length, warmupBatches, batches, batchesPerEngine,
+    root, grammar, phase, nodeStorage: storage, entries: sources.length, warmupBatches, batches, batchesPerEngine,
     buildProfile: engine.diagnostics.buildProfile, node: process.version, cpu: cpuModel(), sampled: sampler !== undefined, sampling,
     texts, phaseMsMedian: sorted[sorted.length >> 1], phaseMsTotal: phaseMs.reduce((sum, ms) => sum + ms, 0), mapped, phaseMs
   }, null, 1) + '\n');

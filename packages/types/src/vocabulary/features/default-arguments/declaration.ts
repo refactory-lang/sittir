@@ -16,7 +16,7 @@ export namespace Declaration {
 		// pt only
 	}
 	export namespace Parameter {
-		export interface Default<G extends GrammarMap, K extends Under<'declaration.parameter.default'> = 'declaration.parameter.default'> {
+		export interface Defaulted<G extends GrammarMap, K extends Under<'declaration.parameter.defaulted'> = 'declaration.parameter.defaulted'> {
 		}
 		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> {
 		}

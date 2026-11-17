@@ -22,7 +22,7 @@ export namespace Statement {
 		// t only
 		readonly importClause?: Slot<G, K, 'importClause', V.Clause.Import.Names<G>>;
 		// t only
-		readonly names?: Slot<G, K, 'names', V.Clause.Import.Alias<G> | V.Identifier.Qualified<G>>[];
+		readonly names?: Slot<G, K, 'names', V.Clause.Import.Alias<G> | V.Clause.Import.Wildcard<G> | V.Identifier.Qualified<G> | string>[];
 		// p only
 		readonly source?: Slot<G, K, 'source', V.Literal.String<G>>;
 		// t only

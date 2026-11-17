@@ -37,6 +37,20 @@ describe('readVocabulary', () => {
 		}
 	});
 
+	it('refuses a kind that restates a member it does not declare', async () => {
+		await expect(
+			vocabularyIn(
+				'export interface Declaration<G, K = "declaration"> {',
+				"\treadonly $path: K;",
+				'\treadonly name: string;',
+				'}',
+				'export interface Bare<G, K = "declaration.bare"> extends SubKindOf<V.Declaration<G>, \'name\'> {',
+				"\treadonly $path: K;",
+				'}'
+			)
+		).rejects.toThrow(/Bare restates name, which it does not declare/);
+	});
+
 	it('drops a member a refinement narrows to never from its members, and keeps it on the parent', async () => {
 		const vocabulary = await vocabularyIn(
 			'export interface Declaration<G, K = "declaration"> {',
@@ -476,7 +490,7 @@ describe('canonicalFacts', () => {
 			"export interface Constructor<G, K = 'declaration.constructor'> extends SubKindOf<V.Declaration<G>> { readonly $path: K; readonly body: string; }"
 		);
 		const slot = (name: string) => ({ name, propertyName: name, required: true, multiple: false, storage: 'verbatim', kinds: ['identifier'], terminals: [] });
-		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, layout: false, seated: false, slots: [slot('name'), slot('body')], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, textLeavesThrough: [], shownAs: [] };
+		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, layout: false, seated: false, slots: [slot('name'), slot('body')], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, textLeavesThrough: [], shownAs: [], spells: [] };
 		const named = (name: string, claims: readonly number[], tested?: true): MemberFact => ({ route: 'rename', owner: 'assignment', name, field: name, kind: null, after: null, anchor: null, claims, ...(tested ? { tested } : {}) });
 		const facts: BindingFacts = {
 			claims: [{ ...claim('declaration.constant'), kind: 'assignment' }, { ...claim('declaration.constructor'), kind: 'assignment' }],
@@ -501,7 +515,7 @@ describe('canonicalFacts', () => {
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [], match: '^$' }],
 			unclaimed: []
 		};
-		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, layout: false, seated: false, slots: [], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, textLeavesThrough: [], shownAs: [] };
+		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, layout: false, seated: false, slots: [], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, textLeavesThrough: [], shownAs: [], spells: [] };
 		const model = new Map([['parameter', parameter]]);
 		const canonical = canonicalFacts(facts, vocabulary, model);
 		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);

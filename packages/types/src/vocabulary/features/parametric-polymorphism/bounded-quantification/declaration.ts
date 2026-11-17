@@ -37,10 +37,12 @@ export namespace Declaration {
 			G,
 			K,
 			'bounds',
-			| V.Expression.Call.Macro<G>
-			| V.Identifier.Any<G>
 			| V.Clause.Bounds.HigherRanked<G>
 			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
 			| V.Type.Any<G>
 		>[];
 	}

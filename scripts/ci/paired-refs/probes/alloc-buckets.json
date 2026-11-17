@@ -1,0 +1,42 @@
+[
+  {
+    "bucket": "text: strings and formatting",
+    "match": "alloc::string::|alloc::str::|alloc::fmt::format|ToString::to_string|str::to_owned|std::ffi::os_str|utf8"
+  },
+  {
+    "bucket": "napi boundary: external buffers, references, borrow scopes",
+    "match": "napi_engine::|napi::bindgen_runtime|napi_create_|v8impl::|node::Buffer"
+  },
+  {
+    "bucket": "node lists and boxes: decoding a value from JavaScript",
+    "match": "FromNapiValue|from_napi_value"
+  },
+  {
+    "bucket": "node lists and boxes: write_record and its temporaries",
+    "match": "arena::write::|arena::built_write|write_record|write_list|write_slot|WriteCell"
+  },
+  {
+    "bucket": "hydration",
+    "match": "arena::hydrate::"
+  },
+  {
+    "bucket": "placer and place_gaps_of lists",
+    "match": "place_gaps_of|Placer|spacing::"
+  },
+  {
+    "bucket": "prepared overlay and prepare",
+    "match": "arena::prep::|arena::prepared|::prepare::|prepare_root"
+  },
+  {
+    "bucket": "navigation table and record reads",
+    "match": "arena::view|arena::reach|arena::parsed|arena::rows|::nodes::|Nodes::"
+  },
+  {
+    "bucket": "layout and render frames",
+    "match": "::layout::|::render::|render_record"
+  },
+  {
+    "bucket": "trivia",
+    "match": "trivia"
+  }
+]

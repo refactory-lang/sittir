@@ -3,14 +3,14 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "683d90a141596e34e6521356c3cf27786b689d117326684d6d67290da4dbbe95";
+export const hash = "70ac88d1ef8065cfe944e78eb4df6b68b997f54ac1064a1481044687a6f72577";
 
 export const renames = {
 	module: "file",
 	function_definition: "function_declaration",
 	class_definition: "class_declaration",
 	typed_parameter: "typed_parameter_declaration",
-	default_parameter: "default_parameter_declaration",
+	default_parameter: "defaulted_parameter_declaration",
 	typed_default_parameter: "typed_default_parameter_declaration",
 	type_param_type_var: "type_parameter_declaration",
 	type_param_type_var_tuple: "variadic_type_parameter_declaration",
@@ -34,7 +34,6 @@ export const renames = {
 	import_prefix: "prefix_relative_import_clause",
 	aliased_import: "alias_import_clause",
 	wildcard_import: "wildcard_import_clause",
-	comprehension_clauses: "comprehension_clause",
 	keyword_argument: "named_argument",
 	pair: "pair_element",
 	list_splat: "spread_element",
@@ -89,7 +88,6 @@ export const renames = {
 	true: "true_boolean_literal",
 	false: "false_boolean_literal",
 	none: "null_literal",
-	decorator: "decorator_attribute",
 	comment: "line_comment"
 };
 
@@ -106,7 +104,7 @@ export default grammar(
 			_simple_statements: { "0": field("statements") },
 			_suite: { "-3": alias("block_statement") },
 			_type_param_optional1: { "1": field("bounds") },
-			aliased_import: { "0/0": alias("qualified_identifier") },
+			aliased_import: [{ "2": field("rename") }, { "0/0": alias("qualified_identifier") }],
 			assignment_eq: { "0": field("name"), "1/1": field("value") },
 			assignment_type: { "0": field("name") },
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
@@ -132,6 +130,7 @@ export default grammar(
 			member_type: { "0": field("qualifier") },
 			named_expression: { "0": field("left"), "2": field("right") },
 			parameter: { "-5": alias("rest_pattern"), "-1": alias("map_rest_pattern") },
+			parenthesized_list_splat: { "1": field("expression") },
 			pattern: { "-3": alias("rest_pattern") },
 			pattern_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
 			primary_expression: { "-1": alias("rest_pattern") },

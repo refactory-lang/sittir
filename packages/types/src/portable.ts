@@ -122,7 +122,10 @@ export interface PortableSlotStep {
  * `flatten` container's holder takes the container's element key in its own input, in place of the slot that holds the container. `through`
  * lists the element keys of the containers a mounted container stands in for, outermost first: a parsed tree passes through them, while the
  * build reaches the container through its mount. `members` are the element's members whose slots are the container's own: the build fills them
- * when it wraps the element, and the read takes them when it unwraps the container to the element.
+ * when it wraps the element, and the read takes them when it unwraps the container to the element. A container that `sets` flags spells them
+ * by its own tokens: a node of its `kind` holds the element with those flags set, so the read sets them on the element, and the build puts an
+ * element in the seat whose containers set exactly the container flags the element has. With `elements`, the flags are set only on an element
+ * of one of those kinds, and an element of any other kind sits there with none.
  */
 export interface PortableContainer {
 	readonly builder?: string;
@@ -132,6 +135,7 @@ export interface PortableContainer {
 	readonly flatten?: true;
 	readonly through?: readonly string[];
 	readonly members?: readonly PortableMemberStep[];
+	readonly sets?: { readonly kind: number; readonly flags: readonly string[]; readonly elements?: readonly number[] };
 }
 
 /**
@@ -291,7 +295,7 @@ export interface PortableBuildArm {
 	readonly template?: PortableTemplate;
 	readonly facts?: readonly PortableSpelledFact[];
 	readonly sole?: { readonly member: string; readonly delimiter: number };
-	readonly content?: string;
+	readonly content?: PortableMemberStep;
 }
 
 /**

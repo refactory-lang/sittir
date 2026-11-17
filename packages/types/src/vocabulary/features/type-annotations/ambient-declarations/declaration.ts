@@ -5,10 +5,10 @@ export namespace Declaration {
 	export interface Ambient<G extends GrammarMap, K extends Under<'declaration.ambient'> = 'declaration.ambient'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly content: Slot<
+		readonly body: Slot<
 			G,
 			K,
-			'content',
+			'body',
 			| V.Declaration.Any<G>
 			| V.Statement.Block<G>
 			| V.Statement.Any<G>

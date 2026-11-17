@@ -8,8 +8,10 @@ export namespace Declaration {
 			K,
 			'type',
 			| V.Clause.Bounds.Removed<G>
-			| V.Expression.Call.Macro<G>
+			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
 			| V.Type.Any<G>
 		>;
 	}

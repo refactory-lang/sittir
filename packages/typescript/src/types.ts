@@ -4943,20 +4943,20 @@ export interface Arguments {
 
 export interface Decorator {
 	readonly $type: TSKindId.Decorator;
-	readonly _content:
+	readonly _expression:
 		| Identifier
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
 		| DecoratorParenthesizedExpression;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _expression: 'expression';
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<
+		readonly expression: SlotHint<
 			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 		>;
 	};
-	readonly content: () =>
+	readonly expression: () =>
 		| Identifier
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
@@ -7669,14 +7669,14 @@ export interface DefaultType {
 export interface Constraint {
 	readonly $type: TSKindId.Constraint;
 	readonly _operator: TSKindId.ExtendsKeyword | TSKindId.Colon;
-	readonly _bounds: Type;
+	readonly _type: Type;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
-		readonly _bounds: 'bounds';
+		readonly _type: 'type';
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'extends' | ':', TSKindId.ExtendsKeyword | TSKindId.Colon>;
-		readonly bounds:
+		readonly type:
 			| KindEnum<
 					| 'any'
 					| 'number'
@@ -7706,11 +7706,11 @@ export interface Constraint {
 			| Type;
 	};
 	readonly __slotHints__?: {
-		readonly bounds: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 		readonly operator: SlotHint<NonNullable<T.Constraint.Options>['operator']>;
 	};
 	readonly operator: () => TSKindId.ExtendsKeyword | TSKindId.Colon;
-	readonly bounds: () => Type;
+	readonly type: () => Type;
 }
 
 export interface ConstructSignature {
@@ -15217,7 +15217,7 @@ export interface DecoratorNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Decorator.Bound,
-	'content',
+	'expression',
 	TSKindId.Decorator,
 	Decorator.Parsed,
 	never
@@ -16240,7 +16240,7 @@ export interface ConstraintNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Constraint.Bound,
-	'bounds',
+	'type',
 	TSKindId.Constraint,
 	Constraint.Parsed,
 	never

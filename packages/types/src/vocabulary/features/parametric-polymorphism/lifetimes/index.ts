@@ -1,4 +1,3 @@
-export type * from './clause.ts';
 export type * from './declaration.ts';
 export type * from './identifier.ts';
 export type * from './type.ts';

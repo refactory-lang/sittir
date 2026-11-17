@@ -713,22 +713,22 @@ function buildImportList$with$delimiter(this: Received<Held>, ...args: unknown[]
 
 export function buildAliasedImport<
 	NameSlot extends T.AliasedImport.Config['name'],
-	AliasSlot extends T.AliasedImport.Config['alias']
->(config: RefusingConfig<T.AliasedImport.Config, { name: NameSlot; alias: AliasSlot }>): T.AliasedImport.Bound;
+	RenameSlot extends T.AliasedImport.Config['rename']
+>(config: RefusingConfig<T.AliasedImport.Config, { name: NameSlot; rename: RenameSlot }>): T.AliasedImport.Bound;
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Bound {
 	currentHandle()?.admit(TSKindId.AliasedImport, [config]);
 	const _name = config.name;
-	const _alias = config.alias;
+	const _rename = config.rename;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'aliased_import', { name: _name, alias: _alias });
+	if (handle !== undefined) admitChildren(handle, 'aliased_import', { name: _name, rename: _rename });
 	const node = {
 		$type: TSKindId.AliasedImport as const,
 		_name,
-		_alias,
+		_rename,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		alias: () => hydrateStoredSlot(node, '_alias'),
+		rename: () => hydrateStoredSlot(node, '_rename'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -739,7 +739,7 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { name: buildAliasedImport$with$name, alias: buildAliasedImport$with$alias, [RECEIVER]: node };
+	node.$with = { name: buildAliasedImport$with$name, rename: buildAliasedImport$with$rename, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AliasedImport.Bound;
 }
@@ -752,9 +752,9 @@ function buildAliasedImport$with(node: Held, setter: string, args: readonly unkn
 			return applySetter(args, (value: Admit<T.DottedName>) =>
 				rebuilt(node, handle, () => buildAliasedImport({ ...config, name: value }))
 			);
-		case 'alias':
+		case 'rename':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildAliasedImport({ ...config, alias: value }))
+				rebuilt(node, handle, () => buildAliasedImport({ ...config, rename: value }))
 			);
 	}
 	throw new Error(`aliased_import has no $with.${setter}`);
@@ -762,8 +762,8 @@ function buildAliasedImport$with(node: Held, setter: string, args: readonly unkn
 function buildAliasedImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildAliasedImport$with(receiverOf(this, '$with.name'), 'name', args);
 }
-function buildAliasedImport$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildAliasedImport$with(receiverOf(this, '$with.alias'), 'alias', args);
+function buildAliasedImport$with$rename(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAliasedImport$with(receiverOf(this, '$with.rename'), 'rename', args);
 }
 
 export const buildWildcardImport: TSKindId.WildcardImport = TSKindId.WildcardImport;
@@ -2909,15 +2909,15 @@ export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListS
 export function buildParenthesizedListSplat(
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
-	const _content = value;
+	const _expression = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { expression: _expression });
 	const node = {
 		$type: TSKindId.ParenthesizedListSplat as const,
-		_content,
+		_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2927,7 +2927,7 @@ export function buildParenthesizedListSplat(
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildParenthesizedListSplat$with$content, [RECEIVER]: node };
+	node.$with = { expression: buildParenthesizedListSplat$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Bound;
 }
@@ -2935,15 +2935,15 @@ export function buildParenthesizedListSplat(
 function buildParenthesizedListSplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'content':
+		case 'expression':
 			return applySetter(args, (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
 				rebuilt(node, handle, () => buildParenthesizedListSplat(value))
 			);
 	}
 	throw new Error(`parenthesized_list_splat has no $with.${setter}`);
 }
-function buildParenthesizedListSplat$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildParenthesizedListSplat$with(receiverOf(this, '$with.content'), 'content', args);
+function buildParenthesizedListSplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParenthesizedListSplat$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildArgumentList(): T.EmptyArgumentList;

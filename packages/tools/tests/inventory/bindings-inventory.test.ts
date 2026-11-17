@@ -165,10 +165,9 @@ describe('deriveVocabulary', () => {
 		expect(levelMembers(d, 'type.rest.map').has('operator')).toBe(false);
 	});
 	it('keeps bounds introducers out of the portable members without losing the bounds', () => {
-		const bounds = levelMembers(d, 'clause.bounds');
-		expect(bounds.has('bounds')).toBe(true);
-		for (const grammar of ['rust', 'typescript']) expect(bounds.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
-		expect(bounds.has('content')).toBe(false);
+		expect([...levelMembers(d, 'clause.bounds').keys()]).toEqual([]);
+		const parameter = levelMembers(d, 'declaration.type_parameter');
+		for (const grammar of ['rust', 'typescript']) expect(parameter.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
 	});
 	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
 		const argument = d.members.get('element.type_argument');
@@ -177,16 +176,16 @@ describe('deriveVocabulary', () => {
 		expect(argument?.get('bounds')?.kinds.has('clause.bounds')).toBe(false);
 		expect(argument?.get('bounds')?.multiple).toBe(true);
 		expect(argument?.get('bounds')?.optional).toBe(true);
-		expect(argument?.get('content')?.kinds.has('element.type_binding')).toBe(true);
+		expect(argument?.get('argument')?.kinds.has('element.type_binding')).toBe(true);
 		expect(d.members.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
 			new Set(['element.type_argument'])
 		);
 	});
 	it('claims a container whose capture has no direct target as a vocabulary kind of its own', () => {
 		const ambient = d.members.get('declaration.ambient');
-		expect([...(ambient?.keys() ?? [])]).toEqual(['content']);
-		expect(ambient?.get('content')?.kinds.has('statement.block')).toBe(true);
-		expect(levelMembers(d, 'declaration.ambient').get('content')?.optional).toBe(false);
+		expect([...(ambient?.keys() ?? [])]).toEqual(['body']);
+		expect(ambient?.get('body')?.kinds.has('statement.block')).toBe(true);
+		expect(levelMembers(d, 'declaration.ambient').get('body')?.optional).toBe(false);
 		expect([...(d.members.get('statement.labeled')?.keys() ?? [])].sort()).toEqual(['body', 'label']);
 		for (const v of ['statement.expression', 'statement.return', 'statement.if'])
 			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(false);

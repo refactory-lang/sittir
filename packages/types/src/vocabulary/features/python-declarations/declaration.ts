@@ -7,7 +7,7 @@ export namespace Declaration {
 		// p only
 	}
 	export namespace Parameter {
-		export interface Default<G extends GrammarMap, K extends Under<'declaration.parameter.default'> = 'declaration.parameter.default'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'default'> {
+		export interface Defaulted<G extends GrammarMap, K extends Under<'declaration.parameter.defaulted'> = 'declaration.parameter.defaulted'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'default'> {
 			// claimed by p
 			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Tuple<G>>;

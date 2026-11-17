@@ -40,7 +40,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly
 	aliasStorage: null,
 	interiorPart: null,
 	textLeavesThrough: [],
-	shownAs: []
+	shownAs: [],
+	spells: []
 });
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -49,7 +50,7 @@ const grammar = async (bindings: string): Promise<GrammarInput> => ({
 	model: new Map(
 		[
 			node('decorated', [slot('decorators', ['decorator'], true), slot('body', ['_definition', 'leaf_b'])]),
-			node('declared', [slot('content', ['_definition'])]),
+			{ ...node('declared', [slot('content', ['_definition'])]), spells: ['declare'] },
 			node('marked', [slot('marks', ['mark'], true), flag('async', 'async'), slot('body', ['leaf_b'])]),
 			node('mark'),
 			node('_definition', [], ['leaf_a']),

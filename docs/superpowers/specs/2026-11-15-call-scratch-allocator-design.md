@@ -2,6 +2,65 @@
 
 **Status:** draft, 2026-11-15. The user asked for a spec on using the allocator trait Rust 1.100.0 stabilized, and ruled three points the same day: arena storage only; our own allocator, not a crate; the arena render's rank fix lands first and this follows it. The draft was then corrected against the engine source by the peer that owns the arena work. It is to be re-read after the rank fix lands, because that fix changes what is left for an allocator to do (see "What the rank fix changes"). Nothing is built.
 
+**Groundwork approved, 2026-11-16** (the maintainer: "Allocator groundwork now"). Two parts depend on nothing in flight and start now: the allocation count by call site (Verification, step 1), and the `Scratch` type of "The allocator" with the tests of "Safety", in a file of its own with no consumer. The rank stamp this draft waited for was measured and dropped; what changes the picture instead is the deletion of the placer, the largest per-call allocator, in the parsed-comments design. So every row of "What moves" waits for that deletion and is re-read against the allocation count taken after it.
+
+## Ruled 2026-11-16: it is the `NodeAllocator`
+
+The maintainer, after approving the groundwork: "we should call this the NodeAllocator (for list of nodes/and boxed enums)", "NodeAllocator would be used whenever a node is created", and "i'm fine with not having a source allocator". Where the sections below say `Scratch`, read `NodeAllocator`; they are rewritten when the allocation count is in.
+
+What that changes:
+
+- **Its first consumer is the typed nodes a call creates,** since `Vec` and `Box` are exactly what stable Rust lets an allocator back. The draft below aimed first at the navigation table and the placer's lists; those come second, if the count still shows them after the placer is deleted.
+- **Where typed nodes are made is not yet established for arena storage,** and an earlier version of this section asserted it wrongly. What the code's own headers say: a typed node is made by the typed read (`ReadNode`), which is object storage's read; arena storage's read is direct hydration, "with no native node made first"; an arena build is written by JavaScript's builders straight into the built chunks; and the native record writer (`arena/write.rs`) "writes built records from native nodes, as the record fuzz and the render parity tests build them". A build does not go through an edit. So in arena storage there may be few typed nodes to allocate at all, and the storage where they are made is the one the 2026-11-15 ruling excluded. The allocation count's decode table settles which calls make them; nothing is designed until it is read.
+- **Verified at the call sites, 2026-11-16** (master 42b8d6814; from code, to be confirmed by the count):
+
+  | operation | arena storage | object storage |
+  |---|---|---|
+  | parse | no typed node | no typed node |
+  | read (one node, or whole) | no typed node: record reads return addresses and words | `read_node` builds a typed node, encodes it to a JavaScript object, and drops it when the call ends |
+  | factory build | no typed node: JavaScript writes words into the built chunks | no typed node: a JavaScript object |
+  | `$with` on a parsed or built node | no typed node: JavaScript writes a built record | no typed node until it is rendered |
+  | render of a parsed root | from the record at an address | from the tree's source tables, no typed tree decoded |
+  | render of a built or edited root | from the record at an address | the JavaScript node is decoded into a typed node for the call, rendered and dropped |
+
+  So arena storage makes no typed node in any call, and the native record writer (`write_record`, the `WriteCell` derive) is reached only from tests. Typed nodes are made in object storage, by a read and by the render of a built or edited root, and in both they live for one call. A `NodeAllocator` for nodes therefore has consumers only in object storage, which the 2026-11-15 ruling put out of scope. That ruling and this one cannot both stand as written; the maintainer decides which gives, with the count in hand.
+- **There is no allocator for source text.** The string pool's chunks are native memory JavaScript reads in place, as the record arena's are, and stay as they are.
+- **What it cannot back, in arena storage:** a node that lasts. A parsed or built node is a record in the chunked arena, which JavaScript views and counts, and no Rust allocator owns that memory. So "whenever a node is created" can only mean whenever a call makes a typed node natively.
+- **Object storage is still out,** as ruled on 2026-11-15: its typed nodes live as long as their tree, so a per-call allocator cannot hold them.
+
+Open until the count is read: whether the per-call tables share the same allocator or stay on the global one, and the name of the scope type (the approved rows named `Scratch` and `Scope`; the renamed rows go back to the maintainer before code).
+
+## Direction, 2026-11-16: the allocator removes the record encoding (closed the same day)
+
+**Closed by the maintainer, 2026-11-16:** "yes let's close it", on the study's result below. Nothing is built for it. Two things come out of it: the 14 hand decoders go through the views (arena plan Task 6e; the maintainer: "let's fix the 14 functions"), and the facts still written twice are tracked as issue 1256's subject, the record constants. No allocator for source text either: a parsed leaf is a span into its source's one string, so a parse makes no text allocation per node, and the one known cost, built text interned from JavaScript, is the arena plan's Task 6b.
+
+What remains of this document's subject is its original question: whether arena storage has enough per-call allocation left, once the placer is deleted, to justify a per-call allocator. The allocation count answers it.
+
+The maintainer, on learning that arena storage makes no typed node: "what the allocator can do here, is handle the record encoding/decoding? i.e. make arena storage look like object storage?", and, asked which aim, "remove the record encoding".
+
+So the `NodeAllocator` is not a scratch beside the arena. It is the arena: a typed node is allocated in a chunk, the chunk is what JavaScript views, and the cell codec goes. This is the aim.
+
+**What the aim would not buy is a single source for the layout, because that exists.** Codegen places a node's storage slots once (`recordLayoutOf`, in `packages/codegen/src/emitters/record-layout.ts`) and stamps the result on the generated Rust node type and into the generated JavaScript record tables. The derive on that one Rust type writes the typed node, its record view, its hydration walk and its record writer from the same stamps. So a record view and a typed node already describe the same slots at the same words, and native code reads a record through its view with no copy. The maintainer's own check on the aim, the same day: "but that's not possible, right?" and "the views produce the same layout... right". What is left for the study is narrower: whether anything is gained by a typed node being the stored bytes, beyond what the views give. Nothing below this section is designed for it, and the per-call scratch the rest of this document describes is set aside until the study answers.
+
+**The narrowed study's result, 2026-11-16** (from call sites on master; no probe was run):
+
+- **A typed node as the stored bytes adds almost nothing over the views, and costs.** A view reads the chunk in place with no copy, and a node's one render body already runs over both the typed node and its record view through the generated fields trait. A typed layout in the chunk would remove the derived views, the record side of prepare and hydration, and the cell codec in Rust and JavaScript. It would keep the counts and release, the validation of bytes JavaScript wrote, and hydration from the parser's tree. Its containers would have to be our own, with references that are chunk-relative words JavaScript can follow, which is a cell under another name, and JavaScript's builders would be regenerated to write those layouts.
+- **Records already have the two things a typed node spends words on.** A cell that names another record's address is the box, in one word. The kind in a record's header, and a tag word only where a slot holds more than one form, are the enum's discriminants, stored only where the slot's type leaves them open.
+- **What the layout's single source does not cover.** Placement (`recordLayoutOf`) and the cell and side-field constants each have one source, exported from Rust to JavaScript. Written twice, in Rust and in JavaScript or codegen: the record header width, with no check that the two agree; the stored and form constants, with a compile-time check per slot; the side record's field order and the offsets inside a field; and the chunk growth numbers, with no check. Exporting those from Rust as the cell constants are is what would remove duplication.
+- **Hand decoders beside the views:** 14 functions across 8 files (`admit.rs`, `count.rs`, `reach.rs`, `built.rs`, `parsed.rs`, `borrowed.rs`, `hydrate.rs`, `prep.rs`) decode cells directly, against the shape tables the derive emits.
+
+The study as first written, kept for the record:
+
+**A study comes first, before any design ruling or engine code.** It answers, from the code and one small probe:
+
+1. **What the encoding is today.** A census of every piece: the cell codec, the record and side-record layouts, the generated layouts and views on both sides, the builders that write words from JavaScript, the counts, and what reads each.
+2. **Who writes a node.** JavaScript's builders write records today without a native call. With typed nodes in the chunk, either JavaScript writes Rust's layouts through generated writers, or a build goes through native. `Vec` and `Box` from the standard library have unspecified layouts and carry their allocator, so a layout JavaScript can read or write needs container types of our own with a fixed layout.
+3. **Release.** Records are counted and released one by one, and parsed and built release are to be one behaviour. A bump arena frees all at once. The study says how a typed node in a chunk is counted and freed, or what replaces counting.
+4. **Size.** A cell is one 32-bit word naming a chunk and an offset; a typed node holds pointers. The study gives retained bytes for the same corpus in both forms, against the arena design's memory claim.
+5. **What is deleted and what it costs to get there:** the files and generated outputs that go, the goldens retaken, and an order of work that keeps master green.
+
+The probe: one generated node type with a list slot and a child, laid out with a fixed layout in a chunk, written from native and read from JavaScript by generated offsets, with the bytes compared against today's record for the same node.
+
 ## Why
 
 A native call builds short-lived tables and frees every one before it returns. The render profile of arena storage against master's arena, on python and typescript, shows:

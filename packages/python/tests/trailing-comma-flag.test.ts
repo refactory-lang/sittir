@@ -35,7 +35,7 @@ describe.each(STORAGES)("a for clause's trailing comma is a flag, in %s", (_stor
 	it('builds a clause from a portable value, the comma written by its flag and left to the blank default without it', async () => {
 		const runtime = await runtimeOf();
 		const list = (clause: object): string =>
-			String(runtime.engine.render(runtime.build({ $path: 'expression.comprehension.list', body: 'x', clauses: { $path: 'clause.comprehension', contents: [clause] } } as never) as never));
+			String(runtime.engine.render(runtime.build({ $path: 'expression.comprehension.list', body: 'x', clauses: [clause] } as never) as never));
 		const clause = { $path: 'clause.comprehension.for', left: 'x', rights: ['a', 'b'] };
 		expect(list({ ...clause, $flags: ['trailingComma'] })).toBe('[x for x in a, b,]');
 		expect(list({ ...clause, $flags: [] })).toBe('[x for x in a, b]');
@@ -44,8 +44,8 @@ describe.each(STORAGES)("a for clause's trailing comma is a flag, in %s", (_stor
 
 	it('reads the comma as a flag of a plain portable value, not a node carried whole', async () => {
 		const runtime = await runtimeOf();
-		const read = runtime.read(runtime.engine.parse('[x for x in a, b,]\n')) as { statements: [{ content: { clauses: { contents: unknown[] } } }] };
-		expect(read.statements[0].content.clauses.contents).toEqual([{ $path: 'clause.comprehension.for', $flags: ['trailingComma'], left: 'x', rights: ['a', 'b'] }]);
+		const read = runtime.read(runtime.engine.parse('[x for x in a, b,]\n')) as { statements: [{ clauses: unknown[] }] };
+		expect(read.statements[0].clauses).toEqual([{ $path: 'clause.comprehension.for', $flags: ['trailingComma'], left: 'x', rights: ['a', 'b'] }]);
 	});
 
 	it('reads and builds a clause back with its comma, and one without it without', async () => {

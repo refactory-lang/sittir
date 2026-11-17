@@ -31254,7 +31254,7 @@
                 "_decorator": [
                   {
                     "$type": 285,
-                    "_content": {
+                    "_expression": {
                       "$type": 287,
                       "_arguments": {
                         "$type": 284,
@@ -31340,7 +31340,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator content: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator expression: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\nclass Foo {\n  @bar<T>()\n  method() {\n  }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -31362,7 +31362,7 @@
             "_decorator": [
               {
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$type": 287,
                   "_arguments": {
                     "$type": 284,
@@ -31446,7 +31446,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator content: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator expression: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "class Foo {\n  @bar<T>()\n  method() {\n  }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -31524,7 +31524,7 @@
           "_decorator": [
             {
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$type": 287,
                 "_arguments": {
                   "$type": 284,
@@ -31598,7 +31598,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body members: (class_body_member_method decorator: (decorator content: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body members: (class_body_member_method decorator: (decorator expression: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "{\n  @bar<T>()\n  method() {\n  }\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -31615,7 +31615,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$type": 287,
             "_arguments": {
               "$type": 284,
@@ -31687,7 +31687,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body_member_method decorator: (decorator content: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_body_member_method decorator: (decorator expression: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "@bar<T>()\nmethod() {\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -31701,7 +31701,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$type": 287,
         "_arguments": {
           "$type": 284,
@@ -31739,7 +31739,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments)))",
+    "expectedReparseTree": "(decorator expression: (decorator_call_expression function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments)))",
     "expectedSourceOut": "@bar<T>()",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32069,7 +32069,7 @@
                         }
                       },
                       "$type": 285,
-                      "_content": {
+                      "_expression": {
                         "$text": "foo",
                         "$type": 1
                       }
@@ -32117,7 +32117,7 @@
                   "_decorator": [
                     {
                       "$type": 285,
-                      "_content": {
+                      "_expression": {
                         "$type": 287,
                         "_arguments": {
                           "$type": 284,
@@ -32191,7 +32191,7 @@
                         }
                       },
                       "$type": 285,
-                      "_content": {
+                      "_expression": {
                         "$text": "readonly",
                         "$type": 1
                       }
@@ -32237,7 +32237,7 @@
                 "_decorator": [
                   {
                     "$type": 285,
-                    "_content": {
+                    "_expression": {
                       "$text": "readonly",
                       "$type": 1
                     }
@@ -32286,7 +32286,7 @@
                           "_decorator": [
                             {
                               "$type": 285,
-                              "_content": {
+                              "_expression": {
                                 "$text": "required",
                                 "$type": 1
                               }
@@ -32311,7 +32311,7 @@
                           "_decorator": [
                             {
                               "$type": 285,
-                              "_content": {
+                              "_expression": {
                                 "$text": "optional",
                                 "$type": 1
                               }
@@ -32344,7 +32344,7 @@
           "_decorator": [
             {
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$text": "baz",
                 "$type": 1
               }
@@ -32361,7 +32361,7 @@
                 }
               },
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$text": "bam",
                 "$type": 1
               }
@@ -32388,7 +32388,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator content: (identifier)) decorator: (decorator content: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator content: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator expression: (identifier)) decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32421,7 +32421,7 @@
                     }
                   },
                   "$type": 285,
-                  "_content": {
+                  "_expression": {
                     "$text": "foo",
                     "$type": 1
                   }
@@ -32469,7 +32469,7 @@
               "_decorator": [
                 {
                   "$type": 285,
-                  "_content": {
+                  "_expression": {
                     "$type": 287,
                     "_arguments": {
                       "$type": 284,
@@ -32543,7 +32543,7 @@
                     }
                   },
                   "$type": 285,
-                  "_content": {
+                  "_expression": {
                     "$text": "readonly",
                     "$type": 1
                   }
@@ -32589,7 +32589,7 @@
             "_decorator": [
               {
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$text": "readonly",
                   "$type": 1
                 }
@@ -32638,7 +32638,7 @@
                       "_decorator": [
                         {
                           "$type": 285,
-                          "_content": {
+                          "_expression": {
                             "$text": "required",
                             "$type": 1
                           }
@@ -32663,7 +32663,7 @@
                       "_decorator": [
                         {
                           "$type": 285,
-                          "_content": {
+                          "_expression": {
                             "$text": "optional",
                             "$type": 1
                           }
@@ -32696,7 +32696,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "baz",
             "$type": 1
           }
@@ -32713,7 +32713,7 @@
             }
           },
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "bam",
             "$type": 1
           }
@@ -32738,7 +32738,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_declaration decorator: (decorator content: (identifier)) decorator: (decorator content: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator content: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration decorator: (decorator expression: (identifier)) decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32752,7 +32752,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "baz",
         "$type": 1
       }
@@ -32767,7 +32767,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@baz",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32781,7 +32781,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "bam",
         "$type": 1
       }
@@ -32796,7 +32796,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@bam",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32810,7 +32810,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "foo",
         "$type": 1
       }
@@ -32825,7 +32825,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@foo",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32839,7 +32839,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$type": 287,
         "_arguments": {
           "$type": 284,
@@ -32876,7 +32876,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier))))",
+    "expectedReparseTree": "(decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier))))",
     "expectedSourceOut": "@bar.buzz(grue)",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32890,7 +32890,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "readonly",
         "$type": 1
       }
@@ -32905,7 +32905,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@readonly",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32919,7 +32919,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "readonly",
         "$type": 1
       }
@@ -32934,7 +32934,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@readonly",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32948,7 +32948,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "required",
         "$type": 1
       }
@@ -32963,7 +32963,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@required",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -32977,7 +32977,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "optional",
         "$type": 1
       }
@@ -32992,7 +32992,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@optional",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -33081,7 +33081,7 @@
                   }
                 },
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$text": "foo",
                   "$type": 1
                 }
@@ -33129,7 +33129,7 @@
             "_decorator": [
               {
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$type": 287,
                   "_arguments": {
                     "$type": 284,
@@ -33203,7 +33203,7 @@
                   }
                 },
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$text": "readonly",
                   "$type": 1
                 }
@@ -33249,7 +33249,7 @@
           "_decorator": [
             {
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$text": "readonly",
                 "$type": 1
               }
@@ -33298,7 +33298,7 @@
                     "_decorator": [
                       {
                         "$type": 285,
-                        "_content": {
+                        "_expression": {
                           "$text": "required",
                           "$type": 1
                         }
@@ -33323,7 +33323,7 @@
                     "_decorator": [
                       {
                         "$type": 285,
-                        "_content": {
+                        "_expression": {
                           "$text": "optional",
                           "$type": 1
                         }
@@ -33363,7 +33363,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator content: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "{\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -33391,7 +33391,7 @@
               }
             },
             "$type": 285,
-            "_content": {
+            "_expression": {
               "$text": "foo",
               "$type": 1
             }
@@ -33428,7 +33428,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type))))",
     "expectedSourceOut": "@foo static 2: string;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -33461,7 +33461,7 @@
         "_decorator": [
           {
             "$type": 285,
-            "_content": {
+            "_expression": {
               "$type": 287,
               "_arguments": {
                 "$type": 284,
@@ -33529,7 +33529,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment))))",
+    "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment))))",
     "expectedSourceOut": "@bar.buzz(grue) public static 2: string = 'string';",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -33557,7 +33557,7 @@
               }
             },
             "$type": 285,
-            "_content": {
+            "_expression": {
               "$text": "readonly",
               "$type": 1
             }
@@ -33608,7 +33608,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition_plain decorator: (decorator content: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment))))",
+    "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition_plain decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment))))",
     "expectedSourceOut": "@readonly readonly 'hello'?: int = 'string';",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -33634,7 +33634,7 @@
             }
           },
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "foo",
             "$type": 1
           }
@@ -33669,7 +33669,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(public_field_definition_plain decorator: (decorator content: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))",
+    "expectedReparseTree": "(public_field_definition_plain decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))",
     "expectedSourceOut": "@foo static 2: string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -33700,7 +33700,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$type": 287,
             "_arguments": {
               "$type": 284,
@@ -33766,7 +33766,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(public_field_definition_plain decorator: (decorator content: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))",
+    "expectedReparseTree": "(public_field_definition_plain decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))",
     "expectedSourceOut": "@bar.buzz(grue) public static 2: string = 'string'",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -33792,7 +33792,7 @@
             }
           },
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "readonly",
             "$type": 1
           }
@@ -33841,7 +33841,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(public_field_definition_plain decorator: (decorator content: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))",
+    "expectedReparseTree": "(public_field_definition_plain decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))",
     "expectedSourceOut": "@readonly readonly 'hello'?: int = 'string'",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -34260,7 +34260,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "readonly",
             "$type": 1
           }
@@ -34309,7 +34309,7 @@
                 "_decorator": [
                   {
                     "$type": 285,
-                    "_content": {
+                    "_expression": {
                       "$text": "required",
                       "$type": 1
                     }
@@ -34334,7 +34334,7 @@
                 "_decorator": [
                   {
                     "$type": 285,
-                    "_content": {
+                    "_expression": {
                       "$text": "optional",
                       "$type": 1
                     }
@@ -34372,7 +34372,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body_member_method decorator: (decorator content: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_body_member_method decorator: (decorator expression: (identifier)) (method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "@readonly fooBar(@required param: any, @optional param2?: any) {\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -34420,7 +34420,7 @@
               "_decorator": [
                 {
                   "$type": 285,
-                  "_content": {
+                  "_expression": {
                     "$text": "required",
                     "$type": 1
                   }
@@ -34445,7 +34445,7 @@
               "_decorator": [
                 {
                   "$type": 285,
-                  "_content": {
+                  "_expression": {
                     "$text": "optional",
                     "$type": 1
                   }
@@ -34481,7 +34481,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(method_definition_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon)))",
     "expectedSourceOut": "fooBar(@required param: any, @optional param2?: any) {\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -34504,7 +34504,7 @@
             "_decorator": [
               {
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$text": "required",
                   "$type": 1
                 }
@@ -34529,7 +34529,7 @@
             "_decorator": [
               {
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$text": "optional",
                   "$type": 1
                 }
@@ -34562,7 +34562,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))))",
     "expectedSourceOut": "(@required param: any, @optional param2?: any)",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -34583,7 +34583,7 @@
           "_decorator": [
             {
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$text": "required",
                 "$type": 1
               }
@@ -34608,7 +34608,7 @@
           "_decorator": [
             {
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$text": "optional",
                 "$type": 1
               }
@@ -34640,7 +34640,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))",
     "expectedSourceOut": "@required param: any, @optional param2?: any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -34657,7 +34657,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "required",
             "$type": 1
           }
@@ -34687,7 +34687,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))",
+    "expectedReparseTree": "(required_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))",
     "expectedSourceOut": "@required param: any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -34762,7 +34762,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "optional",
             "$type": 1
           }
@@ -34792,7 +34792,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(optional_parameter decorator: (decorator content: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))",
+    "expectedReparseTree": "(optional_parameter decorator: (decorator expression: (identifier)) name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))",
     "expectedSourceOut": "@optional param2?: any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -38855,7 +38855,7 @@
           "_decorator": [
             {
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$text": "bar",
                 "$type": 1
               }
@@ -38884,7 +38884,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator content: (identifier)) name: (type_identifier) body: (class_body)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body)))",
     "expectedSourceOut": "\nabstract class Foo {\n}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -39194,7 +39194,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$text": "bar",
             "$type": 1
           }
@@ -39221,7 +39221,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(abstract_class_declaration decorator: (decorator content: (identifier)) name: (type_identifier) body: (class_body))",
+    "expectedReparseTree": "(abstract_class_declaration decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body))",
     "expectedSourceOut": "@bar\nabstract class Foo {\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -41078,7 +41078,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$text": "bar",
         "$type": 1
       }
@@ -41096,7 +41096,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (identifier))",
+    "expectedReparseTree": "(decorator expression: (identifier))",
     "expectedSourceOut": "@bar",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -41122,7 +41122,7 @@
                 "_decorator": [
                   {
                     "$type": 285,
-                    "_content": {
+                    "_expression": {
                       "$type": 304,
                       "_expression": {
                         "$type": 286,
@@ -41198,7 +41198,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator content: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator expression: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\nclass C {\n    @(super.decorate)\n    method2() { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -41220,7 +41220,7 @@
             "_decorator": [
               {
                 "$type": 285,
-                "_content": {
+                "_expression": {
                   "$type": 304,
                   "_expression": {
                     "$type": 286,
@@ -41294,7 +41294,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator content: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body members: (class_body_member_method decorator: (decorator expression: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "class C {\n    @(super.decorate)\n    method2() { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -41346,7 +41346,7 @@
           "_decorator": [
             {
               "$type": 285,
-              "_content": {
+              "_expression": {
                 "$type": 304,
                 "_expression": {
                   "$type": 286,
@@ -41410,7 +41410,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body members: (class_body_member_method decorator: (decorator content: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body members: (class_body_member_method decorator: (decorator expression: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "{\n    @(super.decorate)\n    method2() { }\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -41427,7 +41427,7 @@
       "_decorator": [
         {
           "$type": 285,
-          "_content": {
+          "_expression": {
             "$type": 304,
             "_expression": {
               "$type": 286,
@@ -41489,7 +41489,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(class_body_member_method decorator: (decorator content: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_body_member_method decorator: (decorator expression: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier)))) (method_definition_plain name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "@(super.decorate)\nmethod2() { }\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -41503,7 +41503,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 285,
-      "_content": {
+      "_expression": {
         "$type": 304,
         "_expression": {
           "$type": 286,
@@ -41531,7 +41531,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(decorator content: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier))))",
+    "expectedReparseTree": "(decorator expression: (decorator_parenthesized_expression expression: (decorator_member_expression object: (super) property: (property_identifier))))",
     "expectedSourceOut": "@(super.decorate)",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -62005,8 +62005,8 @@
                   "_const": true,
                   "_constraint": {
                     "$type": 375,
-                    "_bounds": 43,
-                    "_operator": 70
+                    "_operator": 70,
+                    "_type": 43
                   },
                   "_name": {
                     "$type": 505,
@@ -62032,7 +62032,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (binary_expression left: (string_double elements: (string_fragment)) right: (identifier))) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_annotation type: (type_identifier)) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (array_type type: (type_identifier)))) item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_identifier)))))) return_type: (type_annotation type: (array_type type: (type_identifier))) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements_receiver receiver: (receiver_parameter_declaration name: (this) type: (type_annotation type: (array_type type: (type_identifier)))))) return_type: (type_annotation type: (array_type type: (type_identifier))) body: (statement_block statements: (return_statement expression: (array) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))) item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (binary_expression left: (string_double elements: (string_fragment)) right: (identifier))) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_annotation type: (type_identifier)) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (array_type type: (type_identifier)))) item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_identifier)))))) return_type: (type_annotation type: (array_type type: (type_identifier))) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements_receiver receiver: (receiver_parameter_declaration name: (this) type: (type_annotation type: (array_type type: (type_identifier)))))) return_type: (type_annotation type: (array_type type: (type_identifier))) body: (statement_block statements: (return_statement expression: (array) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))) item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\nfunction greeter(person: string) {\n  return \"Hello, \" + person;\n}\n\nfunction foo<T>(x: T): T {\n\n}\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {\n\n}\n\nfunction foo<T, U>(this: T[]): U[] {\n  return []\n}\n\nfunction foo<const T, const U extends string>(x: T, y: U) {\n\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -62624,8 +62624,8 @@
               "_const": true,
               "_constraint": {
                 "$type": 375,
-                "_bounds": 43,
-                "_operator": 70
+                "_operator": 70,
+                "_type": 43
               },
               "_name": {
                 "$type": 505,
@@ -62649,7 +62649,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))) item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(function_declaration name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))) item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) body: (statement_block terminator: (automatic_semicolon)) terminator: (automatic_semicolon))",
     "expectedSourceOut": "function foo<const T, const U extends string>(x: T, y: U) {\n\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -64844,8 +64844,8 @@
             "_const": true,
             "_constraint": {
               "$type": 375,
-              "_bounds": 43,
-              "_operator": 70
+              "_operator": 70,
+              "_type": 43
             },
             "_name": {
               "$type": 505,
@@ -64868,7 +64868,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type)))))",
+    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type)))))",
     "expectedSourceOut": "<const T, const U extends string>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -65039,8 +65039,8 @@
           "_const": true,
           "_constraint": {
             "$type": 375,
-            "_bounds": 43,
-            "_operator": 70
+            "_operator": 70,
+            "_type": 43
           },
           "_name": {
             "$type": 505,
@@ -65062,7 +65062,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))",
     "expectedSourceOut": "const T, const U extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -65277,8 +65277,8 @@
       "_const": true,
       "_constraint": {
         "$type": 375,
-        "_bounds": 43,
-        "_operator": 70
+        "_operator": 70,
+        "_type": 43
       },
       "_name": {
         "$type": 505,
@@ -65298,7 +65298,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type)))",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type)))",
     "expectedSourceOut": "const U extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -66108,8 +66108,8 @@
     "grammar": "typescript",
     "input": {
       "$type": 375,
-      "_bounds": 43,
-      "_operator": 70
+      "_operator": 70,
+      "_type": 43
     },
     "kind": "render",
     "options": {
@@ -66121,7 +66121,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(constraint bounds: (predefined_type))",
+    "expectedReparseTree": "(constraint type: (predefined_type))",
     "expectedSourceOut": "extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -99452,14 +99452,14 @@
                   "_const": false,
                   "_constraint": {
                     "$type": 375,
-                    "_bounds": {
+                    "_operator": 70,
+                    "_type": {
                       "$type": 505,
                       "_content": {
                         "$text": "B",
                         "$type": 1
                       }
-                    },
-                    "_operator": 70
+                    }
                   },
                   "_name": {
                     "$type": 505,
@@ -99716,7 +99716,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) extends_type_clause: (extends_type_clause type: (type_identifier)) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier))))) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (object_type))) (automatic_semicolon) item: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))) (automatic_semicolon)))) statements: (interface_declaration name: (type_identifier) extends_type_clause: (extends_type_clause type: (type_identifier) type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))) body: (interface_body members: (object_type_content item: (method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
+    "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) extends_type_clause: (extends_type_clause type: (type_identifier)) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (object_type))) (automatic_semicolon) item: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))) (automatic_semicolon)))) statements: (interface_declaration name: (type_identifier) extends_type_clause: (extends_type_clause type: (type_identifier) type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))) body: (interface_body members: (object_type_content item: (method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
     "expectedSourceOut": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n  name: string;\n  favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n  x: T;\n  y: U;\n}\n\ninterface X {\n  hook: {}\n  get(key: Key): Promise<T>\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -100051,14 +100051,14 @@
               "_const": false,
               "_constraint": {
                 "$type": 375,
-                "_bounds": {
+                "_operator": 70,
+                "_type": {
                   "$type": 505,
                   "_content": {
                     "$text": "B",
                     "$type": 1
                   }
-                },
-                "_operator": 70
+                }
               },
               "_name": {
                 "$type": 505,
@@ -100082,7 +100082,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(interface_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier))))) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))))))",
+    "expectedReparseTree": "(interface_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))))))",
     "expectedSourceOut": "interface G<T, U extends B> {\n  x: T;\n  y: U;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -102424,14 +102424,14 @@
             "_const": false,
             "_constraint": {
               "$type": 375,
-              "_bounds": {
+              "_operator": 70,
+              "_type": {
                 "$type": 505,
                 "_content": {
                   "$text": "B",
                   "$type": 1
                 }
-              },
-              "_operator": 70
+              }
             },
             "_name": {
               "$type": 505,
@@ -102454,7 +102454,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier)))))",
+    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier)))))",
     "expectedSourceOut": "<T, U extends B>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -102486,14 +102486,14 @@
           "_const": false,
           "_constraint": {
             "$type": 375,
-            "_bounds": {
+            "_operator": 70,
+            "_type": {
               "$type": 505,
               "_content": {
                 "$text": "B",
                 "$type": 1
               }
-            },
-            "_operator": 70
+            }
           },
           "_name": {
             "$type": 505,
@@ -102515,7 +102515,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier))))",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))",
     "expectedSourceOut": "T, U extends B",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -102565,14 +102565,14 @@
       "_const": false,
       "_constraint": {
         "$type": 375,
-        "_bounds": {
+        "_operator": 70,
+        "_type": {
           "$type": 505,
           "_content": {
             "$text": "B",
             "$type": 1
           }
-        },
-        "_operator": 70
+        }
       },
       "_name": {
         "$type": 505,
@@ -102592,7 +102592,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier)))",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier)))",
     "expectedSourceOut": "U extends B",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -102606,14 +102606,14 @@
     "grammar": "typescript",
     "input": {
       "$type": 375,
-      "_bounds": {
+      "_operator": 70,
+      "_type": {
         "$type": 505,
         "_content": {
           "$text": "B",
           "$type": 1
         }
-      },
-      "_operator": 70
+      }
     },
     "kind": "render",
     "options": {
@@ -102625,7 +102625,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(constraint bounds: (type_identifier))",
+    "expectedReparseTree": "(constraint type: (type_identifier))",
     "expectedSourceOut": "extends B",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -107573,14 +107573,14 @@
                   "_const": false,
                   "_constraint": {
                     "$type": 375,
-                    "_bounds": {
+                    "_operator": 55,
+                    "_type": {
                       "$type": 505,
                       "_content": {
                         "$text": "Element",
                         "$type": 1
                       }
-                    },
-                    "_operator": 55
+                    }
                   },
                   "_name": {
                     "$type": 505,
@@ -107607,7 +107607,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier))))) value: (predefined_type) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))) value: (predefined_type) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\ntype HandlerFunction<T: Element> = void\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -107640,14 +107640,14 @@
               "_const": false,
               "_constraint": {
                 "$type": 375,
-                "_bounds": {
+                "_operator": 55,
+                "_type": {
                   "$type": 505,
                   "_content": {
                     "$text": "Element",
                     "$type": 1
                   }
-                },
-                "_operator": 55
+                }
               },
               "_name": {
                 "$type": 505,
@@ -107672,7 +107672,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier))))) value: (predefined_type) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))) value: (predefined_type) terminator: (automatic_semicolon))",
     "expectedSourceOut": "type HandlerFunction<T: Element> = void\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -107782,14 +107782,14 @@
             "_const": false,
             "_constraint": {
               "$type": 375,
-              "_bounds": {
+              "_operator": 55,
+              "_type": {
                 "$type": 505,
                 "_content": {
                   "$text": "Element",
                   "$type": 1
                 }
-              },
-              "_operator": 55
+              }
             },
             "_name": {
               "$type": 505,
@@ -107812,7 +107812,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier)))))",
+    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier)))))",
     "expectedSourceOut": "<T: Element>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -107833,14 +107833,14 @@
           "_const": false,
           "_constraint": {
             "$type": 375,
-            "_bounds": {
+            "_operator": 55,
+            "_type": {
               "$type": 505,
               "_content": {
                 "$text": "Element",
                 "$type": 1
               }
-            },
-            "_operator": 55
+            }
           },
           "_name": {
             "$type": 505,
@@ -107862,7 +107862,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier))))",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))",
     "expectedSourceOut": "T: Element",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -107879,14 +107879,14 @@
       "_const": false,
       "_constraint": {
         "$type": 375,
-        "_bounds": {
+        "_operator": 55,
+        "_type": {
           "$type": 505,
           "_content": {
             "$text": "Element",
             "$type": 1
           }
-        },
-        "_operator": 55
+        }
       },
       "_name": {
         "$type": 505,
@@ -107906,7 +107906,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier)))",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier)))",
     "expectedSourceOut": "T: Element",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -107920,14 +107920,14 @@
     "grammar": "typescript",
     "input": {
       "$type": 375,
-      "_bounds": {
+      "_operator": 55,
+      "_type": {
         "$type": 505,
         "_content": {
           "$text": "Element",
           "$type": 1
         }
-      },
-      "_operator": 55
+      }
     },
     "kind": "render",
     "options": {
@@ -107939,7 +107939,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(constraint bounds: (type_identifier))",
+    "expectedReparseTree": "(constraint type: (type_identifier))",
     "expectedSourceOut": ": Element",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -132530,8 +132530,8 @@
                   "_const": false,
                   "_constraint": {
                     "$type": 375,
-                    "_bounds": 43,
-                    "_operator": 70
+                    "_operator": 70,
+                    "_type": 43
                   },
                   "_name": {
                     "$type": 505,
@@ -132675,8 +132675,8 @@
                   "_const": false,
                   "_constraint": {
                     "$type": 375,
-                    "_bounds": 43,
-                    "_operator": 70
+                    "_operator": 70,
+                    "_type": 43
                   },
                   "_name": {
                     "$type": 505,
@@ -132740,7 +132740,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (lookup_type type: (type_identifier) index_type: (literal_type (number_decimal)))) elements: (string_fragment) elements: (template_type type: (type_identifier)) elements: (string_fragment) elements: (template_type type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type type: (literal_type (string_single elements: (string_fragment)))) elements: (template_type type: (literal_type (number_decimal))) elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string_single elements: (string_fragment))) right: (literal_type (false)))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (lookup_type type: (type_identifier) index_type: (literal_type (number_decimal)))) elements: (string_fragment) elements: (template_type type: (type_identifier)) elements: (string_fragment) elements: (template_type type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type type: (literal_type (string_single elements: (string_fragment)))) elements: (template_type type: (literal_type (number_decimal))) elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string_single elements: (string_fragment))) right: (literal_type (false)))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type))))",
     "expectedSourceOut": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -133257,8 +133257,8 @@
               "_const": false,
               "_constraint": {
                 "$type": 375,
-                "_bounds": 43,
-                "_operator": 70
+                "_operator": 70,
+                "_type": 43
               },
               "_name": {
                 "$type": 505,
@@ -133344,7 +133344,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier)))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier)))",
     "expectedSourceOut": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -133448,8 +133448,8 @@
               "_const": false,
               "_constraint": {
                 "$type": 375,
-                "_bounds": 43,
-                "_operator": 70
+                "_operator": 70,
+                "_type": 43
               },
               "_name": {
                 "$type": 505,
@@ -133511,7 +133511,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type)))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type)))",
     "expectedSourceOut": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -134662,8 +134662,8 @@
             "_const": false,
             "_constraint": {
               "$type": 375,
-              "_bounds": 43,
-              "_operator": 70
+              "_operator": 70,
+              "_type": 43
             },
             "_name": {
               "$type": 505,
@@ -134687,7 +134687,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type)))))",
+    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type)))))",
     "expectedSourceOut": "<S extends string>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -134710,8 +134710,8 @@
             "_const": false,
             "_constraint": {
               "$type": 375,
-              "_bounds": 43,
-              "_operator": 70
+              "_operator": 70,
+              "_type": 43
             },
             "_name": {
               "$type": 505,
@@ -134735,7 +134735,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type)))))",
+    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type)))))",
     "expectedSourceOut": "<S extends string>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -134858,8 +134858,8 @@
           "_const": false,
           "_constraint": {
             "$type": 375,
-            "_bounds": 43,
-            "_operator": 70
+            "_operator": 70,
+            "_type": 43
           },
           "_name": {
             "$type": 505,
@@ -134882,7 +134882,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))",
     "expectedSourceOut": "S extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -134903,8 +134903,8 @@
           "_const": false,
           "_constraint": {
             "$type": 375,
-            "_bounds": 43,
-            "_operator": 70
+            "_operator": 70,
+            "_type": 43
           },
           "_name": {
             "$type": 505,
@@ -134927,7 +134927,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type))))",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))",
     "expectedSourceOut": "S extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -135080,8 +135080,8 @@
       "_const": false,
       "_constraint": {
         "$type": 375,
-        "_bounds": 43,
-        "_operator": 70
+        "_operator": 70,
+        "_type": 43
       },
       "_name": {
         "$type": 505,
@@ -135102,7 +135102,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type)))",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type)))",
     "expectedSourceOut": "S extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -135119,8 +135119,8 @@
       "_const": false,
       "_constraint": {
         "$type": 375,
-        "_bounds": 43,
-        "_operator": 70
+        "_operator": 70,
+        "_type": 43
       },
       "_name": {
         "$type": 505,
@@ -135141,7 +135141,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint bounds: (predefined_type)))",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type)))",
     "expectedSourceOut": "S extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -137357,8 +137357,8 @@
     "grammar": "typescript",
     "input": {
       "$type": 375,
-      "_bounds": 43,
-      "_operator": 70
+      "_operator": 70,
+      "_type": 43
     },
     "kind": "render",
     "options": {
@@ -137371,7 +137371,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(constraint bounds: (predefined_type))",
+    "expectedReparseTree": "(constraint type: (predefined_type))",
     "expectedSourceOut": "extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -137385,8 +137385,8 @@
     "grammar": "typescript",
     "input": {
       "$type": 375,
-      "_bounds": 43,
-      "_operator": 70
+      "_operator": 70,
+      "_type": 43
     },
     "kind": "render",
     "options": {
@@ -137399,7 +137399,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(constraint bounds: (predefined_type))",
+    "expectedReparseTree": "(constraint type: (predefined_type))",
     "expectedSourceOut": "extends string",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -143466,7 +143466,8 @@
                   "_const": false,
                   "_constraint": {
                     "$type": 375,
-                    "_bounds": {
+                    "_operator": 70,
+                    "_type": {
                       "$type": 345,
                       "_abstract": true,
                       "_parameters": {
@@ -143496,8 +143497,7 @@
                         }
                       },
                       "_type": 40
-                    },
-                    "_operator": 70
+                    }
                   },
                   "_name": {
                     "$type": 505,
@@ -143539,7 +143539,8 @@
                   "_const": false,
                   "_constraint": {
                     "$type": 375,
-                    "_bounds": {
+                    "_operator": 70,
+                    "_type": {
                       "$type": 345,
                       "_abstract": false,
                       "_parameters": {
@@ -143569,8 +143570,7 @@
                         }
                       },
                       "_type": 40
-                    },
-                    "_operator": 70
+                    }
                   },
                   "_name": {
                     "$type": 505,
@@ -143603,7 +143603,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier)))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier)))",
     "expectedSourceOut": "\ntype Foo<T extends abstract new (...args: any) => any> = T;\ntype Foo<T extends new (...args: any) => any> = T;\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -143636,7 +143636,8 @@
               "_const": false,
               "_constraint": {
                 "$type": 375,
-                "_bounds": {
+                "_operator": 70,
+                "_type": {
                   "$type": 345,
                   "_abstract": true,
                   "_parameters": {
@@ -143666,8 +143667,7 @@
                     }
                   },
                   "_type": 40
-                },
-                "_operator": 70
+                }
               },
               "_name": {
                 "$type": 505,
@@ -143698,7 +143698,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier))",
     "expectedSourceOut": "type Foo<T extends abstract new (...args: any) => any> = T;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -143731,7 +143731,8 @@
               "_const": false,
               "_constraint": {
                 "$type": 375,
-                "_bounds": {
+                "_operator": 70,
+                "_type": {
                   "$type": 345,
                   "_abstract": false,
                   "_parameters": {
@@ -143761,8 +143762,7 @@
                     }
                   },
                   "_type": 40
-                },
-                "_operator": 70
+                }
               },
               "_name": {
                 "$type": 505,
@@ -143793,7 +143793,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))) value: (type_identifier))",
     "expectedSourceOut": "type Foo<T extends new (...args: any) => any> = T;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -143990,7 +143990,8 @@
             "_const": false,
             "_constraint": {
               "$type": 375,
-              "_bounds": {
+              "_operator": 70,
+              "_type": {
                 "$type": 345,
                 "_abstract": true,
                 "_parameters": {
@@ -144020,8 +144021,7 @@
                   }
                 },
                 "_type": 40
-              },
-              "_operator": 70
+              }
             },
             "_name": {
               "$type": 505,
@@ -144044,7 +144044,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))))",
+    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))))",
     "expectedSourceOut": "<T extends abstract new (...args: any) => any>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -144067,7 +144067,8 @@
             "_const": false,
             "_constraint": {
               "$type": 375,
-              "_bounds": {
+              "_operator": 70,
+              "_type": {
                 "$type": 345,
                 "_abstract": false,
                 "_parameters": {
@@ -144097,8 +144098,7 @@
                   }
                 },
                 "_type": 40
-              },
-              "_operator": 70
+              }
             },
             "_name": {
               "$type": 505,
@@ -144121,7 +144121,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))))",
+    "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))))",
     "expectedSourceOut": "<T extends new (...args: any) => any>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -144142,7 +144142,8 @@
           "_const": false,
           "_constraint": {
             "$type": 375,
-            "_bounds": {
+            "_operator": 70,
+            "_type": {
               "$type": 345,
               "_abstract": true,
               "_parameters": {
@@ -144172,8 +144173,7 @@
                 }
               },
               "_type": 40
-            },
-            "_operator": 70
+            }
           },
           "_name": {
             "$type": 505,
@@ -144195,7 +144195,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))",
     "expectedSourceOut": "T extends abstract new (...args: any) => any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -144216,7 +144216,8 @@
           "_const": false,
           "_constraint": {
             "$type": 375,
-            "_bounds": {
+            "_operator": 70,
+            "_type": {
               "$type": 345,
               "_abstract": false,
               "_parameters": {
@@ -144246,8 +144247,7 @@
                 }
               },
               "_type": 40
-            },
-            "_operator": 70
+            }
           },
           "_name": {
             "$type": 505,
@@ -144269,7 +144269,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))",
+    "expectedReparseTree": "(type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))))",
     "expectedSourceOut": "T extends new (...args: any) => any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -144286,7 +144286,8 @@
       "_const": false,
       "_constraint": {
         "$type": 375,
-        "_bounds": {
+        "_operator": 70,
+        "_type": {
           "$type": 345,
           "_abstract": true,
           "_parameters": {
@@ -144316,8 +144317,7 @@
             }
           },
           "_type": 40
-        },
-        "_operator": 70
+        }
       },
       "_name": {
         "$type": 505,
@@ -144337,7 +144337,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))",
     "expectedSourceOut": "T extends abstract new (...args: any) => any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -144354,7 +144354,8 @@
       "_const": false,
       "_constraint": {
         "$type": 375,
-        "_bounds": {
+        "_operator": 70,
+        "_type": {
           "$type": 345,
           "_abstract": false,
           "_parameters": {
@@ -144384,8 +144385,7 @@
             }
           },
           "_type": 40
-        },
-        "_operator": 70
+        }
       },
       "_name": {
         "$type": 505,
@@ -144405,7 +144405,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) constraint: (constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type))))",
     "expectedSourceOut": "T extends new (...args: any) => any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -144419,7 +144419,8 @@
     "grammar": "typescript",
     "input": {
       "$type": 375,
-      "_bounds": {
+      "_operator": 70,
+      "_type": {
         "$type": 345,
         "_abstract": true,
         "_parameters": {
@@ -144449,8 +144450,7 @@
           }
         },
         "_type": 40
-      },
-      "_operator": 70
+      }
     },
     "kind": "render",
     "options": {
@@ -144462,7 +144462,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))",
+    "expectedReparseTree": "(constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))",
     "expectedSourceOut": "extends abstract new (...args: any) => any",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -144476,7 +144476,8 @@
     "grammar": "typescript",
     "input": {
       "$type": 375,
-      "_bounds": {
+      "_operator": 70,
+      "_type": {
         "$type": 345,
         "_abstract": false,
         "_parameters": {
@@ -144506,8 +144507,7 @@
           }
         },
         "_type": 40
-      },
-      "_operator": 70
+      }
     },
     "kind": "render",
     "options": {
@@ -144519,7 +144519,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(constraint bounds: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))",
+    "expectedReparseTree": "(constraint type: (constructor_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (predefined_type))))) type: (predefined_type)))",
     "expectedSourceOut": "extends new (...args: any) => any",
     "grammar": "typescript",
     "kind": "roundtrip",

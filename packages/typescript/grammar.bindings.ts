@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "c230235fd844d561bfeae6d7975684e790b9c8a61d68ed07cb8ebb2dd4733e33";
+export const hash = "4e23759d2bd771ae78547f1246ba1b3f7ff1a7034bd6423509b4cf0672af5f82";
 
 export const renames = {
 	program: "file",
@@ -50,7 +50,6 @@ export const renames = {
 	import_alias: "alias_import_statement",
 	namespace_export: "namespace_export_clause",
 	export_specifier: "specifier_export_clause",
-	constraint: "bounds_clause",
 	default_type: "default_clause",
 	pair: "pair_element",
 	tuple_parameter: "member_tuple_element",
@@ -72,9 +71,9 @@ export const renames = {
 	import: "import_call_expression",
 	meta_property: "meta_expression",
 	class: "class_expression",
-	decorator_member_expression: "member_content_attribute",
-	decorator_call_expression: "call_content_attribute",
-	decorator_parenthesized_expression: "parenthesized_content_attribute",
+	decorator_member_expression: "member_attribute",
+	decorator_call_expression: "call_attribute",
+	decorator_parenthesized_expression: "parenthesized_attribute",
 	object_assignment_pattern: "assignment_object_pattern",
 	pair_pattern: "pair_object_pattern",
 	array_pattern: "list_pattern",
@@ -112,7 +111,6 @@ export const renames = {
 	this: "receiver_identifier",
 	super: "super_identifier",
 	accessibility_modifier: "visibility_modifier",
-	decorator: "decorator_attribute",
 	comment_block: "block_comment",
 	comment_line: "line_comment"
 };
@@ -132,8 +130,6 @@ export default grammar(
 			as_expression: { "2": field("type") },
 			assignment_expression: { "0/0": field("disposable") },
 			call_expression_member: { "1": field("optional_chain") },
-			constraint: { "1": field("bounds") },
-			decorator: { "1": field("content") },
 			export_clause: { "1/0": field("export_specifiers") },
 			export_statement_default_from: { "1": field("type_only") },
 			export_statement_equals_export: { "2": field("value") },

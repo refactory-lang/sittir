@@ -636,8 +636,8 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.Al
 		name() {
 			return hydrateSlot<T.DottedName>(this, '_name', tree);
 		},
-		alias() {
-			return hydrateSlot<T.Identifier>(this, '_alias', tree);
+		rename() {
+			return hydrateSlot<T.Identifier>(this, '_rename', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -654,7 +654,7 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.Al
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { name: wrapAliasedImport$with$name, alias: wrapAliasedImport$with$alias, [RECEIVER]: node };
+	node.$with = { name: wrapAliasedImport$with$name, rename: wrapAliasedImport$with$rename, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AliasedImport.Parsed;
 }
@@ -669,10 +669,10 @@ function wrapAliasedImport$with(node: Held, setter: string, args: readonly unkno
 					wrapAliasedImport({ ...$edited(data), _name: admitSlot(handle, 'aliased_import', 'name', v) }, tree)
 				)
 			);
-		case 'alias':
-			return applySetter(args, (v: NonNullable<T.AliasedImport['_alias']>) =>
+		case 'rename':
+			return applySetter(args, (v: NonNullable<T.AliasedImport['_rename']>) =>
 				rebuilt(node, handle, () =>
-					wrapAliasedImport({ ...$edited(data), _alias: admitSlot(handle, 'aliased_import', 'alias', v) }, tree)
+					wrapAliasedImport({ ...$edited(data), _rename: admitSlot(handle, 'aliased_import', 'rename', v) }, tree)
 				)
 			);
 	}
@@ -681,8 +681,8 @@ function wrapAliasedImport$with(node: Held, setter: string, args: readonly unkno
 function wrapAliasedImport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAliasedImport$with(receiverOf(this, '$with.name'), 'name', args);
 }
-function wrapAliasedImport$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAliasedImport$with(receiverOf(this, '$with.alias'), 'alias', args);
+function wrapAliasedImport$with$rename(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAliasedImport$with(receiverOf(this, '$with.rename'), 'rename', args);
 }
 
 export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle): T.PrintStatement.Parsed {
@@ -2901,8 +2901,8 @@ export function wrapParenthesizedListSplat(
 	const node = {
 		...data,
 		$type: TSKindId.ParenthesizedListSplat as const,
-		content() {
-			return hydrateSlot<T.ParenthesizedListSplat | T.ListSplat>(this, '_content', tree);
+		expression() {
+			return hydrateSlot<T.ParenthesizedListSplat | T.ListSplat>(this, '_expression', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2919,7 +2919,7 @@ export function wrapParenthesizedListSplat(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: wrapParenthesizedListSplat$with$content, [RECEIVER]: node };
+	node.$with = { expression: wrapParenthesizedListSplat$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Parsed;
 }
@@ -2928,11 +2928,11 @@ function wrapParenthesizedListSplat$with(node: Held, setter: string, args: reado
 	const data = node[INPUT] as T.ParenthesizedListSplat;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.ParenthesizedListSplat['_expression']>) =>
 				rebuilt(node, handle, () =>
 					wrapParenthesizedListSplat(
-						{ ...$edited(data), _content: admitSlot(handle, 'parenthesized_list_splat', 'content', v) },
+						{ ...$edited(data), _expression: admitSlot(handle, 'parenthesized_list_splat', 'expression', v) },
 						tree
 					)
 				)
@@ -2940,8 +2940,8 @@ function wrapParenthesizedListSplat$with(node: Held, setter: string, args: reado
 	}
 	throw new Error(`parenthesized_list_splat has no $with.${setter}`);
 }
-function wrapParenthesizedListSplat$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParenthesizedListSplat$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapParenthesizedListSplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParenthesizedListSplat$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 function wrapArgumentList$listRead(this: { readonly arguments: () => unknown }): readonly unknown[] {
@@ -13574,7 +13574,7 @@ function viewImportList(data: RecordPosition, tree: TreeHandle): T.ImportList.Pa
 function viewAliasedImport$name(this: RecordHandle) {
 	return viewSlot<T.DottedName>(this, 2, 3, 1, 0, 2);
 }
-function viewAliasedImport$alias(this: RecordHandle) {
+function viewAliasedImport$rename(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
 }
 function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImport.Parsed {
@@ -13586,7 +13586,7 @@ function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImp
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		name: viewAliasedImport$name,
-		alias: viewAliasedImport$alias,
+		rename: viewAliasedImport$rename,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -13597,7 +13597,7 @@ function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImp
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { name: $with$name, alias: $with$alias, [RECEIVER]: node };
+	node.$with = { name: $with$name, rename: $with$rename, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AliasedImport.Parsed;
 }
@@ -14777,7 +14777,7 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 	return node as unknown as T.TypeParameter.Parsed;
 }
 
-function viewParenthesizedListSplat$content(this: RecordHandle) {
+function viewParenthesizedListSplat$expression(this: RecordHandle) {
 	return viewSlot<T.ParenthesizedListSplat | T.ListSplat>(this, 2, 3, 1, 0, 2);
 }
 function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.ParenthesizedListSplat.Parsed {
@@ -14788,7 +14788,7 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewParenthesizedListSplat$content,
+		expression: viewParenthesizedListSplat$expression,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -14799,7 +14799,7 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Parsed;
 }
@@ -20946,6 +20946,9 @@ function $with$radixPrefix(this: Received<RecordPosition>, ...args: unknown[]): 
 }
 function $with$real(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.real'), _wrap, 'real', args);
+}
+function $with$rename(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.rename'), _wrap, 'rename', args);
 }
 function $with$returnType(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.returnType'), _wrap, 'returnType', args);

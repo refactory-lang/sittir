@@ -27,7 +27,6 @@ export type { BlockComments } from './block-comments/index.ts';
 export type { BoundClauses } from './parametric-polymorphism/bounded-quantification/bound-clauses/index.ts';
 export type { BoundedQuantification } from './parametric-polymorphism/bounded-quantification/index.ts';
 export type { ByteStrings } from './byte-strings/index.ts';
-export type { CFamilyExpressionStatements } from './c-family-expression-statements/index.ts';
 export type { CFamilyUnaryOperators } from './c-family-unary-operators/index.ts';
 export type { CLike } from './c-like/index.ts';
 export type { CStrings } from './c-strings/index.ts';

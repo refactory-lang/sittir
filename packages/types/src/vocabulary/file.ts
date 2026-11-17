@@ -13,6 +13,10 @@ export interface File<G extends GrammarMap, K extends Under<'file'> = 'file'> {
 		| V.Attribute.Any<G>
 		| V.Declaration.Any<G>
 		| V.Expression.Call.Macro<G>
+		| V.Expression.Any<G>
+		| V.Identifier.Any<G>
+		| V.Literal.Any<G>
+		| V.Pattern.Rest<G>
 		| V.Statement.Any<G>
 	>[];
 }

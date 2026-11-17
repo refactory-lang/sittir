@@ -11,6 +11,30 @@ const readFirst = (source: string): Read => runtime.read(statementsOf(source)[0]
 const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as Read) as never));
 
 describe('the portable read', () => {
+	it('reads the expressions a block holds as statements as themselves, an assignment and a binary included, and builds them back', () => {
+		const source = 'fn f() {\n    a = 1;\n    a + b;\n}\n';
+		const fn = ((runtime.read(runtime.engine.parse(source)) as Read).statements as readonly Read[])[0]!;
+		expect(((fn.body as Read).statements as readonly Read[]).map(({ $path }) => $path)).toEqual(['expression.assignment', 'expression.binary.arithmetic.add']);
+		expect(roundTrip(source)).toBe(source);
+	});
+
+	it.each(['true;', 'a;', '1;', 'a!();'])('reads the statement node of %j on its own as the file read reads it, a unit literal included', (source) => {
+		expect(readFirst(`${source}\n`)).toEqual(((runtime.read(runtime.engine.parse(`${source}\n`)) as Read).statements as readonly Read[])[0]);
+	});
+
+	it.each([
+		['a!();', ['terminated']],
+		['b![];', ['terminated']],
+		['c!{};', ['terminated']],
+		['foo!{a}', undefined]
+	] as const)('reads the macro call of %j with the flags %j, and builds it back as written', (source, flags) => {
+		const call = readFirst(`${source}\n`);
+		expect(call).toMatchObject({ $path: 'expression.call.macro' });
+		expect(call.$flags).toEqual(flags);
+		expect(roundTrip(`${source}\n`)).toBe(`${source}\n`);
+		expect(String(runtime.engine.render(runtime.build({ $path: 'file', statements: [call] } as never) as never))).toBe(`${source}\n`);
+	});
+
 	it('reads a metavariable as its path with its name as the value, and builds the $ back', () => {
 		expect(readFirst('struct S<$t>;\n')).toMatchObject({ $path: 'declaration.struct.unit', typeParameters: [{ $path: 'identifier.metavariable', $value: 't' }] });
 		expect(runtime.build({ $path: 'identifier.metavariable', $value: 'x' } as never)).toBeDefined();
@@ -66,7 +90,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a raw string as its path with its content, and builds it back with the shortest hash run its content fits', () => {
-		expect(readFirst('r"x";')).toEqual({ $path: 'statement.expression', content: { $path: 'literal.string.raw', content: 'x' } });
+		expect(readFirst('r"x";')).toEqual({ $path: 'literal.string.raw', $value: 'x' });
 		expect(roundTrip('r"x";')).toBe('r"x";\n');
 		expect(roundTrip('r##"x"##;')).toBe('r"x";\n');
 		expect(roundTrip('r#"a"b"#;')).toBe('r#"a"b"#;\n');
@@ -136,7 +160,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads the attributes of an enum variant and of a field onto the element, and builds them back on their own lines', () => {
-		const attributes = [{ $path: 'attribute', content: { $path: 'attribute.content', path: 'a' } }];
+		const attributes = [{ $path: 'attribute', path: 'a' }];
 		const sources = ['enum E {\n    #[a]\n    V,\n}\n', 'struct S {\n    #[a]\n    f: u8,\n}\n', 'struct S(#[a] u8);\n'];
 		expect(readFirst(sources[0]!)).toMatchObject({ body: [{ $path: 'declaration.enum_member', name: 'V', attributes }] });
 		expect(readFirst(sources[1]!)).toMatchObject({ body: [{ $path: 'declaration.field', name: 'f', attributes }] });
@@ -153,7 +177,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a call argument with attributes as an argument, one without as its expression, and builds both back', () => {
-		const call = readFirst('f(#[cfg(x)] a, b);').content as Read;
+		const call = readFirst('f(#[cfg(x)] a, b);');
 		expect(call.arguments).toEqual([
 			{ $path: 'argument', attributes: [expect.objectContaining({ $path: 'attribute' })], value: 'a' },
 			'b'

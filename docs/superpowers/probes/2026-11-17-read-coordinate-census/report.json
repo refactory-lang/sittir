@@ -1,0 +1,1539 @@
+[
+ {
+  "corpus": "paired-rust",
+  "grammar": "rust",
+  "sources": 149,
+  "sourceBytes": 14652,
+  "parseErrors": 0,
+  "readWords": 89601,
+  "attributedLessTotal": 0,
+  "recordGapWords": 182,
+  "cellRows": {
+   "named": 1181,
+   "kindMismatch": 148,
+   "notARow": 0,
+   "pairs": {
+    "i32 -> primitive_type / primitive_type": 31,
+    ", -> token_tree_punctuation / token_tree_punctuation": 11,
+    "usize -> primitive_type / primitive_type": 11,
+    "u32 -> primitive_type / primitive_type": 9,
+    "+ -> token_tree_punctuation / token_tree_punctuation": 6,
+    ". -> token_tree_punctuation / token_tree_punctuation": 6,
+    "str -> primitive_type / primitive_type": 6,
+    "bool -> primitive_type / primitive_type": 5
+   }
+  },
+  "records": {
+   "n": 3873,
+   "words": 28272,
+   "headerOnly": 1,
+   "error": 0,
+   "extra": 43
+  },
+  "sideAt": {
+   "n": 3873,
+   "words": 11619,
+   "zeroWidth": 0,
+   "headerOnly": 1,
+   "extra": 43
+  },
+  "sideSource": {
+   "n": 3873,
+   "words": 3873
+  },
+  "sideRecords": {
+   "n": 3873,
+   "words": 56337
+  },
+  "runRecordEntries": {
+   "n": 3724,
+   "words": 7448
+  },
+  "leafCells": {
+   "n": 1276,
+   "words": 4321
+  },
+  "unitCells": {
+   "n": 291,
+   "words": 909
+  },
+  "capturedStrings": {
+   "n": 224,
+   "words": 448
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 2856,
+    "words": 11482,
+    "share": 12.81
+   },
+   "slot content: variable-text leaf": {
+    "n": 893,
+    "words": 3600,
+    "share": 4.02
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 180,
+    "words": 720,
+    "share": 0.8
+   },
+   "slot content: node with no record": {
+    "n": 174,
+    "words": 696,
+    "share": 0.78
+   },
+   "template token: list separator": {
+    "n": 111,
+    "words": 444,
+    "share": 0.5
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 88,
+    "words": 352,
+    "share": 0.39
+   },
+   "trivia": {
+    "n": 66,
+    "words": 264,
+    "share": 0.29
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 32,
+    "words": 128,
+    "share": 0.14
+   },
+   "slot content: keyword unit": {
+    "n": 25,
+    "words": 108,
+    "share": 0.12
+   },
+   "unexplained": {
+    "n": 22,
+    "words": 97,
+    "share": 0.11
+   },
+   "template token: list separator, trailing": {
+    "n": 12,
+    "words": 48,
+    "share": 0.05
+   },
+   "slot content: variable-text leaf (zero-width)": {
+    "n": 1,
+    "words": 4,
+    "share": 0
+   }
+  },
+  "unexplained": {
+   "where_predicates > ,, anonymous, leaf, wide, in-record": 6,
+   "inner_line_doc_comment_marker > !, anonymous, leaf, wide, under-unnamed-row, no render body": 5,
+   "outer_line_doc_comment_marker > /, anonymous, leaf, wide, under-unnamed-row, no render body": 4,
+   "macro_rules > ;, anonymous, leaf, wide, in-record": 3,
+   "impl_item_body > unsafe, anonymous, leaf, wide, in-record": 2,
+   "tuple_expression_elements > ,, anonymous, leaf, wide, in-record": 1,
+   "type_parameters_elements > ,, anonymous, leaf, wide, in-record": 1
+  },
+  "cellWordsToday": 23729,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 89601,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -11974,
+    "total": 77627,
+    "share": 86.6
+   },
+   "one-word parsed cell": {
+    "delta": -15891,
+    "total": 73710,
+    "share": 82.3
+   },
+   "both": {
+    "delta": -27865,
+    "total": 61736,
+    "share": 68.9
+   }
+  }
+ },
+ {
+  "corpus": "paired-typescript",
+  "grammar": "typescript",
+  "sources": 119,
+  "sourceBytes": 13428,
+  "parseErrors": 1,
+  "readWords": 70505,
+  "attributedLessTotal": 0,
+  "recordGapWords": 278,
+  "cellRows": {
+   "named": 1288,
+   "kindMismatch": 164,
+   "notARow": 0,
+   "pairs": {
+    "string -> predefined_type / predefined_type": 60,
+    "number -> predefined_type / predefined_type": 40,
+    "any -> predefined_type / predefined_type": 23,
+    "public -> accessibility_modifier / accessibility_modifier": 10,
+    "void -> predefined_type / predefined_type": 9,
+    "boolean -> predefined_type / predefined_type": 6,
+    "never -> predefined_type / predefined_type": 6,
+    "private -> accessibility_modifier / accessibility_modifier": 4
+   }
+  },
+  "records": {
+   "n": 3023,
+   "words": 21103,
+   "headerOnly": 1,
+   "error": 0,
+   "extra": 9
+  },
+  "sideAt": {
+   "n": 3023,
+   "words": 9069,
+   "zeroWidth": 0,
+   "headerOnly": 1,
+   "extra": 9
+  },
+  "sideSource": {
+   "n": 3023,
+   "words": 3023
+  },
+  "sideRecords": {
+   "n": 3023,
+   "words": 45503
+  },
+  "runRecordEntries": {
+   "n": 2904,
+   "words": 5808
+  },
+  "leafCells": {
+   "n": 1061,
+   "words": 3404
+  },
+  "unitCells": {
+   "n": 825,
+   "words": 1386
+  },
+  "capturedStrings": {
+   "n": 14,
+   "words": 28
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 2079,
+    "words": 8404,
+    "share": 11.92
+   },
+   "slot content: variable-text leaf": {
+    "n": 461,
+    "words": 1921,
+    "share": 2.72
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 337,
+    "words": 1348,
+    "share": 1.91
+   },
+   "slot content: unit the external scanner issues (zero-width)": {
+    "n": 211,
+    "words": 844,
+    "share": 1.2
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 200,
+    "words": 801,
+    "share": 1.14
+   },
+   "slot content: node with no record": {
+    "n": 199,
+    "words": 796,
+    "share": 1.13
+   },
+   "template token: list separator": {
+    "n": 94,
+    "words": 376,
+    "share": 0.53
+   },
+   "slot content: keyword unit": {
+    "n": 56,
+    "words": 224,
+    "share": 0.32
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 49,
+    "words": 196,
+    "share": 0.28
+   },
+   "unexplained": {
+    "n": 43,
+    "words": 173,
+    "share": 0.25
+   },
+   "slot content: other model type (supertype)": {
+    "n": 19,
+    "words": 90,
+    "share": 0.13
+   },
+   "template token: list separator, the list kind lists several separator candidates": {
+    "n": 17,
+    "words": 68,
+    "share": 0.1
+   },
+   "template token: list separator, trailing": {
+    "n": 7,
+    "words": 28,
+    "share": 0.04
+   },
+   "template token: list separator, the list kind lists several separator candidates, trailing": {
+    "n": 6,
+    "words": 24,
+    "share": 0.03
+   },
+   "slot content: other model type (branch)": {
+    "n": 4,
+    "words": 20,
+    "share": 0.03
+   },
+   "template token: list separator, the list kind lists several separator candidates (zero-width)": {
+    "n": 3,
+    "words": 12,
+    "share": 0.02
+   },
+   "template token, under a row with no record": {
+    "n": 2,
+    "words": 8,
+    "share": 0.01
+   },
+   "slot content: other model type (envelope)": {
+    "n": 1,
+    "words": 5,
+    "share": 0.01
+   },
+   "trivia": {
+    "n": 1,
+    "words": 4,
+    "share": 0.01
+   },
+   "template token: list separator, the list kind lists several separator candidates, trailing (zero-width)": {
+    "n": 1,
+    "words": 4,
+    "share": 0.01
+   }
+  },
+  "unexplained": {
+   "object_type_content > automatic_semicolon, named, leaf, zero-width, in-record": 25,
+   "object_type_content > ;, anonymous, leaf, wide, in-record": 9,
+   "array > ,, anonymous, leaf, wide, in-record": 3,
+   "this > this, anonymous, leaf, wide, under-unnamed-row, no render body": 2,
+   "constructor_declaration > identifier (shown as property_identifier), named, leaf, wide, in-record": 1,
+   "import > import, anonymous, leaf, wide, under-unnamed-row, no render body": 1,
+   "override_modifier > override, anonymous, leaf, wide, under-unnamed-row, no render body": 1,
+   "tuple_type_members > ,, anonymous, leaf, wide, in-record": 1
+  },
+  "cellWordsToday": 17296,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 70505,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -8924,
+    "total": 61581,
+    "share": 87.3
+   },
+   "one-word parsed cell": {
+    "delta": -11480,
+    "total": 59025,
+    "share": 83.7
+   },
+   "both": {
+    "delta": -20404,
+    "total": 50101,
+    "share": 71.1
+   }
+  }
+ },
+ {
+  "corpus": "paired-python",
+  "grammar": "python",
+  "sources": 116,
+  "sourceBytes": 11765,
+  "parseErrors": 1,
+  "readWords": 93577,
+  "attributedLessTotal": 0,
+  "recordGapWords": 117,
+  "cellRows": {
+   "named": 1451,
+   "kindMismatch": 0,
+   "notARow": 0,
+   "pairs": {}
+  },
+  "records": {
+   "n": 4273,
+   "words": 25120,
+   "headerOnly": 5,
+   "error": 0,
+   "extra": 46
+  },
+  "sideAt": {
+   "n": 4273,
+   "words": 12819,
+   "zeroWidth": 2,
+   "headerOnly": 5,
+   "extra": 46
+  },
+  "sideSource": {
+   "n": 4273,
+   "words": 4273
+  },
+  "sideRecords": {
+   "n": 4273,
+   "words": 59853
+  },
+  "runRecordEntries": {
+   "n": 4157,
+   "words": 8314
+  },
+  "leafCells": {
+   "n": 1291,
+   "words": 4750
+  },
+  "unitCells": {
+   "n": 178,
+   "words": 403
+  },
+  "capturedStrings": {
+   "n": 606,
+   "words": 1212
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 1537,
+    "words": 6148,
+    "share": 6.57
+   },
+   "slot content: variable-text leaf": {
+    "n": 1284,
+    "words": 5164,
+    "share": 5.52
+   },
+   "template token (zero-width)": {
+    "n": 777,
+    "words": 3108,
+    "share": 3.32
+   },
+   "template token: list separator": {
+    "n": 200,
+    "words": 800,
+    "share": 0.85
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 73,
+    "words": 292,
+    "share": 0.31
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 56,
+    "words": 224,
+    "share": 0.24
+   },
+   "slot content: node with no record": {
+    "n": 52,
+    "words": 208,
+    "share": 0.22
+   },
+   "slot content: keyword unit": {
+    "n": 37,
+    "words": 148,
+    "share": 0.16
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 22,
+    "words": 90,
+    "share": 0.1
+   },
+   "unexplained": {
+    "n": 19,
+    "words": 76,
+    "share": 0.08
+   },
+   "template token: list separator, trailing": {
+    "n": 13,
+    "words": 52,
+    "share": 0.06
+   },
+   "slot content: other model type (envelope)": {
+    "n": 2,
+    "words": 10,
+    "share": 0.01
+   },
+   "slot content: unit the external scanner issues (zero-width)": {
+    "n": 2,
+    "words": 8,
+    "share": 0.01
+   },
+   "trivia": {
+    "n": 2,
+    "words": 8,
+    "share": 0.01
+   },
+   "slot content: other model type (polymorph)": {
+    "n": 1,
+    "words": 5,
+    "share": 0.01
+   }
+  },
+  "unexplained": {
+   "block_statement > newline, named, leaf, zero-width, in-record, no render body": 6,
+   "bare_tuple_pattern > ,, anonymous, leaf, wide, in-record, no render body": 4,
+   "simple_statements_elements > ;, anonymous, leaf, wide, in-record": 3,
+   "tuple_elements > ,, anonymous, leaf, wide, in-record": 3,
+   "expression_list > ,, anonymous, leaf, wide, in-record": 1,
+   "print_chevron_arguments > ,, anonymous, leaf, wide, in-record": 1,
+   "subjects > ,, anonymous, leaf, wide, in-record": 1
+  },
+  "cellWordsToday": 22236,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 93577,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -10108,
+    "total": 83469,
+    "share": 89.2
+   },
+   "one-word parsed cell": {
+    "delta": -13906,
+    "total": 79671,
+    "share": 85.1
+   },
+   "both": {
+    "delta": -24014,
+    "total": 69563,
+    "share": 74.3
+   }
+  }
+ },
+ {
+  "corpus": "paired-regex",
+  "grammar": "regex",
+  "sources": 37,
+  "sourceBytes": 703,
+  "parseErrors": 0,
+  "readWords": 10253,
+  "attributedLessTotal": 0,
+  "recordGapWords": 36,
+  "cellRows": {
+   "named": 265,
+   "kindMismatch": 0,
+   "notARow": 0,
+   "pairs": {}
+  },
+  "records": {
+   "n": 454,
+   "words": 3166,
+   "headerOnly": 11,
+   "error": 0,
+   "extra": 0
+  },
+  "sideAt": {
+   "n": 454,
+   "words": 1362,
+   "zeroWidth": 0,
+   "headerOnly": 11,
+   "extra": 0
+  },
+  "sideSource": {
+   "n": 454,
+   "words": 454
+  },
+  "sideRecords": {
+   "n": 454,
+   "words": 6193
+  },
+  "runRecordEntries": {
+   "n": 417,
+   "words": 834
+  },
+  "leafCells": {
+   "n": 220,
+   "words": 812
+  },
+  "unitCells": {
+   "n": 45,
+   "words": 147
+  },
+  "capturedStrings": {
+   "n": 16,
+   "words": 32
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "slot content: variable-text leaf": {
+    "n": 204,
+    "words": 819,
+    "share": 7.99
+   },
+   "template token": {
+    "n": 138,
+    "words": 552,
+    "share": 5.38
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 41,
+    "words": 164,
+    "share": 1.6
+   },
+   "slot content: node with no record": {
+    "n": 20,
+    "words": 80,
+    "share": 0.78
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 20,
+    "words": 80,
+    "share": 0.78
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 7,
+    "words": 32,
+    "share": 0.31
+   },
+   "unexplained": {
+    "n": 7,
+    "words": 28,
+    "share": 0.27
+   },
+   "template token: list separator": {
+    "n": 5,
+    "words": 20,
+    "share": 0.2
+   },
+   "template token: list separator, trailing": {
+    "n": 1,
+    "words": 4,
+    "share": 0.04
+   }
+  },
+  "unexplained": {
+   "alternation > |, anonymous, leaf, wide, in-record": 4,
+   "lazy > ?, anonymous, leaf, wide, under-unnamed-row, no render body": 2,
+   "negation > ^, anonymous, leaf, wide, under-unnamed-row, no render body": 1
+  },
+  "cellWordsToday": 2965,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 10253,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -576,
+    "total": 9677,
+    "share": 94.4
+   },
+   "one-word parsed cell": {
+    "delta": -2009,
+    "total": 8244,
+    "share": 80.4
+   },
+   "both": {
+    "delta": -2585,
+    "total": 7668,
+    "share": 74.8
+   }
+  }
+ },
+ {
+  "corpus": "paired-scm",
+  "grammar": "scm",
+  "sources": 19,
+  "sourceBytes": 2380,
+  "parseErrors": 0,
+  "readWords": 11540,
+  "attributedLessTotal": 0,
+  "recordGapWords": 71,
+  "cellRows": {
+   "named": 251,
+   "kindMismatch": 14,
+   "notARow": 0,
+   "pairs": {
+    "? -> predicate_type / predicate_type": 7,
+    "? -> quantifier / quantifier": 3,
+    "* -> quantifier / quantifier": 2,
+    "! -> predicate_type / predicate_type": 1,
+    "+ -> quantifier / quantifier": 1
+   }
+  },
+  "records": {
+   "n": 453,
+   "words": 3018,
+   "headerOnly": 0,
+   "error": 0,
+   "extra": 3
+  },
+  "sideAt": {
+   "n": 453,
+   "words": 1359,
+   "zeroWidth": 0,
+   "headerOnly": 0,
+   "extra": 3
+  },
+  "sideSource": {
+   "n": 453,
+   "words": 453
+  },
+  "sideRecords": {
+   "n": 453,
+   "words": 7681
+  },
+  "runRecordEntries": {
+   "n": 434,
+   "words": 868
+  },
+  "leafCells": {
+   "n": 221,
+   "words": 778
+  },
+  "unitCells": {
+   "n": 30,
+   "words": 54
+  },
+  "capturedStrings": {
+   "n": 7,
+   "words": 14
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 493,
+    "words": 2007,
+    "share": 17.39
+   },
+   "slot content: variable-text leaf": {
+    "n": 221,
+    "words": 920,
+    "share": 7.97
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 14,
+    "words": 64,
+    "share": 0.55
+   },
+   "slot content: node with no record": {
+    "n": 14,
+    "words": 56,
+    "share": 0.49
+   },
+   "unexplained": {
+    "n": 13,
+    "words": 52,
+    "share": 0.45
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 13,
+    "words": 52,
+    "share": 0.45
+   },
+   "slot content: keyword unit": {
+    "n": 8,
+    "words": 32,
+    "share": 0.28
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 8,
+    "words": 32,
+    "share": 0.28
+   }
+  },
+  "unexplained": {
+   "anchor > ., anonymous, leaf, wide, under-unnamed-row, no render body": 13
+  },
+  "cellWordsToday": 2431,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 11540,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -2007,
+    "total": 9533,
+    "share": 82.6
+   },
+   "one-word parsed cell": {
+    "delta": -1637,
+    "total": 9903,
+    "share": 85.8
+   },
+   "both": {
+    "delta": -3644,
+    "total": 7896,
+    "share": 68.4
+   }
+  }
+ },
+ {
+  "corpus": "fixture-engine.rs",
+  "grammar": "rust",
+  "sources": 1,
+  "sourceBytes": 24766,
+  "parseErrors": 0,
+  "readWords": 62092,
+  "attributedLessTotal": 6,
+  "recordGapWords": 157,
+  "cellRows": {
+   "named": 894,
+   "kindMismatch": 77,
+   "notARow": 0,
+   "pairs": {
+    "u32 -> primitive_type / primitive_type": 28,
+    "u64 -> primitive_type / primitive_type": 11,
+    "str -> primitive_type / primitive_type": 10,
+    ", -> token_tree_punctuation / token_tree_punctuation": 8,
+    "usize -> primitive_type / primitive_type": 4,
+    "= -> token_tree_punctuation / token_tree_punctuation": 3,
+    "f64 -> primitive_type / primitive_type": 3,
+    ". -> token_tree_punctuation / token_tree_punctuation": 2
+   }
+  },
+  "records": {
+   "n": 2711,
+   "words": 19047,
+   "headerOnly": 0,
+   "error": 0,
+   "extra": 165
+  },
+  "sideAt": {
+   "n": 2711,
+   "words": 8133,
+   "zeroWidth": 0,
+   "headerOnly": 0,
+   "extra": 165
+  },
+  "sideSource": {
+   "n": 2711,
+   "words": 2711
+  },
+  "sideRecords": {
+   "n": 2711,
+   "words": 40717
+  },
+  "runRecordEntries": {
+   "n": 2710,
+   "words": 5420
+  },
+  "leafCells": {
+   "n": 1084,
+   "words": 3682
+  },
+  "unitCells": {
+   "n": 160,
+   "words": 553
+  },
+  "capturedStrings": {
+   "n": 16,
+   "words": 32
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 1791,
+    "words": 7211,
+    "share": 11.61
+   },
+   "slot content: variable-text leaf": {
+    "n": 735,
+    "words": 2942,
+    "share": 4.74
+   },
+   "unexplained": {
+    "n": 152,
+    "words": 759,
+    "share": 1.22
+   },
+   "trivia": {
+    "n": 165,
+    "words": 660,
+    "share": 1.06
+   },
+   "template token: list separator": {
+    "n": 146,
+    "words": 584,
+    "share": 0.94
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 81,
+    "words": 324,
+    "share": 0.52
+   },
+   "slot content: node with no record": {
+    "n": 79,
+    "words": 316,
+    "share": 0.51
+   },
+   "slot content: keyword unit": {
+    "n": 52,
+    "words": 208,
+    "share": 0.33
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 32,
+    "words": 128,
+    "share": 0.21
+   },
+   "template token: list separator, trailing": {
+    "n": 30,
+    "words": 120,
+    "share": 0.19
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 28,
+    "words": 112,
+    "share": 0.18
+   }
+  },
+  "unexplained": {
+   "outer_line_doc_comment_marker > /, anonymous, leaf, wide, under-unnamed-row, no render body": 138,
+   "inner_line_doc_comment_marker > !, anonymous, leaf, wide, under-unnamed-row, no render body": 13,
+   "parameters_elements > ,, anonymous, leaf, wide, in-record": 1
+  },
+  "cellWordsToday": 14916,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 62092,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -7915,
+    "total": 54177,
+    "share": 87.3
+   },
+   "one-word parsed cell": {
+    "delta": -10409,
+    "total": 51683,
+    "share": 83.2
+   },
+   "both": {
+    "delta": -18324,
+    "total": 43768,
+    "share": 70.5
+   }
+  }
+ },
+ {
+  "corpus": "fixture-create-engine.ts",
+  "grammar": "typescript",
+  "sources": 1,
+  "sourceBytes": 8947,
+  "parseErrors": 0,
+  "readWords": 35611,
+  "attributedLessTotal": 0,
+  "recordGapWords": 104,
+  "cellRows": {
+   "named": 844,
+   "kindMismatch": 32,
+   "notARow": 0,
+   "pairs": {
+    "unknown -> predefined_type / predefined_type": 16,
+    "boolean -> predefined_type / predefined_type": 4,
+    "object -> predefined_type / predefined_type": 4,
+    "string -> predefined_type / predefined_type": 4,
+    "void -> predefined_type / predefined_type": 2,
+    "never -> predefined_type / predefined_type": 1,
+    "number -> predefined_type / predefined_type": 1
+   }
+  },
+  "records": {
+   "n": 1446,
+   "words": 10698,
+   "headerOnly": 0,
+   "error": 0,
+   "extra": 0
+  },
+  "sideAt": {
+   "n": 1446,
+   "words": 4338,
+   "zeroWidth": 0,
+   "headerOnly": 0,
+   "extra": 0
+  },
+  "sideSource": {
+   "n": 1446,
+   "words": 1446
+  },
+  "sideRecords": {
+   "n": 1446,
+   "words": 22741
+  },
+  "runRecordEntries": {
+   "n": 1445,
+   "words": 2890
+  },
+  "leafCells": {
+   "n": 693,
+   "words": 2425
+  },
+  "unitCells": {
+   "n": 388,
+   "words": 550
+  },
+  "capturedStrings": {
+   "n": 0,
+   "words": 0
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 993,
+    "words": 4027,
+    "share": 11.31
+   },
+   "slot content: variable-text leaf": {
+    "n": 476,
+    "words": 1946,
+    "share": 5.46
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 218,
+    "words": 872,
+    "share": 2.45
+   },
+   "template token: list separator": {
+    "n": 129,
+    "words": 516,
+    "share": 1.45
+   },
+   "slot content: keyword unit": {
+    "n": 73,
+    "words": 292,
+    "share": 0.82
+   },
+   "slot content: node with no record": {
+    "n": 43,
+    "words": 172,
+    "share": 0.48
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 43,
+    "words": 172,
+    "share": 0.48
+   },
+   "slot content: unit the external scanner issues (zero-width)": {
+    "n": 28,
+    "words": 112,
+    "share": 0.31
+   },
+   "slot content: unit the external scanner issues": {
+    "n": 4,
+    "words": 16,
+    "share": 0.04
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 4,
+    "words": 16,
+    "share": 0.04
+   },
+   "slot content: other model type (supertype)": {
+    "n": 2,
+    "words": 8,
+    "share": 0.02
+   },
+   "unexplained": {
+    "n": 1,
+    "words": 4,
+    "share": 0.01
+   }
+  },
+  "unexplained": {
+   "object_type_content > automatic_semicolon, named, leaf, zero-width, in-record": 1
+  },
+  "cellWordsToday": 9193,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 35611,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -4543,
+    "total": 31068,
+    "share": 87.2
+   },
+   "one-word parsed cell": {
+    "delta": -6209,
+    "total": 29402,
+    "share": 82.6
+   },
+   "both": {
+    "delta": -10752,
+    "total": 24859,
+    "share": 69.8
+   }
+  }
+ },
+ {
+  "corpus": "matter.js",
+  "grammar": "typescript",
+  "sources": 2410,
+  "sourceBytes": 17593826,
+  "parseErrors": 4,
+  "readWords": 29448605,
+  "attributedLessTotal": 770,
+  "recordGapWords": 34462,
+  "cellRows": {
+   "named": 533296,
+   "kindMismatch": 7944,
+   "notARow": 0,
+   "pairs": {
+    "string -> predefined_type / predefined_type": 2440,
+    "number -> predefined_type / predefined_type": 1550,
+    "any -> predefined_type / predefined_type": 1274,
+    "void -> predefined_type / predefined_type": 744,
+    "boolean -> predefined_type / predefined_type": 711,
+    "private -> accessibility_modifier / accessibility_modifier": 471,
+    "unknown -> predefined_type / predefined_type": 266,
+    "protected -> accessibility_modifier / accessibility_modifier": 231
+   }
+  },
+  "records": {
+   "n": 1200399,
+   "words": 8021662,
+   "headerOnly": 4,
+   "error": 0,
+   "extra": 18194
+  },
+  "sideAt": {
+   "n": 1200399,
+   "words": 3601197,
+   "zeroWidth": 4,
+   "headerOnly": 4,
+   "extra": 18194
+  },
+  "sideSource": {
+   "n": 1200399,
+   "words": 1200399
+  },
+  "sideRecords": {
+   "n": 1200399,
+   "words": 19188511
+  },
+  "runRecordEntries": {
+   "n": 1197989,
+   "words": 2395978
+  },
+  "leafCells": {
+   "n": 573735,
+   "words": 1856563
+  },
+  "unitCells": {
+   "n": 218016,
+   "words": 299877
+  },
+  "capturedStrings": {
+   "n": 77367,
+   "words": 154734
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 956748,
+    "words": 3987295,
+    "share": 13.54
+   },
+   "slot content: variable-text leaf": {
+    "n": 320068,
+    "words": 1429074,
+    "share": 4.85
+   },
+   "template token: list separator": {
+    "n": 175974,
+    "words": 703896,
+    "share": 2.39
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 149363,
+    "words": 597452,
+    "share": 2.03
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 25813,
+    "words": 103263,
+    "share": 0.35
+   },
+   "slot content: node with no record": {
+    "n": 25796,
+    "words": 103184,
+    "share": 0.35
+   },
+   "template token: list separator, trailing": {
+    "n": 19250,
+    "words": 77000,
+    "share": 0.26
+   },
+   "slot content: keyword unit": {
+    "n": 18818,
+    "words": 75272,
+    "share": 0.26
+   },
+   "slot content: unit the external scanner issues (zero-width)": {
+    "n": 17627,
+    "words": 70508,
+    "share": 0.24
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 4671,
+    "words": 18684,
+    "share": 0.06
+   },
+   "unexplained": {
+    "n": 4369,
+    "words": 17791,
+    "share": 0.06
+   },
+   "template token: list separator, the list kind lists several separator candidates": {
+    "n": 2440,
+    "words": 9760,
+    "share": 0.03
+   },
+   "template token, under a row with no record": {
+    "n": 1314,
+    "words": 5256,
+    "share": 0.02
+   },
+   "slot content: other model type (supertype)": {
+    "n": 876,
+    "words": 4134,
+    "share": 0.01
+   },
+   "slot content: unit the external scanner issues": {
+    "n": 712,
+    "words": 2848,
+    "share": 0.01
+   },
+   "template token: list separator, the list kind lists several separator candidates, trailing": {
+    "n": 648,
+    "words": 2592,
+    "share": 0.01
+   },
+   "slot content: other model type (envelope)": {
+    "n": 28,
+    "words": 140,
+    "share": 0
+   },
+   "slot content: other model type (branch)": {
+    "n": 8,
+    "words": 40,
+    "share": 0
+   },
+   "trivia": {
+    "n": 7,
+    "words": 31,
+    "share": 0
+   }
+  },
+  "unexplained": {
+   "arguments > ,, anonymous, leaf, wide, in-record": 1086,
+   "object_type_content > automatic_semicolon, named, leaf, zero-width, in-record": 725,
+   "array > ,, anonymous, leaf, wide, in-record": 625,
+   "object > ,, anonymous, leaf, wide, in-record": 611,
+   "override_modifier > override, anonymous, leaf, wide, under-unnamed-row, no render body": 459,
+   "constructor_declaration > identifier (shown as property_identifier), named, leaf, wide, in-record": 315,
+   "object_type_content > ;, anonymous, leaf, wide, in-record": 304,
+   "this > this, anonymous, leaf, wide, under-unnamed-row, no render body": 80,
+   "optional_chain > ?., anonymous, leaf, wide, under-unnamed-row, no render body": 78,
+   "formal_parameters_elements > ,, anonymous, leaf, wide, in-record": 56,
+   "object_pattern > ,, anonymous, leaf, wide, in-record": 21,
+   "enum_body_elements > ,, anonymous, leaf, wide, in-record": 4,
+   "array_pattern > ,, anonymous, leaf, wide, in-record": 2,
+   "import > import, anonymous, leaf, wide, under-unnamed-row, no render body": 2,
+   "tuple_type_members > ,, anonymous, leaf, wide, in-record": 1
+  },
+  "cellWordsToday": 7143871,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 29448605,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -4785799,
+    "total": 24662806,
+    "share": 83.7
+   },
+   "one-word parsed cell": {
+    "delta": -4648983,
+    "total": 24799622,
+    "share": 84.2
+   },
+   "both": {
+    "delta": -9434782,
+    "total": 20013823,
+    "share": 68
+   }
+  }
+ },
+ {
+  "corpus": "next.js",
+  "grammar": "typescript",
+  "sources": 5563,
+  "sourceBytes": 23890734,
+  "parseErrors": 21,
+  "readWords": 58143558,
+  "attributedLessTotal": 1293,
+  "recordGapWords": 122108,
+  "cellRows": {
+   "named": 1277696,
+   "kindMismatch": 31615,
+   "notARow": 0,
+   "pairs": {
+    "string -> predefined_type / predefined_type": 15429,
+    "boolean -> predefined_type / predefined_type": 6631,
+    "any -> predefined_type / predefined_type": 2721,
+    "number -> predefined_type / predefined_type": 2305,
+    "void -> predefined_type / predefined_type": 1982,
+    "unknown -> predefined_type / predefined_type": 836,
+    "private -> accessibility_modifier / accessibility_modifier": 614,
+    "public -> accessibility_modifier / accessibility_modifier": 473
+   }
+  },
+  "records": {
+   "n": 2377396,
+   "words": 16544203,
+   "headerOnly": 54,
+   "error": 0,
+   "extra": 47845
+  },
+  "sideAt": {
+   "n": 2377396,
+   "words": 7132188,
+   "zeroWidth": 11,
+   "headerOnly": 54,
+   "extra": 47845
+  },
+  "sideSource": {
+   "n": 2377396,
+   "words": 2377396
+  },
+  "sideRecords": {
+   "n": 2377396,
+   "words": 37477691
+  },
+  "runRecordEntries": {
+   "n": 2371833,
+   "words": 4743666
+  },
+  "leafCells": {
+   "n": 1015989,
+   "words": 3430377
+  },
+  "unitCells": {
+   "n": 633112,
+   "words": 832459
+  },
+  "capturedStrings": {
+   "n": 71455,
+   "words": 142910
+  },
+  "linkRecords": {
+   "n": 0,
+   "words": 0
+  },
+  "rowsByRole": {
+   "template token": {
+    "n": 1761130,
+    "words": 7241898,
+    "share": 12.46
+   },
+   "slot content: variable-text leaf": {
+    "n": 677900,
+    "words": 2888093,
+    "share": 4.97
+   },
+   "slot content: punctuation or enum unit": {
+    "n": 233285,
+    "words": 933140,
+    "share": 1.6
+   },
+   "slot content: unit the external scanner issues (zero-width)": {
+    "n": 224938,
+    "words": 899752,
+    "share": 1.55
+   },
+   "template token: list separator": {
+    "n": 130511,
+    "words": 522044,
+    "share": 0.9
+   },
+   "slot content: keyword unit": {
+    "n": 75000,
+    "words": 300000,
+    "share": 0.52
+   },
+   "slot content: a token inside a slot-held node that has no record": {
+    "n": 58767,
+    "words": 235072,
+    "share": 0.4
+   },
+   "slot content: node with no record": {
+    "n": 58717,
+    "words": 234892,
+    "share": 0.4
+   },
+   "slot content: the token of a boolean slot": {
+    "n": 38222,
+    "words": 152888,
+    "share": 0.26
+   },
+   "template token: list separator, the list kind lists several separator candidates (zero-width)": {
+    "n": 21225,
+    "words": 84900,
+    "share": 0.15
+   },
+   "template token: list separator, trailing": {
+    "n": 17950,
+    "words": 71800,
+    "share": 0.12
+   },
+   "unexplained": {
+    "n": 12711,
+    "words": 51050,
+    "share": 0.09
+   },
+   "trivia": {
+    "n": 6417,
+    "words": 26448,
+    "share": 0.05
+   },
+   "template token: list separator, the list kind lists several separator candidates, trailing (zero-width)": {
+    "n": 4063,
+    "words": 16252,
+    "share": 0.03
+   },
+   "slot content: other model type (supertype)": {
+    "n": 3676,
+    "words": 15183,
+    "share": 0.03
+   },
+   "slot content: unit the external scanner issues": {
+    "n": 3670,
+    "words": 14680,
+    "share": 0.03
+   },
+   "template token: list separator, the list kind lists several separator candidates": {
+    "n": 1176,
+    "words": 4704,
+    "share": 0.01
+   },
+   "slot content: other model type (branch)": {
+    "n": 484,
+    "words": 2420,
+    "share": 0
+   },
+   "template token, under a row with no record": {
+    "n": 252,
+    "words": 1008,
+    "share": 0
+   },
+   "template token: list separator, the list kind lists several separator candidates, trailing": {
+    "n": 228,
+    "words": 912,
+    "share": 0
+   },
+   "slot content: other model type (envelope)": {
+    "n": 21,
+    "words": 105,
+    "share": 0
+   },
+   "slot content: punctuation or enum unit (missing)": {
+    "n": 4,
+    "words": 16,
+    "share": 0
+   },
+   "template token (missing)": {
+    "n": 2,
+    "words": 8,
+    "share": 0
+   },
+   "slot content: variable-text leaf (missing)": {
+    "n": 1,
+    "words": 4,
+    "share": 0
+   }
+  },
+  "unexplained": {
+   "object > ,, anonymous, leaf, wide, in-record": 6659,
+   "type_parameters_elements > ,, anonymous, leaf, wide, in-record": 1961,
+   "object_type_content > automatic_semicolon, named, leaf, zero-width, in-record": 1410,
+   "array > ,, anonymous, leaf, wide, in-record": 1229,
+   "import > import, anonymous, leaf, wide, under-unnamed-row, no render body": 528,
+   "optional_chain > ?., anonymous, leaf, wide, under-unnamed-row, no render body": 289,
+   "constructor_declaration > identifier (shown as property_identifier), named, leaf, wide, in-record": 206,
+   "array_pattern > ,, anonymous, leaf, wide, in-record": 94,
+   "this > this, anonymous, leaf, wide, under-unnamed-row, no render body": 79,
+   "object_type_content > ;, anonymous, leaf, wide, in-record": 76,
+   "object_pattern > ,, anonymous, leaf, wide, in-record": 70,
+   "arguments > ,, anonymous, leaf, wide, in-record": 63,
+   "enum_body_elements > ,, anonymous, leaf, wide, in-record": 12,
+   "formal_parameters_elements > ,, anonymous, leaf, wide, in-record": 11,
+   "tuple_type_members > ,, anonymous, leaf, wide, in-record": 9,
+   "override_modifier > override, anonymous, leaf, wide, under-unnamed-row, no render body": 8,
+   "import_specifiers > ,, anonymous, leaf, wide, in-record": 6,
+   "export_specifiers > ,, anonymous, leaf, wide, in-record": 1
+  },
+  "cellWordsToday": 14493933,
+  "options": {
+   "today": {
+    "delta": 0,
+    "total": 58143558,
+    "share": 100
+   },
+   "template-token rows removed": {
+    "delta": -7943526,
+    "total": 50200032,
+    "share": 86.3
+   },
+   "one-word parsed cell": {
+    "delta": -9593982,
+    "total": 48549576,
+    "share": 83.5
+   },
+   "both": {
+    "delta": -17537508,
+    "total": 40606050,
+    "share": 69.8
+   }
+  }
+ }
+]

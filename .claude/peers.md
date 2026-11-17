@@ -11,23 +11,28 @@ For every peer:
 3. **A finding that contradicts a sentence** in your spec or plan is reported to `sittir-brainstorm` as a row that quotes the sentence. Don't build past it.
 4. **Your plan task's Status line is the tracker.** A PR ticks its task and updates that line.
 
+5. **A table that compares alternatives bolds the winning cell in each row** (lowest for time, memory and failures; highest for passes; every tied cell on a tie), in reports, PR bodies, specs and plans.
+6. **Code and architecture are drawn in Mermaid:** a flow through the code, a memory or record layout, a class, type or module structure. A fenced `mermaid` block in the markdown file or the report, with a sentence above it saying what it shows. Not for work plans, task order or merge decisions; those stay prose, lists and tables.
+7. **Before proposing or costing a change, look the fact up where the architecture already holds it.** Search the glossary and the docs through Infigraph (`search` with `scope="docs"`, `get_doc_context` on the symbol) and read the generated artifacts, before deriving a fact by hand or re-deriving it in a proposal. A fact about a grammar's nodes is in that grammar's `packages/<lang>/.sittir/node-model.json5` (which kinds are leaves whose text varies, which are fixed tokens, hidden kinds, supertypes); what the parser itself saw is `.sittir/src/grammar.json`; the phases and the two-pipeline model are in `docs/compiler-phase-glossary.md` and `.claude/architecture.md`. A proposal names the artifact or glossary entry each such fact came from. A count of "every token" or "every leaf" that the model splits (fixed text against variable text) is given split.
+8. **No invented concepts, principles or terms.** A report, proposal or spec uses the words the architecture, the specs, the glossary and the code already use, with the meaning they give them, and classifies a thing by the role the architecture gives it. A token of a parse is slot content (a node, a leaf whose text varies, or a unit whose kind id is the slot's value), or trivia (an extra), or a fixed token (the rule's own literal text, which no slot holds and the template writes): "fixed token is what isn't a slot or trivia or a leaf". A model, a category or a label a peer makes up for a costing ("model L", "zero-width fixed rows") is marked as its own shorthand where it is introduced, tied to the existing terms it is made of, and never carried into a spec or relayed as if the architecture held it. Where no existing term fits, say so and ask; a new term enters through the spec it is defined in.
+
 For `sittir-brainstorm`:
 
-5. **A ruling goes into the spec first,** and the plan task if it changes the work. The message to a peer then cites the path and section; it doesn't carry the ruling as its only copy.
-6. **A new design that changes an existing spec** amends that spec, or is linked from it with the superseded sentences named.
-7. **This table changes with the work.** A row is updated in the same commit that hands a peer a new task.
+9. **A ruling goes into the spec first,** and the plan task if it changes the work. The message to a peer then cites the path and section; it doesn't carry the ruling as its only copy.
+10. **A new design that changes an existing spec** amends that spec, or is linked from it with the superseded sentences named.
+11. **This table changes with the work.** A row is updated in the same commit that hands a peer a new task.
 
 ## Bindings
 
-Paths are under `docs/superpowers/`. Worktrees are under `scratchpad/`.
+A path that starts with `specs/` or `plans/` is under `docs/superpowers/`; any other path is from the repo root. Worktrees are under `scratchpad/`.
 
 | peer | works on | spec | plan and task | worktree · branch |
 |---|---|---|---|---|
 | `sittir-brainstorm` | rulings, specs, plans, review, relays | all | all | main checkout · `master` |
-| `sittir-prototype` | arena storage: records at parse, comments placed at parse, release | `specs/2026-11-06-arena-trees-from-records-design.md`, `specs/2026-11-15-parsed-comments-at-parse-design.md`, `specs/2026-11-15-call-scratch-allocator-design.md` (draft, parked) | `plans/2026-11-06-arena-trees-from-records.md` Tasks 6, 6c, 6d, 7 | `wt-2c-census` · `feat/comments-at-parse` (on `feat/arena-hydrate-at-parse`) |
-| `sittir-implement` | the node-surface hoist | `specs/2026-11-15-node-surface-hoist-design.md` | to be written from the accepted outline, on the hoist branch | `wt-implement` · `feat/node-surface-hoist` |
+| `sittir-prototype` | arena storage: records at parse, comments placed at parse, release | `specs/2026-11-06-arena-trees-from-records-design.md`, `specs/2026-11-15-parsed-comments-at-parse-design.md` | `plans/2026-11-06-arena-trees-from-records.md` Tasks 6, 6c, 6d, 7 | `wt-2c-census` · `feat/comments-at-parse` (on `feat/arena-hydrate-at-parse`) |
+| `sittir-implement` | the node-surface hoist | `specs/2026-11-15-node-surface-hoist-design.md` | `plans/2026-11-16-node-surface-hoist.md` (on the hoist branch until its PR merges); Tasks 1–2 done, 3–8 wait for the vocabulary branch | `wt-implement` · `feat/node-surface-hoist` |
 | `sittir-design` | portable vocabulary: no `content` member, flattening, renames | `specs/2026-11-13-portable-generated-builders-design.md`, `specs/2026-09-13-bindings-and-vocabulary-design.md` | `plans/2026-11-13-portable-generated-builders.md` Task 3b | `wt-vocab-rulings` · `feat/no-content-member` |
-| `sittir-engine-api` | CI and benchmark tooling for arena performance (the `phase-profile` benchmark, supporting runs for the arena work); idle until assigned | none of its own; measures against the gate in `plans/2026-11-06-arena-trees-from-records.md` Task 6 | none | `wt-engine-api` · `ci/arena-render-profile` (merged, kept) |
+| `sittir-engine-api` | the allocation count by call site, in both storages; then the outline for routing hand cell decoders through the record views. Also CI and benchmark tooling for the arena work | `specs/2026-11-15-call-scratch-allocator-design.md` (the record-encoding direction in it is closed), `specs/2026-11-06-arena-trees-from-records-design.md` | `plans/2026-11-06-arena-trees-from-records.md` Task 6e (outline only until Task 6 merges) | `wt-engine-api` · `ci/alloc-count` |
 | `sittir-docs` | the glossary and docs tooling | `docs/glossary/README.md` | none | `wt-docs-records` · `docs/backlog-2` |
 | `sittir-maint` | merges, CI, checkout hygiene | `.claude/maint-responsibilities.md` | none | main checkout |
 

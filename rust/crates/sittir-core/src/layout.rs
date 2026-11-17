@@ -914,10 +914,10 @@ mod tests {
     crate::grammar_nodes!(MockTrivia; MockTrivia);
 
     impl crate::trivia::TriviaSeam for MockTrivia {
-        fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {
+        fn seam_gap(&self) -> Option<crate::layout_kinds::LayoutKinds> {
             match self.0.as_str() {
-                "\n" => Some((crate::layout_kinds::LayoutKinds::NEWLINE, None)),
-                " " => Some((crate::layout_kinds::LayoutKinds::SPACE, None)),
+                "\n" => Some(crate::layout_kinds::LayoutKinds::NEWLINE),
+                " " => Some(crate::layout_kinds::LayoutKinds::SPACE),
                 _ => None,
             }
         }

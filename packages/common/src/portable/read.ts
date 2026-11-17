@@ -5,7 +5,7 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { builtFlags, isNumberSlots, leafSeatOf, numberMembers, textBuilt, tokenText } from './facts.ts';
+import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, numberMembers, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
@@ -130,6 +130,8 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 	}
 	const held = new WeakMap<object, readonly { readonly member: PortableMemberStep; readonly value: unknown }[]>();
 	const enclosing = new WeakMap<object, Node>();
+	const containing = containerMembers(table);
+	const containerSet = new WeakMap<object, readonly string[]>();
 	const heldBy = (container: Node, element: unknown, members: readonly PortableMemberStep[]): void => {
 		if (members.length === 0 || element === null || typeof element !== 'object' || Array.isArray(element)) return;
 		const values = [...new Map(members.map((member) => [member.name, member])).values()].flatMap((member) => {
@@ -165,19 +167,34 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			const result = resolve(next, advanced);
 			if (result === undefined) continue;
 			if (!Array.isArray(next)) heldBy(value as Node, result.found, pending.flatMap(({ containers }) => (containers[0]?.key === key ? (containers[0].members ?? []) : [])));
-			if (!Array.isArray(next) && hasKind(result.found)) enclosing.set(result.found, value as Node);
+			if (!Array.isArray(next) && hasKind(result.found)) {
+				enclosing.set(result.found, value as Node);
+				const found = result.found;
+				const sets = pending.flatMap(({ containers }) => (containers[0]?.key === key && containers[0].sets?.kind === value.$type ? setsOn(containers[0], found.$type) : []));
+				if (sets.length > 0) containerSet.set(result.found, [...new Set(sets)]);
+			}
 			return Array.isArray(next) ? { ...result, many: true } : result;
 		}
 		return empty ? { found: [], many: true } : vacant ? { found: undefined, many: false } : undefined;
 	};
+	const chainOf = (seat: PortableSeat): readonly PortableContainer[] => (seat.within ?? []).flatMap((container): PortableContainer[] => [...(container.through ?? []).map((key) => ({ key })), container]);
 	const seatedIn = (slotted: unknown, member: PortableMemberStep): { readonly found: unknown; readonly many: boolean; readonly fitted?: false } =>
 		resolve(
 			slotted,
 			member.seats.flatMap((seat) => {
-				const within = (seat.within ?? []).flatMap((container): PortableContainer[] => [...(container.through ?? []).map((key) => ({ key })), container]);
+				const within = chainOf(seat);
 				return within[0]?.builder === undefined ? [{ seat, containers: within }] : [{ seat, containers: within }, { seat, containers: within.slice(1) }];
 			})
 		) ?? { found: slotted, many: false, fitted: false };
+	const unwrapping = new Map<number, readonly Pending[]>();
+	const unwrapOf = (kind: number): readonly Pending[] => {
+		const known = unwrapping.get(kind);
+		if (known !== undefined) return known;
+		const seats = [...new Set((containing.get(kind) ?? []).flatMap((member) => member.seats))];
+		const pending = seats.flatMap((seat) => chainOf(seat).map((_, i, chain) => ({ seat, containers: chain.slice(i) })));
+		unwrapping.set(kind, pending);
+		return pending;
+	};
 	const routeValue = (node: Node, member: PortableMemberStep): { readonly value: unknown; readonly fitted: boolean; readonly extra?: string } | undefined => {
 		const kept = (item: unknown): boolean => member.reads === undefined || member.reads.includes(kindOfValue(item) ?? -1);
 		const walked = walk(node, stepHops(member.steps));
@@ -250,21 +267,25 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			})
 		);
 	};
-	const closerContent = (node: Node, arms: readonly PortableBuildArm[], structure: Record<string, unknown>): void => {
-		for (const [slot, items] of slotsOf(node))
-			for (const item of items) {
+	const closerTexts = (node: Node, members: readonly PortableMemberStep[]): readonly { readonly slot: string; readonly member: PortableMemberStep; readonly reads: number; readonly text: string }[] =>
+		slotsOf(node).flatMap(([slot, items]) =>
+			items.flatMap((item) => {
 				const content = hasKind(item) ? table.delimiters?.[item.$type]?.content : undefined;
-				if (content === undefined) continue;
+				if (content === undefined) return [];
 				const text = facetText(item as object, content.facet);
-				const member = arms.flatMap((arm) => arm.members).find((candidate) => candidate.seats.some((seat) => seat.kinds.includes(content.reads)));
-				if (text === undefined || text === '' || member === undefined) continue;
-				const path = classify(content.reads);
-				const read = spelledAs(content.reads, path, path === undefined ? [] : armsAt(path, content.reads), text, member.seats);
-				if (read === undefined) continue;
-				accessed(node, slot);
-				const held = structure[member.name];
-				structure[member.name] = Array.isArray(held) ? [...held, read] : held === undefined ? [read] : [held, read];
-			}
+				const member = members.find((candidate) => candidate.seats.some((seat) => seat.kinds.includes(content.reads)));
+				return text === undefined || text === '' || member === undefined ? [] : [{ slot, member, reads: content.reads, text }];
+			})
+		);
+	const closerContent = (node: Node, arms: readonly PortableBuildArm[], structure: Record<string, unknown>): void => {
+		for (const { slot, member, reads, text } of closerTexts(node, arms.flatMap((arm) => arm.members))) {
+			const path = classify(reads);
+			const read = spelledAs(reads, path, path === undefined ? [] : armsAt(path, reads), text, member.seats);
+			if (read === undefined) continue;
+			accessed(node, slot);
+			const held = structure[member.name];
+			structure[member.name] = Array.isArray(held) ? [...held, read] : held === undefined ? [read] : [held, read];
+		}
 	};
 	const read = (value: unknown, carried: PortableCarried | undefined, seats?: readonly PortableSeat[]): unknown => {
 		if (Array.isArray(value)) return value.map((item) => read(item, carried, seats));
@@ -291,6 +312,9 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const path = placed.find(({ fact }) => fact.path !== undefined)?.fact.path ?? classify(typeof value === 'number' ? value : (value as Node));
 		const claimed = path === undefined ? [] : armsAt(path, kind);
 		if (path === undefined || claimed.length === 0) {
+			const unwrap = typeof value === 'number' || seats !== undefined ? [] : unwrapOf(kind);
+			const element = unwrap.length === 0 ? undefined : resolve(value, unwrap);
+			if (element !== undefined && !element.many && kindOfValue(element.found) !== undefined) return read(element.found, carried, [...new Set(unwrap.map(({ seat }) => seat))]);
 			const content = typeof value === 'number' ? undefined : seats?.find((seat) => seat.contents?.[kind] !== undefined)?.contents?.[kind];
 			const spelled = content === undefined ? undefined : textOf(accessed(value as object, content));
 			const own = typeof value === 'number' || seats === undefined ? undefined : nodeText(value);
@@ -314,7 +338,11 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		if (scalar === undefined) {
 			const content = arms.find((arm) => arm.content !== undefined)?.content;
 			if (content !== undefined) {
-				const spelled = textOf(accessed(node, content));
+				const found = routeValue(node, content)?.value;
+				const closers = closerTexts(node, [content]);
+				for (const { slot } of closers) accessed(node, slot);
+				const texts = [...(found === undefined ? [] : Array.isArray(found) ? found.map(textOf) : [textOf(found)]), ...closers.map(({ text }) => text)];
+				const spelled = texts.every((text) => text !== undefined) ? texts.join('') : undefined;
 				return spelled === undefined ? kept(node, { reason: 'text' }, carried) : { $path: path, $value: spelled };
 			}
 			const textAt = (text: string | undefined): unknown => (text === undefined ? undefined : spelledAs(kind, path, arms, text, seats)) ?? kept(node, { reason: 'text' }, carried);
@@ -327,7 +355,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const spelled = placed.flatMap(({ fact }) => fact.flag ?? []);
 		const unbuilt = [...new Set([...flagsOf(kind).filter((flag) => flagHolds(node, flag)), ...spelled])].filter((flag) => !buildable.has(flag));
 		if (unbuilt.length > 0) return kept(node, { reason: 'flags', flags: unbuilt }, carried);
-		const flags = [...buildable].filter((flag) => flagHolds(node, flag) || spelled.includes(flag));
+		const flags = [...new Set([...[...buildable].filter((flag) => flagHolds(node, flag) || spelled.includes(flag)), ...(containerSet.get(node) ?? [])])];
 		Object.assign(touch(node), { path, flags });
 		const at = Object.fromEntries(placed.map(({ fact, index, spelling }) => [fact.name, spelling === undefined ? { index } : { index, spelling }]));
 		const structure: Record<string, unknown> = { $path: path, ...(flags.length === 0 ? {} : { $flags: flags }), ...(placed.length === 0 ? {} : { $at: at }), ...(scalar === undefined ? {} : { $value: scalar.value }) };
