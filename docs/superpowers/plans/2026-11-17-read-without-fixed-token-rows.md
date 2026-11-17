@@ -2,12 +2,12 @@
 
 > **Execution:** the engine-api session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** written 2026-11-17. Tasks 2–9 start when the hydrate-at-parse branch has merged to master; the branch is cut from that merge. Task 1 ran ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It wrote no production code, and that branch is merged into the stage-one branch when the stage-one branch is cut. Task 1 is done, and both of its stops are ruled (2026-11-17): a list's `DELIMITER` is decided by kind (Task 4), and named fixed tokens leave query results (Task 6). Waiting for the hydrate-at-parse merge. **Stopped before Task 4** by its own stop condition, measured ahead of code. Under the kind rule, typescript's validation rows move +159 in both storages: a stored `TRAILING` renders the list's separator where the source's trailing separator is the zero-width automatic semicolon (census README, "Delimiter by kind"). It is with brainstorm for a ruling on the trailing separator's kind. That branch replaces `NodeCoordinate` with the node's name, so this plan's `&NodeCoordinate` signatures (Task 4's `source_trailing`, Task 6's `$treeHandle` row) are re-anchored to it when the stage-one branch is cut.
+**Status:** written 2026-11-17. Tasks 2–9 start when the hydrate-at-parse branch has merged to master; the branch is cut from that merge. Task 1 ran ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It wrote no production code, and that branch is merged into the stage-one branch when the stage-one branch is cut. Task 1 is done, and both of its stops are ruled (2026-11-17): a parsed list stores no trailing flag where its kind leaves it optional, and the options decide (Task 4; this superseded the same day's "decided by kind"), and named fixed tokens leave query results (Task 6). Waiting for the hydrate-at-parse merge. **Stopped before Task 4** on four questions its measurement raised (`probe/delimiter-options-decide`, Task 4's "Stop until ruled"): one-item lists whose trailing comma carries meaning, the stamp's other readers (python's print comma, the portable `trailingComma` flag, the query leaf), a parsed list's `.delimiter` reading `undefined`, and the validator's rule for an option-decided separator. They are with brainstorm. That branch replaces `NodeCoordinate` with the node's name, so this plan's `&NodeCoordinate` signature (Task 6's `$treeHandle` row) is re-anchored to it when the stage-one branch is cut.
 
 How this line is kept:
 - Each finished task is ticked, and this line names the task in progress.
 - A stop condition replaces this line with the stop and its cases until it is ruled. The stop conditions are:
-  - Task 4: a non-zero `delimiter_disagreements` in `CENSUS` after the stamp changes, where the stamp and the kind rule must agree on every corpus, or a `validate history` row that moves other than as the census README's "Delimiter by kind" records;
+  - Task 4: a one-item list whose trailing separator carries meaning rendering without it, or a `validate history` row that moves other than as `probe/delimiter-options-decide` records once the validator's rule is ruled;
   - Task 6: a dropped named fixed token that is not one of the pairs in the spec's "What navigation lists";
   - Task 8: a placement change that is not beside a named fixed token;
   - Task 9: a failed gate.
@@ -31,7 +31,7 @@ How this line is kept:
 - "A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. It writes none for a unit either."
 - "A fixed token's text comes from its kind. … No byte offset of a fixed token is stored."
 - "A record's own coordinate (`AT`: kind, start, end) stays, and so does every offset of text the source carries."
-- A list's delimiter and separator choices render exactly as shipped. That includes `separator_kind` and `tokens` on mixed `object_type_content` lists, and the single-element rule (`AssembledList::singleElementNeedsTrailing`).
+- A list's separator choices render exactly as shipped. That includes `separator_kind` and `tokens` on mixed `object_type_content` lists, and the single-element rule (`AssembledList::singleElementNeedsTrailing`). A parsed list's trailing separator, where its kind leaves it optional, is the options', as a built list's is.
 - No new storage form: no bit beside the run, and no new place in `SideSlot::tokens`.
 - A unit's place among its holder's children is where the kind's render body writes its slot.
 - Named fixed tokens leave navigation. A comment beside one is seated as a built node seats it.
@@ -42,7 +42,7 @@ How this line is kept:
 
 ## Review Focus
 
-1. **A list rebuilt from a source list whose last item was replaced.** It takes its source's trailing flag, as the spec says and as today: rust `f(a, b,)` with `b` replaced renders `a, a,`, whether the rebuilt list keeps its own delimiter or has it cleared. Task 4 pins it: `a_rebuilt_list_takes_its_sources_trailing_flag_whatever_its_items` and `a_list_with_its_delimiter_cleared_reads_its_sources_stamp`.
+1. **A list rebuilt from a parsed list whose last item was replaced.** It takes the options' trailing flag, whatever its source spelled: rust `f(a, b,)` with `b` replaced renders `a, a` unless the option says trailing, and `a, a,` when it does. Task 4 pins it: `a_rebuilt_list_takes_the_options_trailing_flag`.
 2. **A comment between a unit and its neighbour**, such as `& /* c */ mut T` and `a /* c */ ?.[0]`. The side is keyed by the unit's site and renders where it did. Task 8 pins it: `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`.
 3. **A zero-width fixed token at a record's edge:** python's `newline` from a `tokenSeam`, `indent` and `dedent`, and typescript's automatic semicolon in a separator gap. Edge levels and depth moves answer as today. Task 5 pins it: `edge_levels_at_a_zero_width_fixed_token_agree`.
 4. **A MISSING fixed token inside a list**, for example rust `fn f( {` and typescript `if (a {`. The list's stamps and its edge levels match the old tree, and the holder keeps `HOLDS_ERROR`. Tasks 4 and 5 cover it through `with_errors`, which the parity fixtures include.
@@ -57,12 +57,12 @@ These rows are from the spec's § Public surfaces, approved by the maintainer. T
 | addon `siblings` | a unit sibling has no span; a named fixed token is no sibling | 6 |
 | addon `descendants` / `readDescendants`, `$children`, `$descendants` | a named fixed token of a pair in the spec's "What navigation lists" is no longer yielded (29,447 items across the census corpora); every other item is unchanged; resume paths renumber | 6, 9 |
 | *new:* `$query()` views (`$children`, `$descendants`, `ofType`, `where`, `find` and the rest) | a query for such a token's kind finds none of them; a query for the holder's kind finds each, as for a built node: `ofType(kinds.SelfParameter)` matches `&self`, and `ofType(kinds.Self)` finds nothing inside it | 6, 9 |
-| *new:* a parsed list's delimiter (`$snapshot`'s `_delimiter`, and the trailing flag a rebuilt list with its delimiter cleared takes from its source) | a list whose last item is followed by a zero-width separator (typescript's automatic semicolon) stores `TRAILING` where it stored none: 26 lists on paired typescript, 1 on `create-engine.ts`, 725 on matter.js, 5,466 on next.js, all `object_type_content`. The renders probed are unchanged; `validate history` moves as the census README's "Delimiter by kind" records | 4 |
+| *new:* a parsed list's delimiter (`.delimiter`, `$snapshot`'s `_delimiter`, and the trailing flag of a list rendered through its template) | a parsed list stores none: `.delimiter` and `_delimiter` read `undefined`, and a rebuilt or edited list takes the options' trailing separator, where it took its source's (Task 4's counts) | 4 |
 | `NodeCoordinate.$treeHandle`, `$end` | values renumber | 6 |
 | `$text`, `lineStartsInsideTokens`, the parse's error list | unchanged | 1, 7 |
 | `$snapshot` | lists no fixed token (Task 1's test); its `_delimiter` changes as the delimiter row says | 1, 4 |
 
-Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), still guarded by `Engine::with_store` and `record_nodes.rs::field_fits`. `NodeSite` gains `Unit`, `RecordShape` gains `order` and `edges`, and `SourceTable::last_list_child_kind` becomes `SourceTable::source_trailing`.
+Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), still guarded by `Engine::with_store` and `record_nodes.rs::field_fits`. `NodeSite` gains `Unit`, `RecordShape` gains `order` and `edges`, and `SourceTable::last_list_child_kind` and `prepare::source_trailing_delimiter` go.
 
 ## File map
 
@@ -71,9 +71,9 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - `rust/crates/sittir-core/src/arena/admit.rs`: `RecordShape::{order, edges}`, `EdgePart`.
 - `rust/crates/sittir-core/src/arena/run_nodes.rs`: navigation lists units from cells and names `NodeSite::Unit`.
 - `rust/crates/sittir-core/src/engine.rs`: the readers (`Lookups::edge_levels`, `depth_move`, `node_slots`, `separator_before`, `line_starts_inside_tokens`) and `parse_records_with`.
-- `rust/crates/sittir-core/src/prepare.rs`, `render.rs`, `napi_engine.rs`: `source_trailing_delimiter` and `SourceTable::source_trailing`.
+- `rust/crates/sittir-core/src/prepare.rs`, `render.rs`, `napi_engine.rs`: `source_trailing_delimiter` and `SourceTable::last_list_child_kind` go.
 - `rust/crates/sittir-node-macros/src/{attrs,hydrate,expand}.rs`: the `order` and `edges` attributes, roles at meet, separator stamps.
-- `packages/codegen/src/emitters/render-body.ts` and `render-module.ts`: `bodySlotOrder`, `bodyEdgeParts`, the depth-kind check.
+- `packages/codegen/src/emitters/render-body.ts` and `render-module.ts`: `bodySlotOrder`, `bodyEdgeParts`, the depth-kind check; a list's prepare fills its delimiter from the options, and `sourceTrailingSeparator` goes.
 - `rust/crates/sittir-parity-tests/src/lib.rs`: `read_fixtures`, moved out of `record_nodes.rs`, plus `out_of_order_units`.
 - `rust/crates/sittir-parity-tests/tests/stage_one_parity.rs`: new; every parity test below.
 - `rust/crates/sittir-parity-tests/tests/read_census.rs`: new; the census probe, kept.
@@ -179,46 +179,68 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 
 ### Task 4: List facts from stamps
 
-A list's `DELIMITER` is decided by kind (the maintainer, 2026-11-17: "By kind: a separator child follows the last item"): a parsed list ends with a separator when a child of a separator kind follows its last item, whatever its width. The stamp changes rule, and `last_list_child` retires against it.
+A parsed list stores no trailing flag where its kind leaves the trailing separator optional, and the options decide (the maintainer, 2026-11-17: "Store nothing from the source; the options decide", superseding the same day's "By kind"). Wherever a parsed list renders through its template, its trailing separator is the engine's `delimiter` option at its site, as a freshly built list's is: rust `f(a, b,)` rebuilt renders `a, b`. The read stamps only a choice list's separators. The leading flag is not ruled; no source on any census corpus has a leading separator.
+
+**Measured ahead of code** on `probe/delimiter-options-decide` (`ca637661c`, on the hydrate-at-parse head `f9801c969`), which stores no delimiter and makes `source_trailing_delimiter` return the options' value:
+- An unedited parse renders as its source in both storages. The change shows where a list renders through its template: a rebuilt or edited list, the factory round trip and the folded read-render.
+- `validate history`, object and arena storage identical: python 65 → 172 (+107), rust 25 → 164 (+139), typescript 101 → 357 (+256), regex and scm +0.
+- Lists whose stored flag differs from their site's default (`tests/delimiter_options.rs`, an ignored census, run on the base):
+
+  | corpus | parsed lists with a delimiter | lose a trailing separator | gain one |
+  |---|---|---|---|
+  | paired rust | 271 | 18 | 6 |
+  | paired typescript | 208 | 6 | 30 |
+  | paired python | 772 | 25 | 0 |
+  | `engine.rs` | 213 | 26 | 0 |
+  | `create-engine.ts` | 76 | 0 | 1 |
+  | matter.js | 20,300 | 821 | 992 |
+  | next.js | 53,038 | 3,331 | 5,470 |
+
+  Every gain is at one of the four sites whose default is trailing: typescript `object_type_content` and `enum_body_elements`, rust `field_declaration_list_elements` and `enum_variant_list_elements`.
+- The separator stamp beside an options-decided trailing flag renders consistently: typescript `{\n  a?: boolean\n  b?: string\n}` rebuilt renders as itself (a trailing automatic semicolon writes nothing), and `{ a: string, b: number }` renders `{\n  a: string,\n  b: number,\n}`.
+- The unit suite fails 71 tests in 21 files, all list delimiter, trailing-comma or list layout tests.
+
+**Stop until ruled:**
+1. One-item lists whose trailing comma carries meaning that `singleElementNeedsTrailing` does not cover lose it when rebuilt: rust `let (a,) = t` renders `(a)` and `-> (u8,)` renders `(u8)`; python `a[1,]` renders `a[1]`, `match x,:` renders `match x:` and `case (a,):` renders `case (a):`. The spec makes a trailing separator that carries meaning the grammar's rule, as python's `_tuple_elements` is.
+2. Python's `print a,` loses its comma at any count, and the comma suppresses the newline. The stamp has readers besides the render: the portable `trailingComma` flag (bare tuples and print), read from it (`portable-read.test.ts`, `delimiter-parity.test.ts`), and the query `trailingComma` leaf (`Plan::Delimiter`, `query-trailing-comma.test.ts`).
+3. A parsed list's `.delimiter` reads `undefined` where it read the source's flag (`list-owner.test.ts` in rust, python and typescript).
+4. The validator: the added rows are option-decided separators that the reparse lacks, and ratchets only tighten, so the read-render and factory checks need a rule for an option-decided separator.
 
 **Files:**
-- Modify `rust/crates/sittir-core/src/read.rs` (`read::delimiter`), `arena/hydrate.rs`, `rust/crates/sittir-node-macros/src/hydrate.rs`, `engine.rs`, `prepare.rs`, `render.rs`, `napi_engine.rs` and `arena/prep.rs`.
-- Delete `engine::last_list_child`, every `last_list_child_kind`, and their tests in `rust/crates/sittir-core/tests/engine_tree.rs` (`last_list_child_of`, `a_comment_in_a_list_span_is_not_its_last_child`, `a_list_the_tree_holds_a_node_for_ends_in_that_node_child`).
+- Modify `rust/crates/sittir-node-macros/src/expand.rs` (`list_inits`) and `hydrate.rs` (`routed`): a parsed list's flank field is `None`.
+- Modify `packages/codegen/src/emitters/render-module.ts` (`prepareStructImpl`): a list's prepare fills its delimiter with `ctx.options.delimiter_at(…)`. Delete `sourceTrailingSeparator` and its glossary entry; update `emitters/__tests__/render-module-emit.test.ts`.
+- Delete `prepare::source_trailing_delimiter`, `engine::last_list_child`, every `SourceTable::last_list_child_kind` (`render.rs` twice, `engine.rs` three times, `napi_engine.rs::ArenaSources`, and the `prepare.rs` test table `ListTrees`), and their tests: in `rust/crates/sittir-core/tests/engine_tree.rs` `last_list_child_of`, `a_list_the_tree_holds_no_node_for_ends_in_its_holder_child_within_its_span`, `a_comment_in_a_list_span_is_not_its_last_child`, `a_single_item_list_spanning_its_item_ends_in_that_item` and `a_list_the_tree_holds_a_node_for_ends_in_that_node_child`, and `prepare.rs`'s `trailing`.
+- Keep `read::delimiter`: `flank_delimiter` calls it for queries. Whether its trailing half stays is stop 2's ruling.
+- Modify `arena/hydrate.rs`, `arena/prep.rs` and `engine.rs` for the separator stamps.
 - Test: `stage_one_parity.rs`, `packages/typescript/tests/edited-object-type.test.ts`, `packages/rust/tests/rebuilt-list-trailing.test.ts`.
 
 **Interfaces:**
 - Consumes Task 3's `parse_records_with`.
-- Changes `read::delimiter`'s trailing flag, with its signature unchanged: `TRAILING` when a child routed `Route::Separator { slot: items, .. }` follows the last child routed `Route::Slot { slot: items, .. }`. A unit-variant last item keeps today's count of anonymous tokens. The leading flag is unchanged.
 - Produces `read::separator_choices(children: &[Kid], routes: &[Route], items: SlotId, candidates: &[KindId]) -> Option<SideSlot>`. It holds the gaps' majority in `separator` and the outliers by item place in `tokens`.
-- Produces `SourceTable::source_trailing(&self, coord: &NodeCoordinate) -> Option<bool>`, the source list's stamped trailing flag, replacing `last_list_child_kind`.
-
-Which path reads `last_list_child` today: `prepare::source_trailing_delimiter`, reached only when `Setting::fill` finds no delimiter of the list's own. A rebuild through `$with` keeps the parsed list's stored `_delimiter`, so the source's last child is asked only after the delimiter is cleared, as `list.$with.delimiter(undefined)` does. Measured on the hydrate-at-parse head, both storages: rust `f(a, b,)` cleared renders `a, b,`, and with `b` replaced by `a`, `a, a,`. The source's flag holds whatever the items, as the spec's "a rebuilt list takes the trailing flag from its source" says.
+- Drops `prepare::source_trailing_delimiter` and `SourceTable::last_list_child_kind`. No `SourceTable::source_trailing` is built.
 
 - [ ] **Step 1: Write the failing tests.**
-  - `a_parsed_lists_trailing_flag_is_decided_by_kind`, from both trees. Typescript `type T = {\n  a?: boolean\n  b?: string\n}\n` stores `TRAILING`, as does the same source with ` // note` after `b?: string` and `type T = {\n  a?: boolean;\n  b?: string; // note\n}\n`. Rust `f(a, b,)` stores `TRAILING` and `f(a, b)` none.
-  - `parsed_lists_answer_their_delimiter_and_separators_from_stamps`. Over `read_fixtures(name)` for the five grammars, for every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's:
-    - the trailing flag (old: the kind rule over the `All` tree's routes; new: `source_trailing`);
+  - `a_parsed_list_stores_no_trailing_flag`, from both trees: over `read_fixtures(name)` for the five grammars, no parsed list's side record holds `DELIMITER`, and rust `f(a, b,)`'s list stores none.
+  - `parsed_lists_answer_their_separators_from_stamps`. Over `read_fixtures(name)` for the five grammars, for every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's:
     - `slot_separator`;
     - `slot_layouts`;
     - `separator_before` for every item.
 
     Nodes are matched by (grammar, display, span) in pre-order.
   - `a_mixed_object_type_keeps_each_gaps_separator`: typescript `type T = { a: string; b: number, c: boolean }`, with `b` edited through `$with`, renders `{ a: string; b: …, c: boolean }` from both trees.
-  - `a_list_with_its_delimiter_cleared_reads_its_sources_stamp`, in `packages/rust/tests/rebuilt-list-trailing.test.ts`, both storages. The `arguments_elements` of rust `fn main() { f(a, b,); }`, rebuilt with `$with.delimiter(undefined)`, renders `a, b,`; rebuilt with items `(a, a)` and the delimiter cleared, `a, a,`. The same list of `f(a, b)` renders `a, b` and `a, a`.
-  - `a_rebuilt_list_takes_its_sources_trailing_flag_whatever_its_items`, in the same file. The list of `f(a, b,)` rebuilt through `$with.items` renders `a, a,` with items `(a, a)` and `a,` with items `(a)`.
-  - In `edited-object-type.test.ts`, both storages: `type T = {\n  a?: boolean\n  b?: string\n}\n` with its list's delimiter cleared renders, in its root, as its source.
-- [ ] **Step 2: Run them.** Run `PARITY parsed_lists`, `PARITY a_parsed_lists_trailing_flag`, `pnpm exec vitest run --config vitest.config.ts packages/typescript/tests/edited-object-type.test.ts` and `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts`. Expected: `a_parsed_lists_trailing_flag_is_decided_by_kind` FAILs on the first source, which stores none, and `parsed_lists_answer…` FAILs on the `SlotContent` tree, which has no separator rows. The two rust tests and the cleared typescript case pass already: they pin today's renders through the change.
+  - `a_rebuilt_list_takes_the_options_trailing_flag`, in `packages/rust/tests/rebuilt-list-trailing.test.ts`, both storages. The `arguments_elements` of rust `fn main() { f(a, b,); }` rebuilt through `$with.items` renders `a, a` with items `(a, a)` and `a` with `(a)`, and `a, a,` and `a,` under an engine whose `delimiter` option at that site is trailing. Rebuilt with `$with.delimiter(undefined)` it renders `a, b`. The same list of `f(a, b)` renders the same.
+  - The one-item cases of stop 1, as its ruling decides.
+  - In `edited-object-type.test.ts`, both storages: `type T = {\n  a?: boolean\n  b?: string\n}\n` with its member list rebuilt renders, in its root, `{\n  a?: boolean\n  b?: string\n}`.
+- [ ] **Step 2: Run them.** Run `PARITY a_parsed_list_stores`, `PARITY parsed_lists`, `pnpm exec vitest run --config vitest.config.ts packages/typescript/tests/edited-object-type.test.ts` and `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts`. Expected: `a_parsed_list_stores_no_trailing_flag` FAILs on rust `f(a, b,)`, which stores `TRAILING`; `a_rebuilt_list_takes_the_options_trailing_flag` FAILs, rendering `a, a,`; `parsed_lists_answer…` FAILs on the `SlotContent` tree, which has no separator rows.
 - [ ] **Step 3: Implement the stamps and readers.**
-  - **Delimiter.** `read::delimiter`'s trailing flag takes the kind rule above.
+  - **Delimiter.** The derive writes no flank value for a parsed list, and a list's generated prepare fills the options' delimiter. The deletions above.
   - **Separators.** The derive's `record_end` passes `separator_choices` into `parsed_side`, which gains a `slots: Vec<SideSlot>` parameter. That happens only for a list struct with `#[separator_kind(candidates = …)]`, so other lists stamp nothing. `LayoutAt::stored_slots` reads a parsed record's own side record as it reads a built one's. It rebuilds every gap's kind from the majority and the outliers, then runs today's `majority(kinds, preferred)`, which keeps the render-time preference.
-  - **Trailing.** `source_trailing` reads the source list's stamped `DELIMITER` through its `sides`. `source_trailing_delimiter` keeps the options' leading flag. `last_list_child` and `last_list_child_kind` are deleted.
   - **Old path.** `ReadRows::All` trees keep their rows until Task 9.
 - [ ] **Step 4: Run.**
   - Step 2's commands. Expected: PASS.
-  - `CENSUS` on every corpus. Expected: `delimiter_disagreements` is 0 on every one; a non-zero count stops the plan.
-  - `validate:history` per row. Expected: the rows move as the census README's "Delimiter by kind" records, and no other row moves.
-  - The blank line that a stored `TRAILING` adds after a list's trailing line comment (`b?: string // note\n\n}`) is prototype's fix, not this task's. A case that shows it is reported with that fix, not here.
-- [ ] **Step 5: Commit:** `feat(core): a list's trailing flag is decided by kind, and a choice list's separators are stamped where the walk meets them`.
+  - `validate:history` per row. Expected: the rows move as `probe/delimiter-options-decide` records, less what the validator's rule (stop 4) accounts for, and no other row moves.
+  - The unit tests the probe failed pass, rewritten as the rulings decide.
+- [ ] **Step 5: Commit:** `feat(core): a parsed list stores no trailing flag, and a choice list's separators are stamped where the walk meets them`.
 
 ### Task 5: Edge levels from body facts
 
@@ -335,7 +357,7 @@ Which path reads `last_list_child` today: `prepare::source_trailing_delimiter`, 
 - [ ] **Step 5: Run the gates.** These are the spec's § Gates, with each result reported as numbers.
   - **The three-way verification** (working standard 5):
     1. targeted probes of the cases this stage changes, wrap and render layers: Tasks 4–8's named tests, rerun on the final tree;
-    2. `pnpm run validate:native`, then `pnpm run validate:history` against master's recorded baseline. Every row of all three grammars is compared. Each row is unchanged, except as the census README's "Delimiter by kind" records;
+    2. `pnpm run validate:native`, then `pnpm run validate:history` against master's recorded baseline. Every row of all three grammars is compared. Each row is unchanged, except as Task 4 records;
     3. the full unit suites, with any new failure isolated by reapplying the stage's diff in reverse and rebuilding before it is accepted as already present:
        - `cargo test --workspace --no-default-features`;
        - `cargo clippy` in the three configurations;
