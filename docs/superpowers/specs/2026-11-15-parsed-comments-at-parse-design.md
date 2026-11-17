@@ -60,7 +60,7 @@ A list item after the first that follows a blank line in the source carries that
 - It is set only between items of a list slot (statements, members, arguments). The gap after an opening token and the gap before a closing one belong to the tokens and come from the options, so a list's first item never carries the flag (maintainer, 2026-11-15: "Between items only").
 - With leading comments, the flag is measured from the previous item's end to the start of the item's first leading entry, so `a();\n\n// c\nb();` keeps the blank line above the comment. A blank line between a leading comment and its own item (`// d\n\nc();`) is not kept: the comment's line fact puts it on its own line directly above (maintainer, 2026-11-15: "Above the comment only").
 - It adds no stored word: a record child's run entry has spare bits, and a slot-held row uses a spare bit of an existing count.
-- Parse does one comparison per gap between list items, of two row numbers the walk already holds. Nothing reads the flag unless the list is rebuilt.
+- Parse does one scan per gap between list items, of the bytes between them, from the spans the walk holds. (Corrected 2026-11-17: the walk does not hold row numbers; it reads positions only for extras and ERRORs, and reading two positions per child costs more than the scan. The same scan serves the lookup both storages share, whose items hold bytes, not rows.) Nothing reads the flag unless the list is rebuilt.
 
 ## Indentation
 
