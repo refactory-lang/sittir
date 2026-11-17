@@ -93,7 +93,7 @@
 
 ### Task 3b: No member is named `content`
 
-**Status:** merged as #1259 (<merge sha>), <merge date>.
+**Status:** merged as #1259 (d67a0609516a891a234c3cf988e206754d6fbcf6), 2026-11-16.
 
 The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 here, hold the rulings.
 - (a) and (b) are bindings and vocabulary only: container patterns and captures, with no compiler change and no new bindings directive.
