@@ -88,9 +88,8 @@ pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex
         items.push((routed.children[at[0]].index, false));
         items.extend(at.windows(2).map(|pair| {
             let (before, item) = (&routed.children[pair[0]], &routed.children[pair[1]]);
-            let extras: Vec<crate::types::Span> =
-                (pair[0] + 1..pair[1]).filter(|&between| routed.routes[between] == Route::Trivia).map(|between| routed.children[between].span()).collect();
-            (item.index, sets_apart(source, before.end, item.start, &extras))
+            let extras = (pair[0] + 1..pair[1]).filter(|&between| routed.routes[between] == Route::Trivia).map(|between| routed.children[between].span());
+            (item.index, sets_apart(source, before.end, item.start, extras))
         }));
     }
     items.sort_unstable_by_key(|&(item, _)| item);
@@ -105,9 +104,9 @@ pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex
 /// own and the item does not count: that extra leads the item. An extra
 /// whose bytes end in a line break ends its row.
 #[must_use]
-pub fn sets_apart(source: &str, from: u32, to: u32, extras: &[crate::types::Span]) -> bool {
+pub fn sets_apart(source: &str, from: u32, to: u32, extras: impl IntoIterator<Item = crate::types::Span>) -> bool {
     let bytes = source.as_bytes();
-    let mut extras = extras.iter().filter(|extra| extra.start >= from && extra.end <= to).peekable();
+    let mut extras = extras.into_iter().filter(|extra| extra.start >= from && extra.end <= to).peekable();
     let mut breaks = 0;
     let mut at = from;
     while at < to {
@@ -241,7 +240,7 @@ mod tests {
                 crate::types::Span { start, end: start + u32::try_from(extra.len()).unwrap() }
             })
             .collect();
-        sets_apart(source, from, to, &spans)
+        sets_apart(source, from, to, spans)
     }
 
     #[test]

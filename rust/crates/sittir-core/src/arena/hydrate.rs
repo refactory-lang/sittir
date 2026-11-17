@@ -576,17 +576,20 @@ impl<'a> Hydration<'a> {
     /// between the two among the run's entries.
     fn set_apart(&mut self, draft: Draft, items: &[Option<Hydrated>]) {
         let Some(open) = self.open.iter().rfind(|open| open.at == draft.at) else { return };
-        let entry = |item: &Hydrated| match *item {
-            Hydrated::Record { at, .. } => open.entries.iter().position(|entry| matches!(*entry, RunEntry::Record { at: held, .. } if held == at)),
-            Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. } => row.get().checked_sub(2).map(|entry| entry as usize),
-            Hydrated::Unit { row: None, .. } | Hydrated::Text { .. } => None,
-        };
-        let entries: Vec<usize> = items.iter().flatten().filter_map(entry).collect();
-        for pair in entries.windows(2) {
-            let (before, item) = (open.beside[pair[0]].span, open.beside[pair[1]].span);
-            let extras: Vec<Span> = (pair[0] + 1..pair[1]).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span).collect();
-            if crate::list_slots::sets_apart(self.text, before.end, item.start, &extras) {
-                self.apart.push(open.site(pair[1]));
+        let mut unsearched = 0;
+        let mut before: Option<usize> = None;
+        for item in items.iter().flatten() {
+            let entry = match *item {
+                Hydrated::Record { at, .. } => open.entries[unsearched..].iter().position(|entry| matches!(*entry, RunEntry::Record { at: held, .. } if held == at)).map(|found| unsearched + found),
+                Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. } => row.get().checked_sub(2).map(|entry| entry as usize),
+                Hydrated::Unit { row: None, .. } | Hydrated::Text { .. } => None,
+            };
+            let Some(entry) = entry else { continue };
+            unsearched = unsearched.max(entry + 1);
+            let Some(last) = before.replace(entry) else { continue };
+            let extras = (last + 1..entry).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span);
+            if crate::list_slots::sets_apart(self.text, open.beside[last].span.end, open.beside[entry].span.start, extras) {
+                self.apart.push(open.site(entry));
             }
         }
     }

@@ -1426,11 +1426,11 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         Some(Siblings { previous: (0..at).rev().find_map(item), next: (at + 1..routed.children.len()).find_map(item) })
     }
 
-    /// The grammar's whitespace member of the class `gap`, with its own text;
-    /// none when the grammar's layout kinds hold no member it reads as.
+    /// The grammar's whitespace member of the gap kind `gap`, with its own
+    /// text; none when the grammar has no member of that kind.
     fn layout_member(&self, gap: crate::layout_kinds::LayoutKinds) -> Option<G::Trivia> {
         let (table, _) = self.grammar.whitespace();
-        let kind = self.layout_kind(gap.default_text())?;
+        let kind = table.gap_kind(gap)?;
         G::Trivia::from_layout(TriviaText::of(kind, (table.text_of)(kind)))
     }
 
@@ -1438,7 +1438,10 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// whose text holds a line break when the run holds one, and none when it
     /// does not, the one of its seam rank (`classify_whitespace`).
     pub fn layout_kind(&self, run: &str) -> Option<KindId> {
-        layout_kind_in(&self.grammar, run)
+        let (table, kinds) = self.grammar.whitespace();
+        let breaks = run.contains('\n');
+        let class: Vec<KindId> = kinds.iter().copied().filter(|&kind| (table.text_of)(kind).contains('\n') == breaks).collect();
+        crate::classify::classify_whitespace(run, &class, table)
     }
 
     /// One call's lookups in this tree (`Lookups`).
@@ -1726,16 +1729,6 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     pub fn place(&self, index: crate::types::NodeIndex) -> Option<crate::trivia_store::Place> {
         B::place(self, index)
     }
-}
-
-/// The whitespace member `grammar` reads a run as: among its layout kinds
-/// whose text holds a line break when the run holds one, and none when it
-/// does not, the one of its seam rank (`classify_whitespace`).
-fn layout_kind_in<G: EngineGrammar>(grammar: &G, run: &str) -> Option<KindId> {
-    let (table, kinds) = grammar.whitespace();
-    let breaks = run.contains('\n');
-    let class: Vec<KindId> = kinds.iter().copied().filter(|&kind| (table.text_of)(kind).contains('\n') == breaks).collect();
-    crate::classify::classify_whitespace(run, &class, table)
 }
 
 // ─── Lookups ─────────────────────────────────────────────────────────────────
@@ -2785,20 +2778,16 @@ impl<G: EngineGrammar> Engine<G> {
     /// built node's side names one; on the leading side of each list item the
     /// parse set `apart`, the grammar's blank-line member first.
     fn place_extras(&self, tree: crate::types::TreeId, placed: Vec<crate::arena::Placed>, apart: Vec<crate::arena::NodeSite>) {
-        type Side = ((crate::arena::NodeSite, TriviaSide), Vec<crate::trivia_store::CompactEntry>);
-        let mut sides: Vec<Side> = Vec::new();
-        if let Some(kind) = layout_kind_in(&self.grammar, crate::layout_kinds::LayoutKinds::BLANKLINE.default_text()) {
-            sides.extend(apart.into_iter().map(|site| ((site, TriviaSide::Leading), vec![crate::trivia_store::CompactEntry::Layout { kind }])));
+        use crate::trivia_store::CompactEntry;
+        let mut entries: Vec<((crate::arena::NodeSite, TriviaSide), CompactEntry)> = Vec::with_capacity(placed.len() + apart.len());
+        if let Some(kind) = self.grammar.whitespace().0.gap_kind(crate::layout_kinds::LayoutKinds::BLANKLINE) {
+            entries.extend(apart.into_iter().map(|site| ((site, TriviaSide::Leading), CompactEntry::Layout { kind })));
         }
-        for extra in placed {
-            let entry = crate::trivia_store::CompactEntry::Record { kind: extra.kind, at: extra.extra };
-            match sides.iter_mut().find(|(key, _)| *key == (extra.site, extra.side)) {
-                Some((_, entries)) => entries.push(entry),
-                None => sides.push(((extra.site, extra.side), vec![entry])),
-            }
-        }
-        for ((site, side), entries) in sides {
-            self.written.write_kept(crate::trivia_store::Place::Placed { tree, site }, side, entries);
+        entries.extend(placed.into_iter().map(|extra| ((extra.site, extra.side), CompactEntry::Record { kind: extra.kind, at: extra.extra })));
+        entries.sort_by_key(|&(key, _)| key);
+        for run in entries.chunk_by(|(one, _), (other, _)| one == other) {
+            let ((site, side), _) = run[0];
+            self.written.write_kept(crate::trivia_store::Place::Placed { tree, site }, side, run.iter().map(|&(_, entry)| entry).collect());
         }
     }
 
