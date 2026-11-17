@@ -384,9 +384,9 @@ enum Place {
 /// with or without a line break, and empty where they touch: its bytes, the
 /// side, its owner (`Assigned::Layout`), whether it carries the layout
 /// written between the tokens around it, whether an entry's adjacency
-/// spells it (`Table::adjacency`), and whether an extra, `ERROR` or member
-/// of its gap ends where it starts or starts where it ends (`beside`). The
-/// file's two edges are none.
+/// spells it (`Table::adjacency`), and whether it sits directly beside an
+/// extra, `ERROR` or member of its gap on a side seated between the gap's
+/// own two tokens (`beside`). The file's two edges are none.
 ///
 /// Gaps that only a zero-width token parts (an automatic semicolon, a
 /// dedent) are one gap to a render, which writes nothing for the token: the

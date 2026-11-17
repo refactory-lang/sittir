@@ -17,11 +17,23 @@ function leadLastStatementOfFirstBody(root: ReturnType<typeof ts.parse>): void {
 }
 
 describe('a comment between two of its owner tokens, with no named child beside it, goes to the nearest child', () => {
-	it('keeps it through an edit inside its owner and through a snapshot', () => {
-		const root = ts.parse('for /* keep */ (;;) { x(); }\n');
-		expect(ts.render(root.$snapshot()).toString()).toBe('for (/* keep */;;) { x(); }\n');
+	it.each(['object', 'arena'] as const)('keeps it through an edit inside its owner and through a snapshot, joined to the child it leads as a built side joins (%s storage)', async (nodeStorage) => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		const root = engine.parse('for /* keep */ (;;) { x(); }\n');
+		expect(engine.render(root.$snapshot()).toString()).toBe('for (/* keep */ ;;) {\n  x();\n}\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('for (/* keep */;;) {\n  // lead\n  x(); }\n');
+		expect(root.$render()).toBe('for (/* keep */ ;;) {\n  // lead\n  x();\n}\n');
+	});
+
+	it.each(['object', 'arena'] as const)("drops the source line break beside it once it sits between other tokens, as the options write it there (%s storage)", async (nodeStorage) => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		expect(engine.render(engine.parse('for /* keep */\n(;;) {}\n').$snapshot()).toString()).toBe('for (/* keep */ ;;) {}\n');
+	});
+
+	it.each(['object', 'arena'] as const)('keeps the source gap beside it while it sits between the same two tokens (%s storage)', async (nodeStorage) => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		const root = engine.parse('for (/* keep */ ;;) { x(); }\n');
+		expect(engine.render(root.$snapshot()).toString()).toBe('for (/* keep */ ;;) {\n  x();\n}\n');
 	});
 
 	it('trails the last item of a list when it sits after the trailing separator', () => {

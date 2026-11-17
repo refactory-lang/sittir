@@ -1253,7 +1253,7 @@ impl<'t> Placer<'t, '_, '_> {
                             let pushed = Pushed { gap, step, at, until };
                             let carries = self.carries(pushed);
                             let spelled = self.spelled(gap.0, &plan, at, until);
-                            let beside = self.beside(&plan, at, until);
+                            let beside = self.beside(&plan, at, until, node, side);
                             let from = self.text_from(pushed);
                             let id = RunId(self.state.runs);
                             self.state.runs += 1;
@@ -1801,15 +1801,24 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// Whether an extra, `ERROR` or member of `plan`'s gap ends where the
-    /// run `at..until` starts or starts where it ends (`LayoutRun::beside`).
-    fn beside(&mut self, plan: &Plan, at: u32, until: u32) -> bool {
-        plan.steps.iter().any(|step| match step {
-            Step::Entry { entry: Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index), .. } => {
-                let kid = self.kid(*index);
-                kid.end == at || kid.start == until
-            }
-            _ => false,
-        })
+    /// run `at..until` starts or starts where it ends, with the run seated
+    /// on `node`'s `side` between the gap's own two tokens: a leading side
+    /// whose node starts where the gap ends, a trailing side whose node ends
+    /// where it starts, or the owner's inner side (`LayoutRun::beside`).
+    fn beside(&mut self, plan: &Plan, at: u32, until: u32, node: NodeIndex, side: TriviaSide) -> bool {
+        let seated = match side {
+            TriviaSide::Leading => self.kid(node).start == plan.to,
+            TriviaSide::Trailing => self.kid(node).end == plan.from,
+            TriviaSide::Inner => true,
+        };
+        seated
+            && plan.steps.iter().any(|step| match step {
+                Step::Entry { entry: Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index), .. } => {
+                    let kid = self.kid(*index);
+                    kid.end == at || kid.start == until
+                }
+                _ => false,
+            })
     }
 
     /// Whether an entry's adjacency spells the run `at..until` of `plan`, a
