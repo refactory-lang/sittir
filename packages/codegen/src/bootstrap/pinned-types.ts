@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 
-export const EMITTER_TSCONFIG = join('packages', 'codegen', 'tsconfig.emitter.json');
+export const PINNED_TYPES_TSCONFIG = join('packages', 'codegen', 'tsconfig.pinned-types.json');
 
 const EMITTER_PACKAGE = join('packages', 'codegen');
 
