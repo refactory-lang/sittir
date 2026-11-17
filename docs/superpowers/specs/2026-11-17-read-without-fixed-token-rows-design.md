@@ -1,6 +1,6 @@
-# A parsed read stores no row for a fixed token
+# A parsed read stores no row for a fixed token or a unit
 
-**Status:** draft for the maintainer, 2026-11-17. Written by the engine-api session from the coordinate census (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`) and the code on the hydrate-at-parse branch at `1f0170702`. Entries marked "to verify" are checked by a probe or parity test before they are built. This is the task after the hydrate-at-parse branch lands. The release of parsed records (held until this spec is written) is ruled with it.
+**Status:** approved by the maintainer, 2026-11-17, with every open question ruled (§ Decided by the maintainer). Written by the engine-api session from the coordinate census (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`) and the code on the hydrate-at-parse branch at `1f0170702`. Entries marked "to verify" are checked by a probe or parity test before they are built. This is the task after the hydrate-at-parse branch lands. The release of parsed records stays held until stage one has landed and been measured.
 
 ## Decided by the maintainer
 
@@ -34,7 +34,7 @@ A **row** is a run entry for a node with no record: `RunEntry::Row { facts, span
 - A fixed token's text comes from its kind. Where it sits comes from its holder's render body and the record's cells, the way a built node's template answers it. No byte offset of a fixed token is stored.
 - A slot whose content is a choice among units is held by its cell's kind id alone, parsed and built alike.
 - A record's own coordinate (`AT`: kind, start, end) stays, and so does every offset of text the source carries.
-- No reader of a parsed tree asks a fixed token's offset. Each of the four readers that do today asks a position, an order or a small fact stored at parse instead.
+- No reader of a parsed tree asks a fixed token's or a unit's offset. Each of the four readers that do today asks a position, an order or a small fact stored at parse instead.
 
 ## What a parsed record holds
 
@@ -95,7 +95,7 @@ The trailing-separator and automatic-semicolon cases read the cell's kind, not a
 
 A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form.
 
-Unit rows are slot content, not fixed tokens, so removing them goes beyond the ruling as worded. They are listed separately in the numbers and in the open questions.
+Unit rows are slot content, not fixed tokens; the maintainer ruled that they go too, in the same stage. The numbers list them apart.
 
 ## What navigation lists
 
@@ -103,7 +103,7 @@ Navigation (`Nodes` over `RunNodes`, `rust/crates/sittir-core/src/arena/run_node
 
 - every record (child nodes with a record, trivia records);
 - every row: a variable-text leaf, a node with no record, and what lies under trivia;
-- if unit rows go, each unit as its cell lists it, with its kind and no span. A built record lists its units the same way (`arena/built.rs::Engine::descendants_of` yields `QueryItem::Unit`). Where a unit sits among the run's entries is the second open question.
+- each unit from its cell, where its slot's cell sits, with its kind and no span, as a built record lists its units (`arena/built.rs::Engine::descendants_of` yields `QueryItem::Unit`). No run entry is kept for it.
 
 It lists no fixed token. Named fixed tokens leave navigation too: these are polymorph forms whose kind fixes a named node. The census counts them, as rows the render body writes that tree-sitter names:
 
@@ -127,7 +127,7 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
 - **Today.** `nodes::for_each_edge_child` walks from a node to the child at its edge, level by level, while each starts (or ends) where its holder does. The writer then places, at that edge of a slice, what each level's template writes there (`RenderSink::boundary`). The chain often ends in a fixed token: the `(` of `arguments`, the `}` of a block.
 - **After.**
   - The positional test stays for records and rows: their spans are stored.
-  - Where the chain reaches a node whose edge is a fixed token, the token's kind comes from the node kind's render body: its first (last) part, read against the record's cells when that part is a slot, so the edge is the one the record's own render would write.
+  - Where the chain reaches a node whose edge is a fixed token or a unit, the token's kind comes from the node kind's render body: its first (last) part, read against the record's cells when that part is a slot, so the edge is the one the record's own render would write.
   - A fixed token is fixed for its kind, or for the polymorph form that is the record's kind. A choice among literal texts is a slot (a `kindEnum` or `mixedEnum` slot), so its edge is the cell's kind.
   - The per-kind leading and trailing fixed token is generated with the crate from `render-bodies.json`, the source of fixed tokens, as one fact per kind. It is never derived from text at run time.
 - **Identity.** `edge_levels` tests whether the coordinate's node is this node by `kid.span() != coord.span`. That becomes a test by index: the coordinate carries its node's index.
@@ -155,7 +155,7 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
     - Today the prepare walk fills it from the source (`prepare::slot_separators`). The hydration walk fills it at parse instead.
     - A trailing separator is one place past the last item.
     - The automatic semicolon is that place's kind id, as the maintainer's ruling says.
-- **Where the bit lives**, beside the list's run or as a place in `tokens`, is the third open question. The parsed-comments spec keeps this half of a list slot: "The separator half is a preference choice and stays".
+- **The bit lives beside the list's run** (ruled). The parsed-comments spec keeps this half of a list slot: "The separator half is a preference choice and stays".
 
 ### Re-indenting inside multi-line tokens: `line_starts_inside_tokens`
 
@@ -178,7 +178,7 @@ The rule is the parsed-comments spec's and does not change.
 - **No side is placed on a fixed token.** `placed` seats a side only on a named child, and an anonymous fixed token is never named.
   - **Named fixed tokens.** For the named ones listed under navigation, a comment beside one is seated as if it were unnamed, as a built node seats it (the built form has no such child).
   - **Expected cases.** These are the only placements expected to change. The parity test lists each one: node, side, kind and span, before and after.
-- **Sides on a unit,** if unit rows go, are keyed by the unit's site (holder, slot word, item). The shared-arena spec gives that key ("Sides by site"), and a built unit's sides already use it (`trivia_store::Site`). Parsed sides are keyed by row today ("each parsed tree's by row", `trivia_store.rs`).
+- **Sides on a unit** are keyed by the unit's site (holder, slot word, item). The shared-arena spec gives that key ("Sides by site"), and a built unit's sides already use it (`trivia_store::Site`). Parsed sides are keyed by row today ("each parsed tree's by row", `trivia_store.rs`).
 
 ## ERROR, header-only records, zero width and MISSING
 
@@ -196,11 +196,11 @@ The rule is the parsed-comments spec's and does not change.
 
 ## Public surfaces
 
-Each row is for the maintainer before code. "Unchanged" means the value is unchanged and a parity test proves it on every fixture.
+Approved by the maintainer, 2026-11-17. The two rows marked "to verify" are checked before code; a `$snapshot` that lists a fixed token today comes back as its own row. "Unchanged" means the value is unchanged and a parity test proves it on every fixture.
 
 | surface | today | after |
 |---|---|---|
-| addon `siblings(treeId, indexes)` → `Siblings { previous, next }` of `Sibling { start, end, kind }`; JavaScript reaches it through the parsed tree's `siblings` (`packages/common/src/engine.ts`) | a unit sibling carries its row's span; a named fixed token can be a sibling where its holder's read routes no slots (`siblings_counting`, `Kid::holder`) | if unit rows go, a unit sibling has no span, as a rebuilt list's unit sibling already has none (`Sibling`'s doc); a named fixed token is no sibling |
+| addon `siblings(treeId, indexes)` → `Siblings { previous, next }` of `Sibling { start, end, kind }`; JavaScript reaches it through the parsed tree's `siblings` (`packages/common/src/engine.ts`) | a unit sibling carries its row's span; a named fixed token can be a sibling where its holder's read routes no slots (`siblings_counting`, `Kid::holder`) | a unit sibling has no span, as a rebuilt list's unit sibling already has none (`Sibling`'s doc); a named fixed token is no sibling |
 | addon `descendants` and `readDescendants`; query facets `$children`, `$descendants` (`packages/common/src/query.ts`) | items: a node coordinate, or `QueryItem::Unit(kind)` with no span; a resume path of `ChildPosition`s indexes each level's kids | items unchanged (to verify per kind); a resume path's numbers change because a level lists fewer kids. A path is not kept across versions. |
 | `NodeCoordinate.$treeHandle`, `$end` (`packages/types/src/core-types.ts`) | navigation indexes, minted as nodes are met (`Walk::meet`) | values renumber; same contract |
 | `$text` | a record or leaf: its source slice; a query's unit: its kind's text | unchanged; no public surface names a fixed token, so none reads one's text |
@@ -225,21 +225,22 @@ The census's other layout. Every parsed cell is one word:
 - a unit cell is one word already;
 - a slot that can hold a captured interior string keeps two words.
 
-**Two stages, not one change.** The stages change different code and are measured apart:
+**Two stages** (ruled). The stages change different code and are measured apart:
 
-- the row removal changes the hydration walk, navigation and the four readers;
-- the one-word cell changes every parsed-cell decoder, in Rust (`Cell::decode_parsed`, the `CellWord` accessors) and in JavaScript (`record-cell.ts::decodeParsedCell`).
+- stage one, the row removal, changes the hydration walk, navigation and the four readers;
+- stage two, the one-word cell, changes every parsed-cell decoder, in Rust (`Cell::decode_parsed`, the `CellWord` accessors) and in JavaScript (`record-cell.ts::decodeParsedCell`).
 
 Neither needs the other. The row removal lands first.
 
 Read words as a share of today, by corpus. Each row's lowest is in bold.
 
-- **Fixed-token rows:** the stage the ruling asks for. Separators of a list kind with several candidates are left out of it, since their kind ids are stored in `SideSlot::tokens` at a cost the first step measures.
-- **Plus unit rows:** that stage, with the unit rows also removed: keyword, punctuation or enum, external-scanner and boolean-slot units. It is a lower bound: the census counts the token inside an enum node with no record (for example `string` in `predefined_type`) among "a token inside a slot-held node that has no record", and does not split it out.
+- **Fixed-token rows:** the fixed-token rows alone. Separators of a list kind with several candidates are left out of it, since their kind ids are stored in `SideSlot::tokens` at a cost the first step measures.
+- **Stage one:** the fixed-token rows and the unit rows: keyword, punctuation or enum, external-scanner and boolean-slot units. It is a lower bound: the census counts the token inside an enum node with no record (for example `string` in `predefined_type`) among "a token inside a slot-held node that has no record", and does not split it out.
 - **One-word cell:** that change alone.
-- **Both:** the fixed-token stage and the one-word cell together.
+- **Fixed-token rows and one-word cell:** the two together, without the unit rows.
+- **Stage two:** stage one and the one-word cell.
 
-| corpus | fixed-token rows | plus unit rows | one-word cell | both | both, plus unit rows |
+| corpus | fixed-token rows | stage one | one-word cell | fixed-token rows and one-word cell | stage two |
 |---|---|---|---|---|---|
 | paired rust | 86.6 | 86.0 | 82.3 | 68.9 | **68.2** |
 | paired typescript | 87.5 | 83.8 | 83.7 | 71.2 | **67.5** |
@@ -255,7 +256,7 @@ The fixed-token rows are 16.2% of a read's words on matter.js and 13.5% on next.
 
 ## Release under this layout
 
-The maintainer rules release and layout together. This section says what a parsed record holds under the layout above, and how it and its source are counted and freed.
+Release stays held until stage one has landed and been measured (§ Decided by the maintainer, question 7). This section is what it will be ruled against: what a parsed record holds under the layout above, and how it and its source are counted and freed.
 
 **What a parsed record holds:**
 
@@ -290,10 +291,10 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 
 ## Goals
 
-- A parsed read stores no offset for a fixed token, and no row for one.
+- A parsed read stores no offset and no row for a fixed token or a unit.
 - The four readers answer as today on every fixture, from positions, the render body and facts stamped at parse.
-- A parsed unit cell is the built unit cell (if unit rows go).
-- Read words fall to the "fixed-token rows" column on every corpus, less the measured cost of stored separator choices.
+- A parsed unit cell is the built unit cell.
+- Read words fall to the "stage one" column on every corpus, less the measured cost of stored separator choices.
 
 ## Non-goals
 
@@ -314,18 +315,17 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
   - placed sides: node, side, kind and span;
   - query results.
 - **Validation numbers** unchanged across all grammars (`sittir validate history`, compared per row). No render output is expected to change: an untouched node is its source slice, and a rebuilt one writes its template.
-- **Tests that pin rows** change by design: `record_nodes.rs`'s `backers_agree`, and `arena/parsed.rs::runs_agree`, which compare the records' navigation with the tree's. They then compare against the tree with fixed tokens filtered out by role. Each one is listed and shown to pin rows before its expectation changes.
+- **Tests that pin rows** change by design: `record_nodes.rs`'s `backers_agree`, and `arena/parsed.rs::runs_agree`, which compare the records' navigation with the tree's. They then compare against the tree with fixed tokens and units filtered out by role. Each one is listed and shown to pin rows before its expectation changes.
 - **Parse and render timings** on CI's paired run against master's arena, per grammar. The walk does the same work and writes fewer words.
 
 ## Order
 
-1. **Probe.** Count the leaves that need the line-start bit, and each list's trailing separators and separator choices, on every census corpus.
+1. **Probe.** Count the leaves that need the line-start bit, and each list's trailing separators and separator choices, on every census corpus. Check the two public rows marked "to verify": that the parse's error list is computed over the tree at parse, and whether `$snapshot` lists a fixed token (if it does, that comes back as its own row).
 2. **Parity first.** The parity tests above, with the stored facts written beside today's rows and the readers answering both ways. No output change.
-3. **Rows go.** The walk stops writing fixed-token rows, the readers read the stored facts, and the tests that pin rows are retaken.
-4. **Unit rows go**, if the maintainer approves: unit cells take the built form, and unit sides are keyed by site.
-5. **The one-word parsed cell**, as its own change.
+3. **Rows go** (stage one). The walk stops writing fixed-token and unit rows; unit cells take the built form, a unit is listed from its cell, and unit sides are keyed by site; the readers read the stored facts, and the tests that pin rows are retaken.
+4. **The one-word parsed cell** (stage two), as its own change.
 
-Release (the four gaps) is built when the maintainer rules it. Its rules don't depend on which of these steps have landed.
+Release (the four gaps) stays held until step 3 has landed and been measured.
 
 ## Open questions for the maintainer
 
