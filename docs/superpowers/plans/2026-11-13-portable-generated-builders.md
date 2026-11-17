@@ -181,6 +181,32 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 - [ ] **Step 3: Regenerate.** The generated modules type-check with 0 errors, or each error is a `portable-emit-type` row. Record the per-grammar counts of every emit diagnostic as the ceilings.
 - [ ] **Step 4: Run** the corpus test, validate history and the suite. Report type-check times against the baseline. Commit.
 
+### Task 4b: No kind id on the portable surface
+
+The spec's "A kind id has no meaning on the portable surface", as approved: a literal union for paths, no nominal brand, and the kind-id gap closed. No code before Task 4 is in a PR.
+
+**Files:**
+- Modify: `packages/types/src/vocabulary/map.ts` (`NodeOf`), `packages/types/src/portable-build.ts` (`PortableStructure`'s JSDoc)
+- Modify: `packages/common/src/portable/build.ts`, `packages/codegen/src/emitters/overlays/portable/emit/build.ts`
+- Test: `packages/{python,rust,typescript}/tests/build-input.portable.test-d.ts`, `packages/tools/tests/portable/bare-numbers.test.ts`, `packages/codegen/src/bindings/__tests__/pinned-emit.test.ts`
+
+What the census checked, so the task needs no new probe:
+- A bare kind id reaches the portable types only through a map's `nodes` block, where `NodeOf` falls back to the id of a kind with no bound node type: the fixed words (python 9 paths, rust 16 with 33 ids, typescript 23 with 25 ids). Each is already a vocabulary path.
+- A structure path's fixed word reads as its structure (`{ $path: 'literal.null' }`, a boolean with its `$value`). A text path's reads as its text (python `'pass'`, `'*'`, `'_'`; rust `'usize'`, `'()'`, `'..'`, `'self'`; typescript `'unique symbol'`, `'import.meta'`, `'super'`).
+- No table data reaches the kind-id branch of the interpreter's `element()`: a spelled fact's items are structures, and no item member holds a number (python's 8 facts and 12 spellings; rust and typescript have none). Presets write their kind ids into the builder config directly.
+- Before this task, the generated members that place a bare number as a kind id: python 52, rust 63, typescript 34.
+
+- [ ] **Step 1: The failing tests.**
+  - Types: a fixed word's bare kind id is refused where a member holds its path and admits no number (a member that admits `number` admits every numeric enum member, so a number member is pinned at run time instead); its structure is admitted (`{ $path: 'literal.null' }`); a text path admits its text (rust `type.primitive.integral.size` as `'usize'`).
+  - Run time: a bare number in a member with no number taker is refused, by the interpreter and the generated member alike, with the same refusal.
+  - Emit: a member with no takers writes the refusal for a number, never `seated(value, …)`.
+- [ ] **Step 2: Implement.**
+  - `NodeOf`'s fallback is `never`.
+  - The interpreter's `element()` refuses a number instead of placing it as a kind id.
+  - The emitter's no-taker number branch calls `unnumbered`, and `placedByKind` keeps only nodes.
+  - `PortableStructure`'s JSDoc drops "a kind id".
+- [ ] **Step 3: Regenerate,** run the three-way verification, and commit.
+
 ### Task 5: The projection emitter
 
 **Files:**
