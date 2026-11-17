@@ -137,7 +137,9 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 - Built of Step 2:
   - decisions 1, 2 and 4;
   - the header comment;
-  - paths that pick their arm by the `$value`'s type, and number arms that take the scalar whole or in their last numeric slot.
+  - paths that pick their arm by the `$value`'s type, and number arms that take the scalar whole or in their last numeric slot;
+  - text-built arms from their text, where the path reads its `$value` as text;
+  - containers whose builder takes an elements or spread input, holding a single value.
 - A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers decimal-part numbers, holders, owners, mounts and options.
 - Remaining:
   - decisions 5 and 7. Decision 7 lands here, not with the grammar map, so Task 3b's merged output does not carry it yet;
