@@ -7,7 +7,7 @@
 //! and refuses any word no writer writes, so a malformed cell is an error,
 //! never a read outside its record.
 
-use super::{Address, ArenaError, ArenaRead, CellShape, StringRef};
+use super::{Address, ArenaError, ArenaRead, CellShape, RecordShape, StringRef};
 use crate::record::{form, tagged};
 use crate::record::HEADER_WORDS;
 use crate::slot::ChangedEdges;
@@ -493,6 +493,30 @@ impl ListCell {
     }
 }
 
+/// Visits each cell of the built record at `at`, of shape `record`, with its
+/// slot's shape, its item and its word, undecoded: a slot's one word as item
+/// 0, and a list slot's each item's word in its run.
+///
+/// # Errors
+///
+/// What reading the record or a run refuses, and `ArenaError::Malformed`
+/// for a cell word past the record or a list cell `ListCell::of_word`
+/// refuses; and what `visit` refuses.
+pub(super) fn built_cells(arena: &dyn ArenaRead, at: Address, record: RecordShape, mut visit: impl FnMut(CellShape, u32, CellWord) -> Result<(), ArenaError>) -> Result<(), ArenaError> {
+    let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
+    for &shape in record.cells {
+        let word = CellWord(*words.get(shape.built as usize).ok_or(malformed("cell word", shape.built))?);
+        if shape.run.is_none() {
+            visit(shape, 0, word)?;
+            continue;
+        }
+        for (item, n) in ListCell::of_word(word, arena)?.items(arena, 1)?.zip(0..) {
+            visit(shape, n, CellWord(item[0]))?;
+        }
+    }
+    Ok(())
+}
+
 fn run_words(len: u32, item_width: u32) -> Result<u32, ArenaError> {
     if item_width == 0 {
         return Err(malformed("list item width", 0));
@@ -519,6 +543,34 @@ mod tests {
         let unit = CellWord::unit(KindId(5)).expect("a unit");
         assert_eq!((unit.address(), unit.edges()), (Address(5), 0));
         assert_eq!((CellWord(0).address(), CellWord(0).edges()), (Address::NONE, 0));
+    }
+
+    #[test]
+    fn a_built_records_cells_are_walked_a_list_slots_as_its_items() {
+        const CELLS: &[CellShape] = &[
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" },
+            CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items" },
+            CellShape { word: 6, width: 3, run: None, forms: form::NODE, built: 4, key: "_unset" },
+        ];
+        let record = RecordShape { words: 9, built_words: 5, cells: CELLS };
+        let mut image = BuiltImage::new(BITS);
+        let leaf = image.record(KindId(6), HEADER_WORDS, &[]);
+        let child = built_cell(leaf, ChangedEdges { leading: true, trailing: false });
+        let items = [built_cell(leaf, ChangedEdges::default()), built_cell(leaf, ChangedEdges { leading: false, trailing: true })];
+        let run = image.run(&items);
+        let full = image.record(KindId(5), 5, &[(2, child), (3, run)]);
+        let empty = image.record(KindId(5), 5, &[(2, child)]);
+        let walk = |at: Address| {
+            let mut cells = Vec::new();
+            built_cells(&image, at, record, |shape, item, word| {
+                cells.push((shape.key, item, word.0));
+                Ok(())
+            })
+            .expect("a walk");
+            cells
+        };
+        assert_eq!(walk(full), vec![("_child", 0, child), ("_items", 0, items[0]), ("_items", 1, items[1]), ("_unset", 0, 0)]);
+        assert_eq!(walk(empty), vec![("_child", 0, child), ("_unset", 0, 0)], "an empty list has no items");
     }
 
     fn shape(forms: u8, width: u32) -> CellShape {
