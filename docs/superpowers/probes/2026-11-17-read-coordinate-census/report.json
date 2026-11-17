@@ -144,6 +144,8 @@
    "choiceOutliers": 0,
    "flankedLists": 271,
    "delimiterDisagreements": 0,
+   "delimiterToTrailing": {},
+   "delimiterToNone": {},
    "namedFixedQueryItems": {
     "extern_crate_declaration > crate (layout, unit)": 3,
     "mut_pattern > mutable_specifier (layout, unit)": 3,
@@ -362,7 +364,11 @@
    "choiceGaps": 20,
    "choiceOutliers": 0,
    "flankedLists": 208,
-   "delimiterDisagreements": 0,
+   "delimiterDisagreements": 26,
+   "delimiterToTrailing": {
+    "object_type_content": 26
+   },
+   "delimiterToNone": {},
    "namedFixedQueryItems": {
     "abstract_method_signature_getter > formal_parameters (layout, unit)": 1,
     "object_type_content > automatic_semicolon (separator, unit)": 29,
@@ -544,6 +550,8 @@
    "choiceOutliers": 0,
    "flankedLists": 772,
    "delimiterDisagreements": 0,
+   "delimiterToTrailing": {},
+   "delimiterToNone": {},
    "namedFixedQueryItems": {
     "_simple_statements > newline (layout, unit)": 442,
     "block_statement > newline (layout, unit)": 6,
@@ -690,6 +698,8 @@
    "choiceOutliers": 0,
    "flankedLists": 0,
    "delimiterDisagreements": 0,
+   "delimiterToTrailing": {},
+   "delimiterToNone": {},
    "namedFixedQueryItems": {}
   },
   "options": {
@@ -831,6 +841,8 @@
    "choiceOutliers": 0,
    "flankedLists": 0,
    "delimiterDisagreements": 0,
+   "delimiterToTrailing": {},
+   "delimiterToNone": {},
    "namedFixedQueryItems": {}
   },
   "options": {
@@ -992,6 +1004,8 @@
    "choiceOutliers": 0,
    "flankedLists": 213,
    "delimiterDisagreements": 0,
+   "delimiterToTrailing": {},
+   "delimiterToNone": {},
    "namedFixedQueryItems": {
     "reference_expression_mut > mutable_specifier (layout, unit)": 5,
     "self_parameter > self (layout, unit)": 24
@@ -1157,7 +1171,11 @@
    "choiceGaps": 0,
    "choiceOutliers": 0,
    "flankedLists": 76,
-   "delimiterDisagreements": 0,
+   "delimiterDisagreements": 1,
+   "delimiterToTrailing": {
+    "object_type_content": 1
+   },
+   "delimiterToNone": {},
    "namedFixedQueryItems": {
     "object_type_content > automatic_semicolon (separator, unit)": 1
    }
@@ -1372,7 +1390,11 @@
    "choiceGaps": 2440,
    "choiceOutliers": 0,
    "flankedLists": 20300,
-   "delimiterDisagreements": 0,
+   "delimiterDisagreements": 725,
+   "delimiterToTrailing": {
+    "object_type_content": 725
+   },
+   "delimiterToNone": {},
    "namedFixedQueryItems": {
     "abstract_method_signature_getter > formal_parameters (layout, unit)": 6,
     "method_definition_getter > formal_parameters (layout, unit)": 647,
@@ -1620,7 +1642,11 @@
    "choiceGaps": 22401,
    "choiceOutliers": 0,
    "flankedLists": 53038,
-   "delimiterDisagreements": 7,
+   "delimiterDisagreements": 5466,
+   "delimiterToTrailing": {
+    "object_type_content": 5466
+   },
+   "delimiterToNone": {},
    "namedFixedQueryItems": {
     "abstract_method_signature_getter > formal_parameters (layout, unit)": 1,
     "method_definition_getter > formal_parameters (layout, unit)": 125,
