@@ -274,7 +274,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 
 **Interfaces:**
 - Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
-- Produces: `types::NodeId` and the rows that follow from it (the public `NodeCoordinate`, the side record's fields, `Cell::Child`/`Cell::LinkedLeaf`, the `SourceTable` methods and the addon calls). Each row needs the maintainer's approval before code.
+- Produces: `types::NodeId` and the rows that follow from it (the public `NodeCoordinate`, the side record's fields, `Cell::Child`/`Cell::LinkedLeaf`, the `SourceTable` methods and the addon calls). Each row needs the maintainer's approval before code. **Ruled 2026-11-17 ("Prototype, inside #1227"):** the rows not yet produced (the Rust `NodeCoordinate` type, which still holds `tree`, `index` and `end`; the `SourceTable` signatures; `Cell::Child`/`Cell::LinkedLeaf`) are prototype's, and they are built inside Task 6's PR, after the maintainer approves each row.
 - Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
 - Produces: `BuiltRender::render_built_leaf(built, kind, entry, sides, changed, options, entries)`, arena only, internal pub, referencing no tree (approved by the maintainer, 2026-11-14, in place of the `entry_sources_holding` row of 2026-11-12, which is not added).
 
