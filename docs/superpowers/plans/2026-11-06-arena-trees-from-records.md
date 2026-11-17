@@ -334,7 +334,7 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 
 ### Task 6c: A parse places comments; whitespace placement is deleted
 
-**Status:** step 1 committed locally on `feat/comments-at-parse` (cut from Task 6's branch), 2026-11-16. Approved by the maintainer 2026-11-15. **It lands inside Task 6's PR** (ruled 2026-11-16), not after it: its steps 3 and 4 are what bring Task 6's render under its gate.
+**Status:** in progress on Task 6's branch `feat/arena-hydrate-at-parse` (step 1 began on `probe/comments-at-parse`, cut from it, 2026-11-16). Approved by the maintainer 2026-11-15. **It lands inside Task 6's PR** (ruled 2026-11-16), not after it: its steps 3 and 4 are what bring Task 6's render under its gate.
 
 **Object storage is deferred** (the maintainer, 2026-11-16, asked how object storage places comments once the placer is deleted: "Can we defer this? I don't want to invest too much time in object storage"). Steps 3 and 4 are done for arena storage only. Object storage keeps its placer and its lazy placement untouched; no walk is added to its parse and nothing of its path is rewritten. What that leaves open, to be listed before step 3 is built: where the two storages then render an edited parsed tree differently, and what the validation rows and tests that run in both storages do about it. Three ways to close it later were costed (a walk at object's parse, the shared rule run lazily, the placer kept for comments only); none is chosen.
 
