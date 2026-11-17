@@ -79,6 +79,12 @@ The rule, first match wins:
 3. `prev` exists: trailing of `prev`, own line.
 4. Otherwise: inner of `P`, in the gap `c` occupies (see "Gaps").
 
+Ruled 2026-11-17, on a comment that follows an item's separator (`a: string; // c`, `f(a, // c⏎ b)`, an enum variant, an array item), which the reader gave to the next item, so that replacing the next item lost it:
+
+- **Rule 1 across a separator applies only to a comment that is last on its row** ("Only a comment that is last on its row"). When a separator lies between `prev` and `c`, `c` trails `prev` if `next` starts on a later row. A comment followed by `next` on the same row is leading of `next`: `f(a, /* c */ b)`, and `/* B */` in `[/* A */ true, /* B */ false]`, which travels with `false`.
+- **Such an entry is written after the separator, as the source has it** ("After the separator, as the source has it"). The read marks a trailing entry that sits after its item's separator, and the list render writes it after that separator, so `a: string; // c⏎b: number` rebuilds as itself and keeps the comment when `b` is replaced. This is handling in the list render that the trivia-table spec declined for the narrower case of a comment after a list's trailing separator; that case is left as it is.
+- **One decision for both storages.** The owner is decided twice today (the object read's placer and the arena parse walk, held equal by a parity test); the fix goes in one function both reach.
+
 Rule 1 differs from today's reader. Today every comment between two siblings
 becomes leading of `next`, so `a; // note` re-renders on the following line in a
 detached render. Rule 4 is new: today a comment with no named sibling is not
