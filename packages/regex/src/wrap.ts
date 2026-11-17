@@ -46,7 +46,8 @@ import {
 	handleEngine,
 	handleDispose,
 	handleQuery,
-	handleSnapshot
+	handleSnapshot,
+	hoistRead
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -300,7 +301,15 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 			return this._operator;
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -367,7 +376,15 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 			return this._operator;
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -648,7 +665,15 @@ export function wrapAnonymousCapturingGroup(
 		...data,
 		$type: TSKindId.AnonymousCapturingGroup as const,
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -702,7 +727,15 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 			return hydrateSlot<T.GroupName>(this, '_group_name', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -779,7 +812,15 @@ export function wrapNonCapturingGroup(data: T.NonCapturingGroup, tree: TreeHandl
 		...data,
 		$type: TSKindId.NonCapturingGroup as const,
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1694,7 +1735,15 @@ export function wrapInlineFlagsGroupEnable(
 			return hydrateSlot<T.Flags>(this, '_enabled', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1767,7 +1816,15 @@ export function wrapInlineFlagsGroupToggle(
 			return hydrateSlot<T.Flags>(this, '_disabled', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1850,7 +1907,15 @@ export function wrapInlineFlagsGroupDisable(
 			return hydrateSlot<T.Flags>(this, '_disabled', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2022,7 +2087,15 @@ function viewLookaheadAssertion$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewLookaheadAssertion$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 3, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 3, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewLookaheadAssertion(data: RecordPosition, tree: TreeHandle): T.LookaheadAssertion.Parsed {
 	const node = {
@@ -2053,7 +2126,15 @@ function viewLookbehindAssertion$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewLookbehindAssertion$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 3, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 3, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewLookbehindAssertion(data: RecordPosition, tree: TreeHandle): T.LookbehindAssertion.Parsed {
 	const node = {
@@ -2192,7 +2273,15 @@ function viewClassRange(data: RecordPosition, tree: TreeHandle): T.ClassRange.Pa
 }
 
 function viewAnonymousCapturingGroup$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 2, 5, 8, 5, 2);
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 2, 5, 8, 5, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewAnonymousCapturingGroup(data: RecordPosition, tree: TreeHandle): T.AnonymousCapturingGroup.Parsed {
 	const node = {
@@ -2225,7 +2314,15 @@ function viewNamedCapturingGroup$groupName(this: RecordHandle) {
 	return viewSlot<T.GroupName>(this, 3, 3, 1, 0, 3);
 }
 function viewNamedCapturingGroup$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
 	const node = {
@@ -2254,7 +2351,15 @@ function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.Name
 }
 
 function viewNonCapturingGroup$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 2, 5, 8, 5, 2);
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 2, 5, 8, 5, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewNonCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NonCapturingGroup.Parsed {
 	const node = {
@@ -2730,7 +2835,15 @@ function viewInlineFlagsGroupEnable$enabled(this: RecordHandle) {
 	return viewSlot<T.Flags>(this, 2, 3, 1, 0, 2);
 }
 function viewInlineFlagsGroupEnable$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern | undefined>(this, 5, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.Pattern | undefined>(this, 5, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewInlineFlagsGroupEnable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupEnable.Parsed {
 	const node = {
@@ -2764,7 +2877,15 @@ function viewInlineFlagsGroupToggle$disabled(this: RecordHandle) {
 	return viewSlot<T.Flags>(this, 5, 3, 1, 0, 3);
 }
 function viewInlineFlagsGroupToggle$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern | undefined>(this, 8, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.Pattern | undefined>(this, 8, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewInlineFlagsGroupToggle(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupToggle.Parsed {
 	const node = {
@@ -2796,7 +2917,15 @@ function viewInlineFlagsGroupDisable$disabled(this: RecordHandle) {
 	return viewSlot<T.Flags>(this, 2, 3, 1, 0, 2);
 }
 function viewInlineFlagsGroupDisable$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern | undefined>(this, 5, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.Pattern | undefined>(this, 5, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 8, 3, 2);
+			}
+		],
+		false
+	);
 }
 function viewInlineFlagsGroupDisable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupDisable.Parsed {
 	const node = {

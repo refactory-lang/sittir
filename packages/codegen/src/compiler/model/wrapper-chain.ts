@@ -21,6 +21,7 @@ export interface WrapperChain {
 	readonly slot: string;
 	readonly accessor: string;
 	readonly wrappers: readonly string[];
+	readonly storage: readonly string[];
 	readonly slots: readonly AssembledNonterminal[];
 }
 
@@ -126,6 +127,7 @@ function canBeEmpty(slot: AssembledNonterminal): boolean {
 export function wrapperChainOf(nodeMap: NodeMap, holder: AbstractAssembledCompound, slot: AssembledNonterminal): WrapperChain | undefined {
 	if (holder.kind.startsWith('_')) return undefined;
 	const wrappers: string[] = [];
+	const storage: string[] = [];
 	const slots: AssembledNonterminal[] = [];
 	let current = slot;
 	let empty = false;
@@ -138,13 +140,14 @@ export function wrapperChainOf(nodeMap: NodeMap, holder: AbstractAssembledCompou
 		if (inner === undefined || (holdsList(current) && holdsList(inner))) break;
 		if (!(nodeMap.nodes.get(kind) instanceof AssembledList) && holdsOnlyLeaf(nodeMap, inner)) break;
 		wrappers.push(display);
+		storage.push(kind);
 		slots.push(inner);
 		empty = empty || canBeEmpty(inner);
 		current = inner;
 	}
 	if (wrappers.length === 0) return undefined;
 	if (empty && !isRequired(slot)) return undefined;
-	return { holder: holder.kind, slot: slot.name, accessor: slot.propertyName, wrappers, slots };
+	return { holder: holder.kind, slot: slot.name, accessor: slot.propertyName, wrappers, storage, slots };
 }
 
 export function wrapperChainsOf(nodeMap: NodeMap): readonly WrapperChain[] {
@@ -161,11 +164,11 @@ export function wrapperChainsOf(nodeMap: NodeMap): readonly WrapperChain[] {
 
 const tables = new WeakMap<NodeMap, ReadonlyMap<string, WrapperChain>>();
 
-export function wrapperChainFor(nodeMap: NodeMap, holder: string, slot: AssembledNonterminal): WrapperChain | undefined {
+export function wrapperChainFor(nodeMap: NodeMap, holder: string, slotName: string): WrapperChain | undefined {
 	let table = tables.get(nodeMap);
 	if (table === undefined) {
 		table = new Map(wrapperChainsOf(nodeMap).map((chain) => [`${chain.holder}.${chain.slot}`, chain]));
 		tables.set(nodeMap, table);
 	}
-	return table.get(`${holder}.${slot.name}`);
+	return table.get(`${holder}.${slotName}`);
 }

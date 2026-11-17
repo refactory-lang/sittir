@@ -22,6 +22,7 @@ export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { refuseJSON } from './json-refusal.ts';
 export { spelledMember } from './spelled.ts';
+export { hoistRead, type HoistHop } from './hoist-read.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };

@@ -68,6 +68,7 @@ import {
 	handleDispose,
 	handleQuery,
 	handleSnapshot,
+	hoistRead,
 	blankArmRead,
 	blankArmStored
 } from '@sittir/common/utils';
@@ -292,7 +293,15 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		...data,
 		$type: TSKindId.ExportClause as const,
 		exportSpecifiers() {
-			return hydrateSlot<T.ExportSpecifiers | undefined>(this, '_export_specifiers', tree);
+			return hoistRead(
+				hydrateSlot<T.ExportSpecifiers | undefined>(this, '_export_specifiers', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.ExportSpecifier>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -653,7 +662,15 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 		...data,
 		$type: TSKindId.NamedImports as const,
 		importSpecifiers() {
-			return hydrateSlot<T.ImportSpecifiers | undefined>(this, '_import_specifiers', tree);
+			return hoistRead(
+				hydrateSlot<T.ImportSpecifiers | undefined>(this, '_import_specifiers', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.ImportSpecifier>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -745,7 +762,19 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle): 
 			return this._attribute_kind;
 		},
 		object() {
-			return hydrateSlot<T.Object>(this, '_object', tree);
+			return hoistRead(
+				hydrateSlot<T.Object>(this, '_object', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
+							this,
+							'_properties',
+							tree
+						);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1225,7 +1254,15 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 			return hydrateSlot<T.Statement>(this, '_consequence', tree);
 		},
 		alternative() {
-			return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
+			return hoistRead(
+				hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Statement>(this, '_body', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1296,7 +1333,15 @@ export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle): 
 			return hydrateSlot<T.ParenthesizedExpression>(this, '_value', tree);
 		},
 		body() {
-			return hydrateSlot<T.SwitchBody>(this, '_body', tree);
+			return hoistRead(
+				hydrateSlot<T.SwitchBody>(this, '_body', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.SwitchCase | T.SwitchDefault>(this, '_cases', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1659,7 +1704,15 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 			return hydrateSlot<T.CatchClause | undefined>(this, '_handlers', tree);
 		},
 		finalizer() {
-			return hydrateSlot<T.FinallyClause | undefined>(this, '_finalizer', tree);
+			return hoistRead(
+				hydrateSlot<T.FinallyClause | undefined>(this, '_finalizer', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.StatementBlock>(this, '_body', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2922,19 +2975,59 @@ export function wrapClass(data: T.Class, tree: TreeHandle): T.Class.Parsed {
 		...data,
 		$type: TSKindId.Class as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier | undefined>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		heritage() {
-			return hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree);
+			return hoistRead(
+				hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		body() {
-			return hydrateSlot<T.ClassBody>(this, '_body', tree);
+			return hoistRead(
+				hydrateSlot<T.ClassBody>(this, '_body', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.ClassBodyMember>(this, '_members', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -3026,19 +3119,59 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 		...data,
 		$type: TSKindId.ClassDeclaration as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		heritage() {
-			return hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree);
+			return hoistRead(
+				hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		body() {
-			return hydrateSlot<T.ClassBody>(this, '_body', tree);
+			return hoistRead(
+				hydrateSlot<T.ClassBody>(this, '_body', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.ClassBodyMember>(this, '_members', tree);
+					}
+				],
+				true
+			);
 		},
 		terminator() {
 			return blankArmRead(this._terminator);
@@ -3210,10 +3343,33 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 			return hydrateSlot<T.Identifier | undefined>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -3344,10 +3500,33 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -3503,10 +3682,33 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 			return hydrateSlot<T.Identifier | undefined>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -3637,10 +3839,33 @@ export function wrapGeneratorFunctionDeclaration(
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -3870,7 +4095,18 @@ export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle): T.Ne
 			return hydrateSlot<T.PrimaryExpression>(this, '_function', tree);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		arguments() {
 			return hydrateSlot<T.Arguments | undefined>(this, '_arguments', tree);
@@ -5142,10 +5378,29 @@ export function wrapDecoratorCallExpression(
 			return hydrateSlot<T.Identifier | T.DecoratorMemberExpression>(this, '_function', tree);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		arguments() {
-			return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.Arguments>(this, '_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Expression | T.SpreadElement>(this, '_elements', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -5681,10 +5936,33 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -5864,7 +6142,18 @@ export function wrapTypeAssertion(data: T.TypeAssertion, tree: TreeHandle): T.Ty
 		...data,
 		$type: TSKindId.TypeAssertion as const,
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		expression() {
 			return hydrateSlot<T.Expression>(this, '_expression', tree);
@@ -6066,7 +6355,18 @@ export function wrapInstantiationExpression(
 			return hydrateSlot<T.Expression>(this, '_function', tree);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -6256,7 +6556,18 @@ export function wrapExtendsClauseSingle(data: T.ExtendsClauseSingle, tree: TreeH
 			return hydrateSlot<T.Expression>(this, '_value', tree);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -6428,19 +6739,59 @@ export function wrapAbstractClassDeclaration(
 		...data,
 		$type: TSKindId.AbstractClassDeclaration as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		heritage() {
-			return hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree);
+			return hoistRead(
+				hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		body() {
-			return hydrateSlot<T.ClassBody>(this, '_body', tree);
+			return hoistRead(
+				hydrateSlot<T.ClassBody>(this, '_body', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.ClassBodyMember>(this, '_members', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -6818,10 +7169,29 @@ export function wrapInterfaceDeclaration(
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		extendsTypeClause() {
-			return hydrateSlot<T.ExtendsTypeClause | undefined>(this, '_extends_type_clause', tree);
+			return hoistRead(
+				hydrateSlot<T.ExtendsTypeClause | undefined>(this, '_extends_type_clause', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this, '_type', tree);
+					}
+				],
+				true
+			);
 		},
 		body() {
 			return hydrateSlot<T.InterfaceBody>(this, '_body', tree);
@@ -6976,7 +7346,18 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): 
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		body() {
-			return hydrateSlot<T.EnumBody>(this, '_body', tree);
+			return hoistRead(
+				hydrateSlot<T.EnumBody>(this, '_body', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.EnumBodyElements | undefined>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.EnumBodyElement>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -7055,7 +7436,15 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 		...data,
 		$type: TSKindId.EnumBody as const,
 		elements() {
-			return hydrateSlot<T.EnumBodyElements | undefined>(this, '_elements', tree);
+			return hoistRead(
+				hydrateSlot<T.EnumBodyElements | undefined>(this, '_elements', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.EnumBodyElement>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -7206,7 +7595,18 @@ export function wrapTypeAliasDeclaration(
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		value() {
 			return hydrateSlot<T.Type>(this, '_value', tree);
@@ -7310,7 +7710,20 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 		...data,
 		$type: TSKindId.RequiredParameter as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		accessibilityModifier() {
 			return this._accessibility_modifier;
@@ -7325,7 +7738,15 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 			return hydrateSlot<T.Pattern>(this, '_name', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		value() {
 			return hydrateSlot<T.Expression | undefined>(this, '_value', tree);
@@ -7454,7 +7875,20 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 		...data,
 		$type: TSKindId.OptionalParameter as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		accessibilityModifier() {
 			return this._accessibility_modifier;
@@ -7469,7 +7903,15 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 			return hydrateSlot<T.Pattern | TSKindId.This>(this, '_name', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		value() {
 			return hydrateSlot<T.Expression | undefined>(this, '_value', tree);
@@ -7887,7 +8329,15 @@ export function wrapTypeQueryCallExpressionInTypeAnnotation(
 			return hydrateSlot<TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(this, '_function', tree);
 		},
 		arguments() {
-			return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.Arguments>(this, '_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Expression | T.SpreadElement>(this, '_elements', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -8006,7 +8456,15 @@ export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandl
 		...data,
 		$type: TSKindId.AssertsAnnotation as const,
 		asserts() {
-			return hydrateSlot<T.Asserts>(this, '_asserts', tree);
+			return hoistRead(
+				hydrateSlot<T.Asserts>(this, '_asserts', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypePredicate | T.Identifier | TSKindId.This>(this, '_value', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -8057,7 +8515,15 @@ export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle): T.
 			return hydrateSlot<T.Identifier | T.RestPattern>(this, '_name', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -8117,7 +8583,15 @@ export function wrapOptionalTupleParameter(
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -8274,10 +8748,33 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 			return this._abstract;
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		type() {
 			return hydrateSlot<T.Type>(this, '_type', tree);
@@ -8621,7 +9118,18 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 			return hydrateSlot<T.TypeIdentifier | T.NestedTypeIdentifier>(this, '_name', tree);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -9007,7 +9515,15 @@ export function wrapTypeQueryCallExpression(
 		...data,
 		$type: TSKindId.TypeQueryCallExpression as const,
 		arguments() {
-			return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.Arguments>(this, '_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Expression | T.SpreadElement>(this, '_elements', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -9065,7 +9581,18 @@ export function wrapTypeQueryInstantiationExpression(
 			);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -9514,7 +10041,15 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		...data,
 		$type: TSKindId.TypeArguments as const,
 		types() {
-			return hydrateSlot<T.Types>(this, '_types', tree);
+			return hoistRead(
+				hydrateSlot<T.Types>(this, '_types', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -9603,7 +10138,22 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle): T.ObjectTy
 			return this._opening;
 		},
 		members() {
-			return hydrateSlot<T.ObjectTypeContent | undefined>(this, '_members', tree);
+			return hoistRead(
+				hydrateSlot<T.ObjectTypeContent | undefined>(this, '_members', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<
+							| T.ExportStatement
+							| T.PropertySignature
+							| T.CallSignature
+							| T.ConstructSignature
+							| T.IndexSignature
+							| T.MethodSignature
+						>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		closing() {
 			return this._closing;
@@ -9656,10 +10206,33 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle): T.Ca
 		...data,
 		$type: TSKindId.CallSignature as const,
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -9768,7 +10341,15 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 			return this._optional;
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -9905,7 +10486,15 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.TypeParameters as const,
 		elements() {
-			return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParametersElements>(this, '_elements', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -10003,7 +10592,15 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 			return hydrateSlot<T.Constraint | undefined>(this, '_constraint', tree);
 		},
 		default() {
-			return hydrateSlot<T.DefaultType | undefined>(this, '_default', tree);
+			return hoistRead(
+				hydrateSlot<T.DefaultType | undefined>(this, '_default', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -10189,13 +10786,44 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 			return this._abstract;
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -10338,7 +10966,19 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		...data,
 		$type: TSKindId.TupleType as const,
 		tupleTypeMembers() {
-			return hydrateSlot<T.TupleTypeMembers | undefined>(this, '_tuple_type_members', tree);
+			return hoistRead(
+				hydrateSlot<T.TupleTypeMembers | undefined>(this, '_tuple_type_members', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>(
+							this,
+							'_item',
+							tree
+						);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -10586,10 +11226,33 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 		...data,
 		$type: TSKindId.FunctionType as const,
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.Type | T.Asserts | T.TypePredicate>(this, '_return_type', tree);
@@ -11467,7 +12130,15 @@ export function wrapCatchClauseGroup(data: T.CatchClauseGroup, tree: TreeHandle)
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_parameter', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -12804,7 +13475,20 @@ export function wrapClassBodyMemberMethod(
 		...data,
 		$type: TSKindId.ClassBodyMemberMethod as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		methodDefinition() {
 			return hydrateSlot<T.MethodDefinitionClassBodyMemberMethod>(this, '_method_definition', tree);
@@ -13274,7 +13958,19 @@ export function wrapImportStatementClauseFrom(
 		...data,
 		$type: TSKindId.ImportStatementClauseFrom as const,
 		importClause() {
-			return hydrateSlot<T.ImportClause>(this, '_import_clause', tree);
+			return hoistRead(
+				hydrateSlot<T.ImportClause>(this, '_import_clause', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(
+							this,
+							'_content',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		source() {
 			return hydrateSlot<T.String>(this, '_source', tree);
@@ -13545,7 +14241,15 @@ export function wrapParenthesizedExpressionTyped(
 			return hydrateSlot<T.Expression>(this, '_expression', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -13612,7 +14316,15 @@ export function wrapParenthesizedExpressionSequence(
 		...data,
 		$type: TSKindId.ParenthesizedExpressionSequence as const,
 		sequenceExpression() {
-			return hydrateSlot<T.SequenceExpression>(this, '_sequence_expression', tree);
+			return hoistRead(
+				hydrateSlot<T.SequenceExpression>(this, '_sequence_expression', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Expression>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -13813,10 +14525,29 @@ export function wrapCallExpressionCall(data: T.CallExpressionCall, tree: TreeHan
 			return hydrateSlot<T.Expression | TSKindId.Import>(this, '_function', tree);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		arguments() {
-			return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.Arguments>(this, '_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Expression | T.SpreadElement>(this, '_elements', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -13904,7 +14635,15 @@ export function wrapCallExpressionTemplateCall(
 			return hydrateSlot<T.PrimaryExpression | T.NewExpression>(this, '_function', tree);
 		},
 		arguments() {
-			return hydrateSlot<T.TemplateString>(this, '_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TemplateString>(this, '_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this, '_elements', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -13974,10 +14713,29 @@ export function wrapCallExpressionMember(
 			return hydrateSlot<T.PrimaryExpression>(this, '_function', tree);
 		},
 		typeArguments() {
-			return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Types>(this, '_types', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		arguments() {
-			return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+			return hoistRead(
+				hydrateSlot<T.Arguments>(this, '_arguments', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Expression | T.SpreadElement>(this, '_elements', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -14349,10 +15107,26 @@ export function wrapClassHeritageExtendsClause(
 		...data,
 		$type: TSKindId.ClassHeritageExtendsClause as const,
 		extendsClause() {
-			return hydrateSlot<T.ExtendsClause>(this, '_extends_clause', tree);
+			return hoistRead(
+				hydrateSlot<T.ExtendsClause>(this, '_extends_clause', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.ExtendsClauseSingle>(this, '_types', tree);
+					}
+				],
+				true
+			);
 		},
 		implementsClause() {
-			return hydrateSlot<T.ImplementsClause | undefined>(this, '_implements_clause', tree);
+			return hoistRead(
+				hydrateSlot<T.ImplementsClause | undefined>(this, '_implements_clause', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Type>(this, '_type', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -14428,7 +15202,15 @@ export function wrapImportClauseDefaultImport(
 			return hydrateSlot<T.Identifier>(this, '_identifier', tree);
 		},
 		importClauseGroup() {
-			return hydrateSlot<T.ImportClauseGroup | undefined>(this, '_import_clause_group', tree);
+			return hoistRead(
+				hydrateSlot<T.ImportClauseGroup | undefined>(this, '_import_clause_group', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.NamespaceImport | T.NamedImports>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -14588,7 +15370,20 @@ export function wrapExportStatementDefaultDeclaration(
 		...data,
 		$type: TSKindId.ExportStatementDefaultDeclaration as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		content() {
 			return hydrateSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(this, '_content', tree);
@@ -14790,7 +15585,18 @@ export function wrapExportStatementDefaultFromClauseFrom(
 		...data,
 		$type: TSKindId.ExportStatementDefaultFromClauseFrom as const,
 		exportClause() {
-			return hydrateSlot<T.ExportClause>(this, '_export_clause', tree);
+			return hoistRead(
+				hydrateSlot<T.ExportClause>(this, '_export_clause', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.ExportSpecifiers | undefined>(this, '_export_specifiers', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.ExportSpecifier>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		source() {
 			return hydrateSlot<T.String | undefined>(this, '_source', tree);
@@ -15029,7 +15835,15 @@ export function wrapVariableDeclaratorPlain(
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_name', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		value() {
 			return hydrateSlot<T.Expression | undefined>(this, '_value', tree);
@@ -15115,7 +15929,15 @@ export function wrapVariableDeclaratorDefinite(
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -15681,7 +16503,20 @@ export function wrapSetterParameter(data: T.SetterParameter, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.SetterParameter as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		accessibilityModifier() {
 			return this._accessibility_modifier;
@@ -15696,7 +16531,15 @@ export function wrapSetterParameter(data: T.SetterParameter, tree: TreeHandle): 
 			return hydrateSlot<T.LhsExpression | TSKindId.This>(this, '_pattern', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -15841,10 +16684,33 @@ export function wrapMethodDefinitionPlain(
 			return this._optional;
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -16223,7 +17089,18 @@ export function wrapMethodDefinitionSetter(
 			>(this, '_name', tree);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElementsSetAccessorSignature>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlot<T.SetterParameter>(this, '_item', tree);
+					}
+				],
+				false
+			);
 		},
 		body() {
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
@@ -16378,10 +17255,33 @@ export function wrapMethodSignaturePlain(
 			return this._optional;
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -16724,7 +17624,18 @@ export function wrapMethodSignatureSetter(
 			>(this, '_name', tree);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElementsSetAccessorSignature>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlot<T.SetterParameter>(this, '_item', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -16850,10 +17761,33 @@ export function wrapAbstractMethodSignaturePlain(
 			return this._optional;
 		},
 		typeParameters() {
-			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		returnType() {
 			return hydrateSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
@@ -17152,7 +18086,18 @@ export function wrapAbstractMethodSignatureSetter(
 			>(this, '_name', tree);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElementsSetAccessorSignature>(this, '_elements', tree);
+					},
+					function (this: object) {
+						return hydrateSlot<T.SetterParameter>(this, '_item', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -17255,7 +18200,20 @@ export function wrapPublicFieldDefinitionPlain(
 		...data,
 		$type: TSKindId.PublicFieldDefinitionPlain as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		declare() {
 			return this._declare;
@@ -17284,7 +18242,15 @@ export function wrapPublicFieldDefinitionPlain(
 			return this._optionality;
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		value() {
 			return hydrateSlot<T.Expression | undefined>(this, '_value', tree);
@@ -17481,7 +18447,20 @@ export function wrapPublicFieldDefinitionAccessor(
 		...data,
 		$type: TSKindId.PublicFieldDefinitionAccessor as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		accessibilityModifier() {
 			return this._accessibility_modifier;
@@ -17501,7 +18480,15 @@ export function wrapPublicFieldDefinitionAccessor(
 			>(this, '_name', tree);
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		value() {
 			return hydrateSlot<T.Expression | undefined>(this, '_value', tree);
@@ -17670,7 +18657,19 @@ export function wrapConstructorDeclaration(
 			return this._accessibility_modifier;
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParameters>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+							this,
+							'_elements',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		body() {
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
@@ -17760,7 +18759,20 @@ export function wrapReceiverParameterDeclaration(
 		...data,
 		$type: TSKindId.ReceiverParameterDeclaration as const,
 		decorators() {
-			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+			return hoistRead(
+				hydrateSlots<T.Decorator>(this, '_decorator', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.Identifier
+							| T.DecoratorMemberExpression
+							| T.DecoratorCallExpression
+							| T.DecoratorParenthesizedExpression
+						>(this, '_expression', tree);
+					}
+				],
+				true
+			);
 		},
 		accessibilityModifier() {
 			return this._accessibility_modifier;
@@ -17772,7 +18784,15 @@ export function wrapReceiverParameterDeclaration(
 			return this._readonly;
 		},
 		type() {
-			return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+			return hoistRead(
+				hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Type>(this, '_type', tree);
+					}
+				],
+				false
+			);
 		},
 		value() {
 			return hydrateSlot<T.Expression | undefined>(this, '_value', tree);
@@ -18014,7 +19034,15 @@ export function wrapFormalParametersElementsReceiverGroup(
 		...data,
 		$type: TSKindId.FormalParametersElementsReceiverGroup as const,
 		elements() {
-			return hydrateSlot<T.FormalParametersElements | undefined>(this, '_elements', tree);
+			return hoistRead(
+				hydrateSlot<T.FormalParametersElements | undefined>(this, '_elements', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.RequiredParameter | T.OptionalParameter>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -18381,7 +19409,22 @@ export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle): T.In
 			return this._opening;
 		},
 		members() {
-			return hydrateSlot<T.ObjectTypeContent | undefined>(this, '_members', tree);
+			return hoistRead(
+				hydrateSlot<T.ObjectTypeContent | undefined>(this, '_members', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<
+							| T.ExportStatement
+							| T.PropertySignature
+							| T.CallSignature
+							| T.ConstructSignature
+							| T.IndexSignature
+							| T.MethodSignature
+						>(this, '_item', tree);
+					}
+				],
+				true
+			);
 		},
 		closing() {
 			return this._closing;
@@ -18518,7 +19561,15 @@ function viewNamespaceExport(data: RecordPosition, tree: TreeHandle): T.Namespac
 }
 
 function viewExportClause$exportSpecifiers(this: RecordHandle) {
-	return viewSlot<T.ExportSpecifiers | undefined>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.ExportSpecifiers | undefined>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.ExportSpecifier>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 const viewExportClause$wrapper = {
 	kind: TSKindId.ExportSpecifier,
@@ -18723,7 +19774,15 @@ function viewNamespaceImport(data: RecordPosition, tree: TreeHandle): T.Namespac
 }
 
 function viewNamedImports$importSpecifiers(this: RecordHandle) {
-	return viewSlot<T.ImportSpecifiers | undefined>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.ImportSpecifiers | undefined>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.ImportSpecifier>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewNamedImports$listRead(this: { readonly importSpecifiers: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.importSpecifiers(), 'items'), undefined);
@@ -18792,7 +19851,23 @@ function viewImportAttribute$attributeKind(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewImportAttribute$object(this: RecordHandle) {
-	return viewSlot<T.Object>(this, 3, 3, 8, 3, 3);
+	return hoistRead(
+		viewSlot<T.Object>(this, 3, 3, 8, 3, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
+					this,
+					2,
+					1,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		true
+	);
 }
 function viewImportAttribute(data: RecordPosition, tree: TreeHandle): T.ImportAttribute.Parsed {
 	const node = {
@@ -19020,7 +20095,15 @@ function viewIfStatement$consequence(this: RecordHandle) {
 	return viewSlot<T.Statement>(this, 5, 4, 3, 0, 3);
 }
 function viewIfStatement$alternative(this: RecordHandle) {
-	return viewSlot<T.ElseClause | undefined>(this, 9, 3, 1, 0, 4);
+	return hoistRead(
+		viewSlot<T.ElseClause | undefined>(this, 9, 3, 1, 0, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Statement>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.Parsed {
 	const node = {
@@ -19057,7 +20140,15 @@ function viewSwitchStatement$value(this: RecordHandle) {
 	return viewSlot<T.ParenthesizedExpression>(this, 2, 3, 1, 0, 2);
 }
 function viewSwitchStatement$body(this: RecordHandle) {
-	return viewSlot<T.SwitchBody>(this, 5, 3, 8, 3, 3);
+	return hoistRead(
+		viewSlot<T.SwitchBody>(this, 5, 3, 8, 3, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.SwitchCase | T.SwitchDefault>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewSwitchStatement(data: RecordPosition, tree: TreeHandle): T.SwitchStatement.Parsed {
 	const node = {
@@ -19239,7 +20330,15 @@ function viewTryStatement$handlers(this: RecordHandle) {
 	return viewSlot<T.CatchClause | undefined>(this, 6, 15, 8, 15, 3);
 }
 function viewTryStatement$finalizer(this: RecordHandle) {
-	return viewSlot<T.FinallyClause | undefined>(this, 21, 6, 8, 6, 4);
+	return hoistRead(
+		viewSlot<T.FinallyClause | undefined>(this, 21, 6, 8, 6, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.StatementBlock>(this, 2, 4, 8, 4, 2);
+			}
+		],
+		false
+	);
 }
 function viewTryStatement(data: RecordPosition, tree: TreeHandle): T.TryStatement.Parsed {
 	const node = {
@@ -19884,19 +20983,56 @@ function viewNestedIdentifier(data: RecordPosition, tree: TreeHandle): T.NestedI
 }
 
 function viewClass$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClass$name(this: RecordHandle) {
 	return viewSlot<T.TypeIdentifier | undefined>(this, 3, 5, 8, 5, 3);
 }
 function viewClass$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClass$heritage(this: RecordHandle) {
-	return viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5);
+	return hoistRead(
+		viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, 2, 8, 8, 8, 2);
+			}
+		],
+		false
+	);
 }
 function viewClass$body(this: RecordHandle) {
-	return viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6);
+	return hoistRead(
+		viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.ClassBodyMember>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClass(data: RecordPosition, tree: TreeHandle): T.Class.Parsed {
 	const node = {
@@ -19934,19 +21070,56 @@ function viewClass(data: RecordPosition, tree: TreeHandle): T.Class.Parsed {
 }
 
 function viewClassDeclaration$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClassDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.TypeIdentifier>(this, 3, 5, 8, 5, 3);
 }
 function viewClassDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClassDeclaration$heritage(this: RecordHandle) {
-	return viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5);
+	return hoistRead(
+		viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, 2, 8, 8, 8, 2);
+			}
+		],
+		false
+	);
 }
 function viewClassDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6);
+	return hoistRead(
+		viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.ClassBodyMember>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClassDeclaration$terminator(this: RecordHandle) {
 	return blankArmRead(childSlot(this, 26, 1, 18, 0, 7));
@@ -20022,10 +21195,36 @@ function viewFunctionExpression$name(this: RecordHandle) {
 	return viewSlot<T.Identifier | undefined>(this, 3, 3, 1, 0, 3);
 }
 function viewFunctionExpression$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewFunctionExpression$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewFunctionExpression$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 14, 3, 1, 0, 6);
@@ -20077,10 +21276,36 @@ function viewFunctionDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewFunctionDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewFunctionDeclaration$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewFunctionDeclaration$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 14, 3, 1, 0, 6);
@@ -20137,10 +21362,36 @@ function viewGeneratorFunction$name(this: RecordHandle) {
 	return viewSlot<T.Identifier | undefined>(this, 3, 3, 1, 0, 3);
 }
 function viewGeneratorFunction$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewGeneratorFunction$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewGeneratorFunction$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 14, 3, 1, 0, 6);
@@ -20192,10 +21443,36 @@ function viewGeneratorFunctionDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewGeneratorFunctionDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewGeneratorFunctionDeclaration$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewGeneratorFunctionDeclaration$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 14, 3, 1, 0, 6);
@@ -20287,7 +21564,18 @@ function viewNewExpression$function(this: RecordHandle) {
 	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewNewExpression$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewNewExpression$arguments(this: RecordHandle) {
 	return viewSlot<T.Arguments | undefined>(this, 11, 3, 8, 3, 4);
@@ -20934,10 +22222,29 @@ function viewDecoratorCallExpression$function(this: RecordHandle) {
 	return viewSlot<T.Identifier | T.DecoratorMemberExpression>(this, 2, 3, 1, 0, 2);
 }
 function viewDecoratorCallExpression$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments | undefined>(this, 5, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments | undefined>(this, 5, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewDecoratorCallExpression$arguments(this: RecordHandle) {
-	return viewSlot<T.Arguments>(this, 10, 3, 8, 3, 4);
+	return hoistRead(
+		viewSlot<T.Arguments>(this, 10, 3, 8, 3, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Expression | T.SpreadElement>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewDecoratorCallExpression(data: RecordPosition, tree: TreeHandle): T.DecoratorCallExpression.Parsed {
 	const node = {
@@ -21227,10 +22534,36 @@ function viewFunctionSignature$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewFunctionSignature$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewFunctionSignature$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewFunctionSignature$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 14, 3, 1, 0, 6);
@@ -21306,7 +22639,18 @@ function viewDecoratorParenthesizedExpression(
 }
 
 function viewTypeAssertion$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments>(this, 2, 5, 8, 5, 2);
+	return hoistRead(
+		viewSlot<T.TypeArguments>(this, 2, 5, 8, 5, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewTypeAssertion$expression(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 3);
@@ -21402,7 +22746,18 @@ function viewInstantiationExpression$function(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewInstantiationExpression$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments>(this, 6, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments>(this, 6, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewInstantiationExpression(data: RecordPosition, tree: TreeHandle): T.InstantiationExpression.Parsed {
 	const node = {
@@ -21491,7 +22846,18 @@ function viewExtendsClauseSingle$value(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewExtendsClauseSingle$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewExtendsClauseSingle(data: RecordPosition, tree: TreeHandle): T.ExtendsClauseSingle.Parsed {
 	const node = {
@@ -21573,19 +22939,56 @@ function viewAmbientDeclaration(data: RecordPosition, tree: TreeHandle): T.Ambie
 }
 
 function viewAbstractClassDeclaration$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewAbstractClassDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.TypeIdentifier>(this, 3, 5, 8, 5, 3);
 }
 function viewAbstractClassDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewAbstractClassDeclaration$heritage(this: RecordHandle) {
-	return viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5);
+	return hoistRead(
+		viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, 2, 8, 8, 8, 2);
+			}
+		],
+		false
+	);
 }
 function viewAbstractClassDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6);
+	return hoistRead(
+		viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.ClassBodyMember>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewAbstractClassDeclaration(data: RecordPosition, tree: TreeHandle): T.AbstractClassDeclaration.Parsed {
 	const node = {
@@ -21754,10 +23157,29 @@ function viewInterfaceDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.TypeIdentifier>(this, 2, 5, 8, 5, 2);
 }
 function viewInterfaceDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 7, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 7, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewInterfaceDeclaration$extendsTypeClause(this: RecordHandle) {
-	return viewSlot<T.ExtendsTypeClause | undefined>(this, 12, 3, 8, 3, 4);
+	return hoistRead(
+		viewSlot<T.ExtendsTypeClause | undefined>(this, 12, 3, 8, 3, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewInterfaceDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.InterfaceBody>(this, 15, 7, 8, 7, 5);
@@ -21829,7 +23251,18 @@ function viewEnumDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewEnumDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.EnumBody>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.EnumBody>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.EnumBodyElements | undefined>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.EnumBodyElement>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewEnumDeclaration(data: RecordPosition, tree: TreeHandle): T.EnumDeclaration.Parsed {
 	const node = {
@@ -21858,7 +23291,15 @@ function viewEnumDeclaration(data: RecordPosition, tree: TreeHandle): T.EnumDecl
 }
 
 function viewEnumBody$elements(this: RecordHandle) {
-	return viewSlot<T.EnumBodyElements | undefined>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.EnumBodyElements | undefined>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.EnumBodyElement>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewEnumBody$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -21965,7 +23406,18 @@ function viewTypeAliasDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.TypeIdentifier>(this, 2, 5, 8, 5, 2);
 }
 function viewTypeAliasDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 7, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 7, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewTypeAliasDeclaration$value(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 12, 4, 3, 0, 4);
@@ -22007,7 +23459,17 @@ function viewTypeAliasDeclaration(data: RecordPosition, tree: TreeHandle): T.Typ
 }
 
 function viewRequiredParameter$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewRequiredParameter$accessibilityModifier(this: RecordHandle) {
 	return childSlot(this, 4, 1, 2, 0, 4);
@@ -22022,7 +23484,15 @@ function viewRequiredParameter$name(this: RecordHandle) {
 	return viewSlot<T.Pattern>(this, 5, 3, 1, 0, 5);
 }
 function viewRequiredParameter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 8, 3, 1, 0, 6);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 8, 3, 1, 0, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewRequiredParameter$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 11, 4, 3, 0, 7);
@@ -22067,7 +23537,17 @@ function viewRequiredParameter(data: RecordPosition, tree: TreeHandle): T.Requir
 }
 
 function viewOptionalParameter$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewOptionalParameter$accessibilityModifier(this: RecordHandle) {
 	return childSlot(this, 4, 1, 2, 0, 4);
@@ -22082,7 +23562,15 @@ function viewOptionalParameter$name(this: RecordHandle) {
 	return viewSlot<T.Pattern | TSKindId.This>(this, 5, 4, 3, 0, 5);
 }
 function viewOptionalParameter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 9, 3, 1, 0, 6);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 9, 3, 1, 0, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewOptionalParameter$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 12, 4, 3, 0, 7);
@@ -22274,7 +23762,15 @@ function viewTypeQueryCallExpressionInTypeAnnotation$function(this: RecordHandle
 	return viewSlot<TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(this, 2, 4, 3, 0, 2);
 }
 function viewTypeQueryCallExpressionInTypeAnnotation$arguments(this: RecordHandle) {
-	return viewSlot<T.Arguments>(this, 6, 3, 8, 3, 3);
+	return hoistRead(
+		viewSlot<T.Arguments>(this, 6, 3, 8, 3, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Expression | T.SpreadElement>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewTypeQueryCallExpressionInTypeAnnotation(
 	data: RecordPosition,
@@ -22332,7 +23828,15 @@ function viewAsserts(data: RecordPosition, tree: TreeHandle): T.Asserts.Parsed {
 }
 
 function viewAssertsAnnotation$asserts(this: RecordHandle) {
-	return viewSlot<T.Asserts>(this, 2, 3, 1, 0, 2);
+	return hoistRead(
+		viewSlot<T.Asserts>(this, 2, 3, 1, 0, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypePredicate | T.Identifier | TSKindId.This>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewAssertsAnnotation(data: RecordPosition, tree: TreeHandle): T.AssertsAnnotation.Parsed {
 	const node = {
@@ -22362,7 +23866,15 @@ function viewTupleParameter$name(this: RecordHandle) {
 	return viewSlot<T.Identifier | T.RestPattern>(this, 2, 7, 9, 6, 2);
 }
 function viewTupleParameter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation>(this, 9, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation>(this, 9, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewTupleParameter(data: RecordPosition, tree: TreeHandle): T.TupleParameter.Parsed {
 	const node = {
@@ -22393,7 +23905,15 @@ function viewOptionalTupleParameter$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewOptionalTupleParameter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation>(this, 5, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation>(this, 5, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewOptionalTupleParameter(data: RecordPosition, tree: TreeHandle): T.OptionalTupleParameter.Parsed {
 	const node = {
@@ -22478,10 +23998,36 @@ function viewConstructorType$abstract(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewConstructorType$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewConstructorType$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 8, 3, 1, 0, 4);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 8, 3, 1, 0, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewConstructorType$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 11, 4, 3, 0, 5);
@@ -22653,7 +24199,18 @@ function viewGenericType$name(this: RecordHandle) {
 	return viewSlot<T.TypeIdentifier | T.NestedTypeIdentifier>(this, 2, 10, 8, 10, 2);
 }
 function viewGenericType$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments>(this, 12, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments>(this, 12, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.Parsed {
 	const node = {
@@ -22850,7 +24407,15 @@ function viewTypeQuerySubscriptExpression(
 }
 
 function viewTypeQueryCallExpression$arguments(this: RecordHandle) {
-	return viewSlot<T.Arguments>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.Arguments>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Expression | T.SpreadElement>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewTypeQueryCallExpression(data: RecordPosition, tree: TreeHandle): T.TypeQueryCallExpression.Parsed {
 	const node = {
@@ -22887,7 +24452,18 @@ function viewTypeQueryInstantiationExpression$function(this: RecordHandle) {
 	);
 }
 function viewTypeQueryInstantiationExpression$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments>(this, 6, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments>(this, 6, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewTypeQueryInstantiationExpression(
 	data: RecordPosition,
@@ -23134,7 +24710,15 @@ function viewParenthesizedType(data: RecordPosition, tree: TreeHandle): T.Parent
 }
 
 function viewTypeArguments$types(this: RecordHandle) {
-	return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.Types>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewTypeArguments$listRead(this: { readonly types: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.types(), 'items'), undefined);
@@ -23203,7 +24787,22 @@ function viewObjectType$opening(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewObjectType$members(this: RecordHandle) {
-	return viewSlot<T.ObjectTypeContent | undefined>(this, 3, 3, 8, 3, 3);
+	return hoistRead(
+		viewSlot<T.ObjectTypeContent | undefined>(this, 3, 3, 8, 3, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+				>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewObjectType$closing(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 4);
@@ -23235,10 +24834,36 @@ function viewObjectType(data: RecordPosition, tree: TreeHandle): T.ObjectType.Pa
 }
 
 function viewCallSignature$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 2, 5, 8, 5, 2);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 2, 5, 8, 5, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewCallSignature$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 7, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 7, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewCallSignature$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 10, 3, 1, 0, 4);
@@ -23300,7 +24925,15 @@ function viewPropertySignature$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 3);
 }
 function viewPropertySignature$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 19, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 19, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewPropertySignature(data: RecordPosition, tree: TreeHandle): T.PropertySignature.Parsed {
 	const node = {
@@ -23342,7 +24975,15 @@ function viewPropertySignature(data: RecordPosition, tree: TreeHandle): T.Proper
 }
 
 function viewTypeParameters$elements(this: RecordHandle) {
-	return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 const viewTypeParameters$wrapper = {
 	kind: TSKindId.TypeParameter,
@@ -23422,7 +25063,15 @@ function viewTypeParameter$constraint(this: RecordHandle) {
 	return viewSlot<T.Constraint | undefined>(this, 8, 7, 8, 7, 4);
 }
 function viewTypeParameter$default(this: RecordHandle) {
-	return viewSlot<T.DefaultType | undefined>(this, 15, 6, 8, 6, 5);
+	return hoistRead(
+		viewSlot<T.DefaultType | undefined>(this, 15, 6, 8, 6, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParameter.Parsed {
 	const node = {
@@ -23519,13 +25168,47 @@ function viewConstructSignature$abstract(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewConstructSignature$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewConstructSignature$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 8, 3, 1, 0, 4);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 8, 3, 1, 0, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewConstructSignature$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 11, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 11, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewConstructSignature(data: RecordPosition, tree: TreeHandle): T.ConstructSignature.Parsed {
 	const node = {
@@ -23588,7 +25271,23 @@ function viewArrayType(data: RecordPosition, tree: TreeHandle): T.ArrayType.Pars
 }
 
 function viewTupleType$tupleTypeMembers(this: RecordHandle) {
-	return viewSlot<T.TupleTypeMembers | undefined>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.TupleTypeMembers | undefined>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>(
+					this,
+					2,
+					1,
+					4,
+					3,
+					0,
+					2
+				);
+			}
+		],
+		true
+	);
 }
 function viewTupleType$listRead(this: { readonly tupleTypeMembers: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.tupleTypeMembers(), 'items'), undefined);
@@ -23743,10 +25442,36 @@ function viewIntersectionType(data: RecordPosition, tree: TreeHandle): T.Interse
 }
 
 function viewFunctionType$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 2, 5, 8, 5, 2);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 2, 5, 8, 5, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewFunctionType$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 7, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 7, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewFunctionType$returnType(this: RecordHandle) {
 	return viewSlot<T.Type | T.Asserts | T.TypePredicate>(this, 10, 4, 3, 0, 4);
@@ -24320,7 +26045,15 @@ function viewCatchClauseGroup$parameter(this: RecordHandle) {
 	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 2, 4, 9, 3, 2);
 }
 function viewCatchClauseGroup$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewCatchClauseGroup(data: RecordPosition, tree: TreeHandle): T.CatchClauseGroup.Parsed {
 	const node = {
@@ -25012,7 +26745,17 @@ function viewBinaryExpressionIn(data: RecordPosition, tree: TreeHandle): T.Binar
 }
 
 function viewClassBodyMemberMethod$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClassBodyMemberMethod$methodDefinition(this: RecordHandle) {
 	return viewSlot<T.MethodDefinitionClassBodyMemberMethod>(this, 3, 39, 8, 39, 3);
@@ -25233,7 +26976,15 @@ function viewIndexSignatureMappedTypeClause(
 }
 
 function viewImportStatementClauseFrom$importClause(this: RecordHandle) {
-	return viewSlot<T.ImportClause>(this, 2, 14, 8, 14, 2);
+	return hoistRead(
+		viewSlot<T.ImportClause>(this, 2, 14, 8, 14, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(this, 2, 12, 8, 12, 2);
+			}
+		],
+		false
+	);
 }
 function viewImportStatementClauseFrom$source(this: RecordHandle) {
 	return viewSlot<T.String>(this, 16, 3, 8, 3, 3);
@@ -25360,7 +27111,15 @@ function viewParenthesizedExpressionTyped$expression(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewParenthesizedExpressionTyped$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewParenthesizedExpressionTyped(
 	data: RecordPosition,
@@ -25391,7 +27150,15 @@ function viewParenthesizedExpressionTyped(
 }
 
 function viewParenthesizedExpressionSequence$sequenceExpression(this: RecordHandle) {
-	return viewSlot<T.SequenceExpression>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.SequenceExpression>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewParenthesizedExpressionSequence(
 	data: RecordPosition,
@@ -25489,10 +27256,29 @@ function viewCallExpressionCall$function(this: RecordHandle) {
 	return viewSlot<T.Expression | TSKindId.Import>(this, 2, 4, 3, 0, 2);
 }
 function viewCallExpressionCall$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewCallExpressionCall$arguments(this: RecordHandle) {
-	return viewSlot<T.Arguments>(this, 11, 3, 8, 3, 4);
+	return hoistRead(
+		viewSlot<T.Arguments>(this, 11, 3, 8, 3, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Expression | T.SpreadElement>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewCallExpressionCall(data: RecordPosition, tree: TreeHandle): T.CallExpressionCall.Parsed {
 	const node = {
@@ -25529,7 +27315,15 @@ function viewCallExpressionTemplateCall$function(this: RecordHandle) {
 	return viewSlot<T.PrimaryExpression | T.NewExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewCallExpressionTemplateCall$arguments(this: RecordHandle) {
-	return viewSlot<T.TemplateString>(this, 6, 3, 8, 3, 3);
+	return hoistRead(
+		viewSlot<T.TemplateString>(this, 6, 3, 8, 3, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewCallExpressionTemplateCall(data: RecordPosition, tree: TreeHandle): T.CallExpressionTemplateCall.Parsed {
 	const node = {
@@ -25560,10 +27354,29 @@ function viewCallExpressionMember$function(this: RecordHandle) {
 	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewCallExpressionMember$typeArguments(this: RecordHandle) {
-	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
+	return hoistRead(
+		viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewCallExpressionMember$arguments(this: RecordHandle) {
-	return viewSlot<T.Arguments>(this, 11, 3, 8, 3, 4);
+	return hoistRead(
+		viewSlot<T.Arguments>(this, 11, 3, 8, 3, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Expression | T.SpreadElement>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewCallExpressionMember(data: RecordPosition, tree: TreeHandle): T.CallExpressionMember.Parsed {
 	const node = {
@@ -25740,10 +27553,26 @@ function viewArrowFunctionParameter(data: RecordPosition, tree: TreeHandle): T.A
 }
 
 function viewClassHeritageExtendsClause$extendsClause(this: RecordHandle) {
-	return viewSlot<T.ExtendsClause>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.ExtendsClause>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.ExtendsClauseSingle>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClassHeritageExtendsClause$implementsClause(this: RecordHandle) {
-	return viewSlot<T.ImplementsClause | undefined>(this, 5, 3, 8, 3, 3);
+	return hoistRead(
+		viewSlot<T.ImplementsClause | undefined>(this, 5, 3, 8, 3, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Type>(this, 2, 1, 4, 3, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewClassHeritageExtendsClause(data: RecordPosition, tree: TreeHandle): T.ClassHeritageExtendsClause.Parsed {
 	const node = {
@@ -25774,7 +27603,15 @@ function viewImportClauseDefaultImport$identifier(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewImportClauseDefaultImport$importClauseGroup(this: RecordHandle) {
-	return viewSlot<T.ImportClauseGroup | undefined>(this, 5, 7, 8, 7, 3);
+	return hoistRead(
+		viewSlot<T.ImportClauseGroup | undefined>(this, 5, 7, 8, 7, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.NamespaceImport | T.NamedImports>(this, 2, 5, 8, 5, 2);
+			}
+		],
+		false
+	);
 }
 function viewImportClauseDefaultImport(data: RecordPosition, tree: TreeHandle): T.ImportClauseDefaultImport.Parsed {
 	const node = {
@@ -25839,7 +27676,17 @@ function viewExportStatementDefaultFrom(data: RecordPosition, tree: TreeHandle):
 }
 
 function viewExportStatementDefaultDeclaration$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewExportStatementDefaultDeclaration$content(this: RecordHandle) {
 	return viewSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(this, 3, 3, 1, 0, 3);
@@ -25937,7 +27784,18 @@ function viewExportStatementDefaultFromNsFrom(
 }
 
 function viewExportStatementDefaultFromClauseFrom$exportClause(this: RecordHandle) {
-	return viewSlot<T.ExportClause>(this, 2, 5, 8, 5, 2);
+	return hoistRead(
+		viewSlot<T.ExportClause>(this, 2, 5, 8, 5, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.ExportSpecifiers | undefined>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.ExportSpecifier>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewExportStatementDefaultFromClauseFrom$source(this: RecordHandle) {
 	return viewSlot<T.String | undefined>(this, 7, 3, 8, 3, 3);
@@ -26038,7 +27896,15 @@ function viewVariableDeclaratorPlain$name(this: RecordHandle) {
 	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 2, 4, 9, 3, 2);
 }
 function viewVariableDeclaratorPlain$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewVariableDeclaratorPlain$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 9, 4, 3, 0, 4);
@@ -26073,7 +27939,15 @@ function viewVariableDeclaratorDefinite$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewVariableDeclaratorDefinite$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation>(this, 5, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation>(this, 5, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewVariableDeclaratorDefinite(data: RecordPosition, tree: TreeHandle): T.VariableDeclaratorDefinite.Parsed {
 	const node = {
@@ -26334,7 +28208,17 @@ function viewFormalParametersElementsSetAccessorSignature(
 }
 
 function viewSetterParameter$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewSetterParameter$accessibilityModifier(this: RecordHandle) {
 	return childSlot(this, 4, 1, 2, 0, 4);
@@ -26349,7 +28233,15 @@ function viewSetterParameter$pattern(this: RecordHandle) {
 	return viewSlot<T.LhsExpression | TSKindId.This>(this, 5, 4, 3, 0, 5);
 }
 function viewSetterParameter$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 9, 3, 1, 0, 6);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 9, 3, 1, 0, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewSetterParameter(data: RecordPosition, tree: TreeHandle): T.SetterParameter.Parsed {
 	const node = {
@@ -26420,10 +28312,36 @@ function viewMethodDefinitionPlain$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 5);
 }
 function viewMethodDefinitionPlain$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewMethodDefinitionPlain$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewMethodDefinitionPlain$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
@@ -26562,7 +28480,18 @@ function viewMethodDefinitionSetter$name(this: RecordHandle) {
 	);
 }
 function viewMethodDefinitionSetter$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
+	return hoistRead(
+		viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElementsSetAccessorSignature>(this, 2, 14, 8, 14, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlot<T.SetterParameter>(this, 2, 12, 8, 12, 2);
+			}
+		],
+		false
+	);
 }
 function viewMethodDefinitionSetter$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 35, 4, 8, 4, 6);
@@ -26636,10 +28565,36 @@ function viewMethodSignaturePlain$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 5);
 }
 function viewMethodSignaturePlain$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewMethodSignaturePlain$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewMethodSignaturePlain$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
@@ -26768,7 +28723,18 @@ function viewMethodSignatureSetter$name(this: RecordHandle) {
 	);
 }
 function viewMethodSignatureSetter$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
+	return hoistRead(
+		viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElementsSetAccessorSignature>(this, 2, 14, 8, 14, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlot<T.SetterParameter>(this, 2, 12, 8, 12, 2);
+			}
+		],
+		false
+	);
 }
 function viewMethodSignatureSetter(data: RecordPosition, tree: TreeHandle): T.MethodSignatureSetter.Parsed {
 	const node = {
@@ -26828,10 +28794,36 @@ function viewAbstractMethodSignaturePlain$optional(this: RecordHandle) {
 	return recordFlag(this, 2, 2);
 }
 function viewAbstractMethodSignaturePlain$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
+	return hoistRead(
+		viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewAbstractMethodSignaturePlain$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewAbstractMethodSignaturePlain$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
@@ -26952,7 +28944,18 @@ function viewAbstractMethodSignatureSetter$name(this: RecordHandle) {
 	);
 }
 function viewAbstractMethodSignatureSetter$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
+	return hoistRead(
+		viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElementsSetAccessorSignature>(this, 2, 14, 8, 14, 2);
+			},
+			function (this: RecordHandle) {
+				return viewSlot<T.SetterParameter>(this, 2, 12, 8, 12, 2);
+			}
+		],
+		false
+	);
 }
 function viewAbstractMethodSignatureSetter(
 	data: RecordPosition,
@@ -26991,7 +28994,17 @@ function viewAbstractMethodSignatureSetter(
 }
 
 function viewPublicFieldDefinitionPlain$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewPublicFieldDefinitionPlain$declare(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
@@ -27025,7 +29038,15 @@ function viewPublicFieldDefinitionPlain$optionality(this: RecordHandle) {
 	return childSlot(this, 20, 1, 2, 0, 6);
 }
 function viewPublicFieldDefinitionPlain$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 21, 3, 1, 0, 7);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 21, 3, 1, 0, 7),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewPublicFieldDefinitionPlain$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 24, 4, 3, 0, 8);
@@ -27078,7 +29099,17 @@ function viewPublicFieldDefinitionPlain(data: RecordPosition, tree: TreeHandle):
 }
 
 function viewPublicFieldDefinitionAccessor$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewPublicFieldDefinitionAccessor$accessibilityModifier(this: RecordHandle) {
 	return childSlot(this, 4, 1, 2, 0, 4);
@@ -27103,7 +29134,15 @@ function viewPublicFieldDefinitionAccessor$name(this: RecordHandle) {
 	);
 }
 function viewPublicFieldDefinitionAccessor$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 20, 3, 1, 0, 6);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 20, 3, 1, 0, 6),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewPublicFieldDefinitionAccessor$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 23, 4, 3, 0, 7);
@@ -27156,7 +29195,22 @@ function viewConstructorDeclaration$accessibilityModifier(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewConstructorDeclaration$parameters(this: RecordHandle) {
-	return viewSlot<T.FormalParameters>(this, 3, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlot<T.FormalParameters>(this, 3, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.FormalParametersElements | T.FormalParametersElementsReceiver | undefined>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewConstructorDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 6, 4, 8, 4, 4);
@@ -27193,7 +29247,17 @@ function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.C
 }
 
 function viewReceiverParameterDeclaration$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+	return hoistRead(
+		viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>(this, 2, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewReceiverParameterDeclaration$accessibilityModifier(this: RecordHandle) {
 	return childSlot(this, 4, 1, 2, 0, 4);
@@ -27205,7 +29269,15 @@ function viewReceiverParameterDeclaration$readonly(this: RecordHandle) {
 	return recordFlag(this, 2, 1);
 }
 function viewReceiverParameterDeclaration$type(this: RecordHandle) {
-	return viewSlot<T.TypeAnnotation | undefined>(this, 5, 3, 1, 0, 5);
+	return hoistRead(
+		viewSlot<T.TypeAnnotation | undefined>(this, 5, 3, 1, 0, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
 }
 function viewReceiverParameterDeclaration$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 8, 4, 3, 0, 6);
@@ -27289,7 +29361,15 @@ function viewFormalParametersElementsReceiver(
 }
 
 function viewFormalParametersElementsReceiverGroup$elements(this: RecordHandle) {
-	return viewSlot<T.FormalParametersElements | undefined>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.FormalParametersElements | undefined>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.RequiredParameter | T.OptionalParameter>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewFormalParametersElementsReceiverGroup$listRead(this: {
 	readonly elements: () => unknown;
@@ -27501,7 +29581,22 @@ function viewInterfaceBody$opening(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewInterfaceBody$members(this: RecordHandle) {
-	return viewSlot<T.ObjectTypeContent | undefined>(this, 3, 3, 8, 3, 3);
+	return hoistRead(
+		viewSlot<T.ObjectTypeContent | undefined>(this, 3, 3, 8, 3, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+				>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewInterfaceBody$closing(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 4);

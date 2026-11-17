@@ -46,7 +46,8 @@ import {
 	handleEngine,
 	handleDispose,
 	handleQuery,
-	handleSnapshot
+	handleSnapshot,
+	hoistRead
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -245,7 +246,15 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 		...data,
 		$type: TSKindId.String as const,
 		stringContent() {
-			return hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree);
+			return hoistRead(
+				hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.StringContentText | T.EscapeSequence>(this, '_content', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -290,7 +299,15 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.ImmediateString as const,
 		stringContent() {
-			return hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree);
+			return hoistRead(
+				hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.StringContentText | T.EscapeSequence>(this, '_content', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -853,7 +870,15 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			return this._type;
 		},
 		parameters() {
-			return hydrateSlot<T.Parameters | undefined>(this, '_parameters', tree);
+			return hoistRead(
+				hydrateSlot<T.Parameters | undefined>(this, '_parameters', tree),
+				[
+					function (this: object) {
+						return hydrateSlots<T.Capture | T.String | T.Identifier>(this, '_elements', tree);
+					}
+				],
+				true
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1638,7 +1663,15 @@ function viewCapture(data: RecordPosition, tree: TreeHandle): T.Capture.Parsed {
 }
 
 function viewString$stringContent(this: RecordHandle) {
-	return viewSlot<T.StringContent | undefined>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.StringContent | undefined>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.StringContentText | T.EscapeSequence>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 	const node = {
@@ -1665,7 +1698,15 @@ function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 }
 
 function viewImmediateString$stringContent(this: RecordHandle) {
-	return viewSlot<T.StringContent | undefined>(this, 2, 3, 8, 3, 2);
+	return hoistRead(
+		viewSlot<T.StringContent | undefined>(this, 2, 3, 8, 3, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.StringContentText | T.EscapeSequence>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewImmediateString(data: RecordPosition, tree: TreeHandle): T.ImmediateString.Parsed {
 	const node = {
@@ -1964,7 +2005,15 @@ function viewPredicate$type(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 4);
 }
 function viewPredicate$parameters(this: RecordHandle) {
-	return viewSlot<T.Parameters | undefined>(this, 7, 3, 8, 3, 5);
+	return hoistRead(
+		viewSlot<T.Parameters | undefined>(this, 7, 3, 8, 3, 5),
+		[
+			function (this: RecordHandle) {
+				return viewSlots<T.Capture | T.String | T.Identifier>(this, 2, 1, 3, 1, 0, 2);
+			}
+		],
+		true
+	);
 }
 function viewPredicate(data: RecordPosition, tree: TreeHandle): T.Predicate.Parsed {
 	const node = {

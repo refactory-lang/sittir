@@ -1062,7 +1062,7 @@ function emitInterface(
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
-			const chain = wrapperChainFor(nodeMap, node.kind, f);
+			const chain = wrapperChainFor(nodeMap, node.kind, f.name);
 			if (chain !== undefined) {
 				lines.push(`  readonly ${propName}: () => ${hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
 			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {

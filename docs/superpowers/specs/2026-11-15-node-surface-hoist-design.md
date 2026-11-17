@@ -72,7 +72,7 @@ The two layers apply the same idea on their own terms. The portable layer flatte
 
 ## 5. Hoisted wrappers
 
-Master's models. The holder slots are named `Type.getter`. The rule holds at 276 slots: python 71, rust 103 and typescript 102.
+Master's models. The holder slots are named `Type.getter`. The rule holds at 287 slots: python 71, rust 103, typescript 102, regex 8 and scm 3 (the 276 of the three first grammars, and regex's eight `pattern` slots and scm's three).
 
 - **221 are outermost holder slots listed by wrapper.** Python 44 go through 17 wrappers, rust 85 through 23, and typescript 92 through 22. This section lists their single wrappers, §6 their chains, and rows marked §7 have their exact reads and setters there.
 - **37 are listed by holder slot** at the end of this section, most of them the slot of a wrapper that hoists nowhere itself.

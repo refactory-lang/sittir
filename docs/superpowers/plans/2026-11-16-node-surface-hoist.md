@@ -4,7 +4,7 @@
 
 **Goal:** a holder's slot reads through every single-slot wrapper the rule holds for, in the TypeScript wrap layer only: types, wrap getters, `$with` setters, factories and the loose `from` input, the validators' node-to-config reconstruction and the slot-descending `is` guards, all keyed on one stamped chain per holder slot. Nothing in the grammar, the parser, the rust crates or render changes.
 
-**Spec:** `docs/superpowers/specs/2026-11-15-node-surface-hoist-design.md`. Read it first. This plan argues from it and doesn't restate it. The approved change is 276 holder slots: python 71, rust 103, typescript 102.
+**Spec:** `docs/superpowers/specs/2026-11-15-node-surface-hoist-design.md`. Read it first. This plan argues from it and doesn't restate it. The approved change is 287 holder slots: python 71, rust 103, typescript 102, regex 8, scm 3.
 
 **Executor:** sittir-implement. **Reviewer:** sittir-brainstorm, at the end of every task. One PR, one commit per task, in this order.
 
@@ -15,7 +15,7 @@
 - **One stamp, no re-derivation.** The three conditions are decided once, in `compiler/model/wrapper-chain.ts`. Every consumer reads the stamp.
 - **Client side only.** A generated move outside the five consumers (`types.ts`, `wrap.ts`, `factories/*`, `from.ts`, `is.ts`) and the validators stops the work and goes to sittir-brainstorm. So does a moved validation row.
 - **The wrapper is reached through the tree only.** No accessor on the holder returns the wrapper once its slot hoists.
-- **The counts are pinned** at python 71, rust 103, typescript 102. A slot the census adds or drops against the spec is a row for sittir-brainstorm first.
+- **The counts are pinned** at python 71, rust 103, typescript 102, regex 8, scm 3. A slot the census adds or drops against the spec is a row for sittir-brainstorm first.
 - **Three-way verification** before every commit that can change what the pipeline reads, renders, parses or validates: targeted probes, `sittir validate history` compared with numbers, and the full suite with any new failure isolated.
 - **Every PR body lists API changes.** The per-slot appendix (`holder.slot`, chain, read type before → after) is generated from the census.
 - **Hand-written source in `packages/{codegen,common,tools,types}/src` carries no explanatory comments.** Docs carry no PR or task numbers.
@@ -31,10 +31,10 @@
 - Modify: `packages/tools/src/codegen-surface.ts`, `packages/tools/src/index.ts`, `packages/cli/src/commands/tool/index.ts`, `docs/cli-command-glossary.md`
 - Test: `packages/tools/tests/hoist-census.test.ts`
 
-- [ ] **Step 1: The stamp.** `wrapperChainsOf(nodeMap)` returns every holder slot the rule holds for, with its chain, outermost first. The rule is §1: one node slot, only always-spelled tokens (zero-width externals, list separators and optional trailing separators included), the holder slot admitting only the wrapper, no leaf or text slot, presence a fact when both slots may be empty, an alias met as its model kind.
-- [ ] **Step 2: The tool.** `sittir tool hoist-census --grammar <g>` prints the chains and holder slots from the stamp.
-- [ ] **Step 3: The count test.** It pins python 71, rust 103, typescript 102 through the stamp.
-- [ ] **Step 4: Run it.** The test passes at the pinned counts, and the glossary test passes with the tool documented.
+- [x] **Step 1: The stamp.** `wrapperChainsOf(nodeMap)` returns every holder slot the rule holds for, with its chain, outermost first. The rule is §1: one node slot, only always-spelled tokens (zero-width externals, list separators and optional trailing separators included), the holder slot admitting only the wrapper, no leaf or text slot, presence a fact when both slots may be empty, an alias met as its model kind.
+- [x] **Step 2: The tool.** `sittir tool hoist-census --grammar <g>` prints the chains and holder slots from the stamp.
+- [x] **Step 3: The count test.** It pins python 71, rust 103, typescript 102 through the stamp.
+- [x] **Step 4: Run it.** The test passes at the pinned counts, and the glossary test passes with the tool documented.
 
 ### Task 2: The rule tests
 
@@ -43,32 +43,36 @@
 **Files:**
 - Test: `packages/codegen/src/compiler/model/__tests__/wrapper-chain.test.ts`
 
-- [ ] **Step 1: Stamped.** A single wrapper; a list wrapper; a composed chain that stops at a slot admitting more than one kind; an optional inner slot under a required holder.
-- [ ] **Step 2: Not stamped.** An optional inner slot under an optional holder (presence is a fact); a token spelled only sometimes; a wrapper with two slots; a holder slot that admits another kind; a leaf; a token choice.
-- [ ] **Step 3: Run it.** All pass.
+- [x] **Step 1: Stamped.** A single wrapper; a list wrapper; a composed chain that stops at a slot admitting more than one kind; an optional inner slot under a required holder.
+- [x] **Step 2: Not stamped.** An optional inner slot under an optional holder (presence is a fact); a token spelled only sometimes; a wrapper with two slots; a holder slot that admits another kind; a leaf; a token choice.
+- [x] **Step 3: Run it.** All pass.
 
 ### Task 3: Types
 
-**Status:** done. The getters' declared types read the stamp; the generated diff is the three `types.ts` files only, with exactly 71, 103 and 102 getter lines moved, one per stamped slot.
+**Status:** done, c89708f40. The getters' declared types read the stamp; the generated diff is `types.ts` of the five grammars only, with exactly 71, 103, 102, 8 and 3 getter lines moved, one per stamped slot (python, rust, typescript, regex, scm).
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/types.ts` (the holder slot's config and node types read the chain)
 - Test: `packages/codegen/src/emitters/__tests__/` and `packages/{typescript,python,rust}/tests/*.test-d.ts`
 
-- [ ] **Step 1: The failing type tests.** A holder's slot types as the hoisted read on one case per row of §7, and the wrapper's own slot types as the rest of its chain.
-- [ ] **Step 2: The emitter.** Each slot type is derived from the stamp, not from the holder's native slot.
-- [ ] **Step 3: Regenerate** and compare the generated diff with the per-slot appendix.
+- [x] **Step 1: The failing type tests.** A holder's slot types as the hoisted read on one case per row of §7, and the wrapper's own slot types as the rest of its chain.
+- [x] **Step 2: The emitter.** Each slot type is derived from the stamp, not from the holder's native slot.
+- [x] **Step 3: Regenerate** and compare the generated diff with the per-slot appendix.
 
 ### Task 4: Wrap getters
 
+**Status:** in progress. The emitter, the `hoistRead` helper in `@sittir/common` and the per-grammar `hoist-read.test.ts` are built; the getters read through the stamp in both storages. The pinned readers' typing moved into the pinned-types program first (e6f0af68c).
+
 **Files:**
 - Modify: `packages/codegen/src/emitters/wrap.ts`
+- Create: `packages/common/src/hoist-read.ts` (the runtime step the generated getters call)
+- Modify, in e6f0af68c: `packages/codegen/tsconfig.pinned-types.json` (renamed from the emitter program, and the pinned readers join it), `packages/codegen/tsconfig.json`, `packages/codegen/tsconfig.build.json`
 - Test: `packages/{typescript,python,rust}/tests/hoist-read.test.ts`
 
 - [ ] **Step 1: The failing tests.** Per storage (arena, object): the getter reads the native slot, then each wrapper's one slot, and returns a list when any step holds one. A wrapper with an empty slot under a required holder reads `undefined`. A mandatory leading or optional trailing separator doesn't change the read.
-- [ ] **Step 2: The old wrapper accessor is gone,** and the wrapper is still there when walking children: the holder's children include the wrapper node with its own range.
+- [x] **Step 2: The old wrapper accessor is gone,** and the wrapper is still there when walking children: the holder's children include the wrapper node with its own range.
 - [ ] **Step 3: A comment or an ERROR inside a hoisted wrapper** keeps the wrapper's sides: the getter reads the items around it, and a set through the wrapper keeps the comment or the ERROR. One runtime proof, both storages.
-- [ ] **Step 4: The emitter** reads the stamp.
+- [x] **Step 4: The emitter** reads the stamp.
 
 ### Task 5: `$with` setters
 
@@ -110,3 +114,7 @@
 - [ ] **Step 2: Measure.** `sittir validate history` rows (none move); the generated size per file; a hoisted read against the old two-step read, both storages, against the ×1.10 per-grammar bar; the `$with` edit path against the same-value edit.
 - [ ] **Step 3: The full gates:** `tsc` for codegen and the three packages, `oxlint`, the full suite, the `$with` parity run, the rows corpus and the list-setter census.
 - [ ] **Step 4: The PR body** lists the API changes by grammar, with the appendix.
+
+## Follow-ups
+
+- **Pin bump.** Once the hoist merges, `bootstrap.json` moves to a commit that has it, and the two pinned readers (`bindings/pinned-reader.ts`, `bindings/pinned-vocabulary.ts`) change to the hoisted shapes. Until then they read the pin's shapes and are typed by the pin's declarations.

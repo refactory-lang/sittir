@@ -31,6 +31,7 @@ import {
 	spelledReadImports
 } from './shared.ts';
 import { formDefinedProperties } from './refine-emit.ts';
+import { wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
 import { builtTypeSurfaceOf, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -215,13 +216,31 @@ interface SlotAccessorConfig {
 	readonly source: AssembledNonterminal;
 }
 
-function slotAccessorBody(slot: SlotModel, config: SlotAccessorConfig): string {
+interface HoistReader {
+	readonly accessor: AccessorSlot;
+	readonly node: AuthoredCompound | AssembledList;
+}
+
+interface Hoist {
+	readonly readers: readonly HoistReader[];
+	readonly list: boolean;
+}
+
+function hoistedExpr(expr: string, hoist: Hoist | undefined, hop: (reader: HoistReader) => string): string {
+	return hoist === undefined ? expr : `hoistRead(${expr}, [${hoist.readers.map(hop).join(', ')}], ${hoist.list})`;
+}
+
+function slotReadExpr(slot: SlotModel, config: SlotAccessorConfig): string {
 	const one = config.required ? config.elemType : `${config.elemType} | undefined`;
-	if (!storesNodes(config.storageInfo)) return `return ${blankForRead(config.blank, `this.${slot.storageKey}`)}`;
+	if (!storesNodes(config.storageInfo)) return blankForRead(config.blank, `this.${slot.storageKey}`);
 	const key = JSON.stringify(slot.storageKey);
-	if (slot.arity === 'many') return `return hydrateSlots<${config.elemType}>(this, ${key}, tree)`;
+	if (slot.arity === 'many') return `hydrateSlots<${config.elemType}>(this, ${key}, tree)`;
 	const role = config.aliasContent === true ? `, contentRole(this, () => ${dataAccessExpr('this', slot.storageKey)})` : '';
-	return `return ${spelledReadExpr(config.source, `hydrateSlot<${one}>(this, ${key}, tree${role})`)}`;
+	return spelledReadExpr(config.source, `hydrateSlot<${one}>(this, ${key}, tree${role})`);
+}
+
+function slotAccessorBody({ slot, config, hoist }: AccessorSlot): string {
+	return `return ${hoistedExpr(slotReadExpr(slot, config), hoist, ({ accessor }) => `function (this: object) { return ${slotReadExpr(accessor.slot, accessor.config)}; }`)}`;
 }
 
 const SAFE_IDENT_KEY = /^_[A-Za-z_$][A-Za-z0-9_$]*$/;
@@ -243,6 +262,7 @@ export function buildSeparatedListContentSlot(node: AssembledList): AssembledNon
 interface AccessorSlot {
 	readonly slot: SlotModel;
 	readonly config: SlotAccessorConfig;
+	readonly hoist?: Hoist;
 }
 
 function fieldAccessorSlots(
@@ -269,8 +289,29 @@ function listAccessorSlots(node: AssembledList, kindEntries: readonly KindEnumEn
 	];
 }
 
-function accessorSlotsOf(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): AccessorSlot[] {
+function rawAccessorSlotsOf(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): AccessorSlot[] {
 	return node instanceof AssembledList ? listAccessorSlots(node, kindEntries, nodeMap) : fieldAccessorSlots(node.slots, kindEntries, nodeMap, node instanceof AssembledAlias);
+}
+
+function hoistOf(holder: AuthoredCompound | AssembledList, accessor: AccessorSlot, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): Hoist | undefined {
+	const chain = wrapperChainFor(nodeMap, holder.kind, accessor.slot.name);
+	if (chain === undefined) return undefined;
+	const readers = chain.storage.map((kind, hop): HoistReader => {
+		const node = nodeMap.nodes.get(kind) as AuthoredCompound | AssembledList;
+		const slots = rawAccessorSlotsOf(node, kindEntries, nodeMap);
+		const found = node instanceof AssembledList ? slots[0] : slots.find((candidate) => candidate.slot.name === chain.slots[hop]!.name);
+		if (found === undefined) throw new Error(`emitWrap: the wrapper '${kind}' of '${holder.kind}.${accessor.slot.name}' has no accessor for its slot '${chain.slots[hop]!.name}'`);
+		return { accessor: found, node };
+	});
+	const list = accessor.slot.arity === 'many' || readers.some(({ accessor: reader }) => reader.slot.arity === 'many');
+	return { readers, list };
+}
+
+function accessorSlotsOf(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): AccessorSlot[] {
+	return rawAccessorSlotsOf(node, kindEntries, nodeMap).map((accessor) => {
+		const hoist = hoistOf(node, accessor, kindEntries, nodeMap);
+		return hoist === undefined ? accessor : { ...accessor, hoist };
+	});
 }
 
 function settersOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], plan: SeatPlan): SetterEntry[] {
@@ -292,7 +333,7 @@ function wrapHeld(node: AuthoredCompound | AssembledList): HeldLocal[] {
 }
 
 function objectAccessorLines(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string[] {
-	return accessorSlotsOf(node, kindEntries, nodeMap).map(({ slot, config }) => `    ${slot.propertyName}() { ${slotAccessorBody(slot, config)}; },`);
+	return accessorSlotsOf(node, kindEntries, nodeMap).map((accessor) => `    ${accessor.slot.propertyName}() { ${slotAccessorBody(accessor)}; },`);
 }
 
 function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string | undefined {
@@ -368,16 +409,25 @@ export interface HandleShared {
 	inner: boolean;
 }
 
-function handleAccessorBody({ slot, config }: AccessorSlot, places: RecordPlaces): string {
+function handleReadExpr({ slot, config }: AccessorSlot, places: RecordPlaces): string {
 	const one = config.required ? config.elemType : `${config.elemType} | undefined`;
 	const place = placeIn(places, slot.storageKey);
-	if ('bit' in place) return `return recordFlag(this, ${place.word}, ${place.bit})`;
-	if (!storesNodes(config.storageInfo)) return place.run === undefined ? `return ${blankForRead(config.blank, `childSlot(this, ${cellArgs(place)})`)}` : `return childItems(this, ${cellArgs(place, true)})`;
-	if (slot.arity === 'many') return `return viewSlots<${config.elemType}>(this, ${cellArgs(place, true)})`;
+	if ('bit' in place) return `recordFlag(this, ${place.word}, ${place.bit})`;
+	if (!storesNodes(config.storageInfo)) return place.run === undefined ? blankForRead(config.blank, `childSlot(this, ${cellArgs(place)})`) : `childItems(this, ${cellArgs(place, true)})`;
+	if (slot.arity === 'many') return `viewSlots<${config.elemType}>(this, ${cellArgs(place, true)})`;
 	const args = cellArgs(place);
 	const spellings = spelledReadOf(config.source)?.spellings;
 	const tail = spellings === undefined ? (config.aliasContent === true ? ', true' : '') : `, ${config.aliasContent === true}, ${JSON.stringify(spellings)}`;
-	return `return viewSlot<${one}>(this, ${args}${tail})`;
+	return `viewSlot<${one}>(this, ${args}${tail})`;
+}
+
+function handleAccessorBody(accessor: AccessorSlot, places: RecordPlaces, nodeMap: NodeMap): string {
+	const hop = ({ accessor: reader, node }: HoistReader): string => {
+		const wrapperPlaces = recordPlacesOf(node, nodeMap);
+		if (wrapperPlaces === undefined) throw new Error(`emitWrap: the wrapper '${node.kind}' has no record places`);
+		return `function (this: RecordHandle) { return ${handleReadExpr(reader, wrapperPlaces)}; }`;
+	};
+	return `return ${hoistedExpr(handleReadExpr(accessor, places), accessor.hoist, hop)}`;
 }
 
 interface HandleListParts {
@@ -472,7 +522,7 @@ function emitRecordHandle(node: AuthoredCompound | AssembledList, kindEntries: r
 		functions.push(`function ${fn}(this: RecordHandle) {`, `  ${body};`, '}');
 		return fn;
 	};
-	const fields = accessorSlotsOf(node, kindEntries, nodeMap).map((accessor) => `    ${accessor.slot.propertyName}: ${member(accessor.slot.propertyName, handleAccessorBody(accessor, places))},`);
+	const fields = accessorSlotsOf(node, kindEntries, nodeMap).map((accessor) => `    ${accessor.slot.propertyName}: ${member(accessor.slot.propertyName, handleAccessorBody(accessor, places, nodeMap))},`);
 	const presence: string[] = [];
 	for (const { hint } of plan.groups) {
 		const args = cellArgs(placeIn(places, hint.stored));
@@ -737,7 +787,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const lines: string[] = [
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'',
-			`import { ${['restItems', 'admitSplicedEnvelope', 'admitSlot', 'markEdited as $edited', 'RECEIVER', 'carryReadTree', 'treeHandleOf', 'hydrateWith', 'hydrateSlotWith', 'hydrateSlotsWith', 'contentRole', 'inTreeEngine', 'currentHandle', 'listSlotWith', 'elementsWith', 'seatWith', 'groupField', 'LIST_METHODS', 'listIterator', 'listItems', 'holdReadItems', 'listSeparatorOf', 'listSeparator', 'storedElements', 'ownerView', 'ownerRead', 'ownerElements', 'isCoordinate', 'readNode', 'listOption', 'checkDelimited', 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'TREE', 'treeTokenOf', 'queryOf', 'snapshotOf', 'HANDLE', 'INPUT', 'READ_TREE', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing', 'objectInner', 'textOf', 'isRecordPosition', 'positionWords', 'recordSlot', 'recordPresent', 'recordFlag', 'childSlot', 'childItems', 'recordLength', 'recordDelimiter', 'rowData', 'rowOf', 'rowWith', 'handleTrivia', 'handleRender', 'handleSave', 'handleToString', 'handleEngine', 'handleDispose', 'handleQuery', 'handleSnapshot', ...blankArmImports(this.#nodeMap), ...spelledReadImports(this.#nodeMap)].join(', ')} } from '@sittir/common/utils';`,
+			`import { ${['restItems', 'admitSplicedEnvelope', 'admitSlot', 'markEdited as $edited', 'RECEIVER', 'carryReadTree', 'treeHandleOf', 'hydrateWith', 'hydrateSlotWith', 'hydrateSlotsWith', 'contentRole', 'inTreeEngine', 'currentHandle', 'listSlotWith', 'elementsWith', 'seatWith', 'groupField', 'LIST_METHODS', 'listIterator', 'listItems', 'holdReadItems', 'listSeparatorOf', 'listSeparator', 'storedElements', 'ownerView', 'ownerRead', 'ownerElements', 'isCoordinate', 'readNode', 'listOption', 'checkDelimited', 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'TREE', 'treeTokenOf', 'queryOf', 'snapshotOf', 'HANDLE', 'INPUT', 'READ_TREE', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing', 'objectInner', 'textOf', 'isRecordPosition', 'positionWords', 'recordSlot', 'recordPresent', 'recordFlag', 'childSlot', 'childItems', 'recordLength', 'recordDelimiter', 'rowData', 'rowOf', 'rowWith', 'handleTrivia', 'handleRender', 'handleSave', 'handleToString', 'handleEngine', 'handleDispose', 'handleQuery', 'handleSnapshot', 'hoistRead', ...blankArmImports(this.#nodeMap), ...spelledReadImports(this.#nodeMap)].join(', ')} } from '@sittir/common/utils';`,
 			"import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
