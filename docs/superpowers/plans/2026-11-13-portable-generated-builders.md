@@ -130,6 +130,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 ### Task 4: The build emitter
 
 **Status:** in progress on `feat/portable-build-emitter`.
+- The maintainer ruled (2026-11-17) that generated builders call the strict API. The re-costing is with brainstorm; the emitter isn't retargeted until it's accepted.
 - Built:
   - the emitter in the pinned child;
   - gen writing `portable/table.ts` and `portable/build.ts`;
@@ -141,18 +142,18 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - text-built arms from their text, where the path reads its `$value` as text;
   - containers whose builder takes an elements or spread input, holding a single value;
   - decision 7's optional `$path`: the map's `decided` names each member's one structure-built path, and a path function's input is `PathInput<Map, P>`;
-  - members that take one value or a list, built by whether the value is a list.
-- Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 865, rust 1335, typescript 1315.
-- A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers decimal-part numbers, holders, owners, mounts and options.
+  - members that take one value or a list, built by whether the value is a list;
+  - number spelling in decimal parts (exponent forms included) through `decimalSpelling`, with a part the builder takes as an option passed in the call's options.
+- Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 828, rust 1335, typescript 1315.
+- A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
 - Remaining:
   - decision 5;
-  - decision 7's bare scalars. Every member taking a number has several paths taking the same scalar, so the spec's unfit rule waits on a ruling;
+  - decision 7's bare scalars, by the outermost taker (ruled 2026-11-17). Measured: no member has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 members take a number);
   - python's getter;
   - decision 9's tails;
   - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
-  - number spelling in decimal parts (exponent forms included), through the shared value helper;
   - Step 3 (generated-module type errors left: python 1, rust 5, typescript 3, each outside the emitter) and Step 4.
 
 **Files:**
