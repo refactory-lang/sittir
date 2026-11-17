@@ -8,7 +8,7 @@ use crate::engine::{encode_handle, Engine, ReadTrees};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
 use crate::slot::ChangedEdges;
-use crate::trivia::{BuiltEntry, NodeTrivia, TriviaEntry};
+use crate::trivia::{BuiltEntry, TriviaEntry};
 use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex};
@@ -34,7 +34,7 @@ impl<G: RecordGrammar> Engine<G> {
         let at = at.record()?;
         match self.read_node(at, |tree, index| tree.trivia_side(index, side))? {
             Some(entries) => Ok(Some(entries)),
-            None => Ok(self.written().side(Place::Record(at), side)),
+            None => self.written().side(Place::Record(at), side, &*self.written().built()),
         }
     }
 
@@ -44,7 +44,7 @@ impl<G: RecordGrammar> Engine<G> {
     /// # Errors
     ///
     /// As `built_trivia_side`.
-    pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
+    pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         let at = at.record()?;
         if self.written().built().read_record(at) {
             return self.write_read_side(crate::types::NodeName { node: crate::types::NodeId(at.0), site: None }, side, entries);
@@ -59,7 +59,7 @@ impl<G: RecordGrammar> Engine<G> {
     ///
     /// `ArenaError::Malformed` for a name whose record is address 0 or names
     /// no source.
-    pub fn write_read_side(&self, name: crate::types::NodeName, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
+    pub fn write_read_side(&self, name: crate::types::NodeName, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         let record = Address(name.node.0).record()?;
         let site = {
             let chunks = self.written().built();
@@ -148,7 +148,7 @@ impl<G: RecordGrammar> Engine<G> {
     /// `ArenaError::Malformed` for a site whose holder is address 0.
     pub fn built_leaf_side(&self, site: Site<Address>, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
         site.holder.record()?;
-        Ok(self.written().side(Place::Leaf(site), side))
+        self.written().side(Place::Leaf(site), side, &*self.written().built())
     }
 
     /// The sides of every unit and leaf site of the built record at `from`,
@@ -176,7 +176,7 @@ impl<G: RecordGrammar> Engine<G> {
         for site in sites {
             site.holder.record()?;
         }
-        sites.iter().try_for_each(|&site| self.written().write_held_side(Place::Leaf(site), side, entries.to_vec()))
+        sites.iter().try_for_each(|&site| self.written().write_held_side(Place::Leaf(site), side, entries))
     }
 }
 
@@ -190,7 +190,7 @@ impl<G: RecordGrammar> Engine<G> {
     /// a unit at a word the record's kind holds no slot at.
     pub fn built_unit_sides(&self, arena: &impl ArenaRead, at: Address) -> Result<Vec<crate::layout::UnitSides<G::Trivia>>, ArenaError> {
         let kind = arena.header_kind(at, G::KIND_BITS)?;
-        let units = self.written().units(at);
+        let units = self.written().units(at, arena)?;
         units
             .into_iter()
             .map(|(word, item, trivia)| {
@@ -218,7 +218,7 @@ impl<G: RecordGrammar> Engine<G> {
                 Ok((word, unit.item, unit.trivia))
             })
             .collect::<Result<Vec<_>, ArenaError>>()?;
-        self.written().write_units(at, units)
+        self.written().write_units(at, &units)
     }
 
     /// One batch of the walk `ParsedTree::descendants` makes under the node
@@ -355,9 +355,9 @@ impl<G: RecordGrammar> Engine<G> {
     /// The lone built leaf of `kind` whose leaf entry is at `entry` in the
     /// engine's built arena `built`, rendered under `options` as a render
     /// root whose `changed` edges have no neighbour, its line endings
-    /// unspelled, with the sides `sides`: a root has no site, so its sides
-    /// come with the call (`Place::ROOT_LEAF`). The tree over each source a
-    /// side's entry reaches is made for the call.
+    /// unspelled, with the sides `store` holds for it: a root has no site,
+    /// so its sides come with the call (`TriviaStore::root_leaf`). The tree
+    /// over each source a side's entry reaches is made for the call.
     ///
     /// # Errors
     ///
@@ -371,16 +371,15 @@ impl<G: RecordGrammar> Engine<G> {
         built: &super::BuiltChunks,
         kind: KindId,
         entry: Address,
-        sides: Option<NodeTrivia<G::Trivia>>,
+        store: &TriviaStore<G::Trivia>,
         changed: ChangedEdges,
         options: &crate::options::ResolvedOptions,
         entries: crate::engine::AdmitEntry,
     ) -> Result<String, RenderError> {
         let cell = admitted_leaf::<G>(built, kind, entry, changed).map_err(RenderError::Record)?;
-        let store = self.written().root_leaf(sides);
         let trees = crate::engine::SourceTrees::new(self, built, entries);
         let read = ReadTrees::over(&trees);
-        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, Some(built), built, &store, &RenderContext::new(options, &read), None)
+        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, Some(built), built, store, &RenderContext::new(options, &read), None)
     }
 }
 

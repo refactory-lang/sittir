@@ -82,6 +82,16 @@ pub(super) fn strings_written(cells: &ChunkMem<u8>) -> u32 {
     read_u32(unsafe { cells.slice() }, STRINGS_WRITTEN)
 }
 
+#[cfg(test)]
+impl BuiltChunks {
+    /// The cells naming an entry of the string chunk `chunk`; none for a
+    /// chunk that holds no strings.
+    pub(crate) fn text_count(&self, chunk: u32) -> Option<u32> {
+        // SAFETY: as `strings_written`.
+        self.strings_of(chunk).map(|(_, cells)| read_u32(unsafe { cells.slice() }, 0))
+    }
+}
+
 /// A word chunk's meta, its counts included.
 #[derive(Debug)]
 pub(super) struct CountTable {
@@ -273,7 +283,7 @@ impl BuiltChunks {
     /// # Errors
     ///
     /// `ArenaError::OutOfBounds` for a chunk that holds no strings.
-    pub(super) fn hold_text(&mut self, at: Address) -> Result<(), ArenaError> {
+    pub(crate) fn hold_text(&mut self, at: Address) -> Result<(), ArenaError> {
         let Some(Some(BuiltChunk::Bytes { cells, .. })) = self.chunks.get(at.chunk() as usize) else {
             return Err(ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len: 1 });
         };
@@ -363,8 +373,9 @@ impl BuiltChunks {
     /// builder returned holds, a no-op when it holds none. An entry whose
     /// count reaches zero releases what it holds, on an explicit stack: a
     /// record each entry its cells name, the cells' string chunks, its side
-    /// record, and the records its sides in the store hold, which `sides`
-    /// drops and answers; a side record its slots' token runs. The tree of
+    /// record, and the records and leaf entries its sides in the store name,
+    /// which `sides` drops and answers, each released as a cell naming it
+    /// is; a side record its slots' token runs. The tree of
     /// each link record and side record released is kept for `take_trees`.
     /// A sealed chunk left with no live entry is freed. A read's record
     /// takes no release, as a cell naming one drops no count of it: it is
@@ -527,8 +538,8 @@ impl BuiltChunks {
                 (false, cell) => self.drop_cell(cell.address(), stack)?,
             }
         }
-        for record in sides(at) {
-            self.drop_count(Held::Record(record), stack)?;
+        for entry in sides(at) {
+            self.drop_cell(entry, stack)?;
         }
         Ok(())
     }
@@ -751,6 +762,21 @@ mod tests {
         built.release(root, true).expect("released");
         assert_eq!(placed.last(), Some(&side));
         assert!(placed.iter().all(|&at| built.arena.released(at)), "the side record and its token run");
+    }
+
+    #[test]
+    fn a_released_record_drops_what_its_sides_name_as_a_cell_naming_it_does() {
+        let mut built = Builder::new();
+        let side = built.leaf();
+        built.arena.adopt(side).expect("the side holds it");
+        let text = crate::arena::BuiltWriter::new(&mut built.arena).entry(LEAF, "// a").expect("a leaf entry");
+        let chunk = built.arena.alloc_read_words(64).expect("a read's chunk");
+        let read = Address::new(chunk, 0).expect("an address");
+        let root = built.leaf();
+        built.arena.release(Held::Record(root), true, &mut |at| if at == root { vec![side, text, read] } else { Vec::new() }).expect("released");
+        assert!(built.arena.released(root) && built.arena.released(side), "a record a side names");
+        assert_eq!(built.arena.text_count(text.chunk()), Some(0), "a leaf entry a side names gives back its string count");
+        assert!(built.arena.read_chunk(chunk), "a read's record a side names takes no release");
     }
 
     #[test]

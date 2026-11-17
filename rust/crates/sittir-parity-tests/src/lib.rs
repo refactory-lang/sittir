@@ -414,6 +414,6 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
         let inner = sittir_core::trivia_table::TriviaSide::Inner;
         let name = self.name(index).expect("the edited node has a record");
         let entries = self.engine.read_named(name, |parsed, at| parsed.trivia_side(at, inner)).expect("the records read").expect("a read wrote the record");
-        self.engine.write_read_side(name, inner, entries).expect("the node's own side writes back");
+        self.engine.write_read_side(name, inner, &entries).expect("the node's own side writes back");
     }
 }

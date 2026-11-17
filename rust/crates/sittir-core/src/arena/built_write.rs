@@ -95,11 +95,43 @@ pub struct BuiltWriter<'a> {
     words: Option<Open<u32>>,
 }
 
+impl super::ArenaRead for BuiltWriter<'_> {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        super::ArenaRead::chunk(&*self.chunks, n)
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        super::ArenaRead::string_chunk(&*self.chunks, n)
+    }
+
+    fn released(&self, at: Address) -> bool {
+        super::ArenaRead::released(&*self.chunks, at)
+    }
+
+    fn read_chunk(&self, n: u32) -> bool {
+        super::ArenaRead::read_chunk(&*self.chunks, n)
+    }
+
+    fn read_entry(&self, at: Address) -> bool {
+        super::ArenaRead::read_entry(&*self.chunks, at)
+    }
+
+    fn freed(&self, n: u32) -> bool {
+        super::ArenaRead::freed(&*self.chunks, n)
+    }
+}
+
 impl<'a> BuiltWriter<'a> {
     /// A writer appending records to fresh word chunks of `chunks`, and leaf
     /// entries to its open string chunk, past what any builder wrote there.
     pub fn new(chunks: &'a mut BuiltChunks) -> Self {
         Self { chunks, words: None }
+    }
+
+    /// The bits the arena's kind fields take.
+    #[must_use]
+    pub fn kind_bits(&self) -> u32 {
+        self.chunks.kind_bits
     }
 
     /// The header word of a record of `kind`, its flags `flags`.

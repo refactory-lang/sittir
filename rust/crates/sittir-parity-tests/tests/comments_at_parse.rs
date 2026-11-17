@@ -49,7 +49,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
             let stored = records
                 .place(run)
                 .and_then(|place| match place {
-                    Place::Read { tree, site } => engine.written().side(Place::Placed { tree, site }, side),
+                    Place::Read { tree, site } => engine.written().side(Place::Placed { tree, site }, side, &*built).expect("a placed side"),
                     _ => None,
                 })
                 .unwrap_or_default();
@@ -109,7 +109,7 @@ fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar:
             placed += records
                 .place(at)
                 .and_then(|place| match place {
-                    Place::Read { tree, site } => engine.written().side(Place::Placed { tree, site }, side),
+                    Place::Read { tree, site } => engine.written().side(Place::Placed { tree, site }, side, &*built).expect("a placed side"),
                     _ => None,
                 })
                 .map_or(0, |entries| entries.len());
@@ -146,7 +146,7 @@ fn a_placed_error_is_the_entry_a_built_side_holds_for_it() {
     let error = runs.kids(NodeIndex::ROOT).iter().find(|kid| kid.grammar == sittir_core::types::KindId::ERROR).copied().expect("the source's ERROR");
     let Some(sittir_core::arena::NodeSite::Record(at)) = runs.site(error.index) else { panic!("the ERROR has a record of its own") };
     let Some(Place::Read { tree, site }) = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
-    let stored = engine.written().side(Place::Placed { tree, site }, TriviaSide::Inner).expect("the root's inner side");
+    let stored = engine.written().side(Place::Placed { tree, site }, TriviaSide::Inner, &*built).expect("a placed side").expect("the root's inner side");
     assert_eq!(stored.len(), 1, "the root's inner holds the ERROR alone");
     let TriviaEntry::Record(entry) = &stored[0] else { panic!("the ERROR is named by its record, as a built side names it: {:?}", stored[0]) };
     assert_eq!((entry.record.kind, entry.record.at), (sittir_core::types::KindId::ERROR, at), "the entry names the ERROR's own record");

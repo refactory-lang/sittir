@@ -256,11 +256,11 @@ impl TriviaText {
     }
 
     /// Whether the entry writes itself verbatim with its adjacency, in place
-    /// of any seam: an `ERROR` always, any other entry when it carries an
-    /// adjacency.
+    /// of any seam: an `ERROR` its source places (one with a span or the
+    /// bytes it spans), and any entry that carries an adjacency.
     #[must_use]
     pub fn verbatim(&self) -> bool {
-        self.kind == KindId::ERROR || self.before.is_some() || self.after.is_some()
+        self.before.is_some() || self.after.is_some() || (self.kind == KindId::ERROR && (self.span.is_some() || self.bytes.is_some()))
     }
 
     /// The entry of `kind` spanning `span` of `source`, with the in-line runs
@@ -277,11 +277,19 @@ impl TriviaText {
 
 impl TriviaText {
     /// Write an entry of `kind` with `text` and no adjacency, as a written
-    /// entry renders: an `ERROR` verbatim, any other between its kind's
-    /// edges, holding the line end its kind leaves.
+    /// entry renders: an `ERROR` verbatim where `bytes` places it in its
+    /// source, and otherwise as its text between the seams beside it, its
+    /// last token joining what follows; any other between its kind's edges,
+    /// holding the line end its kind leaves.
     pub(crate) fn write(kind: KindId, text: &str, bytes: Option<crate::types::Span>, w: &mut dyn RenderSink) -> RenderResult {
         if kind == KindId::ERROR {
-            return w.verbatim(None, text, None, bytes);
+            if bytes.is_some() {
+                return w.verbatim(None, text, None, bytes);
+            }
+            if !text.is_empty() {
+                w.join_arm(crate::render::JoinArm::NEXT);
+            }
+            return w.text(text);
         }
         w.edge(kind, Side::Before, None);
         w.text(text)?;

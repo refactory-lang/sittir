@@ -185,7 +185,7 @@ fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
         found.expect("a side that holds the comment")
     };
     assert_eq!(path.first(), Some(&0), "the comment lies in the first function");
-    engine.written().write_held_side(place, side, Vec::new()).expect("a write");
+    engine.written().write_held_side(place, side, &[]).expect("a write");
     let built = engine.written().built();
     let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
     let mut nodes = records.nodes();
@@ -364,7 +364,7 @@ fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
     assert!(assigned.contains("Coord"), "the side holds the comment by its coordinate: {assigned}");
     let read = engine.built_trivia_side(at, side).expect("a side").expect("the side its source assigns");
     assert_eq!(unnamed(&format!("{read:?}")), unnamed(&assigned));
-    engine.write_built_trivia_side(at, side, Vec::new()).expect("a write");
+    engine.write_built_trivia_side(at, side, &[]).expect("a write");
     assert_eq!(engine.built_trivia_side(at, side).expect("a side").map(|entries| entries.len()), Some(0), "the written side is the one read");
 }
 

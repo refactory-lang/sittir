@@ -1030,7 +1030,7 @@ macro_rules! napi_engine {
             pub fn write_read_trivia_side(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, node: f64, side: String, entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>) -> ::napi::Result<()> {
                 let engine = engine_of(engine)?;
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                engine.write_read_side($crate::napi_engine::named_key(node)?, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                engine.write_read_side($crate::napi_engine::named_key(node)?, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 $crate::napi_engine::settle(&env, engine.written())
             }
 
@@ -1229,13 +1229,18 @@ macro_rules! napi_engine {
                 let owner = engine_of(owner)?;
                 let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
                 let table = render_options(&engine, options)?;
-                let chunks = owner.written().built();
-                let built = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                let changed = $crate::slot::ChangedEdges { leading, trailing };
-                let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.render_built_leaf(built, kind, $crate::arena::Address(entry), sides, changed, &table, $crate::napi_engine::admit_entry::<$grammar>)))
-                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
-                    .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
-                Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
+                let root = owner.written().root_leaf(sides).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let canonical = {
+                    let chunks = owner.written().built();
+                    chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string())).and_then(|built| {
+                        let changed = $crate::slot::ChangedEdges { leading, trailing };
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.render_built_leaf(built, kind, $crate::arena::Address(entry), &root.store, changed, &table, $crate::napi_engine::admit_entry::<$grammar>)))
+                            .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
+                            .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))
+                    })
+                };
+                root.release().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical?, &table.newline)))
             }
 
             /// `render_built_leaf`'s text written to `path`
@@ -1456,7 +1461,7 @@ macro_rules! napi_engine {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                engine.write_built_trivia_side(address, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 $crate::napi_engine::settle(&env, engine.written())
             }
         }

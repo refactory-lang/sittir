@@ -1749,6 +1749,18 @@ mod word_matcher_tests {
     }
 
     #[test]
+    fn the_token_after_an_error_its_source_does_not_place_is_spaced_where_the_two_would_join() {
+        use crate::render::{JoinArm, Render};
+        let word = with_range_arrow_pairs();
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, &word);
+        crate::trivia::TriviaText::of(crate::types::KindId::ERROR, "..").render(&mut w).unwrap();
+        w.join_arm(JoinArm::PREVIOUS);
+        w.text("=>").unwrap();
+        assert_eq!(out, ".. =>");
+    }
+
+    #[test]
     fn arms_before_one_write_combine_the_write_takes_them_and_an_empty_write_leaves_them() {
         use crate::render::JoinArm;
         let word = with_range_arrow_pairs();
@@ -2412,6 +2424,27 @@ mod sink_tests {
             w.text("y").unwrap();
         });
         assert_eq!(out, ("x y".to_owned(), 1));
+    }
+
+    #[test]
+    fn an_error_its_source_does_not_place_takes_the_seams_beside_it() {
+        use crate::render::Render;
+        let error = |before: Option<&str>, after: Option<&str>| crate::trivia::TriviaText {
+            before: before.map(str::to_owned),
+            after: after.map(str::to_owned),
+            ..crate::trivia::TriviaText::of(KindId::ERROR, "$")
+        };
+        let between_seams = |entry: crate::trivia::TriviaText| {
+            run(|w| {
+                w.text("2,").unwrap();
+                w.seam(crate::layout_kinds::LayoutKinds::SPACE);
+                entry.render(w).unwrap();
+                w.seam(crate::layout_kinds::LayoutKinds::SPACE);
+                w.text("3").unwrap();
+            })
+        };
+        assert_eq!(between_seams(error(None, None)), "2, $ 3");
+        assert_eq!(between_seams(error(Some(""), Some(""))), "2,$3", "an adjacency the source spells still replaces the seams");
     }
 
     #[test]

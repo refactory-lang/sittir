@@ -94,14 +94,71 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
 }
 
 /// How one node renders alike from its record.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum NodeAlike {
     /// The model reads no node there, or the read leaves it no record.
     Unread,
     Rendered,
     /// The native render panics, and the record's does too.
     Panicking,
+    /// Both render, to different text: the node, as `at` names it, and its
+    /// two renders.
+    Apart { at: String, native: String, record: String },
 }
+
+/// An edited node whose record renders apart from its native node: its
+/// index, as `at` names it, and its two renders.
+struct EditedApart {
+    node: u32,
+    at: String,
+    native: String,
+    record: String,
+}
+
+/// Why an edited node's record renders apart from its native node: the
+/// arena's store keeps a written side's entries compact, and object
+/// storage keeps them as written.
+#[derive(Debug, Clone, Copy)]
+enum Divergence {
+    /// An `ERROR` or a line continuation on the side: the store keeps its
+    /// kind and text, not the in-line whitespace beside it, which the
+    /// options write.
+    Adjacency,
+    /// A root whose side holds comments alone: the store keeps each comment
+    /// as its record, object storage as the entry written, and the two
+    /// place the line break around them differently.
+    CommentsRoot,
+}
+
+/// An edited node pinned to render apart from its record: its grammar,
+/// source and node, its native render, its record render, and why. The
+/// edited comparison fails when a node not pinned renders apart, when a
+/// pinned node renders otherwise, and when a pinned node renders alike.
+struct Apart {
+    grammar: &'static str,
+    source: usize,
+    node: u32,
+    native: &'static str,
+    record: &'static str,
+    why: Divergence,
+}
+
+const APART: &[Apart] = &[
+    Apart { grammar: "python", source: 1084, node: 0, native: "{a:#06x}\n", record: "{a:\n#06x}\n", why: Divergence::Adjacency },
+    Apart { grammar: "python", source: 1091, node: 0, native: ":#06x\n", record: ":\n#06x\n", why: Divergence::Adjacency },
+    Apart { grammar: "rust", source: 392, node: 2, native: "{*}", record: "{\n    *\n}", why: Divergence::Adjacency },
+    Apart { grammar: "rust", source: 3487, node: 0, native: "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n", record: "/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n", why: Divergence::CommentsRoot },
+    Apart { grammar: "rust", source: 3488, node: 0, native: "\n/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n", record: "/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n", why: Divergence::CommentsRoot },
+    Apart { grammar: "rust", source: 3489, node: 0, native: "\n// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n", record: "// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n", why: Divergence::CommentsRoot },
+    Apart { grammar: "rust", source: 3491, node: 0, native: "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n", record: "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n", why: Divergence::CommentsRoot },
+    Apart { grammar: "rust", source: 3492, node: 0, native: "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n", record: "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n", why: Divergence::CommentsRoot },
+    Apart { grammar: "rust", source: 3495, node: 0, native: "\n//! Doc comment", record: "//! Doc comment\n", why: Divergence::CommentsRoot },
+    Apart { grammar: "scm", source: 9, node: 0, native: ";", record: ";\n", why: Divergence::CommentsRoot },
+    Apart { grammar: "scm", source: 403, node: 0, native: "I'm a string; not a comment\n", record: "I'm a string\n; not a comment\n", why: Divergence::Adjacency },
+    Apart { grammar: "typescript", source: 143, node: 2, native: "{\n  bar(): number\n  baz(): IBaz,, }", record: "{\n  bar(): number\n  baz(): IBaz ,, }", why: Divergence::Adjacency },
+    Apart { grammar: "typescript", source: 162, node: 2, native: "{\n  bar(): number\n  baz(): Baz,, }", record: "{\n  bar(): number\n  baz(): Baz ,, }", why: Divergence::Adjacency },
+    Apart { grammar: "typescript", source: 2792, node: 1, native: "{ A, B, }", record: "{\n  A, B,\n}", why: Divergence::Adjacency },
+];
 
 impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells> Renders<G, N> {
     /// Whether the node at `index` of `tree`, read one level down, renders
@@ -122,7 +179,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
             (Ok(_), Err(_)) => Err(format!("{at}: the record render panics and the native one does not")),
             (Ok(native), Ok(record)) => {
                 let (native, record) = (native.expect("a native read").map_err(|e| format!("{at}: {e}"))?, record.map_err(|e| format!("{at}: {e}"))?);
-                if record == native { Ok(NodeAlike::Rendered) } else { Err(format!("{at}:\n native {native:?}\n record {record:?}")) }
+                if record == native { Ok(NodeAlike::Rendered) } else { Ok(NodeAlike::Apart { at, native, record }) }
             }
         }
     }
@@ -130,21 +187,23 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
     /// Every node of `source` renders alike from its record, untouched and
     /// edited: the nodes alike each way, and those that panic alike. An
     /// extra takes no sides of its own, so none is edited.
-    fn nodes_alike(&self, source: &str) -> Result<[usize; 3], String> {
+    fn nodes_alike(&self, source: &str) -> Result<([usize; 3], Vec<EditedApart>), String> {
         let mut engine = self.engine();
         let options = engine.options().clone();
-        let mut counts = [0; 3];
+        let (mut counts, mut apart) = ([0; 3], Vec::new());
         let untouched = Self::parse(&mut engine, source);
         if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.native(&untouched, NodeIndex::ROOT, &options))).is_ok_and(|read| read.is_none()) {
-            return Ok(counts);
+            return Ok((counts, apart));
         }
-        let Ok(over) = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.read(&untouched))) else { return Ok(counts) };
+        let Ok(over) = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.read(&untouched))) else { return Ok((counts, apart)) };
         let nodes = sittir_core::read::descendant_count(&untouched.tree().root_node());
-        for index in (0..nodes).map(NodeIndex::new) {
+        for node in 0..nodes {
+            let index = NodeIndex::new(node);
             match self.node_alike(&untouched, &over, index, &options)? {
                 NodeAlike::Rendered => counts[0] += 1,
                 NodeAlike::Panicking => counts[2] += 1,
                 NodeAlike::Unread => continue,
+                NodeAlike::Apart { at, native, record } => return Err(format!("{at}:\n native {native:?}\n record {record:?}")),
             }
             if sittir_core::engine::node_at_index(untouched.tree(), index).is_some_and(|node| node.is_extra()) {
                 continue;
@@ -157,9 +216,10 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
                 NodeAlike::Rendered => counts[1] += 1,
                 NodeAlike::Panicking => counts[2] += 1,
                 NodeAlike::Unread => {}
+                NodeAlike::Apart { at, native, record } => apart.push(EditedApart { node, at, native, record }),
             }
         }
-        Ok(counts)
+        Ok((counts, apart))
     }
 }
 
@@ -185,6 +245,8 @@ fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + R
     assert!(!sources.is_empty(), "{grammar} has round-trip fixtures");
     let mut differ = Vec::new();
     let (mut rendered, mut nodes) = (0, [0; 3]);
+    let pinned: Vec<&Apart> = APART.iter().filter(|pin| pin.grammar == grammar).collect();
+    let mut met = vec![false; pinned.len()];
     for (i, source) in sources.iter().enumerate() {
         match renders.renders_alike(source) {
             Ok(Alike::Rendered) => rendered += 1,
@@ -193,8 +255,26 @@ fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + R
             Err(e) => differ.push(format!("{grammar} source {i}: {e}")),
         }
         match renders.nodes_alike(source) {
-            Ok(counts) => nodes = [nodes[0] + counts[0], nodes[1] + counts[1], nodes[2] + counts[2]],
+            Ok((counts, apart)) => {
+                nodes = [nodes[0] + counts[0], nodes[1] + counts[1], nodes[2] + counts[2]];
+                for EditedApart { node, at, native, record } in apart {
+                    match pinned.iter().position(|pin| (pin.source, pin.node) == (i, node)) {
+                        Some(pin) => {
+                            met[pin] = true;
+                            if (pinned[pin].native, pinned[pin].record) != (native.as_str(), record.as_str()) {
+                                differ.push(format!("{grammar} source {i}: edited {at}, pinned apart by {:?}, renders otherwise:\n native {native:?}\n record {record:?}", pinned[pin].why));
+                            }
+                        }
+                        None => differ.push(format!("{grammar} source {i}: edited {at}:\n native {native:?}\n record {record:?}")),
+                    }
+                }
+            }
             Err(e) => differ.push(format!("{grammar} source {i}: {e}")),
+        }
+    }
+    for (pin, met) in pinned.iter().zip(met) {
+        if !met {
+            differ.push(format!("{grammar} source {}: edited node {}, pinned apart by {:?}, renders alike now: unpin it", pin.source, pin.node, pin.why));
         }
     }
     eprintln!("{grammar}: {rendered} of {} sources render alike; nodes alike {} untouched, {} edited, {} panic alike", sources.len(), nodes[0], nodes[1], nodes[2]);
@@ -307,7 +387,7 @@ fn an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_com
     let over = renders.read(&tree);
     let leading = sittir_core::trivia_table::TriviaSide::Leading;
     tree.write_trivia_side(statement, leading, line_comment("// written")).expect("a side write");
-    over.engine.write_read_side(over.name(statement).expect("a statement has a record"), leading, line_comment("// written")).expect("a side write");
+    over.engine.write_read_side(over.name(statement).expect("a statement has a record"), leading, &line_comment("// written")).expect("a side write");
     let native = renders.native(&tree, NodeIndex::ROOT, &options).expect("a root").expect("a native render");
     let record = RustRenders::record(&over, over.root, &options).expect("a record render");
     assert_eq!(record, native);
