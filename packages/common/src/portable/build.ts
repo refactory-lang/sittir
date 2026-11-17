@@ -623,6 +623,14 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 		const refuseUnmet = (path: string, name: string, routes: readonly PortableSlotRoute[], unmet: (route: PortableSlotRoute) => readonly (readonly string[])[]): never => {
 			throw new Error(`portable build: ${path}: ${name} builds only beside ${[...new Set(routes.map((route) => unmet(route).map((group) => group.join(' or ')).join(' and ')))].join(', or beside ')}`);
 		};
+		const refuseKey = (path: string, arm: PortableBuildArm, name: string): never => {
+			const named = (table.paths[path]?.flags ?? []).includes(name)
+				? `${name} is a flag of ${path}; state it in $flags`
+				: (arm.options ?? []).includes(name)
+					? `${name} is an option of ${nameOf(arm.kind)}; the build writes it from its preference default, and the built node's $with changes it`
+					: `${nameOf(arm.kind)} has no slot ${name}`;
+			throw new Error(`portable build: ${path}: ${named}`);
+		};
 		const fitsShape = (route: PortableSlotRoute, value: unknown): boolean =>
 			Array.isArray(value) ? (value.length > 0 || route.nonEmpty !== true) && listFits(route, value) : !route.multiple && seatsIn(route.seats.filter((seat) => seat.many !== true || route.list === false), value);
 		const ownerFor = (
@@ -745,7 +753,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			if (text !== undefined && arm.content !== undefined && (text !== '' || !arm.content.steps.some((step) => step.optional === true))) placeSlot(frame, arm.content, text, structure.$path);
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
-				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no slot ${name}`);
+				if (routes.length === 0) refuseKey(structure.$path, arm, name);
 				return [name, routes] as const;
 			});
 			const unfilled = (name: string): boolean => emptyList(values.get(name)) && routesOf(arm, name).every((route) => route.nonEmpty === true);

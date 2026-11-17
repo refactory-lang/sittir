@@ -1,4 +1,4 @@
-import { type Vocabulary, byCodepoint, camel, compositionOf, derive, envelopeTargets, lineageOf, readVocabulary, readVocabularySource, resolveRoutes, VOCABULARY_DIR } from '@sittir/codegen/bindings';
+import { byCodepoint, camel, compositionOf, declaredFlags, derive, envelopeTargets, lineageOf, readVocabulary, readVocabularySource, resolveRoutes, VOCABULARY_DIR } from '@sittir/codegen/bindings';
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { loadInputs } from '../inventory/index.ts';
 import { plan, under, type Plan } from '../vocabulary/plan.ts';
@@ -60,8 +60,6 @@ export function guardRows(p: Plan, composed: ReadonlySet<string>, held: Held): G
 	return rows;
 }
 
-const declaresFlag = (vocabulary: Vocabulary, path: string, flag: string): boolean => vocabulary.kinds.has(path) && vocabulary.members(path).get(flag)?.flag === true;
-
 export async function heldBy(grammar: GrammarName): Promise<Held> {
 	const [input] = await loadInputs([grammar]);
 	const d = derive([input!]);
@@ -74,7 +72,7 @@ export async function heldBy(grammar: GrammarName): Promise<Held> {
 		...entries.flatMap((entry) => entry.members.map((route) => memberKey(entry.vocab, route.name))),
 		...[...readEntries.values()].flatMap((onKind) =>
 			onKind.flatMap(({ claim: { flag } }) =>
-				flag === undefined ? [] : onKind.filter((other) => other.claim.flag === flag || declaresFlag(input!.vocabulary, other.vocab, flag)).map((other) => memberKey(other.vocab, flag))
+				flag === undefined ? [] : onKind.filter((other) => other.claim.flag === flag || declaredFlags(input!.vocabulary, other.vocab).includes(flag)).map((other) => memberKey(other.vocab, flag))
 			)
 		),
 		...input!.bindings.containers.flatMap((container) =>

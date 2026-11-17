@@ -208,6 +208,8 @@ export interface PortableDecimalParts {
  * `slot` holds one item, the list is built with `delimiter`, the separator that makes one item that list. A `content` arm builds a lexed
  * identifier: it reads as its path with the text of its `content` slot as the `$value`, and builds by passing that text to its builder, which
  * writes the affix its path stands for. The `facts` an arm's container spells, in the order the bindings declare them, are its path or flags it reads only through that container; a build puts each one's item in it.
+ * `options` names the options of the arm's kind, the slots a preference binds: a structure never states one, since the build writes each from its
+ * preference default and the built node's `$with` changes it.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
@@ -230,16 +232,19 @@ export interface PortableBuildArm {
 	readonly facts?: readonly PortableSpelledFact[];
 	readonly sole?: { readonly slot: string; readonly delimiter: number };
 	readonly content?: PortableSlotRoute;
+	readonly options?: readonly string[];
 }
 
 /**
  * A vocabulary path's build arms, tried in order; a path with `root` false builds only inside a holder slot its arms name. Every number arm
- * reads its own `scalar`; `builds` names, for each scalar type, the kind of the one arm that builds a `$value` of that type.
+ * reads its own `scalar`; `builds` names, for each scalar type, the kind of the one arm that builds a `$value` of that type. `flags` names every
+ * flag the path declares, whether or not an arm builds it; a structure states a flag in its `$flags`, never as a key.
  */
 export interface PortableBuildPath {
 	readonly root: boolean;
 	readonly arms: readonly PortableBuildArm[];
 	readonly builds?: Readonly<Partial<Record<NonNullable<PortableBuildArm['scalar']>, number>>>;
+	readonly flags?: readonly string[];
 }
 
 /**

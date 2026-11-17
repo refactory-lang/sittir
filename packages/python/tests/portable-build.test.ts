@@ -49,7 +49,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('refuses an option or a slot its value is written from, stated beside its $value or without it', () => {
-		expect(() => runtime.build({ $path: 'literal.number.float', $value: 1.5, marker: 'e', exponent: '8' })).toThrow(/literal\.number\.float: float_point has no slot marker$/);
+		expect(() => runtime.build({ $path: 'literal.number.float', $value: 1.5, marker: 'e', exponent: '8' })).toThrow(/literal\.number\.float: marker is an option of float_point; the build writes it from its preference default/);
 		expect(() => runtime.build({ $path: 'literal.number.float', integer: '1', fraction: '5' })).toThrow(/it needs \$value$/);
 	});
 

@@ -594,7 +594,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['group']
 		},
 		'clause.comprehension.for': {
 			root: true,
@@ -689,9 +690,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['left', 'rights']
 						}
-					]
+					],
+					options: ['trailingComma']
 				}
-			]
+			],
+			flags: ['trailingComma', 'async']
 		},
 		'clause.comprehension.if': {
 			root: true,
@@ -2164,7 +2167,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async']
 		},
 		'declaration.function': {
 			root: true,
@@ -2410,7 +2414,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async']
 		},
 		'declaration.method': {
 			root: true,
@@ -2700,7 +2705,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'privateName', 'override']
 		},
 		'declaration.method.special': {
 			root: true,
@@ -2987,7 +2993,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'privateName', 'override']
 		},
 		'declaration.parameter.defaulted': {
 			root: true,
@@ -3515,7 +3522,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['override']
 		},
 		'declaration.property.setter': {
 			root: true,
@@ -3799,7 +3807,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['override']
 		},
 		'declaration.type_alias': {
 			root: true,
@@ -3986,7 +3995,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.type_parameter.parameters': {
 			root: true,
@@ -9078,7 +9088,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[227, 'index']]
 				}
-			]
+			],
+			flags: ['trailingComma']
 		},
 		'expression.comprehension.generator': {
 			root: true,
@@ -9656,7 +9667,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[259, 'elements']]
 				}
-			]
+			],
+			flags: ['debug']
 		},
 		'expression.interpolation.conversion': {
 			root: true,
@@ -9674,7 +9686,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['debug']
 		},
 		'expression.interpolation.format': {
 			root: true,
@@ -9712,7 +9725,8 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: []
 				}
-			]
+			],
+			flags: ['debug']
 		},
 		'expression.lambda': {
 			root: true,
@@ -9976,7 +9990,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['privateName']
 		},
 		'expression.parenthesized': {
 			root: true,
@@ -10953,7 +10968,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -11004,7 +11020,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -11055,7 +11072,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -11108,7 +11126,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -11135,7 +11154,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix', 'marker']
 				}
 			],
 			builds: {
@@ -11162,7 +11182,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix', 'marker']
 				}
 			],
 			builds: {
@@ -11189,7 +11210,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix', 'marker']
 				},
 				{
 					kind: 96,
@@ -11208,7 +11230,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -11235,7 +11258,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				}
 			],
 			builds: {
@@ -11262,7 +11286,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				}
 			],
 			builds: {
@@ -11307,7 +11332,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				},
 				{
 					kind: 97,
@@ -12947,7 +12973,8 @@ export const build: PortableBuildTable = {
 		},
 		'pattern.complex': {
 			root: false,
-			arms: []
+			arms: [],
+			flags: ['sign']
 		},
 		'pattern.complex.add': {
 			root: true,
@@ -13021,7 +13048,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['sign']
 		},
 		'pattern.complex.subtract': {
 			root: true,
@@ -13095,7 +13123,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['sign']
 		},
 		'pattern.list': {
 			root: false,
@@ -13781,7 +13810,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable']
 		},
 		'pattern.tuple': {
 			root: false,
@@ -14079,7 +14109,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[161, 'pattern']]
 				}
-			]
+			],
+			flags: ['trailingComma']
 		},
 		'pattern.wildcard': {
 			root: true,
@@ -15190,7 +15221,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async']
 		},
 		'statement.loop.while': {
 			root: true,
@@ -15568,7 +15600,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['trailingComma']
 		},
 		'statement.resource': {
 			root: true,
@@ -15643,7 +15676,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async']
 		},
 		'statement.return': {
 			root: true,

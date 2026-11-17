@@ -887,7 +887,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['group']
 		},
 		'clause.default': {
 			root: true,
@@ -1224,7 +1225,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'clause.export.specifier.typeof': {
 			root: true,
@@ -1320,7 +1322,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'clause.extends': {
 			root: true,
@@ -1918,7 +1921,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'clause.import.specifier.typeof': {
 			root: true,
@@ -2071,7 +2075,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'clause.mapped_type': {
 			root: true,
@@ -3098,9 +3103,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['body', 'name']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['abstract']
 		},
 		'declaration.constructor': {
 			root: true,
@@ -3463,7 +3470,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.enum_member': {
 			root: true,
@@ -3969,6 +3977,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
 			]
 		},
 		'declaration.field.private': {
@@ -4312,6 +4331,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
 			]
 		},
 		'declaration.field.protected': {
@@ -4655,6 +4685,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
 			]
 		},
 		'declaration.field.public': {
@@ -4998,6 +5039,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
 			]
 		},
 		'declaration.field.signature': {
@@ -5201,6 +5253,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
 			]
 		},
 		'declaration.field.signature.private': {
@@ -5414,6 +5477,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
 			]
 		},
 		'declaration.field.signature.protected': {
@@ -5627,6 +5701,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
 			]
 		},
 		'declaration.field.signature.public': {
@@ -5840,6 +5925,17 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
 			]
 		},
 		'declaration.function': {
@@ -6108,7 +6204,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['body', 'name']
 						}
-					]
+					],
+					options: ['terminator']
 				},
 				{
 					kind: 249,
@@ -6373,9 +6470,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['body', 'name']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['async', 'generator']
 		},
 		'declaration.function.signature': {
 			root: true,
@@ -6624,9 +6723,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['async', 'generator']
 		},
 		'declaration.interface': {
 			root: true,
@@ -7177,7 +7278,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
 		'declaration.method.private': {
 			root: true,
@@ -7584,7 +7686,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
 		'declaration.method.protected': {
 			root: true,
@@ -7991,7 +8094,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
 		'declaration.method.public': {
 			root: true,
@@ -8398,7 +8502,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
 		'declaration.method.signature': {
 			root: true,
@@ -8771,7 +8876,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.method.signature.abstract': {
 			root: true,
@@ -9105,7 +9211,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.method.signature.abstract.private': {
 			root: true,
@@ -9449,7 +9556,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.method.signature.abstract.protected': {
 			root: true,
@@ -9793,7 +9901,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.method.signature.abstract.public': {
 			root: true,
@@ -10137,7 +10246,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.method.signature.private': {
 			root: true,
@@ -10520,7 +10630,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.method.signature.protected': {
 			root: true,
@@ -10903,7 +11014,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.method.signature.public': {
 			root: true,
@@ -11286,7 +11398,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
 		},
 		'declaration.module': {
 			root: true,
@@ -11483,7 +11596,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'type']
 						}
-					]
+					],
+					options: ['terminator']
 				}
 			]
 		},
@@ -12228,7 +12342,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[449, 'item']]
 				}
-			]
+			],
+			flags: ['override', 'readonly', 'optional']
 		},
 		'declaration.parameter.private': {
 			root: false,
@@ -13011,7 +13126,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[449, 'item']]
 				}
-			]
+			],
+			flags: ['override', 'readonly', 'optional']
 		},
 		'declaration.parameter.protected': {
 			root: false,
@@ -13794,7 +13910,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[449, 'item']]
 				}
-			]
+			],
+			flags: ['override', 'readonly', 'optional']
 		},
 		'declaration.parameter.public': {
 			root: false,
@@ -14577,7 +14694,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[449, 'item']]
 				}
-			]
+			],
+			flags: ['override', 'readonly', 'optional']
 		},
 		'declaration.parameter.receiver': {
 			root: false,
@@ -14907,7 +15025,8 @@ export const build: PortableBuildTable = {
 					when: [],
 					holders: [[470, 'receiver']]
 				}
-			]
+			],
+			flags: ['override', 'readonly', 'optional']
 		},
 		'declaration.property': {
 			root: true,
@@ -15154,7 +15273,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.getter': {
 			root: true,
@@ -15367,7 +15487,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.getter.private': {
 			root: true,
@@ -15590,7 +15711,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.getter.protected': {
 			root: true,
@@ -15813,7 +15935,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.getter.public': {
 			root: true,
@@ -16036,7 +16159,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.private': {
 			root: true,
@@ -16293,7 +16417,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.protected': {
 			root: true,
@@ -16550,7 +16675,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.public': {
 			root: true,
@@ -16807,7 +16933,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.setter': {
 			root: true,
@@ -16978,7 +17105,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.setter.private': {
 			root: true,
@@ -17159,7 +17287,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.setter.protected': {
 			root: true,
@@ -17340,7 +17469,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.setter.public': {
 			root: true,
@@ -17521,7 +17651,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract': {
 			root: true,
@@ -17778,7 +17909,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.getter': {
 			root: true,
@@ -17962,7 +18094,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.getter.private': {
 			root: true,
@@ -18156,7 +18289,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.getter.protected': {
 			root: true,
@@ -18350,7 +18484,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.getter.public': {
 			root: true,
@@ -18544,7 +18679,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.setter': {
 			root: true,
@@ -18686,7 +18822,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.setter.private': {
 			root: true,
@@ -18838,7 +18975,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.setter.protected': {
 			root: true,
@@ -18990,7 +19128,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.abstract.setter.public': {
 			root: true,
@@ -19142,7 +19281,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.getter': {
 			root: true,
@@ -19339,7 +19479,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.getter.private': {
 			root: true,
@@ -19546,7 +19687,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.getter.protected': {
 			root: true,
@@ -19753,7 +19895,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.getter.public': {
 			root: true,
@@ -19960,7 +20103,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.setter': {
 			root: true,
@@ -20115,7 +20259,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.setter.private': {
 			root: true,
@@ -20280,7 +20425,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.setter.protected': {
 			root: true,
@@ -20445,7 +20591,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.property.signature.setter.public': {
 			root: true,
@@ -20610,7 +20757,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
 		},
 		'declaration.signature.call': {
 			root: true,
@@ -20956,7 +21104,8 @@ export const build: PortableBuildTable = {
 					},
 					when: []
 				}
-			]
+			],
+			flags: ['abstract']
 		},
 		'declaration.signature.index': {
 			root: true,
@@ -21225,7 +21374,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['readonly']
 		},
 		'declaration.signature.index.mapped': {
 			root: true,
@@ -21447,7 +21597,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['readonly']
 		},
 		'declaration.type_alias': {
 			root: true,
@@ -21559,7 +21710,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'value']
 						}
-					]
+					],
+					options: ['terminator']
 				}
 			]
 		},
@@ -21679,7 +21831,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.variable': {
 			root: true,
@@ -21902,7 +22055,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['definite']
 		},
 		'declaration.variable.constant': {
 			root: true,
@@ -21947,9 +22101,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['declarators']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['definite']
 		},
 		'declaration.variable.pattern': {
 			root: true,
@@ -22070,7 +22226,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['definite']
 		},
 		'declaration.variable.reassignable': {
 			root: true,
@@ -22115,9 +22272,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['declarators']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['definite']
 		},
 		'declaration.variable.reassignable.function_scoped': {
 			root: true,
@@ -22153,9 +22312,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['declarators']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['definite']
 		},
 		'element.pair': {
 			root: true,
@@ -22274,7 +22435,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed']
 		},
 		'element.spread': {
 			root: true,
@@ -22670,11 +22832,13 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound': {
 			root: false,
-			arms: []
+			arms: [],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.add': {
 			root: true,
@@ -22759,7 +22923,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.and': {
 			root: true,
@@ -22844,7 +23009,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.bitwise_and': {
 			root: true,
@@ -22929,7 +23095,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.bitwise_or': {
 			root: true,
@@ -23014,7 +23181,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.bitwise_xor': {
 			root: true,
@@ -23099,7 +23267,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.coalesce': {
 			root: true,
@@ -23184,7 +23353,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.divide': {
 			root: true,
@@ -23269,7 +23439,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.exponent': {
 			root: true,
@@ -23354,7 +23525,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.modulo': {
 			root: true,
@@ -23439,7 +23611,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.multiply': {
 			root: true,
@@ -23524,7 +23697,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.or': {
 			root: true,
@@ -23609,7 +23783,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.shift_left': {
 			root: true,
@@ -23694,7 +23869,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.shift_right': {
 			root: true,
@@ -23779,7 +23955,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.shift_right_unsigned': {
 			root: true,
@@ -23864,7 +24041,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.assignment.compound.subtract': {
 			root: true,
@@ -23949,7 +24127,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['disposable']
 		},
 		'expression.await': {
 			root: true,
@@ -26839,7 +27018,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['optionalChain']
 		},
 		'expression.call.construct': {
 			root: true,
@@ -26994,7 +27174,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['optionalChain']
 		},
 		'expression.call.construct.bare': {
 			root: true,
@@ -27102,7 +27283,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['optionalChain']
 		},
 		'expression.call.import': {
 			root: true,
@@ -27114,7 +27296,8 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: []
 				}
-			]
+			],
+			flags: ['optionalChain']
 		},
 		'expression.call.member': {
 			root: true,
@@ -27259,7 +27442,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['optionalChain']
 		},
 		'expression.call.template': {
 			root: true,
@@ -27327,7 +27511,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['optionalChain']
 		},
 		'expression.cast.assertion': {
 			root: true,
@@ -28792,7 +28977,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'generator']
 		},
 		'expression.instantiation': {
 			root: false,
@@ -29109,7 +29295,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['debug']
 		},
 		'expression.lambda': {
 			root: true,
@@ -29353,7 +29540,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async']
 		},
 		'expression.member': {
 			root: true,
@@ -29468,7 +29656,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['privateName', 'optionalChain']
 		},
 		'expression.meta': {
 			root: true,
@@ -29798,7 +29987,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['optionalChain']
 		},
 		'expression.unary': {
 			root: false,
@@ -30240,7 +30430,8 @@ export const build: PortableBuildTable = {
 		},
 		'expression.update': {
 			root: false,
-			arms: []
+			arms: [],
+			flags: ['prefix']
 		},
 		'expression.update.decrement': {
 			root: true,
@@ -30367,7 +30558,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['prefix']
 		},
 		'expression.update.increment': {
 			root: true,
@@ -30494,7 +30686,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['prefix']
 		},
 		'expression.yield': {
 			root: true,
@@ -31846,7 +32039,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				},
 				{
 					kind: 155,
@@ -31869,7 +32063,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				},
 				{
 					kind: 159,
@@ -31915,7 +32110,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				},
 				{
 					kind: 156,
@@ -31935,7 +32131,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				},
 				{
 					kind: 157,
@@ -31954,7 +32151,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				},
 				{
 					kind: 158,
@@ -31974,7 +32172,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				},
 				{
 					kind: 160,
@@ -32027,7 +32226,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -32054,7 +32254,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -32082,7 +32283,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['marker']
 				}
 			],
 			builds: {
@@ -32243,7 +32445,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				}
 			],
 			builds: {
@@ -32270,7 +32473,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				}
 			],
 			builds: {
@@ -32297,7 +32501,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					]
+					],
+					options: ['radixPrefix']
 				},
 				{
 					kind: 159,
@@ -33113,7 +33318,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['computed']
 		},
 		'pattern.rest': {
 			root: true,
@@ -33255,7 +33461,8 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [],
+					options: ['terminator']
 				}
 			]
 		},
@@ -33290,7 +33497,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['body']
 						}
-					]
+					],
+					options: ['terminator']
 				}
 			]
 		},
@@ -33328,7 +33536,8 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [],
+					options: ['terminator']
 				}
 			]
 		},
@@ -33366,7 +33575,8 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [],
+					options: ['terminator']
 				}
 			]
 		},
@@ -33379,7 +33589,8 @@ export const build: PortableBuildTable = {
 					slots: [],
 					presets: [],
 					flags: {},
-					when: []
+					when: [],
+					options: ['terminator']
 				}
 			]
 		},
@@ -33444,7 +33655,8 @@ export const build: PortableBuildTable = {
 							absent: ['declaration', 'decorators', 'exportClause', 'name', 'source'],
 							required: ['value']
 						}
-					]
+					],
+					options: ['terminator']
 				},
 				{
 					kind: 420,
@@ -33481,7 +33693,8 @@ export const build: PortableBuildTable = {
 							absent: ['declaration', 'decorators', 'exportClause', 'source', 'value'],
 							required: ['name']
 						}
-					]
+					],
+					options: ['terminator']
 				},
 				{
 					kind: 432,
@@ -33679,9 +33892,11 @@ export const build: PortableBuildTable = {
 							absent: ['declaration', 'decorators', 'name', 'value'],
 							required: ['exportClause']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'statement.export.all': {
 			root: true,
@@ -33751,9 +33966,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['source']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'statement.export.default': {
 			root: true,
@@ -33902,7 +34119,8 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: []
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'statement.if': {
 			root: true,
@@ -34154,9 +34372,11 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'statement.import.alias': {
 			root: true,
@@ -34219,9 +34439,11 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'value']
 						}
-					]
+					],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'statement.import.typeof': {
 			root: true,
@@ -34345,9 +34567,11 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					options: ['terminator']
 				}
-			]
+			],
+			flags: ['typeOnly']
 		},
 		'statement.labeled': {
 			root: true,
@@ -34804,7 +35028,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['body', 'condition']
 						}
-					]
+					],
+					options: ['terminator']
 				}
 			]
 		},
@@ -34941,7 +35166,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async']
 		},
 		'statement.loop.while': {
 			root: true,
@@ -35109,7 +35335,8 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [],
+					options: ['terminator']
 				}
 			]
 		},
@@ -35347,7 +35574,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['expression']
 						}
-					]
+					],
+					options: ['terminator']
 				}
 			]
 		},
@@ -36057,7 +36285,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['abstract']
 		},
 		'type.generic': {
 			root: true,
@@ -37294,7 +37523,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unique']
 		},
 		'type.primitive.unchecked': {
 			root: true,

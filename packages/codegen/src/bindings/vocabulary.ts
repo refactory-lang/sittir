@@ -326,12 +326,15 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	return view(undefined);
 }
 
+export const declaredFlags = (vocabulary: Vocabulary, path: string): readonly string[] =>
+	vocabulary.kinds.has(path) ? [...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])) : [];
+
 export function flagSegment(vocabulary: Vocabulary, path: string): { readonly parent: string; readonly flag: string } | undefined {
 	const cut = path.lastIndexOf('.');
 	if (cut < 0) return undefined;
 	const parent = path.slice(0, cut);
 	const flag = camel(path.slice(cut + 1));
-	if (!vocabulary.kinds.has(parent) || vocabulary.members(parent).get(flag)?.flag !== true) return undefined;
+	if (!declaredFlags(vocabulary, parent).includes(flag)) return undefined;
 	if (vocabulary.kinds.has(path)) throw new Error(`bindings: ${path} is a vocabulary kind and also ${parent}'s flag ${flag}; one name names one thing`);
 	return { parent, flag };
 }
@@ -434,12 +437,11 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 
 export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const claims = flagResolved(vocabulary, facts.claims);
-	const flagsOf = (path: string): ReadonlySet<string> => new Set([...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])));
 	const pathsOf = memberTargets(model, readsByKind(model, claims));
 	return {
 		...facts,
 		claims,
-		flagsByPath: new Map([...new Set(claims.map((claim) => claim.vocab))].map((path) => [path, flagsOf(path)])),
+		flagsByPath: new Map([...new Set(claims.map((claim) => claim.vocab))].map((path) => [path, new Set(declaredFlags(vocabulary, path))])),
 		members: facts.members.map((member) => {
 			if (!isNamedMember(member)) return member;
 			const declared = pathsOf(member).flatMap((path) => {

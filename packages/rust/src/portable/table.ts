@@ -441,7 +441,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['inner']
 		},
 		'clause.bounds.higher_ranked': {
 			root: true,
@@ -1185,7 +1186,8 @@ export const build: PortableBuildTable = {
 							required: ['body', 'pattern']
 						}
 					],
-					holders: [[434, 'arms']]
+					holders: [[434, 'arms']],
+					options: ['trailingComma']
 				}
 			]
 		},
@@ -3384,7 +3386,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.enum.private': {
 			root: true,
@@ -3633,7 +3636,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.enum.public': {
 			root: true,
@@ -3869,7 +3873,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.enum.public.internal': {
 			root: true,
@@ -4118,7 +4123,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.enum.public.parent': {
 			root: true,
@@ -4367,7 +4373,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.enum.public.restricted': {
 			root: true,
@@ -4675,7 +4682,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.enum_member': {
 			root: true,
@@ -8737,7 +8745,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.extension.conformance': {
 			root: true,
@@ -9048,7 +9057,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.field': {
 			root: false,
@@ -11078,7 +11088,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.private': {
 			root: true,
@@ -11675,7 +11686,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.public': {
 			root: true,
@@ -12259,7 +12271,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.public.internal': {
 			root: true,
@@ -12856,7 +12869,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.public.parent': {
 			root: true,
@@ -13453,7 +13467,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.public.restricted': {
 			root: true,
@@ -14109,7 +14124,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.signature': {
 			root: true,
@@ -14660,7 +14676,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.signature.private': {
 			root: true,
@@ -15242,7 +15259,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.signature.public': {
 			root: true,
@@ -15811,7 +15829,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.signature.public.internal': {
 			root: true,
@@ -16393,7 +16412,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.signature.public.parent': {
 			root: true,
@@ -16975,7 +16995,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.function.signature.public.restricted': {
 			root: true,
@@ -17616,7 +17637,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'const', 'default', 'unsafe']
 		},
 		'declaration.interface.trait': {
 			root: true,
@@ -17888,7 +17910,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.interface.trait.private': {
 			root: true,
@@ -18191,7 +18214,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.interface.trait.public': {
 			root: true,
@@ -18481,7 +18505,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.interface.trait.public.internal': {
 			root: true,
@@ -18784,7 +18809,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.interface.trait.public.parent': {
 			root: true,
@@ -19087,7 +19113,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.interface.trait.public.restricted': {
 			root: true,
@@ -19449,7 +19476,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.macro': {
 			root: true,
@@ -20432,7 +20460,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
 		'declaration.method.private': {
 			root: true,
@@ -21029,7 +21058,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
 		'declaration.method.public': {
 			root: true,
@@ -21613,7 +21643,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
 		'declaration.method.public.internal': {
 			root: true,
@@ -22210,7 +22241,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
 		'declaration.method.public.parent': {
 			root: true,
@@ -22807,7 +22839,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
 		'declaration.method.public.restricted': {
 			root: true,
@@ -23463,7 +23496,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
 		'declaration.method.signature': {
 			root: true,
@@ -24014,7 +24048,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
 		'declaration.method.signature.private': {
 			root: true,
@@ -24596,7 +24631,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
 		'declaration.method.signature.public': {
 			root: true,
@@ -25165,7 +25201,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
 		'declaration.method.signature.public.internal': {
 			root: true,
@@ -25747,7 +25784,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
 		'declaration.method.signature.public.parent': {
 			root: true,
@@ -26329,7 +26367,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
 		'declaration.method.signature.public.restricted': {
 			root: true,
@@ -26970,7 +27009,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
 		'declaration.module': {
 			root: true,
@@ -27292,7 +27332,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'declaration.module.private': {
 			root: true,
@@ -28647,7 +28688,8 @@ export const build: PortableBuildTable = {
 						[429, 'content']
 					]
 				}
-			]
+			],
+			flags: ['mutable']
 		},
 		'declaration.parameter.receiver': {
 			root: false,
@@ -28873,7 +28915,8 @@ export const build: PortableBuildTable = {
 					],
 					holders: [[440, 'content']]
 				}
-			]
+			],
+			flags: ['reference', 'mutable']
 		},
 		'declaration.parameter.variadic': {
 			root: true,
@@ -28932,7 +28975,8 @@ export const build: PortableBuildTable = {
 					},
 					when: []
 				}
-			]
+			],
+			flags: ['mutable']
 		},
 		'declaration.struct': {
 			root: true,
@@ -34601,7 +34645,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['const']
 		},
 		'declaration.type_parameter.lifetime': {
 			root: true,
@@ -36618,7 +36663,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable', 'static']
 		},
 		'declaration.variable.private': {
 			root: true,
@@ -36795,7 +36841,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable', 'static']
 		},
 		'declaration.variable.public': {
 			root: true,
@@ -36959,7 +37006,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable', 'static']
 		},
 		'declaration.variable.public.internal': {
 			root: true,
@@ -37136,7 +37184,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable', 'static']
 		},
 		'declaration.variable.public.parent': {
 			root: true,
@@ -37313,7 +37362,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable', 'static']
 		},
 		'declaration.variable.public.restricted': {
 			root: true,
@@ -37549,7 +37599,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable', 'static']
 		},
 		'element.attributed': {
 			root: true,
@@ -44179,7 +44230,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['move']
 		},
 		'expression.block.const': {
 			root: true,
@@ -44263,7 +44315,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['move']
 		},
 		'expression.block.try': {
 			root: true,
@@ -44578,7 +44631,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['terminated']
 		},
 		'expression.call.member': {
 			root: true,
@@ -45646,7 +45700,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['async', 'static', 'move']
 		},
 		'expression.member': {
 			root: true,
@@ -46520,7 +46575,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['exclusive', 'raw', 'writable']
 		},
 		'expression.subscript': {
 			root: true,
@@ -48046,7 +48102,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byte']
 		},
 		'literal.number.float': {
 			root: true,
@@ -49954,7 +50011,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['exclusive']
 		},
 		'pattern.struct': {
 			root: true,
@@ -50273,7 +50331,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['byReference', 'mutable']
 		},
 		'pattern.struct.rest': {
 			root: true,
@@ -53058,7 +53117,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsafe']
 		},
 		'type.generic': {
 			root: true,
@@ -53339,7 +53399,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['writable']
 		},
 		'type.primitive': {
 			root: true,
@@ -53606,7 +53667,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsigned']
 		},
 		'type.primitive.integral.int16': {
 			root: true,
@@ -53633,7 +53695,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsigned']
 		},
 		'type.primitive.integral.int32': {
 			root: true,
@@ -53660,7 +53723,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsigned']
 		},
 		'type.primitive.integral.int64': {
 			root: true,
@@ -53687,7 +53751,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsigned']
 		},
 		'type.primitive.integral.int8': {
 			root: true,
@@ -53714,7 +53779,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsigned']
 		},
 		'type.primitive.integral.size': {
 			root: true,
@@ -53741,7 +53807,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['unsigned']
 		},
 		'type.primitive.never': {
 			root: true,
@@ -53972,7 +54039,8 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			flags: ['exclusive']
 		},
 		'type.tuple': {
 			root: true,

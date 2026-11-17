@@ -103,7 +103,7 @@ export interface PortableBuildInput {
 	readonly features: readonly string[];
 	readonly factOf: (entry: ReadEntry) => PortableFactRecord | undefined;
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
-	readonly declaresFlag: (path: string, flag: string) => boolean;
+	readonly flagsOf: (path: string) => readonly string[];
 	readonly valueScalarOf: (path: string) => VocabularyScalar | undefined;
 }
 
@@ -214,7 +214,7 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
 
-export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, readTest, declaresFlag, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
+export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, readTest, flagsOf, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
 	const subjectOf = slotSubjectOf(nodeMap);
 	const tableEntries = tableReadEntries(routes.readEntries, factOf, typeOf);
@@ -980,7 +980,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return portableSpelledFactOf(group[0]!.fact, group.map(({ entry }) => entry), model, routes);
 		};
 		const spelledFacts = [
-			...new Set(spelledHere.flatMap(({ fact }) => (fact.path === entry.vocab || (fact.flag !== undefined && declaresFlag(entry.vocab, fact.flag)) ? [fact.name] : [])))
+			...new Set(spelledHere.flatMap(({ fact }) => (fact.path === entry.vocab || (fact.flag !== undefined && flagsOf(entry.vocab).includes(fact.flag)) ? [fact.name] : [])))
 		].map(spelledFact);
 		const arms = combos.flatMap((combo): Arm[] => {
 			const keeps = (site: Site): boolean =>
@@ -1354,6 +1354,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		}
 	];
 	const paths: Record<string, PortableBuildPath> = {};
+	const optionsOf = (kind: string): { readonly options?: readonly string[] } => {
+		const options = (modelNode(model, kind)?.slots ?? []).flatMap((slot) => (slot.registered === true ? [slot.propertyName] : []));
+		return options.length === 0 ? {} : { options };
+	};
 	const presetCarried = new Set<ReadEntry>();
 	const decided = new Map<string, Record<keyof PortableValueBuild, string | undefined>>();
 	const builderShapes = { builders: Object.fromEntries(builders) };
@@ -1437,10 +1441,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					...arm.arm,
 					...(arm.scalar === undefined ? {} : { scalar: arm.scalar }),
 					when: tests.get(arm)!,
-					...(holders.has(arm) ? { holders: holders.get(arm)! } : {})
+					...(holders.has(arm) ? { holders: holders.get(arm)! } : {}),
+					...optionsOf(arm.kind)
 				})
 			),
-			...(scalarArms.size === 0 ? {} : { builds: Object.fromEntries([...scalarArms].map(([arm, scalar]) => [scalar, arm.arm.kind])) })
+			...(scalarArms.size === 0 ? {} : { builds: Object.fromEntries([...scalarArms].map(([arm, scalar]) => [scalar, arm.arm.kind])) }),
+			...(flagsOf(path).length === 0 ? {} : { flags: flagsOf(path) })
 		};
 	}
 	const values = valueBuilds(paths, decided, (kinds) => grammarDefault(kinds)?.kind, diagnostics);
