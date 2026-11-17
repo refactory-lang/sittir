@@ -340,7 +340,13 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 
 **Both storages take gaps from options** (the maintainer, 2026-11-16: "Yes, both storages take gaps from options"), so the deferral leaves no difference in output. In the lookup both storages share, an unwritten side stops emitting the source's stored whitespace and keeps only its depth members, and list slots stop storing a source layout. Object storage still places its comments lazily through its placer. It is done before step 3's arena side, so both storages move together and the expectations are retaken once. Until step 2 lands, an edited parsed tree in either storage loses the source's blank lines.
 
-**Step 2's form** (2026-11-16): the entry form stays. On its size the maintainer said "Since this is in a table anyway, we don't have to use box": an entry is 112 bytes only because of the typed comment node arm, which arena storage never stores, so arena's table is to be instantiated without it. What that makes an entry, and its rows, are being checked before it is built.
+**Step 2's form** (2026-11-16): the entry form stays, on a compact entry built first ("One compact entry, inside #1227 before step 2").
+- **Why:** a store entry is 112 bytes, the width of its widest arm (a typed trivia node holding text), and arena storage does store that arm: layout members and text entries JavaScript writes into a side decode to typed nodes. On a comment-heavy 199 KB rust file step 1's comment sides retain 137 KB.
+- **The entry:** one ordered list per side, as a built node's `$trivia` is; a comment is its record pointer (a kind and an address, 8 bytes; the entry's store handle is already stripped on insert and put back on read), and a layout member is its one-byte kind (they carry no payload, and blank line and double blank line are already among them).
+- **Where:** converted at the store's two boundaries, compact on write and expanded on read, so render and object storage's own side rows don't change.
+- **Rejected:** two tables, one for layout and one for comments. The order has to be stored either way, a side holding both pays two lists and a merge on read, and it stops matching the built sequence.
+- **By arithmetic from measured sizes:** that rust file's comment sides go from 137 KB to about 28 KB, of which 19.5 KB is the 48-byte row per side; step 2's blank lines cost at most 21 KB there in place of 60 KB.
+- **Rows before code:** the store's new entry type, what a plain text entry does in arena storage (kept behind a pointer, or refused), a coordinate refused on insert, and whether object storage's built nodes write the same rows.
 
 **Spec:** `docs/superpowers/specs/2026-11-15-parsed-comments-at-parse-design.md`. Its "Order" section is this task's step list, and each step is measured on a paired run against master's arena before the next.
 
