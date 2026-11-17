@@ -1,0 +1,73 @@
+import { createEngine } from '@sittir/common';
+import { portableRuntime } from '@sittir/common/engine';
+import type { PortableStructure } from '@sittir/types';
+import { describe, expect, it } from 'vitest';
+import { languageByName } from '../languages.ts';
+import { loadCorpusEntries } from '../validate/common.ts';
+
+const GRAMMARS = ['python', 'rust', 'typescript'] as const;
+
+const STORAGES = ['object', 'arena'] as const;
+
+const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
+
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 1479, rust: 1626, typescript: 1426 };
+
+const NOT_GENERATED = /: (\S+) is not generated$/;
+
+type PathFunction = (structure: PortableStructure) => unknown;
+
+type Outcome = { readonly text: string } | { readonly error: string };
+
+const isStructure = (value: unknown): value is PortableStructure =>
+	typeof value === 'object' && value !== null && !Array.isArray(value) && typeof (value as { readonly $path?: unknown }).$path === 'string';
+
+function* structuresIn(value: unknown): Generator<PortableStructure> {
+	if (Array.isArray(value)) for (const item of value) yield* structuresIn(item);
+	else if (isStructure(value)) {
+		yield value;
+		for (const [key, member] of Object.entries(value)) if (!key.startsWith('$')) yield* structuresIn(member);
+	}
+}
+
+const outcomeOf = (run: () => string): Outcome => {
+	try {
+		return { text: run() };
+	} catch (error) {
+		return { error: error instanceof Error ? error.message : String(error) };
+	}
+};
+
+describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
+	it.each(STORAGES)('builds every corpus structure as the interpreter does, in %s storage', async (nodeStorage) => {
+		const language = await languageByName(grammar);
+		using strict = await createEngine(language, { api: 'strict', nodeStorage });
+		using engine = await createEngine(language, { nodeStorage });
+		const runtime = await portableRuntime(strict);
+		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: (engine: unknown) => object };
+		const generated = portableBuild(engine);
+		const functionOf = (path: string) => path.split('.').reduce<unknown>((at, segment) => (at as Record<string, unknown> | undefined)?.[segment], generated) as PathFunction | undefined;
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		const renderStrict = (node: unknown): string => strict.render(node as never).toString();
+		const differences: string[] = [];
+		const rows: string[] = [];
+		const ungenerated = new Map<string, number>();
+		for (const { name, source } of loadCorpusEntries(grammar)) {
+			for (const structure of structuresIn(runtime.read(strict.parse(source)))) {
+				const path = structure.$path;
+				const run = functionOf(path);
+				const interpreted = outcomeOf(() => renderStrict(runtime.build(structure)));
+				const built: Outcome = typeof run === 'function' ? outcomeOf(() => render(run(structure))) : { error: `${path}: ${path} is not generated` };
+				if ('text' in interpreted && 'text' in built && interpreted.text === built.text) continue;
+				if ('error' in interpreted && 'error' in built) continue;
+				const missing = 'error' in built ? NOT_GENERATED.exec(built.error)?.[1] : undefined;
+				if ('text' in interpreted && missing !== undefined) ungenerated.set(missing, (ungenerated.get(missing) ?? 0) + 1);
+				else if ('error' in interpreted && (INTERPRETER_REFUSES[grammar] ?? []).includes(path)) rows.push(`${name}: ${path}`);
+				else differences.push(`${name}: ${path}: interpreter ${JSON.stringify(interpreted)}, generated ${JSON.stringify(built)}`);
+			}
+		}
+		expect(differences.slice(0, 20)).toEqual([]);
+		expect(differences.length).toBe(0);
+		expect([...ungenerated.values()].reduce((sum, count) => sum + count, 0)).toBeLessThanOrEqual(UNGENERATED_CEILINGS[grammar]);
+	}, 600_000);
+});

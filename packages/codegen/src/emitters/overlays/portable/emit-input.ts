@@ -1,16 +1,15 @@
-import type { PortableBuildTable } from '../../../../../../types/src/portable-build.ts';
-
 export interface PortableEmitMember {
 	readonly paths: readonly string[];
 	readonly texts: readonly string[];
 	readonly string: boolean;
 }
 
-export interface PortableEmitInput {
+export interface PortableEmitInput<Table> {
 	readonly grammar: string;
 	readonly api: string;
 	readonly map: string;
-	readonly table: PortableBuildTable;
+	readonly imports: { readonly vocabulary: string; readonly api: string; readonly map: string };
+	readonly table: Table;
 	readonly members: Readonly<Record<string, Readonly<Record<string, PortableEmitMember>>>>;
 }
 

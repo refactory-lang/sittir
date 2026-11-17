@@ -564,5 +564,1469 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.number.integer.imaginary: its $value is a number, but integer_decimal_imaginary has no number shape, so no read or build of it carries one"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "argument.named: arm 237's builder keywordArgument takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.match: arm 161's builder caseClause takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.catch: arm 165's builder exceptClause takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.comprehension.for: arm 249's builder forInClause takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.comprehension.if: arm 250's builder ifClause takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.else: arm 158's builder elseClause takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.else_if: arm 157's builder elifClause takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.finally: arm 166's builder finallyClause takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.alias: arm 142's builder aliasedImport takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.relative: arm 138's builder relativeImport takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.relative.prefix: arm 137's builder importPrefix takes a text input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.wildcard: arm 143 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.resource: 2 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.resource.item: arm 169's builder withItem takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.line: arm 72's builder comment takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.class: arm 179's builder classDefinition takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant: 3 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor: 2 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function: arm 170's builder functionDefinition takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.special: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.defaulted: arm 204's builder defaultParameter takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed: arm 230's builder typedParameter takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default: arm 205's builder typedDefaultParameter takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.getter: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.setter: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias: arm 178's builder typeAliasStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter: arm 313's builder typeParamTypeVar takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter.parameters: arm 315's builder typeParamParamSpec takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter.variadic: arm 314's builder typeParamTypeVarTuple takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable: 3 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.comparison.equal: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.comparison.greater: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.comparison.greater_equal: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.comparison.less: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.comparison.less_equal: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.comparison.not_equal: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.comparison.not_equal.legacy: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.identity.is: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.identity.is_not: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.membership.in: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.comparator.membership.not_in: arm 311 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair: arm 242's builder pair takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread: arm 173's builder listSplat takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.map: arm 174's builder dictionarySplat takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.parenthesized: arm 181's builder parenthesizedListSplat takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment: arm 148's builder namedExpression takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.add: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_and: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_or: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_xor: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.divide: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.exponent: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.floor_divide: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.matrix_multiply: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.modulo: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.multiply: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.shift_left: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.shift_right: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.subtract: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.await: arm 262's builder await takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.add: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.divide: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.exponent: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.floor_divide: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.modulo: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.multiply: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.subtract: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.and: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.or: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.xor: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.chain: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.greater: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.greater_equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.less: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.less_equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.not_equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.not_equal.legacy: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.identity.is: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.identity.is_not: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and: arm 213's builder booleanOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or: arm 213's builder booleanOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.matrix_multiply: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.membership.in: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.membership.not_in: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call: arm 229's builder call takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.member: arm 229's builder call takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list: arm 238's builder list takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.map: arm 241's builder dictionary takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.set: arm 239's builder set takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.tuple: arm 240's builder tuple takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.comprehension.generator: arm 246's builder generatorExpression takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.comprehension.list: arm 243's builder listComprehension takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.comprehension.map: arm 244's builder dictionaryComprehension takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.comprehension.set: arm 245's builder setComprehension takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional: arm 251's builder conditionalExpression takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.interpolation.conversion: arm 65's builder typeConversion takes a text input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.interpolation.format: arm 259's builder formatSpecifier takes a spread input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda: 2 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member: arm 226's builder attribute takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.parenthesized: arm 247's builder parenthesizedExpression takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.slice: arm 228's builder slice takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.subscript: arm 227's builder subscript takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.bitwise_not: arm 215's builder unaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.negation: arm 215's builder unaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.not: arm 212's builder notOperator takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.plus: arm 215's builder unaryOperator takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield: arm 225's builder yield takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield.delegate: arm 225's builder yield takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "file: arm 133's builder module takes a spread input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier: arm 1's builder identifier takes a text input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.false: arm 70 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.true: arm 69 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.ellipsis: arm 63 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.null: arm 71 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float: arm 101's builder floatPoint takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float.leading_point: arm 102's builder floatLeadingPoint takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float.scientific: arm 103's builder floatScientific takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer: arm 100's builder integerDecimal.plain takes a text input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.big: arm 98's builder integerDecimalLong takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.big.binary: arm 94's builder integerBinaryLong takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.big.hex: arm 90's builder integerHexLong takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.big.octal: 2 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.binary: arm 95's builder integerBinaryPlain takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.hex: arm 91's builder integerHexPlain takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.imaginary: arm 99's builder integerDecimal.imaginary takes a text input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.octal: 2 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.bytes: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.bytes.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.bytes.raw: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.bytes.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.concatenated: arm 252's builder concatenatedString takes a spread input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.escape: 8 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated.deferred: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated.deferred.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated.deferred.raw: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated.deferred.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated.raw: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.interpolated.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.raw: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.text: arm 125's builder stringFragment takes a text input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.unicode: arm 253's builder string takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.as: arm 190's builder caseAsPattern takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.complex.add: arm 197's builder complexPattern takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.complex.subtract: arm 197's builder complexPattern takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.map: arm 192's builder dictPattern takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.or: arm 191's builder unionPattern takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct: arm 196's builder classPattern takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.field: arm 194's builder keywordPattern takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.wildcard: arm 289 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.assert: arm 146's builder assertStatement takes a spread input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.break: arm 154 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.continue: arm 155 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.delete: arm 151's builder deleteStatement takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.empty: arm 153 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.exec: arm 177's builder execStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.global: arm 175's builder globalStatement takes a spread input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.if: arm 156's builder ifStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import: arm 136's builder importStatement takes a forwarded input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.from: arm 140's builder importFromStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.future: arm 139's builder futureImportStatement takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each: arm 162's builder forStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.while: arm 163's builder whileStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.match: arm 159's builder matchStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.nonlocal: arm 176's builder nonlocalStatement takes a spread input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.print: 2 arms, whose pick is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.resource: arm 167's builder withStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.return: arm 150's builder returnStatement takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw: arm 152's builder raiseStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.try: arm 164's builder tryStatement takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained: arm 235's builder constrainedType takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.generic: arm 233's builder genericType takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.nullable: arm 233's builder genericType takes a config input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.rest: arm 232's builder splatType takes a direct input, which is not compiled yet"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union: arm 234's builder unionType takes a config input, which is not compiled yet"
   }
 ]

@@ -1,7 +1,7 @@
 import { loadPinnedBuild } from '../../../../bootstrap/pinned.ts';
 import type { PortableBuildArm, PortableBuildPath, PortableBuildTable } from '../../../../../../types/src/portable-build.ts';
 import type { PinnedBuilders } from './engine.ts';
-import type { PortableEmitDiagnostic, PortableEmitInput, PortableEmitOutput } from './input.ts';
+import type { PortableEmitDiagnostic, PortableEmitInput, PortableEmitOutput } from '../emit-input.ts';
 
 type B = PinnedBuilders;
 type Built<F> = F extends (...args: never[]) => infer R ? R : never;
@@ -22,7 +22,7 @@ interface Trie {
 	readonly children: Map<string, Trie>;
 }
 
-export function emitPortableModule(t: B, input: PortableEmitInput): { readonly program: ReturnType<B['program']>; readonly diagnostics: readonly PortableEmitDiagnostic[] } {
+export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildTable>): { readonly program: ReturnType<B['program']>; readonly diagnostics: readonly PortableEmitDiagnostic[] } {
 	const { table } = input;
 	const diagnostics: PortableEmitDiagnostic[] = [];
 	const id = (name: string) => t.identifier(name);
@@ -39,23 +39,34 @@ export function emitPortableModule(t: B, input: PortableEmitInput): { readonly p
 		t.arrowFunction.callSignature({ parameters: t.formalParameters(t.requiredParameter({ name, type: t.typeAnnotation(type) })), body });
 	const shapeOf = (builder: string) => table.builders[builder];
 
+	const unfit = (path: string, message: string): undefined => {
+		diagnostics.push({ code: 'portable-emit-unfit-member', path, message });
+		return undefined;
+	};
 	const armFunctions = new Map<string, Statement>();
-	const armBody = (path: string, arm: PortableBuildArm): Statement[] => {
-		if (arm.builder === undefined) return [];
+	const armBody = (path: string, arm: PortableBuildArm): Statement[] | undefined => {
+		if (arm.builder === undefined) return unfit(path, `arm ${arm.kind} builds through its holder`);
 		const shape = shapeOf(arm.builder);
 		if (shape === 'constant' || shape === 'nullary') return [ret(call(builderRef(arm.builder)))];
-		return [];
+		return unfit(path, `arm ${arm.kind}'s builder ${arm.builder} takes a ${shape} input, which is not compiled yet`);
 	};
-	const armName = (path: string, row: PortableBuildPath, arm: PortableBuildArm): string => {
+	const armName = (path: string, row: PortableBuildPath, arm: PortableBuildArm): string | undefined => {
 		const name = row.root && row.arms.length === 1 ? identifierOf(path) : `${identifierOf(path)}$${arm.kind}`;
-		if (!armFunctions.has(name)) armFunctions.set(name, constant(name, arrow('input', pathType(path), block(...armBody(path, arm)))));
+		if (armFunctions.has(name)) return name;
+		const body = armBody(path, arm);
+		if (body === undefined) return undefined;
+		armFunctions.set(name, constant(name, arrow('input', pathType(path), block(...body))));
 		return name;
 	};
 
 	const root: Trie = { children: new Map() };
 	for (const [path, row] of Object.entries(table.paths).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
 		if (!row.root) continue;
-		armName(path, row, row.arms[0]!);
+		if (row.arms.length !== 1) {
+			unfit(path, `${row.arms.length} arms, whose pick is not compiled yet`);
+			continue;
+		}
+		if (armName(path, row, row.arms[0]!) === undefined) continue;
 		let node = root;
 		for (const segment of path.split('.')) {
 			let next = node.children.get(segment);
@@ -71,17 +82,18 @@ export function emitPortableModule(t: B, input: PortableEmitInput): { readonly p
 	};
 	const typeImport = (names: readonly string[], source: string) =>
 		t.importStatement.clauseFrom({ typeKeyword: 'type', importClause: t.importClause(t.namedImports(...names.map((name) => t.importSpecifier.name({ name })))), source: str(source) });
+	const built = armFunctions.size > 0;
 	const program = t.program({
 		statements: [
 			typeImport(['Engine'], '@sittir/types'),
-			typeImport(['BuildInput'], '@sittir/types/vocabulary'),
-			typeImport([input.api], '../api.js'),
-			typeImport([input.map], './map.js'),
+			...(built ? [typeImport(['BuildInput'], input.imports.vocabulary)] : []),
+			typeImport([input.api], input.imports.api),
+			...(built ? [typeImport([input.map], input.imports.map)] : []),
 			t.exportStatementDefaultDeclaration({
 				content: t.functionDeclaration({
 					name: 'portableBuild',
-					parameters: t.formalParameters(t.requiredParameter({ name: 'engine', type: t.typeAnnotation(typeRef('Engine', input.api)) })),
-					body: block(constant('b', dot(id('engine'), 'build')), ...armFunctions.values(), ret(surface(root)))
+					parameters: t.formalParameters(t.requiredParameter({ name: built ? 'engine' : '_engine', type: t.typeAnnotation(typeRef('Engine', input.api)) })),
+					body: block(...(built ? [constant('b', dot(id('engine'), 'build'))] : []), ...armFunctions.values(), ret(surface(root)))
 				})
 			})
 		]
@@ -89,11 +101,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput): { readonly p
 	return { program, diagnostics };
 }
 
-export async function emitPortableBuildInProcess(input: PortableEmitInput): Promise<PortableEmitOutput> {
+export async function emitPortableBuildInProcess(input: PortableEmitInput<PortableBuildTable>): Promise<PortableEmitOutput> {
 	const pinned = await loadPinnedBuild();
 	using engine = await pinned.common.createEngine(pinned.typescript.default);
 	const { program, diagnostics } = emitPortableModule(engine.build, input);
 	return { text: String(engine.render(program)), diagnostics };
 }
 
-export type { PortableBuildTable };

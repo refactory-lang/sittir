@@ -3,7 +3,7 @@ import { byCodepoint, compositionOf } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
-import { grammarNodeTypeName } from '../../../grammars.ts';
+import { PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, grammarNodeTypeName, languageApiName, moduleSpecifier } from '../../../grammars.ts';
 import { valueParseKindsOf } from '../../../compiler/model/node-map.ts';
 import { isSlotBearingCompound } from '../../shared.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -13,11 +13,16 @@ import { emitPortableNodeModel } from './node-model.ts';
 import { portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
+import { grammarMapName, VOCABULARY_MODULE } from './grammar-map.ts';
+import type { ExactSlots } from './exact.ts';
+import type { PortableBuildTable } from '@sittir/types';
+import type { PortableEmitInput, PortableEmitMember } from './emit-input.ts';
 
 export interface PortableOutputs {
 	readonly nodeModel: string;
 	readonly surface: string;
 	readonly build: string;
+	readonly emit: PortableEmitInput<PortableBuildTable>;
 	readonly typed: PortableTypedOutput;
 	readonly pickDiagnostics: readonly PickDiagnostic[];
 }
@@ -70,9 +75,18 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];
 	});
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, readTest, declaresFlag: (path, flag) => input.vocabulary.kinds.has(path) && input.vocabulary.members(path).get(flag)?.flag === true, valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.members(path).get('$value')?.scalar : undefined) });
+	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
 	return {
 		build: build.source,
-		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) }),
+		emit: {
+			grammar: input.grammar,
+			api: languageApiName(input.grammar),
+			map: grammarMapName(input.grammar),
+			imports: { vocabulary: VOCABULARY_MODULE, api: moduleSpecifier(PORTABLE_BUILD_FILE, 'api.ts'), map: moduleSpecifier(PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE) },
+			table: build.table,
+			members: emitMembersOf(typed.exact)
+		},
+		typed,
 		pickDiagnostics: [
 			...build.diagnostics,
 			...routes.unplaced.map(
@@ -94,4 +108,13 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			slotFlagTypes
 		})
 	};
+}
+
+function emitMembersOf(exact: ExactSlots): PortableEmitInput<PortableBuildTable>['members'] {
+	return Object.fromEntries(
+		[...exact].map(([path, members]) => [
+			path,
+			Object.fromEntries([...members].map(([member, set]): [string, PortableEmitMember] => [member, { paths: set.kinds, texts: set.texts, string: set.scalars.includes('string') }]))
+		])
+	);
 }

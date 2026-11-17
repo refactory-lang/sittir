@@ -9,7 +9,8 @@ import { REPO_ROOT } from '../grammars.ts';
 import { type PinnedMemo, pinnedMemo, readerDigest } from './pinned-memo.ts';
 import { type BindingFacts, type BindingPattern, type BindingsRoundTrip, BindingsSyntaxError } from './facts.ts';
 import type { Declared, FeatureIndex } from './vocabulary.ts';
-import type { PortableEmitInput, PortableEmitOutput } from '../emitters/overlays/portable/emit/input.ts';
+import type { PortableBuildTable } from '@sittir/types';
+import type { PortableEmitInput, PortableEmitOutput } from '../emitters/overlays/portable/emit-input.ts';
 
 export const PINNED_READER_MARKER = '\u0000sittir-pinned-reader\u0000';
 
@@ -20,7 +21,7 @@ export interface PinnedReaderModes {
 	readonly vocabularyDeclared: { readonly input: string; readonly output: Declared[] };
 	readonly vocabularyFeatureIndex: { readonly input: string; readonly output: FeatureIndex };
 	readonly exportedStrings: { readonly input: string; readonly output: Readonly<Record<string, string>> };
-	readonly portableBuild: { readonly input: PortableEmitInput; readonly output: PortableEmitOutput };
+	readonly portableBuild: { readonly input: PortableEmitInput<PortableBuildTable>; readonly output: PortableEmitOutput };
 }
 
 export type PinnedReaderMode = keyof PinnedReaderModes;

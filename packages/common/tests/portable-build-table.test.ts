@@ -358,7 +358,7 @@ describe('the portable build table', () => {
 			| readonly { readonly code: string; readonly message: string }[]
 			| { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] };
 		const entries = Array.isArray(diagnostics) ? diagnostics : (diagnostics as { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] }).diagnostics;
-		const raised = entries.filter(({ code }) => code.startsWith('portable-') && code !== 'portable-kind-armless').map(({ code, message }) => `${code} ${message.split(':')[0]}`);
+		const raised = entries.filter(({ code }) => code.startsWith('portable-') && !code.startsWith('portable-emit-') && code !== 'portable-kind-armless').map(({ code, message }) => `${code} ${message.split(':')[0]}`);
 		expect(raised.sort()).toEqual(expectedDiagnostics[grammar]);
 	});
 

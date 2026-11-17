@@ -1,4 +1,4 @@
-import { PORTABLE_BUILD_FILE, PORTABLE_SURFACE_FILE, grammarNodeTypeName, grammarTypePrefix, languageApiName, moduleSpecifier } from '../grammars.ts';
+import { PORTABLE_SURFACE_FILE, PORTABLE_TABLE_FILE, grammarNodeTypeName, grammarTypePrefix, languageApiName, moduleSpecifier } from '../grammars.ts';
 import { spelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { ownTextLeaf } from './shared.ts';
@@ -177,7 +177,7 @@ ${BUILDER_TABLES.map(({ mode, surface }) => `\t\t${mode}: () => import('./${irMo
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? `,\n\tportable: rows,\n\tportableBuild: () => import('${moduleSpecifier('api.ts', PORTABLE_BUILD_FILE)}').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags` : ''}
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? `,\n\tportable: rows,\n\tportableBuild: () => import('${moduleSpecifier('api.ts', PORTABLE_TABLE_FILE)}').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags` : ''}
 });
 `;
 }

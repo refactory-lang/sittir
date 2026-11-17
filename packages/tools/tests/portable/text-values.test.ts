@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { readVocabulary, textValued, VOCABULARY_DIR } from '@sittir/codegen/bindings';
 import { takesTextValue } from '@sittir/common/engine';
 import type { PortableBuildTable } from '@sittir/types';
-import { build as python } from '../../../python/src/portable/build.ts';
-import { build as rust } from '../../../rust/src/portable/build.ts';
-import { build as typescript } from '../../../typescript/src/portable/build.ts';
+import { build as python } from '../../../python/src/portable/table.ts';
+import { build as rust } from '../../../rust/src/portable/table.ts';
+import { build as typescript } from '../../../typescript/src/portable/table.ts';
 
 const TABLES: Readonly<Record<string, PortableBuildTable>> = { python, rust, typescript };
 

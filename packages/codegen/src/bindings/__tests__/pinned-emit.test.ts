@@ -7,6 +7,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
 			table: {
 				builders: { passStatement: 'nullary' },
 				paths: { 'statement.pass': { root: true, arms: [{ kind: 1, builder: 'passStatement', when: [], members: [], presets: [], flags: {} }] } }

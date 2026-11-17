@@ -26,6 +26,7 @@ export const PORTABLE_TYPE_TESTS = 'tests/*.portable.test-d.ts';
 export const PORTABLE_TS6_TYPE_TESTS = 'tests/*.portable.ts6.test-d.ts';
 export const PORTABLE_SURFACE_FILE = 'portable/index.ts';
 export const PORTABLE_BUILD_FILE = 'portable/build.ts';
+export const PORTABLE_TABLE_FILE = 'portable/table.ts';
 export const PORTABLE_MAP_FILE = 'portable/map.ts';
 export const NODE_MODEL_FILE = 'node-model.json5';
 export const PORTABLE_NODE_MODEL_FILE = 'node-model-portable.json5';
