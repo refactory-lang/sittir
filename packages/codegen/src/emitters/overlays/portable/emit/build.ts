@@ -98,7 +98,23 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const raise = (message: Expression) => t.throwStatement(t.newExpression({ function: 'Error', arguments: t.arguments(message) }));
 	const kindOf = (value: Primary) => ternary(typeIs(value, 'number'), value, dot(value, '$type'));
 	const kinded = union(['number', shaped('$type', 'number')]);
-	const unbuilt = (owner: string, value: Expression) => ret(call(id('unbuilt'), str(owner), value));
+	let refs = new Set<string>();
+	let deps = new Map<string, ReadonlySet<string>>();
+	const uses = (name: string): string => {
+		refs.add(name);
+		return name;
+	};
+	const tracked = <T>(owner: string, build: () => T): T => {
+		const outer = refs;
+		refs = new Set();
+		try {
+			return build();
+		} finally {
+			deps.set(owner, refs);
+			refs = outer;
+		}
+	};
+	const unbuilt = (owner: string, value: Expression) => ret(call(id(uses('unbuilt')), str(owner), value));
 	const unbuiltHelper = constant(
 		'unbuilt',
 		arrow('owner', 'string', block(raise(binary(binary(binary(id('owner'), '+', str(': ')), '+', dot(id('value'), '$path')), '+', str(' is not generated')))), 'never', [['value', shaped('$path', 'string')]])
@@ -252,14 +268,17 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 		const placed = [...groups.values()].filter(({ kinds }) => kinds.size > 0);
 		return [
-			...placed.map(({ within, kinds }) => when(call(id('seated'), value, t.array(...[...kinds].sort((a, b) => a - b).map(num))), ret(wrapOne(within, value)))),
-			ret(call(id('unseated'), str(`${owner}.${member.name}`), value))
+			...placed.map(({ within, kinds }) => when(call(id(uses('seated')), value, t.array(...[...kinds].sort((a, b) => a - b).map(num))), ret(wrapOne(within, value)))),
+			ret(call(id(uses('unseated')), str(`${owner}.${member.name}`), value))
 		];
 	};
 
 	const memberFunction = (owner: string, arm: PortableBuildArm, member: PortableMemberStep, skip: number): string => {
 		const name = `${identifierOf(owner)}$${arm.kind}_${member.name}${skip === 0 ? '' : '$item'}`;
-		if (memberFunctions.has(name)) return name;
+		return uses(memberFunctions.has(name) ? name : tracked(name, () => memberFunctionOf(name, owner, arm, member, skip)));
+	};
+
+	const memberFunctionOf = (name: string, owner: string, arm: PortableBuildArm, member: PortableMemberStep, skip: number): string => {
 		for (const seat of member.seats) checkSeat(seat);
 		const exact = input.members[owner]?.[member.name];
 		if (exact === undefined) fail(`${member.name} has no exact set`);
@@ -318,7 +337,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		return fail(`${path}'s number is spelled in decimal parts`);
 	};
 
-	const armBody = (path: string, arm: PortableBuildArm, value: Expression): Statement[] => {
+	const armBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
 		if (arm.builder === undefined) return fail(`arm ${arm.kind} builds through its holder`);
 		if (arm.mounted !== undefined) return fail(`arm ${arm.kind} mounts into its holder`);
 		if (arm.template !== undefined) return fail(`a template-spelled member (${arm.template.member})`);
@@ -327,7 +346,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (arm.content !== undefined) return fail(`arm ${arm.kind} builds its text through a content slot`);
 		if (arm.literal !== undefined) return fail(`arm ${arm.kind} is a literal token`);
 		if ((arm.facts ?? []).length > 0) return fail(`arm ${arm.kind} spells facts in its container`);
-		if (arm.scalar !== undefined) return numberBody(path, arm, value);
+		if (arm.scalar !== undefined) return numberBody(path, arm, input());
 		const shape = shapeOf(arm.builder);
 		if (shape === 'text' || shape === 'placed') return fail(`arm ${arm.kind}'s builder takes its text`);
 		const entries: [string, Expression][] = [];
@@ -337,7 +356,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			if (emptied.has(member.name)) continue;
 			if (seen.has(member.name)) return fail(`${member.name} has more than one route`);
 			seen.add(member.name);
-			entries.push([member.steps[0]?.key ?? member.name, memberValue(path, arm, member, value)]);
+			entries.push([member.steps[0]?.key ?? member.name, memberValue(path, arm, member, input())]);
 		}
 		for (const preset of arm.presets) {
 			if (preset.steps.length !== 1 || preset.builder !== undefined || preset.among !== undefined || (preset.kind === undefined && preset.text === undefined))
@@ -351,7 +370,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				if (preset.steps.length !== 1 || preset.kind === undefined) return fail(`flag ${flag}'s preset is not one keyword`);
 				keys.add(preset.steps[0]!.key);
 			}
-			for (const slot of keys) entries.push([slot, flagged(value, flag)]);
+			for (const slot of keys) entries.push([slot, flagged(input(), flag)]);
 		}
 		if (new Set(entries.map(([name]) => name)).size !== entries.length) return fail(`arm ${arm.kind} fills one slot twice`);
 		if ((table.options?.[arm.builder] ?? []).length > 0) return fail(`${arm.builder} takes options`);
@@ -366,13 +385,14 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 
 	function armName(path: string, arm: PortableBuildArm): string | undefined {
 		const name = `${identifierOf(path)}$${arm.kind}`;
-		if (armFunctions.has(name)) return name;
+		if (armFunctions.has(name)) return uses(name);
 		if (failed.has(name)) return undefined;
 		armFunctions.set(name, constant(name, id('undefined')));
 		try {
-			const statements = armBody(path, arm, id('input'));
-			armFunctions.set(name, constant(name, arrow('input', pathType(path), block(...statements), arm.builder === undefined ? undefined : builtType(arm.builder))));
-			return name;
+			const statements = tracked(name, () => armBody(path, arm, () => id(uses('input'))));
+			const parameter = deps.get(name)!.has('input') ? 'input' : '_input';
+			armFunctions.set(name, constant(name, arrow(parameter, pathType(path), block(...statements), arm.builder === undefined ? undefined : builtType(arm.builder))));
+			return uses(name);
 		} catch (error) {
 			if (!(error instanceof Unfit)) throw error;
 			armFunctions.delete(name);
@@ -383,13 +403,16 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	}
 
 	let pathFunctions: Statement[] = [];
+	let roots: string[] = [];
 	let root: Trie = { children: new Map() };
 	do {
 		grew = false;
 		diagnostics.length = 0;
 		memberFunctions = new Map();
 		armFunctions = new Map();
+		deps = new Map();
 		pathFunctions = [];
+		roots = [];
 		root = { children: new Map() };
 		for (const [path, row] of sorted(Object.entries(table.paths), ([path]) => path)) {
 			if (!row.root || row.builds !== undefined) continue;
@@ -398,19 +421,21 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			const value = id('input');
 			let generated = arms.length > 0;
 			try {
-				for (const [i, arm] of arms.entries()) {
-					const name = armName(path, arm);
-					if (name === undefined) {
-						generated = false;
-						break;
+				tracked(identifierOf(path), () => {
+					for (const [i, arm] of arms.entries()) {
+						const name = armName(path, arm);
+						if (name === undefined) {
+							generated = false;
+							break;
+						}
+						const condition = i === arms.length - 1 ? undefined : pickOf(arm, value);
+						if (condition === undefined) {
+							statements.push(ret(call(id(name), value)));
+							break;
+						}
+						statements.push(when(condition, ret(call(id(name), value))));
 					}
-					const condition = i === arms.length - 1 ? undefined : pickOf(arm, value);
-					if (condition === undefined) {
-						statements.push(ret(call(id(name), value)));
-						break;
-					}
-					statements.push(when(condition, ret(call(id(name), value))));
-				}
+				});
 			} catch (error) {
 				if (!(error instanceof Unfit)) throw error;
 				failed.set(path, error.message);
@@ -422,6 +447,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				continue;
 			}
 			pathFunctions.push(constant(identifierOf(path), arrow('input', pathType(path), block(...statements))));
+			roots.push(identifierOf(path));
 			let node = root;
 			for (const segment of path.split('.')) {
 				let next = node.children.get(segment);
@@ -432,6 +458,19 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 	} while (grew);
 	for (const [path, row] of Object.entries(table.paths)) if (row.root && row.builds !== undefined) diagnostics.push({ code: 'portable-emit-unfit-member', path, message: 'a path that picks its arm by its value' });
+	const live = new Set<string>();
+	const reach = (name: string): void => {
+		if (live.has(name)) return;
+		live.add(name);
+		for (const next of deps.get(name) ?? []) reach(next);
+	};
+	for (const name of roots) reach(name);
+	const kept = (functions: ReadonlyMap<string, Statement>): Statement[] => sorted([...functions].filter(([name]) => live.has(name)), ([name]) => name).map(([, statement]) => statement);
+	const helpers: readonly (readonly [string, Statement])[] = [
+		['unbuilt', unbuiltHelper],
+		['seated', seatedHelper],
+		['unseated', unseatedHelper]
+	];
 
 	const surface = (node: Trie): Expression => {
 		const children = obj(sorted(node.children, ([segment]) => segment).map(([segment, child]) => [segment, surface(child)] as const));
@@ -452,9 +491,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 					name: 'portableBuild',
 					parameters: t.formalParameters(t.requiredParameter({ name: built ? 'engine' : '_engine', type: t.typeAnnotation(typeRef('Engine', input.api)) })),
 					body: block(
-						...(built ? [constant('b', dot(id('engine'), 'build')), unbuiltHelper] : []),
-						...(memberFunctions.size > 0 ? [seatedHelper, unseatedHelper] : []),
-						...(built ? [...sorted(memberFunctions, ([name]) => name), ...sorted(armFunctions, ([name]) => name)].map(([, statement]) => statement) : []),
+						...(built ? [constant('b', dot(id('engine'), 'build'))] : []),
+						...helpers.filter(([name]) => live.has(name)).map(([, helper]) => helper),
+						...kept(memberFunctions),
+						...kept(armFunctions),
 						...pathFunctions,
 						ret(surface(root))
 					)

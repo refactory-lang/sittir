@@ -488,46 +488,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 				return unbuilt('clause.where.wherePredicates', value);
 		}
 	};
-	const declaration_macro$416_name = (
-		value: string | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-	) => {
-		if (typeof value === 'string') {
-			if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-			return b.identifier(value);
-		}
-		if (typeof value === 'number') {
-			if (seated(value, [1])) return value;
-			return unseated('declaration.macro.name', value);
-		}
-		if (engine.isNode(value)) {
-			if (seated(value, [1])) return value;
-			return unseated('declaration.macro.name', value);
-		}
-		switch (value.$path) {
-			case 'identifier':
-				return unbuilt('declaration.macro.name', value);
-			default:
-				return unbuilt('declaration.macro.name', value);
-		}
-	};
-	const declaration_macro$416_rules$item = (
-		value: BuildInput<RustMap, 'clause.macro.rule'> | RustMap['nodes']['clause.macro.rule']
-	) => {
-		if (typeof value === 'number') {
-			if (seated(value, [181])) return value;
-			return unseated('declaration.macro.rules', value);
-		}
-		if (engine.isNode(value)) {
-			if (seated(value, [181])) return value;
-			return unseated('declaration.macro.rules', value);
-		}
-		switch (value.$path) {
-			case 'clause.macro.rule':
-				return clause_macro_rule$181(value);
-			default:
-				return unbuilt('declaration.macro.rules', value);
-		}
-	};
 	const declaration_macro_brace$418_name = (
 		value: string | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
 	) => {
@@ -646,46 +606,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 				return clause_macro_rule$181(value);
 			default:
 				return unbuilt('declaration.macro.paren.rules', value);
-		}
-	};
-	const declaration_module$384_name = (
-		value: string | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-	) => {
-		if (typeof value === 'string') {
-			if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-			return b.identifier(value);
-		}
-		if (typeof value === 'number') {
-			if (seated(value, [1])) return value;
-			return unseated('declaration.module.name', value);
-		}
-		if (engine.isNode(value)) {
-			if (seated(value, [1])) return value;
-			return unseated('declaration.module.name', value);
-		}
-		switch (value.$path) {
-			case 'identifier':
-				return unbuilt('declaration.module.name', value);
-			default:
-				return unbuilt('declaration.module.name', value);
-		}
-	};
-	const declaration_module_foreign$395_extern = (
-		value: BuildInput<RustMap, 'modifier.extern'> | RustMap['nodes']['modifier.extern']
-	) => {
-		if (typeof value === 'number') {
-			if (seated(value, [234])) return value;
-			return unseated('declaration.module.foreign.extern', value);
-		}
-		if (engine.isNode(value)) {
-			if (seated(value, [234])) return value;
-			return unseated('declaration.module.foreign.extern', value);
-		}
-		switch (value.$path) {
-			case 'modifier.extern':
-				return modifier_extern$234(value);
-			default:
-				return unbuilt('declaration.module.foreign.extern', value);
 		}
 	};
 	const element_macro_token_binding$184_fragment = (value: string) => {
@@ -1463,18 +1383,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 				return unbuilt('identifier.qualified.qualifier', value);
 		}
 	};
-	const literal_character$145_content = (value: string) => {
-		if (typeof value === 'string') {
-			return value;
-		}
-		if (typeof value === 'number') {
-			return unseated('literal.character.content', value);
-		}
-		if (engine.isNode(value)) {
-			return unseated('literal.character.content', value);
-		}
-		throw new Error('literal.character.content takes no structure');
-	};
 	const literal_number_negative$330_value = (
 		value:
 			| BuildInput<RustMap, 'literal.number.float'>
@@ -1537,219 +1445,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 				return unbuilt('modifier.extern.abi', value);
 			default:
 				return unbuilt('modifier.extern.abi', value);
-		}
-	};
-	const pattern_struct$319_fields$item = (
-		value:
-			| string
-			| BuildInput<RustMap, 'expression.block.const'>
-			| RustMap['nodes']['expression.block.const']
-			| BuildInput<RustMap, 'expression.call.macro'>
-			| RustMap['nodes']['expression.call.macro']
-			| BuildInput<RustMap, 'identifier'>
-			| RustMap['nodes']['identifier']
-			| BuildInput<RustMap, 'identifier.qualified'>
-			| RustMap['nodes']['identifier.qualified']
-			| BuildInput<RustMap, 'literal.boolean.false'>
-			| RustMap['nodes']['literal.boolean.false']
-			| BuildInput<RustMap, 'literal.boolean.true'>
-			| RustMap['nodes']['literal.boolean.true']
-			| BuildInput<RustMap, 'literal.character'>
-			| RustMap['nodes']['literal.character']
-			| BuildInput<RustMap, 'literal.number.float'>
-			| RustMap['nodes']['literal.number.float']
-			| BuildInput<RustMap, 'literal.number.integer'>
-			| RustMap['nodes']['literal.number.integer']
-			| BuildInput<RustMap, 'literal.number.integer.binary'>
-			| RustMap['nodes']['literal.number.integer.binary']
-			| BuildInput<RustMap, 'literal.number.integer.hex'>
-			| RustMap['nodes']['literal.number.integer.hex']
-			| BuildInput<RustMap, 'literal.number.integer.octal'>
-			| RustMap['nodes']['literal.number.integer.octal']
-			| BuildInput<RustMap, 'literal.number.negative'>
-			| RustMap['nodes']['literal.number.negative']
-			| BuildInput<RustMap, 'literal.string'>
-			| RustMap['nodes']['literal.string']
-			| BuildInput<RustMap, 'literal.string.bytes'>
-			| RustMap['nodes']['literal.string.bytes']
-			| BuildInput<RustMap, 'literal.string.bytes.raw'>
-			| RustMap['nodes']['literal.string.bytes.raw']
-			| BuildInput<RustMap, 'literal.string.c'>
-			| RustMap['nodes']['literal.string.c']
-			| BuildInput<RustMap, 'literal.string.c.raw'>
-			| RustMap['nodes']['literal.string.c.raw']
-			| BuildInput<RustMap, 'literal.string.raw'>
-			| RustMap['nodes']['literal.string.raw']
-			| BuildInput<RustMap, 'pattern.as'>
-			| RustMap['nodes']['pattern.as']
-			| BuildInput<RustMap, 'pattern.generic'>
-			| RustMap['nodes']['pattern.generic']
-			| BuildInput<RustMap, 'pattern.list'>
-			| RustMap['nodes']['pattern.list']
-			| BuildInput<RustMap, 'pattern.mutable'>
-			| RustMap['nodes']['pattern.mutable']
-			| BuildInput<RustMap, 'pattern.or'>
-			| RustMap['nodes']['pattern.or']
-			| BuildInput<RustMap, 'pattern.range'>
-			| RustMap['nodes']['pattern.range']
-			| BuildInput<RustMap, 'pattern.range.exclusive'>
-			| RustMap['nodes']['pattern.range.exclusive']
-			| BuildInput<RustMap, 'pattern.range.inclusive'>
-			| RustMap['nodes']['pattern.range.inclusive']
-			| BuildInput<RustMap, 'pattern.range.inclusive.legacy'>
-			| RustMap['nodes']['pattern.range.inclusive.legacy']
-			| BuildInput<RustMap, 'pattern.reference'>
-			| RustMap['nodes']['pattern.reference']
-			| BuildInput<RustMap, 'pattern.reference.value'>
-			| RustMap['nodes']['pattern.reference.value']
-			| BuildInput<RustMap, 'pattern.struct'>
-			| RustMap['nodes']['pattern.struct']
-			| BuildInput<RustMap, 'pattern.struct.field'>
-			| RustMap['nodes']['pattern.struct.field']
-			| BuildInput<RustMap, 'pattern.tuple'>
-			| RustMap['nodes']['pattern.tuple']
-	) => {
-		if (typeof value === 'string') {
-			switch (value) {
-				case '..':
-					return 321;
-				default:
-					return value;
-			}
-		}
-		if (typeof value === 'number') {
-			if (seated(value, [320, 414, 415])) return value;
-			return unseated('pattern.struct.fields', value);
-		}
-		if (engine.isNode(value)) {
-			if (seated(value, [320, 321, 414, 415])) return value;
-			return unseated('pattern.struct.fields', value);
-		}
-		switch (value.$path) {
-			case 'expression.block.const':
-				return unbuilt('pattern.struct.fields', value);
-			case 'expression.call.macro':
-				return unbuilt('pattern.struct.fields', value);
-			case 'identifier':
-				return unbuilt('pattern.struct.fields', value);
-			case 'identifier.qualified':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.boolean.false':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.boolean.true':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.character':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.number.float':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.number.integer':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.number.integer.binary':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.number.integer.hex':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.number.integer.octal':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.number.negative':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.string':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.string.bytes':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.string.bytes.raw':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.string.c':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.string.c.raw':
-				return unbuilt('pattern.struct.fields', value);
-			case 'literal.string.raw':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.as':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.generic':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.list':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.mutable':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.or':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.range':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.range.exclusive':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.range.inclusive':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.range.inclusive.legacy':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.reference':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.reference.value':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.struct':
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.struct.field':
-				if (value.name !== undefined && value.pattern === undefined) return pattern_struct_field$414(value);
-				return unbuilt('pattern.struct.fields', value);
-			case 'pattern.tuple':
-				return unbuilt('pattern.struct.fields', value);
-			default:
-				return unbuilt('pattern.struct.fields', value);
-		}
-	};
-	const pattern_struct$319_type = (
-		value:
-			| string
-			| BuildInput<RustMap, 'identifier'>
-			| RustMap['nodes']['identifier']
-			| BuildInput<RustMap, 'identifier.qualified'>
-			| RustMap['nodes']['identifier.qualified']
-			| BuildInput<RustMap, 'type.generic.turbofish'>
-			| RustMap['nodes']['type.generic.turbofish']
-	) => {
-		if (typeof value === 'string') {
-			if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-			return b.identifier(value);
-		}
-		if (typeof value === 'number') {
-			if (seated(value, [265, 484])) return value;
-			return unseated('pattern.struct.type', value);
-		}
-		if (engine.isNode(value)) {
-			if (seated(value, [265, 484])) return value;
-			return unseated('pattern.struct.type', value);
-		}
-		switch (value.$path) {
-			case 'identifier':
-				return unbuilt('pattern.struct.type', value);
-			case 'identifier.qualified':
-				return identifier_qualified$265(value);
-			case 'type.generic.turbofish':
-				return unbuilt('pattern.struct.type', value);
-			default:
-				return unbuilt('pattern.struct.type', value);
-		}
-	};
-	const pattern_struct_field$414_name = (
-		value: string | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-	) => {
-		if (typeof value === 'string') {
-			if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-			return b.identifier(value);
-		}
-		if (typeof value === 'number') {
-			if (seated(value, [482])) return value;
-			return unseated('pattern.struct.field.name', value);
-		}
-		if (engine.isNode(value)) {
-			if (seated(value, [482])) return value;
-			return unseated('pattern.struct.field.name', value);
-		}
-		switch (value.$path) {
-			case 'identifier':
-				return unbuilt('pattern.struct.field.name', value);
-			default:
-				return unbuilt('pattern.struct.field.name', value);
 		}
 	};
 	const statement_continue$305_label = (
@@ -3095,17 +2790,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 				: b.wherePredicates(...(input.wherePredicates ?? []).map(clause_where$211_wherePredicates$item))
 		);
 	};
-	const declaration_macro$416 = (
-		input: BuildInput<RustMap, 'declaration.macro'>
-	): ReturnType<typeof b.macroDefinitionParen> => {
-		return b.macroDefinitionParen({
-			name: declaration_macro$416_name(input.name),
-			macroRules:
-				(input.rules ?? []).length === 0
-					? undefined
-					: b.macroRules(...(input.rules ?? []).map(declaration_macro$416_rules$item))
-		});
-	};
 	const declaration_macro_brace$418 = (
 		input: BuildInput<RustMap, 'declaration.macro.brace'>
 	): ReturnType<typeof b.macroDefinitionBrace> => {
@@ -3137,19 +2821,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 				(input.rules ?? []).length === 0
 					? undefined
 					: b.macroRules(...(input.rules ?? []).map(declaration_macro_paren$416_rules$item))
-		});
-	};
-	const declaration_module$384 = (
-		input: BuildInput<RustMap, 'declaration.module'>
-	): ReturnType<typeof b.modItemExternal> => {
-		return b.modItemExternal({ name: declaration_module$384_name(input.name) });
-	};
-	const declaration_module_foreign$395 = (
-		input: BuildInput<RustMap, 'declaration.module.foreign'>
-	): ReturnType<typeof b.foreignModItemSemi> => {
-		return b.foreignModItemSemi({
-			externModifier: declaration_module_foreign$395_extern(input.extern),
-			unsafe: (input.$flags ?? []).includes('unsafe')
 		});
 	};
 	const element_macro_token_binding$184 = (
@@ -3234,16 +2905,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 						)
 		});
 	};
-	const expression_range$393 = (
-		input: BuildInput<RustMap, 'expression.range'>
-	): ReturnType<typeof b.rangeExpressionBare> => {
-		return b.rangeExpressionBare();
-	};
-	const expression_range_exclusive$393 = (
-		input: BuildInput<RustMap, 'expression.range.exclusive'>
-	): ReturnType<typeof b.rangeExpressionBare> => {
-		return b.rangeExpressionBare();
-	};
 	const identifier_label$303 = (input: BuildInput<RustMap, 'identifier.label'>): ReturnType<typeof b.label> => {
 		return b.label(identifier_label$303_name(input.name));
 	};
@@ -3276,11 +2937,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 			name: identifier_qualified$265_name(input.name)
 		});
 	};
-	const literal_character$145 = (
-		input: BuildInput<RustMap, 'literal.character'>
-	): ReturnType<typeof b.charLiteralPlain> => {
-		return b.charLiteralPlain({ content: literal_character$145_content(input.content) });
-	};
 	const literal_number_float$162 = (
 		input: BuildInput<RustMap, 'literal.number.float'>
 	): ReturnType<typeof b.floatLiteral> => {
@@ -3293,24 +2949,6 @@ export function portableBuild(engine: Engine<RustAPI>) {
 	};
 	const modifier_extern$234 = (input: BuildInput<RustMap, 'modifier.extern'>): ReturnType<typeof b.externModifier> => {
 		return b.externModifier(input.abi === undefined ? undefined : modifier_extern$234_abi(input.abi));
-	};
-	const pattern_struct$319 = (input: BuildInput<RustMap, 'pattern.struct'>): ReturnType<typeof b.structPattern> => {
-		return b.structPattern({
-			type: pattern_struct$319_type(input.type),
-			fields:
-				(input.fields ?? []).length === 0
-					? undefined
-					: b.structPatternElements(...(input.fields ?? []).map(pattern_struct$319_fields$item))
-		});
-	};
-	const pattern_struct_field$414 = (
-		input: BuildInput<RustMap, 'pattern.struct.field'>
-	): ReturnType<typeof b.fieldPatternShorthand> => {
-		return b.fieldPatternShorthand({
-			name: pattern_struct_field$414_name(input.name),
-			mutable: (input.$flags ?? []).includes('mutable'),
-			byReference: (input.$flags ?? []).includes('byReference')
-		});
 	};
 	const statement_continue$305 = (
 		input: BuildInput<RustMap, 'statement.continue'>
