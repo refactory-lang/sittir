@@ -99,9 +99,14 @@ struct StageOne {
     choice_outliers: u64,
     /// Lists whose record stamps a delimiter.
     flanked_lists: u64,
-    /// Flanked lists whose stamped trailing flag differs from what
-    /// `engine::last_list_child` answers.
+    /// Flanked lists whose kind leaves the trailing flank optional and whose
+    /// stamped trailing flag differs from the kind rule: a separator child
+    /// follows the list's last item.
     delimiter_disagreements: u64,
+    /// Those disagreements by list kind: stamped none where the kind rule
+    /// says trailing, and stamped trailing where it says none.
+    delimiter_to_trailing: BTreeMap<String, u64>,
+    delimiter_to_none: BTreeMap<String, u64>,
     /// Items `$descendants` yields today for a named token no cell holds, by
     /// `holder > token (unit|node)`.
     named_fixed_query_items: BTreeMap<String, u64>,
@@ -444,10 +449,23 @@ fn sources_of(spec: &str) -> Vec<(String, String)> {
     }
 }
 
-/// A grammar's list kinds and the separators each one's rule allows, by kind
-/// name, from its node model.
+/// A grammar's list kinds, by kind name, from its node model: the separators
+/// each one's rule allows, and the kinds that leave the trailing flank
+/// optional.
 struct ListModel {
     separators: HashMap<String, Vec<String>>,
+    trailing_optional: HashSet<String>,
+}
+
+/// Whether a separator child follows the last item of its slot.
+fn trailing_by_kind(routes: &[Route]) -> bool {
+    routes.iter().enumerate().any(|(at, route)| match *route {
+        Route::Separator { slot, .. } => {
+            let item = |route: &Route| matches!(*route, Route::Slot { slot: of, .. } if of == slot);
+            routes[..at].iter().any(item) && !routes[at + 1..].iter().any(item)
+        }
+        _ => false,
+    })
 }
 
 impl ListModel {
@@ -468,15 +486,18 @@ impl ListModel {
             })
             .flatten()
             .collect();
-        Self { separators }
+        let trailing_optional = nodes
+            .iter()
+            .filter(|node| node["trailingDelimiter"].as_str() == Some("optional"))
+            .flat_map(|node| std::iter::once(node["kind"].as_str()).chain(node["shownAs"].as_array().into_iter().flatten().map(serde_json::Value::as_str)))
+            .flatten()
+            .map(str::to_string)
+            .collect();
+        Self { separators, trailing_optional }
     }
 
     fn is_choice(&self, list: &str) -> bool {
         self.separators.get(list).is_some_and(|names| names.len() > 1)
-    }
-
-    fn separates(&self, list: &str, token: &str) -> bool {
-        self.separators.get(list).is_some_and(|names| names.iter().any(|name| name == token))
     }
 }
 
@@ -560,15 +581,18 @@ fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &ParsedTree<G, Records<'
         let side_at = Address(arena.words(record, 2).expect("a header")[1]);
         let Some(delimiter) = SideRecord::read(arena, side_at).expect("a side record").delimiter else { continue };
         tally.flanked_lists += 1;
+        if !model.trailing_optional.contains(&list) {
+            continue;
+        }
+        let Some(routed) = grammar.slot_routes(&mut nodes, &kid) else { continue };
         let stamped = delimiter.has(Delimiter::TRAILING);
-        let last = sittir_core::engine::last_list_child(&mut nodes, kid.span(), kid.grammar);
-        let rows = last.is_some_and(|last| model.separates(&list, &name(last.grammar)));
-        if stamped != rows {
+        let by_kind = trailing_by_kind(&routed.routes);
+        if stamped != by_kind {
             tally.delimiter_disagreements += 1;
-            let last = last.map_or_else(|| "none".to_string(), |last| format!("{} {:?}", name(last.grammar), &source[last.start as usize..last.end as usize]));
-            let kids = nodes.kids(kid.index);
-            let tail: Vec<String> = kids.iter().rev().take(3).rev().map(|child| format!("{}{} {}..{}", name(child.grammar), if child.extra { "(extra)" } else { "" }, child.start, child.end)).collect();
-            tally.cases.push(format!("delimiter\t{label}\t{list}\t{}..{}\tstamped trailing {stamped}\tlast child {last}\tlast kids {}", kid.start, kid.end, tail.join(", ")));
+            let flips = if by_kind { &mut tally.delimiter_to_trailing } else { &mut tally.delimiter_to_none };
+            *flips.entry(list.clone()).or_default() += 1;
+            let tail: Vec<String> = routed.children.iter().zip(&routed.routes).rev().take(3).rev().map(|(child, route)| format!("{} {route:?} {}..{}", name(child.grammar), child.start, child.end)).collect();
+            tally.cases.push(format!("delimiter\t{label}\t{list}\t{}..{}\tstamped trailing {stamped}\tby kind {by_kind}\tlast kids {}", kid.start, kid.end, tail.join(", ")));
         }
     }
     let surface = grammar.surface_kinds();
