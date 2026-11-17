@@ -251,7 +251,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
-**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. On `6664f9dbe` (paired run, Rust 1.100.0): parse plus whole read is ×0.63–0.70 of object, so that gate holds; render is ×1.31–1.46 of master's arena, so that gate does not. The render gap is placement-time navigation, which Task 6c's steps 3 and 4 delete. **Ruled 2026-11-16: "Keep the gate; fold placement into #1227".** Task 6c is built on this branch and the two land as one PR when render and edit meet the gate. Head `b30da527d` carries the edit fix; its paired run is in progress.
+**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. On `6664f9dbe` (paired run, Rust 1.100.0): parse plus whole read is ×0.63–0.70 of object, so that gate holds; render is ×1.31–1.46 of master's arena, so that gate does not. The render gap is placement-time navigation, which Task 6c's steps 3 and 4 delete. **Ruled 2026-11-16: "Keep the gate; fold placement into #1227".** Task 6c is built on this branch and the two land as one PR when render and edit meet the gate. Head `b30da527d` carries the edit fix; its paired run is in progress. As of `5873206c5` (master merged 2026-11-17): the parse hydrates whole and drops its tree (`Engine::parse_records`, the addon's `parseRecords`, `readWords`, `readText`, `readDescendants`, `readPlanHolds`, and `renderBuilt` taking a record address) and the record-word goldens are retaken; steps 1 to 4 are built. The rows Produces names that are not yet produced (the Rust `NodeCoordinate` type, the `SourceTable` signatures, `Cell::Child`/`Cell::LinkedLeaf`) are built next on this branch. Step 5's full three-way verification runs once, on the head that goes to the paired run.
 
 This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
@@ -266,28 +266,28 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 - Tooling kept (the maintainer, 2026-11-13: "Keep both as tooling"): the validators' diagnostic calls may make a tree in an arena engine and read objects off it, so the no-tree test covers `parse`; `backerParity` takes a source and compares the tree's navigation with the navigation over the read's records. `profile/native-hydration.ts` times parse, render and pipeline, and its `hydrate` and `afterShallow` phases end.
 - The codec, in this task: a parsed record embeds no child record (the emitter's inline form, the derive's envelope and the JavaScript decode of an embedded cell go), and the root's record keeps the whole source as its span. Removed as dead with the tree arena (approved by the maintainer, 2026-11-13): `Cell::Coordinate`, the hydrate walks' `depth` and `inline` parameters, and `RecordArenas`, `RecordTrees`, `HeldArenas` and `ReadArenas`, whose callers and the generated `render_record` functions take `reads: Option<&dyn ArenaRead>`. Also removed, approved 2026-11-14: `HydrateNode::hydrate_stamped`, `HydrateInto::rows_by_run`, `write_row` and `held`, and the leaf bit on a parsed node cell's span end, which every such cell set. A side record's row is three words. A built render reads no table of trees; a coordinate of a diagnostic tree that reaches one is refused by name.
 - Record-word goldens are retaken once in this task. Render, query and snapshot output stays byte-identical.
-- Modify: `napi_engine.rs`, the lent arena's second read (see Task 5's follow-up and the spec's Tree lifetime section). `renderBuiltLeaf` goes through `BuiltRender::render_built_leaf(built, kind, entry, sides, changed, options, entries)` on `render_at`'s path, as `renderBuilt` already does, and `render_built_with` is deleted, so no render takes `store.built()` twice. No failing test first, on the maintainer's word.
+- Modify: `napi_engine.rs`, the lent arena's second read (see Task 5's follow-up and the spec's Tree lifetime section). `renderBuiltLeaf` goes through `Engine::render_built_leaf(built, kind, entry, sides, changed, options, entries)` (`arena/built.rs`) on `render_at`'s path, as `renderBuilt` already does, and `render_built_with` is deleted, so no render takes `store.built()` twice. No failing test first, on the maintainer's word.
 - Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
 - Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena root holds no `Tree` object and no reference to a tree. The arena's `#trees` and its `holdTree` calls go.
 - Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots.
-- Test: `rust/crates/sittir-core/tests/arena_tree_lifetime.rs` and `packages/common/tests/arena-tree-lifetime.test.ts`.
+- Test: `rust/crates/sittir-parity-tests/tests/arena_tree_lifetime.rs` and `packages/common/tests/arena-tree-lifetime.test.ts`.
 
 **Interfaces:**
 - Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
 - Produces: `types::NodeId` and the rows that follow from it (the public `NodeCoordinate`, the side record's fields, `Cell::Child`/`Cell::LinkedLeaf`, the `SourceTable` methods and the addon calls). Each row needs the maintainer's approval before code. **Ruled 2026-11-17 ("Prototype, inside #1227"):** the rows not yet produced (the Rust `NodeCoordinate` type, which still holds `tree`, `index` and `end`; the `SourceTable` signatures; `Cell::Child`/`Cell::LinkedLeaf`) are prototype's, and they are built inside Task 6's PR, evaluated at the end with the PR's other public rows.
 - Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
-- Produces: `BuiltRender::render_built_leaf(built, kind, entry, sides, changed, options, entries)`, arena only, internal pub, referencing no tree (approved by the maintainer, 2026-11-14, in place of the `entry_sources_holding` row of 2026-11-12, which is not added).
+- Produces: `Engine::render_built_leaf(built, kind, entry, sides, changed, options, entries)` (`arena/built.rs`), arena only, internal pub, referencing no tree (approved by the maintainer, 2026-11-14, in place of the `entry_sources_holding` row of 2026-11-12, which is not added).
 
-- [ ] **Step 1: The census, before code.** List every field of `ParsedTree` (`engine.rs`) and `TreeArena` (`arena/rows.rs`). Place each in one bin: node data; source text; recomputed from those on demand (with its cost and its readers); or dropped inside the read call. A field that isn't per-tree moves to the engine (grammar, the built-arena `store`) or to the call (the work counters, per Task 10). Say what lazy trivia placement reads after the call. A field that fits none of these goes to brainstorm, which takes it to the maintainer, before any code is written.
-- [ ] **Step 2: Failing tests:**
+- [x] **Step 1: The census, before code.** List every field of `ParsedTree` (`engine.rs`) and `TreeArena` (`arena/rows.rs`). Place each in one bin: node data; source text; recomputed from those on demand (with its cost and its readers); or dropped inside the read call. A field that isn't per-tree moves to the engine (grammar, the built-arena `store`) or to the call (the work counters, per Task 10). Say what lazy trivia placement reads after the call. A field that fits none of these goes to brainstorm, which takes it to the maintainer, before any code is written.
+- [x] **Step 2: Failing tests:**
   - a parse in arena storage leaves no live `tree_sitter::Tree` after `parse` returns, through a test-only count;
   - after `parse` returns, arena storage holds no per-tree value besides the nodes' data and the source text, through the same test-only accounting;
   - (Review Focus 5) a built node linking a parsed node renders byte-identical after the parsed root's release;
   - (Review Focus 4) a 10,000-level nested source in each grammar hydrates at parse with no overflow, and the parse call makes no napi call on a grown segment;
   - the LINK record is still 8 words, asserted on `size_of` and in the JavaScript twin;
   - no `Tree` instance is made in arena storage.
-- [ ] **Step 3:** Run them. They fail.
-- [ ] **Step 4: Implement.**
+- [x] **Step 3:** Run them. They fail.
+- [x] **Step 4: Implement.**
 - [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
 - [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
 
@@ -300,6 +300,8 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 - **The full local three-way verification runs once,** on the head that goes to the paired run, and again on any head after it. The landing gates themselves (render, edit, parse plus whole read, object rows) are unchanged.
 
 ### Task 6b: String-pool interning moves native
+
+**Status:** Built on `feat/arena-text-position` and merged into Task 6's branch at 44fcf67dc: cf6bacfe0 (a string chunk's meta keeps the one written mark), 604bb9328 (built text goes at that mark, in chunks native sizes; `open_strings`, `builtBytes(engine, least)`), e8a1ac2dd (a text encoded in place is claimed where it was encoded). The many-names bench case is 631ac2a18.
 
 The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 as its own PR; the maintainer, 2026-11-16: "let's move 6b to the end, but yes", so **it lands inside Task 6's PR, as its last piece,** after Tasks 6c, 6d and 6e. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
 
@@ -328,15 +330,15 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
     - **Sources stay in chunks of their own.** Task 6's "the read leaves the builders' open chunk alone" stands, so a parsed source's bytes are never kept alive by an unrelated built entry.
     - **Expected effect, measured locally:** little on the many-names case (the single copy is the only gain); this is a cleanup from three write positions for built text to one. The entry format's writer stays in both languages; its constants are the encoding-constants issue's ground.
   - **Built in parallel** on a branch cut from Task 6's branch, merged into it last; one paired run on this task alone before that merge, so its effect is separable from placement's.
-- [ ] **Step 2: Failing tests:** the pool's write position is native's alone; a built string interned twice has one entry; a build's text renders byte-identical.
+- [ ] **Step 2: Failing tests:** the pool's write position is native's alone; a built string interned twice has one entry; a build's text renders byte-identical. The write-position and render tests exist (`a_native_entry_lands_past_what_javascript_wrote_and_javascript_appends_past_it`, `the_open_string_chunk_is_answered_while_its_written_bytes_leave_room`, the three `built-arena.test.ts` cases, and `render-built.test.ts` 'answers the string chunk an entry was written into…'); no test yet pins that a built string interned twice has one entry.
 - [ ] **Step 3:** Run them. They fail.
-- [ ] **Step 4: Implement.**
+- [x] **Step 4: Implement.** cf6bacfe0, 604bb9328, e8a1ac2dd.
 - [ ] **Step 5: Run the three-way verification** in arena storage, and the speed gate: arena is not slower on any CI CPU on the rebuilt, codemod and many-names cases.
-- [ ] **Step 6: Commit:** `feat(arena): the string pool is interned natively`.
+- [x] **Step 6: Commit:** `feat(arena): the string pool is interned natively`. Landed as the three commits above.
 
 ### Task 6c: A parse places comments; whitespace placement is deleted
 
-**Status:** in progress on Task 6's branch `feat/arena-hydrate-at-parse` (step 1 began on `probe/comments-at-parse`, cut from it, 2026-11-16). Approved by the maintainer 2026-11-15. **It lands inside Task 6's PR** (ruled 2026-11-16), not after it: its steps 3 and 4 are what bring Task 6's render under its gate.
+**Status:** in progress on Task 6's branch `feat/arena-hydrate-at-parse`. Step 1 was built on `probe/comments-at-parse`, cut from it 2026-11-16, and is merged into it. Built since, both storages: gaps taken from the options, a layout run kept only beside an extra, `ERROR` or member (e7c1b959a) and only while that entry sits between its gap's own two tokens (f43e53dd4); the line end after a line-terminated extra a slice ends in (004aeda56). Step 2's compact entry is the engine-api session's, cut from Task 6's branch. Approved by the maintainer 2026-11-15. **It lands inside Task 6's PR** (ruled 2026-11-16), not after it: its steps 3 and 4 are what bring Task 6's render under its gate.
 
 **Object storage is deferred** (the maintainer, 2026-11-16, asked how object storage places comments once the placer is deleted: "Can we defer this? I don't want to invest too much time in object storage"). Steps 3 and 4 are done for arena storage only. Object storage keeps its placer and its lazy placement untouched; no walk is added to its parse and nothing of its path is rewritten. What that leaves open, to be listed before step 3 is built: where the two storages then render an edited parsed tree differently, and what the validation rows and tests that run in both storages do about it. Three ways to close it later were costed (a walk at object's parse, the shared rule run lazily, the placer kept for comments only); none is chosen.
 
@@ -352,7 +354,7 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 
 **Spec:** `docs/superpowers/specs/2026-11-15-parsed-comments-at-parse-design.md`. Its "Order" section is this task's step list, and each step is measured on a paired run against master's arena before the next.
 
-- [ ] **Step 1:** comments and ERRORs placed in the hydration walk, stored where no render reads them, with the parity test green on every fixture. No output change.
+- [x] **Step 1:** comments and ERRORs placed in the hydration walk, stored where no render reads them, with the parity test green on every fixture. No output change.
 - [ ] **Step 2:** the blank-line entry between list items. Waits for the maintainer to see parse time and retained bytes.
 - [ ] **Step 3:** a render reads the parse-placed sides; the baseline, deviations and runs are deleted; expectations retaken once.
 - [ ] **Step 4:** the placer and per-tree placement are deleted.
@@ -397,6 +399,7 @@ Example: parse a large file, keep one function rebuilt from it, release the root
 ### Task 6e: One reader for each fact a record's words hold
 
 **Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16. **It lands inside Task 6's PR** (the maintainer, 2026-11-16: "all of 6 should be in 1227"), which replaces the earlier "no code until Task 6 merges". It is built on Task 6's branch after Task 6c's steps 3 and 4, which delete some of the functions it lists; a reader in a file those steps don't touch may be added earlier. The list is re-taken on the branch as it stands when the work starts.
+Readers 1–3 are built in files Task 6c's steps 3 and 4 don't touch: `side_of` (60d9da527), the `CellWord` accessors (bf2decf5f), and the walker in `cell.rs` (401673bba). `admit.rs` and `count.rs` read through them (5786f5879, 1183243da), and the test image writes through the cell codec (6cc9aa93b). Still to move after Task 6c's step 4: `run_nodes.rs`, `prep.rs`, `view.rs` and `built.rs`.
 
 A census on Task 6's head (`b30da527d`) found 15 functions in 7 files that read a record's words by hand: a literal index, a shift or a mask, beside the function that already knows that fact. The count first reported from master, 14, was wrong in both directions; several of those read through the views already, or are writers.
 
