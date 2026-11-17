@@ -148,10 +148,11 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - the module's own `isNode` guard, typed by the grammar's node union;
   - token-only members typed as their token texts, read and build (python 16, rust 5, typescript 9), the generated member taking its text type from the map.
 - Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 828, rust 1335, typescript 1315.
-- A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
+- A path the emitter can't compile whole is left out with `portable-emit-unfit-slot` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
 - A number path is its path, its `$value` and its other slots. Two kinds of slot leave it: the slots its value is written from (`valueSource` on the model), and its options, the slots a preference binds (the model's `registered`). The low-level builder writes an option from its preference default. Python loses 32 fields, rust 4 and typescript 24. Two kinds one path claims stay apart when their options differ.
+- The portable code says "slot" where it said "member": a path holds slots, an option is a slot bound to a preference, and a flag is a slot whose `flag` is true. Renamed so far, each symbol through the TypeScript language service: the `@sittir/types` build table (`PortableSlotRoute`, an arm's and a container's `slots`, a fact's, template's, pick test's and sole delimiter's `slot`), the module emitter's input and its diagnostic `portable-emit-unfit-slot`, the build interpreter's refusals, and the interpreter's own names. Remaining: the bindings, the build table emitter's internals, the tools, and the spec and plan prose.
 - Remaining:
   - decision 5;
   - decision 7's bare numbers, by the outermost taker (ruled 2026-11-17); in a member with a number taker a number is a number, and the type stops admitting a fixed word's bare kind id there (ruled 2026-11-17). Measured: no member has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 members take a number);
