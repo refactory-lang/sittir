@@ -354,7 +354,7 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 - [ ] **Step 2:** the blank-line entry between list items. Waits for the maintainer to see parse time and retained bytes.
 - [ ] **Step 3:** a render reads the parse-placed sides; the baseline, deviations and runs are deleted; expectations retaken once.
 - [ ] **Step 4:** the placer and per-tree placement are deleted.
-- [ ] **Step 5:** a census of what still reads the plain token rows.
+- [x] **Step 5:** a census of what still reads the plain token rows. Taken 2026-11-17 by the engine-api session (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`): fixed-token rows are 18–19% of a read's words on matter.js and next.js, and four readers of a fixed token's offsets outlive steps 3 and 4 (spacing boundaries, depth moves, a list's trailing separator, re-indenting inside multi-line tokens). The maintainer, 2026-11-17: "Since we are no longer preserving white space that really needs to go". Removing the rows entirely is specified in `docs/superpowers/specs/2026-11-17-read-without-fixed-token-rows-design.md` and is the next task after this one.
 
 ### Task 6d: One release for parsed and built records
 
