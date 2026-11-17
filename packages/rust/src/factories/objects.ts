@@ -1243,31 +1243,49 @@ function buildUnionItem$with(node: Held, setter: string, args: readonly unknown[
 	const config = node[INPUT] as T.UnionItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildUnionItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildUnionItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildUnionItem({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildUnionItem({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildUnionItem({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1280,7 +1298,7 @@ function buildUnionItem$with(node: Held, setter: string, args: readonly unknown[
 				)
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -1392,31 +1410,49 @@ function buildEnumItem$with(node: Held, setter: string, args: readonly unknown[]
 	const config = node[INPUT] as T.EnumItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildEnumItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildEnumItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildEnumItem({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildEnumItem({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildEnumItem({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1429,7 +1465,7 @@ function buildEnumItem$with(node: Held, setter: string, args: readonly unknown[]
 				)
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -1555,7 +1591,7 @@ function buildEnumVariantList$with(node: Held, setter: string, args: readonly un
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -1641,10 +1677,19 @@ function buildEnumVariant$with(node: Held, setter: string, args: readonly unknow
 	const config = node[INPUT] as T.EnumVariant.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildEnumVariant({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildEnumVariant({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
@@ -1767,7 +1812,7 @@ function buildFieldDeclarationList$with(node: Held, setter: string, args: readon
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -1848,10 +1893,19 @@ function buildFieldDeclaration$with(node: Held, setter: string, args: readonly u
 	const config = node[INPUT] as T.FieldDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildFieldDeclaration({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildFieldDeclaration({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.FieldIdentifier.Types>) =>
@@ -1969,7 +2023,7 @@ function buildOrderedFieldDeclarationList$with(node: Held, setter: string, args:
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -2049,10 +2103,19 @@ function buildExternCrateDeclaration$with(node: Held, setter: string, args: read
 	const config = node[INPUT] as T.ExternCrateDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildExternCrateDeclaration({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildExternCrateDeclaration({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
@@ -2141,10 +2204,19 @@ function buildConstItem$with(node: Held, setter: string, args: readonly unknown[
 	const config = node[INPUT] as T.ConstItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildConstItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildConstItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
@@ -2250,10 +2322,19 @@ function buildStaticItem$with(node: Held, setter: string, args: readonly unknown
 	const config = node[INPUT] as T.StaticItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildStaticItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildStaticItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'byReference':
 			return applySetter(args, (value?: Admit<NonNullable<T.StaticItem.Config>['byReference']>) =>
@@ -2384,31 +2465,49 @@ function buildTypeItem$with(node: Held, setter: string, args: readonly unknown[]
 	const config = node[INPUT] as T.TypeItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildTypeItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildTypeItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeItem({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildTypeItem({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildTypeItem({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -2555,10 +2654,19 @@ function buildFunctionItem$with(node: Held, setter: string, args: readonly unkno
 	const config = node[INPUT] as T.FunctionItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildFunctionItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildFunctionItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
@@ -2569,27 +2677,72 @@ function buildFunctionItem$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildFunctionItem({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildFunctionItem({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildFunctionItem({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
-				applySetter(args, (value: Admit<T.Parameters>) =>
-					rebuilt(node, handle, () => buildFunctionItem({ ...config, parameters: value }))
-				)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.ParametersElements as const,
+					optional: false,
+					make: buildParametersElements,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<T.Parameters>) =>
+								rebuilt(node, handle, () => buildFunctionItem({ ...config, parameters: value }))
+							)
+						: applySetter(args, (...args: unknown[]) =>
+								rebuilt(node, handle, () =>
+									listSlotWith(
+										args,
+										{
+											kind: TSKindId.ParametersElements as const,
+											optional: false,
+											make: buildParametersElements,
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+										},
+										(list: never) =>
+											((value: Admit<T.Parameters>) => buildFunctionItem({ ...config, parameters: value }))(
+												buildParameters(list) as never
+											)
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<T.Parameters>) =>
+						rebuilt(node, handle, () => buildFunctionItem({ ...config, parameters: value }))
+					)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionItem.Config>['returnType']>) =>
@@ -2729,10 +2882,19 @@ function buildFunctionSignatureItem$with(node: Held, setter: string, args: reado
 	const config = node[INPUT] as T.FunctionSignatureItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
@@ -2743,27 +2905,72 @@ function buildFunctionSignatureItem$with(node: Held, setter: string, args: reado
 				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildFunctionSignatureItem({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildFunctionSignatureItem({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
-				applySetter(args, (value: Admit<T.Parameters>) =>
-					rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, parameters: value }))
-				)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.ParametersElements as const,
+					optional: false,
+					make: buildParametersElements,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<T.Parameters>) =>
+								rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, parameters: value }))
+							)
+						: applySetter(args, (...args: unknown[]) =>
+								rebuilt(node, handle, () =>
+									listSlotWith(
+										args,
+										{
+											kind: TSKindId.ParametersElements as const,
+											optional: false,
+											make: buildParametersElements,
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+										},
+										(list: never) =>
+											((value: Admit<T.Parameters>) => buildFunctionSignatureItem({ ...config, parameters: value }))(
+												buildParameters(list) as never
+											)
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<T.Parameters>) =>
+						rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, parameters: value }))
+					)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionSignatureItem.Config>['returnType']>) =>
@@ -2963,7 +3170,7 @@ function buildWhereClause$with(node: Held, setter: string, args: readonly unknow
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'wherePredicates':
-			return hoistedWith(node, 'wherePredicates', '_where_predicates', 'items', true, args, (args) =>
+			return hoistedWith(node, 'wherePredicates', '_where_predicates', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -3026,7 +3233,7 @@ function buildWherePredicate$with(node: Held, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildWherePredicate({ ...config, left: value }))
 			);
 		case 'bounds':
-			return hoistedWith(node, 'bounds', '_bounds', 'bounds', false, args, (args) =>
+			return hoistedWith(node, 'bounds', '_bounds', 'bounds', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.TraitBounds>) =>
 					rebuilt(node, handle, () => buildWherePredicate({ ...config, bounds: value }))
 				)
@@ -3130,10 +3337,19 @@ function buildTraitItem$with(node: Held, setter: string, args: readonly unknown[
 	const config = node[INPUT] as T.TraitItem.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildTraitItem({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildTraitItem({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'unsafe':
 			return applySetter(args, (value?: Admit<NonNullable<T.TraitItem.Config>['unsafe']>) =>
@@ -3144,24 +3360,33 @@ function buildTraitItem$with(node: Held, setter: string, args: readonly unknown[
 				rebuilt(node, handle, () => buildTraitItem({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildTraitItem({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildTraitItem({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'bounds':
-			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, args, (args) =>
+			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.TraitBounds>) =>
 					rebuilt(node, handle, () => buildTraitItem({ ...config, bounds: value }))
 				)
@@ -3177,7 +3402,7 @@ function buildTraitItem$with(node: Held, setter: string, args: readonly unknown[
 				)
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'declarations', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'declarations', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.TraitInterfaceDeclarationBody>) =>
 					rebuilt(node, handle, () => buildTraitItem({ ...config, body: value }))
 				)
@@ -3276,24 +3501,33 @@ function buildAssociatedType$with(node: Held, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildAssociatedType({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildAssociatedType({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildAssociatedType({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'bounds':
-			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, args, (args) =>
+			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.TraitBounds>) =>
 					rebuilt(node, handle, () => buildAssociatedType({ ...config, bounds: value }))
 				)
@@ -3420,21 +3654,30 @@ function buildHigherRankedTraitBound$with(node: Held, setter: string, args: read
 	const config = node[INPUT] as T.HigherRankedTraitBound.Config;
 	switch (setter) {
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', false, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: false,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value: Admit<T.TypeParameters>) => buildHigherRankedTraitBound({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: false,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value: Admit<T.TypeParameters>) => buildHigherRankedTraitBound({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.HigherRankedTraitBound.Config>['type']>) =>
@@ -3590,7 +3833,7 @@ function buildTypeParameters$with(node: Held, setter: string, args: readonly unk
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', false, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -3748,7 +3991,7 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value }))
 			);
 		case 'bounds':
-			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, args, (args) =>
+			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.TraitBounds>) =>
 					rebuilt(node, handle, () => buildTypeParameter({ ...config, bounds: value }))
 				)
@@ -3814,7 +4057,7 @@ function buildLifetimeParameter$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildLifetimeParameter({ ...config, name: value }))
 			);
 		case 'bounds':
-			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, args, (args) =>
+			return hoistedWith(node, 'bounds', '_bounds', 'bounds', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.TraitBounds>) =>
 					rebuilt(node, handle, () => buildLifetimeParameter({ ...config, bounds: value }))
 				)
@@ -3991,10 +4234,19 @@ function buildUseDeclaration$with(node: Held, setter: string, args: readonly unk
 	const config = node[INPUT] as T.UseDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildUseDeclaration({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildUseDeclaration({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'argument':
 			return applySetter(args, (value: Admit<NonNullable<T.UseDeclaration.Config>['argument']>) =>
@@ -4057,7 +4309,7 @@ function buildScopedUseList$with(node: Held, setter: string, args: readonly unkn
 				rebuilt(node, handle, () => buildScopedUseList({ ...config, path: value }))
 			);
 		case 'list':
-			return hoistedWith(node, 'list', '_list', 'useClauses', false, args, (args) =>
+			return hoistedWith(node, 'list', '_list', 'useClauses', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -4193,7 +4445,7 @@ function buildUseList$with(node: Held, setter: string, args: readonly unknown[])
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'useClauses':
-			return hoistedWith(node, 'useClauses', '_use_clauses', 'items', true, args, (args) =>
+			return hoistedWith(node, 'useClauses', '_use_clauses', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5001,7 +5253,7 @@ function buildForLifetimes$with(node: Held, setter: string, args: readonly unkno
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'lifetimes':
-			return hoistedWith(node, 'lifetimes', '_lifetimes', 'items', false, args, (args) =>
+			return hoistedWith(node, 'lifetimes', '_lifetimes', 'items', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5085,7 +5337,7 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 	const config = node[INPUT] as T.FunctionType.Config;
 	switch (setter) {
 		case 'forLifetimes':
-			return hoistedWith(node, 'forLifetimes', '_for_lifetimes', 'lifetimes', true, args, (args) =>
+			return hoistedWith(node, 'forLifetimes', '_for_lifetimes', 'lifetimes', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5101,10 +5353,46 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildFunctionType({ ...config, content: value }))
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
-				applySetter(args, (value: Admit<T.Parameters>) =>
-					rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
-				)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.ParametersElements as const,
+					optional: false,
+					make: buildParametersElements,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<T.Parameters>) =>
+								rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+							)
+						: applySetter(args, (...args: unknown[]) =>
+								rebuilt(node, handle, () =>
+									listSlotWith(
+										args,
+										{
+											kind: TSKindId.ParametersElements as const,
+											optional: false,
+											make: buildParametersElements,
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+										},
+										(list: never) =>
+											((value: Admit<T.Parameters>) => buildFunctionType({ ...config, parameters: value }))(
+												buildParameters(list) as never
+											)
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<T.Parameters>) =>
+						rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+					)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
@@ -5212,7 +5500,7 @@ function buildTupleType$with(node: Held, setter: string, args: readonly unknown[
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'types':
-			return hoistedWith(node, 'types', '_types', 'items', false, args, (args) =>
+			return hoistedWith(node, 'types', '_types', 'items', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5281,7 +5569,7 @@ function buildGenericFunction$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildGenericFunction({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5357,7 +5645,7 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 					rebuilt(node, handle, () => buildGenericType({ ...config, type: value }))
 			);
 		case 'typeArguments':
-			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5436,7 +5724,7 @@ function buildGenericTypeWithTurbofish$with(node: Held, setter: string, args: re
 				rebuilt(node, handle, () => buildGenericTypeWithTurbofish({ ...config, type: value }))
 			);
 		case 'typeArguments':
-			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5612,7 +5900,7 @@ function buildUseBounds$with(node: Held, setter: string, args: readonly unknown[
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'bounds':
-			return hoistedWith(node, 'bounds', '_bounds', 'items', true, args, (args) =>
+			return hoistedWith(node, 'bounds', '_bounds', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5726,7 +6014,7 @@ function buildTypeArguments$with(node: Held, setter: string, args: readonly unkn
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', false, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5808,7 +6096,7 @@ function buildTypeBinding$with(node: Held, setter: string, args: readonly unknow
 				rebuilt(node, handle, () => buildTypeBinding({ ...config, name: value }))
 			);
 		case 'typeArguments':
-			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', true, args, (args) =>
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -5963,21 +6251,30 @@ function buildAbstractType$with(node: Held, setter: string, args: readonly unkno
 	const config = node[INPUT] as T.AbstractType.Config;
 	switch (setter) {
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildAbstractType({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildAbstractType({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'trait':
 			return applySetter(
@@ -6871,7 +7168,7 @@ function buildCallExpression$with(node: Held, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildCallExpression({ ...config, function: value }))
 			);
 		case 'arguments':
-			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -6986,7 +7283,7 @@ function buildArguments$with(node: Held, setter: string, args: readonly unknown[
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -7140,7 +7437,7 @@ function buildTupleExpression$with(node: Held, setter: string, args: readonly un
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', false, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -7212,7 +7509,7 @@ function buildStructExpression$with(node: Held, setter: string, args: readonly u
 				) => rebuilt(node, handle, () => buildStructExpression({ ...config, name: value }))
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'initializers', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'initializers', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -7326,7 +7623,7 @@ function buildFieldInitializerList$with(node: Held, setter: string, args: readon
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'initializers':
-			return hoistedWith(node, 'initializers', '_initializers', 'items', true, args, (args) =>
+			return hoistedWith(node, 'initializers', '_initializers', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -7596,7 +7893,7 @@ function buildIfExpression$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildIfExpression({ ...config, consequence: value }))
 			);
 		case 'alternative':
-			return hoistedWith(node, 'alternative', '_alternative', 'body', true, args, (args) =>
+			return hoistedWith(node, 'alternative', '_alternative', 'body', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.ElseClause>) =>
 					rebuilt(node, handle, () => buildIfExpression({ ...config, alternative: value }))
 				)
@@ -7807,7 +8104,7 @@ function buildMatchExpression$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildMatchExpression({ ...config, subject: value }))
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'matchBlockArms', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'matchBlockArms', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.MatchBlock>) =>
 					rebuilt(node, handle, () => buildMatchExpression({ ...config, body: value }))
 				)
@@ -9096,7 +9393,7 @@ function buildGenericPattern$with(node: Held, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildGenericPattern({ ...config, name: value }))
 			);
 		case 'typeArguments':
-			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -9211,7 +9508,7 @@ function buildTuplePattern$with(node: Held, setter: string, args: readonly unkno
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -9318,7 +9615,7 @@ function buildSlicePattern$with(node: Held, setter: string, args: readonly unkno
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -9384,7 +9681,7 @@ function buildTupleStructPattern$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildTupleStructPattern({ ...config, type: value }))
 			);
 		case 'fields':
-			return hoistedWith(node, 'fields', '_fields', 'items', true, args, (args) =>
+			return hoistedWith(node, 'fields', '_fields', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -9449,7 +9746,7 @@ function buildStructPattern$with(node: Held, setter: string, args: readonly unkn
 				rebuilt(node, handle, () => buildStructPattern({ ...config, type: value }))
 			);
 		case 'fields':
-			return hoistedWith(node, 'fields', '_fields', 'items', true, args, (args) =>
+			return hoistedWith(node, 'fields', '_fields', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -13861,7 +14158,7 @@ function buildClosureExpressionBlock$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, move: value }))
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'parameters', false, args, (args) =>
+			return hoistedWith(node, 'parameters', '_parameters', 'parameters', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.ClosureParameters>) =>
 					rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, parameters: value }))
 				)
@@ -13971,7 +14268,7 @@ function buildClosureExpressionExpr$with(node: Held, setter: string, args: reado
 				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, move: value }))
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'parameters', false, args, (args) =>
+			return hoistedWith(node, 'parameters', '_parameters', 'parameters', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.ClosureParameters>) =>
 					rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, parameters: value }))
 				)
@@ -14344,21 +14641,30 @@ function buildImplItemBody$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildImplItemBody({ ...config, unsafe: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildImplItemBody({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildImplItemBody({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'traitClause':
 			return applySetter(args, (value?: Admit<T.ImplItemPositiveClause | T.ImplItemNegativeClause>) =>
@@ -14379,7 +14685,7 @@ function buildImplItemBody$with(node: Held, setter: string, args: readonly unkno
 				)
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'declarations', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'declarations', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.ExtensionDeclarationBody>) =>
 					rebuilt(node, handle, () => buildImplItemBody({ ...config, body: value }))
 				)
@@ -14481,21 +14787,30 @@ function buildImplItemSemi$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildImplItemSemi({ ...config, unsafe: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildImplItemSemi({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildImplItemSemi({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'traitClause':
 			return applySetter(args, (value?: Admit<T.ImplItemPositiveClause | T.ImplItemNegativeClause>) =>
@@ -14702,6 +15017,8 @@ function buildVisibilityModifierPub$with(node: Held, setter: string, args: reado
 				'_visibility_modifier_pub_scope',
 				'content',
 				true,
+				undefined,
+				handle,
 				args,
 				(args) =>
 					applySetter(args, (value?: Admit<T.VisibilityModifierPubScope>) =>
@@ -14878,10 +15195,19 @@ function buildModItemExternal$with(node: Held, setter: string, args: readonly un
 	const config = node[INPUT] as T.ModItemExternal.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildModItemExternal({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildModItemExternal({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
@@ -14950,17 +15276,26 @@ function buildModItemInline$with(node: Held, setter: string, args: readonly unkn
 	const config = node[INPUT] as T.ModItemInline.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildModItemInline({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildModItemInline({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildModItemInline({ ...config, name: value }))
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'declarations', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'declarations', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.DeclarationList>) =>
 					rebuilt(node, handle, () => buildModItemInline({ ...config, body: value }))
 				)
@@ -15424,7 +15759,7 @@ function buildForeignModItemSemi$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, unsafe: value }))
 			);
 		case 'externModifier':
-			return hoistedWith(node, 'externModifier', '_extern_modifier', 'abi', false, args, (args) =>
+			return hoistedWith(node, 'externModifier', '_extern_modifier', 'abi', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.ExternModifier>) =>
 					rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, externModifier: value }))
 				)
@@ -15492,13 +15827,13 @@ function buildForeignModItemBody$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, unsafe: value }))
 			);
 		case 'externModifier':
-			return hoistedWith(node, 'externModifier', '_extern_modifier', 'abi', false, args, (args) =>
+			return hoistedWith(node, 'externModifier', '_extern_modifier', 'abi', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.ExternModifier>) =>
 					rebuilt(node, handle, () => buildForeignModItemBody({ ...config, externModifier: value }))
 				)
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'declarations', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'declarations', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.DeclarationList>) =>
 					rebuilt(node, handle, () => buildForeignModItemBody({ ...config, body: value }))
 				)
@@ -16641,7 +16976,7 @@ function buildMacroDefinitionParen$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildMacroDefinitionParen({ ...config, name: value }))
 			);
 		case 'macroRules':
-			return hoistedWith(node, 'macroRules', '_macro_rules', 'items', true, args, (args) =>
+			return hoistedWith(node, 'macroRules', '_macro_rules', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -16711,7 +17046,7 @@ function buildMacroDefinitionBracket$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildMacroDefinitionBracket({ ...config, name: value }))
 			);
 		case 'macroRules':
-			return hoistedWith(node, 'macroRules', '_macro_rules', 'items', true, args, (args) =>
+			return hoistedWith(node, 'macroRules', '_macro_rules', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -16780,7 +17115,7 @@ function buildMacroDefinitionBrace$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildMacroDefinitionBrace({ ...config, name: value }))
 			);
 		case 'macroRules':
-			return hoistedWith(node, 'macroRules', '_macro_rules', 'items', true, args, (args) =>
+			return hoistedWith(node, 'macroRules', '_macro_rules', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -17075,31 +17410,49 @@ function buildStructItemBrace$with(node: Held, setter: string, args: readonly un
 	const config = node[INPUT] as T.StructItemBrace.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildStructItemBrace({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildStructItemBrace({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildStructItemBrace({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildStructItemBrace({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildStructItemBrace({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -17112,7 +17465,7 @@ function buildStructItemBrace$with(node: Held, setter: string, args: readonly un
 				)
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -17224,34 +17577,52 @@ function buildStructItemTuple$with(node: Held, setter: string, args: readonly un
 	const config = node[INPUT] as T.StructItemTuple.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildStructItemTuple({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildStructItemTuple({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildStructItemTuple({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildStructItemTuple({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildStructItemTuple({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'elements', false, args, (args) =>
+			return hoistedWith(node, 'body', '_body', 'elements', false, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -17355,31 +17726,49 @@ function buildStructItemUnit$with(node: Held, setter: string, args: readonly unk
 	const config = node[INPUT] as T.StructItemUnit.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildStructItemUnit({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildStructItemUnit({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildStructItemUnit({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildStructItemUnit({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildStructItemUnit({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 	}
 	throw new Error(`struct_item_unit has no $with.${setter}`);
@@ -17587,7 +17976,7 @@ function buildAttributedParameter$with(node: Held, setter: string, args: readonl
 	const config = node[INPUT] as T.AttributedParameter.Config;
 	switch (setter) {
 		case 'attributeItem':
-			return hoistedWith(node, 'attributeItem', '_attribute_item', 'attribute', true, args, (args) =>
+			return hoistedWith(node, 'attributeItem', '_attribute_item', 'attribute', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.AttributeItem>) =>
 					rebuilt(node, handle, () => buildAttributedParameter({ ...config, attributeItem: value }))
 				)
@@ -17806,10 +18195,19 @@ function buildAttributedOrderedField$with(node: Held, setter: string, args: read
 				)
 			);
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildAttributedOrderedField({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildAttributedOrderedField({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.AttributedOrderedField.Config>['type']>) =>
@@ -17879,7 +18277,7 @@ function buildTypeArgument$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildTypeArgument({ ...config, content: value }))
 			);
 		case 'traitBounds':
-			return hoistedWith(node, 'traitBounds', '_trait_bounds', 'bounds', true, args, (args) =>
+			return hoistedWith(node, 'traitBounds', '_trait_bounds', 'bounds', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.TraitBounds>) =>
 					rebuilt(node, handle, () => buildTypeArgument({ ...config, traitBounds: value }))
 				)
@@ -18088,7 +18486,7 @@ function buildArrayExpressionList$with(node: Held, setter: string, args: readonl
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -18566,7 +18964,7 @@ function buildAttributedParameterReceiver$with(node: Held, setter: string, args:
 	const config = node[INPUT] as T.AttributedParameterReceiver.Config;
 	switch (setter) {
 		case 'attributeItem':
-			return hoistedWith(node, 'attributeItem', '_attribute_item', 'attribute', true, args, (args) =>
+			return hoistedWith(node, 'attributeItem', '_attribute_item', 'attribute', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.AttributeItem>) =>
 					rebuilt(node, handle, () => buildAttributedParameterReceiver({ ...config, attributeItem: value }))
 				)
@@ -18831,7 +19229,7 @@ function buildParametersElementsReceiverGroup$with(node: Held, setter: string, a
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
 				applySetter(args, (...args: unknown[]) =>
 					rebuilt(node, handle, () =>
 						listSlotWith(
@@ -19140,10 +19538,19 @@ function buildMethodDeclaration$with(node: Held, setter: string, args: readonly 
 	const config = node[INPUT] as T.MethodDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildMethodDeclaration({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildMethodDeclaration({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
@@ -19154,27 +19561,72 @@ function buildMethodDeclaration$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildMethodDeclaration({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) => buildMethodDeclaration({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
-				applySetter(args, (value: Admit<T.Parameters>) =>
-					rebuilt(node, handle, () => buildMethodDeclaration({ ...config, parameters: value }))
-				)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.ParametersElements as const,
+					optional: false,
+					make: buildParametersElements,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<T.Parameters>) =>
+								rebuilt(node, handle, () => buildMethodDeclaration({ ...config, parameters: value }))
+							)
+						: applySetter(args, (...args: unknown[]) =>
+								rebuilt(node, handle, () =>
+									listSlotWith(
+										args,
+										{
+											kind: TSKindId.ParametersElements as const,
+											optional: false,
+											make: buildParametersElements,
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+										},
+										(list: never) =>
+											((value: Admit<T.Parameters>) => buildMethodDeclaration({ ...config, parameters: value }))(
+												buildParameters(list) as never
+											)
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<T.Parameters>) =>
+						rebuilt(node, handle, () => buildMethodDeclaration({ ...config, parameters: value }))
+					)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.MethodDeclaration.Config>['returnType']>) =>
@@ -19316,10 +19768,19 @@ function buildSignatureMethodDeclaration$with(node: Held, setter: string, args: 
 	const config = node[INPUT] as T.SignatureMethodDeclaration.Config;
 	switch (setter) {
 		case 'visibilityModifier':
-			return hoistedWith(node, 'visibilityModifier', '_visibility_modifier', 'content', true, args, (args) =>
-				applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
-					rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, visibilityModifier: value }))
-				)
+			return hoistedWith(
+				node,
+				'visibilityModifier',
+				'_visibility_modifier',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<T.VisibilityModifier>) =>
+						rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, visibilityModifier: value }))
+					)
 			);
 		case 'functionModifiers':
 			return applySetter(args, (value?: Admit<T.FunctionModifiers>) =>
@@ -19330,27 +19791,74 @@ function buildSignatureMethodDeclaration$with(node: Held, setter: string, args: 
 				rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.TypeParameters as const,
-								optional: true,
-								make: buildTypeParameters,
-								element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
-							},
-							(value?: Admit<T.TypeParameters>) => buildSignatureMethodDeclaration({ ...config, typeParameters: value })
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+								},
+								(value?: Admit<T.TypeParameters>) =>
+									buildSignatureMethodDeclaration({ ...config, typeParameters: value })
+							)
 						)
 					)
-				)
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
-				applySetter(args, (value: Admit<T.Parameters>) =>
-					rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, parameters: value }))
-				)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.ParametersElements as const,
+					optional: false,
+					make: buildParametersElements,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<T.Parameters>) =>
+								rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, parameters: value }))
+							)
+						: applySetter(args, (...args: unknown[]) =>
+								rebuilt(node, handle, () =>
+									listSlotWith(
+										args,
+										{
+											kind: TSKindId.ParametersElements as const,
+											optional: false,
+											make: buildParametersElements,
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+										},
+										(list: never) =>
+											((value: Admit<T.Parameters>) =>
+												buildSignatureMethodDeclaration({ ...config, parameters: value }))(
+												buildParameters(list) as never
+											)
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<T.Parameters>) =>
+						rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, parameters: value }))
+					)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['returnType']>) =>

@@ -4392,6 +4392,16 @@ export interface FunctionItem {
 				{ delimiter?: Delimiter.None | Delimiter.Trailing },
 				T.AttributedTypeParameter.Config
 			>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
+			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
@@ -4485,6 +4495,16 @@ export interface FunctionSignatureItem {
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing },
 				T.AttributedTypeParameter.Config
+			>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -5926,6 +5946,16 @@ export interface FunctionType {
 		readonly returnType: SlotHint<NonNullable<T.FunctionType.Config>['returnType'], true>;
 		readonly $listSlots: {
 			readonly forLifetimes: ListSlotHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
+			>;
 		};
 	};
 	readonly forLifetimes: () => readonly Lifetime[];
@@ -11070,6 +11100,16 @@ export interface MethodDeclaration {
 				{ delimiter?: Delimiter.None | Delimiter.Trailing },
 				T.AttributedTypeParameter.Config
 			>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
+			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
@@ -11163,6 +11203,16 @@ export interface SignatureMethodDeclaration {
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing },
 				T.AttributedTypeParameter.Config
+			>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};

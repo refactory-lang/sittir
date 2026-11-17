@@ -13,7 +13,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		const [f, g] = root.statements();
 		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
 		const edited = f.$with.parameters(...g.parameters());
-		expect(String(e.render(edited))).toBe('fn f(c: u8) {}');
+		expect(String(e.render(edited))).toBe('fn f(c: u8,) {}');
 		e[Symbol.dispose]();
 	});
 
@@ -42,6 +42,24 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		if (!e.is.foreignModItem(item)) throw new Error('expected a foreign mod item');
 		const edited = item.$with.externModifier(undefined);
 		expect(String(e.render(edited))).toBe('extern {}');
+		e[Symbol.dispose]();
+	});
+
+	it('sets several type parameters through the existing angle brackets', async () => {
+		const { e, root } = await open('fn f<A>(a: u8) {}\nfn g<B, C>(c: u8) {}\n');
+		const [f, g] = root.statements();
+		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
+		const [b, c] = g.typeParameters();
+		expect(String(e.render(f.$with.typeParameters(b!, c!)))).toBe('fn f<B, C>(a: u8) {}');
+		e[Symbol.dispose]();
+	});
+
+	it('builds the parameters of a function that has the empty form, from several items', async () => {
+		const { e, root } = await open('fn f() {}\nfn g(c: u8, d: u16) {}\n');
+		const [f, g] = root.statements();
+		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
+		const [c, d] = g.parameters();
+		expect(String(e.render(f.$with.parameters(c!, d!)))).toBe('fn f(c: u8, d: u16) {}');
 		e[Symbol.dispose]();
 	});
 });

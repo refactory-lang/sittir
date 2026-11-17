@@ -350,7 +350,7 @@ function wrapLookaheadAssertion$with(node: Held, setter: string, args: readonly 
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapLookaheadAssertion(
@@ -432,7 +432,7 @@ function wrapLookbehindAssertion$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapLookbehindAssertion(
@@ -715,7 +715,7 @@ function wrapAnonymousCapturingGroup$with(node: Held, setter: string, args: read
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.AnonymousCapturingGroup['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapAnonymousCapturingGroup(
@@ -807,7 +807,7 @@ function wrapNamedCapturingGroup$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapNamedCapturingGroup(
@@ -876,7 +876,7 @@ function wrapNonCapturingGroup$with(node: Held, setter: string, args: readonly u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.NonCapturingGroup['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapNonCapturingGroup(
@@ -1819,7 +1819,7 @@ function wrapInlineFlagsGroupEnable$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.InlineFlagsGroupEnable['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapInlineFlagsGroupEnable(
@@ -1917,7 +1917,7 @@ function wrapInlineFlagsGroupToggle$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.InlineFlagsGroupToggle['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapInlineFlagsGroupToggle(
@@ -2005,7 +2005,7 @@ function wrapInlineFlagsGroupDisable$with(node: Held, setter: string, args: read
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
 				applySetter(args, (v: NonNullable<T.InlineFlagsGroupDisable['_pattern']>) =>
 					rebuilt(node, handle, () =>
 						wrapInlineFlagsGroupDisable(

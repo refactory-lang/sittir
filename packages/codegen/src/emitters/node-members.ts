@@ -18,6 +18,8 @@ export interface HoistSet {
 	readonly storage: string;
 	readonly slot: string;
 	readonly optional: boolean;
+	readonly list?: string;
+	readonly placed?: { readonly params: string; readonly body: string };
 }
 
 export interface HeldRead {
@@ -106,7 +108,10 @@ function sharedSetterName(prefix: string, entry: SetterEntry): string {
 function appliedSetter(entry: SetterEntry): string {
 	const applied = (list: string) => `applySetter(${list}, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
 	if (entry.hoist === undefined) return applied('args');
-	return `hoistedWith(node, ${JSON.stringify(entry.name)}, ${JSON.stringify(entry.hoist.storage)}, ${JSON.stringify(entry.hoist.slot)}, ${entry.hoist.optional}, args, (args) => ${applied('args')})`;
+	const { placed } = entry.hoist;
+	const placedApplied = (list: string) => `applySetter(${list}, (${placed!.params}) => rebuilt(node, handle, () => ${placed!.body}))`;
+	const place = placed === undefined ? '' : `, (value) => ${placedApplied('[value]')}`;
+	return `hoistedWith(node, ${JSON.stringify(entry.name)}, ${JSON.stringify(entry.hoist.storage)}, ${JSON.stringify(entry.hoist.slot)}, ${entry.hoist.optional}, ${entry.hoist.list === undefined ? 'undefined' : `{ ${entry.hoist.list} }`}, handle, args, (args) => ${placed === undefined ? applied('args') : `args.length === 0 ? ${placedApplied('args')} : ${applied('args')}`}${place})`;
 }
 
 function withLines(name: string, kind: string, nodeType: string, prelude: readonly string[], setters: readonly SetterEntry[], caseLines: (entry: SetterEntry) => readonly string[] = () => []): string[] {
@@ -199,9 +204,10 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		const base = `(${entry.params}) => ${entry.body}`;
 		const element = plan.elements.find((candidate) => candidate.slot === entry.name);
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
-		const elementSet = element === undefined ? base : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`;
+		const wrapped = slot?.wrap === undefined ? base : `(list: never) => ((${entry.params}) => ${entry.body})(${slot.wrap} as never)`;
+		const elementSet = element === undefined ? wrapped : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${wrapped})`;
 		if (slot !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads, hoist: entry.hoist };
+			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads, hoist: entry.hoist === undefined || slot.wrap === undefined ? entry.hoist : { ...entry.hoist, list: slot.spec, placed: { params: entry.params, body: entry.body } } };
 		}
 		if (element !== undefined) {
 			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`, reads: entry.reads, hoist: entry.hoist };

@@ -659,11 +659,15 @@ export function listSlotWith(
 	spec: Omit<ListSlotSpec, 'slot'>,
 	set: (...args: never[]) => unknown
 ): unknown {
-	const make = spec.make as (...args: unknown[]) => unknown;
 	const run = set as (...args: unknown[]) => unknown;
-	if (args.length === 0) return spec.optional ? run() : run(make());
+	return args.length === 0 && spec.optional ? run() : run(listSlotValue(args, spec));
+}
+
+function listSlotValue(args: readonly unknown[], spec: Omit<ListSlotSpec, 'slot'>): unknown {
+	const make = spec.make as (...args: unknown[]) => unknown;
+	if (args.length === 0) return make();
 	const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
-	return run(whole ? args[0] : make(...convertElements(args, spec.element)));
+	return whole ? args[0] : make(...convertElements(args, spec.element));
 }
 
 interface ElementsSeatSpec extends ElementConfig {
@@ -914,14 +918,18 @@ export function hoistedWith(
 	storage: string,
 	slot: string,
 	optional: boolean,
+	list: Omit<ListSlotSpec, 'slot'> | undefined,
+	handle: EngineHandle | undefined,
 	args: readonly unknown[],
-	apply: (args: readonly unknown[]) => unknown
+	apply: (args: readonly unknown[]) => unknown,
+	place: (value: unknown) => unknown = (value) => apply([value])
 ): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
 	const native = clears ? undefined : nativeSlotReader(node, accessor);
 	const existing = clears ? undefined : native === undefined ? hydrateStoredSlot(node, storage) : native.call(node);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
-	return set?.[slot] === undefined ? apply(args) : apply([set[slot](...args)]);
+	const value = list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
+	return set?.[slot] === undefined ? apply(value) : place(set[slot](...value));
 }
 
 /** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot. */

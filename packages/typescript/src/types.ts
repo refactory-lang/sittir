@@ -4028,6 +4028,10 @@ export interface FunctionExpression {
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
 		};
 	};
 	readonly async: () => boolean;
@@ -4078,6 +4082,10 @@ export interface FunctionDeclaration {
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
 		};
 	};
 	readonly async: () => boolean;
@@ -4123,6 +4131,10 @@ export interface GeneratorFunction {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
@@ -4173,6 +4185,10 @@ export interface GeneratorFunctionDeclaration {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
@@ -5269,6 +5285,10 @@ export interface FunctionSignature {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
@@ -6497,6 +6517,10 @@ export interface ConstructorType {
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
 		};
 	};
 	readonly abstract: () => boolean;
@@ -7531,6 +7555,10 @@ export interface CallSignature {
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
 		};
 	};
 	readonly typeParameters: () => readonly TypeParameter[];
@@ -7773,6 +7801,10 @@ export interface ConstructSignature {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
@@ -8099,6 +8131,10 @@ export interface FunctionType {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
@@ -8849,6 +8885,9 @@ export interface ImportStatementClauseFrom {
 	readonly __slotHints__?: {
 		readonly importClause: SlotHint<T.ImportClause>;
 		readonly source: SlotHint<T.String>;
+		readonly $listSlots: {
+			readonly importClause: ListSlotHint<T.ImportSpecifier, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	readonly importClause: () => NamespaceImport | NamedImports | ImportClauseDefaultImport;
 	readonly source: () => String;
@@ -9269,6 +9308,9 @@ export interface ImportClauseDefaultImport {
 	readonly __slotHints__?: {
 		readonly identifier: SlotHint<T.Identifier>;
 		readonly importClauseGroup: SlotHint<T.ImportClauseGroup, true>;
+		readonly $listSlots: {
+			readonly importClauseGroup: ListSlotHint<T.ImportSpecifier, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	readonly identifier: () => Identifier;
 	readonly importClauseGroup: () => NamespaceImport | NamedImports | undefined;
@@ -9811,6 +9853,10 @@ export interface MethodDefinitionPlain {
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
 		};
 	};
 	readonly accessibilityModifier: () =>
@@ -10015,6 +10061,10 @@ export interface MethodSignaturePlain {
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
 		};
 	};
 	readonly accessibilityModifier: () =>
@@ -10197,6 +10247,10 @@ export interface AbstractMethodSignaturePlain {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
@@ -10520,6 +10574,12 @@ export interface ConstructorDeclaration {
 		>;
 		readonly parameters: SlotHint<T.FormalParameters>;
 		readonly body: SlotHint<T.StatementBlock>;
+		readonly $listSlots: {
+			readonly parameters: ListSlotHint<
+				T.RequiredParameter | T.OptionalParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	readonly accessibilityModifier: () =>
 		| TSKindId.PublicKeyword

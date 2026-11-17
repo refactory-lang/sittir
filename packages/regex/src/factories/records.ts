@@ -336,7 +336,7 @@ function withLookaheadAssertion(node: object, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildLookaheadAssertion$set(node, 'operator', { operator: value }))
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => buildLookaheadAssertion$set(node, 'pattern', { pattern: value }))
 				)
@@ -433,7 +433,7 @@ function withLookbehindAssertion(node: object, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildLookbehindAssertion$set(node, 'operator', { operator: value }))
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => buildLookbehindAssertion$set(node, 'pattern', { pattern: value }))
 				)
@@ -881,7 +881,7 @@ function withAnonymousCapturingGroup(node: object, setter: string, args: readonl
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => _buildAnonymousCapturingGroup$patch(node, value))
 				)
@@ -1005,7 +1005,7 @@ function withNamedCapturingGroup(node: object, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildNamedCapturingGroup$set(node, 'groupName', { groupName: value }))
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => buildNamedCapturingGroup$set(node, 'pattern', { pattern: value }))
 				)
@@ -1066,7 +1066,7 @@ function withNonCapturingGroup(node: object, setter: string, args: readonly unkn
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
 				applySetter(args, (value: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => _buildNonCapturingGroup$patch(node, value))
 				)
@@ -2505,7 +2505,7 @@ function withInlineFlagsGroupEnable(node: object, setter: string, args: readonly
 				rebuilt(node, handle, () => buildInlineFlagsGroupEnable$set(node, 'enabled', { enabled: value }))
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => buildInlineFlagsGroupEnable$set(node, 'pattern', { pattern: value }))
 				)
@@ -2636,7 +2636,7 @@ function withInlineFlagsGroupToggle(node: object, setter: string, args: readonly
 				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$set(node, 'disabled', { disabled: value }))
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => buildInlineFlagsGroupToggle$set(node, 'pattern', { pattern: value }))
 				)
@@ -2743,7 +2743,7 @@ function withInlineFlagsGroupDisable(node: object, setter: string, args: readonl
 				rebuilt(node, handle, () => buildInlineFlagsGroupDisable$set(node, 'disabled', { disabled: value }))
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.Pattern>) =>
 					rebuilt(node, handle, () => buildInlineFlagsGroupDisable$set(node, 'pattern', { pattern: value }))
 				)

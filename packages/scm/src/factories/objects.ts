@@ -262,7 +262,7 @@ function buildString$with(node: Held, setter: string, args: readonly unknown[]):
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'stringContent':
-			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value)))
 			);
 	}
@@ -321,7 +321,7 @@ function buildImmediateString$with(node: Held, setter: string, args: readonly un
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'stringContent':
-			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildImmediateString(value)))
 			);
 	}
@@ -861,7 +861,7 @@ function buildPredicate$with(node: Held, setter: string, args: readonly unknown[
 				rebuilt(node, handle, () => buildPredicate({ ...config, type: value }))
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', true, args, (args) =>
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', true, undefined, handle, args, (args) =>
 				applySetter(args, (value?: Admit<T.Parameters>) =>
 					rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
 				)

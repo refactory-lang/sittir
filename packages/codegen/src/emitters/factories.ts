@@ -136,6 +136,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { BuiltViewTable, leafAdoptLines, patchTwinLines, RECORD_CONSTRUCTION_IMPORTS, RECORD_VIEW_TYPES, recordParts, recordRefusalLines } from './record-construction.ts';
 import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
+import { wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
 import { splicedEnvelopeOf } from '../compiler/model/spliced-envelopes.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -2804,16 +2805,36 @@ function viewPlanOfTarget(
 function listSlotTargets(
 	node: AssembledNode,
 	nodeMap: NodeMap
-): readonly { readonly slot: AssembledNonterminal; readonly kind: AssembledNode }[] {
+): readonly { readonly slot: AssembledNonterminal; readonly kind: AssembledNode; readonly wrappers: readonly AssembledNode[] }[] {
 	if (!isSlotBearingCompound(node)) return [];
 	return node.slots.flatMap((slot) => {
 		if (isMultiple(slot)) return [];
 		const kinds = slotKindNames(slot);
-		const kind = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
-		return kind !== undefined && kind.rawFactoryName !== undefined && listViewTarget(kind, nodeMap) !== undefined
-			? [{ slot, kind }]
-			: [];
+		const own = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
+		if (own !== undefined && isListKind(own, nodeMap)) return [{ slot, kind: own, wrappers: [] }];
+		const hoisted = hoistedListKind(node, slot, nodeMap);
+		return hoisted === undefined ? [] : [{ slot, ...hoisted }];
 	});
+}
+
+function isListKind(kind: AssembledNode, nodeMap: NodeMap): boolean {
+	return kind.rawFactoryName !== undefined && listViewTarget(kind, nodeMap) !== undefined;
+}
+
+function hoistedListKind(
+	node: AssembledNode,
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap
+): { readonly kind: AssembledNode; readonly wrappers: readonly AssembledNode[] } | undefined {
+	const chain = wrapperChainFor(nodeMap, node.kind, slot.name);
+	if (chain === undefined) return undefined;
+	const wrappers = chain.storage.map((name) => nodeMap.nodes.get(name)!);
+	const last = wrappers[wrappers.length - 1]!;
+	if (isListKind(last, nodeMap)) return { kind: last, wrappers: wrappers.slice(0, -1) };
+	const held = chain.slots[chain.slots.length - 1]!;
+	if (isMultiple(held)) return undefined;
+	const kind = slotKindNames(held).map((name) => nodeMap.nodes.get(name)).find((candidate) => candidate !== undefined && isListKind(candidate, nodeMap));
+	return kind === undefined ? undefined : { kind, wrappers };
 }
 
 export function listSlotHints(
@@ -2834,16 +2855,17 @@ function listSlotSpecs(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
 	factoryScope: string
-): readonly { readonly slot: string; readonly spec: string }[] {
-	return listSlotTargets(node, nodeMap).map(({ slot, kind }) => ({
+): readonly { readonly slot: string; readonly spec: string; readonly wrap?: string }[] {
+	return listSlotTargets(node, nodeMap).map(({ slot, kind, wrappers }) => ({
 		slot: slot.propertyName,
-		spec: `kind: ${factoryTypeDiscriminant(kind.kind, nodeMap, kindEntries)}, optional: ${!isRequired(slot)}, make: ${factoryScope}${kind.rawFactoryName}${elementSpecOf(kind, nodeMap, factoryScope)}`
+		spec: `kind: ${factoryTypeDiscriminant(kind.kind, nodeMap, kindEntries)}, optional: ${!isRequired(slot)}, make: ${factoryScope}${kind.rawFactoryName}${elementSpecOf(kind, nodeMap, factoryScope)}`,
+		...(wrappers.length === 0 ? {} : { wrap: wrappers.reduceRight((inner, wrapper) => `${factoryScope}${wrapper.rawFactoryName}(${inner})`, 'list') })
 	}));
 }
 
 export interface SeatPlan {
 	readonly viewPlan: ListViewPlan | undefined;
-	readonly slots: readonly { readonly slot: string; readonly spec: string }[];
+	readonly slots: readonly { readonly slot: string; readonly spec: string; readonly wrap?: string }[];
 	readonly groups: readonly { readonly hint: GroupSeatHint; readonly spec: string }[];
 	readonly elements: readonly { readonly slot: string; readonly spec: string }[];
 }

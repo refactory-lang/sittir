@@ -44,4 +44,10 @@ describe.each(['arena', 'object'] as const)('the python hoist sets through its w
 		expect(String(e.render(bare.$with.returnType(other.returnType()!)))).toBe('def h() -> str:\n    pass');
 		e[Symbol.dispose]();
 	});
-});
+	it('sets several parameters when a function already has parameters', async () => {
+		const { e, item } = await first('def f(a):\n    pass\n');
+		const other = e.parse('def g(b, c):\n    pass\n').statements()[0]!;
+		if (!e.is.functionDefinition(other)) throw new Error('expected a function');
+		expect(String(e.render(item.$with.parameters(...other.parameters())))).toBe('def f(b, c):\n    pass');
+		e[Symbol.dispose]();
+	});});

@@ -47,4 +47,22 @@ describe.each(['arena', 'object'] as const)('the typescript hoist sets through i
 		expect(String(e.render(edited as never))).toBe('set x(w: string) {}');
 		e[Symbol.dispose]();
 	});
+
+	it('sets every formal parameter when several are passed', async () => {
+		const { e, root } = await open('function f(a) {}\nfunction g(b, c) {}\n');
+		const [f, g] = root.statements();
+		if (!e.is.functionDeclaration(f!) || !e.is.functionDeclaration(g!)) throw new Error('expected functions');
+		const [b, c] = g.parameters();
+		expect(String(e.render(f.$with.parameters(b!, c!)))).toBe('function f(b, c) {}\n');
+		e[Symbol.dispose]();
+	});
+
+	it('sets several type parameters through the existing angle brackets', async () => {
+		const { e, root } = await open('function f<A>() {}\nfunction g<B, C>() {}\n');
+		const [f, g] = root.statements();
+		if (!e.is.functionDeclaration(f!) || !e.is.functionDeclaration(g!)) throw new Error('expected functions');
+		const [b, c] = g.typeParameters();
+		expect(String(e.render(f.$with.typeParameters(b!, c!)))).toBe('function f<B, C>() {}\n');
+		e[Symbol.dispose]();
+	});
 });
