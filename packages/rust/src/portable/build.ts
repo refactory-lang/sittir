@@ -1,5 +1,5 @@
 import type { Engine } from '@sittir/types';
-import type { BuildInput } from '@sittir/types/vocabulary';
+import type { BuildInput, Unmapped } from '@sittir/types/vocabulary';
 import type { RustAPI } from '../api.js';
 import type { RustMap } from './map.js';
 export function portableBuild(engine: Engine<RustAPI>) {
@@ -11,6 +11,9 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 	): never => {
 		throw new Error(owner + ': ' + value.$path + ' is not generated');
+	};
+	const missing = (owner: string): never => {
+		throw new Error(owner + ' is required');
 	};
 	const seated = <
 		V extends
@@ -403,7 +406,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 				return unbuilt('clause.import.list.scoped.path', value);
 		}
 	};
-	const clause_import_wildcard$229_useWildcardGroup = (value: never) => {
+	const clause_import_wildcard$229_useWildcardGroup = (value: Unmapped<'rust:use_wildcard_group'>) => {
 		if (typeof value === 'number') {
 			if (seated(value, [359])) return value;
 			return unseated('clause.import.wildcard.useWildcardGroup', value);
@@ -1385,6 +1388,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 	};
 	const literal_number_negative$330_value = (
 		value:
+			| string
 			| BuildInput<RustMap, 'literal.number.float'>
 			| RustMap['nodes']['literal.number.float']
 			| BuildInput<RustMap, 'literal.number.integer'>
@@ -1396,6 +1400,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 			| BuildInput<RustMap, 'literal.number.integer.octal'>
 			| RustMap['nodes']['literal.number.integer.octal']
 	) => {
+		if (typeof value === 'string') return value;
 		if (typeof value === 'number') {
 			if (seated(value, [141, 142, 143, 144, 162, 331])) return value;
 			return unseated('literal.number.negative.value', value);
@@ -2736,10 +2741,15 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		return b.removedTraitBound(clause_bounds_removed$218_type(input.type));
 	};
 	const clause_bounds_use$249 = (input: BuildInput<RustMap, 'clause.bounds.use'>): ReturnType<typeof b.useBounds> => {
+		const bounds$first = (input.bounds ?? [])[0];
+		const bounds$rest = (input.bounds ?? []).slice(1);
 		return b.useBounds(
-			(input.bounds ?? []).length === 0
+			bounds$first === undefined
 				? undefined
-				: b.useBoundsElements(...(input.bounds ?? []).map(clause_bounds_use$249_bounds$item))
+				: b.useBoundsElements(
+						clause_bounds_use$249_bounds$item(bounds$first),
+						...bounds$rest.map(clause_bounds_use$249_bounds$item)
+					)
 		);
 	};
 	const clause_else$291 = (input: BuildInput<RustMap, 'clause.else'>): ReturnType<typeof b.elseClause> => {
@@ -2754,10 +2764,15 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		});
 	};
 	const clause_import_list$227 = (input: BuildInput<RustMap, 'clause.import.list'>): ReturnType<typeof b.useList> => {
+		const useClauses$first = (input.useClauses ?? [])[0];
+		const useClauses$rest = (input.useClauses ?? []).slice(1);
 		return b.useList(
-			(input.useClauses ?? []).length === 0
+			useClauses$first === undefined
 				? undefined
-				: b.useClauses(...(input.useClauses ?? []).map(clause_import_list$227_useClauses$item))
+				: b.useClauses(
+						clause_import_list$227_useClauses$item(useClauses$first),
+						...useClauses$rest.map(clause_import_list$227_useClauses$item)
+					)
 		);
 	};
 	const clause_import_list_scoped$226 = (
@@ -2784,43 +2799,63 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		});
 	};
 	const clause_where$211 = (input: BuildInput<RustMap, 'clause.where'>): ReturnType<typeof b.whereClause> => {
+		const wherePredicates$first = (input.wherePredicates ?? [])[0];
+		const wherePredicates$rest = (input.wherePredicates ?? []).slice(1);
 		return b.whereClause(
-			(input.wherePredicates ?? []).length === 0
+			wherePredicates$first === undefined
 				? undefined
-				: b.wherePredicates(...(input.wherePredicates ?? []).map(clause_where$211_wherePredicates$item))
+				: b.wherePredicates(
+						clause_where$211_wherePredicates$item(wherePredicates$first),
+						...wherePredicates$rest.map(clause_where$211_wherePredicates$item)
+					)
 		);
 	};
 	const declaration_macro_brace$418 = (
 		input: BuildInput<RustMap, 'declaration.macro.brace'>
 	): ReturnType<typeof b.macroDefinitionBrace> => {
+		const rules$first = (input.rules ?? [])[0];
+		const rules$rest = (input.rules ?? []).slice(1);
 		return b.macroDefinitionBrace({
 			name: declaration_macro_brace$418_name(input.name),
 			macroRules:
-				(input.rules ?? []).length === 0
+				rules$first === undefined
 					? undefined
-					: b.macroRules(...(input.rules ?? []).map(declaration_macro_brace$418_rules$item))
+					: b.macroRules(
+							declaration_macro_brace$418_rules$item(rules$first),
+							...rules$rest.map(declaration_macro_brace$418_rules$item)
+						)
 		});
 	};
 	const declaration_macro_bracket$417 = (
 		input: BuildInput<RustMap, 'declaration.macro.bracket'>
 	): ReturnType<typeof b.macroDefinitionBracket> => {
+		const rules$first = (input.rules ?? [])[0];
+		const rules$rest = (input.rules ?? []).slice(1);
 		return b.macroDefinitionBracket({
 			name: declaration_macro_bracket$417_name(input.name),
 			macroRules:
-				(input.rules ?? []).length === 0
+				rules$first === undefined
 					? undefined
-					: b.macroRules(...(input.rules ?? []).map(declaration_macro_bracket$417_rules$item))
+					: b.macroRules(
+							declaration_macro_bracket$417_rules$item(rules$first),
+							...rules$rest.map(declaration_macro_bracket$417_rules$item)
+						)
 		});
 	};
 	const declaration_macro_paren$416 = (
 		input: BuildInput<RustMap, 'declaration.macro.paren'>
 	): ReturnType<typeof b.macroDefinitionParen> => {
+		const rules$first = (input.rules ?? [])[0];
+		const rules$rest = (input.rules ?? []).slice(1);
 		return b.macroDefinitionParen({
 			name: declaration_macro_paren$416_name(input.name),
 			macroRules:
-				(input.rules ?? []).length === 0
+				rules$first === undefined
 					? undefined
-					: b.macroRules(...(input.rules ?? []).map(declaration_macro_paren$416_rules$item))
+					: b.macroRules(
+							declaration_macro_paren$416_rules$item(rules$first),
+							...rules$rest.map(declaration_macro_paren$416_rules$item)
+						)
 		});
 	};
 	const element_macro_token_binding$184 = (
@@ -2842,13 +2877,18 @@ export function portableBuild(engine: Engine<RustAPI>) {
 	const element_type_binding$251 = (
 		input: BuildInput<RustMap, 'element.type_binding'>
 	): ReturnType<typeof b.typeBinding> => {
+		const typeArguments$first = (input.typeArguments ?? [])[0];
+		const typeArguments$rest = (input.typeArguments ?? []).slice(1);
 		return b.typeBinding({
 			name: element_type_binding$251_name(input.name),
 			typeArguments:
-				(input.typeArguments ?? []).length === 0
+				typeArguments$first === undefined
 					? undefined
 					: b.typeArguments(
-							b.typeArgumentsElements(...(input.typeArguments ?? []).map(element_type_binding$251_typeArguments$item))
+							b.typeArgumentsElements(
+								element_type_binding$251_typeArguments$item(typeArguments$first),
+								...typeArguments$rest.map(element_type_binding$251_typeArguments$item)
+							)
 						),
 			type: element_type_binding$251_type(input.type)
 		});
@@ -2895,18 +2935,23 @@ export function portableBuild(engine: Engine<RustAPI>) {
 	const expression_collection_struct$282 = (
 		input: BuildInput<RustMap, 'expression.collection.struct'>
 	): ReturnType<typeof b.structExpression> => {
+		const body$first = (input.body ?? [])[0];
+		const body$rest = (input.body ?? []).slice(1);
 		return b.structExpression({
 			name: expression_collection_struct$282_name(input.name),
 			body:
-				(input.body ?? []).length === 0
+				body$first === undefined
 					? b.fieldInitializerList()
 					: b.fieldInitializerList(
-							b.fieldInitializerListElements(...(input.body ?? []).map(expression_collection_struct$282_body$item))
+							b.fieldInitializerListElements(
+								expression_collection_struct$282_body$item(body$first),
+								...body$rest.map(expression_collection_struct$282_body$item)
+							)
 						)
 		});
 	};
 	const identifier_label$303 = (input: BuildInput<RustMap, 'identifier.label'>): ReturnType<typeof b.label> => {
-		return b.label(identifier_label$303_name(input.name));
+		return b.label(input.name === undefined ? missing('identifier.label.name') : identifier_label$303_name(input.name));
 	};
 	const identifier_lifetime$239 = (
 		input: BuildInput<RustMap, 'identifier.lifetime'>
@@ -2958,7 +3003,12 @@ export function portableBuild(engine: Engine<RustAPI>) {
 	const statement_import$224 = (
 		input: BuildInput<RustMap, 'statement.import'>
 	): ReturnType<typeof b.useDeclaration> => {
-		return b.useDeclaration({ argument: statement_import$224_argument(input.argument) });
+		return b.useDeclaration({
+			argument:
+				input.argument === undefined
+					? missing('statement.import.argument')
+					: statement_import$224_argument(input.argument)
+		});
 	};
 	const statement_import_package$204 = (
 		input: BuildInput<RustMap, 'statement.import.package'>

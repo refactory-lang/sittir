@@ -84,9 +84,10 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			map: grammarMapName(input.grammar),
 			imports: { vocabulary: VOCABULARY_MODULE, api: moduleSpecifier(PORTABLE_BUILD_FILE, 'api.ts'), map: moduleSpecifier(PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE) },
 			table: build.table,
-			members: emitMembersOf(typed.slots),
+			members: emitMembersOf(typed.slots, (path, member) => input.vocabulary.members(path).get(member)?.optional === true),
 			viewed: typed.reads.viewed,
 			textPaths: typed.reads.textPaths,
+			textInputs: typed.textInputs,
 			holes: build.holes
 		},
 		typed,
@@ -113,11 +114,11 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	};
 }
 
-function emitMembersOf(exact: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>): PortableEmitInput<PortableBuildTable>['members'] {
+function emitMembersOf(exact: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, optional: (path: string, member: string) => boolean): PortableEmitInput<PortableBuildTable>['members'] {
 	return Object.fromEntries(
 		[...exact].map(([path, members]) => [
 			path,
-			Object.fromEntries([...members].map(([member, set]): [string, PortableEmitMember] => [member, { paths: set.kinds, texts: set.texts, string: set.scalars.includes('string') }]))
+			Object.fromEntries([...members].map(([member, set]): [string, PortableEmitMember] => [member, { paths: set.kinds, texts: set.texts, unmapped: set.unmapped, string: set.scalars.includes('string'), optional: optional(path, member) }]))
 		])
 	);
 }

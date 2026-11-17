@@ -226,6 +226,7 @@ export interface GrammarMapOutput {
 	readonly source: string;
 	readonly unformed: readonly UnformedTest[];
 	readonly slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
+	readonly textInputs: readonly string[];
 }
 
 export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots): GrammarMapOutput {
@@ -280,5 +281,5 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		`export type ${map}Fits = V.Assert<V.Fits<${map}>>;`,
 		''
 	);
-	return { source: lines.join('\n'), unformed, slots };
+	return { source: lines.join('\n'), unformed, slots, textInputs: textBuiltPaths(typedInput) };
 }

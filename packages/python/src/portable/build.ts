@@ -1,5 +1,5 @@
 import type { Engine } from '@sittir/types';
-import type { BuildInput } from '@sittir/types/vocabulary';
+import type { BuildInput, Unmapped } from '@sittir/types/vocabulary';
 import type { PythonAPI } from '../api.js';
 import type { PythonMap } from './map.js';
 export function portableBuild(engine: Engine<PythonAPI>) {
@@ -11,6 +11,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 	): never => {
 		throw new Error(owner + ': ' + value.$path + ' is not generated');
+	};
+	const missing = (owner: string): never => {
+		throw new Error(owner + ' is required');
 	};
 	const seated = <
 		V extends
@@ -238,6 +241,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -627,6 +631,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -1099,6 +1104,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -1562,6 +1568,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -1963,6 +1970,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -2386,6 +2394,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -2892,6 +2901,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -3358,6 +3368,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -3820,6 +3831,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -4233,6 +4245,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -4634,6 +4647,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -5023,6 +5037,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -5412,6 +5427,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -5801,6 +5817,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -6236,6 +6253,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -6682,6 +6700,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -7136,6 +7155,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -7590,6 +7610,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -8044,6 +8065,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -8498,6 +8520,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -8952,6 +8975,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -9406,6 +9430,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -9860,6 +9885,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -10314,6 +10340,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -10768,6 +10795,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -11222,6 +11250,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -11676,6 +11705,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -12130,6 +12160,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -19058,6 +19089,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -19447,6 +19479,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -19836,6 +19869,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -20225,6 +20259,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -22488,6 +22523,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -22917,6 +22953,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -23314,6 +23351,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -23703,6 +23741,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -24092,6 +24131,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -24489,6 +24529,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.tuple.bare'>
 			| PythonMap['nodes']['pattern.tuple.bare']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -24957,6 +24998,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -25972,6 +26014,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -26674,6 +26717,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -26912,6 +26956,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const identifier_qualified$187_qualifier = (
 		value:
+			| string
 			| BuildInput<PythonMap, 'expression.assignment'>
 			| PythonMap['nodes']['expression.assignment']
 			| BuildInput<PythonMap, 'expression.await'>
@@ -27098,7 +27143,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
+		if (typeof value === 'string') return value;
 		if (typeof value === 'number') {
 			if (seated(value, [187])) return value;
 			return unseated('identifier.qualified.qualifier', value);
@@ -27509,6 +27556,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -27990,6 +28038,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const pattern_complex_add$197_imaginary = (
 		value:
+			| string
 			| BuildInput<PythonMap, 'literal.number.float'>
 			| PythonMap['nodes']['literal.number.float']
 			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -28015,6 +28064,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| BuildInput<PythonMap, 'literal.number.integer.octal'>
 			| PythonMap['nodes']['literal.number.integer.octal']
 	) => {
+		if (typeof value === 'string') return value;
 		if (typeof value === 'number') {
 			if (
 				seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295])
@@ -28060,6 +28110,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const pattern_complex_add$197_real = (
 		value:
+			| string
 			| BuildInput<PythonMap, 'literal.number.float'>
 			| PythonMap['nodes']['literal.number.float']
 			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -28085,6 +28136,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| BuildInput<PythonMap, 'literal.number.integer.octal'>
 			| PythonMap['nodes']['literal.number.integer.octal']
 	) => {
+		if (typeof value === 'string') return value;
 		if (typeof value === 'number') {
 			if (
 				seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295])
@@ -28130,6 +28182,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const pattern_complex_subtract$197_imaginary = (
 		value:
+			| string
 			| BuildInput<PythonMap, 'literal.number.float'>
 			| PythonMap['nodes']['literal.number.float']
 			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -28155,6 +28208,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| BuildInput<PythonMap, 'literal.number.integer.octal'>
 			| PythonMap['nodes']['literal.number.integer.octal']
 	) => {
+		if (typeof value === 'string') return value;
 		if (typeof value === 'number') {
 			if (
 				seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295])
@@ -28200,6 +28254,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const pattern_complex_subtract$197_real = (
 		value:
+			| string
 			| BuildInput<PythonMap, 'literal.number.float'>
 			| PythonMap['nodes']['literal.number.float']
 			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -28225,6 +28280,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| BuildInput<PythonMap, 'literal.number.integer.octal'>
 			| PythonMap['nodes']['literal.number.integer.octal']
 	) => {
+		if (typeof value === 'string') return value;
 		if (typeof value === 'number') {
 			if (
 				seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295])
@@ -28740,6 +28796,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['pattern.rest']
 			| BuildInput<PythonMap, 'pattern.rest.map'>
 			| PythonMap['nodes']['pattern.rest.map']
+			| Unmapped<'python:key_value_pattern'>
 	) => {
 		if (typeof value === 'number') {
 			if (seated(value, [193, 195, 300, 301])) return value;
@@ -30487,6 +30544,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -30971,6 +31029,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -31362,6 +31421,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -31753,6 +31813,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -32144,6 +32205,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['literal.string.unicode']
 			| BuildInput<PythonMap, 'pattern.rest'>
 			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -32547,6 +32609,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -32960,6 +33023,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -33406,6 +33470,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -33819,6 +33884,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			| PythonMap['nodes']['type.rest']
 			| BuildInput<PythonMap, 'type.union'>
 			| PythonMap['nodes']['type.union']
+			| Unmapped<'python:as_pattern'>
 	) => {
 		if (typeof value === 'string') {
 			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
@@ -34066,7 +34132,8 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'clause.import.relative'>
 	): ReturnType<typeof b.relativeImport> => {
 		return b.relativeImport({
-			dots: clause_import_relative$138_dots(input.dots),
+			dots:
+				input.dots === undefined ? missing('clause.import.relative.dots') : clause_import_relative$138_dots(input.dots),
 			name: input.name === undefined ? undefined : clause_import_relative$138_name(input.name)
 		});
 	};
@@ -34109,32 +34176,41 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'declaration.variable'>
 	): ReturnType<typeof b.assignmentEq> => {
 		return b.assignmentEq({
-			name: declaration_variable$302_name(input.name),
-			value: declaration_variable$302_value(input.value)
+			name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$302_name(input.name),
+			value:
+				input.value === undefined ? missing('declaration.variable.value') : declaration_variable$302_value(input.value)
 		});
 	};
 	const declaration_variable$303 = (
 		input: BuildInput<PythonMap, 'declaration.variable'>
 	): ReturnType<typeof b.assignmentType> => {
 		return b.assignmentType({
-			name: declaration_variable$303_name(input.name),
-			type: declaration_variable$303_type(input.type)
+			name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$303_name(input.name),
+			type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$303_type(input.type)
 		});
 	};
 	const declaration_variable$304 = (
 		input: BuildInput<PythonMap, 'declaration.variable'>
 	): ReturnType<typeof b.assignmentTyped> => {
 		return b.assignmentTyped({
-			name: declaration_variable$304_name(input.name),
-			type: declaration_variable$304_type(input.type),
-			value: declaration_variable$304_value(input.value)
+			name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$304_name(input.name),
+			type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$304_type(input.type),
+			value:
+				input.value === undefined ? missing('declaration.variable.value') : declaration_variable$304_value(input.value)
 		});
 	};
 	const element_pair$242 = (input: BuildInput<PythonMap, 'element.pair'>): ReturnType<typeof b.pair> => {
-		return b.pair({ key: element_pair$242_key(input.key), value: element_pair$242_value(input.value) });
+		return b.pair({
+			key: element_pair$242_key(input.key),
+			value: input.value === undefined ? missing('element.pair.value') : element_pair$242_value(input.value)
+		});
 	};
 	const element_spread$173 = (input: BuildInput<PythonMap, 'element.spread'>): ReturnType<typeof b.listSplat> => {
-		return b.listSplat(element_spread$173_expression(input.expression));
+		return b.listSplat(
+			input.expression === undefined
+				? missing('element.spread.expression')
+				: element_spread$173_expression(input.expression)
+		);
 	};
 	const element_spread_map$174 = (
 		input: BuildInput<PythonMap, 'element.spread.map'>
@@ -34278,8 +34354,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_arithmetic_add$214_left(input.left),
-			right: expression_binary_arithmetic_add$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.arithmetic.add.left')
+					: expression_binary_arithmetic_add$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.arithmetic.add.right')
+					: expression_binary_arithmetic_add$214_right(input.right),
 			operator: 48
 		});
 	};
@@ -34287,8 +34369,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_arithmetic_divide$214_left(input.left),
-			right: expression_binary_arithmetic_divide$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.arithmetic.divide.left')
+					: expression_binary_arithmetic_divide$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.arithmetic.divide.right')
+					: expression_binary_arithmetic_divide$214_right(input.right),
 			operator: 53
 		});
 	};
@@ -34296,8 +34384,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_arithmetic_exponent$214_left(input.left),
-			right: expression_binary_arithmetic_exponent$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.arithmetic.exponent.left')
+					: expression_binary_arithmetic_exponent$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.arithmetic.exponent.right')
+					: expression_binary_arithmetic_exponent$214_right(input.right),
 			operator: 35
 		});
 	};
@@ -34305,8 +34399,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_arithmetic_floor_divide$214_left(input.left),
-			right: expression_binary_arithmetic_floor_divide$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.arithmetic.floor_divide.left')
+					: expression_binary_arithmetic_floor_divide$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.arithmetic.floor_divide.right')
+					: expression_binary_arithmetic_floor_divide$214_right(input.right),
 			operator: 55
 		});
 	};
@@ -34314,8 +34414,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_arithmetic_modulo$214_left(input.left),
-			right: expression_binary_arithmetic_modulo$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.arithmetic.modulo.left')
+					: expression_binary_arithmetic_modulo$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.arithmetic.modulo.right')
+					: expression_binary_arithmetic_modulo$214_right(input.right),
 			operator: 54
 		});
 	};
@@ -34323,8 +34429,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_arithmetic_multiply$214_left(input.left),
-			right: expression_binary_arithmetic_multiply$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.arithmetic.multiply.left')
+					: expression_binary_arithmetic_multiply$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.arithmetic.multiply.right')
+					: expression_binary_arithmetic_multiply$214_right(input.right),
 			operator: 8
 		});
 	};
@@ -34332,8 +34444,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_arithmetic_subtract$214_left(input.left),
-			right: expression_binary_arithmetic_subtract$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.arithmetic.subtract.left')
+					: expression_binary_arithmetic_subtract$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.arithmetic.subtract.right')
+					: expression_binary_arithmetic_subtract$214_right(input.right),
 			operator: 49
 		});
 	};
@@ -34341,8 +34459,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.bitwise.and'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_bitwise_and$214_left(input.left),
-			right: expression_binary_bitwise_and$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.bitwise.and.left')
+					: expression_binary_bitwise_and$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.bitwise.and.right')
+					: expression_binary_bitwise_and$214_right(input.right),
 			operator: 56
 		});
 	};
@@ -34350,8 +34474,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.bitwise.or'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_bitwise_or$214_left(input.left),
-			right: expression_binary_bitwise_or$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.bitwise.or.left')
+					: expression_binary_bitwise_or$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.bitwise.or.right')
+					: expression_binary_bitwise_or$214_right(input.right),
 			operator: 45
 		});
 	};
@@ -34359,8 +34489,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_bitwise_xor$214_left(input.left),
-			right: expression_binary_bitwise_xor$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.bitwise.xor.left')
+					: expression_binary_bitwise_xor$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.bitwise.xor.right')
+					: expression_binary_bitwise_xor$214_right(input.right),
 			operator: 57
 		});
 	};
@@ -34368,8 +34504,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.logical.and'>
 	): ReturnType<typeof b.booleanOperator> => {
 		return b.booleanOperator({
-			left: expression_binary_logical_and$213_left(input.left),
-			right: expression_binary_logical_and$213_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.logical.and.left')
+					: expression_binary_logical_and$213_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.logical.and.right')
+					: expression_binary_logical_and$213_right(input.right),
 			operator: 51
 		});
 	};
@@ -34377,8 +34519,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.logical.or'>
 	): ReturnType<typeof b.booleanOperator> => {
 		return b.booleanOperator({
-			left: expression_binary_logical_or$213_left(input.left),
-			right: expression_binary_logical_or$213_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.logical.or.left')
+					: expression_binary_logical_or$213_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.logical.or.right')
+					: expression_binary_logical_or$213_right(input.right),
 			operator: 52
 		});
 	};
@@ -34386,8 +34534,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_matrix_multiply$214_left(input.left),
-			right: expression_binary_matrix_multiply$214_right(input.right),
+			left:
+				input.left === undefined
+					? missing('expression.binary.matrix_multiply.left')
+					: expression_binary_matrix_multiply$214_left(input.left),
+			right:
+				input.right === undefined
+					? missing('expression.binary.matrix_multiply.right')
+					: expression_binary_matrix_multiply$214_right(input.right),
 			operator: 44
 		});
 	};
@@ -34395,8 +34549,14 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.shift.left'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_shift_left$214_operand(input.operand),
-			right: expression_binary_shift_left$214_count(input.count),
+			left:
+				input.operand === undefined
+					? missing('expression.binary.shift.left.operand')
+					: expression_binary_shift_left$214_operand(input.operand),
+			right:
+				input.count === undefined
+					? missing('expression.binary.shift.left.count')
+					: expression_binary_shift_left$214_count(input.count),
 			operator: 58
 		});
 	};
@@ -34404,36 +34564,57 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.binary.shift.right'>
 	): ReturnType<typeof b.binaryOperator> => {
 		return b.binaryOperator({
-			left: expression_binary_shift_right$214_operand(input.operand),
-			right: expression_binary_shift_right$214_count(input.count),
+			left:
+				input.operand === undefined
+					? missing('expression.binary.shift.right.operand')
+					: expression_binary_shift_right$214_operand(input.operand),
+			right:
+				input.count === undefined
+					? missing('expression.binary.shift.right.count')
+					: expression_binary_shift_right$214_count(input.count),
 			operator: 9
 		});
 	};
 	const expression_collection_list$238 = (
 		input: BuildInput<PythonMap, 'expression.collection.list'>
 	): ReturnType<typeof b.list> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.list(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.collectionElements(...(input.elements ?? []).map(expression_collection_list$238_elements$item))
+				: b.collectionElements(
+						expression_collection_list$238_elements$item(elements$first),
+						...elements$rest.map(expression_collection_list$238_elements$item)
+					)
 		);
 	};
 	const expression_collection_map$241 = (
 		input: BuildInput<PythonMap, 'expression.collection.map'>
 	): ReturnType<typeof b.dictionary> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.dictionary(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.dictionaryElements(...(input.elements ?? []).map(expression_collection_map$241_elements$item))
+				: b.dictionaryElements(
+						expression_collection_map$241_elements$item(elements$first),
+						...elements$rest.map(expression_collection_map$241_elements$item)
+					)
 		);
 	};
 	const expression_collection_tuple$240 = (
 		input: BuildInput<PythonMap, 'expression.collection.tuple'>
 	): ReturnType<typeof b.tuple> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.tuple(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.tupleElements(...(input.elements ?? []).map(expression_collection_tuple$240_elements$item))
+				: b.tupleElements(
+						expression_collection_tuple$240_elements$item(elements$first),
+						...elements$rest.map(expression_collection_tuple$240_elements$item)
+					)
 		);
 	};
 	const expression_conditional$251 = (
@@ -34449,7 +34630,10 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'expression.interpolation'>
 	): ReturnType<typeof b.formatExpression> => {
 		return b.formatExpression({
-			expression: expression_interpolation$360_expression(input.expression),
+			expression:
+				input.expression === undefined
+					? missing('expression.interpolation.expression')
+					: expression_interpolation$360_expression(input.expression),
 			typeConversion:
 				input.typeConversion === undefined
 					? undefined
@@ -34506,7 +34690,10 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'identifier.qualified'>
 	): ReturnType<typeof b.memberType> => {
 		return b.memberType({
-			qualifier: identifier_qualified$236_qualifier(input.qualifier),
+			qualifier:
+				input.qualifier === undefined
+					? missing('identifier.qualified.qualifier')
+					: identifier_qualified$236_qualifier(input.qualifier),
 			name: identifier_qualified$236_name(input.name)
 		});
 	};
@@ -34537,28 +34724,46 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		});
 	};
 	const pattern_list$203 = (input: BuildInput<PythonMap, 'pattern.list'>): ReturnType<typeof b.listPattern> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.listPattern(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.patterns(...(input.elements ?? []).map(pattern_list$203_elements$item))
+				: b.patterns(
+						pattern_list$203_elements$item(elements$first),
+						...elements$rest.map(pattern_list$203_elements$item)
+					)
 		);
 	};
 	const pattern_list$284 = (input: BuildInput<PythonMap, 'pattern.list'>): ReturnType<typeof b.caseListPattern> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.caseListPattern(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.listPatternCasePatterns(...(input.elements ?? []).map(pattern_list$284_elements$item))
+				: b.listPatternCasePatterns(
+						pattern_list$284_elements$item(elements$first),
+						...elements$rest.map(pattern_list$284_elements$item)
+					)
 		);
 	};
 	const pattern_map$192 = (input: BuildInput<PythonMap, 'pattern.map'>): ReturnType<typeof b.dictPattern> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.dictPattern(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.dictPatternElements(...(input.elements ?? []).map(pattern_map$192_elements$item))
+				: b.dictPatternElements(
+						pattern_map$192_elements$item(elements$first),
+						...elements$rest.map(pattern_map$192_elements$item)
+					)
 		);
 	};
 	const pattern_or$191 = (input: BuildInput<PythonMap, 'pattern.or'>): ReturnType<typeof b.unionPattern> => {
-		return b.unionPattern({ left: pattern_or$191_left(input.left), right: pattern_or$191_right(input.right) });
+		return b.unionPattern({
+			left: input.left === undefined ? missing('pattern.or.left') : pattern_or$191_left(input.left),
+			right: pattern_or$191_right(input.right)
+		});
 	};
 	const pattern_rest$206 = (input: BuildInput<PythonMap, 'pattern.rest'>): ReturnType<typeof b.listSplatPattern> => {
 		return b.listSplatPattern(pattern_rest$206_pattern(input.pattern));
@@ -34577,12 +34782,17 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		return b.splatPatternDictionary(pattern_rest_map$301_pattern(input.pattern));
 	};
 	const pattern_struct$196 = (input: BuildInput<PythonMap, 'pattern.struct'>): ReturnType<typeof b.classPattern> => {
+		const fields$first = (input.fields ?? [])[0];
+		const fields$rest = (input.fields ?? []).slice(1);
 		return b.classPattern({
-			type: pattern_struct$196_type(input.type),
+			type: input.type === undefined ? missing('pattern.struct.type') : pattern_struct$196_type(input.type),
 			fields:
-				(input.fields ?? []).length === 0
+				fields$first === undefined
 					? undefined
-					: b.listPatternCasePatterns(...(input.fields ?? []).map(pattern_struct$196_fields$item))
+					: b.listPatternCasePatterns(
+							pattern_struct$196_fields$item(fields$first),
+							...fields$rest.map(pattern_struct$196_fields$item)
+						)
 		});
 	};
 	const pattern_struct_field$194 = (
@@ -34590,21 +34800,34 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	): ReturnType<typeof b.keywordPattern> => {
 		return b.keywordPattern({
 			name: pattern_struct_field$194_name(input.name),
-			pattern: pattern_struct_field$194_pattern(input.pattern)
+			pattern:
+				input.pattern === undefined
+					? missing('pattern.struct.field.pattern')
+					: pattern_struct_field$194_pattern(input.pattern)
 		});
 	};
 	const pattern_tuple$202 = (input: BuildInput<PythonMap, 'pattern.tuple'>): ReturnType<typeof b.tuplePattern> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.tuplePattern(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.tuplePatternElements(...(input.elements ?? []).map(pattern_tuple$202_elements$item))
+				: b.tuplePatternElements(
+						pattern_tuple$202_elements$item(elements$first),
+						...elements$rest.map(pattern_tuple$202_elements$item)
+					)
 		);
 	};
 	const pattern_tuple$283 = (input: BuildInput<PythonMap, 'pattern.tuple'>): ReturnType<typeof b.caseTuplePattern> => {
+		const elements$first = (input.elements ?? [])[0];
+		const elements$rest = (input.elements ?? []).slice(1);
 		return b.caseTuplePattern(
-			(input.elements ?? []).length === 0
+			elements$first === undefined
 				? undefined
-				: b.listPatternCasePatterns(...(input.elements ?? []).map(pattern_tuple$283_elements$item))
+				: b.listPatternCasePatterns(
+						pattern_tuple$283_elements$item(elements$first),
+						...elements$rest.map(pattern_tuple$283_elements$item)
+					)
 		);
 	};
 	const statement_delete$151 = (
@@ -34645,7 +34868,10 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		return b.splatType(type_rest$232_type(input.type));
 	};
 	const type_union$234 = (input: BuildInput<PythonMap, 'type.union'>): ReturnType<typeof b.unionType> => {
-		return b.unionType({ left: type_union$234_left(input.left), right: type_union$234_right(input.right) });
+		return b.unionType({
+			left: input.left === undefined ? missing('type.union.left') : type_union$234_left(input.left),
+			right: type_union$234_right(input.right)
+		});
 	};
 	const argument_named = (input: BuildInput<PythonMap, 'argument.named'>) => {
 		return argument_named$237(input);

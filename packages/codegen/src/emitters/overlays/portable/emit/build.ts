@@ -134,6 +134,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			body: call(dot(id('kinds'), 'includes'), kindOf(id('value')))
 		})
 	);
+	const missingHelper = constant('missing', arrow('owner', 'string', block(raise(binary(id('owner'), '+', str(' is required')))), 'never'));
 	const unseatedHelper = constant('unseated', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' has no seat for kind ')), '+', paren(kindOf(id('value')))))), 'never', [['value', kinded]]));
 	const holes = new Set(input.holes.map(([holder, key]) => `${holder} ${key}`));
 	const takesHoles = (member: PortableMemberStep): boolean => member.seats.some((seat) => holes.has(`${seat.at[0]} ${seat.at[1]}`));
@@ -169,17 +170,34 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		return fail(`a container builder ${container.builder} taking a ${shape} input`);
 	};
 	const wrapOne = (within: readonly PortableContainer[] | undefined, value: Expression): Expression => [...(within ?? [])].reverse().reduce((inner, container) => placeOne(container, inner), value);
-	const wrapList = (within: readonly PortableContainer[], items: Expression): Expression => {
+	const wrapList = (within: readonly PortableContainer[], items: { readonly all: Expression } | { readonly first: Expression; readonly rest: Expression }): Expression => {
 		const inner = within.at(-1)!;
 		if (inner.builder === undefined) return fail(`a list container at ${inner.key} with no builder of its own`);
 		const shape = shapeOf(inner.builder);
+		const args: Argument[] = 'all' in items ? [t.spreadElement(items.all)] : [items.first, t.spreadElement(items.rest)];
 		const listed =
 			shape === 'spread' || shape === 'elements'
-				? call(builderRef(inner.builder), t.spreadElement(items))
+				? call(builderRef(inner.builder), ...args)
 				: shape === 'config'
-					? call(builderRef(inner.builder), obj([[inner.key, items]]))
+					? call(builderRef(inner.builder), obj([[inner.key, 'all' in items ? items.all : t.array(...args)]]))
 					: fail(`a list container builder ${inner.builder} taking a ${shape} input`);
 		return wrapOne(within.slice(0, -1), listed);
+	};
+	let prelude: Statement[] = [];
+	const preluded = (build: () => Statement[]): Statement[] => {
+		const outer = prelude;
+		prelude = [];
+		try {
+			const body = build();
+			return [...prelude, ...body];
+		} finally {
+			prelude = outer;
+		}
+	};
+	const split = (name: string, list: Expression, item: string): { readonly empty: Operand; readonly items: { readonly first: Expression; readonly rest: Expression } } => {
+		const [first, rest] = [`${name}$first`, `${name}$rest`];
+		prelude.push(constant(first, t.subscriptExpression({ object: list, index: num(0) })), constant(rest, call(dot(list, 'slice'), num(1))));
+		return { empty: binary(id(first), '===', id('undefined')), items: { first: call(id(item), id(first)), rest: call(dot(id(rest), 'map'), id(item)) } };
 	};
 
 	const testOf = (test: PortablePickTest, value: Primary): Operand | undefined => {
@@ -196,6 +214,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 
 	const viewed = new Set(input.viewed);
 	const textPaths = new Set(input.textPaths);
+	const textInputs = new Set(input.textInputs);
 	const failed = new Map<string, string>();
 	let memberFunctions = new Map<string, Statement>();
 	let armFunctions = new Map<string, Statement>();
@@ -286,7 +305,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const statements: Statement[] = [];
 		if (takesHoles(member)) statements.push(when(binary(value, '===', 'null'), ret('null')));
 		const structures = exact!.paths.filter((path) => viewed.has(path));
-		const texted = exact!.string || exact!.texts.length > 0 || exact!.paths.some((path) => textPaths.has(path));
+		const free = exact!.string || exact!.paths.some((path) => textPaths.has(path) || textInputs.has(path));
+		const texted = free || exact!.texts.length > 0;
 		const text = stringBranch(member, skip, value);
 		if (text !== undefined) statements.push(when(typeIs(value, 'string'), block(...text)));
 		else if (texted) statements.push(when(typeIs(value, 'string'), ret(value)));
@@ -297,7 +317,11 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			const cases = structures.map((path) => t.switchCase({ value: str(path), bodies: caseOf(owner, path, member, skip, value) }));
 			statements.push(t.switchStatement({ value: paren(dot(value, '$path')), body: t.switchBody(...cases, t.switchDefault({ bodies: [unbuilt(`${owner}.${member.name}`, value)] })) }));
 		}
-		const items: TypeNode[] = [...(text !== undefined || texted ? ['string'] : []), ...structures.flatMap((path) => [pathType(path), nodesType(path)])];
+		const items: TypeNode[] = [
+			...(free || (text !== undefined && exact!.texts.length === 0) ? ['string'] : exact!.texts.map((literal) => t.literalType(str(literal)))),
+			...structures.flatMap((path) => [pathType(path), nodesType(path)]),
+			...exact!.unmapped.map((name) => typeRef(uses('Unmapped'), t.literalType(str(name))))
+		];
 		memberFunctions.set(name, constant(name, arrow('value', union(items.length === 0 ? ['never'] : items), block(...statements))));
 		return name;
 	};
@@ -312,17 +336,17 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (member.list === true) {
 			const seat = member.seats.find((candidate) => candidate.many === true && (candidate.within ?? []).length > 0);
 			if (seat === undefined) return fail(`${member.name} is a list with no list container seat`);
-			const items = call(dot(listOf(given), 'map'), id(memberFunction(owner, arm, member, seat.within!.length)));
+			const item = memberFunction(owner, arm, member, seat.within!.length);
 			const open = seat.within!.findIndex((container) => container.optional === true);
-			if (open < 0)
-				return step!.optional === true ? ternary(binary(dot(listOf(given), 'length'), '===', num(0)), id('undefined'), wrapList(seat.within!, items)) : wrapList(seat.within!, items);
+			if (open < 0 && step!.optional !== true) return wrapList(seat.within!, { all: call(dot(listOf(given), 'map'), id(item)) });
 			const outer = seat.within!.slice(0, open + 1);
-			if (outer.at(-1)!.builder === undefined) return fail(`${member.name}'s optional list container has no builder`);
-			const empty = wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!)));
-			return ternary(binary(dot(listOf(given), 'length'), '===', num(0)), empty, wrapList(seat.within!, items));
+			if (open >= 0 && outer.at(-1)!.builder === undefined) return fail(`${member.name}'s optional list container has no builder`);
+			const { empty, items } = split(member.name, listOf(given), item);
+			return ternary(empty, open < 0 ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))), wrapList(seat.within!, items));
 		}
 		const single = call(id(memberFunction(owner, arm, member, 0)), given);
-		return step!.optional === true ? ternary(binary(given, '===', id('undefined')), id('undefined'), single) : single;
+		if (step!.optional === true) return ternary(binary(given, '===', id('undefined')), id('undefined'), single);
+		return input.members[owner]?.[member.name]?.optional === true ? ternary(binary(given, '===', id('undefined')), call(id(uses('missing')), str(`${owner}.${member.name}`)), single) : single;
 	};
 
 	const numberBody = (path: string, arm: PortableBuildArm, value: Expression): Statement[] => {
@@ -389,7 +413,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (failed.has(name)) return undefined;
 		armFunctions.set(name, constant(name, id('undefined')));
 		try {
-			const statements = tracked(name, () => armBody(path, arm, () => id(uses('input'))));
+			const statements = tracked(name, () => preluded(() => armBody(path, arm, () => id(uses('input')))));
 			const parameter = deps.get(name)!.has('input') ? 'input' : '_input';
 			armFunctions.set(name, constant(name, arrow(parameter, pathType(path), block(...statements), arm.builder === undefined ? undefined : builtType(arm.builder))));
 			return uses(name);
@@ -468,6 +492,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const kept = (functions: ReadonlyMap<string, Statement>): Statement[] => sorted([...functions].filter(([name]) => live.has(name)), ([name]) => name).map(([, statement]) => statement);
 	const helpers: readonly (readonly [string, Statement])[] = [
 		['unbuilt', unbuiltHelper],
+		['missing', missingHelper],
 		['seated', seatedHelper],
 		['unseated', unseatedHelper]
 	];
@@ -483,7 +508,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const program = t.program({
 		statements: [
 			typeImport(['Engine'], '@sittir/types'),
-			...(built ? [typeImport(['BuildInput'], input.imports.vocabulary)] : []),
+			...(built ? [typeImport(['BuildInput', ...(live.has('Unmapped') ? ['Unmapped'] : [])], input.imports.vocabulary)] : []),
 			typeImport([input.api], input.imports.api),
 			...(built ? [typeImport([input.map], input.imports.map)] : []),
 			t.exportStatementDefaultDeclaration({

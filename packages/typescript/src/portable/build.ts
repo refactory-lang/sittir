@@ -1,5 +1,5 @@
 import type { Engine } from '@sittir/types';
-import type { BuildInput } from '@sittir/types/vocabulary';
+import type { BuildInput, Unmapped } from '@sittir/types/vocabulary';
 import type { TypescriptAPI } from '../api.js';
 import type { TypeScriptMap } from './map.js';
 export function portableBuild(engine: Engine<TypescriptAPI>) {
@@ -11,6 +11,9 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 	): never => {
 		throw new Error(owner + ': ' + value.$path + ' is not generated');
+	};
+	const missing = (owner: string): never => {
+		throw new Error(owner + ' is required');
 	};
 	const seated = <
 		V extends
@@ -185,7 +188,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 				return unbuilt('clause.finally.body', value);
 		}
 	};
-	const clause_import_attribute$204_attributeKind = (value: string) => {
+	const clause_import_attribute$204_attributeKind = (value: 'assert' | 'with') => {
 		if (typeof value === 'string') {
 			switch (value) {
 				case 'assert':
@@ -286,6 +289,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			| TypeScriptMap['nodes']['statement.block']
 			| BuildInput<TypeScriptMap, 'statement.import.alias'>
 			| TypeScriptMap['nodes']['statement.import.alias']
+			| Unmapped<'typescript:using_declaration'>
 	) => {
 		if (typeof value === 'number') {
 			if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 400]))
@@ -637,6 +641,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			| TypeScriptMap['nodes']['identifier.qualified']
 			| BuildInput<TypeScriptMap, 'type.import'>
 			| TypeScriptMap['nodes']['type.import']
+			| Unmapped<'typescript:type_query_subscript_expression'>
 	) => {
 		if (typeof value === 'string') {
 			if (
@@ -702,6 +707,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			| TypeScriptMap['nodes']['identifier.qualified']
 			| BuildInput<TypeScriptMap, 'type.import'>
 			| TypeScriptMap['nodes']['type.import']
+			| Unmapped<'typescript:type_query_subscript_expression'>
 	) => {
 		if (typeof value === 'string') {
 			if (
@@ -767,6 +773,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			| TypeScriptMap['nodes']['identifier.qualified']
 			| BuildInput<TypeScriptMap, 'type.import'>
 			| TypeScriptMap['nodes']['type.import']
+			| Unmapped<'typescript:type_query_subscript_expression'>
 	) => {
 		if (typeof value === 'string') {
 			switch (value) {
@@ -1422,7 +1429,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 				return unbuilt('type.nullable.type', value);
 		}
 	};
-	const type_object$369_closing = (value: string) => {
+	const type_object$369_closing = (value: '|}' | '}') => {
 		if (typeof value === 'string') {
 			switch (value) {
 				case '|}':
@@ -1550,7 +1557,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 				return unbuilt('type.object.members', value);
 		}
 	};
-	const type_object$369_opening = (value: string) => {
+	const type_object$369_opening = (value: '{' | '{|') => {
 		if (typeof value === 'string') {
 			switch (value) {
 				case '{':
@@ -1620,6 +1627,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			| TypeScriptMap['nodes']['identifier.qualified']
 			| BuildInput<TypeScriptMap, 'type.import'>
 			| TypeScriptMap['nodes']['type.import']
+			| Unmapped<'typescript:type_query_subscript_expression'>
 	) => {
 		if (typeof value === 'string') {
 			switch (value) {
@@ -1699,10 +1707,15 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		return b.decoratorParenthesizedExpression(attribute_parenthesized$304_expression(input.expression));
 	};
 	const clause_export$193 = (input: BuildInput<TypeScriptMap, 'clause.export'>): ReturnType<typeof b.exportClause> => {
+		const exportSpecifiers$first = (input.exportSpecifiers ?? [])[0];
+		const exportSpecifiers$rest = (input.exportSpecifiers ?? []).slice(1);
 		return b.exportClause(
-			(input.exportSpecifiers ?? []).length === 0
+			exportSpecifiers$first === undefined
 				? undefined
-				: b.exportSpecifiers(...(input.exportSpecifiers ?? []).map(clause_export$193_exportSpecifiers$item))
+				: b.exportSpecifiers(
+						clause_export$193_exportSpecifiers$item(exportSpecifiers$first),
+						...exportSpecifiers$rest.map(clause_export$193_exportSpecifiers$item)
+					)
 		);
 	};
 	const clause_finally$233 = (
@@ -1731,12 +1744,19 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 	const declaration_enum$322 = (
 		input: BuildInput<TypeScriptMap, 'declaration.enum'>
 	): ReturnType<typeof b.enumDeclaration> => {
+		const body$first = (input.body ?? [])[0];
+		const body$rest = (input.body ?? []).slice(1);
 		return b.enumDeclaration({
 			name: declaration_enum$322_name(input.name),
 			body:
-				(input.body ?? []).length === 0
+				body$first === undefined
 					? b.enumBody()
-					: b.enumBody(b.enumBodyElements(...(input.body ?? []).map(declaration_enum$322_body$item))),
+					: b.enumBody(
+							b.enumBodyElements(
+								declaration_enum$322_body$item(body$first),
+								...body$rest.map(declaration_enum$322_body$item)
+							)
+						),
 			const: (input.$flags ?? []).includes('const')
 		});
 	};
@@ -1754,7 +1774,10 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		input: BuildInput<TypeScriptMap, 'identifier.qualified'>
 	): ReturnType<typeof b.nestedIdentifier> => {
 		return b.nestedIdentifier({
-			qualifier: identifier_qualified$244_qualifier(input.qualifier),
+			qualifier:
+				input.qualifier === undefined
+					? missing('identifier.qualified.qualifier')
+					: identifier_qualified$244_qualifier(input.qualifier),
 			name: identifier_qualified$244_name(input.name)
 		});
 	};
@@ -1762,7 +1785,10 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		input: BuildInput<TypeScriptMap, 'identifier.qualified'>
 	): ReturnType<typeof b.nestedTypeIdentifier> => {
 		return b.nestedTypeIdentifier({
-			qualifier: identifier_qualified$319_qualifier(input.qualifier),
+			qualifier:
+				input.qualifier === undefined
+					? missing('identifier.qualified.qualifier')
+					: identifier_qualified$319_qualifier(input.qualifier),
 			name: identifier_qualified$319_name(input.name)
 		});
 	};
@@ -1770,14 +1796,18 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		input: BuildInput<TypeScriptMap, 'identifier.qualified'>
 	): ReturnType<typeof b.typeQueryMemberExpression> => {
 		return b.typeQueryMemberExpression({
-			object: identifier_qualified$354_qualifier(input.qualifier),
+			object:
+				input.qualifier === undefined
+					? missing('identifier.qualified.qualifier')
+					: identifier_qualified$354_qualifier(input.qualifier),
 			property: identifier_qualified$354_name(input.name),
 			operator: 63
 		});
 	};
 	const literal_regex$276 = (input: BuildInput<TypeScriptMap, 'literal.regex'>): ReturnType<typeof b.regex> => {
 		return b.regex({
-			pattern: literal_regex$276_pattern(input.pattern),
+			pattern:
+				input.pattern === undefined ? missing('literal.regex.pattern') : literal_regex$276_pattern(input.pattern),
 			flags: input.flags === undefined ? undefined : literal_regex$276_flags(input.flags)
 		});
 	};
@@ -1798,7 +1828,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		return b.restPattern(pattern_rest$292_pattern(input.pattern));
 	};
 	const type_array$378 = (input: BuildInput<TypeScriptMap, 'type.array'>): ReturnType<typeof b.arrayType> => {
-		return b.arrayType(type_array$378_type(input.type));
+		return b.arrayType(input.type === undefined ? missing('type.array.type') : type_array$378_type(input.type));
 	};
 	const type_index_query$359 = (
 		input: BuildInput<TypeScriptMap, 'type.index_query'>
@@ -1809,12 +1839,17 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		return b.flowMaybeType(type_nullable$365_type(input.type));
 	};
 	const type_object$369 = (input: BuildInput<TypeScriptMap, 'type.object'>): ReturnType<typeof b.objectType> => {
+		const members$first = (input.members ?? [])[0];
+		const members$rest = (input.members ?? []).slice(1);
 		return b.objectType({
 			opening: type_object$369_opening(input.opening),
 			members:
-				(input.members ?? []).length === 0
+				members$first === undefined
 					? undefined
-					: b.objectTypeContent(...(input.members ?? []).map(type_object$369_members$item)),
+					: b.objectTypeContent(
+							type_object$369_members$item(members$first),
+							...members$rest.map(type_object$369_members$item)
+						),
 			closing: type_object$369_closing(input.closing)
 		});
 	};

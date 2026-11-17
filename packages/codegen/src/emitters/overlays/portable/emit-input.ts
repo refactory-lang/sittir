@@ -1,7 +1,9 @@
 export interface PortableEmitMember {
 	readonly paths: readonly string[];
 	readonly texts: readonly string[];
+	readonly unmapped: readonly string[];
 	readonly string: boolean;
+	readonly optional: boolean;
 }
 
 export interface PortableEmitInput<Table> {
@@ -13,6 +15,7 @@ export interface PortableEmitInput<Table> {
 	readonly members: Readonly<Record<string, Readonly<Record<string, PortableEmitMember>>>>;
 	readonly viewed: readonly string[];
 	readonly textPaths: readonly string[];
+	readonly textInputs: readonly string[];
 	readonly holes: readonly (readonly [holder: number, key: string])[];
 }
 

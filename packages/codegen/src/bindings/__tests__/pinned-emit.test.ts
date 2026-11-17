@@ -15,6 +15,7 @@ describe('the pinned child emits a portable build module', () => {
 			members: {},
 			viewed: [],
 			textPaths: [],
+			textInputs: [],
 			holes: []
 		});
 		expect(diagnostics).toEqual([]);
@@ -47,6 +48,7 @@ describe('the pinned child emits a portable build module', () => {
 			members: {},
 			viewed: [],
 			textPaths: [],
+			textInputs: [],
 			holes: []
 		});
 		expect(diagnostics.map(({ code, path }) => [code, path])).toEqual([['portable-emit-unfit-member', 'statement.jump']]);
@@ -67,6 +69,7 @@ describe('the pinned child emits a portable build module', () => {
 			members: {},
 			viewed: [],
 			textPaths: [],
+			textInputs: [],
 			holes: []
 		});
 		expect(diagnostics).toEqual([]);
@@ -88,14 +91,61 @@ describe('the pinned child emits a portable build module', () => {
 					'expression.collection.list': { root: true, arms: [{ kind: 1, builder: 'array', when: [], members: [{ name: 'elements', steps: [{ key: 'elements' }], multiple: true, seats: [{ at: [1, 'elements'], kinds: [7, 9] }] }], presets: [], flags: {} }] }
 				}
 			},
-			members: { 'expression.collection.list': { elements: { paths: [], texts: [], string: false } } },
+			members: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, optional: true } } },
 			viewed: [],
 			textPaths: [],
+			textInputs: [],
 			holes
 		});
 		expect(diagnostics).toEqual([]);
 		expect(text).toContain('if (seated(value, [7, 9])) return value;');
 		expect(text).toContain("return unseated('expression.collection.list.elements', value);");
 		expect(text.includes('if (value === null) return null;')).toBe(holed);
+	}, 60_000);
+
+	it('spells a guarded list as its first item and the rest, guards an optional member, and types a token member by its texts', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			api: 'PythonAPI',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			table: {
+				builders: { block: 'config', blockBody: 'spread' },
+				paths: {
+					'statement.block': {
+						root: true,
+						arms: [
+							{
+								kind: 1,
+								builder: 'block',
+								when: [],
+								members: [
+									{ name: 'statements', steps: [{ key: 'body', optional: true }], multiple: false, list: true, seats: [{ at: [1, 'body'], kinds: [7], many: true, within: [{ key: 'body', builder: 'blockBody' }] }] },
+									{ name: 'label', steps: [{ key: 'label' }], multiple: false, seats: [{ at: [1, 'label'], kinds: [8, 9], tokens: { a: 8, b: 9 } }] }
+								],
+								presets: [],
+								flags: {}
+							}
+						]
+					}
+				}
+			},
+			members: {
+				'statement.block': {
+					statements: { paths: [], texts: [], unmapped: [], string: false, optional: true },
+					label: { paths: [], texts: ['a', 'b'], unmapped: [], string: false, optional: true }
+				}
+			},
+			viewed: [],
+			textPaths: [],
+			textInputs: [],
+			holes: []
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain('const statements$first = (input.statements ?? [])[0];');
+		expect(text).toContain('const statements$rest = (input.statements ?? []).slice(1);');
+		expect(text).toContain('statements$first === undefined ? undefined : b.blockBody(statement_block$1_statements$item(statements$first), ...statements$rest.map(statement_block$1_statements$item))');
+		expect(text).toContain("input.label === undefined ? missing('statement.block.label') : statement_block$1_label(input.label)");
+		expect(text).toContain("const statement_block$1_label = (value: 'a' | 'b') =>");
 	}, 60_000);
 });
