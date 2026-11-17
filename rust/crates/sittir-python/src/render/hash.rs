@@ -7,4 +7,4 @@
 // (packages/python/src/backend.ts) compares it against the TS-side copy to
 // detect a native binary built from older generated code.
 
-pub const RENDER_MODULE_HASH: &str = "0ffbb2548500aa36a923a4d9be983d58c730d12c53b83d095390073c268b60df";
+pub const RENDER_MODULE_HASH: &str = "bc38d3136fa36504f9e7c204209cd1b4cd9aedb861b796c4e1f1cccd52b873c4";

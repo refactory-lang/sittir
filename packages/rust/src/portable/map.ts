@@ -130,7 +130,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -151,11 +150,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'attributes' | 'value'>;
 		};
 		readonly attribute: {
-			readonly content: V.Read<RustMap, 'attribute.content'> | T.Attribute.Parsed;
-			readonly $forms: V.Form<'content'>;
-		};
-		readonly 'attribute.content': {
-			readonly content: never;
 			readonly input:
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.brace'>
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.bracket'>
@@ -279,7 +273,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -305,79 +298,10 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly $forms: V.Form<'path'>;
 		};
-		readonly 'attribute.inner': {
-			readonly content: V.Read<RustMap, 'attribute.content'> | T.Attribute.Parsed;
-			readonly $forms: V.Form<'content'>;
-		};
-		readonly 'clause.bounds': {
-			readonly bounds:
-				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
-				| V.Read<RustMap, 'clause.bounds.removed'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Read<RustMap, 'type.abstract'>
-				| V.Read<RustMap, 'type.array'>
-				| V.Read<RustMap, 'type.bounded'>
-				| V.Read<RustMap, 'type.dynamic'>
-				| V.Read<RustMap, 'type.function'>
-				| V.Read<RustMap, 'type.generic'>
-				| V.Read<RustMap, 'type.pointer'>
-				| V.Text<RustMap, 'type.primitive.boolean'>
-				| V.Text<RustMap, 'type.primitive.character'>
-				| V.Text<RustMap, 'type.primitive.floating.float32'>
-				| V.Text<RustMap, 'type.primitive.floating.float64'>
-				| V.Text<RustMap, 'type.primitive.integral.int128'>
-				| V.Text<RustMap, 'type.primitive.integral.int16'>
-				| V.Text<RustMap, 'type.primitive.integral.int32'>
-				| V.Text<RustMap, 'type.primitive.integral.int64'>
-				| V.Text<RustMap, 'type.primitive.integral.int8'>
-				| V.Text<RustMap, 'type.primitive.integral.size'>
-				| V.Text<RustMap, 'type.primitive.never'>
-				| V.Text<RustMap, 'type.primitive.string'>
-				| V.Read<RustMap, 'type.reference'>
-				| V.Read<RustMap, 'type.tuple'>
-				| V.Text<RustMap, 'type.unit'>
-				| '!'
-				| '()'
-				| 'bool'
-				| 'char'
-				| 'f32'
-				| 'f64'
-				| 'i128'
-				| 'i16'
-				| 'i32'
-				| 'i64'
-				| 'i8'
-				| 'isize'
-				| 'str'
-				| 'u128'
-				| 'u16'
-				| 'u32'
-				| 'u64'
-				| 'u8'
-				| 'usize'
-				| T.ArrayType.Parsed
-				| T.BoundedType.Parsed
-				| T.FunctionType.Parsed
-				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
-				| T.PointerTypeConst.Parsed
-				| T.PointerTypeMut.Parsed
-				| T.ReferenceType.Parsed
-				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed;
-			readonly $forms: V.Form<'bounds'>;
-		};
 		readonly 'clause.bounds.higher_ranked': {
-			readonly bounds: never;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -429,7 +353,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -443,7 +366,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'type' | 'typeParameters'>;
 		};
 		readonly 'clause.bounds.removed': {
-			readonly bounds: never;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -495,7 +417,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -510,7 +431,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.lifetime'>;
 		};
 		readonly 'clause.case.match': {
-			readonly attributes: V.Read<RustMap, 'attribute'> | V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -631,7 +552,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -773,7 +693,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -997,7 +916,6 @@ export interface RustMap extends V.GrammarMap {
 								| T.IntegerLiteralHex.Parsed
 								| T.IntegerLiteralOctal.Parsed
 								| T.MatchExpression.Parsed
-								| T.Metavariable.Parsed
 								| T.ParenthesizedExpression.Parsed
 								| T.RangeExpressionBinary.Parsed
 								| T.RangeExpressionPostfix.Parsed
@@ -1027,7 +945,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'clause.import.alias': {
-			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
@@ -1036,9 +953,9 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
-			readonly $forms: V.Form<'alias' | 'name'>;
+			readonly rename: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly $forms: V.Form<'name' | 'rename'>;
 		};
 		readonly 'clause.import.list': {
 			readonly useClauses:
@@ -1064,7 +981,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly useClauses: never;
 			readonly $forms: V.Form<'list'>;
@@ -1254,7 +1170,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -1399,7 +1314,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -1540,7 +1454,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -1560,10 +1473,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'left'>;
-		};
-		readonly 'clause.lifetimes': {
-			readonly lifetimes: V.Read<RustMap, 'identifier.lifetime'>;
-			readonly $forms: V.Form<'lifetimes'>;
 		};
 		readonly 'clause.macro.rule': {
 			readonly left:
@@ -1640,7 +1549,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -1694,28 +1602,23 @@ export interface RustMap extends V.GrammarMap {
 			readonly wherePredicates: never;
 			readonly $forms: V.Form<'bounds' | 'left'>;
 		};
-		readonly 'comment.block': {
-			readonly content: V.Read<RustMap, 'comment.text'>;
-		};
 		readonly 'comment.block.doc': {
-			readonly content: V.Read<RustMap, 'comment.text'>;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'comment.block.doc.inner': {
-			readonly content: V.Read<RustMap, 'comment.text'>;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'comment.line': {
-			readonly content: V.Read<RustMap, 'comment.text'>;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'comment.line.doc': {
-			readonly content: V.Read<RustMap, 'comment.text'>;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'comment.line.doc.inner': {
-			readonly content: V.Read<RustMap, 'comment.text'>;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
+		};
+		readonly 'comment.text': {
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'declaration.constant': {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
@@ -1770,7 +1673,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -1896,7 +1798,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -1969,7 +1870,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -2095,7 +1995,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -2168,7 +2067,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -2294,7 +2192,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -2367,7 +2264,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -2493,7 +2389,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -2566,7 +2461,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -2692,7 +2586,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -2722,7 +2615,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -2775,7 +2667,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -2901,7 +2792,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -3095,7 +2985,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -3235,7 +3124,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -3385,7 +3273,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -3535,7 +3422,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -3685,7 +3571,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -3835,7 +3720,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -3873,7 +3757,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -3995,7 +3878,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -4145,7 +4027,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -4295,7 +4176,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -4445,7 +4325,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -4595,7 +4474,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -4745,7 +4623,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -4783,7 +4660,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -4905,7 +4781,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -5055,7 +4930,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -5205,7 +5079,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -5355,7 +5228,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -5505,7 +5377,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -5655,7 +5526,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -5693,7 +5563,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -5815,7 +5684,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -5838,7 +5706,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.extension': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -5985,7 +5852,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6002,7 +5868,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.extension.conformance': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -6155,7 +6020,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6223,7 +6087,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6285,7 +6148,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6347,7 +6209,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6409,7 +6270,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6471,7 +6331,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6490,7 +6349,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -6543,7 +6401,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6557,8 +6414,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -6663,7 +6519,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6683,8 +6538,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -6789,7 +6643,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6809,8 +6662,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -6915,7 +6767,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -6935,8 +6786,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7041,7 +6891,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7061,8 +6910,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7167,7 +7015,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7187,8 +7034,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7293,7 +7139,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7307,7 +7152,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -7323,8 +7167,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7429,7 +7272,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7449,8 +7291,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7555,7 +7396,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7575,8 +7415,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7681,7 +7520,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7701,8 +7539,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7807,7 +7644,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7827,8 +7663,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -7933,7 +7768,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -7953,8 +7787,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -8059,7 +7892,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -8073,7 +7905,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -8086,7 +7917,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -8235,7 +8065,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -8253,7 +8082,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.private': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -8402,7 +8230,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -8420,7 +8247,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -8569,7 +8395,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -8587,7 +8412,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public.internal': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -8736,7 +8560,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -8754,7 +8577,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public.parent': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -8903,7 +8725,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -8921,7 +8742,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public.restricted': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -9070,7 +8890,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -9085,7 +8904,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -9096,6 +8914,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.macro': {
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly rules: V.Read<RustMap, 'clause.macro.rule'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.macro.brace': {
@@ -9119,8 +8939,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -9225,7 +9044,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -9245,8 +9063,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -9351,7 +9168,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -9371,8 +9187,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -9477,7 +9292,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -9497,8 +9311,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -9603,7 +9416,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -9623,8 +9435,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -9729,7 +9540,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -9749,8 +9559,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -9855,7 +9664,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -9869,7 +9677,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -9885,8 +9692,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -9991,7 +9797,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -10011,8 +9816,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -10117,7 +9921,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -10137,8 +9940,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -10243,7 +10045,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -10263,8 +10064,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -10369,7 +10169,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -10389,8 +10188,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -10495,7 +10293,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -10515,8 +10312,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| T.Metavariable.Parsed;
+				| V.Read<RustMap, 'identifier.metavariable'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -10621,7 +10417,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -10635,7 +10430,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -10648,7 +10442,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -10749,7 +10542,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module.foreign': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -10851,7 +10643,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module.private': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -10952,7 +10743,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module.public': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -11053,7 +10843,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module.public.internal': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -11154,7 +10943,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module.public.parent': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -11255,7 +11043,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module.public.restricted': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -11359,7 +11146,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'scope', 'body'> | V.Form<'body' | 'name' | 'scope'>;
 		};
@@ -11477,7 +11263,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -11539,7 +11324,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -11730,7 +11514,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -11842,7 +11625,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -11918,7 +11700,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -11987,7 +11768,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12051,7 +11831,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12127,7 +11906,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12195,7 +11973,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12263,7 +12040,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12331,7 +12107,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12350,7 +12125,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
@@ -12409,7 +12183,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12474,7 +12247,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12531,7 +12303,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12596,7 +12367,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
 				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12693,7 +12463,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -12803,7 +12572,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12927,7 +12695,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -13053,7 +12820,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -13127,7 +12893,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -13253,7 +13018,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -13327,7 +13091,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -13453,7 +13216,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -13527,7 +13289,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -13653,7 +13414,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -13727,7 +13487,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -13853,7 +13612,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -13884,7 +13642,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -13937,7 +13694,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -14063,7 +13819,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -14205,7 +13960,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -14246,7 +14000,7 @@ export interface RustMap extends V.GrammarMap {
 				| 'tt'
 				| 'ty'
 				| 'vis';
-			readonly name: V.Read<RustMap, 'identifier.metavariable'> | T.Metavariable.Parsed;
+			readonly name: V.Read<RustMap, 'identifier.metavariable'>;
 			readonly $forms: V.Form<'fragment' | 'name'>;
 		};
 		readonly 'element.macro.token_repetition': {
@@ -14382,7 +14136,6 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenRepetition.Parsed
 				| T.TokenTreeBrace.Parsed
 				| T.TokenTreeBracket.Parsed
@@ -14523,7 +14276,6 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenBindingPattern.Parsed
 				| T.TokenRepetitionPattern.Parsed
 				| T.TokenTreePatternBrace.Parsed
@@ -14531,6 +14283,142 @@ export interface RustMap extends V.GrammarMap {
 				| T.TokenTreePatternParen.Parsed;
 			readonly tokens: never;
 			readonly $forms: V.Form<'operator'>;
+		};
+		readonly 'element.macro.token_tree': {
+			readonly tokens:
+				| V.Read<RustMap, 'element.macro.token_repetition'>
+				| V.Read<RustMap, 'element.macro.token_tree.brace'>
+				| V.Read<RustMap, 'element.macro.token_tree.bracket'>
+				| V.Read<RustMap, 'element.macro.token_tree.paren'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
+				| '!'
+				| '!='
+				| '#'
+				| '%'
+				| '%='
+				| '&'
+				| '&&'
+				| '&='
+				| "'"
+				| '*'
+				| '*='
+				| '+'
+				| '+='
+				| ','
+				| '-'
+				| '-='
+				| '->'
+				| '.'
+				| '..'
+				| '...'
+				| '..='
+				| '/'
+				| '/='
+				| ':'
+				| '::'
+				| ';'
+				| '<'
+				| '<<'
+				| '<<='
+				| '<='
+				| '='
+				| '=='
+				| '=>'
+				| '>'
+				| '>='
+				| '>>'
+				| '>>='
+				| '?'
+				| '@'
+				| '^'
+				| '^='
+				| '_'
+				| 'as'
+				| 'async'
+				| 'await'
+				| 'bool'
+				| 'break'
+				| 'char'
+				| 'const'
+				| 'continue'
+				| 'crate'
+				| 'default'
+				| 'enum'
+				| 'f32'
+				| 'f64'
+				| 'false'
+				| 'fn'
+				| 'for'
+				| 'gen'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'if'
+				| 'impl'
+				| 'isize'
+				| 'let'
+				| 'loop'
+				| 'match'
+				| 'mod'
+				| 'mut'
+				| 'pub'
+				| 'return'
+				| 'self'
+				| 'static'
+				| 'str'
+				| 'struct'
+				| 'super'
+				| 'trait'
+				| 'true'
+				| 'type'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'union'
+				| 'unsafe'
+				| 'use'
+				| 'usize'
+				| 'where'
+				| 'while'
+				| '|'
+				| '|='
+				| '||'
+				| T.TokenRepetition.Parsed
+				| T.TokenTreeBrace.Parsed
+				| T.TokenTreeBracket.Parsed
+				| T.TokenTreeParen.Parsed;
 		};
 		readonly 'element.macro.token_tree.brace': {
 			readonly tokens:
@@ -14663,7 +14551,6 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenRepetition.Parsed
 				| T.TokenTreeBrace.Parsed
 				| T.TokenTreeBracket.Parsed
@@ -14800,11 +14687,141 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenRepetition.Parsed
 				| T.TokenTreeBrace.Parsed
 				| T.TokenTreeBracket.Parsed
 				| T.TokenTreeParen.Parsed;
+		};
+		readonly 'element.macro.token_tree.delimited': {
+			readonly tokens:
+				| V.Read<RustMap, 'element.macro.token_tree.delimited.brace'>
+				| V.Read<RustMap, 'element.macro.token_tree.delimited.bracket'>
+				| V.Read<RustMap, 'element.macro.token_tree.delimited.paren'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
+				| '!'
+				| '!='
+				| '#'
+				| '$'
+				| '%'
+				| '%='
+				| '&'
+				| '&&'
+				| '&='
+				| "'"
+				| '*'
+				| '*='
+				| '+'
+				| '+='
+				| ','
+				| '-'
+				| '-='
+				| '->'
+				| '.'
+				| '..'
+				| '...'
+				| '..='
+				| '/'
+				| '/='
+				| ':'
+				| '::'
+				| ';'
+				| '<'
+				| '<<'
+				| '<<='
+				| '<='
+				| '='
+				| '=='
+				| '=>'
+				| '>'
+				| '>='
+				| '>>'
+				| '>>='
+				| '?'
+				| '@'
+				| '^'
+				| '^='
+				| '_'
+				| 'as'
+				| 'async'
+				| 'await'
+				| 'bool'
+				| 'break'
+				| 'char'
+				| 'const'
+				| 'continue'
+				| 'crate'
+				| 'default'
+				| 'enum'
+				| 'f32'
+				| 'f64'
+				| 'false'
+				| 'fn'
+				| 'for'
+				| 'gen'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'if'
+				| 'impl'
+				| 'isize'
+				| 'let'
+				| 'loop'
+				| 'match'
+				| 'mod'
+				| 'mut'
+				| 'pub'
+				| 'return'
+				| 'self'
+				| 'static'
+				| 'str'
+				| 'struct'
+				| 'super'
+				| 'trait'
+				| 'true'
+				| 'type'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'union'
+				| 'unsafe'
+				| 'use'
+				| 'usize'
+				| 'where'
+				| 'while'
+				| '|'
+				| '|='
+				| '||';
 		};
 		readonly 'element.macro.token_tree.delimited.brace': {
 			readonly tokens:
@@ -15330,11 +15347,148 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenRepetition.Parsed
 				| T.TokenTreeBrace.Parsed
 				| T.TokenTreeBracket.Parsed
 				| T.TokenTreeParen.Parsed;
+		};
+		readonly 'element.macro.token_tree.pattern': {
+			readonly tokens:
+				| V.Read<RustMap, 'element.macro.token_binding'>
+				| V.Read<RustMap, 'element.macro.token_repetition.pattern'>
+				| V.Read<RustMap, 'element.macro.token_tree.pattern.brace'>
+				| V.Read<RustMap, 'element.macro.token_tree.pattern.bracket'>
+				| V.Read<RustMap, 'element.macro.token_tree.pattern.paren'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
+				| '!'
+				| '!='
+				| '#'
+				| '%'
+				| '%='
+				| '&'
+				| '&&'
+				| '&='
+				| "'"
+				| '*'
+				| '*='
+				| '+'
+				| '+='
+				| ','
+				| '-'
+				| '-='
+				| '->'
+				| '.'
+				| '..'
+				| '...'
+				| '..='
+				| '/'
+				| '/='
+				| ':'
+				| '::'
+				| ';'
+				| '<'
+				| '<<'
+				| '<<='
+				| '<='
+				| '='
+				| '=='
+				| '=>'
+				| '>'
+				| '>='
+				| '>>'
+				| '>>='
+				| '?'
+				| '@'
+				| '^'
+				| '^='
+				| '_'
+				| 'as'
+				| 'async'
+				| 'await'
+				| 'bool'
+				| 'break'
+				| 'char'
+				| 'const'
+				| 'continue'
+				| 'crate'
+				| 'default'
+				| 'enum'
+				| 'f32'
+				| 'f64'
+				| 'false'
+				| 'fn'
+				| 'for'
+				| 'gen'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'if'
+				| 'impl'
+				| 'isize'
+				| 'let'
+				| 'loop'
+				| 'match'
+				| 'mod'
+				| 'mut'
+				| 'pub'
+				| 'return'
+				| 'self'
+				| 'static'
+				| 'str'
+				| 'struct'
+				| 'super'
+				| 'trait'
+				| 'true'
+				| 'type'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'union'
+				| 'unsafe'
+				| 'use'
+				| 'usize'
+				| 'where'
+				| 'while'
+				| '|'
+				| '|='
+				| '||'
+				| T.TokenBindingPattern.Parsed
+				| T.TokenRepetitionPattern.Parsed
+				| T.TokenTreePatternBrace.Parsed
+				| T.TokenTreePatternBracket.Parsed
+				| T.TokenTreePatternParen.Parsed;
 		};
 		readonly 'element.macro.token_tree.pattern.brace': {
 			readonly tokens:
@@ -15468,7 +15622,6 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenBindingPattern.Parsed
 				| T.TokenRepetitionPattern.Parsed
 				| T.TokenTreePatternBrace.Parsed
@@ -15607,7 +15760,6 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenBindingPattern.Parsed
 				| T.TokenRepetitionPattern.Parsed
 				| T.TokenTreePatternBrace.Parsed
@@ -15746,7 +15898,6 @@ export interface RustMap extends V.GrammarMap {
 				| '|'
 				| '|='
 				| '||'
-				| T.Metavariable.Parsed
 				| T.TokenBindingPattern.Parsed
 				| T.TokenRepetitionPattern.Parsed
 				| T.TokenTreePatternBrace.Parsed
@@ -15874,7 +16025,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -15896,7 +16046,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'element.struct.field': {
 			readonly attributes: V.Read<RustMap, 'attribute'>;
-			readonly field:
+			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'literal.number.integer'>
@@ -16026,7 +16176,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -16044,70 +16193,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'field', 'value'> | V.Form<'field' | 'value'>;
+			readonly $forms: V.Form<'name', 'value'> | V.Form<'name' | 'value'>;
 		};
 		readonly 'element.type_argument': {
-			readonly bounds:
-				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
-				| V.Read<RustMap, 'clause.bounds.removed'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Read<RustMap, 'type.abstract'>
-				| V.Read<RustMap, 'type.array'>
-				| V.Read<RustMap, 'type.bounded'>
-				| V.Read<RustMap, 'type.dynamic'>
-				| V.Read<RustMap, 'type.function'>
-				| V.Read<RustMap, 'type.generic'>
-				| V.Read<RustMap, 'type.pointer'>
-				| V.Text<RustMap, 'type.primitive.boolean'>
-				| V.Text<RustMap, 'type.primitive.character'>
-				| V.Text<RustMap, 'type.primitive.floating.float32'>
-				| V.Text<RustMap, 'type.primitive.floating.float64'>
-				| V.Text<RustMap, 'type.primitive.integral.int128'>
-				| V.Text<RustMap, 'type.primitive.integral.int16'>
-				| V.Text<RustMap, 'type.primitive.integral.int32'>
-				| V.Text<RustMap, 'type.primitive.integral.int64'>
-				| V.Text<RustMap, 'type.primitive.integral.int8'>
-				| V.Text<RustMap, 'type.primitive.integral.size'>
-				| V.Text<RustMap, 'type.primitive.never'>
-				| V.Text<RustMap, 'type.primitive.string'>
-				| V.Read<RustMap, 'type.reference'>
-				| V.Read<RustMap, 'type.tuple'>
-				| V.Text<RustMap, 'type.unit'>
-				| '!'
-				| '()'
-				| 'bool'
-				| 'char'
-				| 'f32'
-				| 'f64'
-				| 'i128'
-				| 'i16'
-				| 'i32'
-				| 'i64'
-				| 'i8'
-				| 'isize'
-				| 'str'
-				| 'u128'
-				| 'u16'
-				| 'u32'
-				| 'u64'
-				| 'u8'
-				| 'usize'
-				| T.ArrayType.Parsed
-				| T.BoundedType.Parsed
-				| T.FunctionType.Parsed
-				| T.HigherRankedTraitBound.Parsed
-				| T.Metavariable.Parsed
-				| T.PointerTypeConst.Parsed
-				| T.PointerTypeMut.Parsed
-				| T.ReferenceType.Parsed
-				| T.RemovedTraitBound.Parsed
-				| T.ScopedTypeIdentifier.Parsed;
-			readonly content:
+			readonly argument:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'element.type_binding'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -16187,7 +16276,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.RawStringLiteral.Parsed
@@ -16196,7 +16284,66 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed
 				| T.StringLiteral.Parsed
 				| T.TypeBinding.Parsed;
-			readonly $forms: V.Form<'content'>;
+			readonly bounds:
+				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
+				| V.Read<RustMap, 'clause.bounds.removed'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.lifetime'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Read<RustMap, 'type.abstract'>
+				| V.Read<RustMap, 'type.array'>
+				| V.Read<RustMap, 'type.bounded'>
+				| V.Read<RustMap, 'type.dynamic'>
+				| V.Read<RustMap, 'type.function'>
+				| V.Read<RustMap, 'type.generic'>
+				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
+				| V.Read<RustMap, 'type.reference'>
+				| V.Read<RustMap, 'type.tuple'>
+				| V.Text<RustMap, 'type.unit'>
+				| '!'
+				| '()'
+				| 'bool'
+				| 'char'
+				| 'f32'
+				| 'f64'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'isize'
+				| 'str'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'usize'
+				| T.ArrayType.Parsed
+				| T.BoundedType.Parsed
+				| T.FunctionType.Parsed
+				| T.HigherRankedTraitBound.Parsed
+				| T.PointerTypeConst.Parsed
+				| T.PointerTypeMut.Parsed
+				| T.ReferenceType.Parsed
+				| T.RemovedTraitBound.Parsed
+				| T.ScopedTypeIdentifier.Parsed;
+			readonly $forms: V.Form<'argument'>;
 		};
 		readonly 'element.type_binding': {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
@@ -16251,7 +16398,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -16381,7 +16527,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -16519,7 +16664,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -16660,7 +16804,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -16798,7 +16941,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -16938,7 +17080,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -17076,7 +17217,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -17217,7 +17357,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -17355,7 +17494,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -17496,7 +17634,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -17634,7 +17771,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -17775,7 +17911,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -17913,7 +18048,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -18054,7 +18188,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -18192,7 +18325,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -18333,7 +18465,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -18471,7 +18602,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -18612,7 +18742,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -18750,7 +18879,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -18891,7 +19019,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -19029,7 +19156,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -19170,7 +19296,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -19308,7 +19433,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -19449,7 +19573,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -19587,7 +19710,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -19728,7 +19850,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -19869,7 +19990,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20007,7 +20127,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20147,7 +20266,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20285,7 +20403,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20426,7 +20543,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20564,7 +20680,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20705,7 +20820,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20843,7 +20957,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -20984,7 +21097,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -21122,7 +21234,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -21263,7 +21374,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -21401,7 +21511,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -21542,7 +21651,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -21680,7 +21788,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -21821,7 +21928,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -21959,7 +22065,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -22100,7 +22205,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -22238,7 +22342,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -22379,7 +22482,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -22517,7 +22619,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -22658,7 +22759,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -22796,7 +22896,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -22937,7 +23036,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -23075,7 +23173,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -23216,7 +23313,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -23354,7 +23450,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -23495,7 +23590,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -23633,7 +23727,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -23774,7 +23867,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -23912,7 +24004,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24053,7 +24144,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24191,7 +24281,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24332,7 +24421,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24470,7 +24558,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24491,7 +24578,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.shift.left': {
-			readonly left:
+			readonly count:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -24611,7 +24698,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24629,7 +24715,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly right:
+			readonly operand:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -24749,7 +24835,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24767,10 +24852,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'left' | 'right'>;
+			readonly $forms: V.Form<'count' | 'operand'>;
 		};
 		readonly 'expression.binary.shift.right': {
-			readonly left:
+			readonly count:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -24890,7 +24975,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -24908,7 +24992,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly right:
+			readonly operand:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -25028,7 +25112,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -25046,7 +25129,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'left' | 'right'>;
+			readonly $forms: V.Form<'count' | 'operand'>;
 		};
 		readonly 'expression.block.async': {
 			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
@@ -25281,7 +25364,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
@@ -25649,7 +25731,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -25718,7 +25799,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -25946,7 +26026,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -26085,7 +26164,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -26348,7 +26426,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -26418,7 +26495,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -26548,7 +26624,6 @@ export interface RustMap extends V.GrammarMap {
 								| T.IntegerLiteralHex.Parsed
 								| T.IntegerLiteralOctal.Parsed
 								| T.MatchExpression.Parsed
-								| T.Metavariable.Parsed
 								| T.ParenthesizedExpression.Parsed
 								| T.RangeExpressionBinary.Parsed
 								| T.RangeExpressionPostfix.Parsed
@@ -26690,7 +26765,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -26841,7 +26915,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -26982,7 +27055,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -27123,7 +27195,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -27261,7 +27332,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -27402,7 +27472,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -27540,7 +27609,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -27685,7 +27753,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -27823,7 +27890,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -27964,7 +28030,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -28102,7 +28167,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -28243,7 +28307,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -28384,7 +28447,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -28522,7 +28584,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -28663,7 +28724,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -28803,7 +28863,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -28944,7 +29003,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -29085,7 +29143,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -29229,7 +29286,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -29251,7 +29307,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly file: {
 			readonly statements:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -29331,9 +29386,93 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.variable.public.internal'>
 				| V.Read<RustMap, 'declaration.variable.public.parent'>
 				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
 				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
 				| V.Text<RustMap, 'statement.empty'>
-				| V.Read<RustMap, 'statement.expression'>
+				| V.Read<RustMap, 'statement.if'>
 				| V.Read<RustMap, 'statement.import'>
 				| V.Read<RustMap, 'statement.import.package'>
 				| V.Read<RustMap, 'statement.import.package.private'>
@@ -29346,7 +29485,16 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.internal'>
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
 				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
 				| T.ConstItem.Parsed
 				| T.FunctionItem.Parsed
 				| T.FunctionSignatureItem.Parsed
@@ -29359,6 +29507,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly identifier: {
 			readonly $text: PortableTexts['identifier'];
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'identifier.label': {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
@@ -29385,7 +29534,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'super'
 				| T.BracketedType.Parsed
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly $forms:
 				| V.Form<
@@ -29400,7 +29548,6 @@ export interface RustMap extends V.GrammarMap {
 								| V.Read<RustMap, 'type.generic.turbofish'>
 								| 'crate'
 								| 'super'
-								| T.Metavariable.Parsed
 								| T.ScopedIdentifier.Parsed;
 						}
 				  >
@@ -29418,7 +29565,6 @@ export interface RustMap extends V.GrammarMap {
 								| 'crate'
 								| 'super'
 								| T.BracketedType.Parsed
-								| T.Metavariable.Parsed
 								| T.ScopedIdentifier.Parsed;
 						}
 				  >
@@ -29437,7 +29583,6 @@ export interface RustMap extends V.GrammarMap {
 								| 'crate'
 								| 'super'
 								| T.BracketedType.Parsed
-								| T.Metavariable.Parsed
 								| T.ScopedIdentifier.Parsed;
 						}
 				  >;
@@ -29452,7 +29597,10 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'literal.character': {
 			readonly content: string;
-			readonly $forms: V.Form<'content'> | V.Form<never, 'content'>;
+			readonly $forms: V.Form<'content', '$value'> | V.Form<'$value', 'content'>;
+		};
+		readonly 'literal.number.float': {
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer': {
 			readonly content: string;
@@ -29554,30 +29702,24 @@ export interface RustMap extends V.GrammarMap {
 			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
 		};
 		readonly 'literal.string.bytes.raw': {
-			readonly content: V.Read<RustMap, 'literal.string.text'>;
-			readonly elements: never;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string.c': {
 			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
 		};
 		readonly 'literal.string.c.raw': {
-			readonly content: V.Read<RustMap, 'literal.string.text'>;
-			readonly elements: never;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string.escape': {
-			readonly content: string;
 			readonly elements: never;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string.raw': {
-			readonly content: V.Read<RustMap, 'literal.string.text'>;
-			readonly elements: never;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string.text': {
 			readonly elements: never;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'modifier.extern': {
 			readonly abi:
@@ -29598,7 +29740,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly $forms: V.Form<'scope'>;
 		};
@@ -29942,7 +30083,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -29981,7 +30121,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -30022,7 +30161,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -30061,7 +30199,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -30103,7 +30240,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -30142,7 +30278,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -30184,7 +30319,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -30223,7 +30357,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralBinary.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
-				| T.Metavariable.Parsed
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
@@ -30552,7 +30685,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly label: V.Read<RustMap, 'identifier.label'>;
 			readonly statements:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
 				| V.Read<RustMap, 'declaration.constant.public'>
@@ -30632,9 +30764,93 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.variable.public.internal'>
 				| V.Read<RustMap, 'declaration.variable.public.parent'>
 				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
 				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
 				| V.Text<RustMap, 'statement.empty'>
-				| V.Read<RustMap, 'statement.expression'>
+				| V.Read<RustMap, 'statement.if'>
 				| V.Read<RustMap, 'statement.import'>
 				| V.Read<RustMap, 'statement.import.package'>
 				| V.Read<RustMap, 'statement.import.package.private'>
@@ -30647,7 +30863,16 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.internal'>
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
 				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
 				| T.ConstItem.Parsed
 				| T.FunctionItem.Parsed
 				| T.FunctionSignatureItem.Parsed
@@ -30777,7 +31002,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -30917,7 +31141,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -30942,110 +31165,6 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'statement.empty': {
 			readonly $text: PortableTexts['statement.empty'];
-		};
-		readonly 'statement.expression': {
-			readonly content:
-				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
-				| V.Read<RustMap, 'expression.assignment.compound.add'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<RustMap, 'expression.assignment.compound.divide'>
-				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
-				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
-				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<RustMap, 'expression.binary.bitwise.and'>
-				| V.Read<RustMap, 'expression.binary.bitwise.or'>
-				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
-				| V.Read<RustMap, 'expression.binary.comparison.equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.less'>
-				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<RustMap, 'expression.binary.logical.and'>
-				| V.Read<RustMap, 'expression.binary.logical.or'>
-				| V.Read<RustMap, 'expression.binary.shift.left'>
-				| V.Read<RustMap, 'expression.binary.shift.right'>
-				| V.Read<RustMap, 'expression.block.async'>
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.block.generator'>
-				| V.Read<RustMap, 'expression.block.try'>
-				| V.Read<RustMap, 'expression.block.unsafe'>
-				| V.Read<RustMap, 'expression.call'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'expression.call.member'>
-				| V.Read<RustMap, 'expression.call.qualified'>
-				| V.Read<RustMap, 'expression.cast.conversion'>
-				| V.Read<RustMap, 'expression.collection.list'>
-				| V.Read<RustMap, 'expression.collection.list.repeat'>
-				| V.Read<RustMap, 'expression.collection.struct'>
-				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.instantiation'>
-				| V.Read<RustMap, 'expression.lambda'>
-				| V.Read<RustMap, 'expression.member'>
-				| V.Read<RustMap, 'expression.parenthesized'>
-				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
-				| V.Read<RustMap, 'expression.range.exclusive'>
-				| V.Read<RustMap, 'expression.range.inclusive'>
-				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
-				| V.Read<RustMap, 'expression.reference'>
-				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
-				| V.Read<RustMap, 'expression.unary.deref'>
-				| V.Read<RustMap, 'expression.unary.negation'>
-				| V.Read<RustMap, 'expression.unary.not'>
-				| V.Text<RustMap, 'expression.unit'>
-				| V.Read<RustMap, 'expression.yield'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.boolean.false'>
-				| V.Read<RustMap, 'literal.boolean.true'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.bytes.raw'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.c.raw'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'statement.block'>
-				| V.Read<RustMap, 'statement.break'>
-				| V.Read<RustMap, 'statement.continue'>
-				| V.Read<RustMap, 'statement.if'>
-				| V.Read<RustMap, 'statement.loop'>
-				| V.Read<RustMap, 'statement.loop.for_each'>
-				| V.Read<RustMap, 'statement.loop.while'>
-				| V.Read<RustMap, 'statement.match'>
-				| V.Read<RustMap, 'statement.return'>
-				| '()'
-				| 'false'
-				| 'self'
-				| 'true'
-				| T.Block.Parsed
-				| T.ForExpression.Parsed
-				| T.IfExpression.Parsed
-				| T.MatchExpression.Parsed
-				| T.WhileExpression.Parsed;
-			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'statement.if': {
 			readonly alternative: V.Read<RustMap, 'clause.else'>;
@@ -31173,7 +31292,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -31207,7 +31325,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.ScopedUseList.Parsed
 				| T.UseAsClause.Parsed;
@@ -31255,7 +31372,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly $forms: V.Form<'name' | 'scope'>;
 		};
@@ -31272,7 +31388,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.ScopedUseList.Parsed
 				| T.UseAsClause.Parsed;
@@ -31291,7 +31406,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.ScopedUseList.Parsed
 				| T.UseAsClause.Parsed;
@@ -31310,7 +31424,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.ScopedUseList.Parsed
 				| T.UseAsClause.Parsed;
@@ -31329,7 +31442,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.ScopedUseList.Parsed
 				| T.UseAsClause.Parsed;
@@ -31348,7 +31460,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.ScopedUseList.Parsed
 				| T.UseAsClause.Parsed;
@@ -31360,7 +31471,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'crate'
 				| 'self'
 				| 'super'
-				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly $forms: V.Form<'argument' | 'scope'>;
 		};
@@ -31553,7 +31663,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -31699,7 +31808,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -31842,7 +31950,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -31983,7 +32090,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -32075,7 +32181,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32201,7 +32306,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.RangeExpressionBinary.Parsed
 				| T.RangeExpressionPostfix.Parsed
@@ -32275,7 +32379,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32334,7 +32437,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32395,7 +32497,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.QualifiedType.Parsed
@@ -32420,7 +32521,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'type.function': {
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly forLifetimes: V.Read<RustMap, 'clause.lifetimes'>;
+			readonly forLifetimes: V.Read<RustMap, 'identifier.lifetime'>;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'declaration.parameter'>
@@ -32524,7 +32625,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32607,7 +32707,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32706,7 +32805,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32763,7 +32861,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32824,7 +32921,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ArrayType.Parsed
 				| T.BoundedType.Parsed
 				| T.FunctionType.Parsed
-				| T.Metavariable.Parsed
 				| T.PointerTypeConst.Parsed
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
@@ -32897,10 +32993,7 @@ export interface RustMap extends V.GrammarMap {
 	readonly nodes: V.NodesOf<
 		{
 			readonly argument: TSKindId.Argument;
-			readonly attribute: TSKindId.AttributeItem;
-			readonly 'attribute.content': TSKindId.Attribute;
-			readonly 'attribute.inner': TSKindId.InnerAttributeItem;
-			readonly 'clause.bounds': TSKindId.TraitBounds;
+			readonly attribute: TSKindId.Attribute;
 			readonly 'clause.bounds.higher_ranked': TSKindId.HigherRankedTraitBound;
 			readonly 'clause.bounds.removed': TSKindId.RemovedTraitBound;
 			readonly 'clause.bounds.use': TSKindId.UseBounds;
@@ -32912,7 +33005,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'clause.import.wildcard': TSKindId.UseWildcard;
 			readonly 'clause.let': TSKindId.LetCondition;
 			readonly 'clause.let.chain': TSKindId.LetChain;
-			readonly 'clause.lifetimes': TSKindId.ForLifetimes;
 			readonly 'clause.macro.rule': TSKindId.MacroRule;
 			readonly 'clause.where': TSKindId.WhereClause;
 			readonly 'clause.where.predicate': TSKindId.WherePredicate;
@@ -33226,7 +33318,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'statement.break': TSKindId.BreakExpression;
 			readonly 'statement.continue': TSKindId.ContinueExpression;
 			readonly 'statement.empty': TSKindId.EmptyStatement;
-			readonly 'statement.expression': TSKindId.ExpressionStatement;
 			readonly 'statement.if': TSKindId.IfExpression;
 			readonly 'statement.import': TSKindId.UseDeclaration;
 			readonly 'statement.import.package': TSKindId.ExternCrateDeclaration;
@@ -33276,10 +33367,7 @@ export interface RustMap extends V.GrammarMap {
 	>;
 	readonly flags: {
 		readonly argument: never;
-		readonly attribute: never;
-		readonly 'attribute.content': never;
-		readonly 'attribute.inner': never;
-		readonly 'clause.bounds': never;
+		readonly attribute: 'inner';
 		readonly 'clause.bounds.higher_ranked': never;
 		readonly 'clause.bounds.removed': never;
 		readonly 'clause.bounds.use': never;
@@ -33291,7 +33379,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'clause.import.wildcard': never;
 		readonly 'clause.let': never;
 		readonly 'clause.let.chain': never;
-		readonly 'clause.lifetimes': never;
 		readonly 'clause.macro.rule': never;
 		readonly 'clause.where': never;
 		readonly 'clause.where.predicate': never;
@@ -33483,7 +33570,7 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.block.try': never;
 		readonly 'expression.block.unsafe': never;
 		readonly 'expression.call': never;
-		readonly 'expression.call.macro': never;
+		readonly 'expression.call.macro': 'terminated';
 		readonly 'expression.call.member': never;
 		readonly 'expression.call.qualified': never;
 		readonly 'expression.cast.conversion': never;
@@ -33559,7 +33646,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'statement.break': never;
 		readonly 'statement.continue': never;
 		readonly 'statement.empty': never;
-		readonly 'statement.expression': never;
 		readonly 'statement.if': never;
 		readonly 'statement.import': never;
 		readonly 'statement.import.package': never;

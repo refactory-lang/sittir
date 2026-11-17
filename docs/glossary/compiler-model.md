@@ -6335,3 +6335,7 @@ Returns the `LineEndings` a node map carries. It throws when the node map carrie
 ### `packages/codegen/src/compiler/model/line-endings.ts::admittedLineEndings`
 
 Derives a grammar's admitted line endings from its layout, its whitespace and its extras. A declared newline arm is admitted when no lexed pattern swallows it and, when a parser probe is given, the parser reads it back the same as the preferred newline; with no admitted arm the preferred newline stands in. A `null` parser skips the probe.
+
+### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSeam::sightings`
+
+The sightings the closure records for one concrete seam pair, as a readonly list of `ConcreteSighting` values, one per place the pair is observed.

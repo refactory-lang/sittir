@@ -44,7 +44,16 @@ export namespace Declaration {
 			readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 			// p only
 			readonly parameters: Slot<G, K, 'parameters', V.Declaration.Parameter.Any<G> | V.Identifier.Any<G> | V.Pattern.Any<G> | string>[];
-			readonly returnType?: Slot<G, K, 'returnType', V.Identifier.Any<G> | V.Type.Any<G>>;
+			readonly returnType?: Slot<
+				G,
+				K,
+				'returnType',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Rest<G>
+				| V.Type.Any<G>
+			>;
 			// p only
 			readonly typeParameters?: Slot<G, K, 'typeParameters', V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>>[];
 			// p only

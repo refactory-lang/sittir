@@ -13,7 +13,7 @@ const STORAGES: readonly (readonly [string, NodeStorageOptions])[] = [
 ];
 const classOf = (...lines: readonly string[]): string => `class A:\n${lines.map((line) => `    ${line}\n`).join('')}`;
 const block = (statement: string): Read => ({ $path: 'statement.block', statements: [statement] });
-const cache: Read = { $path: 'attribute.decorator', content: { $path: 'expression.member', object: 'functools', property: 'cache' } };
+const cache: Read = { $path: 'expression.member', object: 'functools', property: 'cache' };
 
 const runtimes = new Map(await Promise.all(STORAGES.map(async ([name, storage]) => [name, await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict', ...storage })))] as const)));
 
@@ -38,13 +38,13 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 	});
 
 	it("reads a getter's return annotation as the property's type", () => {
-		expect(memberOf(classOf('@property', 'def x(self) -> int:', '    return 1'))).toMatchObject({ type: { $path: 'type', content: 'int' } });
+		expect(memberOf(classOf('@property', 'def x(self) -> int:', '    return 1'))).toMatchObject({ type: 'int' });
 	});
 
 	it("reads a setter's return annotation as its return type, never as the property's type, and builds it back", () => {
 		const source = classOf('@x.setter', 'def x(self, v: int) -> None:', '    pass');
 		const member = memberOf(source);
-		expect(member).toMatchObject({ $path: 'declaration.property.setter', returnType: { $path: 'type' } });
+		expect(member).toMatchObject({ $path: 'declaration.property.setter', returnType: { $path: 'literal.null' } });
 		expect(member.type).toBeUndefined();
 		expect(inClass(member)).toBe(source);
 	});
@@ -101,7 +101,7 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 	});
 
 	it('reads a decorator that only resembles a fact as a decorator', () => {
-		expect(memberOf(classOf('@y.setter', 'def x(self, v):', '    pass'))).toMatchObject({ $path: 'declaration.method', decorators: [{ content: { object: 'y', property: 'setter' } }] });
+		expect(memberOf(classOf('@y.setter', 'def x(self, v):', '    pass'))).toMatchObject({ $path: 'declaration.method', decorators: [{ object: 'y', property: 'setter' }] });
 		const split = memberOf(classOf('@typing.foo', '@bar.override', 'def f(self):', '    pass'));
 		expect(split).toMatchObject({ $path: 'declaration.method' });
 		expect(split.$flags).toBeUndefined();

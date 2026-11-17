@@ -274,9 +274,11 @@ describe('portable is: rust', async () => {
 		expect(at('expression.cast.conversion')(cast)).toBe(true);
 	});
 
-	it('reads trait bounds as the bounds clause', () => {
-		const bounds = find('fn f<T: A + B>() {}\n', 'trait_bounds');
-		expect(at('clause.bounds')(bounds)).toBe(true);
+	it('reads trait bounds through their holder, and a higher-ranked bound as its own clause', () => {
+		const SOURCE = "fn f<T: A + for<'a> B<'a>>() {}\n";
+		expect(at('clause.bounds')(find(SOURCE, 'trait_bounds'))).toBe(false);
+		expect(at('declaration.type_parameter')(find(SOURCE, 'type_parameter'))).toBe(true);
+		expect(at('clause.bounds.higher_ranked')(find(SOURCE, 'higher_ranked_trait_bound'))).toBe(true);
 	});
 
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
@@ -450,7 +452,7 @@ describe('portable is: rust', async () => {
 });
 
 describe('portable is: typescript', async () => {
-	const { at, find } = await surfaces('typescript');
+	const { at, find, paths } = await surfaces('typescript');
 
 	it('reads each parser comment form directly and tests a documentation block by its own text', async () => {
 		const commentEngine = await createEngine(typescript);
@@ -518,9 +520,9 @@ describe('portable is: typescript', async () => {
 		expect(at('statement.import.alias')(alias)).toBe(true);
 	});
 
-	it('reads a type parameter\'s constraint as the bounds clause', () => {
-		const bounds = find('function f<T extends U>() {}\n', 'constraint');
-		expect(at('clause.bounds')(bounds)).toBe(true);
+	it('reads a type parameter\'s constraint through the parameter, with no bounds clause of its own', () => {
+		expect(paths()).not.toContain('clause.bounds');
+		expect(at('declaration.type_parameter')(find('function f<T extends U>() {}\n', 'type_parameter'))).toBe(true);
 	});
 
 	it('reads this, a kind id, as the receiver', () => {
@@ -532,7 +534,7 @@ describe('portable is: typescript', async () => {
 		for (const [path, owned] of [
 			['expression.call', Function.prototype.call],
 			['declaration.signature.call', Function.prototype.call],
-			['attribute.content.call', Function.prototype.call],
+			['attribute.call', Function.prototype.call],
 			['declaration.constructor', Function.prototype.constructor],
 			['type.function.constructor', Function.prototype.constructor]
 		] as const) {

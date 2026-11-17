@@ -57,10 +57,23 @@ export const functionName: Function['name'] = 'f';
 export const dottedFunctionName: Function['name'] = dottedRead;
 
 declare const aliasRead: V.Read<PythonMap, 'clause.import.alias'>;
-// @ts-expect-error a from-import reads what it imports as its content, never as names
-export const fromImportNames: V.BuildInput<PythonMap, 'statement.import.from'>['names'] = [aliasRead];
+export const fromImportNames: V.BuildInput<PythonMap, 'statement.import.from'>['names'] = [aliasRead, '*'];
+// @ts-expect-error a from-import holds what it imports as its names, never as content
+export const fromImportContent: V.BuildInput<PythonMap, 'statement.import.from'>['content'] = [aliasRead];
 
-declare const decoratorRead: V.Read<PythonMap, 'attribute.decorator'>;
-export const classDecorators: V.Read<PythonMap, 'declaration.class'>['decorators'] = [decoratorRead];
+declare const memberRead: V.Read<PythonMap, 'expression.member'>;
+export const classDecorators: V.Read<PythonMap, 'declaration.class'>['decorators'] = ['cache', memberRead];
+// @ts-expect-error a decorator reads as its expression, so no path names the decorator
+export const decoratorPath: V.Read<PythonMap, 'attribute.decorator'> = { $path: 'attribute.decorator' };
+
+export const annotation: V.BuildInput<PythonMap, 'declaration.variable'>['type'] = 'int';
+export const annotationMember: V.BuildInput<PythonMap, 'declaration.function'>['returnType'] = memberRead;
+
+export const comment: V.BuildInput<PythonMap, 'comment.line'> = { $path: 'comment.line', $value: ' x' };
+// @ts-expect-error a comment builds from its text, never from a content member
+export const commentContent: V.BuildInput<PythonMap, 'comment.line'> = { $path: 'comment.line', content: ' x' };
+export const escape: V.BuildInput<PythonMap, 'literal.string.escape'> = { $path: 'literal.string.escape', $value: 'n' };
+// @ts-expect-error a yield holds its operand as its expression, never as content
+export const yieldContent: V.BuildInput<PythonMap, 'expression.yield'>['content'] = 'x';
 
 export const formatSpec: NonNullable<V.Read<PythonMap, 'expression.interpolation.format'>['elements']>[number] = '>10';

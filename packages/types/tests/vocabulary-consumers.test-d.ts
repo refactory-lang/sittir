@@ -15,7 +15,6 @@ import type {
 	AsyncAwait,
 	BoundedQuantification,
 	Clause,
-	Comment,
 	Declaration,
 	Elisions,
 	Expression,
@@ -296,7 +295,7 @@ declare module '../src/vocabulary/index.ts' {
 declare const docText: Unmapped<'g:doc_text'>;
 export const docTextRead: string = docText.text;
 export const unclaimedName: Declaration.Function<Core>['name'] = docText;
-export const unclaimedContent: Comment.Line<Core>['content'] = docText;
-export const unclaimedDocContent: Comment.Line.Doc.Inner<Core>['content'] = docText;
+export const unclaimedExpression: Statement.Return<Core>['expression'] = docText;
+export const unclaimedBody: Declaration.Ambient<Core>['body'] = docText;
 // @ts-expect-error the narrowed name admits no unclaimed kind
 export const narrowedUnclaimed: Declaration.Function<Narrowed>['name'] = docText;

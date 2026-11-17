@@ -1,4 +1,3 @@
-export type * from './attribute.ts';
 export type * from './declaration.ts';
 export type * from './expression.ts';
 

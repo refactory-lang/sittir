@@ -1346,28 +1346,28 @@ export function buildAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AttributeItem as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _attribute);
 		const node = arena.view(record);
 		return node as unknown as T.AttributeItem.Bound;
 	});
 }
 
 function _buildAttributeItem$patch(source: object, value: Admit<T.Attribute>): T.AttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AttributeItem as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'attribute', _attribute));
 		const node = arena.view(record);
 		return node as unknown as T.AttributeItem.Bound;
 	});
@@ -1375,7 +1375,7 @@ function _buildAttributeItem$patch(source: object, value: Admit<T.Attribute>): T
 function withAttributeItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'content':
+		case 'attribute':
 			return applySetter(args, (value: Admit<T.Attribute>) =>
 				rebuilt(node, handle, () => _buildAttributeItem$patch(node, value))
 			);
@@ -1408,28 +1408,28 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.InnerAttributeItem as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _attribute);
 		const node = arena.view(record);
 		return node as unknown as T.InnerAttributeItem.Bound;
 	});
 }
 
 function _buildInnerAttributeItem$patch(source: object, value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.InnerAttributeItem as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'attribute', _attribute));
 		const node = arena.view(record);
 		return node as unknown as T.InnerAttributeItem.Bound;
 	});
@@ -1437,7 +1437,7 @@ function _buildInnerAttributeItem$patch(source: object, value: Admit<T.Attribute
 function withInnerAttributeItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'content':
+		case 'attribute':
 			return applySetter(args, (value: Admit<T.Attribute>) =>
 				rebuilt(node, handle, () => _buildInnerAttributeItem$patch(node, value))
 			);
@@ -5897,8 +5897,8 @@ function withUseList(node: object, setter: string, args: readonly unknown[]): un
 
 export function buildUseAsClause<
 	NameSlot extends T.UseAsClause.Config['name'],
-	AliasSlot extends T.UseAsClause.Config['alias']
->(config: RefusingConfig<T.UseAsClause.Config, { name: NameSlot; alias: AliasSlot }>): T.UseAsClause.Bound;
+	RenameSlot extends T.UseAsClause.Config['rename']
+>(config: RefusingConfig<T.UseAsClause.Config, { name: NameSlot; rename: RenameSlot }>): T.UseAsClause.Bound;
 export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bound {
 	currentHandle()?.admit(TSKindId.UseAsClause, [config]);
 	const _name = rejectKeywordText(
@@ -5907,15 +5907,15 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
-	const _alias = config.alias;
+	const _rename = config.rename;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name, alias: _alias });
+	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name, rename: _rename });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UseAsClause as const, { _name, _alias });
+	handle?.verifyStored?.(TSKindId.UseAsClause as const, { _name, _rename });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.UseAsClause as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 6, _alias);
+		storeCell(arena, record, 3, 6, _rename);
 		const node = arena.view(record);
 		return node as unknown as T.UseAsClause.Bound;
 	});
@@ -5929,28 +5929,28 @@ function buildUseAsClause$patch(source: object, config: T.UseAsClause.Config): T
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
-	const _alias = config.alias;
+	const _rename = config.rename;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name, alias: _alias });
+	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name, rename: _rename });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UseAsClause as const, { _name, _alias });
+	handle?.verifyStored?.(TSKindId.UseAsClause as const, { _name, _rename });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.UseAsClause as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'alias', _alias));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'rename', _rename));
 		const node = arena.view(record);
 		return node as unknown as T.UseAsClause.Bound;
 	});
 }
 function buildUseAsClause$set(
 	source: object,
-	...[slot, input]: ['name', Partial<T.UseAsClause.Config>] | ['alias', Partial<T.UseAsClause.Config>]
+	...[slot, input]: ['name', Partial<T.UseAsClause.Config>] | ['rename', Partial<T.UseAsClause.Config>]
 ): T.UseAsClause.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'name':
-			case 'alias':
+			case 'rename':
 				return buildUseAsClause$patch(source, { ...(inputs.config as T.UseAsClause.Config), ...input });
 		}
 	}
@@ -5972,16 +5972,16 @@ function buildUseAsClause$set(
 				_name
 			) as unknown as T.UseAsClause.Bound;
 		}
-		case 'alias': {
+		case 'rename': {
 			const config = input;
-			const _alias = config.alias;
+			const _rename = config.rename;
 			return setSlot(
 				source,
 				TSKindId.UseAsClause as const,
 				'use_as_clause',
 				1,
-				'alias',
-				_alias
+				'rename',
+				_rename
 			) as unknown as T.UseAsClause.Bound;
 		}
 	}
@@ -5993,9 +5993,9 @@ function withUseAsClause(node: object, setter: string, args: readonly unknown[])
 			return applySetter(args, (value: Admit<NonNullable<T.UseAsClause.Config>['name']>) =>
 				rebuilt(node, handle, () => buildUseAsClause$set(node, 'name', { name: value }))
 			);
-		case 'alias':
+		case 'rename':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildUseAsClause$set(node, 'alias', { alias: value }))
+				rebuilt(node, handle, () => buildUseAsClause$set(node, 'rename', { rename: value }))
 			);
 	}
 	throw new Error(`use_as_clause has no $with.${setter}`);
@@ -9934,25 +9934,25 @@ function withFieldInitializerList(node: object, setter: string, args: readonly u
 
 export function buildShorthandFieldInitializer<
 	AttributesSlot extends T.ShorthandFieldInitializer.Config['attributes'],
-	FieldSlot extends T.ShorthandFieldInitializer.Config['field']
+	NameSlot extends T.ShorthandFieldInitializer.Config['name']
 >(
-	config: RefusingConfig<T.ShorthandFieldInitializer.Config, { attributes: AttributesSlot; field: FieldSlot }>
+	config: RefusingConfig<T.ShorthandFieldInitializer.Config, { attributes: AttributesSlot; name: NameSlot }>
 ): T.ShorthandFieldInitializer.Bound;
 export function buildShorthandFieldInitializer(
 	config: T.ShorthandFieldInitializer.Config
 ): T.ShorthandFieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
-	const _field = config.field;
+	const _name = config.name;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, field: _field });
+		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ShorthandFieldInitializer as const, { _attributes, _field });
+	handle?.verifyStored?.(TSKindId.ShorthandFieldInitializer as const, { _attributes, _name });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ShorthandFieldInitializer as const);
 		storeList(arena, record, 2, 2, _attributes);
-		storeCell(arena, record, 3, 3, _field);
+		storeCell(arena, record, 3, 3, _name);
 		const node = arena.view(record);
 		return node as unknown as T.ShorthandFieldInitializer.Bound;
 	});
@@ -9964,16 +9964,16 @@ function buildShorthandFieldInitializer$patch(
 ): T.ShorthandFieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
-	const _field = config.field;
+	const _name = config.name;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, field: _field });
+		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ShorthandFieldInitializer as const, { _attributes, _field });
+	handle?.verifyStored?.(TSKindId.ShorthandFieldInitializer as const, { _attributes, _name });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ShorthandFieldInitializer as const);
 		patchList(arena, record, 2, 2, _attributes);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'field', _field));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
 		const node = arena.view(record);
 		return node as unknown as T.ShorthandFieldInitializer.Bound;
 	});
@@ -9982,13 +9982,13 @@ function buildShorthandFieldInitializer$set(
 	source: object,
 	...[slot, input]:
 		| ['attributes', Partial<T.ShorthandFieldInitializer.Config>]
-		| ['field', Partial<T.ShorthandFieldInitializer.Config>]
+		| ['name', Partial<T.ShorthandFieldInitializer.Config>]
 ): T.ShorthandFieldInitializer.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'attributes':
-			case 'field':
+			case 'name':
 				return buildShorthandFieldInitializer$patch(source, {
 					...(inputs.config as T.ShorthandFieldInitializer.Config),
 					...input
@@ -10008,16 +10008,16 @@ function buildShorthandFieldInitializer$set(
 				_attributes
 			) as unknown as T.ShorthandFieldInitializer.Bound;
 		}
-		case 'field': {
+		case 'name': {
 			const config = input;
-			const _field = config.field;
+			const _name = config.name;
 			return setSlot(
 				source,
 				TSKindId.ShorthandFieldInitializer as const,
 				'shorthand_field_initializer',
 				1,
-				'field',
-				_field
+				'name',
+				_name
 			) as unknown as T.ShorthandFieldInitializer.Bound;
 		}
 	}
@@ -10031,9 +10031,9 @@ function withShorthandFieldInitializer(node: object, setter: string, args: reado
 					buildShorthandFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
-		case 'field':
+		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildShorthandFieldInitializer$set(node, 'field', { field: value }))
+				rebuilt(node, handle, () => buildShorthandFieldInitializer$set(node, 'name', { name: value }))
 			);
 	}
 	throw new Error(`shorthand_field_initializer has no $with.${setter}`);
@@ -10041,27 +10041,27 @@ function withShorthandFieldInitializer(node: object, setter: string, args: reado
 
 export function buildFieldInitializer<
 	AttributesSlot extends T.FieldInitializer.Config['attributes'],
-	FieldSlot extends T.FieldInitializer.Config['field'],
+	NameSlot extends T.FieldInitializer.Config['name'],
 	ValueSlot extends T.FieldInitializer.Config['value']
 >(
-	config: RefusingConfig<T.FieldInitializer.Config, { attributes: AttributesSlot; field: FieldSlot; value: ValueSlot }>
+	config: RefusingConfig<T.FieldInitializer.Config, { attributes: AttributesSlot; name: NameSlot; value: ValueSlot }>
 ): T.FieldInitializer.Bound;
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.FieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(config.attributes ?? []);
-	const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
+	const _name = admitAliasContent<NonNullable<T.FieldInitializer['_name']>>(config.name, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
 	const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_initializer', { attributes: _attributes, field: _field, value: _value });
+		admitChildren(handle, 'field_initializer', { attributes: _attributes, name: _name, value: _value });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FieldInitializer as const, { _attributes, _field, _value });
+	handle?.verifyStored?.(TSKindId.FieldInitializer as const, { _attributes, _name, _value });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.FieldInitializer as const);
 		storeList(arena, record, 2, 2, _attributes);
-		storeCell(arena, record, 3, 3, _field);
+		storeCell(arena, record, 3, 3, _name);
 		storeCell(arena, record, 4, 6, _value);
 		const node = arena.view(record);
 		return node as unknown as T.FieldInitializer.Bound;
@@ -10071,19 +10071,19 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 function buildFieldInitializer$patch(source: object, config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.FieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(config.attributes ?? []);
-	const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
+	const _name = admitAliasContent<NonNullable<T.FieldInitializer['_name']>>(config.name, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
 	const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_initializer', { attributes: _attributes, field: _field, value: _value });
+		admitChildren(handle, 'field_initializer', { attributes: _attributes, name: _name, value: _value });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FieldInitializer as const, { _attributes, _field, _value });
+	handle?.verifyStored?.(TSKindId.FieldInitializer as const, { _attributes, _name, _value });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.FieldInitializer as const);
 		patchList(arena, record, 2, 2, _attributes);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'field', _field));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
 		patchCell(arena, record, 4, 6, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.FieldInitializer.Bound;
@@ -10093,14 +10093,14 @@ function buildFieldInitializer$set(
 	source: object,
 	...[slot, input]:
 		| ['attributes', Partial<T.FieldInitializer.Config>]
-		| ['field', Partial<T.FieldInitializer.Config>]
+		| ['name', Partial<T.FieldInitializer.Config>]
 		| ['value', Partial<T.FieldInitializer.Config>]
 ): T.FieldInitializer.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'attributes':
-			case 'field':
+			case 'name':
 			case 'value':
 				return buildFieldInitializer$patch(source, { ...(inputs.config as T.FieldInitializer.Config), ...input });
 		}
@@ -10118,9 +10118,9 @@ function buildFieldInitializer$set(
 				_attributes
 			) as unknown as T.FieldInitializer.Bound;
 		}
-		case 'field': {
+		case 'name': {
 			const config = input;
-			const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
+			const _name = admitAliasContent<NonNullable<T.FieldInitializer['_name']>>(config.name, [
 				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 			]);
 			return setSlot(
@@ -10128,8 +10128,8 @@ function buildFieldInitializer$set(
 				TSKindId.FieldInitializer as const,
 				'field_initializer',
 				1,
-				'field',
-				_field
+				'name',
+				_name
 			) as unknown as T.FieldInitializer.Bound;
 		}
 		case 'value': {
@@ -10155,9 +10155,9 @@ function withFieldInitializer(node: object, setter: string, args: readonly unkno
 					buildFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) })
 				)
 			);
-		case 'field':
+		case 'name':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldInitializer$set(node, 'field', { field: value }))
+				rebuilt(node, handle, () => buildFieldInitializer$set(node, 'name', { name: value }))
 			);
 		case 'value':
 			return applySetter(args, (value: Admit<NonNullable<T.FieldInitializer.Config>['value']>) =>

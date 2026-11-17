@@ -46,10 +46,10 @@ export namespace Type {
 		readonly left?: Slot<G, K, 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
 		readonly right: Slot<G, K, 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
-	export interface Literal<G extends GrammarMap, K extends Under<'type.literal'> = 'type.literal'> extends SubKindOf<V.Type<G, K>, 'content'> {
+	export interface Literal<G extends GrammarMap, K extends Under<'type.literal'> = 'type.literal'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly content: Slot<G, K, 'content', unknown>;
+		readonly value: Slot<G, K, 'value', unknown>;
 	}
 	export interface Lookup<G extends GrammarMap, K extends Under<'type.lookup'> = 'type.lookup'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by t

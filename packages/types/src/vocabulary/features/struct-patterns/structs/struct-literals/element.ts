@@ -9,11 +9,11 @@ export namespace Element {
 		export interface Field<G extends GrammarMap, K extends Under<'element.struct.field'> = 'element.struct.field'> extends SubKindOf<V.Element.Struct<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly field:
+			readonly name:
 				Slot<
 				G,
 				K,
-				'field',
+				'name',
 				| V.Identifier.Any<G>
 				| V.Literal.Number.Integer<G>
 				| V.Literal.Number.Integer.Binary<G>

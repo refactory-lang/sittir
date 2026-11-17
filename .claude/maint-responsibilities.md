@@ -7,6 +7,7 @@ sittir-maint keeps the books and watches the repository, so brainstorm can stay 
 - **Open:** when a PR that implements a plan task opens, add `**Status:** open as #N.` under that task's heading on master.
 - **Merge:** after it merges, set the line to `**Status:** merged as #N (<merge sha>), <date>.` and check that the PR ticked the task's steps. Tick any it missed.
 - **Parked, superseded or reworked:** write that status only when the maintainer or brainstorm says so, quoting who said it.
+- **On each pass,** for every peer with a pushed head newer than its plan task's last tick or Status change, compare the two: steps the code shows built but the plan leaves unticked, a Status line naming another branch or head, a named file or symbol that is elsewhere. Nudge the owner with the list; report to brainstorm only what stays wrong on the next pass.
 - **Before merging a task PR,** check that it ticks its task's steps and writes `merged as #N`. If it doesn't, tell brainstorm before merging.
 - **Rulings:** when a PR body cites a maintainer ruling or approved API rows, check that the governing spec's Decided section holds the ruling. If it doesn't, tell brainstorm. Brainstorm writes rulings; maint doesn't.
 - **Naming:** flag to the owner any PR body, status line or plan edit that uses a bare task number ("Task 6" instead of "arena plan Task 6") or "parse" as a noun.

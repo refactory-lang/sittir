@@ -15,7 +15,7 @@ export namespace Expression {
 			| V.Pattern.Any<G>
 		>;
 		// p only
-		readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
+		readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 		// p only
 	}
 	export namespace Comprehension {
@@ -31,7 +31,7 @@ export namespace Expression {
 				| V.Literal.Any<G>
 				| V.Pattern.Any<G>
 			>;
-			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 		}
 		export interface List<G extends GrammarMap, K extends Under<'expression.comprehension.list'> = 'expression.comprehension.list'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
@@ -45,13 +45,13 @@ export namespace Expression {
 				| V.Literal.Any<G>
 				| V.Pattern.Any<G>
 			>;
-			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 		}
 		export interface Map<G extends GrammarMap, K extends Under<'expression.comprehension.map'> = 'expression.comprehension.map'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
 			readonly $path: K;
 			readonly body: Slot<G, K, 'body', V.Element.Pair<G>>;
-			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 		}
 		export interface Set<G extends GrammarMap, K extends Under<'expression.comprehension.set'> = 'expression.comprehension.set'> extends SubKindOf<V.Expression.Comprehension<G, K>> {
 			// claimed by p
@@ -65,7 +65,7 @@ export namespace Expression {
 				| V.Literal.Any<G>
 				| V.Pattern.Any<G>
 			>;
-			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension<G>>;
+			readonly clauses: Slot<G, K, 'clauses', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 		}
 	}
 }

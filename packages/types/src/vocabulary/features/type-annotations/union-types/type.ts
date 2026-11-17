@@ -10,7 +10,25 @@ export namespace Type {
 	export interface Union<G extends GrammarMap, K extends Under<'type.union'> = 'type.union'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by pt
 		readonly $path: K;
-		readonly left?: Slot<G, K, 'left', V.Identifier.Any<G> | V.Type.Any<G>>;
-		readonly right: Slot<G, K, 'right', V.Identifier.Any<G> | V.Type.Any<G>>;
+		readonly left?: Slot<
+			G,
+			K,
+			'left',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Type.Any<G>
+		>;
+		readonly right: Slot<
+			G,
+			K,
+			'right',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Type.Any<G>
+		>;
 	}
 }

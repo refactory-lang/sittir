@@ -7,16 +7,6 @@ export namespace Expression {
 	export interface Yield<G extends GrammarMap, K extends Under<'expression.yield'> = 'expression.yield'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-		readonly content?: Slot<
-			G,
-			K,
-			'content',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-		>;
-		// p only
 		readonly expression?: Slot<
 			G,
 			K,
@@ -25,9 +15,8 @@ export namespace Expression {
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
 			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
+			| V.Pattern.Any<G>
 			| V.Statement.Any<G>
 		>;
-		// rt only
 	}
 }

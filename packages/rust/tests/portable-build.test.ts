@@ -30,11 +30,12 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('builds a block comment from its content text, through the one form its content seat holds', () => {
-		expect(render(runtime.build({ $path: 'comment.block', content: ' x ' }))).toBe('/* x */');
+		expect(render(runtime.build({ $path: 'comment.block', $value: ' x ' }))).toBe('/* x */');
 	});
 
-	it('builds an expression statement through the form its content takes', () => {
-		expect(render(runtime.build({ $path: 'statement.expression', content: 'x' }))).toBe('x;');
+	it('builds an expression in a statement list through the statement form its kind takes', () => {
+		const loop = { $path: 'statement.loop', body: { $path: 'statement.block', statements: [] } };
+		expect(render(runtime.build({ $path: 'file', statements: ['x', loop] }))).toBe('x;\nloop {}\n');
 	});
 
 	it("presets an arithmetic refinement's operator, and builds text members through their slot's leaf", () => {
@@ -83,9 +84,9 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it("takes the route whose slot seats the value: an attribute's delimited token tree as its arguments, and refuses a token tree no route seats", () => {
-		expect(render(runtime.build({ $path: 'attribute.content', path: 'derive', input: { $path: 'element.macro.token_tree.delimited', tokens: [] } }))).toBe('derive()');
-		expect(render(runtime.build({ $path: 'attribute.content', path: 'cfg', input: { $path: 'element.macro.token_tree.delimited.bracket', tokens: [] } }))).toBe('cfg[]');
-		expect(() => runtime.build({ $path: 'attribute.content', path: 'derive', input: { $path: 'element.macro.token_tree', tokens: [] } })).toThrow(
+		expect(render(runtime.build({ $path: 'attribute', path: 'derive', input: { $path: 'element.macro.token_tree.delimited', tokens: [] } }))).toBe('derive()');
+		expect(render(runtime.build({ $path: 'attribute', path: 'cfg', input: { $path: 'element.macro.token_tree.delimited.bracket', tokens: [] } }))).toBe('cfg[]');
+		expect(() => runtime.build({ $path: 'attribute', path: 'derive', input: { $path: 'element.macro.token_tree', tokens: [] } })).toThrow(
 			/element\.macro\.token_tree sits in attribute_input\.arguments, attribute_input\.value/
 		);
 	});

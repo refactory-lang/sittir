@@ -11,10 +11,10 @@ const render = (node: unknown): string => String(runtime.engine.render(node as n
 const expressionOf = (source: string): Read => {
 	const file = runtime.read(runtime.engine.parse(`fn m() { ${source}; }`)) as Read;
 	const body = (file.statements as readonly Read[])[0]!.body as Read;
-	return ((body.statements as readonly Read[])[0]!.content ?? (body.statements as readonly Read[])[0]) as Read;
+	return (body.statements as readonly Read[])[0]!;
 };
 const roundTrip = (source: string): string => render(runtime.build(runtime.read(runtime.engine.parse(source)) as never));
-const argument = (content: string) => ({ $path: 'element.type_argument', content, bounds: [] });
+const argument = (name: string) => ({ $path: 'element.type_argument', argument: name, bounds: [] });
 const member = { $path: 'expression.member', object: 'x', property: 'f' };
 const qualified = { $path: 'identifier.qualified', qualifier: 'a', name: 'f' };
 

@@ -1,7 +1,7 @@
 import { byCodepoint, compositionOf, lineageOf } from '../../../bindings/vocabulary.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE, grammarDisplayName, moduleSpecifier, type GrammarName } from '../../../grammars.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
-import { textBuilt } from '@sittir/common/engine';
+import { builtFlags, containerSetFlags, textBuilt } from '@sittir/common/engine';
 import type { PortableBuildArm, PortablePickTest } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { kindDiscriminantExpr } from '../../kind-discriminant.ts';
@@ -183,16 +183,12 @@ export const textBuiltPaths = ({ table }: PortableTypedInput): readonly string[]
 		.map(([path]) => path)
 		.sort(byCodepoint);
 
-const armFlagsOf = (arm: PortableBuildArm): readonly string[] => [
-	...Object.keys(arm.flags),
-	...(arm.facts ?? []).flatMap((fact) => (fact.flag === undefined ? [] : [fact.flag])),
-	...arm.when.flatMap((test) => ('flag' in test ? [test.flag] : []))
-];
-
-export const mapFlagsOf = ({ table }: PortableTypedInput): readonly (readonly [path: string, flags: readonly string[]])[] =>
-	Object.keys(table.paths)
+export const mapFlagsOf = ({ table }: PortableTypedInput): readonly (readonly [path: string, flags: readonly string[]])[] => {
+	const set = containerSetFlags(table);
+	return Object.keys(table.paths)
 		.sort(byCodepoint)
-		.map((path) => [path, [...new Set(table.paths[path]!.arms.flatMap(armFlagsOf))].sort(byCodepoint)]);
+		.map((path) => [path, [...new Set(table.paths[path]!.arms.flatMap((arm) => [...builtFlags(arm), ...(set.get(arm.kind) ?? [])]))].sort(byCodepoint)]);
+};
 
 const SCALAR_TYPES = { integer: 'number', float: 'number', bigint: 'bigint' } as const;
 

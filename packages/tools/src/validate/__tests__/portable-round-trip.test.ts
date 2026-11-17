@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { loadCorpusEntries } from '../common.ts';
 import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
@@ -56,6 +57,14 @@ describe('the portable round trip', () => {
 			armless: [],
 			errors: [{ entry: 'signed literal type', stage: 'reparse', rendered: 'let x: 2 | +4;\n' }]
 		});
+	});
+
+	it('builds a macro call its statement terminates back in the expression statement the parser gives, and an item macro back bare', async () => {
+		const names = ['Function declarations', 'Macro invocation - no arguments', 'Macro invocation - arbitrary tokens'];
+		const entries = loadCorpusEntries('rust').filter(({ name }) => names.includes(name));
+		expect(entries.map(({ name }) => name).sort()).toEqual([...names].sort());
+		const result = await runPortableRoundTrip('rust', [...entries, { name: 'item macro', source: 'foo! { a }\nfn f() {\n    foo! { a }\n}\n' }]);
+		expect(result).toMatchObject({ total: 4, pass: 4, astMatchPass: 4, errors: [], astMismatches: [] });
 	});
 
 	it('runs only for a grammar whose bindings give it a portable surface', async () => {

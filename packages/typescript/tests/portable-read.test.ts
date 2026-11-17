@@ -11,6 +11,10 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 const firstOf = (source: string): unknown => (read(source).statements as readonly Read[])[0];
 
 describe('the portable read', () => {
+	it.each(['true;', 'null;', 'a;'])('reads the statement node of %j on its own as the file read reads it, a unit literal included', (source) => {
+		expect(runtime.read(runtime.engine.parse(`${source}\n`).statements()[0]!)).toEqual(firstOf(`${source}\n`));
+	});
+
 	it.each(['function* f() {\n  yield* x;\n}\n', 'type T = -1;\n'])('reads a kind its holder mounts as its own path, carrying nothing, and builds it back through the mount: %j', (source) => {
 		const parsed = read(source);
 		expect(JSON.stringify(parsed)).not.toContain('"$type"');
@@ -20,13 +24,13 @@ describe('the portable read', () => {
 	});
 
 	it('reads a delegating yield at its holder and a negative literal type in its seat, and builds the delegate only with its operand', () => {
-		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ body: { statements: [{ expression: { $path: 'expression.yield.delegate', expression: 'x' } }] } });
-		expect(firstOf('type T = -1;\n')).toMatchObject({ value: { $path: 'type.literal', content: { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } } } });
+		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ body: { statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] } });
+		expect(firstOf('type T = -1;\n')).toMatchObject({ value: { $path: 'type.literal', value: { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } } } });
 		expect(() => runtime.build({ $path: 'expression.yield.delegate' } as never)).toThrow('it needs expression');
 	});
 
 	it('reads the members a binding captures from its slot, and builds an import back', () => {
-		const clause = { $path: 'clause.import.names', content: [{ $path: 'clause.import.specifier', name: 'a' }, { $path: 'clause.import.specifier', name: 'b', alias: 'c' }] };
+		const clause = { $path: 'clause.import.names', specifiers: [{ $path: 'clause.import.specifier', name: 'a' }, { $path: 'clause.import.specifier', name: 'b', alias: 'c' }] };
 		expect(firstOf('import {a, b as c} from "x";')).toMatchObject({ importClause: clause });
 		expect(roundTrip('import {a, b as c} from "x";')).toBe('import { a, b as c } from "x";\n');
 	});
@@ -48,8 +52,8 @@ describe('the portable read', () => {
 	});
 
 	it('reads a construct call without parentheses as the bare refinement with no arguments, and one with empty parentheses as the call with none, and builds each back', () => {
-		expect(firstOf('new X;')).toEqual({ $path: 'statement.expression', expression: { $path: 'expression.call.construct.bare', function: 'X', typeArguments: [] } });
-		expect(firstOf('new X();')).toEqual({ $path: 'statement.expression', expression: { $path: 'expression.call.construct', function: 'X', arguments: [], typeArguments: [] } });
+		expect(firstOf('new X;')).toEqual({ $path: 'expression.call.construct.bare', function: 'X', typeArguments: [] });
+		expect(firstOf('new X();')).toEqual({ $path: 'expression.call.construct', function: 'X', arguments: [], typeArguments: [] });
 		for (const source of ['new X;', 'new X();', 'new X(a);', 'new X<T>;', 'new X<T>();', 'new new X()();']) expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
@@ -81,7 +85,7 @@ describe('the portable read', () => {
 
 	it('reads a method decorator onto the method, and builds it back', () => {
 		const source = 'class C {\n  @d\n  m() {}\n}\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', decorators: [{ $path: 'attribute.decorator', content: 'd' }] }] });
+		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', decorators: ['d'] }] });
 		expect(roundTrip(source)).toBe(source);
 	});
 
@@ -158,7 +162,7 @@ describe('the portable read', () => {
 		const exported = (source: string) => ((firstOf(source) as Read).exportClause as Read).exportSpecifiers;
 		expect(exported('export { x as default };')).toEqual([{ $path: 'clause.export.specifier', name: 'x', alias: 'default' }]);
 		expect(exported('export { default } from "y";')).toEqual([{ $path: 'clause.export.specifier', name: 'default' }]);
-		expect(((firstOf('import { default as z } from "y";') as Read).importClause as Read).content).toEqual([{ $path: 'clause.import.specifier', name: 'default', alias: 'z' }]);
+		expect(((firstOf('import { default as z } from "y";') as Read).importClause as Read).specifiers).toEqual([{ $path: 'clause.import.specifier', name: 'default', alias: 'z' }]);
 		for (const source of ['export { x as default };', 'export { default } from "y";', 'import { default as z } from "y";']) expect(roundTrip(source)).toBe(`${source}\n`);
 		expect(typescript.is.portable.identifier('default')).toBe(true);
 	});
@@ -263,7 +267,7 @@ describe('the portable read', () => {
 
 	it('reads an instantiation by its function, as rust does, in an expression and in a type query, and builds each back', () => {
 		const instantiation = { $path: 'expression.instantiation', function: 'f', typeArguments: ['T'] };
-		expect(firstOf('f<T>;')).toMatchObject({ expression: instantiation });
+		expect(firstOf('f<T>;')).toMatchObject(instantiation);
 		expect(firstOf('type X = typeof f<T>;')).toMatchObject({ value: { $path: 'type.query', expression: instantiation } });
 		expect(roundTrip('f<T>;')).toBe('f<T>;\n');
 		expect(roundTrip('type X = typeof f<T>;')).toBe('type X = typeof f<T>;\n');

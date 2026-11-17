@@ -6,7 +6,7 @@ export namespace Statement {
 		// claimed by t
 		readonly $path: K;
 		readonly declaration?: Slot<G, K, 'declaration', V.Declaration.Any<G> | V.Statement.Any<G>>;
-		readonly decorators?: Slot<G, K, 'decorators', V.Attribute.Decorator<G>>[];
+		readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
 		readonly exportClause?: Slot<G, K, 'exportClause', V.Clause.Export<G> | V.Clause.Export.Namespace<G>>;
 		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly source?: Slot<G, K, 'source', V.Literal.String<G>>;

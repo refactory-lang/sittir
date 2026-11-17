@@ -13,13 +13,13 @@ describe('a starred type is the rest type, and only * stars a type, as CPython r
 
 	it('reads a starred type argument as type.rest', () => {
 		expect(readOf('x: tuple[*Ts]\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"statement.expression","content":{"$path":"declaration.variable","name":"x","type":{"$path":"type","content":{"$path":"type.generic","name":"tuple","typeArguments":[{"$path":"type","content":{"$path":"type.rest","type":"Ts"}}]}}}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.variable","name":"x","type":{"$path":"type.generic","name":"tuple","typeArguments":[{"$path":"type.rest","type":"Ts"}]}}]}'
 		);
 	});
 
 	it('reads a starred parameter annotation as type.rest', () => {
 		expect(readOf('def f(*args: *Ts): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[{"$path":"declaration.parameter.typed","name":{"$path":"pattern.rest","pattern":"args"},"type":{"$path":"type","content":{"$path":"type.rest","type":"Ts"}}}],"body":{"$path":"statement.block","statements":["pass"]}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[{"$path":"declaration.parameter.typed","name":{"$path":"pattern.rest","pattern":"args"},"type":{"$path":"type.rest","type":"Ts"}}],"body":{"$path":"statement.block","statements":["pass"]}}]}'
 		);
 	});
 
@@ -27,7 +27,7 @@ describe('a starred type is the rest type, and only * stars a type, as CPython r
 		const built = runtime.build({
 			$path: 'declaration.variable',
 			name: 'x',
-			type: { $path: 'type', content: { $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type', content: { $path: 'type.rest', type: 'Ts' } }] } }
+			type: { $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type.rest', type: 'Ts' }] }
 		} as never);
 		expect(String(runtime.engine.render(built as never))).toBe('x: tuple[*Ts]');
 	});

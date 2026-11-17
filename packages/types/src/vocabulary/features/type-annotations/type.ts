@@ -14,7 +14,10 @@ export namespace Type {
 			K,
 			'typeArguments',
 			| V.Element.TypeArgument<G>
+			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
 			| V.Type.Any<G>
 		>[];
 	}

@@ -875,13 +875,13 @@
         },
         {
           "type": "FIELD",
-          "name": "content",
+          "name": "attribute",
           "content": {
             "type": "SYMBOL",
             "name": "attribute"
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -907,13 +907,13 @@
         },
         {
           "type": "FIELD",
-          "name": "content",
+          "name": "attribute",
           "content": {
             "type": "SYMBOL",
             "name": "attribute"
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -2944,10 +2944,13 @@
         },
         {
           "type": "FIELD",
-          "name": "alias",
+          "name": "rename",
           "content": {
             "type": "SYMBOL",
             "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -3536,17 +3539,10 @@
           "value": "<"
         },
         {
-          "type": "FIELD",
+          "type": "SYMBOL",
           "name": "lifetimes",
-          "content": {
-            "type": "SYMBOL",
-            "name": "lifetimes",
-            "metadata": {
-              "symbolSource": "group-lift"
-            }
-          },
           "metadata": {
-            "fieldSource": "override"
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -6094,7 +6090,7 @@
         },
         {
           "type": "FIELD",
-          "name": "field",
+          "name": "name",
           "content": {
             "type": "SYMBOL",
             "name": "identifier"
@@ -6124,7 +6120,7 @@
         },
         {
           "type": "FIELD",
-          "name": "field",
+          "name": "name",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -6137,6 +6133,9 @@
                 "name": "integer_literal"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {

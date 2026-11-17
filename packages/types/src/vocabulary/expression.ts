@@ -228,13 +228,61 @@ export namespace Expression {
 			readonly $path: K;
 		}
 		export namespace Shift {
-			export interface Left<G extends GrammarMap, K extends Under<'expression.binary.shift.left'> = 'expression.binary.shift.left'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+			export interface Left<G extends GrammarMap, K extends Under<'expression.binary.shift.left'> = 'expression.binary.shift.left'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator' | 'left' | 'right'> {
 				readonly $path: K;
 				readonly operator?: never;
+				readonly left?: never;
+				readonly right?: never;
+				readonly operand?: Slot<
+					G,
+					K,
+					'operand',
+					| V.Declaration.Module<G>
+					| V.Expression.Any<G>
+					| V.Identifier.Any<G>
+					| V.Literal.Any<G>
+					| V.Pattern.Any<G>
+					| V.Statement.Any<G>
+				>;
+				readonly count?: Slot<
+					G,
+					K,
+					'count',
+					| V.Declaration.Module<G>
+					| V.Expression.Any<G>
+					| V.Identifier.Any<G>
+					| V.Literal.Any<G>
+					| V.Pattern.Any<G>
+					| V.Statement.Any<G>
+				>;
 			}
-			export interface Right<G extends GrammarMap, K extends Under<'expression.binary.shift.right'> = 'expression.binary.shift.right'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+			export interface Right<G extends GrammarMap, K extends Under<'expression.binary.shift.right'> = 'expression.binary.shift.right'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator' | 'left' | 'right'> {
 				readonly $path: K;
 				readonly operator?: never;
+				readonly left?: never;
+				readonly right?: never;
+				readonly operand?: Slot<
+					G,
+					K,
+					'operand',
+					| V.Declaration.Module<G>
+					| V.Expression.Any<G>
+					| V.Identifier.Any<G>
+					| V.Literal.Any<G>
+					| V.Pattern.Any<G>
+					| V.Statement.Any<G>
+				>;
+				readonly count?: Slot<
+					G,
+					K,
+					'count',
+					| V.Declaration.Module<G>
+					| V.Expression.Any<G>
+					| V.Identifier.Any<G>
+					| V.Literal.Any<G>
+					| V.Pattern.Any<G>
+					| V.Statement.Any<G>
+				>;
 			}
 		}
 	}
@@ -374,7 +422,7 @@ export namespace Expression {
 			| V.Identifier.Any<G>
 			| V.Pattern.Any<G>
 			| V.Declaration.Parameter<G>
-			| V.Declaration.Parameter.Default<G>
+			| V.Declaration.Parameter.Defaulted<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
@@ -388,7 +436,7 @@ export namespace Expression {
 			| V.Identifier.Any<G>
 			| V.Pattern.Any<G>
 			| V.Declaration.Parameter<G>
-			| V.Declaration.Parameter.Default<G>
+			| V.Declaration.Parameter.Defaulted<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>

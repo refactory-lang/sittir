@@ -8594,7 +8594,7 @@
         },
         {
           "type": "FIELD",
-          "name": "content",
+          "name": "expression",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -12742,13 +12742,13 @@
         },
         {
           "type": "FIELD",
-          "name": "bounds",
+          "name": "type",
           "content": {
             "type": "SYMBOL",
             "name": "type"
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         }
       ]

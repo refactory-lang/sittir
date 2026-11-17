@@ -26,13 +26,13 @@ describe('a shorthand field initializer and a field initializer stay two kinds',
 	});
 
 	it('builds a shorthand without a value and reads it back as a shorthand', () => {
-		const shorthand = ir.shorthandFieldInitializer({ field: ir.identifier('a') });
+		const shorthand = ir.shorthandFieldInitializer({ name: ir.identifier('a') });
 		expect(shorthand.$type).toBe(rs.kinds.ShorthandFieldInitializer);
 		expect(itemKinds(`fn f() { S { ${shorthand.$render().toString()} }; }\n`)).toEqual([rs.kinds.ShorthandFieldInitializer]);
 	});
 
 	it('builds a field initializer with a value and reads it back as a field initializer', () => {
-		const field = ir.fieldInitializer({ field: 'b', value: ir.integerLiteral('1') });
+		const field = ir.fieldInitializer({ name: 'b', value: ir.integerLiteral('1') });
 		expect(field.$type).toBe(rs.kinds.FieldInitializer);
 		expect(itemKinds(`fn f() { S { ${field.$render().toString()} }; }\n`)).toEqual([rs.kinds.FieldInitializer]);
 	});

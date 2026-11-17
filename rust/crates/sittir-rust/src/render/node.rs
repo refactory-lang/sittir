@@ -12304,8 +12304,8 @@ impl ::sittir_core::render::Render for StructExpressionNameNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = FieldInitializerFieldNodeSlotRecord)]
-pub enum FieldInitializerFieldNodeSlot {
+#[node(choice, stamp = stamp, view = FieldInitializerNameNodeSlotRecord)]
+pub enum FieldInitializerNameNodeSlot {
     #[kind(kind::_FIELD_IDENTIFIER, display)]
     FieldIdentifier(FieldIdentifierNode),
     #[kind(kind::INTEGER_LITERAL_DECIMAL)]
@@ -12318,50 +12318,50 @@ pub enum FieldInitializerFieldNodeSlot {
     IntegerLiteralOctal(IntegerLiteralOctalNode),
 }
 
-impl ::sittir_core::prepare::Prepare for FieldInitializerFieldNodeSlot {
+impl ::sittir_core::prepare::Prepare for FieldInitializerNameNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
-            FieldInitializerFieldNodeSlot::FieldIdentifier(t) => t.prepare(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralHex(t) => t.prepare(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
+            FieldInitializerNameNodeSlot::FieldIdentifier(t) => t.prepare(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralHex(t) => t.prepare(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            FieldInitializerFieldNodeSlot::FieldIdentifier(t) => t.gap_edges(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralHex(t) => t.gap_edges(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralBinary(t) => t.gap_edges(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralOctal(t) => t.gap_edges(),
+            FieldInitializerNameNodeSlot::FieldIdentifier(t) => t.gap_edges(),
+            FieldInitializerNameNodeSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
+            FieldInitializerNameNodeSlot::IntegerLiteralHex(t) => t.gap_edges(),
+            FieldInitializerNameNodeSlot::IntegerLiteralBinary(t) => t.gap_edges(),
+            FieldInitializerNameNodeSlot::IntegerLiteralOctal(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            FieldInitializerFieldNodeSlot::FieldIdentifier(t) => t.snapshot_edge(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            FieldInitializerNameNodeSlot::FieldIdentifier(t) => t.snapshot_edge(),
+            FieldInitializerNameNodeSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            FieldInitializerNameNodeSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            FieldInitializerNameNodeSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            FieldInitializerNameNodeSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            FieldInitializerFieldNodeSlot::FieldIdentifier(t) => t.source_coordinate(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
-            FieldInitializerFieldNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            FieldInitializerNameNodeSlot::FieldIdentifier(t) => t.source_coordinate(),
+            FieldInitializerNameNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            FieldInitializerNameNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            FieldInitializerNameNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            FieldInitializerNameNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            FieldInitializerFieldNodeSlot::FieldIdentifier(t) => t.source_separator(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
-            FieldInitializerFieldNodeSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
+            FieldInitializerNameNodeSlot::FieldIdentifier(t) => t.source_separator(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
+            FieldInitializerNameNodeSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -12372,7 +12372,7 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerFieldNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for FieldInitializerFieldNodeSlot {
+impl ::sittir_core::view::KindOf for FieldInitializerNameNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
@@ -12384,20 +12384,20 @@ impl ::sittir_core::view::KindOf for FieldInitializerFieldNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for FieldInitializerFieldNodeSlot {
+impl ::sittir_core::render::Render for FieldInitializerNameNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FieldInitializerFieldNodeSlot::FieldIdentifier(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlot::IntegerLiteralDecimal(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlot::IntegerLiteralHex(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlot::IntegerLiteralBinary(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlot::IntegerLiteralOctal(inner) => inner.render(w),
+            FieldInitializerNameNodeSlot::FieldIdentifier(inner) => inner.render(w),
+            FieldInitializerNameNodeSlot::IntegerLiteralDecimal(inner) => inner.render(w),
+            FieldInitializerNameNodeSlot::IntegerLiteralHex(inner) => inner.render(w),
+            FieldInitializerNameNodeSlot::IntegerLiteralBinary(inner) => inner.render(w),
+            FieldInitializerNameNodeSlot::IntegerLiteralOctal(inner) => inner.render(w),
         }
     }
 }
 
 ::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for FieldInitializerFieldNodeSlotRecord<'_> {
+impl ::sittir_core::view::KindOf for FieldInitializerNameNodeSlotRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
@@ -12409,14 +12409,14 @@ impl ::sittir_core::view::KindOf for FieldInitializerFieldNodeSlotRecord<'_> {
     }
 }
 
-impl ::sittir_core::render::Render for FieldInitializerFieldNodeSlotRecord<'_> {
+impl ::sittir_core::render::Render for FieldInitializerNameNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FieldInitializerFieldNodeSlotRecord::FieldIdentifier(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
-            FieldInitializerFieldNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            FieldInitializerNameNodeSlotRecord::FieldIdentifier(inner) => inner.render(w),
+            FieldInitializerNameNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            FieldInitializerNameNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            FieldInitializerNameNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            FieldInitializerNameNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
         }
     }
 }
@@ -21000,9 +21000,9 @@ pub struct AttributeItemNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_content")]
-    #[slot(field = field::CONTENT, word = 2, width = 3, forms = 1, built = 2)]
-    pub content: ::sittir_core::SlotValue<Box<AttributeNode>>,
+    #[wire(key = "_attribute")]
+    #[slot(field = field::ATTRIBUTE, word = 2, width = 3, forms = 1, built = 2)]
+    pub attribute: ::sittir_core::SlotValue<Box<AttributeNode>>,
 }
 
 impl ::sittir_core::view::KindOf for AttributeItemNode {
@@ -21066,7 +21066,7 @@ fn prepare_attribute_item<N: AttributeItemPrepare + ?Sized>(node: &mut N, overla
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(190), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute, overlay, ctx)?;
     Ok(())
 }
 
@@ -21078,9 +21078,9 @@ pub struct InnerAttributeItemNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_content")]
-    #[slot(field = field::CONTENT, word = 2, width = 3, forms = 1, built = 2)]
-    pub content: ::sittir_core::SlotValue<AttributeNode>,
+    #[wire(key = "_attribute")]
+    #[slot(field = field::ATTRIBUTE, word = 2, width = 3, forms = 1, built = 2)]
+    pub attribute: ::sittir_core::SlotValue<AttributeNode>,
 }
 
 impl ::sittir_core::view::KindOf for InnerAttributeItemNode {
@@ -21144,7 +21144,7 @@ fn prepare_inner_attribute_item<N: InnerAttributeItemPrepare + ?Sized>(node: &mu
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(191), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute, overlay, ctx)?;
     Ok(())
 }
 
@@ -23855,9 +23855,9 @@ pub struct UseAsClauseNode {
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 4, forms = 3, built = 2)]
     pub name: ::sittir_core::SlotValue<AttributePathNodeSlot>,
-    #[wire(key = "_alias")]
-    #[slot(field = field::ALIAS, word = 6, width = 3, forms = 1, built = 3)]
-    pub alias: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_rename")]
+    #[slot(field = field::RENAME, word = 6, width = 3, forms = 1, built = 3)]
+    pub rename: ::sittir_core::SlotValue<IdentifierNode>,
 }
 
 impl ::sittir_core::view::KindOf for UseAsClauseNode {
@@ -23922,7 +23922,7 @@ fn prepare_use_as_clause<N: UseAsClausePrepare + ?Sized>(node: &mut N, overlay: 
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(228), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.alias, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.rename, overlay, ctx)?;
     Ok(())
 }
 
@@ -24816,7 +24816,7 @@ pub struct ForLifetimesNode {
     #[height]
     height: u16,
     #[wire(key = "_lifetimes")]
-    #[slot(field = field::LIFETIMES, word = 2, width = 3, forms = 1, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub lifetimes: ::sittir_core::SlotValue<LifetimesNode>,
 }
 
@@ -27534,9 +27534,9 @@ pub struct ShorthandFieldInitializerNode {
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attributes: Vec<::sittir_core::SlotValue<AttributeItemNode>>,
-    #[wire(key = "_field")]
-    #[slot(field = field::FIELD, word = 3, width = 3, forms = 1, built = 3)]
-    pub field: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 3, width = 3, forms = 1, built = 3)]
+    pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_attributes_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE)]
     pub attributes_separator_space: Option<KindId>,
@@ -27607,7 +27607,7 @@ fn prepare_shorthand_field_initializer<N: ShorthandFieldInitializerPrepare + ?Si
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.field, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     Ok(())
 }
 
@@ -27622,9 +27622,9 @@ pub struct FieldInitializerNode {
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attributes: Vec<::sittir_core::SlotValue<AttributeItemNode>>,
-    #[wire(key = "_field")]
-    #[slot(field = field::FIELD, word = 3, width = 3, forms = 1, built = 3)]
-    pub field: ::sittir_core::SlotValue<FieldInitializerFieldNodeSlot>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 3, width = 3, forms = 1, built = 3)]
+    pub name: ::sittir_core::SlotValue<FieldInitializerNameNodeSlot>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 6, width = 4, forms = 3, built = 4)]
     pub value: ::sittir_core::SlotValue<ExpressionNode>,
@@ -27698,7 +27698,7 @@ fn prepare_field_initializer<N: FieldInitializerPrepare + ?Sized>(node: &mut N, 
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_FIELD_INITIALIZER_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.field, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
     Ok(())
 }
@@ -29292,7 +29292,7 @@ pub struct FieldExpressionNode {
     pub object: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_property")]
     #[slot(field = field::PROPERTY, word = 6, width = 3, forms = 1, built = 3)]
-    pub property: ::sittir_core::SlotValue<FieldInitializerFieldNodeSlot>,
+    pub property: ::sittir_core::SlotValue<FieldInitializerNameNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for FieldExpressionNode {
@@ -49533,14 +49533,14 @@ fn render_non_special_token<N: NonSpecialTokenFields + ?Sized>(node: &N, w: &mut
 }
 
 fn render_attribute_item<N: AttributeItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
+    let attribute = node.attribute();
     w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("#")?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_POUND_AFTER);
     w.site_at(options::SITE_ATTRIBUTE_ITEM_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_LBRACK_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute", ::sittir_core::types::ItemIndex(0), w, |w| attribute.render(w))?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -49548,7 +49548,7 @@ fn render_attribute_item<N: AttributeItemFields + ?Sized>(node: &N, w: &mut dyn 
 }
 
 fn render_inner_attribute_item<N: InnerAttributeItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
+    let attribute = node.attribute();
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("#")?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_POUND_AFTER);
@@ -49558,7 +49558,7 @@ fn render_inner_attribute_item<N: InnerAttributeItemFields + ?Sized>(node: &N, w
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_LBRACK_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute", ::sittir_core::types::ItemIndex(0), w, |w| attribute.render(w))?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -50172,14 +50172,14 @@ fn render_use_list<N: UseListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_cor
 }
 
 fn render_use_as_clause<N: UseAsClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alias = node.alias();
     let name = node.name();
+    let rename = node.rename();
     w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_USE_AS_CLAUSE_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_USE_AS_CLAUSE_AS_KEYWORD_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_rename", ::sittir_core::types::ItemIndex(0), w, |w| rename.render(w))?;
     w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -50766,10 +50766,10 @@ fn render_shorthand_field_initializer<N: ShorthandFieldInitializerFields + ?Size
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
         join: ::sittir_core::render::JoinArm::NONE,
     };
-    let field = node.field();
+    let name = node.name();
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     attributes.render(w)?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_field", ::sittir_core::types::ItemIndex(0), w, |w| field.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -50789,11 +50789,11 @@ fn render_field_initializer<N: FieldInitializerFields + ?Sized>(node: &N, w: &mu
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
         join: ::sittir_core::render::JoinArm::NONE,
     };
-    let field = node.field();
+    let name = node.name();
     let value = node.value();
     w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     attributes.render(w)?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_field", ::sittir_core::types::ItemIndex(0), w, |w| field.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_FIELD_INITIALIZER_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FIELD_INITIALIZER_COLON_AFTER);
@@ -56852,7 +56852,7 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ArrayExpressionListElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixOperatorNodeSlot, RangePatternWithLeftWithRightOperatorNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, MatchBlockArmsArmsNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, AttributedElementNode, ArrayExpressionListElementsNode, TupleExpressionElementsNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, ArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, ArrayExpressionSemiNode, ArrayExpressionListNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, StringCloseNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerNameNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ArrayExpressionListElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixOperatorNodeSlot, RangePatternWithLeftWithRightOperatorNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, MatchBlockArmsArmsNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, AttributedElementNode, ArrayExpressionListElementsNode, TupleExpressionElementsNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, ArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, ArrayExpressionSemiNode, ArrayExpressionListNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, StringCloseNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AbstractTypeNode>() == 120, "AbstractTypeNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -57162,13 +57162,13 @@ const _: () = assert!(::core::mem::size_of::<FieldExpressionNode>() == 144, "Fie
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FieldIdentifierNode>() == 56, "FieldIdentifierNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<FieldInitializerFieldNodeSlot>() == 88, "FieldInitializerFieldNodeSlot is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FieldInitializerListElementsItemNodeSlot>() == 216, "FieldInitializerListElementsItemNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FieldInitializerListElementsNode>() == 48, "FieldInitializerListElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FieldInitializerListNode>() == 64, "FieldInitializerListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FieldInitializerNameNodeSlot>() == 88, "FieldInitializerNameNodeSlot is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FieldInitializerNode>() == 328, "FieldInitializerNode is not the 328 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

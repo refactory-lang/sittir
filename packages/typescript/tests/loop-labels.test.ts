@@ -26,7 +26,7 @@ describe('a label belongs to the loop or block it names', () => {
 	});
 
 	it('reads a label around any other statement as statement.labeled, the outer of two labels included', () => {
-		expect(firstOf('a: x++;')).toMatchObject({ $path: 'statement.labeled', label: 'a', body: { $path: 'statement.expression' } });
+		expect(firstOf('a: x++;')).toMatchObject({ $path: 'statement.labeled', label: 'a', body: { $path: 'expression.update.increment' } });
 		expect(firstOf('a: if (x) {}')).toMatchObject({ $path: 'statement.labeled', label: 'a', body: { $path: 'statement.if' } });
 		expect(firstOf('a: b: for (;;) {}')).toMatchObject({ $path: 'statement.labeled', label: 'a', body: { $path: 'statement.loop.counted', label: 'b' } });
 	});

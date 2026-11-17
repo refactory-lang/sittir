@@ -5016,10 +5016,10 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 	const node = {
 		...data,
 		$type: TSKindId.Decorator as const,
-		content() {
+		expression() {
 			return hydrateSlot<
 				T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
-			>(this, '_content', tree);
+			>(this, '_expression', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -5036,7 +5036,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: wrapDecorator$with$content, [RECEIVER]: node };
+	node.$with = { expression: wrapDecorator$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Parsed;
 }
@@ -5045,17 +5045,17 @@ function wrapDecorator$with(node: Held, setter: string, args: readonly unknown[]
 	const data = node[INPUT] as T.Decorator;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.Decorator['_content']>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.Decorator['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapDecorator({ ...$edited(data), _content: admitSlot(handle, 'decorator', 'content', v) }, tree)
+					wrapDecorator({ ...$edited(data), _expression: admitSlot(handle, 'decorator', 'expression', v) }, tree)
 				)
 			);
 	}
 	throw new Error(`decorator has no $with.${setter}`);
 }
-function wrapDecorator$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDecorator$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapDecorator$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDecorator$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function wrapDecoratorMemberExpression(
@@ -10129,8 +10129,8 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle): T.Constrai
 		operator() {
 			return this._operator;
 		},
-		bounds() {
-			return hydrateSlot<T.Type>(this, '_bounds', tree);
+		type() {
+			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -10147,7 +10147,7 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle): T.Constrai
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { operator: wrapConstraint$with$operator, bounds: wrapConstraint$with$bounds, [RECEIVER]: node };
+	node.$with = { operator: wrapConstraint$with$operator, type: wrapConstraint$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Constraint.Parsed;
 }
@@ -10162,10 +10162,10 @@ function wrapConstraint$with(node: Held, setter: string, args: readonly unknown[
 					wrapConstraint({ ...$edited(data), _operator: admitSlot(handle, 'constraint', 'operator', v) }, tree)
 				)
 			);
-		case 'bounds':
-			return applySetter(args, (v: NonNullable<T.Constraint['_bounds']>) =>
+		case 'type':
+			return applySetter(args, (v: NonNullable<T.Constraint['_type']>) =>
 				rebuilt(node, handle, () =>
-					wrapConstraint({ ...$edited(data), _bounds: admitSlot(handle, 'constraint', 'bounds', v) }, tree)
+					wrapConstraint({ ...$edited(data), _type: admitSlot(handle, 'constraint', 'type', v) }, tree)
 				)
 			);
 	}
@@ -10174,8 +10174,8 @@ function wrapConstraint$with(node: Held, setter: string, args: readonly unknown[
 function wrapConstraint$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapConstraint$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function wrapConstraint$with$bounds(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapConstraint$with(receiverOf(this, '$with.bounds'), 'bounds', args);
+function wrapConstraint$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapConstraint$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHandle): T.ConstructSignature.Parsed {
@@ -20859,7 +20859,7 @@ function viewArguments(data: RecordPosition, tree: TreeHandle): T.Arguments.Pars
 	return node as unknown as T.Arguments.Parsed;
 }
 
-function viewDecorator$content(this: RecordHandle) {
+function viewDecorator$expression(this: RecordHandle) {
 	return viewSlot<
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>(this, 2, 3, 1, 2);
@@ -20872,7 +20872,7 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewDecorator$content,
+		expression: viewDecorator$expression,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -20883,7 +20883,7 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Parsed;
 }
@@ -23471,7 +23471,7 @@ function viewDefaultType(data: RecordPosition, tree: TreeHandle): T.DefaultType.
 function viewConstraint$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 2);
 }
-function viewConstraint$bounds(this: RecordHandle) {
+function viewConstraint$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 3, 4, 3, 3);
 }
 function viewConstraint(data: RecordPosition, tree: TreeHandle): T.Constraint.Parsed {
@@ -23483,7 +23483,7 @@ function viewConstraint(data: RecordPosition, tree: TreeHandle): T.Constraint.Pa
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		operator: viewConstraint$operator,
-		bounds: viewConstraint$bounds,
+		type: viewConstraint$type,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -23494,7 +23494,7 @@ function viewConstraint(data: RecordPosition, tree: TreeHandle): T.Constraint.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { operator: $with$operator, bounds: $with$bounds, [RECEIVER]: node };
+	node.$with = { operator: $with$operator, type: $with$type, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Constraint.Parsed;
 }
@@ -27547,9 +27547,6 @@ function $with$bodies(this: Received<RecordPosition>, ...args: unknown[]): unkno
 }
 function $with$body(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.body'), _wrap, 'body', args);
-}
-function $with$bounds(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.bounds'), _wrap, 'bounds', args);
 }
 function $with$cases(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.cases'), _wrap, 'cases', args);

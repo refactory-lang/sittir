@@ -355,7 +355,7 @@ export const records = {
 		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
 	},
 	ArgumentsNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
-	DecoratorNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
+	DecoratorNode: { words: 5, builtWords: 3, expression: { word: 2, width: 3, forms: 1, built: 2 } },
 	DecoratorMemberExpressionNode: {
 		words: 9,
 		builtWords: 4,
@@ -681,7 +681,7 @@ export const records = {
 		words: 7,
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
-		bounds: { word: 3, width: 4, forms: 3, built: 3 }
+		type_: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	ConstructSignatureNode: {
 		words: 12,

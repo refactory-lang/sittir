@@ -10,7 +10,7 @@ type Read = { readonly $path: string; readonly [member: string]: unknown };
 const py = await sharedEngine(() => createEngine(python));
 const runtime = await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict' })));
 const read = (source: string): Read => runtime.read(runtime.engine.parse(source)) as Read;
-const value = (source: string): unknown => (((read(source).statements as readonly Read[])[0] as Read).content as Read).value;
+const value = (source: string): unknown => ((read(source).statements as readonly Read[])[0] as Read).value;
 const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(read(source)) as never));
 
 describe('long and plain hex, octal and binary integers', () => {

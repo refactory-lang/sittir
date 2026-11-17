@@ -34,6 +34,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	interiorPart: null,
 	textLeavesThrough: [],
 	shownAs: [],
+	spells: [],
 	...extra
 });
 

@@ -36,10 +36,10 @@ export namespace Clause {
 		export interface Names<G extends GrammarMap, K extends Under<'clause.import.names'> = 'clause.import.names'> extends SubKindOf<V.Clause.Import<G, K>> {
 			// claimed by t
 			readonly $path: K;
-			readonly content?: Slot<
+			readonly specifiers?: Slot<
 				G,
 				K,
-				'content',
+				'specifiers',
 				| V.Clause.Import.Namespace<G>
 				| V.Clause.Import.Specifier.Any<G>
 			>[];

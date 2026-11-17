@@ -2226,17 +2226,17 @@ export interface ImportList {
 export interface AliasedImport {
 	readonly $type: TSKindId.AliasedImport;
 	readonly _name: DottedName;
-	readonly _alias: Identifier;
+	readonly _rename: Identifier;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
-		readonly _alias: 'alias';
+		readonly _rename: 'rename';
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.DottedName>;
-		readonly alias: SlotHint<T.Identifier>;
+		readonly rename: SlotHint<T.Identifier>;
 	};
 	readonly name: () => DottedName;
-	readonly alias: () => Identifier;
+	readonly rename: () => Identifier;
 }
 
 export interface PrintStatement {
@@ -2936,14 +2936,14 @@ export interface TypeParameter {
 
 export interface ParenthesizedListSplat {
 	readonly $type: TSKindId.ParenthesizedListSplat;
-	readonly _content: ParenthesizedListSplat | ListSplat;
+	readonly _expression: ParenthesizedListSplat | ListSplat;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _expression: 'expression';
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.ParenthesizedListSplat | T.ListSplat>;
+		readonly expression: SlotHint<T.ParenthesizedListSplat | T.ListSplat>;
 	};
-	readonly content: () => ParenthesizedListSplat | ListSplat;
+	readonly expression: () => ParenthesizedListSplat | ListSplat;
 }
 
 export interface ArgumentList {
@@ -9354,7 +9354,7 @@ export interface ParenthesizedListSplatNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ParenthesizedListSplat.Bound,
-	'content',
+	'expression',
 	TSKindId.ParenthesizedListSplat,
 	ParenthesizedListSplat.Parsed,
 	never

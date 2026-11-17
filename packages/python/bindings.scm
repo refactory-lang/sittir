@@ -25,7 +25,7 @@
 ((method_declaration name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
-(default_parameter value: (_)? @default) @declaration.parameter.default
+(default_parameter value: (_)? @default) @declaration.parameter.defaulted
 (typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
 (type_param_type_var) @declaration.type_parameter
 (type_param_type_var (type) @bounds)
@@ -52,6 +52,7 @@
 (raise_statement (_)? @expression) @statement.raise
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
+(import_from_statement [(wildcard_import) (import_list) (parenthesized_import_list)] @names)
 (match_statement (subjects) @subject) @statement.match
 (subjects ",") @expression.collection.tuple.bare
 (subjects subject: (_) @elements)
@@ -65,11 +66,12 @@
 (continue_statement) @statement.continue
 (global_statement) @statement.global
 (nonlocal_statement) @statement.nonlocal
-(expression_statement) @statement.expression
+(expression_statement (_) @element)
 (expression_statement_tuple ",") @expression.collection.tuple.bare
 (expression_statement_tuple item: (_) @elements)
 (expression_statement_tuple "," @trailingComma .)
 (future_import_statement) @statement.import.future
+(future_import_statement [(import_list) (parenthesized_import_list)] @names)
 (print_statement_plain) @statement.print
 (print_statement_plain (print_arguments) @arguments)
 (print_statement_plain (print_arguments "," @trailingComma .))
@@ -101,8 +103,9 @@
 (relative_import) @clause.import.relative
 (import_prefix) @clause.import.relative.prefix
 (aliased_import) @clause.import.alias
+(aliased_import alias: (_) @rename)
 (wildcard_import) @clause.import.wildcard
-(comprehension_clauses) @clause.comprehension
+(comprehension_clauses content: (_) @element)
 (lambda_within_for_in_clause) @expression.lambda
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
@@ -113,6 +116,7 @@
 (list_splat) @element.splat
 (dictionary_splat) @element.splat.dictionary
 (parenthesized_list_splat) @element.splat.parenthesized
+(parenthesized_list_splat (_) @expression)
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call) @expression.call
@@ -129,8 +133,8 @@
 (binary_operator operator: "&") @expression.binary.bitwise.and
 (binary_operator operator: "|") @expression.binary.bitwise.or
 (binary_operator operator: "^") @expression.binary.bitwise.xor
-(binary_operator operator: "<<") @expression.binary.shift.left
-(binary_operator operator: ">>") @expression.binary.shift.right
+(binary_operator left: (_) @operand operator: "<<" right: (_) @count) @expression.binary.shift.left
+(binary_operator left: (_) @operand operator: ">>" right: (_) @count) @expression.binary.shift.right
 (boolean_operator) @expression.binary.logical
 (boolean_operator operator: "and") @expression.binary.logical.and
 (boolean_operator operator: "or") @expression.binary.logical.or
@@ -193,6 +197,7 @@
 (lambda) @expression.lambda
 (await (_)? @expression) @expression.await
 (yield) @expression.yield
+(yield (_) @expression)
 (yield_from_clause (_) @expression) @expression.yield.delegate
 (interpolation) @expression.interpolation
 (format_expression) @expression.interpolation
@@ -245,7 +250,7 @@
 (case_as_pattern (identifier) @name)
 
 ; ── type ───────────────────────────────────────────────────────────────────────
-(type) @type
+(type (_) @element)
 (generic_type) @type.generic
 (generic_type (type_parameter (_) @typeArguments))
 ((generic_type (identifier) @_n (type_parameter (types . (type) @type .))) @type.nullable (#eq? @_n "Optional"))
@@ -305,7 +310,7 @@
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(decorator (_)? @content) @attribute.decorator
+(decorator expression: (_) @element)
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (comment) @comment.line

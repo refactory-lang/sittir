@@ -16,3 +16,15 @@ export const repetitionSeparator: V.Read<RustMap, 'element.macro.token_repetitio
 declare const lifetimeRead: V.Read<RustMap, 'identifier.lifetime'>;
 // @ts-expect-error a function's name never reads as a lifetime
 export const lifetimeFunctionName: V.BuildInput<RustMap, 'declaration.function'>['name'] = lifetimeRead;
+
+export const lineComment: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comment.line', $value: ' x' };
+// @ts-expect-error a line comment builds from its text, never from a content member
+export const lineCommentContent: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comment.line', content: ' x' };
+export const docComment: V.BuildInput<RustMap, 'comment.line.doc'> = { $path: 'comment.line.doc', $value: ' x' };
+export const typeArgument: V.BuildInput<RustMap, 'element.type_argument'>['argument'] = 'u8';
+// @ts-expect-error a type argument holds its argument as its argument, never as content
+export const typeArgumentContent: V.BuildInput<RustMap, 'element.type_argument'>['content'] = 'u8';
+declare const call: V.Read<RustMap, 'expression.call'>;
+export const statements: V.BuildInput<RustMap, 'statement.block'>['statements'] = [call];
+// @ts-expect-error a statement list holds an expression itself, so no expression statement wraps it
+export const expressionStatement: V.BuildInput<RustMap, 'statement.expression'> = { $path: 'statement.expression' };

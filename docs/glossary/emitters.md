@@ -3213,7 +3213,7 @@ between the seams the template and the joins write.
 
 `TriviaNode` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own. Its seam text is the kind's fixed text: JS names a whitespace entry by its exact spelling, so the kind determines the text.
 
-A line continuation kind with a text of its own (`continuationTriviaKinds`) holds a `sittir_core::trivia::TriviaText` rather than its kind's struct, so it carries the adjacency an `ERROR` carries (`$before`/`$after`, the source's in-line runs beside it, `TriviaText::verbatim`). Without an adjacency (a built continuation) it is a seam member: its text replaces its gap's spacing. With one (a read continuation, `ParsedTree::assigned_side`) it is no seam member and renders verbatim with the runs, as an `ERROR` does, so the continuation line's alignment survives as text.
+A line continuation kind with a text of its own (`continuationTriviaKinds`) holds a `sittir_core::trivia::TriviaText` rather than its kind's struct, so it carries the adjacency an `ERROR` carries (`$before`/`$after`, the source's in-line runs beside it, `TriviaText::verbatim`). It is never a seam member: `seam_gap` returns a layout kind for whitespace trivia only. It renders verbatim with the runs beside it (a read continuation, `ParsedTree::assigned_side`), as an `ERROR` does, so the continuation line's alignment survives as text.
 
 `NodeLayout` is an alias for `sittir_core::layout::NodeLayout<TriviaNode>`, the layout every struct node carries; its trivia is a `sittir_core::trivia::NodeTrivia<TriviaNode>`.
 The carrier's shape (leading, trailing and inner entries, each with its

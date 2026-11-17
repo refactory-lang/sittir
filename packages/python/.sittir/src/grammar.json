@@ -499,10 +499,13 @@
         },
         {
           "type": "FIELD",
-          "name": "alias",
+          "name": "rename",
           "content": {
             "type": "SYMBOL",
             "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -2015,7 +2018,7 @@
           },
           {
             "type": "FIELD",
-            "name": "content",
+            "name": "expression",
             "content": {
               "type": "CHOICE",
               "members": [

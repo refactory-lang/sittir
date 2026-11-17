@@ -5,6 +5,15 @@ export namespace Type {
 	export interface Constrained<G extends GrammarMap, K extends Under<'type.constrained'> = 'type.constrained'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by p
 		readonly $path: K;
-		readonly baseType: Slot<G, K, 'baseType', V.Type.Any<G>>;
+		readonly baseType: Slot<
+			G,
+			K,
+			'baseType',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Type.Any<G>
+		>;
 	}
 }

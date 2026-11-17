@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { preference } from '../../dsl/primitives/preference.ts';
 import { layoutSlots, renamedFromOf, slotModelOf } from '../index.ts';
+import type { Rule } from '../../types/rule.ts';
+import { CHOICE, FIELD, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts';
 
 const RECORD = {
 	nodes: [
@@ -33,7 +35,7 @@ const RECORD = {
 
 describe('slotModelOf', () => {
 	it('reads each node\'s slots with their accessors and terminals, deriving the kinds the record leaves out', () => {
-		const model = slotModelOf(RECORD);
+		const model = slotModelOf(RECORD, {});
 		expect(model.get('binary')?.slots).toEqual([
 			{ name: 'left', propertyName: 'left', required: true, multiple: false, storage: 'verbatim', kinds: ['expr'], terminals: [] },
 			{ name: 'operator', propertyName: 'operator', required: true, multiple: false, storage: 'verbatim', kinds: ['minus'], terminals: ['+'] },
@@ -41,6 +43,32 @@ describe('slotModelOf', () => {
 		]);
 		expect(model.get('items')).toMatchObject({ modelType: 'list', elementKinds: ['item'] });
 		expect(model.get('call_expression')?.modelType).toBe('branch');
+	});
+
+	it('records the tokens every parse of a kind spells outside its slots', () => {
+		const text = (value: string): Rule<'evaluate'> => ({ type: STRING, value });
+		const rules: Record<string, Rule<'evaluate'>> = {
+			lexed: { type: SEQ, members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'x' } }, { type: TOKEN, content: text(';') }] },
+			immediate: { type: SEQ, members: [text('#'), { type: 'IMMEDIATE_TOKEN', content: { type: 'PREC', value: 1, content: text('!') } }] },
+			composite: { type: TOKEN, content: { type: SEQ, members: [text('a'), text('b')] } },
+			either: { type: CHOICE, members: [{ type: SEQ, members: [text('('), text(')')] }, { type: SEQ, members: [text('('), text(','), text(')')] }] },
+			maybe: { type: SEQ, members: [text('x'), { type: CHOICE, members: [text(';'), { type: 'BLANK' }] }] },
+			hidden: { type: SEQ, members: [text('let'), { type: SYMBOL, name: '_semi' }] },
+			typed: { type: SEQ, members: [text(':'), { type: SYMBOL, name: '_type' }] },
+			_semi: text(';'),
+			_type: text('int')
+		};
+		const kinds = ['lexed', 'immediate', 'composite', 'either', 'maybe', 'hidden', 'typed'];
+		const model = slotModelOf({ nodes: kinds.map((kind) => ({ kind, modelType: 'branch' })) }, { rules, supertypes: ['_type'] });
+		expect(Object.fromEntries(kinds.map((kind) => [kind, model.get(kind)?.spells]))).toEqual({
+			lexed: [';'],
+			immediate: ['#', '!'],
+			composite: [],
+			either: ['(', ')'],
+			maybe: ['x'],
+			hidden: ['let', ';'],
+			typed: [':']
+		});
 	});
 });
 
