@@ -278,7 +278,7 @@ Today's pinned vocabulary reader isn't affected. Codegen already runs it in a ch
   - `true` and `false` go to the boolean paths;
   - a string goes to the member's leaf, as today.
   
-  The type admits the scalar exactly where a path builds it. A member where two paths take the same scalar is `portable-emit-unfit-member`.
+  The type admits the scalar exactly where a path builds it. A member where two paths take the same scalar and neither is beneath the other is `portable-emit-unfit-member`; otherwise the outermost takes it (an integer goes to `literal.number.integer`, not `.hex`; ruled 2026-11-17, "The outermost path takes it").
 - `$path` stays required on a member with several structure-built paths (a block's `statements`).
 
 | call | today | after |
@@ -384,6 +384,13 @@ Table 4. The same path in different slots: `expression.binary.arithmetic.add`'s 
 | typescript `statement.return.expression` | yes | `arithmetic.add` |
 
 Python's tail is `add` in 171 slots and `arithmetic.add` in 2, its statement lists (`file.statements` and `statement.block.statements`). Rust and typescript need `arithmetic.add` in all of theirs (144 and 198 slots).
+
+### Ruled while the emitter was built (2026-11-17)
+
+- **A string the map admits builds.** Decision 1's sentence stands ("Make it build, as the spec says"): python `{ $path: 'identifier.qualified', qualifier: 'a', name: 'b' }` builds `a.b`. Today neither side does it: the interpreter throws and the loose slot's type refuses the string. Both are fixed at the root, and the count of members with the same shape is reported before code.
+- **Loose list arguments admit `null` for a hole** ("Yes, loose list args admit null") on the kinds whose model says `hasOptionalElements` (typescript `object`, `array_pattern`, `object_pattern`), through the same `withHoles` type the storage and setters use, so a read is a valid build input: `b.arrayPattern([a, null, b])` builds `[a,, b]`.
+- **A member whose grammar slot is a fixed set of tokens is typed as those texts** ("The map narrows them to their token texts"): rust `fragment` and the integer `suffix` read and build as the union the grammar admits (`'u8' | 'i32' | …`), derived from the grammar's token list, not `string`. One rule for every such member; the count per grammar is reported before code.
+- **`decimalSpelling` is exported** from `@sittir/common/portable/utils` ("Approve"): `decimalSpelling(value: number | bigint, parts, scientific: boolean): DecimalSpelling<P> | undefined` in `packages/common/src/number.ts`. The interpreter's spelling bodies move into it unchanged, and the generated build calls it; `undefined` means unspellable and each caller throws its own message.
 
 ## Diagnostics and the MVP sets
 
