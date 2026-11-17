@@ -6,6 +6,7 @@ import type { Admit, NonEmptyArray, RefuseUndeclared, RefusingConfig } from '@si
 import {
 	currentHandle,
 	admitChildren,
+	hoistedWith,
 	elementsWith,
 	rebuilt,
 	refuseJSON,
@@ -297,8 +298,10 @@ function withString(node: object, setter: string, args: readonly unknown[]): unk
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (value?: Admit<T.StringContent>) =>
-				rebuilt(node, handle, () => _buildString$patch(node, value))
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.StringContent>) =>
+					rebuilt(node, handle, () => _buildString$patch(node, value))
+				)
 			);
 	}
 	throw new Error(`string has no $with.${setter}`);
@@ -356,8 +359,10 @@ function withImmediateString(node: object, setter: string, args: readonly unknow
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (value?: Admit<T.StringContent>) =>
-				rebuilt(node, handle, () => _buildImmediateString$patch(node, value))
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.StringContent>) =>
+					rebuilt(node, handle, () => _buildImmediateString$patch(node, value))
+				)
 			);
 	}
 	throw new Error(`immediate_string has no $with.${setter}`);
@@ -1145,8 +1150,10 @@ function withPredicate(node: object, setter: string, args: readonly unknown[]): 
 				rebuilt(node, handle, () => buildPredicate$set(node, 'type', { type: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value?: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildPredicate$set(node, 'parameters', { parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.Parameters>) =>
+					rebuilt(node, handle, () => buildPredicate$set(node, 'parameters', { parameters: value }))
+				)
 			);
 	}
 	throw new Error(`predicate has no $with.${setter}`);

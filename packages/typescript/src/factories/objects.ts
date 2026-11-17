@@ -21,6 +21,7 @@ import {
 	currentHandle,
 	admitChildren,
 	checkDelimited,
+	hoistedWith,
 	listSlotWith,
 	LIST_METHODS,
 	listIterator,
@@ -409,12 +410,14 @@ function buildExportClause$with(node: Held, setter: string, args: readonly unkno
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'exportSpecifiers':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
-						(value?: Admit<T.ExportSpecifiers>) => _buildExportClause(value)
+			return hoistedWith(node, 'exportSpecifiers', '_export_specifiers', 'items', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
+							(value?: Admit<T.ExportSpecifiers>) => _buildExportClause(value)
+						)
 					)
 				)
 			);
@@ -792,12 +795,14 @@ function buildNamedImports$with(node: Held, setter: string, args: readonly unkno
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'importSpecifiers':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
-						(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports(value)
+			return hoistedWith(node, 'importSpecifiers', '_import_specifiers', 'items', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
+							(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports(value)
+						)
 					)
 				)
 			);
@@ -854,8 +859,10 @@ function buildImportAttribute$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildImportAttribute({ ...config, attributeKind: value }))
 			);
 		case 'object':
-			return applySetter(args, (value: Admit<T.Object>) =>
-				rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
+			return hoistedWith(node, 'object', '_object', 'properties', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Object>) =>
+					rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
+				)
 			);
 	}
 	throw new Error(`import_attribute has no $with.${setter}`);
@@ -1536,8 +1543,10 @@ function buildIfStatement$with(node: Held, setter: string, args: readonly unknow
 				rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value }))
 			);
 		case 'alternative':
-			return applySetter(args, (value?: Admit<T.ElseClause>) =>
-				rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
+			return hoistedWith(node, 'alternative', '_alternative', 'body', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.ElseClause>) =>
+					rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
+				)
 			);
 	}
 	throw new Error(`if_statement has no $with.${setter}`);
@@ -1594,8 +1603,10 @@ function buildSwitchStatement$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildSwitchStatement({ ...config, value: value }))
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.SwitchBody>) =>
-				rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
+			return hoistedWith(node, 'body', '_body', 'cases', false, args, (args) =>
+				applySetter(args, (value: Admit<T.SwitchBody>) =>
+					rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
+				)
 			);
 	}
 	throw new Error(`switch_statement has no $with.${setter}`);
@@ -1983,8 +1994,10 @@ function buildTryStatement$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: value }))
 			);
 		case 'finalizer':
-			return applySetter(args, (value?: Admit<T.FinallyClause>) =>
-				rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
+			return hoistedWith(node, 'finalizer', '_finalizer', 'body', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.FinallyClause>) =>
+					rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
+				)
 			);
 	}
 	throw new Error(`try_statement has no $with.${setter}`);
@@ -3384,22 +3397,28 @@ function buildClass$with(node: Held, setter: string, args: readonly unknown[]): 
 				rebuilt(node, handle, () => buildClass({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildClass({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildClass({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'heritage':
-			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-				rebuilt(node, handle, () => buildClass({ ...config, heritage: value }))
+			return hoistedWith(node, 'heritage', '_heritage', 'content', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.ClassHeritage>) =>
+					rebuilt(node, handle, () => buildClass({ ...config, heritage: value }))
+				)
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.ClassBody>) =>
-				rebuilt(node, handle, () => buildClass({ ...config, body: value }))
+			return hoistedWith(node, 'body', '_body', 'members', false, args, (args) =>
+				applySetter(args, (value: Admit<T.ClassBody>) =>
+					rebuilt(node, handle, () => buildClass({ ...config, body: value }))
+				)
 			);
 	}
 	throw new Error(`class has no $with.${setter}`);
@@ -3522,22 +3541,28 @@ function buildClassDeclaration$with(node: Held, setter: string, args: readonly u
 				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value }, options)
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value }, options)
+						)
 					)
 				)
 			);
 		case 'heritage':
-			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options))
+			return hoistedWith(node, 'heritage', '_heritage', 'content', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.ClassHeritage>) =>
+					rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options))
+				)
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.ClassBody>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options))
+			return hoistedWith(node, 'body', '_body', 'members', false, args, (args) =>
+				applySetter(args, (value: Admit<T.ClassBody>) =>
+					rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options))
+				)
 			);
 		case 'terminator':
 			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
@@ -3701,18 +3726,22 @@ function buildFunctionExpression$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionExpression({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildFunctionExpression({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value }))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -3851,18 +3880,23 @@ function buildFunctionDeclaration$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionDeclaration({ ...config, typeParameters: value }, options)
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) =>
+								buildFunctionDeclaration({ ...config, typeParameters: value }, options)
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -3994,18 +4028,22 @@ function buildGeneratorFunction$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildGeneratorFunction({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildGeneratorFunction({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value }))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -4144,19 +4182,23 @@ function buildGeneratorFunctionDeclaration$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) =>
-							buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) =>
+								buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -4338,12 +4380,14 @@ function buildNewExpression$with(node: Held, setter: string, args: readonly unkn
 				rebuilt(node, handle, () => buildNewExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildNewExpression({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+							(value?: Admit<T.TypeArguments>) => buildNewExpression({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
@@ -5995,18 +6039,22 @@ function buildDecoratorCallExpression$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildDecoratorCallExpression({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+							(value?: Admit<T.TypeArguments>) => buildDecoratorCallExpression({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
+			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Arguments>) =>
+					rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
+				)
 			);
 	}
 	throw new Error(`decorator_call_expression has no $with.${setter}`);
@@ -6618,18 +6666,22 @@ function buildFunctionSignature$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildFunctionSignature({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionSignature({ ...config, typeParameters: value }, options)
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildFunctionSignature({ ...config, typeParameters: value }, options)
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -6761,12 +6813,14 @@ function buildTypeAssertion$with(node: Held, setter: string, args: readonly unkn
 	const config = node[INPUT] as T.TypeAssertion.Config;
 	switch (setter) {
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) => buildTypeAssertion({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+							(value: Admit<T.TypeArguments>) => buildTypeAssertion({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
@@ -6982,12 +7036,14 @@ function buildInstantiationExpression$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildInstantiationExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) => buildInstantiationExpression({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+							(value: Admit<T.TypeArguments>) => buildInstantiationExpression({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
@@ -7163,12 +7219,14 @@ function buildExtendsClauseSingle$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildExtendsClauseSingle({ ...config, value: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildExtendsClauseSingle({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+							(value?: Admit<T.TypeArguments>) => buildExtendsClauseSingle({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
@@ -7369,22 +7427,28 @@ function buildAbstractClassDeclaration$with(node: Held, setter: string, args: re
 				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'heritage':
-			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value }))
+			return hoistedWith(node, 'heritage', '_heritage', 'content', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.ClassHeritage>) =>
+					rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value }))
+				)
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.ClassBody>) =>
-				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
+			return hoistedWith(node, 'body', '_body', 'members', false, args, (args) =>
+				applySetter(args, (value: Admit<T.ClassBody>) =>
+					rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
+				)
 			);
 	}
 	throw new Error(`abstract_class_declaration has no $with.${setter}`);
@@ -7747,18 +7811,22 @@ function buildInterfaceDeclaration$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildInterfaceDeclaration({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildInterfaceDeclaration({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'extendsTypeClause':
-			return applySetter(args, (value?: Admit<T.ExtendsTypeClause>) =>
-				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value }))
+			return hoistedWith(node, 'extendsTypeClause', '_extends_type_clause', 'types', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.ExtendsTypeClause>) =>
+					rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value }))
+				)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.InterfaceBody>) =>
@@ -7893,12 +7961,14 @@ function buildEnumDeclaration$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value }))
 			);
 		case 'body':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
-						(value: Admit<T.EnumBody>) => buildEnumDeclaration({ ...config, body: value })
+			return hoistedWith(node, 'body', '_body', 'elements', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
+							(value: Admit<T.EnumBody>) => buildEnumDeclaration({ ...config, body: value })
+						)
 					)
 				)
 			);
@@ -8004,12 +8074,14 @@ function buildEnumBody$with(node: Held, setter: string, args: readonly unknown[]
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
-						(value?: Admit<T.EnumBodyElements>) => _buildEnumBody(value)
+			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
+							(value?: Admit<T.EnumBodyElements>) => _buildEnumBody(value)
+						)
 					)
 				)
 			);
@@ -8179,13 +8251,15 @@ function buildTypeAliasDeclaration$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) =>
-							buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) =>
+								buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
+						)
 					)
 				)
 			);
@@ -8320,8 +8394,10 @@ function buildRequiredParameter$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value }))
+				)
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['value']>) =>
@@ -8457,8 +8533,10 @@ function buildOptionalParameter$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value }))
+				)
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['value']>) =>
@@ -8836,8 +8914,10 @@ function buildTypeQueryCallExpressionInTypeAnnotation$with(
 					rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value }))
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value }))
+			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Arguments>) =>
+					rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value }))
+				)
 			);
 	}
 	throw new Error(`type_query_call_expression_in_type_annotation has no $with.${setter}`);
@@ -8949,8 +9029,8 @@ function buildAssertsAnnotation$with(node: Held, setter: string, args: readonly 
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'asserts':
-			return applySetter(args, (value: Admit<T.Asserts>) =>
-				rebuilt(node, handle, () => _buildAssertsAnnotation(value))
+			return hoistedWith(node, 'asserts', '_asserts', 'value', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Asserts>) => rebuilt(node, handle, () => _buildAssertsAnnotation(value)))
 			);
 	}
 	throw new Error(`asserts_annotation has no $with.${setter}`);
@@ -9006,8 +9086,10 @@ function buildTupleParameter$with(node: Held, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildTupleParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', false, args, (args) =>
+				applySetter(args, (value: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`tuple_parameter has no $with.${setter}`);
@@ -9072,8 +9154,10 @@ function buildOptionalTupleParameter$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', false, args, (args) =>
+				applySetter(args, (value: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`optional_tuple_parameter has no $with.${setter}`);
@@ -9257,18 +9341,22 @@ function buildConstructorType$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildConstructorType({ ...config, abstract: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildConstructorType({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildConstructorType({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value }))
+				)
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ConstructorType.Config>['type']>) =>
@@ -9628,12 +9716,14 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 				rebuilt(node, handle, () => buildGenericType({ ...config, name: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) => buildGenericType({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+							(value: Admit<T.TypeArguments>) => buildGenericType({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
@@ -10024,8 +10114,10 @@ function buildTypeQueryCallExpression$with(node: Held, setter: string, args: rea
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => _buildTypeQueryCallExpression(value))
+			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Arguments>) =>
+					rebuilt(node, handle, () => _buildTypeQueryCallExpression(value))
+				)
 			);
 	}
 	throw new Error(`type_query_call_expression has no $with.${setter}`);
@@ -10101,13 +10193,15 @@ function buildTypeQueryInstantiationExpression$with(node: Held, setter: string, 
 				rebuilt(node, handle, () => buildTypeQueryInstantiationExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) =>
-							buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+							(value: Admit<T.TypeArguments>) =>
+								buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
@@ -10672,12 +10766,14 @@ function buildTypeArguments$with(node: Held, setter: string, args: readonly unkn
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'types':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
-						(value: Admit<T.Types>) => _buildTypeArguments(value)
+			return hoistedWith(node, 'types', '_types', 'items', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
+							(value: Admit<T.Types>) => _buildTypeArguments(value)
+						)
 					)
 				)
 			);
@@ -10749,12 +10845,14 @@ function buildObjectType$with(node: Held, setter: string, args: readonly unknown
 	const config = node[INPUT] as ConfigOf<T.ObjectType>;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-						(value?: Admit<T.ObjectTypeContent>) => buildObjectType({ ...config, members: value })
+			return hoistedWith(node, 'members', '_members', 'items', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+							(value?: Admit<T.ObjectTypeContent>) => buildObjectType({ ...config, members: value })
+						)
 					)
 				)
 			);
@@ -10924,18 +11022,22 @@ function buildCallSignature$with(node: Held, setter: string, args: readonly unkn
 	const config = node[INPUT] as T.CallSignature.Config;
 	switch (setter) {
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildCallSignature({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildCallSignature({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value }))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -11064,8 +11166,10 @@ function buildPropertySignature$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, optional: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`property_signature has no $with.${setter}`);
@@ -11184,12 +11288,14 @@ function buildTypeParameters$with(node: Held, setter: string, args: readonly unk
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
-						(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
+			return hoistedWith(node, 'elements', '_elements', 'items', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
+							(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
+						)
 					)
 				)
 			);
@@ -11269,8 +11375,10 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, constraint: value }))
 			);
 		case 'default':
-			return applySetter(args, (value?: Admit<T.DefaultType>) =>
-				rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
+			return hoistedWith(node, 'default', '_default', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.DefaultType>) =>
+					rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
+				)
 			);
 	}
 	throw new Error(`type_parameter has no $with.${setter}`);
@@ -11473,22 +11581,28 @@ function buildConstructSignature$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildConstructSignature({ ...config, abstract: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildConstructSignature({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildConstructSignature({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value }))
+				)
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`construct_signature has no $with.${setter}`);
@@ -11650,12 +11764,14 @@ function buildTupleType$with(node: Held, setter: string, args: readonly unknown[
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'tupleTypeMembers':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
-						(value?: Admit<T.TupleTypeMembers>) => _buildTupleType(value)
+			return hoistedWith(node, 'tupleTypeMembers', '_tuple_type_members', 'items', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
+							(value?: Admit<T.TupleTypeMembers>) => _buildTupleType(value)
+						)
 					)
 				)
 			);
@@ -11922,18 +12038,22 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 	const config = node[INPUT] as T.FunctionType.Config;
 	switch (setter) {
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionType({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildFunctionType({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
@@ -12979,8 +13099,10 @@ function buildCatchClauseGroup$with(node: Held, setter: string, args: readonly u
 				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, parameter: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`catch_clause_group has no $with.${setter}`);
@@ -15028,8 +15150,10 @@ function buildImportStatementClauseFrom$with(node: Held, setter: string, args: r
 	const config = node[INPUT] as T.ImportStatementClauseFrom.Config;
 	switch (setter) {
 		case 'importClause':
-			return applySetter(args, (value: Admit<T.ImportClause>) =>
-				rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value }))
+			return hoistedWith(node, 'importClause', '_import_clause', 'content', false, args, (args) =>
+				applySetter(args, (value: Admit<T.ImportClause>) =>
+					rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value }))
+				)
 			);
 		case 'source':
 			return applySetter(args, (value: Admit<T.String>) =>
@@ -15298,8 +15422,10 @@ function buildParenthesizedExpressionTyped$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, expression: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`parenthesized_expression_typed has no $with.${setter}`);
@@ -15367,8 +15493,10 @@ function buildParenthesizedExpressionSequence$with(node: Held, setter: string, a
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'sequenceExpression':
-			return applySetter(args, (value: Admit<T.SequenceExpression>) =>
-				rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value))
+			return hoistedWith(node, 'sequenceExpression', '_sequence_expression', 'expressions', false, args, (args) =>
+				applySetter(args, (value: Admit<T.SequenceExpression>) =>
+					rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value))
+				)
 			);
 	}
 	throw new Error(`parenthesized_expression_sequence has no $with.${setter}`);
@@ -15594,18 +15722,22 @@ function buildCallExpressionCall$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildCallExpressionCall({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+							(value?: Admit<T.TypeArguments>) => buildCallExpressionCall({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
+			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Arguments>) =>
+					rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
+				)
 			);
 	}
 	throw new Error(`call_expression_call has no $with.${setter}`);
@@ -15676,8 +15808,10 @@ function buildCallExpressionTemplateCall$with(node: Held, setter: string, args: 
 				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, function: value }))
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.TemplateString>) =>
-				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value }))
+			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.TemplateString>) =>
+					rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value }))
+				)
 			);
 	}
 	throw new Error(`call_expression_template_call has no $with.${setter}`);
@@ -15755,18 +15889,22 @@ function buildCallExpressionMember$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildCallExpressionMember({ ...config, typeArguments: value })
+			return hoistedWith(node, 'typeArguments', '_type_arguments', 'types', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+							(value?: Admit<T.TypeArguments>) => buildCallExpressionMember({ ...config, typeArguments: value })
+						)
 					)
 				)
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
+			return hoistedWith(node, 'arguments', '_arguments', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Arguments>) =>
+					rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
+				)
 			);
 	}
 	throw new Error(`call_expression_member has no $with.${setter}`);
@@ -16098,12 +16236,16 @@ function buildClassHeritageExtendsClause$with(node: Held, setter: string, args: 
 	const config = node[INPUT] as T.ClassHeritageExtendsClause.Config;
 	switch (setter) {
 		case 'extendsClause':
-			return applySetter(args, (value: Admit<T.ExtendsClause>) =>
-				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value }))
+			return hoistedWith(node, 'extendsClause', '_extends_clause', 'types', false, args, (args) =>
+				applySetter(args, (value: Admit<T.ExtendsClause>) =>
+					rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value }))
+				)
 			);
 		case 'implementsClause':
-			return applySetter(args, (value?: Admit<T.ImplementsClause>) =>
-				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value }))
+			return hoistedWith(node, 'implementsClause', '_implements_clause', 'types', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.ImplementsClause>) =>
+					rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value }))
+				)
 			);
 	}
 	throw new Error(`class_heritage_extends_clause has no $with.${setter}`);
@@ -16177,8 +16319,10 @@ function buildImportClauseDefaultImport$with(node: Held, setter: string, args: r
 				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, identifier: value }))
 			);
 		case 'importClauseGroup':
-			return applySetter(args, (value?: Admit<T.ImportClauseGroup>) =>
-				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
+			return hoistedWith(node, 'importClauseGroup', '_import_clause_group', 'content', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.ImportClauseGroup>) =>
+					rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
+				)
 			);
 	}
 	throw new Error(`import_clause_default_import has no $with.${setter}`);
@@ -16517,13 +16661,15 @@ function buildExportStatementDefaultFromClauseFrom$with(node: Held, setter: stri
 	const config = node[INPUT] as T.ExportStatementDefaultFromClauseFrom.Config;
 	switch (setter) {
 		case 'exportClause':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
-						(value: Admit<T.ExportClause>) =>
-							buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
+			return hoistedWith(node, 'exportClause', '_export_clause', 'exportSpecifiers', false, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
+							(value: Admit<T.ExportClause>) =>
+								buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
+						)
 					)
 				)
 			);
@@ -16751,8 +16897,10 @@ function buildVariableDeclaratorPlain$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value }))
+				)
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['value']>) =>
@@ -16826,8 +16974,10 @@ function buildVariableDeclaratorDefinite$with(node: Held, setter: string, args: 
 				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', false, args, (args) =>
+				applySetter(args, (value: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`variable_declarator_definite has no $with.${setter}`);
@@ -17733,8 +17883,10 @@ function buildSetterParameter$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildSetterParameter({ ...config, pattern: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
+				)
 			);
 	}
 	throw new Error(`setter_parameter has no $with.${setter}`);
@@ -17915,18 +18067,22 @@ function buildMethodDefinitionPlain$with(node: Held, setter: string, args: reado
 				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, optional: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildMethodDefinitionPlain({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildMethodDefinitionPlain({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value }))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -18216,8 +18372,10 @@ function buildMethodDefinitionSetter$with(node: Held, setter: string, args: read
 				) => rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, name: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
+					rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value }))
+				)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -18394,18 +18552,22 @@ function buildMethodSignaturePlain$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, optional: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildMethodSignaturePlain({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) => buildMethodSignaturePlain({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value }))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -18662,8 +18824,10 @@ function buildMethodSignatureSetter$with(node: Held, setter: string, args: reado
 				) => rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, name: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
+					rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
+				)
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -18815,18 +18979,23 @@ function buildAbstractMethodSignaturePlain$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, optional: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
+			return hoistedWith(node, 'typeParameters', '_type_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+							(value?: Admit<T.TypeParameters>) =>
+								buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
+						)
 					)
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value }))
+				)
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -19081,8 +19250,10 @@ function buildAbstractMethodSignatureSetter$with(node: Held, setter: string, arg
 				) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, name: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
+					rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
+				)
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -19272,8 +19443,10 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, optionality: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value }))
+				)
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['value']>) =>
@@ -19458,8 +19631,10 @@ function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, arg
 				) => rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value }))
+				)
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['value']>) =>
@@ -19648,8 +19823,10 @@ function buildConstructorDeclaration$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, accessibilityModifier: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, args, (args) =>
+				applySetter(args, (value: Admit<T.FormalParameters>) =>
+					rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value }))
+				)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -19773,8 +19950,10 @@ function buildReceiverParameterDeclaration$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, readonly: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
+			return hoistedWith(node, 'type', '_type', 'type', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
+					rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
+				)
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['value']>) =>
@@ -20001,12 +20180,14 @@ function buildFormalParametersElementsReceiverGroup$with(
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.FormalParametersElements as const, optional: true, make: buildFormalParametersElements },
-						(value?: Admit<T.FormalParametersElements>) => _buildFormalParametersElementsReceiverGroup(value)
+			return hoistedWith(node, 'elements', '_elements', 'items', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.FormalParametersElements as const, optional: true, make: buildFormalParametersElements },
+							(value?: Admit<T.FormalParametersElements>) => _buildFormalParametersElementsReceiverGroup(value)
+						)
 					)
 				)
 			);
@@ -20362,12 +20543,14 @@ function buildInterfaceBody$with(node: Held, setter: string, args: readonly unkn
 	const config = node[INPUT] as ConfigOf<T.InterfaceBody>;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-						(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody({ ...config, members: value })
+			return hoistedWith(node, 'members', '_members', 'items', true, args, (args) =>
+				applySetter(args, (...args: unknown[]) =>
+					rebuilt(node, handle, () =>
+						listSlotWith(
+							args,
+							{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+							(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody({ ...config, members: value })
+						)
 					)
 				)
 			);

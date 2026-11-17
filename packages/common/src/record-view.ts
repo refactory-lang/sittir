@@ -355,7 +355,7 @@ function treeOfNode(node: object): TreeHandle | undefined {
 	return isRecordPosition(node) ? node.$tree : (builtRefOf(node)?.arena.tree ?? treeOf(node));
 }
 
-function nativeSlotReader(node: object, accessor: string): ((this: object) => unknown) | undefined {
+export function nativeSlotReader(node: object, accessor: string): ((this: object) => unknown) | undefined {
 	const tree = treeOfNode(node);
 	const kind = (node as { readonly $type?: unknown }).$type;
 	return tree === undefined || typeof kind !== 'number' ? undefined : treeNativeSlots(tree)?.[kind]?.[accessor];

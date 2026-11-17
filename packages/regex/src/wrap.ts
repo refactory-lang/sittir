@@ -12,6 +12,7 @@ import {
 	hydrateSlotsWith,
 	inTreeEngine,
 	currentHandle,
+	hoistedWith,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -349,11 +350,13 @@ function wrapLookaheadAssertion$with(node: Held, setter: string, args: readonly 
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapLookaheadAssertion(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'lookahead_assertion', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapLookaheadAssertion(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'lookahead_assertion', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -429,11 +432,13 @@ function wrapLookbehindAssertion$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapLookbehindAssertion(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'lookbehind_assertion', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapLookbehindAssertion(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'lookbehind_assertion', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -710,11 +715,13 @@ function wrapAnonymousCapturingGroup$with(node: Held, setter: string, args: read
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.AnonymousCapturingGroup['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapAnonymousCapturingGroup(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'anonymous_capturing_group', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (v: NonNullable<T.AnonymousCapturingGroup['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapAnonymousCapturingGroup(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'anonymous_capturing_group', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -800,11 +807,13 @@ function wrapNamedCapturingGroup$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapNamedCapturingGroup(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'named_capturing_group', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapNamedCapturingGroup(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'named_capturing_group', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -867,11 +876,13 @@ function wrapNonCapturingGroup$with(node: Held, setter: string, args: readonly u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.NonCapturingGroup['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapNonCapturingGroup(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'non_capturing_group', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (v: NonNullable<T.NonCapturingGroup['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapNonCapturingGroup(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'non_capturing_group', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -1808,11 +1819,13 @@ function wrapInlineFlagsGroupEnable$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.InlineFlagsGroupEnable['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapInlineFlagsGroupEnable(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_enable', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+				applySetter(args, (v: NonNullable<T.InlineFlagsGroupEnable['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapInlineFlagsGroupEnable(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_enable', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -1904,11 +1917,13 @@ function wrapInlineFlagsGroupToggle$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.InlineFlagsGroupToggle['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapInlineFlagsGroupToggle(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_toggle', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+				applySetter(args, (v: NonNullable<T.InlineFlagsGroupToggle['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapInlineFlagsGroupToggle(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_toggle', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -1990,11 +2005,13 @@ function wrapInlineFlagsGroupDisable$with(node: Held, setter: string, args: read
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.InlineFlagsGroupDisable['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapInlineFlagsGroupDisable(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_disable', 'pattern', v) },
-						tree
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+				applySetter(args, (v: NonNullable<T.InlineFlagsGroupDisable['_pattern']>) =>
+					rebuilt(node, handle, () =>
+						wrapInlineFlagsGroupDisable(
+							{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_disable', 'pattern', v) },
+							tree
+						)
 					)
 				)
 			);

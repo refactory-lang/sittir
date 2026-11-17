@@ -12,6 +12,7 @@ import {
 	hydrateSlotsWith,
 	inTreeEngine,
 	currentHandle,
+	hoistedWith,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -281,9 +282,11 @@ function wrapString$with(node: Held, setter: string, args: readonly unknown[]): 
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (v: NonNullable<T.String['_string_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapString({ ...$edited(data), _string_content: admitSlot(handle, 'string', 'stringContent', v) }, tree)
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+				applySetter(args, (v: NonNullable<T.String['_string_content']>) =>
+					rebuilt(node, handle, () =>
+						wrapString({ ...$edited(data), _string_content: admitSlot(handle, 'string', 'stringContent', v) }, tree)
+					)
 				)
 			);
 	}
@@ -339,11 +342,13 @@ function wrapImmediateString$with(node: Held, setter: string, args: readonly unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (v: NonNullable<T.ImmediateString['_string_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapImmediateString(
-						{ ...$edited(data), _string_content: admitSlot(handle, 'immediate_string', 'stringContent', v) },
-						tree
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+				applySetter(args, (v: NonNullable<T.ImmediateString['_string_content']>) =>
+					rebuilt(node, handle, () =>
+						wrapImmediateString(
+							{ ...$edited(data), _string_content: admitSlot(handle, 'immediate_string', 'stringContent', v) },
+							tree
+						)
 					)
 				)
 			);
@@ -939,9 +944,11 @@ function wrapPredicate$with(node: Held, setter: string, args: readonly unknown[]
 				)
 			);
 		case 'parameters':
-			return applySetter(args, (v: NonNullable<T.Predicate['_parameters']>) =>
-				rebuilt(node, handle, () =>
-					wrapPredicate({ ...$edited(data), _parameters: admitSlot(handle, 'predicate', 'parameters', v) }, tree)
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (v: NonNullable<T.Predicate['_parameters']>) =>
+					rebuilt(node, handle, () =>
+						wrapPredicate({ ...$edited(data), _parameters: admitSlot(handle, 'predicate', 'parameters', v) }, tree)
+					)
 				)
 			);
 	}

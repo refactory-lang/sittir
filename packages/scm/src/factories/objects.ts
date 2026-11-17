@@ -7,6 +7,7 @@ import type { Held, Received } from '@sittir/common/utils';
 import {
 	currentHandle,
 	admitChildren,
+	hoistedWith,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -261,7 +262,9 @@ function buildString$with(node: Held, setter: string, args: readonly unknown[]):
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value)));
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value)))
+			);
 	}
 	throw new Error(`string has no $with.${setter}`);
 }
@@ -318,8 +321,8 @@ function buildImmediateString$with(node: Held, setter: string, args: readonly un
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (value?: Admit<T.StringContent>) =>
-				rebuilt(node, handle, () => _buildImmediateString(value))
+			return hoistedWith(node, 'stringContent', '_string_content', 'contents', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildImmediateString(value)))
 			);
 	}
 	throw new Error(`immediate_string has no $with.${setter}`);
@@ -858,8 +861,10 @@ function buildPredicate$with(node: Held, setter: string, args: readonly unknown[
 				rebuilt(node, handle, () => buildPredicate({ ...config, type: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value?: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
+			return hoistedWith(node, 'parameters', '_parameters', 'elements', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.Parameters>) =>
+					rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
+				)
 			);
 	}
 	throw new Error(`predicate has no $with.${setter}`);

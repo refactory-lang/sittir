@@ -7,6 +7,7 @@ import type { Held, Received } from '@sittir/common/utils';
 import {
 	currentHandle,
 	admitChildren,
+	hoistedWith,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -279,8 +280,10 @@ function buildLookaheadAssertion$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, operator: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Pattern>) =>
+					rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
+				)
 			);
 	}
 	throw new Error(`lookahead_assertion has no $with.${setter}`);
@@ -337,8 +340,10 @@ function buildLookbehindAssertion$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, operator: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Pattern>) =>
+					rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
+				)
 			);
 	}
 	throw new Error(`lookbehind_assertion has no $with.${setter}`);
@@ -665,8 +670,10 @@ function buildAnonymousCapturingGroup$with(node: Held, setter: string, args: rea
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Pattern>) =>
+					rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
+				)
 			);
 	}
 	throw new Error(`anonymous_capturing_group has no $with.${setter}`);
@@ -732,8 +739,10 @@ function buildNamedCapturingGroup$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, groupName: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Pattern>) =>
+					rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
+				)
 			);
 	}
 	throw new Error(`named_capturing_group has no $with.${setter}`);
@@ -797,8 +806,8 @@ function buildNonCapturingGroup$with(node: Held, setter: string, args: readonly 
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => _buildNonCapturingGroup(value))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', false, args, (args) =>
+				applySetter(args, (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildNonCapturingGroup(value)))
 			);
 	}
 	throw new Error(`non_capturing_group has no $with.${setter}`);
@@ -1844,8 +1853,10 @@ function buildInlineFlagsGroupEnable$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, enabled: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.Pattern>) =>
+					rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
+				)
 			);
 	}
 	throw new Error(`inline_flags_group_enable has no $with.${setter}`);
@@ -1918,8 +1929,10 @@ function buildInlineFlagsGroupToggle$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, disabled: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.Pattern>) =>
+					rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
+				)
 			);
 	}
 	throw new Error(`inline_flags_group_toggle has no $with.${setter}`);
@@ -1985,8 +1998,10 @@ function buildInlineFlagsGroupDisable$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, disabled: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
+			return hoistedWith(node, 'pattern', '_pattern', 'content', true, args, (args) =>
+				applySetter(args, (value?: Admit<T.Pattern>) =>
+					rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
+				)
 			);
 	}
 	throw new Error(`inline_flags_group_disable has no $with.${setter}`);

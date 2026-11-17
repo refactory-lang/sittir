@@ -1,7 +1,8 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { emptyForms } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { isRequired, type AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
 import { spelledReadExpr } from './shared.ts';
 import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
 
@@ -10,6 +11,13 @@ export interface SetterEntry {
 	readonly params: string;
 	readonly body: string;
 	readonly reads?: readonly string[];
+	readonly hoist?: HoistSet;
+}
+
+export interface HoistSet {
+	readonly storage: string;
+	readonly slot: string;
+	readonly optional: boolean;
 }
 
 export interface HeldRead {
@@ -55,6 +63,14 @@ export interface NodeMemberSpec {
 	readonly text?: string;
 }
 
+export function withHoists(setters: readonly SetterEntry[], node: { readonly kind: string; readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap): SetterEntry[] {
+	return setters.map((entry) => {
+		const slot = node.slots.find((candidate) => candidate.propertyName === entry.name);
+		const chain = slot === undefined || slot.arity === 'many' ? undefined : wrapperChainFor(nodeMap, node.kind, slot.name);
+		return slot === undefined || chain === undefined ? entry : { ...entry, hoist: { storage: slot.storageKey, slot: chain.slots[0]!.propertyName, optional: !isRequired(slot) } };
+	});
+}
+
 export const ROOT_ERRORS_LINE = '    $errors: (data as { readonly $errors?: unknown }).$errors,';
 export const ROOT_SAVE_LINE = '    $save: handleSave,';
 
@@ -88,7 +104,9 @@ function sharedSetterName(prefix: string, entry: SetterEntry): string {
 }
 
 function appliedSetter(entry: SetterEntry): string {
-	return `applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
+	const applied = (list: string) => `applySetter(${list}, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
+	if (entry.hoist === undefined) return applied('args');
+	return `hoistedWith(node, ${JSON.stringify(entry.name)}, ${JSON.stringify(entry.hoist.storage)}, ${JSON.stringify(entry.hoist.slot)}, ${entry.hoist.optional}, args, (args) => ${applied('args')})`;
 }
 
 function withLines(name: string, kind: string, nodeType: string, prelude: readonly string[], setters: readonly SetterEntry[], caseLines: (entry: SetterEntry) => readonly string[] = () => []): string[] {
@@ -183,10 +201,10 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
 		const elementSet = element === undefined ? base : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`;
 		if (slot !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads };
+			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads, hoist: entry.hoist };
 		}
 		if (element !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`, reads: entry.reads };
+			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`, reads: entry.reads, hoist: entry.hoist };
 		}
 		return entry;
 	});

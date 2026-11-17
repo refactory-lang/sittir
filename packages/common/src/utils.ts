@@ -13,7 +13,7 @@ import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
-import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
+import { cacheOf, chosenSeparatorOf, nativeSlotReader, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
@@ -906,6 +906,22 @@ export function childItems(node: RecordHandle, word: number, width: number, run:
 /** `hydrateSlotWith` for a list slot. */
 export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode): readonly unknown[] {
 	return hydrateSlotsBy(node, key, (value) => hydrateWith(value, tree, wrap));
+}
+
+export function hoistedWith(
+	node: object,
+	accessor: string,
+	storage: string,
+	slot: string,
+	optional: boolean,
+	args: readonly unknown[],
+	apply: (args: readonly unknown[]) => unknown
+): unknown {
+	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
+	const native = clears ? undefined : nativeSlotReader(node, accessor);
+	const existing = clears ? undefined : native === undefined ? hydrateStoredSlot(node, storage) : native.call(node);
+	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
+	return set?.[slot] === undefined ? apply(args) : apply([set[slot](...args)]);
 }
 
 /** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot. */
