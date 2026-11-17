@@ -20,6 +20,21 @@ describe.each(['object', 'arena'] as const)('a rebuilt list writes one blank lin
 		expect(root.$with.statements(...root.statements()).$render()).toBe(expected);
 	});
 
+	it.each([
+		['moved after another item', [0, 2, 1], 'a = 1\nc = 3\nb = 2\n'],
+		['moved first', [2, 0, 1], 'c = 3\na = 1\nb = 2\n']
+	] as const)('an item the source set apart takes the options’ gap once %s', async (_, order, expected) => {
+		using engine = await createEngine(python, { nodeStorage });
+		const root = engine.parse('a = 1\nb = 2\n\nc = 3\n');
+		const statements = root.statements();
+		expect(root.$with.statements(...order.map((at) => statements[at]!)).$render()).toBe(expected);
+	});
+
+	it('an item the source set apart, rendered alone, opens with no blank line', async () => {
+		using engine = await createEngine(python, { nodeStorage });
+		expect(engine.parse('a = 1\n\nb = 2\n').statements()[1]!.$render()).toBe('b = 2');
+	});
+
 	it('in a block a rebuilt function body holds', async () => {
 		using engine = await createEngine(python, { nodeStorage });
 		const root = engine.parse('def f():\n    a = 1\n\n\n    b = 2\n') as any;

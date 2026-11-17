@@ -768,8 +768,7 @@ function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<stri
 	let path: Set<object> | undefined;
 	for (;;) {
 		if (placeOf(at) !== undefined || typeof at.$type !== 'number' || !view.isWrapper(at.$type)) return at;
-		const node = at;
-		const held = Object.keys(node).flatMap((key) => (isSlotKey(key) && isPresent(node[key]) ? [node[key]] : []));
+		const held = storedSlotValues(at).flatMap(([key, value]) => (isSlotKey(key) && isPresent(value) ? [value] : []));
 		const [only] = held;
 		if (held.length !== 1 || !isRecord(only)) return at;
 		enterPath((path ??= new Set([entry])), only);
