@@ -23,7 +23,7 @@ import type {
 } from '@sittir/types';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { Delimiter } from '@sittir/common/delimiter';
-import { builtMembers, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
+import { builtSlots, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
@@ -1301,7 +1301,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return ordered.map((arm): Part => [{ variant: found.supertype.kind, value: arm.arm.kind, ...(variantOf(arm) === found.kind ? { default: true as const } : {}) }, [arm]]);
 		},
 		(group) => {
-			const names = (arm: Arm): string[] => builtMembers(arm.arm).map((m) => m.name).sort();
+			const names = (arm: Arm): string[] => builtSlots(arm.arm).map((m) => m.name).sort();
 			const parts = new Map<string, Arm[]>();
 			for (const arm of group) (parts.get(names(arm).join(',')) ?? parts.set(names(arm).join(','), []).get(names(arm).join(','))!).push(arm);
 			if (parts.size < 2) return undefined;
@@ -1341,7 +1341,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const nested = sets.every((x, i) => sets.every((y, j) => i === j || disjoint([x, y]) || subset(x, y) || subset(y, x)));
 				return nested ? [...parts.values()].sort((x, y) => x[0]!.memberKinds.get(name)!.size - y[0]!.memberKinds.get(name)!.size) : undefined;
 			};
-			const member = builtMembers(group[0]!.arm).map((m) => m.name).find((name) => partsBy(name) !== undefined);
+			const member = builtSlots(group[0]!.arm).map((m) => m.name).find((name) => partsBy(name) !== undefined);
 			return member === undefined
 				? undefined
 				: partsBy(member)!.map((arms): Part => [{ slot: member, kinds: sortedIds(arms[0]!.memberKinds.get(member)!) }, arms]);
@@ -1392,7 +1392,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return group;
 		};
 		const takesValue = (arm: Arm): boolean => textBuilt(builderShapes, arm.arm) || arm.scalar !== undefined || arm.value !== undefined;
-		const memberNames = (arm: Arm): readonly string[] => [...builtMembers(arm.arm).map((member) => member.name), ...(takesValue(arm) ? [VALUE] : [])];
+		const memberNames = (arm: Arm): readonly string[] => [...builtSlots(arm.arm).map((member) => member.name), ...(takesValue(arm) ? [VALUE] : [])];
 		const stated = new Set(arms.flatMap(memberNames));
 		const listed = new Set(arms.flatMap((arm) => arm.arm.slots.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
 		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !memberNames(arm).includes(name)).sort();

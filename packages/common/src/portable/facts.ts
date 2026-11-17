@@ -31,7 +31,7 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 export const textBuilt = (table: Pick<PortableBuildTable, 'builders'>, arm: Pick<PortableBuildArm, 'slots' | 'builder'>): boolean =>
 	arm.slots.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'text';
 
-export const builtMembers = (arm: Pick<PortableBuildArm, 'slots' | 'content'>): readonly PortableSlotRoute[] => (arm.content === undefined ? arm.slots : [...arm.slots, arm.content]);
+export const builtSlots = (arm: Pick<PortableBuildArm, 'slots' | 'content'>): readonly PortableSlotRoute[] => (arm.content === undefined ? arm.slots : [...arm.slots, arm.content]);
 
 export const takesTextValue = (table: PortableBuildTable, arm: PortableBuildArm): boolean => arm.content !== undefined || textBuilt(table, arm);
 
@@ -49,17 +49,17 @@ export const setsOn = (container: PortableContainer, kind: number): readonly str
 
 export const seatSets = (seat: PortableSeat, kind: number): readonly string[] => (seat.within ?? []).flatMap((container) => setsOn(container, kind));
 
-export const tableMembers = (table: PortableBuildTable): readonly PortableSlotRoute[] => {
+export const tableSlots = (table: PortableBuildTable): readonly PortableSlotRoute[] => {
 	const out: PortableSlotRoute[] = [];
-	const visit = (member: PortableSlotRoute): void => {
-		out.push(member);
-		for (const seat of member.seats) for (const container of seat.within ?? []) (container.slots ?? []).forEach(visit);
+	const visit = (slot: PortableSlotRoute): void => {
+		out.push(slot);
+		for (const seat of slot.seats) for (const container of seat.within ?? []) (container.slots ?? []).forEach(visit);
 	};
-	for (const { arms } of Object.values(table.paths)) for (const arm of arms) builtMembers(arm).forEach(visit);
+	for (const { arms } of Object.values(table.paths)) for (const arm of arms) builtSlots(arm).forEach(visit);
 	return out;
 };
 
-export const tableSeats = (table: PortableBuildTable): readonly PortableSeat[] => tableMembers(table).flatMap((member) => member.seats);
+export const tableSeats = (table: PortableBuildTable): readonly PortableSeat[] => tableSlots(table).flatMap((slot) => slot.seats);
 
 export const containerSetFlags = (table: PortableBuildTable): ReadonlyMap<number, ReadonlySet<string>> => {
 	const out = new Map<number, Set<string>>();
@@ -67,11 +67,11 @@ export const containerSetFlags = (table: PortableBuildTable): ReadonlyMap<number
 	return out;
 };
 
-export const containerMembers = (table: PortableBuildTable): ReadonlyMap<number, readonly PortableSlotRoute[]> => {
+export const containerSlots = (table: PortableBuildTable): ReadonlyMap<number, readonly PortableSlotRoute[]> => {
 	const out = new Map<number, Set<PortableSlotRoute>>();
-	for (const member of tableMembers(table))
-		for (const seat of member.seats) if (seat.many !== true && (seat.within ?? []).length > 0) (out.get(seat.at[0]) ?? out.set(seat.at[0], new Set()).get(seat.at[0])!).add(member);
-	return new Map([...out].map(([kind, members]) => [kind, [...members]]));
+	for (const slot of tableSlots(table))
+		for (const seat of slot.seats) if (seat.many !== true && (seat.within ?? []).length > 0) (out.get(seat.at[0]) ?? out.set(seat.at[0], new Set()).get(seat.at[0])!).add(slot);
+	return new Map([...out].map(([kind, slots]) => [kind, [...slots]]));
 };
 
 export const isNumberSlots = (numeric: PortableBuildArm['numeric']): numeric is readonly string[] => Array.isArray(numeric);
