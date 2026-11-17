@@ -50,6 +50,15 @@ impl LayoutKinds {
         Self(self.0 & self.0.wrapping_neg())
     }
 
+    /// The widest kind of the set: the highest bit.
+    #[must_use]
+    pub const fn widest(self) -> Self {
+        match self.0.checked_ilog2() {
+            Some(bit) => Self(1 << bit),
+            None => Self::NONE,
+        }
+    }
+
     /// The seam rank of one kind: a run of spaces, then no whitespace at all,
     /// then a run by how many lines it breaks. See [`crate::spacing::SeamRank`].
     #[must_use]

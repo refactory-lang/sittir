@@ -86,13 +86,32 @@ impl WhitespaceTable {
         self.gaps.iter().find(|(_, gap)| *gap == id).map(|(bit, _)| crate::layout_kinds::LayoutKinds(*bit))
     }
 
-    /// The text the grammar spells one gap kind with.
+    /// The gap kinds the grammar admits: tight, and each kind its extras
+    /// accept.
+    #[must_use]
+    pub fn admitted_gaps(&self) -> crate::layout_kinds::LayoutKinds {
+        crate::layout_kinds::LayoutKinds(self.gaps.iter().fold(crate::layout_kinds::LayoutKinds::TIGHT.0, |set, (bit, _)| set | bit))
+    }
+
+    /// The gap kind the grammar writes for `gap`: `gap` where the grammar
+    /// admits it, and otherwise the widest in-line kind it admits that is
+    /// narrower. A gap that breaks the line is kept: a grammar admits every
+    /// breaking kind or none, each being a run of its newline.
+    #[must_use]
+    pub fn admit(&self, gap: crate::layout_kinds::LayoutKinds) -> crate::layout_kinds::LayoutKinds {
+        let admitted = self.admitted_gaps();
+        if gap.is_empty() || gap.breaks() || admitted.has(gap) {
+            return gap;
+        }
+        admitted.and(crate::layout_kinds::LayoutKinds(gap.0.wrapping_sub(1))).widest()
+    }
+
+    /// The text the grammar spells a gap with, as it admits it (`admit`); a
+    /// kind it has no member for writes nothing.
     #[must_use]
     pub fn text_of_gap(&self, gap: crate::layout_kinds::LayoutKinds) -> &'static str {
-        match self.gaps.iter().find(|(bit, _)| *bit == gap.0) {
-            Some((_, id)) => (self.text_of)(*id),
-            None => gap.default_text(),
-        }
+        let gap = self.admit(gap);
+        self.gaps.iter().find(|(bit, _)| *bit == gap.0).map_or("", |(_, id)| (self.text_of)(*id))
     }
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
