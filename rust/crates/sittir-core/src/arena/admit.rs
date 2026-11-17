@@ -119,7 +119,7 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         pending.push(Step::Leave(at, kind));
         arena.words(at, record.built_words.max(HEADER_WORDS))?;
         SideRecord::read(arena, super::borrowed::side_of(arena, at)?)?;
-        super::cell::built_cells(arena, at, record, |_, _, word| {
+        super::cell::built_cells(arena, at, record, super::cell::Lists::Items, |_, _, word| {
             match Cell::decode_built(word, arena, bits)? {
                 Cell::Child { at: child, link: None, .. } if arena.read_record(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
                 Cell::Child { kind, at: child, link: None, .. } => pending.push(Step::Enter(child, kind)),

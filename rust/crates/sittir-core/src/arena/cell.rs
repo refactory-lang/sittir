@@ -469,14 +469,20 @@ impl ListCell {
     /// changed edges on a list cell, a run of no items, or one that names no
     /// word after its length.
     pub fn of_word(cell: CellWord, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
-        let CellWord(word) = cell;
-        if word == 0 {
-            return Ok(ListCell::EMPTY);
+        match run_of(cell)? {
+            None => Ok(ListCell::EMPTY),
+            Some(run) => Self::of_run(run, arena),
         }
-        if cell.edges() != 0 {
-            return Err(malformed("list cell edges", word));
-        }
-        let run = cell.address();
+    }
+
+    /// The list whose run starts at `run` in `arena`, its first word the
+    /// list's length.
+    ///
+    /// # Errors
+    ///
+    /// What reading the run's length refuses, and `ArenaError::Malformed` for
+    /// a run of no items, or one that names no word after its length.
+    pub(super) fn of_run(run: Address, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
         let len = arena.word(run)?;
         if len == 0 {
             return Err(malformed("list length", len));
@@ -493,20 +499,44 @@ impl ListCell {
     }
 }
 
+/// The run a list cell names, none for an empty list.
+fn run_of(cell: CellWord) -> Result<Option<Address>, ArenaError> {
+    match cell {
+        CellWord(0) => Ok(None),
+        cell if cell.edges() != 0 => Err(malformed("list cell edges", cell.0)),
+        cell => Ok(Some(cell.address())),
+    }
+}
+
+/// What a walk over a built record's cells visits for a list slot.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum Lists {
+    /// Each item's cell in its run.
+    Items,
+    /// The list cell naming its run, word 0 for an empty list, its edges
+    /// checked as `ListCell::of_word` checks them.
+    Runs,
+}
+
 /// Visits each cell of the built record at `at`, of shape `record`, with its
 /// slot's shape, its item and its word, undecoded: a slot's one word as item
-/// 0, and a list slot's each item's word in its run.
+/// 0, and a list slot's as `lists` says.
 ///
 /// # Errors
 ///
 /// What reading the record or a run refuses, and `ArenaError::Malformed`
 /// for a cell word past the record or a list cell `ListCell::of_word`
 /// refuses; and what `visit` refuses.
-pub(super) fn built_cells(arena: &dyn ArenaRead, at: Address, record: RecordShape, mut visit: impl FnMut(CellShape, u32, CellWord) -> Result<(), ArenaError>) -> Result<(), ArenaError> {
+pub(super) fn built_cells(arena: &dyn ArenaRead, at: Address, record: RecordShape, lists: Lists, mut visit: impl FnMut(CellShape, u32, CellWord) -> Result<(), ArenaError>) -> Result<(), ArenaError> {
     let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
     for &shape in record.cells {
         let word = CellWord(*words.get(shape.built as usize).ok_or(malformed("cell word", shape.built))?);
         if shape.run.is_none() {
+            visit(shape, 0, word)?;
+            continue;
+        }
+        if lists == Lists::Runs {
+            run_of(word)?;
             visit(shape, 0, word)?;
             continue;
         }
@@ -546,7 +576,7 @@ mod tests {
     }
 
     #[test]
-    fn a_built_records_cells_are_walked_a_list_slots_as_its_items() {
+    fn a_built_records_cells_are_walked_a_list_slots_as_its_items_or_as_the_cell_naming_its_run() {
         const CELLS: &[CellShape] = &[
             CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" },
             CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items" },
@@ -560,17 +590,29 @@ mod tests {
         let run = image.run(&items);
         let full = image.record(KindId(5), 5, &[(2, child), (3, run)]);
         let empty = image.record(KindId(5), 5, &[(2, child)]);
-        let walk = |at: Address| {
+        let walk = |at: Address, lists: Lists| {
             let mut cells = Vec::new();
-            built_cells(&image, at, record, |shape, item, word| {
+            built_cells(&image, at, record, lists, |shape, item, word| {
                 cells.push((shape.key, item, word.0));
                 Ok(())
             })
             .expect("a walk");
             cells
         };
-        assert_eq!(walk(full), vec![("_child", 0, child), ("_items", 0, items[0]), ("_items", 1, items[1]), ("_unset", 0, 0)]);
-        assert_eq!(walk(empty), vec![("_child", 0, child), ("_unset", 0, 0)], "an empty list has no items");
+        assert_eq!(walk(full, Lists::Items), vec![("_child", 0, child), ("_items", 0, items[0]), ("_items", 1, items[1]), ("_unset", 0, 0)]);
+        assert_eq!(walk(full, Lists::Runs), vec![("_child", 0, child), ("_items", 0, run), ("_unset", 0, 0)]);
+        assert_eq!(walk(empty, Lists::Items), vec![("_child", 0, child), ("_unset", 0, 0)], "an empty list has no items");
+        assert_eq!(walk(empty, Lists::Runs), vec![("_child", 0, child), ("_items", 0, 0), ("_unset", 0, 0)], "and its cell is word 0");
+    }
+
+    #[test]
+    fn a_run_is_read_from_its_address_as_from_the_list_cell_naming_it() {
+        let mut image = BuiltImage::new(BITS);
+        let leaf = image.record(KindId(6), HEADER_WORDS, &[]);
+        let run = image.run(&[built_cell(leaf, ChangedEdges::default())]);
+        assert_eq!(ListCell::of_run(CellWord(run).address(), &image), ListCell::of_word(CellWord(run), &image));
+        let empty = BuiltImage::words(&mut image, &[0, 0]);
+        assert_eq!(ListCell::of_run(empty, &image), Err(malformed("list length", 0)));
     }
 
     fn shape(forms: u8, width: u32) -> CellShape {

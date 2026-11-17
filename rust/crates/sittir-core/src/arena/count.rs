@@ -22,7 +22,7 @@
 
 use std::sync::Arc;
 
-use super::cell::{flag, header_of, CellWord};
+use super::cell::{built_cells, flag, header_of, CellWord, ListCell, Lists};
 use super::memory::ChunkMem;
 use super::side::SideRecord;
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, RecordShape, ARENA_RELEASED};
@@ -461,10 +461,9 @@ impl BuiltChunks {
                 }
             }
             Held::Run(at) => {
-                let len = self.word(at)?;
-                let items = ArenaRead::words(self, at, len + 1)?[1..].to_vec();
+                let items: Vec<CellWord> = ListCell::of_run(at, self)?.items(self, 1)?.map(|item| CellWord(item[0])).collect();
                 for item in items {
-                    self.drop_cell(CellWord(item).address(), stack)?;
+                    self.drop_cell(item.address(), stack)?;
                 }
             }
             Held::Side(at) => {
@@ -488,22 +487,20 @@ impl BuiltChunks {
 
     fn release_record(&mut self, at: Address, kind: KindId, stack: &mut Vec<Held>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
         let shape: RecordShape = (self.shape)(kind).ok_or(malformed("released record kind", u32::from(kind.0)))?;
-        let words = ArenaRead::words(self, at, shape.built_words)?.to_vec();
+        let mut cells = Vec::with_capacity(shape.cells.len());
+        built_cells(self, at, shape, Lists::Runs, |cell, _, word| {
+            cells.push((cell.run.is_some(), word));
+            Ok(())
+        })?;
         let side = super::borrowed::side_of(self, at)?;
         if side != Address::NONE {
             self.drop_count(Held::Side(side), stack)?;
         }
-        for cell in shape.cells {
-            let word = CellWord(*words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?);
-            if cell.run.is_some() {
-                if word.edges() != 0 {
-                    return Err(malformed("list cell edges", word.0));
-                }
-                if word.0 != 0 {
-                    self.drop_count(Held::Run(word.address()), stack)?;
-                }
-            } else {
-                self.drop_cell(word.address(), stack)?;
+        for (list, word) in cells {
+            match (list, word) {
+                (true, CellWord(0)) => {}
+                (true, run) => self.drop_count(Held::Run(run.address()), stack)?,
+                (false, cell) => self.drop_cell(cell.address(), stack)?,
             }
         }
         for record in sides(at) {
@@ -513,49 +510,34 @@ impl BuiltChunks {
     }
 
     /// Whether the record at `from` reaches the record at `target` through
-    /// its cells, `from` itself included.
+    /// its cells, `from` itself included. A read's record is not walked: its
+    /// cells name only records of its own tree.
     ///
     /// # Errors
     ///
     /// What reading the records refuses.
     pub fn reaches(&self, from: Address, target: Address) -> Result<bool, ArenaError> {
-        let mut stack = vec![Held::Record(from)];
+        let mut stack = vec![from];
         let mut seen = std::collections::HashSet::new();
-        while let Some(held) = stack.pop() {
-            if !seen.insert(held) {
+        while let Some(at) = stack.pop() {
+            if at == target {
+                return Ok(true);
+            }
+            if !seen.insert(at) || self.read_chunk(at.chunk()) {
                 continue;
             }
-            let cells: Vec<u32> = match held {
-                Held::Record(at) => {
-                    if at == target {
-                        return Ok(true);
-                    }
-                    let (kind, flags) = header_of(self.word(at)?, self.kind_bits);
-                    if flags != 0 {
-                        continue;
-                    }
-                    let shape = (self.shape)(kind).ok_or(malformed("record kind", u32::from(kind.0)))?;
-                    let words = ArenaRead::words(self, at, shape.built_words)?;
-                    for cell in shape.cells.iter().filter(|cell| cell.run.is_some()) {
-                        let word = words[cell.built as usize];
-                        if word != 0 {
-                            stack.push(Held::Run(CellWord(word).address()));
-                        }
-                    }
-                    shape.cells.iter().filter(|cell| cell.run.is_none()).map(|cell| words[cell.built as usize]).collect()
-                }
-                Held::Run(at) => {
-                    let len = self.word(at)?;
-                    ArenaRead::words(self, at, len + 1)?[1..].to_vec()
-                }
-                Held::Side(_) | Held::Text(_) => continue,
-            };
-            for word in cells {
-                let at = CellWord(word).address();
-                if at.chunk() != 0 && self.chunk(at.chunk()).is_some() {
-                    stack.push(Held::Record(at));
-                }
+            let (kind, flags) = header_of(self.word(at)?, self.kind_bits);
+            if flags != 0 {
+                continue;
             }
+            let shape = (self.shape)(kind).ok_or(malformed("record kind", u32::from(kind.0)))?;
+            built_cells(self, at, shape, Lists::Items, |_, _, word| {
+                let at = word.address();
+                if at.chunk() != 0 && self.chunk(at.chunk()).is_some() {
+                    stack.push(at);
+                }
+                Ok(())
+            })?;
         }
         Ok(false)
     }
@@ -771,6 +753,19 @@ mod tests {
         let link = built.place(&[with_kind(LEAF, BITS).expect("a kind") | flag::LINK << BITS, 0, 4, 1, 2, 0, 0, 3], 1);
         built.release(link, false).expect("released");
         assert_eq!(built.arena.take_trees(), vec![TreeId(4)]);
+    }
+
+    #[test]
+    fn a_read_s_record_a_built_record_names_is_not_walked_as_a_built_one() {
+        use crate::arena::{ReadWriter, RecordSpace};
+        let mut built = Builder::new();
+        let target = built.leaf();
+        let mut reads = ReadWriter::new(&mut built.arena);
+        let child = reads.push(&[with_kind(LEAF, BITS).expect("a kind"), 0]).expect("a read's record");
+        let parsed = reads.push(&[with_kind(PAIR, BITS).expect("a kind"), 0, with_kind(LEAF, BITS).expect("a kind"), child.0, 0, 0]).expect("a read's record");
+        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), 0, parsed.0 << 2, 0], OWNED | 1);
+        assert_eq!(built.arena.reaches(root, target), Ok(false), "a read's record names only records of its own tree");
+        assert_eq!(built.arena.reaches(root, parsed), Ok(true));
     }
 
     #[test]
