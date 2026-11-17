@@ -9,12 +9,12 @@
 //! The derive writes each node type's `WriteCell` through these helpers.
 
 use crate::heap::HeapBytes;
-use super::{Address, ArenaError, BuiltChunks, BuiltWriter, CellWord, SideRecord, SideSlot, Sides};
+use super::{Address, ArenaError, BuiltChunks, BuiltWriter, Cell, CellWord, SideRecord, SideSlot, Sides};
 use crate::layout::{NodeLayout, UnitSides};
 use crate::record::HEADER_WORDS;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
-use crate::trivia::NodeTrivia;
-use crate::trivia_store::{Place, Site, TriviaStore};
+use crate::trivia::{NodeTrivia, TriviaEntry, TriviaText};
+use crate::trivia_store::{CompactEntry, Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
 use crate::types::{ItemIndex, KindId};
 use crate::verbatim::VerbatimNode;
@@ -39,6 +39,9 @@ pub struct RecordSink<'a, T> {
     writer: BuiltWriter<'a>,
     store: &'a TriviaStore<T>,
     link: &'a mut Link<'a>,
+    /// The cell a trivia value is written as (`WriteCell` of the trivia
+    /// type), by which its side is kept (`kept`).
+    trivia: fn(&T, &mut RecordSink<'_, T>) -> Result<CellWord, ArenaError>,
     /// Whether a record's cells are being written, so a record written now
     /// is a child, whose changed edges are its holder's cell's.
     nested: bool,
@@ -52,30 +55,88 @@ pub struct RecordSink<'a, T> {
 
 impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
     /// A built write's sink into `chunks`, its trivia kept in `store`.
-    pub fn built(chunks: &'a mut BuiltChunks, store: &'a TriviaStore<T>, link: &'a mut Link<'a>) -> Self {
-        Self { writer: BuiltWriter::new(chunks), store, link, nested: false, leaf: None, leaves: Vec::new() }
+    pub fn built(chunks: &'a mut BuiltChunks, store: &'a TriviaStore<T>, link: &'a mut Link<'a>) -> Self
+    where
+        T: WriteCell<T>,
+    {
+        Self { writer: BuiltWriter::new(chunks), store, link, trivia: <T as WriteCell<T>>::write_cell, nested: false, leaf: None, leaves: Vec::new() }
+    }
+
+    /// `entries` as the engine's store keeps them (`CompactEntry`): a built
+    /// record by its kind and address, a coordinate naming a node a read
+    /// left a record of as that record, and a value by the cell it is
+    /// written as, which the side holds as a holder holds its child's: a
+    /// unit as a layout member, a leaf entry as text and a record as a
+    /// record.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a coordinate naming no read's record,
+    /// before any entry is written, and for a value written as a cell of any
+    /// other form; else what writing a value refuses.
+    pub fn kept(&mut self, entries: &[TriviaEntry<T>]) -> Result<Vec<CompactEntry>, ArenaError> {
+        if entries.iter().any(|entry| matches!(entry, TriviaEntry::Value(SlotValue::Coord(coordinate)) if self.read_record(coordinate).is_none())) {
+            return Err(ArenaError::Unwritable("a coordinate in a side naming no record a read left"));
+        }
+        let nested = std::mem::replace(&mut self.nested, true);
+        let kept = entries.iter().map(|entry| self.kept_entry(entry)).collect();
+        self.nested = nested;
+        kept
+    }
+
+    fn kept_entry(&mut self, entry: &TriviaEntry<T>) -> Result<CompactEntry, ArenaError> {
+        let value = match entry {
+            TriviaEntry::Record(record) => return Ok(CompactEntry::Record { kind: record.record.kind, at: record.record.at }),
+            TriviaEntry::Value(SlotValue::Node(value)) => value,
+            TriviaEntry::Value(SlotValue::Coord(coordinate)) => return self.read_record(coordinate).ok_or(ArenaError::Unwritable("a coordinate in a side naming no record a read left")),
+        };
+        let write = self.trivia;
+        let cell = write(value, self)?;
+        match Cell::decode_built(cell, &self.writer, self.writer.kind_bits())? {
+            Cell::Unit { kind, .. } if kind != KindId::BLANK => Ok(CompactEntry::Layout { kind }),
+            Cell::Child { kind, at, link: None, .. } => Ok(CompactEntry::Record { kind, at }),
+            Cell::BuiltLeaf { kind, .. } => Ok(CompactEntry::Text { kind, at: cell.address() }),
+            Cell::BuiltText { .. } => Ok(CompactEntry::Text { kind: KindId::BLANK, at: cell.address() }),
+            _ => Err(ArenaError::Unwritable("a trivia value written as no record, layout member or leaf entry")),
+        }
+    }
+
+    /// The record a read left of the node `coordinate` names by its own
+    /// record, as an entry; none for a node it names by a site in its
+    /// holder's record, or by no record.
+    fn read_record(&self, coordinate: &NodeCoordinate) -> Option<CompactEntry> {
+        let kind = coordinate.kind?;
+        match coordinate.name()? {
+            crate::types::NodeName { node, site: None } if super::ArenaRead::read_entry(&self.writer, Address(node.0)) => Some(CompactEntry::Record { kind, at: Address(node.0) }),
+            _ => None,
+        }
     }
 
     /// Moves a built record's trivia, its units' and its leaves' into the
     /// store, at the record's place and at each unit's and leaf's site, by
-    /// the slot's stamped word.
-    fn keep_sides(&self, at: Address, trivia: Option<&NodeTrivia<T>>, units: &[(u32, &UnitSides<T>)], leaves: &[(u32, ItemIndex, NodeTrivia<T>)]) {
-        let keep = |place: Place, trivia: &NodeTrivia<T>| {
-            for (side, entries) in [(TriviaSide::Leading, &trivia.leading), (TriviaSide::Trailing, &trivia.trailing), (TriviaSide::Inner, &trivia.inner)] {
-                if let Some(entries) = entries {
-                    self.store.write_side(place, side, entries.clone());
-                }
-            }
-        };
+    /// the slot's stamped word, each side kept as the store keeps it
+    /// (`kept`).
+    fn keep_sides(&mut self, at: Address, trivia: Option<&NodeTrivia<T>>, units: &[(u32, &UnitSides<T>)], leaves: &[(u32, ItemIndex, NodeTrivia<T>)]) -> Result<(), ArenaError> {
         if let Some(trivia) = trivia {
-            keep(Place::Record(at), trivia);
+            self.keep(Place::Record(at), trivia)?;
         }
         for &(word, unit) in units {
-            keep(Place::Unit(Site { holder: at, word, item: unit.item }), &unit.trivia);
+            self.keep(Place::Unit(Site { holder: at, word, item: unit.item }), &unit.trivia)?;
         }
         for (word, item, trivia) in leaves {
-            keep(Place::Leaf(Site { holder: at, word: *word, item: *item }), trivia);
+            self.keep(Place::Leaf(Site { holder: at, word: *word, item: *item }), trivia)?;
         }
+        Ok(())
+    }
+
+    fn keep(&mut self, place: Place, trivia: &NodeTrivia<T>) -> Result<(), ArenaError> {
+        for (side, entries) in [(TriviaSide::Leading, &trivia.leading), (TriviaSide::Trailing, &trivia.trailing), (TriviaSide::Inner, &trivia.inner)] {
+            if let Some(entries) = entries {
+                let kept = self.kept(entries)?;
+                self.store.write_kept(place, side, kept);
+            }
+        }
+        Ok(())
     }
 }
 
@@ -128,6 +189,14 @@ impl<T: Clone + HeapBytes, C: WriteCell<T>, const ADJACENT: bool> WriteCell<T> f
 /// Bare text is a captured string's cell, an entry of the blank kind. An
 /// `ERROR` node keeps its kind, as a built leaf.
 impl<T: Clone + HeapBytes> WriteCell<T> for VerbatimNode {
+    fn write_cell(&self, sink: &mut RecordSink<'_, T>) -> Result<CellWord, ArenaError> {
+        CellWord::of(sink.writer.entry(self.kind, &self.text)?, ChangedEdges::default())
+    }
+}
+
+/// Detached trivia text is a leaf entry of its kind, as a verbatim node is:
+/// its snapshot span and its adjacency are not kept.
+impl<T: Clone + HeapBytes> WriteCell<T> for TriviaText {
     fn write_cell(&self, sink: &mut RecordSink<'_, T>) -> Result<CellWord, ArenaError> {
         CellWord::of(sink.writer.entry(self.kind, &self.text)?, ChangedEdges::default())
     }
@@ -245,7 +314,7 @@ pub fn write_record<T: Clone + HeapBytes>(
         record[1] = side.write(&mut |words| sink.writer.place(words, 1))?.0;
     }
     let at = sink.writer.record(&record, !nested)?;
-    sink.keep_sides(at, layout.and_then(|layout| layout.trivia.as_ref()), &units, &leaves);
+    sink.keep_sides(at, layout.and_then(|layout| layout.trivia.as_ref()), &units, &leaves)?;
     CellWord::of(at, site_changed)
 }
 
@@ -493,7 +562,7 @@ mod tests {
     fn a_built_sink_writes_a_child_as_a_child_cell_with_its_sides() {
         let trivia = Some(NodeTrivia { leading: Some(vec![entry("// child")]), trailing: None, inner: None });
         let child = pair(Some(Box::new(NodeLayout { trivia, ..NodeLayout::default() })), name("a", None), Vec::new());
-        let (mut chunks, store) = (chunks(), TriviaStore::new());
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let cell = write_record(&mut RecordSink::built(&mut chunks, &store, &mut unlinked), KindId(7), 3, None, |_| Some(2), |sink, words, _| {
             words[2] = write_slot(sink, &child, "_child")?.0;
             Ok(())
@@ -503,7 +572,7 @@ mod tests {
         let held = decode(&chunks, CellWord(chunks.words(at, 3).expect("its words")[2]));
         let Cell::Child { at: child, .. } = held else { panic!("a child cell, not {held:?}") };
         assert!(child < at, "the child is its own record, written before its holder");
-        assert_eq!(store.side(Place::Record(child), TriviaSide::Leading), Some(vec![entry("// child")]));
+        assert_eq!(store.side(Place::Record(child), TriviaSide::Leading, &chunks).expect("read"), Some(vec![entry("// child")]));
     }
 
     /// An envelope: its content built at word 2, read from the same row.
@@ -523,7 +592,7 @@ mod tests {
 
     #[test]
     fn a_built_write_moves_its_trivia_and_units_into_the_store() {
-        let (mut chunks, store) = (chunks(), TriviaStore::new());
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let trivia = Some(NodeTrivia { leading: Some(vec![entry("// a")]), trailing: None, inner: None });
         let unit = UnitSides { slot: "_items".to_owned(), item: ItemIndex(1), trivia: NodeTrivia { leading: None, trailing: None, inner: Some(Vec::new()) } };
         let layout = Some(Box::new(NodeLayout { trivia, units: vec![unit], ..NodeLayout::default() }));
@@ -531,21 +600,21 @@ mod tests {
         let node = Pair { items_space: Some(KindId(2)), ..pair(layout, name("x", leaf), Vec::new()) };
         let cell = node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut unlinked)).expect("written");
         let Cell::Child { at: record, .. } = decode(&chunks, cell) else { panic!("a record") };
-        assert_eq!(store.side(Place::Record(record), TriviaSide::Leading), Some(vec![entry("// a")]));
-        assert_eq!(store.side(Place::Record(record), TriviaSide::Trailing), None, "a side no write set stays unwritten");
-        assert_eq!(store.side(Place::Unit(Site { holder: record, word: 6, item: ItemIndex(1) }), TriviaSide::Inner), Some(Vec::new()));
+        assert_eq!(store.side(Place::Record(record), TriviaSide::Leading, &chunks).expect("read"), Some(vec![entry("// a")]));
+        assert_eq!(store.side(Place::Record(record), TriviaSide::Trailing, &chunks).expect("read"), None, "a side no write set stays unwritten");
+        assert_eq!(store.side(Place::Unit(Site { holder: record, word: 6, item: ItemIndex(1) }), TriviaSide::Inner, &chunks).expect("read"), Some(Vec::new()));
         let (kind, side, open, left, items) = pair_record(&chunks, cell);
         assert_eq!((kind, open), (PAIR, 1));
         assert_eq!(side.slots, vec![SideSlot { word: 6, space_after: Some(KindId(2)), ..SideSlot::default() }], "the setting is in its slot's entry");
         let Cell::BuiltLeaf { kind: NAME, text, .. } = left else { panic!("a built leaf, not {left:?}") };
         assert_eq!(chunks.text(text), Ok("x"));
-        assert_eq!(store.side(Place::Leaf(Site { holder: record, word: 3, item: ItemIndex(0) }), TriviaSide::Trailing), Some(vec![entry("// x")]), "a leaf has no record: its sides are kept at its site");
+        assert_eq!(store.side(Place::Leaf(Site { holder: record, word: 3, item: ItemIndex(0) }), TriviaSide::Trailing, &chunks).expect("read"), Some(vec![entry("// x")]), "a leaf has no record: its sides are kept at its site");
         assert_eq!(items, Vec::<Cell>::new());
     }
 
     #[test]
     fn a_built_unit_of_an_unstamped_slot_is_refused_before_any_side_is_kept() {
-        let (mut chunks, store) = (chunks(), TriviaStore::new());
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let trivia = Some(NodeTrivia { leading: Some(vec![entry("// a")]), trailing: None, inner: None });
         let unit = UnitSides { slot: "_gone".to_owned(), item: ItemIndex(0), trivia: NodeTrivia::default() };
         let node = pair(Some(Box::new(NodeLayout { trivia, units: vec![unit], ..NodeLayout::default() })), name("x", None), Vec::new());
@@ -555,7 +624,7 @@ mod tests {
 
     #[test]
     fn a_built_record_links_a_node_named_by_its_site_and_refuses_a_node_of_a_tree() {
-        let (mut chunks, store) = (chunks(), TriviaStore::new());
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let of_tree = Address::new(0, 1).expect("an address");
         let mut link = |coord: &NodeCoordinate| Ok(if coord.index == NodeIndex(5) { Linked::Record(of_tree) } else { Linked::Leaf("y".to_owned()) });
         let changed = ChangedEdges { leading: true, trailing: false };
@@ -572,7 +641,7 @@ mod tests {
 
     #[test]
     fn a_child_s_changed_edges_are_its_holder_s_cell_s_and_a_root_keeps_its_own() {
-        let (mut chunks, store) = (chunks(), TriviaStore::new());
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let changed = |leading, trailing| ChangedEdges { leading, trailing };
         let moved = |edges| Some(Box::new(NodeLayout { changed: edges, ..NodeLayout::default() }));
         let content = pair(moved(changed(true, false)), name("x", moved(changed(false, true))), Vec::new());
@@ -594,7 +663,7 @@ mod tests {
     #[test]
     fn a_built_leaf_keeps_no_snapshot_span_and_refuses_its_edges() {
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 1 } };
-        let (mut chunks, store) = (chunks(), TriviaStore::new());
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let snapshot = Some(Box::new(NodeLayout { span: Some(span), ..NodeLayout::default() }));
         let cell = pair(None, name("x", snapshot), Vec::new()).write_cell(&mut RecordSink::built(&mut chunks, &store, &mut unlinked)).expect("written");
         let (_, _, _, left, _) = pair_record(&chunks, cell);
@@ -606,7 +675,7 @@ mod tests {
 
     #[test]
     fn a_built_write_refuses_a_node_read_from_a_tree() {
-        let (mut chunks, store) = (chunks(), TriviaStore::new());
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let node = pair(Some(read_at(1, 2)), name("x", None), Vec::new());
         assert_eq!(node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut unlinked)), Err(ArenaError::Unwritable("a node read from a tree in a built record")));
     }

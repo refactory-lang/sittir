@@ -136,8 +136,10 @@ fn site_cell<N: RecordCells>(reads: &dyn ArenaRead, site: super::NodeSite, index
     }))
 }
 
-/// A grammar's render of a record: its generated `render_record`.
-pub trait RecordGrammar: EngineGrammar {
+/// A grammar's render of a record: its generated `render_record`. Its
+/// trivia type is written into the built arena as a side keeps it
+/// (`RecordSink::kept`).
+pub trait RecordGrammar: EngineGrammar<Trivia: super::WriteCell<<Self as EngineGrammar>::Trivia>> {
     /// Renders the record `root` names, prepared into a fresh overlay over
     /// the parsed trees' arenas `trees`, the built arena `built` and the
     /// store of written sides `store`, and answers its text before its line

@@ -477,7 +477,7 @@ pub struct ParsedTree<G: EngineGrammar, B: Backing = tree_sitter::Tree> {
     /// The sides writes set, by row: the tree's own, written through
     /// `&mut self` alone (`write_trivia_side`), so no read of them ever
     /// meets a write and none takes a lock.
-    sides: crate::trivia_store::SideRows<NodeIndex, G::Trivia>,
+    sides: crate::trivia_store::SideRows<NodeIndex, TriviaEntry<G::Trivia>>,
 }
 
 /// What a parsed tree's nodes are read from, and how its source is held.
@@ -2100,7 +2100,10 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     fn seated(&mut self, index: NodeIndex, side: TriviaSide, layout: Option<Lent<'_>>) -> Vec<SideEntry<G::Trivia>> {
         let tree = self.tree;
         let written = match B::place(tree, index) {
-            Some(place) => tree.store.side(place, side),
+            #[cfg(feature = "arena")]
+            Some(place) => B::reads(tree).and_then(|arena| tree.store.side(place, side, arena).ok().flatten()),
+            #[cfg(not(feature = "arena"))]
+            Some(_) => None,
             None => tree.sides.get(index, side).map(|written| tree.store.answered(written)),
         };
         match written {
@@ -2721,17 +2724,17 @@ impl<G: EngineGrammar> Engine<G> {
     /// as its entries in document order, each the record it names, as a
     /// built node's side names one.
     fn place_extras(&self, tree: crate::types::TreeId, placed: Vec<crate::arena::Placed>) {
-        type Side<T> = ((crate::arena::NodeSite, TriviaSide), Vec<TriviaEntry<T>>);
-        let mut sides: Vec<Side<G::Trivia>> = Vec::new();
+        type Side = ((crate::arena::NodeSite, TriviaSide), Vec<crate::trivia_store::CompactEntry>);
+        let mut sides: Vec<Side> = Vec::new();
         for extra in placed {
-            let entry = TriviaEntry::Record(crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: extra.kind, at: extra.extra }, store: None });
+            let entry = crate::trivia_store::CompactEntry::Record { kind: extra.kind, at: extra.extra };
             match sides.iter_mut().find(|(key, _)| *key == (extra.site, extra.side)) {
                 Some((_, entries)) => entries.push(entry),
                 None => sides.push(((extra.site, extra.side), vec![entry])),
             }
         }
         for ((site, side), entries) in sides {
-            self.written.write_side(crate::trivia_store::Place::Placed { tree, site }, side, entries);
+            self.written.write_kept(crate::trivia_store::Place::Placed { tree, site }, side, entries);
         }
     }
 

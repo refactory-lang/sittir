@@ -336,7 +336,7 @@ pub struct LayoutAt<'r, T> {
     overlay: Marker<'r, T>,
 }
 
-impl<T: Clone + 'static> LayoutAt<'_, T> {
+impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
     fn enveloped(&self) -> bool {
         matches!(self.key.place, PrepPlace::Content(_))
     }
@@ -387,10 +387,10 @@ impl<T: Clone + 'static> LayoutAt<'_, T> {
             (Some(at), _) => (source_sides(prep, &at), self.template_units(prep)?),
             (None, PrepPlace::Stored(Place::Record(record))) => {
                 let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
-                let units = prep.store.units(record).into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
-                (prep.store.sides(Place::Record(record)), units)
+                let units = prep.store.units(record, prep.built)?.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
+                (prep.store.sides(Place::Record(record), prep.built)?, units)
             }
-            (None, PrepPlace::Stored(place @ Place::Leaf(_))) => (prep.store.sides(place), Vec::new()),
+            (None, PrepPlace::Stored(place @ Place::Leaf(_))) => (prep.store.sides(place, prep.built)?, Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
         merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref(), prep.sources, prep.lent());
@@ -432,7 +432,7 @@ impl<T: Clone + 'static> LayoutAt<'_, T> {
     }
 }
 
-impl<'r, T: Prepare + TriviaSeam + Clone + 'static> LayoutTarget<RecordPrep<'r, T>> for LayoutAt<'r, T> {
+impl<'r, T: Prepare + TriviaSeam + Clone + crate::trivia::FromTriviaText + 'static> LayoutTarget<RecordPrep<'r, T>> for LayoutAt<'r, T> {
     /// Prepares its sides and its units' sides into the overlay, which takes
     /// the per-item separators its slots store as its slots' first.
     fn prepare(&mut self, prep: &mut RecordPrep<'r, T>, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
@@ -887,10 +887,10 @@ pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, claims: 
 /// span and its stored sides, as a holder reads them before the record's own
 /// prepare.
 #[must_use]
-pub fn record_snapshot_edge<T: Prepare + Clone>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool) -> Option<SnapshotEdge> {
+pub fn record_snapshot_edge<T: Prepare + Clone + crate::trivia::FromTriviaText>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool) -> Option<SnapshotEdge> {
     let key = RecordKey::of(prep, at, claims).ok()?;
     let side = key.side(prep).ok()?;
-    crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| prep.store.sides(place)).as_ref())
+    crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| prep.store.sides(place, prep.built).ok().flatten()).as_ref())
 }
 
 /// `KindOf::kind_in` of the value `at` names, read through its view `V`.
