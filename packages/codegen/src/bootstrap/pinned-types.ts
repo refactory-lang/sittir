@@ -6,6 +6,8 @@ export const EMITTER_TSCONFIG = join('packages', 'codegen', 'tsconfig.emitter.js
 
 const EMITTER_PACKAGE = join('packages', 'codegen');
 
+const EMITTER_INPUTS = [join('packages', 'types', 'src', 'portable-build.ts')];
+
 export interface PinnedTypeEscape {
 	readonly file: string;
 	readonly reason: string;
@@ -46,9 +48,10 @@ function packageOwner(): (file: string) => PackageOwner | undefined {
 
 export function pinnedTypeEscapes(explained: string, { cwd, checkout, pinned }: PinnedTypeScope): PinnedTypeEscape[] {
 	const [emitter, pin] = [join(real(checkout), EMITTER_PACKAGE), real(pinned)];
+	const inputs = new Set(EMITTER_INPUTS.map((input) => join(real(checkout), input)));
 	const ownerOf = packageOwner();
 	const unpinned = (file: string): boolean => (ownerOf(file)?.name.startsWith('@sittir/') ?? false) && !within(pin, file);
-	const local = (file: string, reason: string): boolean => ownerOf(file)?.dir === emitter && LOCAL_REASONS.some((pattern) => pattern.test(reason));
+	const local = (file: string, reason: string): boolean => (ownerOf(file)?.dir === emitter || inputs.has(file)) && LOCAL_REASONS.some((pattern) => pattern.test(reason));
 	const escapes = new Map<string, PinnedTypeEscape>();
 	let file: string | undefined;
 	for (const line of explained.split('\n')) {
