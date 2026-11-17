@@ -127,7 +127,7 @@ It lists no fixed token. Named fixed tokens leave navigation too: these are poly
 | `receiver_parameter_declaration` > `this` | 80 on matter.js, 79 on next.js |
 | rust `self_parameter` > `self`; `*_mut` forms > `mutable_specifier`; doc-comment markers | at most 151 a corpus |
 
-Today a query already passes over them: `ParsedTree::descendants` (`engine.rs`) skips a child its holder's read routes to no slot, and an unnamed one. To verify per kind: query results on every fixture are equal before and after.
+They leave query results too ("Yes, they leave queries too", 2026-11-17). Today a query returns them: the stage-one probe counts 29,447 such results across its corpora (`named_fixed_query_items`, census README). After the change a query matches the holder's kind instead, as it must for a built node, which has no such child: `(self_parameter)` rather than `(self)` inside `&self`, the getter kind rather than its `(formal_parameters)`. The ruling takes every pair the probe found, the table's and these: `abstract_method_signature_getter` and `method_signature_getter` > `formal_parameters`; python `block_statement` and `decorator` > `newline`; rust `extern_crate_declaration` > `crate`, `mut_pattern` > `mutable_specifier`, `receiver_parameter_declaration` > `self`. A test pins, per pair, that the query for the token finds none and the query for the holder finds each.
 
 ## The four readers
 
