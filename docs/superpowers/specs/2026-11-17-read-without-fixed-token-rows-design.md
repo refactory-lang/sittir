@@ -7,6 +7,7 @@
 - **"Fixed token rows removed entirely"** (2026-11-17), with **"Since we are no longer preserving white space that really needs to go"** (2026-11-17, read beside the census). Removal is the requirement; this spec says how.
 - **"Automatic semicolons aren't fixed tokens! They are in a choice block and that should be encoded by kindId"** (2026-11-17).
 - **"fixed token is what isn't a slot or trivia or a leaf"** (2026-11-17): the census classes tokens by role, not by token class.
+- **"Yes, unit rows go too"** (2026-11-17, open question 1): a unit in a slot is held by its cell's kind id alone and has no row, so a parsed unit cell is the built unit cell. The addon's `siblings` gives a unit sibling no span, and a side placed on a unit is keyed by its site.
 - These standing rulings bind every choice below:
   - **A parsed node does not behave differently from a built node** (2026-11-15).
   - **"it would be whatever matches built nodes"** (2026-11-16): where a form is open, the form a built node already uses decides it.
@@ -24,7 +25,7 @@ A **row** is a run entry for a node with no record: `RunEntry::Row { facts, span
 
 ## The end state
 
-- A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. If the maintainer approves the unit section below, it writes none for a unit either.
+- A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. It writes none for a unit either.
 - A fixed token's text comes from its kind. Where it sits comes from its holder's render body and the record's cells, the way a built node's template answers it. No byte offset of a fixed token is stored.
 - A slot whose content is a choice among units is held by its cell's kind id alone, parsed and built alike.
 - A record's own coordinate (`AT`: kind, start, end) stays, and so does every offset of text the source carries.
@@ -323,7 +324,7 @@ Release (the four gaps) is built when the maintainer rules it. Its rules don't d
 
 ## Open questions for the maintainer
 
-1. **Do unit rows go too?** Units are slot content, not fixed tokens, but they are held by their kind id alone; they are 2.6% more on matter.js and 4.0% on next.js. If yes, `siblings` gives a unit no span.
+1. ~~Do unit rows go too?~~ Ruled 2026-11-17: yes (see Decided by the maintainer).
 2. **If units go, where does navigation list a unit?**
    - (a) As a built record does, from its cell, placed among the run's entries by cell order. Recommended: it matches built nodes.
    - (b) A one-word run entry holding the unit's facts word. This keeps today's order but stores the kind twice.
