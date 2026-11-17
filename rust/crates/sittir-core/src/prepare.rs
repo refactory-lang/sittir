@@ -93,10 +93,8 @@ impl<O, X: ArmOf<O> + ?Sized> ArmOf<O> for &mut X {
 /// flag is always `default`'s.
 #[must_use]
 pub fn source_trailing_delimiter(source: Option<&NodeCoordinate>, kind: KindId, separators: &[KindId], default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
-    let Some(source) = source else { return default };
-    let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
-    let trailing = crate::types::Delimiter::TRAILING;
-    if separators.contains(&last) { default.with(trailing) } else { default.without(trailing) }
+    let _ = (source, kind, separators, ctx);
+    default
 }
 
 /// The item at one end of a root's render, as the root's edge reads it: a

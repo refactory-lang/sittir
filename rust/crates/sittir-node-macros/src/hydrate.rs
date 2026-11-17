@@ -152,15 +152,7 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         Role::Flank(flank) => Some(flank),
         _ => None,
     });
-    let delimiter = if let Some(flank) = flank {
-        let item = attrs.item.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "a list's flank needs `#[node(item = …)]`"))?;
-        let position = slots.iter().find(|(_, field, _)| field.ident == item).map(|&(i, ..)| i).ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
-        let option = |value: Option<u16>| value.map_or_else(|| quote!(::core::option::Option::None), |value| quote!(::core::option::Option::Some(#value)));
-        let (leading, trailing) = (option(flank.leading), option(flank.trailing));
-        quote!(::core::option::Option::Some(__rt::delimiter(::sittir_core::types::Span::of(&__node), &children, &routes, ::sittir_core::types::SlotId(#position), #leading, #trailing)))
-    } else {
-        quote!(::core::option::Option::None)
-    };
+    let delimiter = quote!(::core::option::Option::None);
     let (collect, keep) = if flank.is_some() {
         (
             quote!(let (mut children, mut routes) = (::std::vec::Vec::new(), ::std::vec::Vec::new());),

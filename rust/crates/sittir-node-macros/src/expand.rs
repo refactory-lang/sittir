@@ -1186,10 +1186,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
     for field in fields {
         let name = field.ident;
         match &field.role {
-            Role::Flank(flank) => {
-                let call = delimiter_call(attrs, slots, name, flank)?;
-                inits.push(quote!(#name: ::core::option::Option::Some(#call),));
-            }
+            Role::Flank(_) => inits.push(quote!(#name: ::core::option::Option::None,)),
             Role::SeparatorKind(_) => inits.push(quote!(#name: ::core::option::Option::None,)),
             _ => {}
         }
