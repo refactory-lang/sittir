@@ -16,7 +16,7 @@ import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
 import { grammarMapName, VOCABULARY_MODULE } from './grammar-map.ts';
 import type { ExactSet } from './exact.ts';
 import type { PortableBuildTable } from '@sittir/types';
-import type { PortableEmitInput, PortableEmitMember } from './emit-input.ts';
+import type { PortableEmitInput, PortableEmitSlot } from './emit-input.ts';
 
 export interface PortableOutputs {
 	readonly nodeModel: string;
@@ -84,7 +84,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			node: grammarNodeTypeName(nodeMap.name),
 			imports: { vocabulary: VOCABULARY_MODULE, builders: moduleSpecifier(PORTABLE_BUILD_FILE, 'ir-strict.ts'), map: moduleSpecifier(PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE), utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: moduleSpecifier(PORTABLE_BUILD_FILE, 'types.ts') },
 			table: build.table,
-			members: emitMembersOf(typed.slots, (path, member) => input.vocabulary.members(path).get(member)?.optional === true),
+			slots: emitSlotsOf(typed.slots, (path, member) => input.vocabulary.members(path).get(member)?.optional === true),
 			viewed: typed.reads.viewed,
 			textPaths: typed.reads.textPaths,
 			textInputs: typed.textInputs,
@@ -116,11 +116,11 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	};
 }
 
-function emitMembersOf(exact: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, optional: (path: string, member: string) => boolean): PortableEmitInput<PortableBuildTable>['members'] {
+function emitSlotsOf(exact: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, optional: (path: string, slot: string) => boolean): PortableEmitInput<PortableBuildTable>['slots'] {
 	return Object.fromEntries(
-		[...exact].map(([path, members]) => [
+		[...exact].map(([path, slots]) => [
 			path,
-			Object.fromEntries([...members].map(([member, set]): [string, PortableEmitMember] => [member, { paths: set.kinds, texts: set.texts, unmapped: set.unmapped, string: set.scalars.includes('string'), optional: optional(path, member) }]))
+			Object.fromEntries([...slots].map(([slot, set]): [string, PortableEmitSlot] => [slot, { paths: set.kinds, texts: set.texts, unmapped: set.unmapped, string: set.scalars.includes('string'), optional: optional(path, slot) }]))
 		])
 	);
 }

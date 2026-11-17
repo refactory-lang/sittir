@@ -249,15 +249,15 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	let grew = false;
 
 	const wrappedText = (owner: string, member: PortableSlotRoute, skip: number, value: Expression, every: readonly PortableSeat[]): Statement[] => {
-		const exact = input.members[owner]![member.name]!;
+		const exact = input.slots[owner]![member.name]!;
 		const takesText = (path: string, name: string): boolean => {
-			const set = input.members[path]?.[name];
+			const set = input.slots[path]?.[name];
 			return set !== undefined && (set.string || set.texts.length > 0 || set.paths.some((at) => textPaths.has(at) || textInputs.has(at)));
 		};
 		const wrappers = exact.paths.flatMap((path) => {
 			const fitting = viewed.has(path) ? fittingOf(path, member.seats) : [];
 			if (fitting.length !== 1) return [];
-			const required = fitting[0]!.arm.slots.filter((step) => input.members[path]?.[step.name]?.optional !== true);
+			const required = fitting[0]!.arm.slots.filter((step) => input.slots[path]?.[step.name]?.optional !== true);
 			return required.length === 1 && takesText(path, required[0]!.name) ? [[path, required[0]!.name] as const] : [];
 		});
 		const outermost = wrappers.filter(([path]) => !wrappers.some(([other]) => path.startsWith(`${other}.`)));
@@ -297,7 +297,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const caseOf = (owner: string, path: string, member: PortableSlotRoute, skip: number, value: Expression, every: readonly PortableSeat[]): Statement[] => {
 		const fitting = fittingOf(path, member.seats);
 		if (fitting.length === 0) {
-			if (fittingOf(path, every).length === 0) found.push([{ code: 'portable-emit-unplaced-path', path: owner, member: member.name, message: `${path} has no arm that fits ${member.name}'s seats` }, scope]);
+			if (fittingOf(path, every).length === 0) found.push([{ code: 'portable-emit-unplaced-path', path: owner, slot: member.name, message: `${path} has no arm that fits ${member.name}'s seats` }, scope]);
 			return [unbuilt(`${owner}.${member.name}`, value)];
 		}
 		const statements: Statement[] = [];
@@ -344,7 +344,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 
 	const memberFunctionOf = (name: string, owner: string, arm: PortableBuildArm, member: PortableSlotRoute, skip: number, every: readonly PortableSeat[]): string => {
 		for (const seat of member.seats) checkSeat(seat);
-		const exact = input.members[owner]?.[member.name];
+		const exact = input.slots[owner]?.[member.name];
 		if (exact === undefined) fail(`${member.name} has no exact set`);
 		const value = id('value');
 		const statements: Statement[] = [];
@@ -388,7 +388,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const single = (): Expression => {
 			const built = call(id(memberFunction(owner, arm, member, 0)), given);
 			if (step!.optional === true) return ternary(binary(given, '===', id('undefined')), id('undefined'), built);
-			return input.members[owner]?.[member.name]?.optional === true ? ternary(binary(given, '===', id('undefined')), call(id(uses('missing')), str(`${owner}.${member.name}`)), built) : built;
+			return input.slots[owner]?.[member.name]?.optional === true ? ternary(binary(given, '===', id('undefined')), call(id(uses('missing')), str(`${owner}.${member.name}`)), built) : built;
 		};
 		if (member.list !== true && !either) return single();
 		const seat = member.seats.find((candidate) => candidate.many === true && (candidate.within ?? []).length > 0);
@@ -565,7 +565,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			}
 			if (!generated) {
 				const reason = failed.get(path) ?? arms.map((arm) => failed.get(`${identifierOf(path)}$${arm.kind}`)).find((message) => message !== undefined) ?? 'no arm builds it at the root';
-				found.push([{ code: 'portable-emit-unfit-member', path, message: reason }, undefined]);
+				found.push([{ code: 'portable-emit-unfit-slot', path, message: reason }, undefined]);
 				continue;
 			}
 			pathFunctions.push(constant(identifierOf(path), arrow('input', type, block(...statements))));

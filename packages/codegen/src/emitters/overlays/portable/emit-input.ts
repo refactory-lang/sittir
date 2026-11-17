@@ -1,4 +1,4 @@
-export interface PortableEmitMember {
+export interface PortableEmitSlot {
 	readonly paths: readonly string[];
 	readonly texts: readonly string[];
 	readonly unmapped: readonly string[];
@@ -12,7 +12,7 @@ export interface PortableEmitInput<Table> {
 	readonly node: string;
 	readonly imports: { readonly vocabulary: string; readonly builders: string; readonly map: string; readonly utils: string; readonly nodes: string; readonly types: string };
 	readonly table: Table;
-	readonly members: Readonly<Record<string, Readonly<Record<string, PortableEmitMember>>>>;
+	readonly slots: Readonly<Record<string, Readonly<Record<string, PortableEmitSlot>>>>;
 	readonly viewed: readonly string[];
 	readonly textPaths: readonly string[];
 	readonly textInputs: readonly string[];
@@ -21,12 +21,12 @@ export interface PortableEmitInput<Table> {
 	readonly decided: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }
 
-export type PortableEmitCode = 'portable-emit-unplaced-path' | 'portable-emit-unfit-member' | 'portable-emit-pinned-gap' | 'portable-emit-type' | 'portable-emit-tail-is-path';
+export type PortableEmitCode = 'portable-emit-unplaced-path' | 'portable-emit-unfit-slot' | 'portable-emit-pinned-gap' | 'portable-emit-type' | 'portable-emit-tail-is-path';
 
 export interface PortableEmitDiagnostic {
 	readonly code: PortableEmitCode;
 	readonly path: string;
-	readonly member?: string;
+	readonly slot?: string;
 	readonly message: string;
 }
 

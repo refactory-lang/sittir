@@ -13,7 +13,7 @@ describe('the pinned child emits a portable build module', () => {
 				builders: { passStatement: 'nullary' },
 				paths: { 'statement.pass': { root: true, arms: [{ kind: 1, builder: 'passStatement', when: [], slots: [], presets: [], flags: {} }] } }
 			},
-			members: {},
+			slots: {},
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -51,7 +51,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			members: {},
+			slots: {},
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -59,7 +59,7 @@ describe('the pinned child emits a portable build module', () => {
 			holes: [],
 				decided: {}
 		});
-		expect(diagnostics.map(({ code, path }) => [code, path])).toEqual([['portable-emit-unfit-member', 'statement.jump']]);
+		expect(diagnostics.map(({ code, path }) => [code, path])).toEqual([['portable-emit-unfit-slot', 'statement.jump']]);
 		expect(text).toContain('const statement_pass$1 = ');
 		expect(text).not.toContain('statement_jump');
 	}, 60_000);
@@ -97,7 +97,7 @@ describe('the pinned child emits a portable build module', () => {
 					'expression.await': { root: false, arms: [{ kind: 9, builder: 'other', when: [], slots: [], presets: [], flags: {} }] }
 				}
 			},
-			members: {
+			slots: {
 				'statement.expression': {
 					expression: { paths: ['expression.await'], texts: [], unmapped: [], string: false, optional: false },
 					label: { paths: [], texts: [], unmapped: [], string: false, optional: true }
@@ -110,7 +110,7 @@ describe('the pinned child emits a portable build module', () => {
 			holes: [],
 			decided: {}
 		});
-		expect(diagnostics.map(({ code, path }) => [code, path])).toEqual([['portable-emit-unfit-member', 'statement.expression']]);
+		expect(diagnostics.map(({ code, path }) => [code, path])).toEqual([['portable-emit-unfit-slot', 'statement.expression']]);
 		expect(text).not.toContain('statement_expression');
 	}, 60_000);
 
@@ -124,7 +124,7 @@ describe('the pinned child emits a portable build module', () => {
 				builders: { lineContinuation: 'config' },
 				paths: { 'element.continuation': { root: true, arms: [{ kind: 2, builder: 'lineContinuation', when: [], slots: [], presets: [{ steps: [{ key: 'text' }], text: "\\'" }], flags: {} }] } }
 			},
-			members: {},
+			slots: {},
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -151,7 +151,7 @@ describe('the pinned child emits a portable build module', () => {
 					'expression.collection.list': { root: true, arms: [{ kind: 1, builder: 'array', when: [], slots: [{ name: 'elements', steps: [{ key: 'elements' }], multiple: true, seats: [{ at: [1, 'elements'], kinds: [7, 9] }] }], presets: [], flags: {} }] }
 				}
 			},
-			members: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, optional: true } } },
+			slots: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, optional: true } } },
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -196,7 +196,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			members: {
+			slots: {
 				'statement.block': {
 					statements: { paths: [], texts: [], unmapped: [], string: false, optional: true },
 					label: { paths: [], texts: ['a', 'b'], unmapped: [], string: false, optional: true }
@@ -248,7 +248,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			members: {
+			slots: {
 				'identifier.qualified': {
 					qualifier: { paths: ['identifier.qualified'], texts: [], unmapped: [], string: true, optional: true },
 					name: { paths: [], texts: [], unmapped: [], string: true, optional: false },
@@ -296,7 +296,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			members: { 'element.macro.token_binding': { fragment: { paths: ['element.macro.fragment'], texts: ['block', 'expr'], unmapped: [], string: false, optional: false } } },
+			slots: { 'element.macro.token_binding': { fragment: { paths: ['element.macro.fragment'], texts: ['block', 'expr'], unmapped: [], string: false, optional: false } } },
 			viewed: [],
 			textPaths: ['element.macro.fragment'],
 			textInputs: [],
@@ -328,7 +328,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			members: {},
+			slots: {},
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -379,7 +379,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			members: {},
+			slots: {},
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -411,7 +411,7 @@ describe('the pinned child emits a portable build module', () => {
 						'expression.generator': { root: false, arms: [{ kind: 2, builder: 'generatorExpression', when: [], slots: [], presets: [], flags: {} }] }
 					}
 				},
-				members: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, optional: false } } },
+				slots: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, optional: false } } },
 				viewed: [...paths],
 				textPaths: [],
 				textInputs: [],
@@ -444,7 +444,7 @@ describe('the pinned child emits a portable build module', () => {
 			map: 'PythonMap',
 			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
 			table: { builders: { stringFragment: 'text' }, paths: { 'literal.string.text': { root: true, arms: [{ kind: 1, builder: 'stringFragment', when: [], slots: [], presets: [], flags: {} }] } } },
-			members: {},
+			slots: {},
 			viewed: [],
 			textPaths: [],
 			textInputs: ['literal.string.text'],
@@ -453,7 +453,7 @@ describe('the pinned child emits a portable build module', () => {
 				decided: {}
 		});
 		expect(text.includes("return b.stringFragment(typeof input === 'string' ? input : input.$value);")).toBe(built);
-		expect(diagnostics.map(({ code }) => code)).toEqual(built ? [] : ['portable-emit-unfit-member']);
+		expect(diagnostics.map(({ code }) => code)).toEqual(built ? [] : ['portable-emit-unfit-slot']);
 	}, 60_000);
 
 	it.each([
@@ -473,7 +473,7 @@ describe('the pinned child emits a portable build module', () => {
 					'identifier.qualified': { root: false, arms: [{ kind: 8, builder: 'dottedName', when: [], slots: [], presets: [], flags: {} }] }
 				}
 			},
-			members: { 'declaration.function': { body: { paths: [...viewed], texts: [], unmapped: [], string: false, optional: false } } },
+			slots: { 'declaration.function': { body: { paths: [...viewed], texts: [], unmapped: [], string: false, optional: false } } },
 			viewed: [...viewed],
 			textPaths: [],
 			textInputs: [],

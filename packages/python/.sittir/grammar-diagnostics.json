@@ -2496,7 +2496,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.case.match: a pick by the render options' variant _suite"
@@ -2504,7 +2504,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.catch: arm 165 builds through one of several forms"
@@ -2512,7 +2512,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.comprehension.for: rights requires other members or reads only some kinds"
@@ -2544,7 +2544,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.else: a pick by the render options' variant _suite"
@@ -2552,7 +2552,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.else_if: a pick by the render options' variant _suite"
@@ -2560,7 +2560,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.finally: a pick by the render options' variant _suite"
@@ -3304,7 +3304,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.import.wildcard: arm 143 builds through its holder"
@@ -3312,7 +3312,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.resource: items requires other members or reads only some kinds"
@@ -3320,7 +3320,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "clause.resource.item: arm 169 builds through one of several forms"
@@ -3328,7 +3328,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "comment.line: arm 72 builds its text through a content slot"
@@ -3336,7 +3336,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.class: arm 179 builds through one of several forms"
@@ -3344,7 +3344,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.constant: a preset at name that is not one keyword or text"
@@ -3352,7 +3352,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.constructor: a pick by the render options' variant _suite"
@@ -3360,7 +3360,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.function: arm 170 builds through one of several forms"
@@ -3368,7 +3368,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.method: arm 361 builds through one of several forms"
@@ -3376,7 +3376,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.method.special: a template-spelled member (name)"
@@ -3384,7 +3384,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.property.getter: arm 361 builds through one of several forms"
@@ -3392,7 +3392,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.property.setter: arm 361 builds through one of several forms"
@@ -3400,7 +3400,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.type_alias: typeParameters reaches its slot in 2 steps"
@@ -3408,7 +3408,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.type_parameter: bounds is a list with no list container seat"
@@ -3528,7 +3528,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.comparison.equal: arm 311 builds through its holder"
@@ -3536,7 +3536,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.comparison.greater: arm 311 builds through its holder"
@@ -3544,7 +3544,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.comparison.greater_equal: arm 311 builds through its holder"
@@ -3552,7 +3552,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.comparison.less: arm 311 builds through its holder"
@@ -3560,7 +3560,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.comparison.less_equal: arm 311 builds through its holder"
@@ -3568,7 +3568,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.comparison.not_equal: arm 311 builds through its holder"
@@ -3576,7 +3576,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.comparison.not_equal.legacy: arm 311 builds through its holder"
@@ -3584,7 +3584,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.identity.is: arm 311 builds through its holder"
@@ -3592,7 +3592,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.identity.is_not: arm 311 builds through its holder"
@@ -3600,7 +3600,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.membership.in: arm 311 builds through its holder"
@@ -3608,7 +3608,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "element.comparator.membership.not_in: arm 311 builds through its holder"
@@ -3928,7 +3928,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.chain: comparators requires other members or reads only some kinds"
@@ -3936,7 +3936,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.equal: right reaches its slot in 2 steps"
@@ -3944,7 +3944,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.greater: right reaches its slot in 2 steps"
@@ -3952,7 +3952,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.greater_equal: right reaches its slot in 2 steps"
@@ -3960,7 +3960,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.less: right reaches its slot in 2 steps"
@@ -3968,7 +3968,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.less_equal: right reaches its slot in 2 steps"
@@ -3976,7 +3976,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.not_equal: right reaches its slot in 2 steps"
@@ -3984,7 +3984,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.comparison.not_equal.legacy: right reaches its slot in 2 steps"
@@ -3992,7 +3992,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.identity.is: right reaches its slot in 2 steps"
@@ -4000,7 +4000,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.identity.is_not: right reaches its slot in 2 steps"
@@ -4008,7 +4008,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.membership.in: right reaches its slot in 2 steps"
@@ -4016,7 +4016,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.binary.membership.not_in: right reaches its slot in 2 steps"
@@ -4024,7 +4024,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.call.member: a preset at function that is not one keyword or text"
@@ -4032,7 +4032,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.collection.set: elements requires other members or reads only some kinds"
@@ -4040,7 +4040,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.comprehension.generator: clauses requires other members or reads only some kinds"
@@ -4048,7 +4048,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.comprehension.list: clauses requires other members or reads only some kinds"
@@ -4056,7 +4056,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.comprehension.map: clauses requires other members or reads only some kinds"
@@ -4064,7 +4064,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.comprehension.set: clauses requires other members or reads only some kinds"
@@ -4096,7 +4096,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.member: flag privateName spells text, a delimiter or an unset preset"
@@ -4104,7 +4104,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.slice: a flattened container at expression"
@@ -4112,7 +4112,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.subscript: a seat at index holding refined kinds"
@@ -4120,7 +4120,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "expression.yield.delegate: expression reaches its slot in 2 steps"
@@ -4128,7 +4128,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "file: a container at definition that holds members of its own"
@@ -4136,7 +4136,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.boolean.false: arm 70 builds through its holder"
@@ -4144,7 +4144,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.boolean.true: arm 69 builds through its holder"
@@ -4152,7 +4152,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.ellipsis: arm 63 builds through its holder"
@@ -4160,7 +4160,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.null: arm 71 builds through its holder"
@@ -4168,7 +4168,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.number.integer.imaginary: arm 99's builder takes its text"
@@ -4176,7 +4176,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string: string takes options"
@@ -4184,7 +4184,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.bytes: a preset at stringStart.prefix that is not one keyword or text"
@@ -4192,7 +4192,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.bytes.multiline: a preset at stringStart.prefix that is not one keyword or text"
@@ -4200,7 +4200,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.bytes.raw: arm 253 builds its text through a content slot"
@@ -4208,7 +4208,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.bytes.raw.multiline: arm 253 builds its text through a content slot"
@@ -4216,7 +4216,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.concatenated: strings requires other members or reads only some kinds"
@@ -4224,7 +4224,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.escape: arm 109 builds its text through a content slot"
@@ -4232,7 +4232,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated: a preset at stringStart.prefix that is not one keyword or text"
@@ -4240,7 +4240,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated.deferred: a preset at stringStart.prefix that is not one keyword or text"
@@ -4248,7 +4248,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated.deferred.multiline: a preset at stringStart.prefix that is not one keyword or text"
@@ -4256,7 +4256,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated.deferred.raw: a preset at stringStart.prefix that is not one keyword or text"
@@ -4264,7 +4264,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated.deferred.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
@@ -4272,7 +4272,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated.multiline: a preset at stringStart.prefix that is not one keyword or text"
@@ -4280,7 +4280,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated.raw: a preset at stringStart.prefix that is not one keyword or text"
@@ -4288,7 +4288,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.interpolated.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
@@ -4296,7 +4296,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.multiline: a preset at stringStart.quote that is not one keyword or text"
@@ -4304,7 +4304,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.raw: arm 253 builds its text through a content slot"
@@ -4312,7 +4312,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.raw.multiline: arm 253 builds its text through a content slot"
@@ -4320,7 +4320,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.unicode: a preset at stringStart.prefix that is not one keyword or text"
@@ -4480,7 +4480,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "pattern.wildcard: arm 289 builds through its holder"
@@ -4488,7 +4488,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.assert: expressions requires other members or reads only some kinds"
@@ -4496,7 +4496,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.break: arm 154 builds through its holder"
@@ -4504,7 +4504,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.continue: arm 155 builds through its holder"
@@ -4536,7 +4536,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.empty: arm 153 builds through its holder"
@@ -4568,7 +4568,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.global: names requires other members or reads only some kinds"
@@ -4576,7 +4576,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.if: a pick by the render options' variant _suite"
@@ -4584,7 +4584,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.import: names requires other members or reads only some kinds"
@@ -4592,7 +4592,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.import.from: names requires other members or reads only some kinds"
@@ -4600,7 +4600,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.import.future: names requires other members or reads only some kinds"
@@ -4608,7 +4608,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.loop.for_each: a pick by the render options' variant _suite"
@@ -4616,7 +4616,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.loop.while: a pick by the render options' variant _suite"
@@ -4624,7 +4624,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.match: a seat at subject holding refined kinds"
@@ -4632,7 +4632,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.nonlocal: names requires other members or reads only some kinds"
@@ -4640,7 +4640,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.print: arguments requires other members or reads only some kinds"
@@ -4648,7 +4648,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.resource: a pick by the render options' variant _suite"
@@ -4728,7 +4728,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "statement.try: a pick by the render options' variant _suite"
@@ -4736,7 +4736,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "type.generic: typeArguments reaches its slot in 2 steps"
@@ -4744,7 +4744,7 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
     "message": "type.nullable: type reaches its slot in 3 steps"
