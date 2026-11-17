@@ -331,4 +331,4 @@ Release (the four gaps) is built when the maintainer rules it. Its rules don't d
 
 1. ~~Do unit rows go too?~~ Ruled 2026-11-17: yes (see Decided by the maintainer).
 2–6. Ruled 2026-11-17 (see Decided by the maintainer): a unit is listed from its cell; the trailing-separator bit sits beside the list's run; named fixed tokens leave navigation; two stages, rows first; the public surface rows are approved.
-7. **Release:** rule the four gaps now, since this layout doesn't change their rules, or after the row removal lands?
+7. **Release.** Ruled 2026-11-17: "Keep holding". The four gaps stay proposed until the row removal has landed and been measured, and the hydrate-at-parse branch lands without parsed release (a parsed record is freed with its engine, as before it).
