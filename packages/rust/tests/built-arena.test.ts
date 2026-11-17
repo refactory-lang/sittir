@@ -45,13 +45,13 @@ function chunksOf() {
 	let made = 0;
 	return {
 		words: (length: number) => ({ chunk: ++made, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: [] }),
-		bytes: (length: number) => ({ chunk: ++made, data: new Uint8Array(length), meta: new Uint8Array(4), freed: [] })
+		bytes: (least: number) => ({ chunk: ++made, data: new Uint8Array(Math.max(least, 1024)), meta: new Uint8Array(8), freed: [] })
 	};
 }
 
-const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined): BuiltArena =>
+const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined, chunks: Pick<Records, 'words' | 'bytes'> = chunksOf()): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], ...NO_READS, trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunks, bump: () => undefined, release: () => [], ...NO_READS, trivia },
 		(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
@@ -322,6 +322,33 @@ describe('a built arena', () => {
 		expect(arena.entryAt(wide.at).len).toBe(new TextEncoder().encode('héllo 🌍').length);
 		expect(arena.entryText(arena.entryAt(wide.at).entry)).toBe('héllo 🌍');
 		expect(arena.entryText(arena.entryAt(arena.entry(4, '').at).entry)).toBe('');
+	});
+
+	it("writes a leaf entry at its string chunk's written mark, past the bytes another writer put there", () => {
+		const data = new Uint8Array(64).fill(0xaa, 0, 8);
+		const meta = new Uint8Array(8);
+		const marks = new Uint32Array(meta.buffer);
+		marks[1] = 8;
+		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes: () => ({ chunk: 9, data, meta, freed: [] }) });
+		const entry = arena.entry(4, 'name');
+		expect([chunkOf(entry.at, format!), wordOf(entry.at, format!)]).toEqual([9, 8]);
+		expect(Array.from(data.subarray(0, 8))).toEqual(new Array(8).fill(0xaa));
+		expect(marks[1]).toBe(16);
+		expect(arena.entryText(arena.entryAt(entry.at).entry)).toBe('name');
+	});
+
+	it('asks for a string chunk with the room an entry needs, and appends to it while it has room', () => {
+		let made = 20;
+		const asked: number[] = [];
+		const bytes = (least: number) => (asked.push(least), { chunk: ++made, data: new Uint8Array(32), meta: new Uint8Array(8), freed: [] });
+		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
+		const placed = ['aaaa', 'bbbbbbbb', 'c'.repeat(16)].map((text) => arena.entry(4, text).at);
+		expect(asked).toEqual([8, 20]);
+		expect(placed.map((at) => [chunkOf(at, format!), wordOf(at, format!)])).toEqual([
+			[21, 0],
+			[21, 8],
+			[22, 0]
+		]);
 	});
 
 	it('refuses a read past its written words', () => {

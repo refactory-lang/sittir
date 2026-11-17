@@ -680,41 +680,39 @@ impl BuiltChunks {
         .cloned()
     }
 
-    /// A new string chunk of `len` bytes, zeroed: its number, its memory
-    /// and its meta, its cell count.
-    ///
-    /// # Errors
-    ///
-    /// As `alloc_words`.
-    pub fn alloc_bytes(&mut self, len: u32) -> Result<NewChunk<u8>, ArenaError> {
+    /// A new string chunk of `len` bytes, zeroed, as `strings_chunk` answers
+    /// it.
+    fn alloc_bytes(&mut self, len: u32) -> Result<NewChunk<u8>, ArenaError> {
         let chunk = self.number(len)?;
-        let mem = ChunkMem::zeroed(len as usize);
-        let meta = ChunkMem::zeroed(count::CELLS_META_BYTES);
-        self.chunks[chunk as usize] = Some(BuiltChunk::Bytes { mem: Arc::clone(&mem), cells: Arc::clone(&meta) });
+        self.chunks[chunk as usize] = Some(BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(count::CELLS_META_BYTES) });
         self.opened(1, chunk, len <= STRING_CHUNK_BYTES);
-        Ok(NewChunk { chunk, mem, meta, sealed: None })
+        self.strings_chunk(chunk).ok_or(ArenaError::OutOfBounds { chunk, word: 0, len })
     }
 
-    /// The number of the string chunk builders append text to with at least
-    /// `least` bytes past those written into it: the open one while it has
-    /// the room, else a new one, double the last up to `STRING_CHUNK_BYTES`;
-    /// and for text past that, a chunk of its own, which leaves the open one
-    /// open.
+    /// The string chunk `chunk`: its number, its memory and its meta, its
+    /// cell count and the bytes builders wrote into it.
+    fn strings_chunk(&self, chunk: u32) -> Option<NewChunk<u8>> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Bytes { mem, cells })) => Some(NewChunk { chunk, mem: Arc::clone(mem), meta: Arc::clone(cells), sealed: None }),
+            _ => None,
+        }
+    }
+
+    /// The string chunk builders append text to with at least `least` bytes
+    /// past those written into it: the open one while it has the room, else
+    /// a new one, double the last up to `STRING_CHUNK_BYTES`; and for text
+    /// past that, a chunk of its own, which leaves the open one open.
     ///
     /// # Errors
     ///
     /// As `alloc_words`.
-    pub fn open_strings(&mut self, least: u32) -> Result<u32, ArenaError> {
+    pub fn open_strings(&mut self, least: u32) -> Result<NewChunk<u8>, ArenaError> {
         if least > STRING_CHUNK_BYTES {
-            return self.alloc_bytes(least).map(|made| made.chunk);
+            return self.alloc_bytes(least);
         }
-        let open = self.open[1].and_then(|chunk| self.strings_of(chunk).map(|(mem, cells)| (chunk, mem.len(), count::strings_written(cells))));
-        match open {
-            Some((chunk, len, written)) if len - written as usize >= least as usize => Ok(chunk),
-            open => {
-                let last = open.and_then(|(_, len, _)| u32::try_from(len).ok());
-                self.alloc_bytes(next_limit(last, FIRST_STRING_BYTES, STRING_CHUNK_BYTES, least)).map(|made| made.chunk)
-            }
+        match self.open[1].and_then(|chunk| self.strings_chunk(chunk)) {
+            Some(open) if open.mem.len() - count::strings_written(&open.meta) as usize >= least as usize => Ok(open),
+            open => self.alloc_bytes(next_limit(open.and_then(|open| u32::try_from(open.mem.len()).ok()), FIRST_STRING_BYTES, STRING_CHUNK_BYTES, least)),
         }
     }
 

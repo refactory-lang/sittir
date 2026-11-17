@@ -166,11 +166,14 @@ export declare function backerParity(engine: object, source: string): BackerPari
 export declare function builtBump(engine: object, address: number): void
 
 /**
- * r" A new chunk of `length` bytes of the built arena's strings,
- * r" as `builtWords` answers one of words, its `data` a
- * r" `Uint8Array`.
+ * r" The chunk of the built arena's strings that builders append
+ * r" text to, with at least `least` bytes past those written into
+ * r" it: the open one while it has the room, else a new one
+ * r" native sizes. Answered as `builtWords` answers a chunk of
+ * r" words, its `data` a `Uint8Array`; its meta holds the cell
+ * r" count, then the bytes written, where the next entry goes.
  */
-export declare function builtBytes(engine: object, length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }
+export declare function builtBytes(engine: object, least: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }
 
 /**
  * r" The entries a write gave `side` (`leading`, `trailing` or

@@ -1276,14 +1276,17 @@ macro_rules! napi_engine {
                 $crate::napi_engine::built_chunk(&env, engine.written(), false, length)
             }
 
-            /// A new chunk of `length` bytes of the built arena's strings,
-            /// as `builtWords` answers one of words, its `data` a
-            /// `Uint8Array`.
+            /// The chunk of the built arena's strings that builders append
+            /// text to, with at least `least` bytes past those written into
+            /// it: the open one while it has the room, else a new one
+            /// native sizes. Answered as `builtWords` answers a chunk of
+            /// words, its `data` a `Uint8Array`; its meta holds the cell
+            /// count, then the bytes written, where the next entry goes.
             #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }")]
-            pub fn built_bytes(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, length: f64) -> ::napi::Result<$crate::napi_engine::Made> {
+            pub fn built_bytes(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, least: f64) -> ::napi::Result<$crate::napi_engine::Made> {
                 let engine = engine_of(engine)?;
-                let length: u32 = $crate::napi_engine::checked_whole(length, "length")?;
-                $crate::napi_engine::built_chunk(&env, engine.written(), true, length)
+                let least: u32 = $crate::napi_engine::checked_whole(least, "least")?;
+                $crate::napi_engine::built_chunk(&env, engine.written(), true, least)
             }
 
             /// Takes one more count of the built entry at `address`, whose
@@ -1973,12 +1976,13 @@ impl napi::bindgen_prelude::TypeName for Made {
     }
 }
 
-/// A new chunk of the built arena `store` holds, of `length` bytes when
-/// `bytes`, else of `length` words: `{ chunk, data, meta, freed, sealed }`,
-/// its number, the typed arrays over it and its meta, held weakly in the
-/// store's buffers and reported to V8, the chunks freed since JavaScript was
-/// last told, and the word chunk it sealed with its new meta, the old one
-/// detached.
+/// A chunk of the built arena `store` holds: when `bytes`, the string chunk
+/// builders append text to with at least `length` bytes of room
+/// (`BuiltChunks::open_strings`), else a new chunk of `length` words.
+/// Answers `{ chunk, data, meta, freed, sealed }`: its number, the typed
+/// arrays over it and its meta, held weakly in the store's buffers and
+/// reported to V8, the chunks freed since JavaScript was last told, and the
+/// word chunk it sealed with its new meta, the old one detached.
 ///
 /// # Errors
 ///
@@ -1989,7 +1993,7 @@ pub fn built_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<
     let refused = |e: crate::arena::ArenaError| napi::Error::from_reason(e.to_string());
     let mut buffers = store.buffers();
     let (chunk, data, meta, sealed) = if bytes {
-        let made = store.built_mut().alloc_bytes(length).map_err(refused)?;
+        let made = store.built_mut().open_strings(length).map_err(refused)?;
         (made.chunk, buffers.view::<u8>(env, true, made.chunk, || Some(made.mem))?, made.meta, made.sealed)
     } else {
         let made = store.built_mut().alloc_words(length).map_err(refused)?;

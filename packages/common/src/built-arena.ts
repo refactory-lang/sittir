@@ -65,7 +65,7 @@ export interface BuiltRecords {
 	readonly owner: object;
 	readonly kinds: KindView;
 	words(length: number): BuiltChunk<WritableWords>;
-	bytes(length: number): BuiltChunk<Uint8Array>;
+	bytes(least: number): BuiltChunk<Uint8Array>;
 	bump(at: number): void;
 	release(at: number, held: number, owned: boolean): readonly number[];
 	read(chunk: number): WritableWords | undefined;
@@ -97,8 +97,8 @@ export interface ParsedRecords {
 export type WriteLeafSites = (leaf: object, sites: readonly number[]) => void;
 
 const FIRST_CHUNK_WORDS = 1 << 10;
-const FIRST_STRING_BYTES = 1 << 10;
 const ENTRY_HEAD_BYTES = 4;
+const STRINGS_WRITTEN_WORD = 1;
 const DEFERRED_PRUNE = 256;
 
 interface CommitMark {
@@ -116,16 +116,37 @@ function units(size: number, least: number): void {
 	if (!Number.isSafeInteger(size) || size < least) throw new Error(`a built arena cannot allocate ${size} units`);
 }
 
+function encodedInto(text: string, data: Uint8Array, at: number): number | undefined {
+	if (at > data.length) return undefined;
+	const { read, written } = encoder.encodeInto(text, data.subarray(at));
+	return read === text.length && ((at + written + 3) & ~3) <= data.length ? written : undefined;
+}
+
+interface Marks {
+	at(chunk: number): number;
+	set(chunk: number, at: number): void;
+	reset(chunk: number): void;
+}
+
+function ownMarks(): Marks {
+	const used: number[] = [];
+	return {
+		at: (chunk) => used[chunk] ?? 0,
+		set: (chunk, at) => void (used[chunk] = at),
+		reset: (chunk) => void (used[chunk] = 0)
+	};
+}
+
 class Chunks<A extends WritableWords | Uint8Array> {
 	readonly #make: (length: number) => BuiltChunk<A>;
 	readonly #opened: (chunk: number, data: A, meta: Uint8Array) => void;
 	readonly #freed: (chunks: readonly number[]) => void;
 	readonly #sealed: ((chunk: number, meta: Uint8Array) => void) | undefined;
 	readonly #empty: A;
-	readonly #first: number;
+	readonly #first: number | undefined;
 	readonly #limit: number;
+	readonly #marks: Marks;
 	readonly chunks: A[] = [];
-	readonly used: number[] = [];
 	#open = -1;
 
 	constructor(
@@ -133,7 +154,7 @@ class Chunks<A extends WritableWords | Uint8Array> {
 		opened: (chunk: number, data: A, meta: Uint8Array) => void,
 		freed: (chunks: readonly number[]) => void,
 		empty: A,
-		first: number,
+		sizing: { readonly first: number } | { readonly marks: Marks },
 		format: CellFormat,
 		sealed?: (chunk: number, meta: Uint8Array) => void
 	) {
@@ -143,25 +164,36 @@ class Chunks<A extends WritableWords | Uint8Array> {
 		this.#sealed = sealed;
 		this.#empty = empty;
 		this.#limit = 2 ** format.chunkShift;
-		this.#first = Math.min(first, this.#limit);
+		this.#first = 'first' in sizing ? Math.min(sizing.first, this.#limit) : undefined;
+		this.#marks = 'marks' in sizing ? sizing.marks : ownMarks();
+	}
+
+	written(chunk: number): number {
+		return this.#marks.at(chunk);
+	}
+
+	tail(): { readonly chunk: number; readonly word: number; readonly data: A } | undefined {
+		const open = this.#open;
+		return open < 0 || !this.has(open) ? undefined : { chunk: open, word: this.#marks.at(open), data: this.chunks[open]! };
 	}
 
 	alloc(size: number): { readonly chunk: number; readonly word: number; readonly data: A } {
 		units(size, 0);
-		if (size > this.#limit) {
-			const own = this.#push(size);
-			this.used[own] = size;
-			return { chunk: own, word: 0, data: this.chunks[own]! };
-		}
+		if (size > this.#limit) return this.#claim(this.#push(size), size);
 		const open = this.#open;
-		if (open < 0 || this.used[open]! + size > this.chunks[open]!.length) {
-			const grown = open < 0 ? this.#first : Math.min(this.#limit, this.chunks[open]!.length * 2);
-			this.#open = this.#push(Math.max(size, grown));
+		if (open < 0 || this.#marks.at(open) + size > this.chunks[open]!.length) {
+			const first = this.#first;
+			this.#open = this.#push(first === undefined ? size : Math.max(size, open < 0 ? first : Math.min(this.#limit, this.chunks[open]!.length * 2)));
 		}
-		const chunk = this.#open;
-		const word = this.used[chunk]!;
-		this.used[chunk] = word + size;
-		return { chunk, word, data: this.chunks[chunk]! };
+		return this.#claim(this.#open, size);
+	}
+
+	#claim(chunk: number, size: number): { readonly chunk: number; readonly word: number; readonly data: A } {
+		const word = this.#marks.at(chunk);
+		const data = this.chunks[chunk]!;
+		if (word + size > data.length) throw new Error(`a built arena's chunk ${chunk} came back with ${data.length - word} units of room, short of ${size}`);
+		this.#marks.set(chunk, word + size);
+		return { chunk, word, data };
 	}
 
 	#push(length: number): number {
@@ -170,7 +202,7 @@ class Chunks<A extends WritableWords | Uint8Array> {
 		if (sealed !== undefined) this.#sealed?.(sealed.chunk, sealed.meta);
 		if (chunk === 0 || this.has(chunk)) throw new Error(`a built arena's new chunk came back as chunk ${chunk}, which it already holds or names none`);
 		this.chunks[chunk] = data;
-		this.used[chunk] = 0;
+		this.#marks.reset(chunk);
 		this.#opened(chunk, data, meta);
 		return chunk;
 	}
@@ -178,7 +210,7 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	forget(chunk: number): void {
 		if (this.chunks[chunk] === undefined) return;
 		this.chunks[chunk] = this.#empty;
-		this.used[chunk] = 0;
+		this.#marks.reset(chunk);
 	}
 
 	vacate(chunk: number): void {
@@ -199,7 +231,7 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	}
 
 	holds(chunk: number, unit: number, length: number): boolean {
-		return this.has(chunk) && unit + length <= this.used[chunk]!;
+		return this.has(chunk) && unit + length <= this.#marks.at(chunk);
 	}
 }
 
@@ -378,19 +410,25 @@ export class BuiltArena {
 			(chunk, data, meta) => (this.#tables[chunk] = { ...countViews(meta, data.length), ranked: 0 }),
 			freed,
 			new Uint32Array(0),
-			FIRST_CHUNK_WORDS,
+			{ first: FIRST_CHUNK_WORDS },
 			format,
 			(chunk, meta) => Object.assign(this.#tables[chunk]!, countViews(meta, this.#words.chunks[chunk]!.length))
 		);
 		this.#bytes = new Chunks(
 			bytes,
 			(chunk, data, meta) => {
-				this.#cells[chunk] = new Uint32Array(meta.buffer, meta.byteOffset, 1);
+				this.#cells[chunk] = new Uint32Array(meta.buffer, meta.byteOffset, STRINGS_WRITTEN_WORD + 1);
 				this.#heads[chunk] = new Uint32Array(data.buffer, data.byteOffset, data.byteLength >>> 2);
 			},
 			freed,
 			new Uint8Array(0),
-			FIRST_STRING_BYTES,
+			{
+				marks: {
+					at: (chunk) => this.#cells[chunk]?.[STRINGS_WRITTEN_WORD] ?? 0,
+					set: (chunk, at) => void (this.#cells[chunk]![STRINGS_WRITTEN_WORD] = at),
+					reset: () => undefined
+				}
+			},
 			format
 		);
 	}
@@ -918,14 +956,16 @@ export class BuiltArena {
 		const texts = (this.#entries[kind] ??= new Map());
 		const known = texts.get(text);
 		if (known !== undefined && this.#live(known)) return known;
-		const bytes = encoder.encode(text);
+		const tail = this.#bytes.tail();
+		const inPlace = tail === undefined ? undefined : encodedInto(text, tail.data, tail.word + ENTRY_HEAD_BYTES);
+		const bytes = inPlace === undefined ? encoder.encode(text) : undefined;
+		const length = inPlace ?? bytes!.length;
 		const { kindBits } = this.format;
-		if (bytes.length >= 2 ** (32 - kindBits)) throw new Error(`a built leaf's text of ${bytes.length} bytes is past what a leaf entry's length holds`);
-		const size = (ENTRY_HEAD_BYTES + bytes.length + 3) & ~3;
-		const target = this.#bytes.alloc(size);
+		if (length >= 2 ** (32 - kindBits)) throw new Error(`a built leaf's text of ${length} bytes is past what a leaf entry's length holds`);
+		const target = this.#bytes.alloc((ENTRY_HEAD_BYTES + length + 3) & ~3);
+		if (bytes !== undefined) target.data.set(bytes, target.word + ENTRY_HEAD_BYTES);
 		const heads = this.#heads[target.chunk]!;
-		heads[target.word >>> 2] = (withKind(kind, kindBits) | (bytes.length * 2 ** kindBits)) >>> 0;
-		target.data.set(bytes, target.word + ENTRY_HEAD_BYTES);
+		heads[target.word >>> 2] = (withKind(kind, kindBits) | (length * 2 ** kindBits)) >>> 0;
 		const entry: BuiltText = { at: addressOf(target.chunk, target.word, this.format), kind, text, data: target.data };
 		texts.set(text, entry);
 		(this.#entryAt[target.chunk] ??= new Map()).set(entry.at, entry);
@@ -1032,7 +1072,7 @@ export class BuiltArena {
 
 	chunks(): BuiltChunks {
 		const cut = <A extends WritableWords | Uint8Array>(table: Chunks<A>): A[] =>
-			table.chunks.map((chunk, n) => chunk.subarray(0, table.used[n]) as A);
+			table.chunks.map((chunk, n) => chunk.subarray(0, table.written(n)) as A);
 		return { words: cut(this.#words), bytes: cut(this.#bytes) };
 	}
 

@@ -203,15 +203,14 @@ impl<'a> BuiltWriter<'a> {
         let len = u32::try_from(text.len()).ok().filter(|&len| len < 1 << (32 - bits)).ok_or(ArenaError::Full)?;
         let size = (ENTRY_HEAD_BYTES + len).next_multiple_of(4);
         let head = with_kind(kind, bits)? | len << bits;
-        let chunk = self.chunks.open_strings(size)?;
-        let byte = self.chunks.reserve_strings(chunk, size)?;
-        let (mem, _) = self.chunks.strings_of(chunk).ok_or(ArenaError::Full)?;
+        let open = self.chunks.open_strings(size)?;
+        let byte = self.chunks.reserve_strings(open.chunk, size)?;
         // SAFETY: as `place`.
-        let out = unsafe { mem.slice_mut() };
+        let out = unsafe { open.mem.slice_mut() };
         let start = byte as usize;
         out[start..start + ENTRY_HEAD_BYTES as usize].copy_from_slice(&head.to_ne_bytes());
         out[start + ENTRY_HEAD_BYTES as usize..start + (ENTRY_HEAD_BYTES + len) as usize].copy_from_slice(text.as_bytes());
-        let at = Address::new(chunk, byte).ok_or(ArenaError::Full)?;
+        let at = Address::new(open.chunk, byte).ok_or(ArenaError::Full)?;
         self.chunks.hold_text(at)?;
         Ok(at)
     }
@@ -265,29 +264,29 @@ mod tests {
     #[test]
     fn the_open_string_chunk_is_answered_while_its_written_bytes_leave_room() {
         let mut chunks = store();
-        let first = chunks.open_strings(8).expect("a chunk");
+        let first = chunks.open_strings(8).expect("a chunk").chunk;
         assert_eq!(length(&chunks, first), FIRST_STRING_BYTES as usize);
         write_as_javascript(&chunks, first, NAME, "abcd");
-        assert_eq!(chunks.open_strings(8).expect("the open chunk"), first);
+        assert_eq!(chunks.open_strings(8).expect("the open chunk").chunk, first);
         write_as_javascript(&chunks, first, NAME, &"x".repeat(FIRST_STRING_BYTES as usize - 16));
         assert_eq!(written(&chunks, first), FIRST_STRING_BYTES - 4);
-        let next = chunks.open_strings(8).expect("the next chunk");
+        let next = chunks.open_strings(8).expect("the next chunk").chunk;
         assert_ne!(next, first);
         assert_eq!(length(&chunks, next), 2 * FIRST_STRING_BYTES as usize);
-        let own = chunks.open_strings(STRING_CHUNK_BYTES + 4).expect("a chunk of its own");
+        let own = chunks.open_strings(STRING_CHUNK_BYTES + 4).expect("a chunk of its own").chunk;
         assert_eq!(length(&chunks, own), (STRING_CHUNK_BYTES + 4) as usize);
-        assert_eq!(chunks.open_strings(8).expect("the open chunk"), next, "a chunk of its own leaves the open one open");
+        assert_eq!(chunks.open_strings(8).expect("the open chunk").chunk, next, "a chunk of its own leaves the open one open");
     }
 
     #[test]
     fn a_native_entry_lands_past_what_javascript_wrote_and_javascript_appends_past_it() {
         let mut chunks = store();
-        let open = chunks.open_strings(8).expect("a chunk");
+        let open = chunks.open_strings(8).expect("a chunk").chunk;
         let javascript = write_as_javascript(&chunks, open, NAME, "js");
         chunks.hold_text(javascript).expect("held");
         let native = BuiltWriter::new(&mut chunks).entry(NAME, "native").expect("written");
         assert_eq!(native, Address::new(open, 8).expect("an address"));
-        assert_eq!(chunks.open_strings(8).expect("the open chunk"), open);
+        assert_eq!(chunks.open_strings(8).expect("the open chunk").chunk, open);
         let after = write_as_javascript(&chunks, open, NAME, "after");
         assert_eq!(after, Address::new(open, 20).expect("an address"));
         assert_eq!(text_at(&chunks, javascript), (NAME, "js".to_owned()));
