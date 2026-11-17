@@ -374,6 +374,14 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 
 Example: parse a large file, keep one function rebuilt from it, release the root. Before, every read chunk stays until dispose; after, every chunk is freed except those holding the records the kept function names. `Engine.release`'s JSDoc changes with it. No new public item.
 
+**Four corrections found against the code, approved 2026-11-16** (the maintainer's "yes" to sharing with a hold plus an explicit detached copy):
+1. **The source's holders.** The table's "held by the root and by each link record" would free the text under a live record, since a built cell can name a parsed record directly with no link record. Every parsed side record holds the source instead, one count per side record added once at the end of the parse, so the source goes with the last parsed record, whoever held it.
+2. **JavaScript counts a parsed record it names** by writing the count in shared memory: the addon's `read(chunk)` reply carries the chunk's count meta beside its words, as `builtWords` does. No call per hold.
+3. **A link record holds its holder's record,** so a linked leaf still renders after its root is released. The `trees` list a released link record reported (`take_trees`, the release reply) is removed; nothing reads it.
+4. **A parsed root's count is its handle's,** so a second release is a no-op as for a built root, and a builder that puts the root into a built record moves the count. `BuiltChunks::release`'s sides callback also receives a released parsed record's source, so its placed sides are dropped.
+
+**What a build shares and what it copies.** A string argument, and the captured strings of a parsed record being edited, are copied and interned into the built pool. A parsed child record is named by its address and a parsed leaf by a link record; both keep reading spans of the source. The maintainer proposed cloning the span whenever a node is referenced from a different root; it isn't done, because a build is bottom-up and has no root when the reference is made, and an edit's new root shares every untouched subtree, so cloning there would copy the file's records. A caller who keeps a fragment and wants its source freed takes an explicit detached copy, which must reference no source; whether the existing snapshot path already does is to be confirmed, and fixed here if it doesn't.
+
 **Who and where:** built on the branch cut from Task 6's for Tasks 6b and 6e, on Task 6e's `CellWord` accessors and `side_of`; `count.rs` is not touched by Task 6c's steps 3 and 4.
 
 ### Task 6e: One reader for each fact a record's words hold
