@@ -127,6 +127,15 @@ describe('a holder slot keeps the wrapper', () => {
 		).toEqual([]);
 	});
 
+	it('when a list of wrappers holds a list each, because the arms would flatten into one', () => {
+		expect(
+			chainsOf({
+				holder: seq(field('terms', seq(repeat1(sym('term'))))),
+				term: repeat1(sym('expr'))
+			})
+		).toEqual([]);
+	});
+
 	it('when the wrapper has a token choice instead of a fixed token', () => {
 		expect(
 			chainsOf({

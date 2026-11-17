@@ -600,7 +600,7 @@ export interface LookaheadAssertion {
 		readonly pattern: SlotHint<T.Pattern>;
 	};
 	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface LookbehindAssertion {
@@ -622,7 +622,7 @@ export interface LookbehindAssertion {
 		readonly pattern: SlotHint<T.Pattern>;
 	};
 	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface CharacterClass {
@@ -726,7 +726,7 @@ export interface AnonymousCapturingGroup {
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface NamedCapturingGroup {
@@ -752,7 +752,7 @@ export interface NamedCapturingGroup {
 	};
 	readonly operator: () => TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt;
 	readonly groupName: () => GroupName;
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface NonCapturingGroup {
@@ -767,7 +767,7 @@ export interface NonCapturingGroup {
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface ZeroOrMore {
@@ -1053,7 +1053,7 @@ export interface InlineFlagsGroupEnable {
 		readonly pattern: SlotHint<T.Pattern, true>;
 	};
 	readonly enabled: () => Flags;
-	readonly pattern: () => Pattern | undefined;
+	readonly pattern: () => Alternation | Term | undefined;
 }
 
 export interface InlineFlagsGroupToggle {
@@ -1076,7 +1076,7 @@ export interface InlineFlagsGroupToggle {
 	};
 	readonly enabled: () => Flags;
 	readonly disabled: () => Flags;
-	readonly pattern: () => Pattern | undefined;
+	readonly pattern: () => Alternation | Term | undefined;
 }
 
 export interface InlineFlagsGroupDisable {
@@ -1095,7 +1095,7 @@ export interface InlineFlagsGroupDisable {
 		readonly pattern: SlotHint<T.Pattern, true>;
 	};
 	readonly disabled: () => Flags;
-	readonly pattern: () => Pattern | undefined;
+	readonly pattern: () => Alternation | Term | undefined;
 }
 
 // Leaf node types

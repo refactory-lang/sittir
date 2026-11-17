@@ -91,8 +91,10 @@ import {
 	isDeclaredSupertype,
 	needsNonEmptyHoist,
 	quoteKey,
-	spelledReadType
+	spelledReadType,
+	parenthesizeUnion
 } from './shared.ts';
+import { wrapperChainFor, type WrapperChain } from '../compiler/model/wrapper-chain.ts';
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
@@ -1002,6 +1004,22 @@ function aliasContentTypeExpr(node: AssembledNode, nodeMap: NodeMap, kindEntries
 	return mixedEnumStorageTypeExpr(content, nodeMap, kindEntries) ?? storage;
 }
 
+function hoistedReadType(
+	chain: WrapperChain,
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap,
+	storageElementOf: (slot: AssembledNonterminal) => string
+): string {
+	const listed = (s: AssembledNonterminal): boolean => isMultiple(s) && !resolveFieldStorageInfo(s, nodeMap).collapsesMultiplicity;
+	const last = chain.slots[chain.slots.length - 1]!;
+	if (listed(last)) {
+		return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `readonly (${storageElementOf(last)})[]` : slotListTypeOf(last, storageElementOf, 'readonly');
+	}
+	const element = spelledReadType(last) ?? storageElementOf(last);
+	if (listed(slot) || chain.slots.some(listed)) return `readonly ${parenthesizeUnion(element)}[]`;
+	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${element} | undefined` : element;
+}
+
 function emitInterface(
 	lines: string[],
 	node: StructuralNode,
@@ -1044,7 +1062,10 @@ function emitInterface(
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
-			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+			const chain = wrapperChainFor(nodeMap, node.kind, f);
+			if (chain !== undefined) {
+				lines.push(`  readonly ${propName}: () => ${hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
+			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				lines.push(`  readonly ${propName}: () => ${slotListTypeOf(f, storageElementOf, 'readonly')};`);
 			} else if (hasBlankArm(f)) {
 				lines.push(`  readonly ${propName}: () => ${slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries).input} | undefined;`);

@@ -21,6 +21,7 @@ export interface WrapperChain {
 	readonly slot: string;
 	readonly accessor: string;
 	readonly wrappers: readonly string[];
+	readonly slots: readonly AssembledNonterminal[];
 }
 
 interface Walk {
@@ -112,8 +113,12 @@ function holdsOnlyLeaf(nodeMap: NodeMap, slot: AssembledNonterminal): boolean {
 	return kind !== undefined && nodeMap.nodes.get(kind) instanceof AssembledLeaf;
 }
 
+function holdsList(slot: AssembledNonterminal): boolean {
+	return slot.values.some((value) => value.multiplicity === 'array' || value.multiplicity === 'nonEmptyArray');
+}
+
 function canBeEmpty(slot: AssembledNonterminal): boolean {
-	const multiple = slot.values.some((value) => value.multiplicity === 'array' || value.multiplicity === 'nonEmptyArray');
+	const multiple = holdsList(slot);
 	const nonEmpty = slot.values.every((value) => value.multiplicity === 'nonEmptyArray');
 	return !isRequired(slot) || (multiple && !nonEmpty);
 }
@@ -121,6 +126,7 @@ function canBeEmpty(slot: AssembledNonterminal): boolean {
 export function wrapperChainOf(nodeMap: NodeMap, holder: AbstractAssembledCompound, slot: AssembledNonterminal): WrapperChain | undefined {
 	if (holder.kind.startsWith('_')) return undefined;
 	const wrappers: string[] = [];
+	const slots: AssembledNonterminal[] = [];
 	let current = slot;
 	let empty = false;
 	for (;;) {
@@ -129,15 +135,16 @@ export function wrapperChainOf(nodeMap: NodeMap, holder: AbstractAssembledCompou
 		const display = displayKindOf(current, kind);
 		if (display.startsWith('_')) break;
 		const inner = wrapperSlotOf(nodeMap, kind);
-		if (inner === undefined) break;
+		if (inner === undefined || (holdsList(current) && holdsList(inner))) break;
 		if (!(nodeMap.nodes.get(kind) instanceof AssembledList) && holdsOnlyLeaf(nodeMap, inner)) break;
 		wrappers.push(display);
+		slots.push(inner);
 		empty = empty || canBeEmpty(inner);
 		current = inner;
 	}
 	if (wrappers.length === 0) return undefined;
 	if (empty && !isRequired(slot)) return undefined;
-	return { holder: holder.kind, slot: slot.name, accessor: slot.propertyName, wrappers };
+	return { holder: holder.kind, slot: slot.name, accessor: slot.propertyName, wrappers, slots };
 }
 
 export function wrapperChainsOf(nodeMap: NodeMap): readonly WrapperChain[] {
@@ -150,4 +157,15 @@ export function wrapperChainsOf(nodeMap: NodeMap): readonly WrapperChain[] {
 		}
 	}
 	return out;
+}
+
+const tables = new WeakMap<NodeMap, ReadonlyMap<string, WrapperChain>>();
+
+export function wrapperChainFor(nodeMap: NodeMap, holder: string, slot: AssembledNonterminal): WrapperChain | undefined {
+	let table = tables.get(nodeMap);
+	if (table === undefined) {
+		table = new Map(wrapperChainsOf(nodeMap).map((chain) => [`${chain.holder}.${chain.slot}`, chain]));
+		tables.set(nodeMap, table);
+	}
+	return table.get(`${holder}.${slot.name}`);
 }

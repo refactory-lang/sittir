@@ -522,7 +522,7 @@ export interface String {
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<T.StringContent, true>;
 	};
-	readonly stringContent: () => StringContent | undefined;
+	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[];
 }
 
 export interface ImmediateString {
@@ -537,7 +537,7 @@ export interface ImmediateString {
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<T.StringContent, true>;
 	};
-	readonly stringContent: () => StringContent | undefined;
+	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[];
 }
 
 export interface StringContent {
@@ -702,7 +702,7 @@ export interface Predicate {
 	readonly prefix: () => TSKindId.Pound | TSKindId.Dot;
 	readonly name: () => ImmediateIdentifier;
 	readonly type: () => TSKindId.Qmark | TSKindId.Bang;
-	readonly parameters: () => Parameters | undefined;
+	readonly parameters: () => readonly (Capture | String | Identifier)[];
 }
 
 export interface ListElementQuantifier {

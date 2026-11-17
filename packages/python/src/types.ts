@@ -2155,7 +2155,7 @@ export interface ImportStatement {
 			readonly names: ListSlotHint<T.DottedName | T.AliasedImport, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly names: () => Names;
+	readonly names: () => NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface RelativeImport {
@@ -2480,8 +2480,8 @@ export interface MatchStatement {
 			readonly subject: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly subject: () => Subjects;
-	readonly body: () => MatchBlock;
+	readonly subject: () => NonEmptyArray<Expression>;
+	readonly body: () => readonly CaseClause[];
 }
 
 export interface MatchBlock {
@@ -2515,7 +2515,7 @@ export interface CaseClause {
 		readonly body: SlotHint<T.Suite>;
 	};
 	readonly pattern: () => CasePattern | CasePatternList;
-	readonly guard: () => IfClause | undefined;
+	readonly guard: () => Expression | undefined;
 	readonly body: () => Suite;
 }
 
@@ -2554,7 +2554,7 @@ export interface ForStatement {
 	readonly left: () => Pattern | PatternList;
 	readonly right: () => Expression | ExpressionList;
 	readonly body: () => Suite;
-	readonly alternative: () => ElseClause | undefined;
+	readonly alternative: () => Suite | undefined;
 }
 
 export interface WhileStatement {
@@ -2582,7 +2582,7 @@ export interface WhileStatement {
 	};
 	readonly condition: () => Expression;
 	readonly body: () => Suite;
-	readonly alternative: () => ElseClause | undefined;
+	readonly alternative: () => Suite | undefined;
 }
 
 export interface TryStatement {
@@ -2609,8 +2609,8 @@ export interface TryStatement {
 	};
 	readonly body: () => Suite;
 	readonly handlers: () => readonly ExceptClause[];
-	readonly alternative: () => ElseClause | undefined;
-	readonly finalizer: () => FinallyClause | undefined;
+	readonly alternative: () => Suite | undefined;
+	readonly finalizer: () => Suite | undefined;
 }
 
 export interface ExceptClause {
@@ -2635,7 +2635,7 @@ export interface ExceptClause {
 		readonly body: SlotHint<T.Suite>;
 	};
 	readonly group: () => boolean;
-	readonly exception: () => ExceptClauseException | undefined;
+	readonly exception: () => ExceptClauseExceptionAs | ExceptClauseExceptionList | undefined;
 	readonly body: () => Suite;
 }
 
@@ -2729,9 +2729,16 @@ export interface FunctionDefinition {
 	};
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly parameters: () => Parameters;
-	readonly returnType: () => Type | undefined;
+	readonly typeParameters: () => readonly TypeParam[];
+	readonly parameters: () => readonly Parameter[];
+	readonly returnType: () =>
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+		| undefined;
 	readonly body: () => Suite;
 }
 
@@ -2751,7 +2758,7 @@ export interface Parameters {
 			readonly elements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => ParametersElements | undefined;
+	readonly elements: () => readonly Parameter[];
 }
 
 export interface LambdaParameters {
@@ -2770,7 +2777,7 @@ export interface LambdaParameters {
 			readonly parametersElements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parametersElements: () => ParametersElements;
+	readonly parametersElements: () => NonEmptyArray<Parameter>;
 }
 
 export interface ListSplat {
@@ -2876,8 +2883,8 @@ export interface TypeAliasStatement {
 		};
 	};
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly value: () => Type;
+	readonly typeParameters: () => readonly TypeParam[];
+	readonly value: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface ClassDefinition {
@@ -2910,7 +2917,7 @@ export interface ClassDefinition {
 		};
 	};
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
+	readonly typeParameters: () => readonly TypeParam[];
 	readonly bases: () => ArgumentList | undefined;
 	readonly body: () => SuiteClassDefinition;
 }
@@ -2931,7 +2938,7 @@ export interface TypeParameter {
 			readonly types: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly types: () => Types;
+	readonly types: () => readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 }
 
 export interface ParenthesizedListSplat {
@@ -2974,7 +2981,13 @@ export interface ArgumentList {
 			>;
 		};
 	};
-	readonly arguments: () => ArgumentListElements | undefined;
+	readonly arguments: () => readonly (
+		| Expression
+		| ListSplat
+		| DictionarySplat
+		| ParenthesizedListSplat
+		| KeywordArgument
+	)[];
 }
 
 export interface DecoratedDefinition {
@@ -2989,7 +3002,7 @@ export interface DecoratedDefinition {
 		readonly decorators: SlotHint<NonEmptyArray<T.Decorator>, false, true>;
 		readonly definition: SlotHint<T.ClassDefinition | T.FunctionDefinition>;
 	};
-	readonly decorators: () => NonEmptyArray<Decorator>;
+	readonly decorators: () => readonly Expression[];
 	readonly definition: () => ClassDefinition | FunctionDefinition;
 }
 
@@ -3166,7 +3179,7 @@ export interface CaseAsPattern {
 		readonly casePattern: SlotHint<T.CasePattern>;
 		readonly identifier: SlotHint<T.Identifier>;
 	};
-	readonly casePattern: () => CasePattern;
+	readonly casePattern: () => CaseAsPattern | KeywordPattern | SimplePattern;
 	readonly identifier: () => Identifier;
 }
 
@@ -3314,7 +3327,7 @@ export interface DictPattern {
 			>;
 		};
 	};
-	readonly elements: () => DictPatternElements | undefined;
+	readonly elements: () => readonly (KeyValuePattern | SplatPattern)[];
 }
 
 export interface KeyValuePattern {
@@ -3387,7 +3400,7 @@ export interface KeyValuePattern {
 		| ComplexPattern
 		| DottedName
 		| TSKindId.WildcardPattern;
-	readonly value: () => CasePattern;
+	readonly value: () => CaseAsPattern | KeywordPattern | SimplePattern;
 }
 
 export interface KeywordPattern {
@@ -3479,7 +3492,7 @@ export interface ClassPattern {
 		};
 	};
 	readonly type: () => DottedName;
-	readonly fields: () => ListPatternCasePatterns | undefined;
+	readonly fields: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface ComplexPattern {
@@ -3556,7 +3569,7 @@ export interface TuplePattern {
 			readonly elements: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => TuplePatternElements | undefined;
+	readonly elements: () => readonly Pattern[];
 }
 
 export interface ListPattern {
@@ -3575,7 +3588,7 @@ export interface ListPattern {
 			readonly elements: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => Patterns | undefined;
+	readonly elements: () => readonly Pattern[];
 }
 
 export interface DefaultParameter {
@@ -3623,7 +3636,7 @@ export interface TypedDefaultParameter {
 		readonly default: SlotHint<NonNullable<T.TypedDefaultParameter.Config>['default']>;
 	};
 	readonly name: () => Identifier;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	readonly default: () => Expression;
 }
 
@@ -3862,7 +3875,7 @@ export interface Lambda {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parameters: () => LambdaParameters | undefined;
+	readonly parameters: () => readonly Parameter[];
 	readonly body: () => Expression;
 }
 
@@ -3890,7 +3903,7 @@ export interface LambdaWithinForInClause {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parameters: () => LambdaParameters | undefined;
+	readonly parameters: () => readonly Parameter[];
 	readonly body: () => Expression | LambdaWithinForInClause;
 }
 
@@ -4043,7 +4056,7 @@ export interface Subscript {
 		};
 	};
 	readonly object: () => PrimaryExpression;
-	readonly index: () => Subscripts;
+	readonly index: () => NonEmptyArray<Expression | Slice>;
 }
 
 export interface Slice {
@@ -4115,7 +4128,7 @@ export interface TypedParameter {
 		readonly type: SlotHint<T.Type>;
 	};
 	readonly name: () => Identifier | ListSplatPattern | DictionarySplatPattern;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface Type {
@@ -4173,7 +4186,14 @@ export interface GenericType {
 		};
 	};
 	readonly name: () => Identifier;
-	readonly typeParameter: () => TypeParameter;
+	readonly typeParameter: () => readonly (
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+	)[];
 }
 
 export interface UnionType {
@@ -4192,8 +4212,8 @@ export interface UnionType {
 		readonly left: SlotHint<T.Type>;
 		readonly right: SlotHint<T.Type>;
 	};
-	readonly left: () => Type;
-	readonly right: () => Type;
+	readonly left: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	readonly right: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface ConstrainedType {
@@ -4212,8 +4232,8 @@ export interface ConstrainedType {
 		readonly baseType: SlotHint<T.Type>;
 		readonly constraint: SlotHint<T.Type>;
 	};
-	readonly baseType: () => Type;
-	readonly constraint: () => Type;
+	readonly baseType: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	readonly constraint: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface MemberType {
@@ -4231,7 +4251,7 @@ export interface MemberType {
 		readonly qualifier: SlotHint<T.Type>;
 		readonly name: SlotHint<T.Identifier>;
 	};
-	readonly qualifier: () => Type;
+	readonly qualifier: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	readonly name: () => Identifier;
 }
 
@@ -4278,7 +4298,7 @@ export interface List {
 			>;
 		};
 	};
-	readonly elements: () => CollectionElements | undefined;
+	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface Set {
@@ -4303,7 +4323,7 @@ export interface Set {
 			>;
 		};
 	};
-	readonly elements: () => CollectionElements;
+	readonly elements: () => NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
 
 export interface Tuple {
@@ -4328,7 +4348,7 @@ export interface Tuple {
 			>;
 		};
 	};
-	readonly elements: () => TupleElements | undefined;
+	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface Dictionary {
@@ -4347,7 +4367,7 @@ export interface Dictionary {
 			readonly elements: ListSlotHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => DictionaryElements | undefined;
+	readonly elements: () => readonly (Pair | DictionarySplat)[];
 }
 
 export interface Pair {
@@ -4395,7 +4415,7 @@ export interface ListComprehension {
 		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	readonly body: () => Expression;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface DictionaryComprehension {
@@ -4414,7 +4434,7 @@ export interface DictionaryComprehension {
 		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	readonly body: () => Pair;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface SetComprehension {
@@ -4438,7 +4458,7 @@ export interface SetComprehension {
 		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	readonly body: () => Expression;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface GeneratorExpression {
@@ -4462,7 +4482,7 @@ export interface GeneratorExpression {
 		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	readonly body: () => Expression;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface ParenthesizedExpression {
@@ -4770,7 +4790,7 @@ export interface WithClauseWithItems {
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<WithItem>;
+	readonly items: () => readonly Expression[];
 }
 
 export interface Types {
@@ -4785,7 +4805,7 @@ export interface Types {
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<Type>;
+	readonly items: () => readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 }
 
 export interface ArgumentListElements {
@@ -4824,7 +4844,7 @@ export interface ListPatternCasePatterns {
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<CasePattern>;
+	readonly items: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface DictPatternElements {
@@ -4908,7 +4928,7 @@ export interface TypeParams {
 			readonly items: ListSlotHint<T.TypeParam, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly items: () => TypeParamsItems;
+	readonly items: () => NonEmptyArray<TypeParam>;
 }
 
 export interface TypeParamsItems {
@@ -4953,7 +4973,7 @@ export interface CasePatternList {
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly elements: () => NonEmptyArray<CasePattern>;
+	readonly elements: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface TupleElements {
@@ -5018,7 +5038,7 @@ export interface CaseTuplePattern {
 			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => ListPatternCasePatterns | undefined;
+	readonly elements: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface CaseListPattern {
@@ -5037,7 +5057,7 @@ export interface CaseListPattern {
 			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => ListPatternCasePatterns | undefined;
+	readonly elements: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface PrintArguments {
@@ -5089,8 +5109,8 @@ export interface PrintStatementChevron {
 			readonly arguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly chevron: () => Chevron;
-	readonly arguments: () => PrintChevronArguments | undefined;
+	readonly chevron: () => Expression;
+	readonly arguments: () => readonly Expression[];
 }
 
 export interface PrintStatementPlain {
@@ -5109,7 +5129,7 @@ export interface PrintStatementPlain {
 			readonly arguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly arguments: () => PrintArguments;
+	readonly arguments: () => NonEmptyArray<Expression>;
 }
 
 export interface ComprehensionClauses {
@@ -5516,7 +5536,7 @@ export interface ParenthesizedImportList {
 			>;
 		};
 	};
-	readonly importList: () => ImportList;
+	readonly importList: () => NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface SplatPatternList {
@@ -5590,7 +5610,7 @@ export interface AssignmentType {
 		readonly type: SlotHint<T.Type>;
 	};
 	readonly name: () => Pattern | PatternList;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface AssignmentTyped {
@@ -5620,7 +5640,7 @@ export interface AssignmentTyped {
 		readonly value: SlotHint<NonNullable<T.AssignmentTyped.Config>['value']>;
 	};
 	readonly name: () => Pattern | PatternList;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	readonly value: () => Expression | ExpressionList | PatternList | Yield;
 }
 
@@ -5651,7 +5671,7 @@ export interface WithClauseBare {
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<WithItem>;
+	readonly items: () => readonly Expression[];
 }
 
 export interface WithClauseParen {
@@ -5670,7 +5690,7 @@ export interface WithClauseParen {
 			readonly items: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly items: () => WithClauseWithItems;
+	readonly items: () => readonly Expression[];
 }
 
 export interface SuiteInline {
@@ -5689,7 +5709,7 @@ export interface SuiteInline {
 			readonly statements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly statements: () => SimpleStatementsElements;
+	readonly statements: () => NonEmptyArray<SimpleStatement>;
 }
 
 export interface SuiteBlock {
@@ -5704,7 +5724,7 @@ export interface SuiteBlock {
 	readonly __slotHints__?: {
 		readonly block: SlotHint<T.Block>;
 	};
-	readonly block: () => Block;
+	readonly block: () => readonly Statement[];
 }
 
 export interface SuiteEmpty {
@@ -5812,7 +5832,7 @@ export interface TypeParamTypeVar {
 		readonly bounds: SlotHint<T.Type, true>;
 	};
 	readonly name: () => Identifier;
-	readonly bounds: () => Type | undefined;
+	readonly bounds: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
 }
 
 export interface TypeParamTypeVarTuple {
@@ -5943,9 +5963,16 @@ export interface ConstructorDeclaration {
 		};
 	};
 	readonly async: () => boolean;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly parameters: () => Parameters;
-	readonly returnType: () => Type | undefined;
+	readonly typeParameters: () => readonly TypeParam[];
+	readonly parameters: () => readonly Parameter[];
+	readonly returnType: () =>
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+		| undefined;
 	readonly body: () => Suite;
 }
 
@@ -5973,7 +6000,7 @@ export interface SuiteBlockClassDeclaration {
 	readonly __slotHints__?: {
 		readonly blockClassDeclaration: SlotHint<T.BlockClassDeclaration>;
 	};
-	readonly blockClassDeclaration: () => BlockClassDeclaration;
+	readonly blockClassDeclaration: () => readonly StatementClassDefinition[];
 }
 
 export interface DecoratedDefinitionClassDeclaration {
@@ -5988,7 +6015,7 @@ export interface DecoratedDefinitionClassDeclaration {
 		readonly decorators: SlotHint<NonEmptyArray<T.Decorator>, false, true>;
 		readonly definition: SlotHint<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>;
 	};
-	readonly decorators: () => NonEmptyArray<Decorator>;
+	readonly decorators: () => readonly Expression[];
 	readonly definition: () => ClassDefinition | MethodDeclaration | ConstructorDeclaration;
 }
 
@@ -6102,9 +6129,16 @@ export interface MethodDeclaration {
 	};
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly parameters: () => Parameters;
-	readonly returnType: () => Type | undefined;
+	readonly typeParameters: () => readonly TypeParam[];
+	readonly parameters: () => readonly Parameter[];
+	readonly returnType: () =>
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+		| undefined;
 	readonly body: () => Suite;
 }
 

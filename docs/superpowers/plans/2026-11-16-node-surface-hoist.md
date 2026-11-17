@@ -49,6 +49,8 @@
 
 ### Task 3: Types
 
+**Status:** done. The getters' declared types read the stamp; the generated diff is the three `types.ts` files only, with exactly 71, 103 and 102 getter lines moved, one per stamped slot.
+
 **Files:**
 - Modify: `packages/codegen/src/emitters/types.ts` (the holder slot's config and node types read the chain)
 - Test: `packages/codegen/src/emitters/__tests__/` and `packages/{typescript,python,rust}/tests/*.test-d.ts`

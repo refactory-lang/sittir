@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { hoistCensus } from '../src/census/hoist.ts';
 
-const PINNED = { python: 71, rust: 103, typescript: 102 } as const;
+const PINNED = { python: 71, rust: 103, typescript: 102, regex: 8, scm: 3 } as const;
 
 describe('the hoist census', () => {
 	it.each(Object.entries(PINNED))('stamps %s at its pinned holder slot count', async (grammar, slots) => {
