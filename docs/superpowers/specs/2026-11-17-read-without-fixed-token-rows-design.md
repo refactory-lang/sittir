@@ -127,7 +127,7 @@ It lists no fixed token. Named fixed tokens leave navigation too: these are poly
 | `receiver_parameter_declaration` > `this` | 80 on matter.js, 79 on next.js |
 | rust `self_parameter` > `self`; `*_mut` forms > `mutable_specifier`; doc-comment markers | at most 151 a corpus |
 
-Today a query already passes over them: `ParsedTree::descendants` (`engine.rs`) skips a child its holder's read routes to no slot, and an unnamed one. To verify per kind: query results on every fixture are equal before and after.
+They leave query results too ("Yes, they leave queries too", 2026-11-17). Today a query returns them: the stage-one probe counts 29,447 such results across its corpora (`named_fixed_query_items`, census README). After the change a query matches the holder's kind instead, as it must for a built node, which has no such child: `(self_parameter)` rather than `(self)` inside `&self`, the getter kind rather than its `(formal_parameters)`. The ruling takes every pair the probe found, the table's and these: `abstract_method_signature_getter` and `method_signature_getter` > `formal_parameters`; python `block_statement` and `decorator` > `newline`; rust `extern_crate_declaration` > `crate`, `mut_pattern` > `mutable_specifier`, `receiver_parameter_declaration` > `self`. A test pins, per pair, that the query for the token finds none and the query for the holder finds each.
 
 ## The four readers
 
@@ -160,26 +160,33 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
 ### A list's delimiter and separator: `last_list_child` and `Lookups::node_slots`
 
 - **Today.** A list's trailing separator and its separator choice are its `delimiter` and `separator` preferences (§ Decided by the maintainer, question 3): a parsed list keeps its source's, and a built one takes the declared default through the same fill.
-  - **Nothing is stamped for them on a parsed record.** `SideRecord::of`, the read's writer, writes no `DELIMITER` and no `SEPARATOR_KIND`; those words are a builder's settings.
-  - **Each render's prepare re-derives three facts of the source list** from its separator tokens, which navigation reads from rows:
-    - whether the source ends the list with one of its separators: `prepare::source_trailing_delimiter`, through `SourceTable::last_list_child_kind`. That is `engine::last_list_child`: the last child that is not an extra and has width, so an automatic semicolon is never a trailing separator;
-    - the separator the gaps take: `slot_separator` and `slot_layouts`, through `Lookups::node_slots`. It runs `list_slots::slot_gaps`, then `majority`, which prefers a separator written over the list's first gap (`written_separator`);
-    - each gap that takes another: `separator_before`, through the same `node_slots`. It is what prepare puts in `SlotLayout::tokens` (`SlotTarget::separators`).
-- **After.** The hydration walk stamps the three facts while its working list still holds the separator tokens. It writes them into words the side record already has:
-  - `DELIMITER`: `TRAILING` where the source ends the list with one of its separators, by the test `last_list_child` makes today, and nothing where it doesn't;
-  - `SideSlot::separator`: the kind the gaps' majority takes;
-  - `SideSlot::tokens`: each gap whose kind is another, by its item's place, the form `SlotLayout::tokens` already has.
+  - **The delimiter is already stamped at parse.**
+    - The hydration stamps `DELIMITER` on the record of every list whose kind has an optional flank, which is every list whose trailing separator is optional. The derive's `record_end` passes `read::delimiter`, both flags, to `parsed_side`.
+    - That covers 19 list kinds in rust, 8 in typescript and 23 in python, the same lists as `DELIMITER_SITES`.
+    - The render takes the stamp as the parsed list's own setting.
+    - A row is read for it only by a list rebuilt from a source list (its `sides`). `prepare::source_trailing_delimiter` takes the trailing flag from the source list's last kid and the leading flag from the options. The last kid is `SourceTable::last_list_child_kind`, that is `engine::last_list_child`: the last child that is not an extra and has width.
+  - **The separators are not stamped.**
+    - A parsed record's slot layouts come from `SourceTable::slot_layouts` (`LayoutAt::stored_slots`). That is `Lookups::node_slots` over the kids: `list_slots::slot_gaps`, then `majority`, which prefers a separator written over the list's first gap (`written_separator`).
+    - It gives the slot separator: `slot_separator`, and `separator_kind` where the list's separator is a choice.
+    - It gives each gap that takes another: `separator_before`, which is what prepare puts in `SlotLayout::tokens` (`SlotTarget::separators`).
+- **After.**
+  - **The delimiter takes no new stamp.** `last_list_child_kind` reads the trailing flag of the `DELIMITER` the source list's record already holds, and `last_list_child` goes with the rows. The parity step proves, on every parsed list, that the stamp's trailing flag and `last_list_child`'s answer agree before the rows go.
+  - **The separators are stamped by the walk**, while its working list still holds the separator tokens, into the side record's existing slot entry:
+    - `SideSlot::separator`: the kind the gaps' majority takes;
+    - `SideSlot::tokens`: each gap whose kind is another, by its item's place, the form `SlotLayout::tokens` already has.
 
-  The three readers read the stamps where they read kids now, through the coordinates they take today, and `last_list_child` goes with the rows. The majority and the outliers give back every gap's kind, so the render's choice between the majority and a written separator is made as today. `separator_kind` and `tokens` render as shipped, mixed `object_type_content` lists included. No new form is added: no bit beside the run, and no new place in `tokens`.
-- **The leading flag stays the options'.** On a parsed record the `DELIMITER` word holds the source's trailing fact. `source_trailing_delimiter` combines it with the options' value, as it combines the last child's kind now. It is not read as the node's own setting, which only a builder writes.
+    A parsed record's `stored_slots` reads them as it reads a built record's, and `separator_before` reads its holder's `tokens` by the item's place. The majority and the outliers give back every gap's kind, so the render's choice between the majority and a written separator is made as today. `separator_kind` and `tokens` render as shipped, mixed `object_type_content` lists included.
+  - **Only a list whose separator is a choice is stamped**, which today is typescript's `object_type_content`. A list with one separator gives every gap that one, its kind's own, so a stamp there would hold nothing a reader lacks. The parity step checks this: `slot_separator` answers the same for every fixed-separator list from its kind as from its kids.
+  - No new form is added: no bit beside the run, and no new place in `tokens`.
+- **The leading flag is unchanged.** A parsed list's `DELIMITER` holds its source's flags, as today. A rebuilt list takes the trailing flag from its source and the leading flag from the options, as today.
   - No grammar declares a delimiter default with `LEADING`.
-  - Typescript's `object_type_content` allows `LEADING`, so a render option can set it, and that option applies as today.
+  - Typescript's `object_type_content` allows `LEADING`, so a render option can set it.
 - **A trailing separator that carries meaning is the kind's rule**, not a stamp or an option. A list whose single element needs its trailing separator renders it at one element, built or parsed (`AssembledList::singleElementNeedsTrailing`, pinned by `packages/{rust,python}/tests/single-element-list.test.ts`). These lists are python's `tuple_elements`, `tuple_pattern_elements`, `expression_list`, `pattern_list` and `case_pattern_list`, and rust's `tuple_expression_elements`.
 - **What it costs.**
-  - A `DELIMITER` word on each list whose source ends with a separator. The census counts 19,250 such lists with a fixed separator on matter.js and 17,950 on next.js. Each is a 4-word row today.
-  - A `tokens` entry only where a gap differs from its list's majority.
-  - The separator rows of `object_type_content` go: 3,088 on matter.js and 26,692 on next.js, 25,288 of them automatic semicolons.
-  - The first step measures the stamps.
+  - The delimiter costs nothing new. The trailing separators' rows go with the other fixed-token rows: the census counts 19,250 lists with a fixed separator that end with one on matter.js and 17,950 on next.js, each a 4-word row today.
+  - The separator stamps cost one slot entry (`SideSlot`, 8 words) on each parsed `object_type_content` with a gap, plus a token run where a gap differs from the majority.
+  - `object_type_content`'s separator rows go: 3,088 on matter.js and 26,692 on next.js, 25,288 of them automatic semicolons.
+  - The first step measures the slot entries.
 
 ### Re-indenting inside multi-line tokens: `line_starts_inside_tokens`
 
@@ -318,7 +325,7 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 - A parsed read stores no offset and no row for a fixed token or a unit.
 - The four readers answer as today on every fixture, from positions, the render body and facts stamped at parse.
 - A parsed unit cell is the built unit cell.
-- Read words fall to the "stage one" column on every corpus, less the measured cost of the stamped list facts.
+- Read words fall to the "stage one" column on every corpus, less the measured cost of the stamped separator choices.
 
 ## Non-goals
 
@@ -344,7 +351,7 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 
 ## Order
 
-1. **Probe.** Count the leaves that need the line-start bit, the lists whose source ends with a separator, and the gaps that differ from their list's majority, on every census corpus. Check the two public rows marked "to verify": that the parse's error list is computed over the tree at parse, and whether `$snapshot` lists a fixed token (if it does, that comes back as its own row).
+1. **Probe.** Count the leaves that need the line-start bit, the parsed `object_type_content` lists with a gap, and the gaps that differ from their list's majority, on every census corpus. Check the two public rows marked "to verify": that the parse's error list is computed over the tree at parse, and whether `$snapshot` lists a fixed token (if it does, that comes back as its own row).
 2. **Parity first.** The parity tests above, with the stored facts written beside today's rows and the readers answering both ways. No output change.
 3. **Rows go** (stage one). The walk stops writing fixed-token and unit rows; unit cells take the built form, a unit is listed from its cell, and unit sides are keyed by site; the readers read the stored facts, and the tests that pin rows are retaken.
 4. **The one-word parsed cell** (stage two), as its own change.

@@ -1,13 +1,14 @@
 import { readFileSync } from 'node:fs';
 
 const here = new URL('.', import.meta.url).pathname;
-const tallies = readFileSync(here + 'out.jsonl', 'utf8').trim().split('\n').map((line) => JSON.parse(line));
+const dir = process.argv[2] ? process.argv[2].replace(/\/?$/, '/') : here;
+const tallies = readFileSync(dir + 'out.jsonl', 'utf8').trim().split('\n').map((line) => JSON.parse(line));
 
 const grammars = {};
 function grammarOf(name) {
 	if (grammars[name]) return grammars[name];
-	const model = JSON.parse(readFileSync(`${here}models/${name}.json5`, 'utf8'));
-	const bodies = JSON.parse(readFileSync(`${here}models/${name}.render-bodies.json`, 'utf8'));
+	const model = JSON.parse(readFileSync(`${dir}models/${name}.json5`, 'utf8'));
+	const bodies = JSON.parse(readFileSync(`${dir}models/${name}.render-bodies.json`, 'utf8'));
 	const byKind = {};
 	const byText = {};
 	for (const entry of model.nodes) {
@@ -20,7 +21,7 @@ function grammarOf(name) {
 		for (let hops = 0; target?.modelType === 'alias' && hops < 8; hops++) target = byKind[target.slots?.[0]?.values?.[0]?.parseKind];
 		entry.resolved = target ?? entry;
 	}
-	const external = new Set(JSON.parse(readFileSync(`${here}models/${name}.externals.json`, 'utf8')));
+	const external = new Set(JSON.parse(readFileSync(`${dir}models/${name}.externals.json`, 'utf8')));
 	const modelKindOf = (kind) => byKind[kind]?.kind ?? kind;
 	const booleanValues = {};
 	for (const entry of model.nodes) for (const slot of entry.slots ?? []) if (slot.storage === 'boolean') for (const value of slot.values ?? []) {
@@ -141,6 +142,7 @@ for (const t of tallies) {
 		rowsByRole: Object.fromEntries(Object.entries(roles).sort((a, b) => b[1].words - a[1].words).map(([k, v]) => [k, { ...v, share: +((v.words / total) * 100).toFixed(2) }])),
 		unexplained: Object.fromEntries(Object.entries(unexplained).sort((a, b) => b[1] - a[1]).slice(0, 25)),
 		cellWordsToday,
+		stageOne: t.stage_one && { abuttingLeaves: t.stage_one.abutting_leaves, choiceLists: t.stage_one.choice_lists, choiceGaps: t.stage_one.choice_gaps, choiceOutliers: t.stage_one.choice_outliers, flankedLists: t.stage_one.flanked_lists, delimiterDisagreements: t.stage_one.delimiter_disagreements, namedFixedQueryItems: t.stage_one.named_fixed_query_items },
 		options: Object.fromEntries(Object.entries(options).map(([name, delta]) => [name, { delta, total: total + delta, share: +(((total + delta) / total) * 100).toFixed(1) }])),
 	});
 }
