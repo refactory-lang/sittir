@@ -748,7 +748,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                     text = &text[run.open_before..];
                 }
             } else if self.tail.is_none() && !self.at_line_start() {
-                self.write_text(" ")?;
+                self.write_text(self.payload_text(Payload { set: LayoutKinds::SPACE, pick: LayoutKinds::SPACE }))?;
             }
             self.write_text(text)?;
             if let Some(recorder) = self.recorder.as_mut() {
@@ -913,7 +913,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.merge_payload(Payload { set: kinds, pick: kinds.narrowest() }, strength, false);
     }
 
-    /// The text a payload writes: the grammar's spelling of its picked kind.
+    /// The text a payload writes: the grammar's spelling of its picked kind,
+    /// as the grammar admits it (`WhitespaceTable::text_of_gap`).
     fn payload_text(&self, payload: Payload) -> &'static str {
         match self.table {
             Some(table) => table.text_of_gap(payload.pick),
@@ -2460,6 +2461,38 @@ mod sink_tests {
         };
         assert_eq!(between_seams(error(None, None)), "2, $ 3");
         assert_eq!(between_seams(error(Some(""), Some(""))), "2,$3", "an adjacency the source spells still replaces the seams");
+    }
+
+    #[test]
+    fn a_gap_the_grammar_does_not_admit_is_written_as_the_widest_in_line_gap_it_does() {
+        const NO_SPACE: WhitespaceTable = WhitespaceTable { text_of, indent: INDENT, dedent: DEDENT, leaf_edges: &[], gaps: &[(1, TIGHT), (8, NEWLINE), (16, BLANK)] };
+        let written = |table: &WhitespaceTable, f: &dyn Fn(&mut SpacingWriter<'_, String>)| {
+            let mut s = String::new();
+            let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_table(table);
+            f(&mut w);
+            w.finish().unwrap();
+            s
+        };
+        let joined = |w: &mut SpacingWriter<'_, String>| {
+            w.text(")").unwrap();
+            w.trivia_join(LayoutKinds::SPACE);
+            w.text("a)").unwrap();
+        };
+        let deferred = |w: &mut SpacingWriter<'_, String>| {
+            w.text(")").unwrap();
+            w.defer_trailing(&mut |w| w.text("a)")).unwrap();
+            w.seat_trailing().unwrap();
+        };
+        let broken = |w: &mut SpacingWriter<'_, String>| {
+            w.text(")").unwrap();
+            w.trivia_join(LayoutKinds::NEWLINE);
+            w.text("a)").unwrap();
+        };
+        assert_eq!((written(&TABLE, &joined), written(&TABLE, &deferred)), (") a)".to_owned(), ") a)".to_owned()));
+        assert_eq!((written(&NO_SPACE, &joined), written(&NO_SPACE, &deferred)), (")a)".to_owned(), ")a)".to_owned()));
+        assert_eq!(written(&NO_SPACE, &broken), ")\na)", "a join that asks for a line break keeps it");
+        assert_eq!(NO_SPACE.admitted_gaps(), LayoutKinds::from_bits(LayoutKinds::TIGHT.0 | LayoutKinds::NEWLINE.0 | LayoutKinds::BLANKLINE.0));
+        assert_eq!((NO_SPACE.admit(LayoutKinds::SPACE), NO_SPACE.admit(LayoutKinds::TAB), TABLE.admit(LayoutKinds::TAB)), (LayoutKinds::TIGHT, LayoutKinds::TIGHT, LayoutKinds::SPACE));
     }
 
     #[test]
