@@ -139,10 +139,14 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - the header comment;
   - paths that pick their arm by the `$value`'s type, and number arms that take the scalar whole or in their last numeric slot;
   - text-built arms from their text, where the path reads its `$value` as text;
-  - containers whose builder takes an elements or spread input, holding a single value.
+  - containers whose builder takes an elements or spread input, holding a single value;
+  - decision 7's optional `$path`: the map's `decided` names each member's one structure-built path, and a path function's input is `PathInput<Map, P>`.
 - A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers decimal-part numbers, holders, owners, mounts and options.
+- The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
+- The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
 - Remaining:
-  - decisions 5 and 7. Decision 7 lands here, not with the grammar map, so Task 3b's merged output does not carry it yet;
+  - decision 5;
+  - decision 7's bare scalars. Every member taking a number has several paths taking the same scalar, so the spec's unfit rule waits on a ruling;
   - python's getter;
   - decision 9's tails;
   - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
