@@ -54,3 +54,34 @@ describe('a tuple expression with more than one element', () => {
 		expect(tupleOf(two).$render()).toBe('(x, y,)');
 	});
 });
+
+describe('a tuple type or pattern with one element', () => {
+	const parsedType = (text: string) => {
+		const item = engine.parse(`const A: ${text} = x;\n`).statements()[0];
+		const type = item !== undefined && is.constItem(item) ? item.type() : undefined;
+		if (type === undefined || !is.tupleType(type)) throw new Error(`expected a tuple type: ${text}`);
+		return type;
+	};
+
+	it('renders the separator when the delimiter asks for it, for a type', () => {
+		const text = build.tupleType({ types: build.types({ delimiter: Delimiter.Trailing }, parsedType('(u8, u16)').types()[0]!) }).$render();
+		expect(text).toBe('(u8,)');
+		expect(is.tupleType(parsedType(text))).toBe(true);
+	});
+
+	it('renders the separator when the delimiter asks for it, for a pattern', () => {
+		const text = build.tuplePattern({ elements: build.tuplePatternElements({ delimiter: Delimiter.Trailing }, build.identifier('a')) }).$render();
+		expect(text).toBe('(a,)');
+	});
+
+	it('keeps the separator when a parsed tuple type of two is cut to one with the delimiter', () => {
+		const parsed = parsedType('(u8, u16)');
+		const text = parsed.$with.types(build.types({ delimiter: Delimiter.Trailing }, parsed.types()[0]!)).$render();
+		expect(text).toBe('(u8,)');
+	});
+
+	it('renders the parenthesised spelling without the delimiter', () => {
+		const parsed = parsedType('(u8, u16)');
+		expect(parsed.$with.types(build.types(parsed.types()[0]!)).$render()).toBe('(u8)');
+	});
+});
