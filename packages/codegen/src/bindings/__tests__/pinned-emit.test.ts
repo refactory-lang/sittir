@@ -8,7 +8,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { passStatement: 'nullary' },
 				paths: { 'statement.pass': { root: true, arms: [{ kind: 1, builder: 'passStatement', when: [], members: [], presets: [], flags: {} }] } }
@@ -35,7 +35,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { passStatement: 'nullary', breakStatement: 'nullary' },
 				paths: {
@@ -67,7 +67,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { exampleStatement: 'config', other: 'nullary' },
 				paths: {
@@ -117,7 +117,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { lineContinuation: 'config' },
 				paths: { 'element.continuation': { root: true, arms: [{ kind: 2, builder: 'lineContinuation', when: [], members: [], presets: [{ steps: [{ key: 'text' }], text: "\\'" }], flags: {} }] } }
@@ -142,7 +142,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'typescript',
 			api: 'TypeScriptAPI',
 			map: 'TypeScriptMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { array: 'spread' },
 				paths: {
@@ -168,7 +168,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { block: 'config', blockBody: 'spread' },
 				paths: {
@@ -217,7 +217,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'typescript',
 			api: 'TypeScriptAPI',
 			map: 'TypeScriptMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { numberDecimal: 'text', numberBigint: 'direct' },
 				paths: {
@@ -247,13 +247,65 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain("return unbuilt('literal.number', input);");
 	}, 60_000);
 
+	it('spells a float in its decimal parts through decimalSpelling, passes a part its builder takes as an option in the options, and throws where it spells none', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			api: 'TypeScriptAPI',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
+			table: {
+				builders: { numberFloatPoint: 'config', numberFloatScientific: 'config' },
+				options: { numberFloatScientific: ['marker'] },
+				paths: {
+					'literal.number.float': {
+						root: true,
+						builds: { float: 7 },
+						arms: [{ kind: 7, builder: 'numberFloatPoint', scalar: 'float', numeric: { integer: 'integer', fraction: 'fraction' }, when: [], members: [], presets: [], flags: {} }]
+					},
+					'literal.number.float.scientific': {
+						root: true,
+						builds: { float: 8 },
+						arms: [
+							{
+								kind: 8,
+								builder: 'numberFloatScientific',
+								scalar: 'float',
+								numeric: { integer: 'integer', exponent: 'exponent', marker: 'marker' },
+								scientific: true,
+								when: [],
+								members: [],
+								presets: [],
+								flags: {}
+							}
+						]
+					}
+				}
+			},
+			members: {},
+			viewed: [],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("import { decimalSpelling } from '@sittir/common/portable/utils';");
+		expect(text).toContain("const parts = decimalSpelling(input.$value, { integer: 'integer', fraction: 'fraction' }, false);");
+		expect(text).toContain("const parts = decimalSpelling(input.$value, { integer: 'integer', exponent: 'exponent', marker: 'marker' }, true);");
+		expect(text).toContain("if (parts === undefined) return unspelled('literal.number.float', input.$value);");
+		expect(text).toContain('return b.numberFloatPoint({ integer: parts.integer, fraction: parts.fraction });');
+		expect(text).toContain('return b.numberFloatScientific({ integer: parts.integer, exponent: parts.exponent }, { marker: parts.marker });');
+		expect(text).toContain('const unspelled = (owner: string, value: number | bigint): never => {');
+	}, 60_000);
+
 	it('builds a member that takes one value or a list by whether it holds a list, and wraps a single value in an elements container', async () => {
 		const run = (seats: readonly PortableSeat[], paths: readonly string[] = []) =>
 			runPinned('portableBuild', {
 				grammar: 'python',
 				api: 'PythonAPI',
 				map: 'PythonMap',
-				imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+				imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 				table: {
 					builders: { call: 'config', argumentList: 'config', argumentListElements: 'elements', generatorExpression: 'nullary' },
 					paths: {
@@ -292,7 +344,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: { builders: { stringFragment: 'text' }, paths: { 'literal.string.text': { root: true, arms: [{ kind: 1, builder: 'stringFragment', when: [], members: [], presets: [], flags: {} }] } } },
 			members: {},
 			viewed: [],
@@ -314,7 +366,7 @@ describe('the pinned child emits a portable build module', () => {
 			grammar: 'python',
 			api: 'PythonAPI',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js', utils: '@sittir/common/portable/utils' },
 			table: {
 				builders: { functionDefinition: 'config', block: 'nullary', dottedName: 'nullary' },
 				paths: {

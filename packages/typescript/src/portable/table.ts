@@ -31895,7 +31895,6 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
-					numericRequired: ['integer'],
 					members: [],
 					presets: [],
 					flags: {},
@@ -31911,7 +31910,6 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
-					numericRequired: ['fraction'],
 					members: [],
 					presets: [],
 					flags: {},
@@ -31927,7 +31925,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
-					numericRequired: ['integer', 'exponent', 'marker'],
+					scientific: true,
 					members: [],
 					presets: [],
 					flags: {},
@@ -31977,7 +31975,6 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
-					numericRequired: ['integer'],
 					members: [
 						{
 							name: 'integer',
@@ -32116,7 +32113,6 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
-					numericRequired: ['fraction'],
 					members: [
 						{
 							name: 'fraction',
@@ -32233,7 +32229,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
-					numericRequired: ['integer', 'exponent', 'marker'],
+					scientific: true,
 					members: [
 						{
 							name: 'integer',

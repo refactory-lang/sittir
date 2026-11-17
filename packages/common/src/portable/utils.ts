@@ -1,1 +1,1 @@
-export { integerSpelling, integerValue, type IntegerBase } from '../number.ts';
+export { decimalSpelling, integerSpelling, integerValue, type DecimalSpelling, type IntegerBase } from '../number.ts';

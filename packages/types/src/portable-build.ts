@@ -193,8 +193,8 @@ export interface PortableDecimalParts {
  * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
  * whether the holder takes its config or its sole value. `scalar` is the type of the number a number arm reads (`bigint` where the path's `$value` is
  * a bigint, read and built as one); its path's `builds` names the arm that builds a `$value` of each type. `numeric` says what spells the number: the
- * slots of its kind whose texts, in order, spell it (one slot, or a radix prefix and its digits), or the slot of each part of its decimal spelling, of
- * which `numericRequired` names the ones the kind always spells; an arm with no `numeric` spells it in its kind's whole text. An arm builds the number
+ * slots of its kind whose texts, in order, spell it (one slot, or a radix prefix and its digits), or the slot of each part of its decimal spelling;
+ * `scientific` marks a kind whose decimal spelling always has an exponent. An arm with no `numeric` spells it in its kind's whole text. An arm builds the number
  * as its builder's input, or, where its builder takes a config, through its last `numeric` slot or its decimal parts. An integer arm reads its number
  * in the `digits` base after the `digits` affix. Its other members read and build beside the `$value`. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder, the kind
@@ -215,7 +215,7 @@ export interface PortableBuildArm {
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float' | 'bigint';
 	readonly numeric?: readonly string[] | PortableDecimalParts;
-	readonly numericRequired?: readonly string[];
+	readonly scientific?: true;
 	readonly digits?: { readonly base: 2 | 8 | 10 | 16; readonly affix: string };
 	readonly literal?: { readonly value?: boolean };
 	readonly when: readonly PortablePickTest[];

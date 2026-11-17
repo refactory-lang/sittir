@@ -3,6 +3,7 @@ import type { Engine } from '@sittir/types';
 import type { BuildInput, PathInput, Unmapped } from '@sittir/types/vocabulary';
 import type { TypescriptAPI } from '../api.js';
 import type { TypeScriptMap } from './map.js';
+import { decimalSpelling } from '@sittir/common/portable/utils';
 export function portableBuild(engine: Engine<TypescriptAPI>) {
 	const b = engine.build;
 	const unbuilt = (
@@ -42,6 +43,9 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			  }
 	): never => {
 		throw new Error(owner + ' has no seat for kind ' + (typeof value === 'number' ? value : value.$type));
+	};
+	const unspelled = (owner: string, value: number | bigint): never => {
+		throw new Error(owner + ' cannot spell ' + value);
 	};
 	const attribute_member$286_object = (
 		value:
@@ -1800,6 +1804,26 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			operator: 63
 		});
 	};
+	const literal_number$156 = (
+		input: PathInput<TypeScriptMap, 'literal.number'>
+	): ReturnType<typeof b.numberFloatPoint> => {
+		const parts = decimalSpelling(
+			input.$value,
+			{
+				integer: 'integer',
+				fraction: 'fraction',
+				exponent: 'exponent',
+				marker: 'marker',
+				exponentSign: 'exponentSign'
+			},
+			false
+		);
+		if (parts === undefined) return unspelled('literal.number', input.$value);
+		return b.numberFloatPoint(
+			{ integer: parts.integer, fraction: parts.fraction, exponent: parts.exponent, exponentSign: parts.exponentSign },
+			{ marker: parts.marker }
+		);
+	};
 	const literal_number$160 = (
 		input: PathInput<TypeScriptMap, 'literal.number'>
 	): ReturnType<typeof b.number.decimal> => {
@@ -1809,6 +1833,54 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		input: PathInput<TypeScriptMap, 'literal.number'>
 	): ReturnType<typeof b.numberBigintDecimal> => {
 		return b.numberBigintDecimal(input.$value);
+	};
+	const literal_number_float$156 = (
+		input: PathInput<TypeScriptMap, 'literal.number.float'>
+	): ReturnType<typeof b.numberFloatPoint> => {
+		const parts = decimalSpelling(
+			input.$value,
+			{
+				integer: 'integer',
+				fraction: 'fraction',
+				exponent: 'exponent',
+				marker: 'marker',
+				exponentSign: 'exponentSign'
+			},
+			false
+		);
+		if (parts === undefined) return unspelled('literal.number.float', input.$value);
+		return b.numberFloatPoint(
+			{ integer: parts.integer, fraction: parts.fraction, exponent: parts.exponent, exponentSign: parts.exponentSign },
+			{ marker: parts.marker }
+		);
+	};
+	const literal_number_float_leading_point$157 = (
+		input: PathInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	): ReturnType<typeof b.numberFloatLeadingPoint> => {
+		const parts = decimalSpelling(
+			input.$value,
+			{ fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' },
+			false
+		);
+		if (parts === undefined) return unspelled('literal.number.float.leading_point', input.$value);
+		return b.numberFloatLeadingPoint(
+			{ fraction: parts.fraction, exponent: parts.exponent, exponentSign: parts.exponentSign },
+			{ marker: parts.marker }
+		);
+	};
+	const literal_number_float_scientific$158 = (
+		input: PathInput<TypeScriptMap, 'literal.number.float.scientific'>
+	): ReturnType<typeof b.numberFloatScientific> => {
+		const parts = decimalSpelling(
+			input.$value,
+			{ integer: 'integer', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' },
+			true
+		);
+		if (parts === undefined) return unspelled('literal.number.float.scientific', input.$value);
+		return b.numberFloatScientific(
+			{ integer: parts.integer, exponent: parts.exponent, exponentSign: parts.exponentSign },
+			{ marker: parts.marker }
+		);
 	};
 	const literal_number_integer$160 = (
 		input: PathInput<TypeScriptMap, 'literal.number.integer'>
@@ -1963,24 +2035,24 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 	const literal_number = (input: PathInput<TypeScriptMap, 'literal.number'>) => {
 		if (typeof input.$value === 'bigint') return literal_number$166(input);
 		if (typeof input.$value === 'number')
-			return Number.isSafeInteger(input.$value) ? literal_number$160(input) : unbuilt('literal.number', input);
+			return Number.isSafeInteger(input.$value) ? literal_number$160(input) : literal_number$156(input);
 		return unbuilt('literal.number', input);
 	};
 	const literal_number_float = (input: PathInput<TypeScriptMap, 'literal.number.float'>) => {
-		if (typeof input.$value === 'bigint') return unbuilt('literal.number.float', input);
-		if (typeof input.$value === 'number') return unbuilt('literal.number.float', input);
+		if (typeof input.$value === 'bigint') return literal_number_float$156(input);
+		if (typeof input.$value === 'number') return literal_number_float$156(input);
 		return unbuilt('literal.number.float', input);
 	};
 	const literal_number_float_leading_point = (
 		input: PathInput<TypeScriptMap, 'literal.number.float.leading_point'>
 	) => {
-		if (typeof input.$value === 'bigint') return unbuilt('literal.number.float.leading_point', input);
-		if (typeof input.$value === 'number') return unbuilt('literal.number.float.leading_point', input);
+		if (typeof input.$value === 'bigint') return literal_number_float_leading_point$157(input);
+		if (typeof input.$value === 'number') return literal_number_float_leading_point$157(input);
 		return unbuilt('literal.number.float.leading_point', input);
 	};
 	const literal_number_float_scientific = (input: PathInput<TypeScriptMap, 'literal.number.float.scientific'>) => {
-		if (typeof input.$value === 'bigint') return unbuilt('literal.number.float.scientific', input);
-		if (typeof input.$value === 'number') return unbuilt('literal.number.float.scientific', input);
+		if (typeof input.$value === 'bigint') return literal_number_float_scientific$158(input);
+		if (typeof input.$value === 'number') return literal_number_float_scientific$158(input);
 		return unbuilt('literal.number.float.scientific', input);
 	};
 	const literal_number_integer = (input: PathInput<TypeScriptMap, 'literal.number.integer'>) => {

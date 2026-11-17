@@ -3,6 +3,7 @@ import type { Engine } from '@sittir/types';
 import type { BuildInput, PathInput, Unmapped } from '@sittir/types/vocabulary';
 import type { PythonAPI } from '../api.js';
 import type { PythonMap } from './map.js';
+import { decimalSpelling } from '@sittir/common/portable/utils';
 export function portableBuild(engine: Engine<PythonAPI>) {
 	const b = engine.build;
 	const unbuilt = (
@@ -51,6 +52,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			  }
 	): never => {
 		throw new Error(owner + ' has no seat for kind ' + (typeof value === 'number' ? value : value.$type));
+	};
+	const unspelled = (owner: string, value: number | bigint): never => {
+		throw new Error(owner + ' cannot spell ' + value);
 	};
 	const argument_named$237_name = (
 		value: string | BuildInput<PythonMap, 'identifier'> | PythonMap['nodes']['identifier']
@@ -399,11 +403,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('argument.named.value', value);
 			case 'literal.number.float':
-				return unbuilt('argument.named.value', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('argument.named.value', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('argument.named.value', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -791,11 +795,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('clause.comprehension.if.condition', value);
 			case 'literal.number.float':
-				return unbuilt('clause.comprehension.if.condition', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('clause.comprehension.if.condition', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('clause.comprehension.if.condition', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -1256,11 +1260,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.parameter.defaulted.default', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.parameter.defaulted.default', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.parameter.defaulted.default', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.parameter.defaulted.default', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -1725,11 +1729,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.parameter.typed.type', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.parameter.typed.type', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.parameter.typed.type', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.parameter.typed.type', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -2127,11 +2131,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.parameter.typed_default.default', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.parameter.typed_default.default', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.parameter.typed_default.default', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.parameter.typed_default.default', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -2555,11 +2559,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.parameter.typed_default.type', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.parameter.typed_default.type', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.parameter.typed_default.type', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.parameter.typed_default.type', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -3076,11 +3080,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.variable.value', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.variable.value', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.variable.value', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.variable.value', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -3533,11 +3537,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.variable.type', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -3998,11 +4002,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.variable.type', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -4422,11 +4426,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('declaration.variable.value', value);
 			case 'literal.number.float':
-				return unbuilt('declaration.variable.value', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('declaration.variable.value', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('declaration.variable.value', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -4816,11 +4820,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('element.pair.key', value);
 			case 'literal.number.float':
-				return unbuilt('element.pair.key', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('element.pair.key', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('element.pair.key', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -5208,11 +5212,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('element.pair.value', value);
 			case 'literal.number.float':
-				return unbuilt('element.pair.value', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('element.pair.value', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('element.pair.value', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -5600,11 +5604,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('element.spread.expression', value);
 			case 'literal.number.float':
-				return unbuilt('element.spread.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('element.spread.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('element.spread.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -5992,11 +5996,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('element.spread.map.expression', value);
 			case 'literal.number.float':
-				return unbuilt('element.spread.map.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('element.spread.map.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('element.spread.map.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -6430,11 +6434,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -6885,11 +6889,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.add.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.add.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.add.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.add.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -7342,11 +7346,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -7799,11 +7803,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -8256,11 +8260,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -8713,11 +8717,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.divide.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.divide.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.divide.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.divide.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -9170,11 +9174,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.exponent.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.exponent.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.exponent.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.exponent.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -9627,11 +9631,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.floor_divide.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.floor_divide.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.floor_divide.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.floor_divide.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -10084,11 +10088,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -10541,11 +10545,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.modulo.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.modulo.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.modulo.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.modulo.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -10998,11 +11002,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.multiply.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.multiply.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.multiply.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.multiply.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -11455,11 +11459,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.shift_left.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.shift_left.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.shift_left.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.shift_left.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -11912,11 +11916,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.shift_right.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.shift_right.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.shift_right.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.shift_right.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -12369,11 +12373,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.assignment.compound.subtract.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.assignment.compound.subtract.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.assignment.compound.subtract.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.assignment.compound.subtract.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -12684,11 +12688,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.await.expression', value);
 			case 'literal.number.float':
-				return unbuilt('expression.await.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.await.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.await.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -12997,11 +13001,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.add.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.add.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.add.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.add.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -13310,11 +13314,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.add.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.add.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.add.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.add.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -13623,11 +13627,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.divide.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.divide.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.divide.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.divide.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -13936,11 +13940,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.divide.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.divide.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.divide.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.divide.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -14249,11 +14253,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.exponent.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.exponent.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.exponent.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.exponent.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -14562,11 +14566,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.exponent.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.exponent.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.exponent.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.exponent.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -14875,11 +14879,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -15188,11 +15192,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -15501,11 +15505,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.modulo.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.modulo.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.modulo.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.modulo.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -15814,11 +15818,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.modulo.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.modulo.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.modulo.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.modulo.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -16127,11 +16131,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.multiply.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.multiply.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.multiply.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.multiply.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -16440,11 +16444,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.multiply.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.multiply.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.multiply.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.multiply.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -16753,11 +16757,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.subtract.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.subtract.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.subtract.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.subtract.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -17066,11 +17070,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.arithmetic.subtract.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.arithmetic.subtract.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.arithmetic.subtract.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.arithmetic.subtract.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -17379,11 +17383,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.bitwise.and.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.bitwise.and.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.bitwise.and.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.bitwise.and.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -17692,11 +17696,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.bitwise.and.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.bitwise.and.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.bitwise.and.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.bitwise.and.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -18005,11 +18009,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.bitwise.or.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.bitwise.or.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.bitwise.or.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.bitwise.or.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -18318,11 +18322,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.bitwise.or.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.bitwise.or.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.bitwise.or.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.bitwise.or.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -18631,11 +18635,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.bitwise.xor.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.bitwise.xor.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.bitwise.xor.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.bitwise.xor.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -18944,11 +18948,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.bitwise.xor.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.bitwise.xor.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.bitwise.xor.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.bitwise.xor.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -19336,11 +19340,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.logical.and.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.logical.and.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.logical.and.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.logical.and.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -19728,11 +19732,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.logical.and.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.logical.and.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.logical.and.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.logical.and.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -20120,11 +20124,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.logical.or.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.logical.or.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.logical.or.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.logical.or.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -20512,11 +20516,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.logical.or.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.logical.or.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.logical.or.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.logical.or.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -20825,11 +20829,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.matrix_multiply.left', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.matrix_multiply.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.matrix_multiply.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.matrix_multiply.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -21138,11 +21142,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.matrix_multiply.right', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.matrix_multiply.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.matrix_multiply.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.matrix_multiply.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -21451,11 +21455,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.shift.left.count', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.shift.left.count', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.shift.left.count', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.shift.left.count', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -21764,11 +21768,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.shift.left.operand', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.shift.left.operand', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.shift.left.operand', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.shift.left.operand', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -22077,11 +22081,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.shift.right.count', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.shift.right.count', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.shift.right.count', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.shift.right.count', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -22390,11 +22394,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.binary.shift.right.operand', value);
 			case 'literal.number.float':
-				return unbuilt('expression.binary.shift.right.operand', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.binary.shift.right.operand', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.binary.shift.right.operand', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -22801,11 +22805,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.call.arguments', value);
 			case 'literal.number.float':
-				return unbuilt('expression.call.arguments', value);
+				return b.argumentList(b.argumentListElements(literal_number_float$101(value)));
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.call.arguments', value);
+				return b.argumentList(b.argumentListElements(literal_number_float_leading_point$102(value)));
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.call.arguments', value);
+				return b.argumentList(b.argumentListElements(literal_number_float_scientific$103(value)));
 			case 'literal.number.integer':
 				return b.argumentList(b.argumentListElements(literal_number_integer$100(value)));
 			case 'literal.number.integer.big':
@@ -23209,11 +23213,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.call.arguments', value);
 			case 'literal.number.float':
-				return unbuilt('expression.call.arguments', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.call.arguments', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.call.arguments', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -23522,11 +23526,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.call.function', value);
 			case 'literal.number.float':
-				return unbuilt('expression.call.function', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.call.function', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.call.function', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -23930,11 +23934,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.collection.list.elements', value);
 			case 'literal.number.float':
-				return unbuilt('expression.collection.list.elements', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.collection.list.elements', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.collection.list.elements', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -24362,11 +24366,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.collection.tuple.elements', value);
 			case 'literal.number.float':
-				return unbuilt('expression.collection.tuple.elements', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.collection.tuple.elements', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.collection.tuple.elements', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -24754,11 +24758,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.conditional.alternative', value);
 			case 'literal.number.float':
-				return unbuilt('expression.conditional.alternative', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.conditional.alternative', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.conditional.alternative', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -25146,11 +25150,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.conditional.condition', value);
 			case 'literal.number.float':
-				return unbuilt('expression.conditional.condition', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.conditional.condition', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.conditional.condition', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -25538,11 +25542,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.conditional.consequence', value);
 			case 'literal.number.float':
-				return unbuilt('expression.conditional.consequence', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.conditional.consequence', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.conditional.consequence', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -25944,11 +25948,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.interpolation.expression', value);
 			case 'literal.number.float':
-				return unbuilt('expression.interpolation.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.interpolation.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.interpolation.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -26395,11 +26399,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.lambda.body', value);
 			case 'literal.number.float':
-				return unbuilt('expression.lambda.body', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.lambda.body', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.lambda.body', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -26909,11 +26913,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.parenthesized.expression', value);
 			case 'literal.number.float':
-				return unbuilt('expression.parenthesized.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.parenthesized.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.parenthesized.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -27222,11 +27226,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.unary.bitwise_not.argument', value);
 			case 'literal.number.float':
-				return unbuilt('expression.unary.bitwise_not.argument', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.unary.bitwise_not.argument', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.unary.bitwise_not.argument', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -27535,11 +27539,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.unary.negation.argument', value);
 			case 'literal.number.float':
-				return unbuilt('expression.unary.negation.argument', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.unary.negation.argument', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.unary.negation.argument', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -27927,11 +27931,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.unary.not.argument', value);
 			case 'literal.number.float':
-				return unbuilt('expression.unary.not.argument', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.unary.not.argument', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.unary.not.argument', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -28240,11 +28244,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.unary.plus.argument', value);
 			case 'literal.number.float':
-				return unbuilt('expression.unary.plus.argument', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.unary.plus.argument', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.unary.plus.argument', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -28636,11 +28640,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('expression.yield.expression', value);
 			case 'literal.number.float':
-				return unbuilt('expression.yield.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('expression.yield.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('expression.yield.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -29477,11 +29481,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('identifier.qualified.qualifier', value);
 			case 'literal.number.float':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -29553,6 +29557,42 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			default:
 				return unbuilt('identifier.qualified.qualifier', value);
 		}
+	};
+	const literal_number_float$101_imaginary = (value: string) => {
+		if (typeof value === 'string') {
+			return value;
+		}
+		if (typeof value === 'number') {
+			return unseated('literal.number.float.imaginary', value);
+		}
+		if (engine.isNode(value)) {
+			return unseated('literal.number.float.imaginary', value);
+		}
+		throw new Error('literal.number.float.imaginary takes no structure');
+	};
+	const literal_number_float_leading_point$102_imaginary = (value: string) => {
+		if (typeof value === 'string') {
+			return value;
+		}
+		if (typeof value === 'number') {
+			return unseated('literal.number.float.leading_point.imaginary', value);
+		}
+		if (engine.isNode(value)) {
+			return unseated('literal.number.float.leading_point.imaginary', value);
+		}
+		throw new Error('literal.number.float.leading_point.imaginary takes no structure');
+	};
+	const literal_number_float_scientific$103_imaginary = (value: string) => {
+		if (typeof value === 'string') {
+			return value;
+		}
+		if (typeof value === 'number') {
+			return unseated('literal.number.float.scientific.imaginary', value);
+		}
+		if (engine.isNode(value)) {
+			return unseated('literal.number.float.scientific.imaginary', value);
+		}
+		throw new Error('literal.number.float.scientific.imaginary takes no structure');
 	};
 	const pattern_as$190_name = (
 		value: string | BuildInput<PythonMap, 'identifier'> | PythonMap['nodes']['identifier']
@@ -29720,11 +29760,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('pattern.as.pattern', value);
 			case 'literal.number.float':
-				return unbuilt('pattern.as.pattern', value);
+				return b.casePattern(b.simplePattern(literal_number_float$101(value)));
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.as.pattern', value);
+				return b.casePattern(b.simplePattern(literal_number_float_leading_point$102(value)));
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.as.pattern', value);
+				return b.casePattern(b.simplePattern(literal_number_float_scientific$103(value)));
 			case 'literal.number.integer':
 				return b.casePattern(b.simplePattern(literal_number_integer$100(value)));
 			case 'literal.number.integer.big':
@@ -29856,11 +29896,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'literal.number.float':
-				return unbuilt('pattern.complex.add.imaginary', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.complex.add.imaginary', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.complex.add.imaginary', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -29930,11 +29970,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'literal.number.float':
-				return unbuilt('pattern.complex.add.real', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.complex.add.real', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.complex.add.real', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -30004,11 +30044,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'literal.number.float':
-				return unbuilt('pattern.complex.subtract.imaginary', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.complex.subtract.imaginary', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.complex.subtract.imaginary', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -30078,11 +30118,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'literal.number.float':
-				return unbuilt('pattern.complex.subtract.real', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.complex.subtract.real', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.complex.subtract.real', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -30484,11 +30524,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('pattern.list.elements', value);
 			case 'literal.number.float':
-				return unbuilt('pattern.list.elements', value);
+				return b.casePattern(b.simplePattern(literal_number_float$101(value)));
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.list.elements', value);
+				return b.casePattern(b.simplePattern(literal_number_float_leading_point$102(value)));
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.list.elements', value);
+				return b.casePattern(b.simplePattern(literal_number_float_scientific$103(value)));
 			case 'literal.number.integer':
 				return b.casePattern(b.simplePattern(literal_number_integer$100(value)));
 			case 'literal.number.integer.big':
@@ -30738,11 +30778,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('pattern.or.left', value);
 			case 'literal.number.float':
-				return unbuilt('pattern.or.left', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.or.left', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.or.left', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -30963,11 +31003,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('pattern.or.right', value);
 			case 'literal.number.float':
-				return unbuilt('pattern.or.right', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.or.right', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.or.right', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -31336,11 +31376,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('pattern.struct.fields', value);
 			case 'literal.number.float':
-				return unbuilt('pattern.struct.fields', value);
+				return b.casePattern(b.simplePattern(literal_number_float$101(value)));
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.struct.fields', value);
+				return b.casePattern(b.simplePattern(literal_number_float_leading_point$102(value)));
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.struct.fields', value);
+				return b.casePattern(b.simplePattern(literal_number_float_scientific$103(value)));
 			case 'literal.number.integer':
 				return b.casePattern(b.simplePattern(literal_number_integer$100(value)));
 			case 'literal.number.integer.big':
@@ -31600,11 +31640,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('pattern.struct.field.pattern', value);
 			case 'literal.number.float':
-				return unbuilt('pattern.struct.field.pattern', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.struct.field.pattern', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.struct.field.pattern', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -32064,11 +32104,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('pattern.tuple.elements', value);
 			case 'literal.number.float':
-				return unbuilt('pattern.tuple.elements', value);
+				return b.casePattern(b.simplePattern(literal_number_float$101(value)));
 			case 'literal.number.float.leading_point':
-				return unbuilt('pattern.tuple.elements', value);
+				return b.casePattern(b.simplePattern(literal_number_float_leading_point$102(value)));
 			case 'literal.number.float.scientific':
-				return unbuilt('pattern.tuple.elements', value);
+				return b.casePattern(b.simplePattern(literal_number_float_scientific$103(value)));
 			case 'literal.number.integer':
 				return b.casePattern(b.simplePattern(literal_number_integer$100(value)));
 			case 'literal.number.integer.big':
@@ -32484,11 +32524,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('statement.delete.expressions', value);
 			case 'literal.number.float':
-				return unbuilt('statement.delete.expressions', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('statement.delete.expressions', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('statement.delete.expressions', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -32969,11 +33009,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('statement.exec.inClauses', value);
 			case 'literal.number.float':
-				return unbuilt('statement.exec.inClauses', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('statement.exec.inClauses', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('statement.exec.inClauses', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -33365,11 +33405,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('statement.return.expression', value);
 			case 'literal.number.float':
-				return unbuilt('statement.return.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('statement.return.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('statement.return.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -33757,11 +33797,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('statement.throw.cause', value);
 			case 'literal.number.float':
-				return unbuilt('statement.throw.cause', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('statement.throw.cause', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('statement.throw.cause', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -34153,11 +34193,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('statement.throw.expression', value);
 			case 'literal.number.float':
-				return unbuilt('statement.throw.expression', value);
+				return literal_number_float$101(value);
 			case 'literal.number.float.leading_point':
-				return unbuilt('statement.throw.expression', value);
+				return literal_number_float_leading_point$102(value);
 			case 'literal.number.float.scientific':
-				return unbuilt('statement.throw.expression', value);
+				return literal_number_float_scientific$103(value);
 			case 'literal.number.integer':
 				return literal_number_integer$100(value);
 			case 'literal.number.integer.big':
@@ -34559,11 +34599,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('type.constrained.baseType', value);
 			case 'literal.number.float':
-				return unbuilt('type.constrained.baseType', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('type.constrained.baseType', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('type.constrained.baseType', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -34975,11 +35015,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('type.constrained.constraint', value);
 			case 'literal.number.float':
-				return unbuilt('type.constrained.constraint', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('type.constrained.constraint', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('type.constrained.constraint', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -35424,11 +35464,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('type.union.left', value);
 			case 'literal.number.float':
-				return unbuilt('type.union.left', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('type.union.left', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('type.union.left', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -35840,11 +35880,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'literal.null':
 				return unbuilt('type.union.right', value);
 			case 'literal.number.float':
-				return unbuilt('type.union.right', value);
+				return b.type(literal_number_float$101(value));
 			case 'literal.number.float.leading_point':
-				return unbuilt('type.union.right', value);
+				return b.type(literal_number_float_leading_point$102(value));
 			case 'literal.number.float.scientific':
-				return unbuilt('type.union.right', value);
+				return b.type(literal_number_float_scientific$103(value));
 			case 'literal.number.integer':
 				return b.type(literal_number_integer$100(value));
 			case 'literal.number.integer.big':
@@ -36559,6 +36599,79 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			name: identifier_qualified$236_name(input.name)
 		});
 	};
+	const literal_number_float$101 = (
+		input: PathInput<PythonMap, 'literal.number.float'>
+	): ReturnType<typeof b.floatPoint> => {
+		const parts = decimalSpelling(
+			input.$value,
+			{
+				integer: 'integer',
+				fraction: 'fraction',
+				exponent: 'exponent',
+				marker: 'marker',
+				exponentSign: 'exponentSign'
+			},
+			false
+		);
+		if (parts === undefined) return unspelled('literal.number.float', input.$value);
+		return b.floatPoint(
+			{
+				imaginary: input.imaginary === undefined ? undefined : literal_number_float$101_imaginary(input.imaginary),
+				integer: parts.integer,
+				fraction: parts.fraction,
+				exponent: parts.exponent,
+				exponentSign: parts.exponentSign
+			},
+			{ marker: parts.marker }
+		);
+	};
+	const literal_number_float_leading_point$102 = (
+		input: PathInput<PythonMap, 'literal.number.float.leading_point'>
+	): ReturnType<typeof b.floatLeadingPoint> => {
+		const parts = decimalSpelling(
+			input.$value,
+			{
+				integer: 'integer',
+				fraction: 'fraction',
+				exponent: 'exponent',
+				marker: 'marker',
+				exponentSign: 'exponentSign'
+			},
+			false
+		);
+		if (parts === undefined) return unspelled('literal.number.float.leading_point', input.$value);
+		return b.floatLeadingPoint(
+			{
+				imaginary:
+					input.imaginary === undefined ? undefined : literal_number_float_leading_point$102_imaginary(input.imaginary),
+				integer: parts.integer,
+				fraction: parts.fraction,
+				exponent: parts.exponent,
+				exponentSign: parts.exponentSign
+			},
+			{ marker: parts.marker }
+		);
+	};
+	const literal_number_float_scientific$103 = (
+		input: PathInput<PythonMap, 'literal.number.float.scientific'>
+	): ReturnType<typeof b.floatScientific> => {
+		const parts = decimalSpelling(
+			input.$value,
+			{ integer: 'integer', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' },
+			true
+		);
+		if (parts === undefined) return unspelled('literal.number.float.scientific', input.$value);
+		return b.floatScientific(
+			{
+				imaginary:
+					input.imaginary === undefined ? undefined : literal_number_float_scientific$103_imaginary(input.imaginary),
+				integer: parts.integer,
+				exponent: parts.exponent,
+				exponentSign: parts.exponentSign
+			},
+			{ marker: parts.marker }
+		);
+	};
 	const literal_number_integer$100 = (
 		input: PathInput<PythonMap, 'literal.number.integer'>
 	): ReturnType<typeof b.integerDecimal.plain> => {
@@ -36982,18 +37095,18 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		return identifier$1(input);
 	};
 	const literal_number_float = (input: PathInput<PythonMap, 'literal.number.float'>) => {
-		if (typeof input.$value === 'bigint') return unbuilt('literal.number.float', input);
-		if (typeof input.$value === 'number') return unbuilt('literal.number.float', input);
+		if (typeof input.$value === 'bigint') return literal_number_float$101(input);
+		if (typeof input.$value === 'number') return literal_number_float$101(input);
 		return unbuilt('literal.number.float', input);
 	};
 	const literal_number_float_leading_point = (input: PathInput<PythonMap, 'literal.number.float.leading_point'>) => {
-		if (typeof input.$value === 'bigint') return unbuilt('literal.number.float.leading_point', input);
-		if (typeof input.$value === 'number') return unbuilt('literal.number.float.leading_point', input);
+		if (typeof input.$value === 'bigint') return literal_number_float_leading_point$102(input);
+		if (typeof input.$value === 'number') return literal_number_float_leading_point$102(input);
 		return unbuilt('literal.number.float.leading_point', input);
 	};
 	const literal_number_float_scientific = (input: PathInput<PythonMap, 'literal.number.float.scientific'>) => {
-		if (typeof input.$value === 'bigint') return unbuilt('literal.number.float.scientific', input);
-		if (typeof input.$value === 'number') return unbuilt('literal.number.float.scientific', input);
+		if (typeof input.$value === 'bigint') return literal_number_float_scientific$103(input);
+		if (typeof input.$value === 'number') return literal_number_float_scientific$103(input);
 		return unbuilt('literal.number.float.scientific', input);
 	};
 	const literal_number_integer = (input: PathInput<PythonMap, 'literal.number.integer'>) => {

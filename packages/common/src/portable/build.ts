@@ -4,7 +4,6 @@ import type {
 	PortableBuildTable,
 	PortableCallShape,
 	PortableContainer,
-	PortableDecimalParts,
 	PortableFlagStep,
 	PortableSpelledFact,
 	PortableSpelling,
@@ -19,6 +18,7 @@ import type {
 	PortableTemplate,
 	PortableValueBuild
 } from '@sittir/types';
+import { decimalSpelling } from '../number.ts';
 import { hasKind } from './classify.ts';
 import { builtMembers, isNumberSlots, leafSeatOf, numberMembers, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
@@ -599,48 +599,6 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			else setPlaced(owner, placed.key ?? key, placed, path);
 			return placed.delimited === true;
 		};
-		const spelledParts = (spelling: string, parts: PortableDecimalParts): ReadonlyMap<string, string> | undefined => {
-			const [, integer, fraction, sign, exponent] = /^(\d+)(?:\.(\d+))?(?:e([+-])(\d+))?$/.exec(spelling) ?? [];
-			if (integer === undefined) return undefined;
-			const out = new Map<string, string>();
-			if (parts.integer !== undefined) out.set(parts.integer, integer);
-			else if (integer !== '0') return undefined;
-			if (parts.fraction !== undefined) out.set(parts.fraction, fraction ?? '0');
-			else if (fraction !== undefined) return undefined;
-			if (exponent === undefined) return out;
-			if (parts.exponent === undefined) return undefined;
-			out.set(parts.exponent, exponent);
-			if (parts.marker !== undefined) out.set(parts.marker, 'e');
-			if (sign !== '-') return out;
-			if (parts.exponentSign === undefined) return undefined;
-			out.set(parts.exponentSign, '-');
-			return out;
-		};
-		const significandOf = (value: number | bigint): { readonly digits: string; readonly power: number } | undefined => {
-			const [, whole, fraction = '', exponent = '0'] = /^(\d+)(?:\.(\d+))?(?:e([+-]\d+))?$/.exec(typeof value === 'number' ? value.toExponential() : String(value)) ?? [];
-			if (whole === undefined) return undefined;
-			const written = `${whole}${fraction}`;
-			const digits = written.replace(/0+$/, '') || '0';
-			return { digits, power: Number(exponent) - fraction.length + written.length - digits.length };
-		};
-		const exponentSpelling = (mantissa: string, power: number): string => `${mantissa}e${power < 0 ? '-' : '+'}${Math.abs(power)}`;
-		const decimalParts = (value: number | bigint, parts: PortableDecimalParts, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
-			const scientific = parts.exponent !== undefined && (arm.numericRequired ?? []).includes(parts.exponent);
-			const significand = significandOf(value);
-			const spellings = scientific
-				? [significand && exponentSpelling(significand.digits, significand.power)]
-				: [
-						String(value),
-						...(typeof value === 'number' && parts.exponent !== undefined
-							? [value.toExponential(), significand && exponentSpelling(`0.${significand.digits}`, significand.power + significand.digits.length)]
-							: [])
-					];
-			for (const spelling of spellings) {
-				const out = spelling === undefined ? undefined : spelledParts(spelling, parts);
-				if (out !== undefined) return out;
-			}
-			throw new Error(`portable build: ${path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(value)}`);
-		};
 		const takesMany = (route: PortableMemberStep): boolean => route.multiple || route.seats.some((seat) => seat.many === true && !holdsOne(route, seat));
 		const takesList = (route: PortableMemberStep): boolean => takesMany(route) || route.list === true;
 		const seatsIn = (offered: readonly PortableSeat[], item: unknown): boolean =>
@@ -778,7 +736,11 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 					throw new Error(`portable build: ${structure.$path}: $value ${spelledValue(scalar)} spells ${stated.join(' and ')}; state the $value or ${stated.length === 1 ? 'that member' : 'those members'}, not both`);
 				if (arm.numeric === undefined || (isNumberSlots(arm.numeric) && !takesConfig(arm.builder!))) frame.input = scalar;
 				else if (isNumberSlots(arm.numeric)) frame.config[arm.numeric.at(-1)!] = scalar;
-				else for (const [key, part] of decimalParts(scalar, arm.numeric, arm, structure.$path)) frame.config[key] = part;
+				else {
+					const spelled = decimalSpelling(scalar, arm.numeric, arm.scientific === true);
+					if (spelled === undefined) throw new Error(`portable build: ${structure.$path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(scalar)}`);
+					Object.assign(frame.config, spelled);
+				}
 			}
 			const text = takesTextValue(table, arm) && typeof structure.$value === 'string' ? structure.$value : undefined;
 			if (arm.content !== undefined && text === undefined) throw new Error(`portable build: ${structure.$path} takes its ${nameOf(arm.kind)} as a text $value`);

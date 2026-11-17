@@ -147,6 +147,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			body: call(dot(id('Array'), 'isArray'), id('value'))
 		})
 	);
+	const unspelledHelper = constant('unspelled', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' cannot spell ')), '+', id('value')))), 'never', [['value', union(['number', 'bigint'])]]));
 	const missingHelper = constant('missing', arrow('owner', 'string', block(raise(binary(id('owner'), '+', str(' is required')))), 'never'));
 	const unseatedHelper = constant('unseated', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' has no seat for kind ')), '+', paren(kindOf(id('value')))))), 'never', [['value', kinded]]));
 	const holes = new Set(input.holes.map(([holder, key]) => `${holder} ${key}`));
@@ -381,14 +382,23 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const numberBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
 		const callee = builderRef(arm.builder!);
 		const numeric = arm.numeric;
-		if (numeric !== undefined && !Array.isArray(numeric)) return fail(`${path}'s number is spelled in decimal parts`);
-		const slots: readonly string[] = numeric ?? [];
+		const parts = numeric === undefined || Array.isArray(numeric) ? undefined : numeric;
+		const slots: readonly string[] = numeric === undefined ? [] : Array.isArray(numeric) ? numeric : Object.values(numeric);
 		const spelled = (member: PortableMemberStep): boolean => numeric === undefined || (member.steps.length === 1 && slots.includes(member.steps[0]!.key));
 		const others = arm.members.filter((member) => !spelled(member));
 		const scalar = dot(input(), '$value');
 		if (numeric === undefined || shapeOf(arm.builder!) !== 'config') return others.length > 0 ? fail(`${path}'s number arm takes members beside its value`) : [ret(call(callee, scalar))];
 		const entries = others.map((member): [string, Expression] => [member.steps[0]?.key ?? member.name, memberValue(path, arm, member, input())]);
-		return [ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
+		if (parts === undefined) return [ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
+		const options = new Set(table.options?.[arm.builder!] ?? []);
+		if (entries.some(([key]) => options.has(key))) return fail(`${path}'s number arm takes a member through its builder's options`);
+		const written = slots.map((slot): [string, Expression] => [slot, dot(id('parts'), slot)]);
+		const optioned = written.filter(([slot]) => options.has(slot));
+		return [
+			constant('parts', call(id(uses('decimalSpelling')), scalar, obj(Object.entries(parts).map(([part, slot]) => [part, str(slot)])), arm.scientific === true ? t.true : t.false)),
+			when(binary(id('parts'), '===', id('undefined')), ret(call(id(uses('unspelled')), str(path), scalar))),
+			ret(call(callee, obj([...entries, ...written.filter(([slot]) => !options.has(slot))]), ...(optioned.length === 0 ? [] : [obj(optioned)])))
+		];
 	};
 
 	const armBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
@@ -551,7 +561,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		['missing', missingHelper],
 		['seated', seatedHelper],
 		['listed', listedHelper],
-		['unseated', unseatedHelper]
+		['unseated', unseatedHelper],
+		['unspelled', unspelledHelper]
 	];
 
 	const surface = (node: Trie): Expression => {
@@ -559,8 +570,9 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (node.path === undefined) return children;
 		return node.children.size === 0 ? id(identifierOf(node.path)) : call(dot(id('Object'), 'assign'), id(identifierOf(node.path)), children);
 	};
-	const typeImport = (names: readonly string[], source: string) =>
-		t.importStatement.clauseFrom({ typeKeyword: 'type', importClause: t.importClause(t.namedImports(...names.map((name) => t.importSpecifier.name({ name })))), source: str(source) });
+	const clauseOf = (names: readonly string[]) => t.importClause(t.namedImports(...names.map((name) => t.importSpecifier.name({ name }))));
+	const typeImport = (names: readonly string[], source: string) => t.importStatement.clauseFrom({ typeKeyword: 'type', importClause: clauseOf(names), source: str(source) });
+	const valueImport = (names: readonly string[], source: string) => t.importStatement.clauseFrom({ importClause: clauseOf(names), source: str(source) });
 	const built = pathFunctions.length > 0;
 	const program = t.program({
 		statements: [
@@ -568,6 +580,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			...(built ? [typeImport(['BuildInput', 'PathInput', 'Unmapped'].filter((name) => live.has(name)), input.imports.vocabulary)] : []),
 			typeImport([input.api], input.imports.api),
 			...(built ? [typeImport([input.map], input.imports.map)] : []),
+			...(live.has('decimalSpelling') ? [valueImport(['decimalSpelling'], input.imports.utils)] : []),
 			t.exportStatementDefaultDeclaration({
 				content: t.functionDeclaration({
 					name: 'portableBuild',

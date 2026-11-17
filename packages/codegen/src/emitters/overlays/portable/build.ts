@@ -1109,7 +1109,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const partSlots = parts ? DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []) : [];
 			const numeric: PortableBuildArm['numeric'] =
 				numericKeys.length === 0 ? undefined : parts ? Object.fromEntries(partSlots.map((slot) => [slot.propertyName, slot.propertyName])) : numericKeys;
-			const numericRequired = partSlots.filter((slot) => isRequired(slot)).map((slot) => slot.propertyName);
+			const scientific = partSlots.some((slot) => slot.propertyName === 'exponent' && isRequired(slot));
 			const read =
 				numericKeys.length === 0
 					? { shape: wholeTextShape(kind, node), pattern: wholeTextPattern(node) }
@@ -1157,7 +1157,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(mount === undefined ? {} : { mounted: mount.mounted }),
 						...(seated === undefined ? {} : { seated }),
 						...(numeric === undefined ? {} : { numeric }),
-						...(numericRequired.length === 0 ? {} : { numericRequired }),
+						...(scientific ? { scientific } : {}),
 						...(digits === undefined ? {} : { digits }),
 						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
 						members: armMembers,

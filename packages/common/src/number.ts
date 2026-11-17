@@ -1,3 +1,5 @@
+import type { PortableDecimalParts } from '@sittir/types';
+
 export type NumberBase = 'float' | 2 | 8 | 10 | 16;
 
 /**
@@ -57,6 +59,57 @@ export function numberRefusal(value: number | bigint, integer: boolean, signed: 
 	}
 	if (integer && typeof value === 'number' && Number.isInteger(value) && !Number.isSafeInteger(value)) {
 		return `${value} is past Number.MAX_SAFE_INTEGER and has lost precision; pass it as a bigint`;
+	}
+	return undefined;
+}
+
+type Part<P extends PortableDecimalParts, K extends keyof PortableDecimalParts> = K extends keyof P ? Exclude<P[K], undefined> : never;
+
+export type DecimalSpelling<P extends PortableDecimalParts, S extends boolean = boolean> = { readonly [K in Part<P, 'integer' | 'fraction'>]: string } & (S extends true
+	? { readonly [K in Part<P, 'exponent'>]: string } & { readonly [K in Part<P, 'marker'>]: 'e' }
+	: { readonly [K in Part<P, 'exponent'>]?: string } & { readonly [K in Part<P, 'marker'>]?: 'e' }) & { readonly [K in Part<P, 'exponentSign'>]?: '-' };
+
+const spelledParts = (spelling: string, parts: PortableDecimalParts): Record<string, string> | undefined => {
+	const [, integer, fraction, sign, exponent] = /^(\d+)(?:\.(\d+))?(?:e([+-])(\d+))?$/.exec(spelling) ?? [];
+	if (integer === undefined) return undefined;
+	const out: Record<string, string> = {};
+	if (parts.integer !== undefined) out[parts.integer] = integer;
+	else if (integer !== '0') return undefined;
+	if (parts.fraction !== undefined) out[parts.fraction] = fraction ?? '0';
+	else if (fraction !== undefined) return undefined;
+	if (exponent === undefined) return out;
+	if (parts.exponent === undefined) return undefined;
+	out[parts.exponent] = exponent;
+	if (parts.marker !== undefined) out[parts.marker] = 'e';
+	if (sign !== '-') return out;
+	if (parts.exponentSign === undefined) return undefined;
+	out[parts.exponentSign] = '-';
+	return out;
+};
+
+const significandOf = (value: number | bigint): { readonly digits: string; readonly power: number } | undefined => {
+	const [, whole, fraction = '', exponent = '0'] = /^(\d+)(?:\.(\d+))?(?:e([+-]\d+))?$/.exec(typeof value === 'number' ? value.toExponential() : String(value)) ?? [];
+	if (whole === undefined) return undefined;
+	const written = `${whole}${fraction}`;
+	const digits = written.replace(/0+$/, '') || '0';
+	return { digits, power: Number(exponent) - fraction.length + written.length - digits.length };
+};
+
+const exponentSpelling = (mantissa: string, power: number): string => `${mantissa}e${power < 0 ? '-' : '+'}${Math.abs(power)}`;
+
+export function decimalSpelling<const P extends PortableDecimalParts, const S extends boolean>(value: number | bigint, parts: P, scientific: S): DecimalSpelling<P, S> | undefined {
+	const significand = significandOf(value);
+	const spellings = scientific
+		? [significand && exponentSpelling(significand.digits, significand.power)]
+		: [
+				String(value),
+				...(typeof value === 'number' && parts.exponent !== undefined
+					? [value.toExponential(), significand && exponentSpelling(`0.${significand.digits}`, significand.power + significand.digits.length)]
+					: [])
+			];
+	for (const spelling of spellings) {
+		const out = spelling === undefined ? undefined : spelledParts(spelling, parts);
+		if (out !== undefined) return out as DecimalSpelling<P, S>;
 	}
 	return undefined;
 }
