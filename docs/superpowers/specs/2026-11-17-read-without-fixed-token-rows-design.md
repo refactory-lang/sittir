@@ -8,6 +8,11 @@
 - **"Automatic semicolons aren't fixed tokens! They are in a choice block and that should be encoded by kindId"** (2026-11-17).
 - **"fixed token is what isn't a slot or trivia or a leaf"** (2026-11-17): the census classes tokens by role, not by token class.
 - **"Yes, unit rows go too"** (2026-11-17, open question 1): a unit in a slot is held by its cell's kind id alone and has no row, so a parsed unit cell is the built unit cell. The addon's `siblings` gives a unit sibling no span, and a side placed on a unit is keyed by its site.
+- **A unit is listed from its cell** ("From its cell, as a built record does", 2026-11-17, open question 2): navigation yields a unit where its slot's cell sits, with its kind and no span. No run entry is kept for it.
+- **A fixed-separator list's trailing separator is one bit beside the list's run** (2026-11-17, open question 3). A list kind with several separator candidates stores each gap's kind id in `SideSlot::tokens`.
+- **Named fixed tokens leave navigation** ("Accept", 2026-11-17, open question 4): a polymorph form's named fixed text (`self`, `mutable_specifier`, a getter's `formal_parameters`, `this`, doc-comment markers, python's `newline`, `indent` and `dedent`) has no row and is not listed; a comment beside one is seated as a built node seats it. The parity test lists every placement that changes.
+- **Two stages, rows first** (2026-11-17, open question 5): the rows go, measured; then the one-word parsed cell, measured.
+- **The public surface rows are approved** (2026-11-17, open question 6) as § Public surfaces has them. The two marked "to verify" (the parse's error list, `$snapshot`) are checked before code, and a `$snapshot` that lists a fixed token today comes back as its own row.
 - These standing rulings bind every choice below:
   - **A parsed node does not behave differently from a built node** (2026-11-15).
   - **"it would be whatever matches built nodes"** (2026-11-16): where a form is open, the form a built node already uses decides it.
@@ -325,15 +330,5 @@ Release (the four gaps) is built when the maintainer rules it. Its rules don't d
 ## Open questions for the maintainer
 
 1. ~~Do unit rows go too?~~ Ruled 2026-11-17: yes (see Decided by the maintainer).
-2. **If units go, where does navigation list a unit?**
-   - (a) As a built record does, from its cell, placed among the run's entries by cell order. Recommended: it matches built nodes.
-   - (b) A one-word run entry holding the unit's facts word. This keeps today's order but stores the kind twice.
-3. **The trailing-separator bit for a list with a fixed separator:**
-   - (a) one bit beside the list's run, no words. Recommended.
-   - (b) one more place in `SideSlot::tokens`: a side-slot entry, 8 words or more, for each such list.
-
-   A separator choice uses `tokens` either way.
-4. **Named fixed tokens** (`self`, `mutable_specifier`, a getter's `formal_parameters`, `this`, doc-comment markers, python's `newline`, `indent` and `dedent`) leave navigation, and a comment beside one is seated as a built node seats it. Accept?
-5. **Two stages:** the row removal first, then the one-word cell, each measured. Accept, or one change?
-6. **The public surface rows above.**
+2–6. Ruled 2026-11-17 (see Decided by the maintainer): a unit is listed from its cell; the trailing-separator bit sits beside the list's run; named fixed tokens leave navigation; two stages, rows first; the public surface rows are approved.
 7. **Release:** rule the four gaps now, since this layout doesn't change their rules, or after the row removal lands?
