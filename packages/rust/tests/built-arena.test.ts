@@ -332,7 +332,7 @@ describe('a built arena', () => {
 		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes: () => ({ chunk: 9, data, meta, freed: [] }) });
 		const entry = arena.entry(4, 'name');
 		expect([chunkOf(entry.at, format!), wordOf(entry.at, format!)]).toEqual([9, 8]);
-		expect(Array.from(data.subarray(0, 8))).toEqual(new Array(8).fill(0xaa));
+		expect(Array.from(data.subarray(0, 8))).toEqual(Array.from({ length: 8 }, () => 0xaa));
 		expect(marks[1]).toBe(16);
 		expect(arena.entryText(arena.entryAt(entry.at).entry)).toBe('name');
 	});
