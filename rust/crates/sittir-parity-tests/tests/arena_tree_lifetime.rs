@@ -176,7 +176,7 @@ fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
         let mut found = None;
         while let Some(path) = pending.pop() {
             let at = at_path(&mut nodes, &path);
-            if let Some(side) = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().find(|&side| !records.side_entries(at, side, false).is_empty()) {
+            if let Some(side) = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().find(|&side| records.side_entries(at, side, false).iter().any(|entry| matches!(entry, sittir_core::read::SideEntry::Source { .. }))) {
                 found = Some((path, side, records.place(at).expect("a place in the store")));
                 break;
             }
