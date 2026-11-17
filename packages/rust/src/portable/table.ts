@@ -48083,27 +48083,6 @@ export const build: PortableBuildTable = {
 					},
 					members: [
 						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [141, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9][0-9_]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
 							name: 'suffix',
 							steps: [
 								{
@@ -48132,7 +48111,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}
@@ -48153,27 +48132,6 @@ export const build: PortableBuildTable = {
 						affix: '0b'
 					},
 					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [143, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0b[01_]+))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'suffix',
 							steps: [
@@ -48203,7 +48161,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}
@@ -48224,27 +48182,6 @@ export const build: PortableBuildTable = {
 						affix: '0x'
 					},
 					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [142, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0x[0-9a-fA-F_]+))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'suffix',
 							steps: [
@@ -48274,7 +48211,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}
@@ -48295,27 +48232,6 @@ export const build: PortableBuildTable = {
 						affix: '0o'
 					},
 					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [144, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0o[0-7_]+))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'suffix',
 							steps: [
@@ -48345,7 +48261,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}

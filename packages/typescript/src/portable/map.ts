@@ -28227,62 +28227,41 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'identifier.super': {
 			readonly $text: PortableTexts['identifier.super'];
 		};
+		readonly 'literal.number': {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'literal.number.float': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-';
-			readonly fraction: string;
-			readonly integer: string;
-			readonly marker: 'E' | 'e';
-			readonly $forms: V.Form<'integer'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.float.leading_point': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-';
-			readonly fraction: string;
-			readonly marker: 'E' | 'e';
-			readonly $forms: V.Form<'fraction'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.float.scientific': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-';
-			readonly fraction: never;
-			readonly integer: string;
-			readonly marker: 'E' | 'e';
-			readonly $forms: V.Form<'exponent' | 'integer' | 'marker'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer': {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.binary': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.hex': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.octal': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.binary': {
-			readonly content: string;
-			readonly radixPrefix: '0B' | '0b';
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.hex': {
-			readonly content: string;
-			readonly radixPrefix: '0X' | '0x';
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.octal': {
-			readonly content: string;
-			readonly radixPrefix: '0O' | '0o';
-			readonly $forms: V.Form<'content', 'radixPrefix'> | V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:

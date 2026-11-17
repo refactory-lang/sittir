@@ -20,7 +20,7 @@ import type {
 } from '@sittir/types';
 import { decimalSpelling } from '../number.ts';
 import { hasKind } from './classify.ts';
-import { builtMembers, isNumberSlots, leafSeatOf, numberMembers, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
+import { builtMembers, isNumberSlots, leafSeatOf, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -731,9 +731,6 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 					throw new Error(
 						`portable build: ${structure.$path} takes ${arm.scalar === 'float' ? 'a float (a number)' : 'an integer (a safe integer or a bigint)'} in ${language}, not ${spelledValue(scalar)}`
 					);
-				const stated = numberMembers(arm).flatMap((member) => (values.has(member.name) ? [member.name] : []));
-				if (stated.length > 0)
-					throw new Error(`portable build: ${structure.$path}: $value ${spelledValue(scalar)} spells ${stated.join(' and ')}; state the $value or ${stated.length === 1 ? 'that member' : 'those members'}, not both`);
 				if (arm.numeric === undefined || (isNumberSlots(arm.numeric) && !takesConfig(arm.builder!))) frame.input = scalar;
 				else if (isNumberSlots(arm.numeric)) frame.config[arm.numeric.at(-1)!] = scalar;
 				else {

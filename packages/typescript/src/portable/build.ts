@@ -1942,14 +1942,16 @@ const literal_number$156 = (
 ): ReturnType<typeof b.numberFloatPoint> => {
 	const parts = decimalSpelling(
 		input.$value,
-		{ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' },
+		{ integer: 'integer', fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number', input.$value);
-	return b.numberFloatPoint(
-		{ integer: parts.integer, fraction: parts.fraction, exponent: parts.exponent, exponentSign: parts.exponentSign },
-		{ marker: parts.marker }
-	);
+	return b.numberFloatPoint({
+		integer: parts.integer,
+		fraction: parts.fraction,
+		exponentSign: parts.exponentSign,
+		exponent: parts.exponent
+	});
 };
 const literal_number$160 = (input: PathInput<TypeScriptMap, 'literal.number'>): ReturnType<typeof b.number.decimal> => {
 	const value = input.$value;
@@ -1965,42 +1967,46 @@ const literal_number_float$156 = (
 ): ReturnType<typeof b.numberFloatPoint> => {
 	const parts = decimalSpelling(
 		input.$value,
-		{ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' },
+		{ integer: 'integer', fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float', input.$value);
-	return b.numberFloatPoint(
-		{ integer: parts.integer, fraction: parts.fraction, exponent: parts.exponent, exponentSign: parts.exponentSign },
-		{ marker: parts.marker }
-	);
+	return b.numberFloatPoint({
+		integer: parts.integer,
+		fraction: parts.fraction,
+		exponentSign: parts.exponentSign,
+		exponent: parts.exponent
+	});
 };
 const literal_number_float_leading_point$157 = (
 	input: PathInput<TypeScriptMap, 'literal.number.float.leading_point'>
 ): ReturnType<typeof b.numberFloatLeadingPoint> => {
 	const parts = decimalSpelling(
 		input.$value,
-		{ fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' },
+		{ fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float.leading_point', input.$value);
-	return b.numberFloatLeadingPoint(
-		{ fraction: parts.fraction, exponent: parts.exponent, exponentSign: parts.exponentSign },
-		{ marker: parts.marker }
-	);
+	return b.numberFloatLeadingPoint({
+		fraction: parts.fraction,
+		exponentSign: parts.exponentSign,
+		exponent: parts.exponent
+	});
 };
 const literal_number_float_scientific$158 = (
 	input: PathInput<TypeScriptMap, 'literal.number.float.scientific'>
 ): ReturnType<typeof b.numberFloatScientific> => {
 	const parts = decimalSpelling(
 		input.$value,
-		{ integer: 'integer', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' },
+		{ integer: 'integer', exponentSign: 'exponentSign', exponent: 'exponent' },
 		true
 	);
 	if (parts === undefined) return unspelled('literal.number.float.scientific', input.$value);
-	return b.numberFloatScientific(
-		{ integer: parts.integer, exponent: parts.exponent, exponentSign: parts.exponentSign },
-		{ marker: parts.marker }
-	);
+	return b.numberFloatScientific({
+		integer: parts.integer,
+		exponentSign: parts.exponentSign,
+		exponent: parts.exponent
+	});
 };
 const literal_number_integer$160 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer'>

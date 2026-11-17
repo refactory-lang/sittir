@@ -292,12 +292,17 @@ function sameShapeAs(
 	kinds: readonly string[],
 	members: readonly MemberFact[],
 	routed: ReadonlyMap<string, readonly MemberRoute[]>,
+	model: SlotModel,
 	symbols: SymbolSource
 ): readonly string[] {
 	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
 	const supplied = (kind: string): string =>
-		(routed.get(kind) ?? [])
-			.map((m) => m.name)
+		[
+			...new Set([
+				...(routed.get(kind) ?? []).map((m) => m.name),
+				...(model.get(kind)?.slots ?? []).flatMap((slot) => (slot.registered === true ? [slot.propertyName] : []))
+			])
+		]
 			.sort()
 			.join('\0');
 	const [first, ...rest] = kinds;
@@ -349,7 +354,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		(into.get(c.vocab) ?? into.set(c.vocab, []).get(c.vocab)!).push(kind);
 	}
 	const mergedOfPath = new Map(
-		[...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs(kinds, facts.members, routes.members, symbols)])
+		[...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs(kinds, facts.members, routes.members, model, symbols)])
 	);
 	for (const path of new Set([...kindsOfPath.keys(), ...unpatchableOfPath.keys()])) {
 		const kinds = kindsOfPath.get(path) ?? [];

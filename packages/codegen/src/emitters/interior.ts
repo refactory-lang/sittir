@@ -17,6 +17,7 @@ import { lexedContentSlot, ownTextLeaf, slotLiteralValues, type LooseRefusal } f
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { includesNonEmpty, patternDfa } from '../compiler/model/pattern-automaton.ts';
 import { integerSpelling } from '@sittir/common/portable/utils';
+import type { PortableDecimalParts } from '@sittir/types';
 import { asLexed, withoutCaptures } from '../util/pattern-pieces.ts';
 
 export type InteriorEntry =
@@ -362,6 +363,24 @@ export function numberSpelling(node: AssembledNode, content: AssembledNontermina
 	const spelled = numberShapeOfPattern(content.name, joined);
 	if (spelled === undefined || !spellsItsBase(spelled)) return undefined;
 	return prefix === undefined ? { slots: [content], shape, pattern } : { slots: [prefix, content], shape: spelled, pattern: joined };
+}
+
+export const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'exponentSign'] as const satisfies readonly (keyof PortableDecimalParts)[];
+
+export function numberSlotsOf(node: AssembledNode, config: boolean): readonly AssembledNonterminal[] {
+	if (kindNumberShape(node.kind, node) === undefined) return [];
+	if (!config) {
+		const content = lexedContentSlot(node);
+		return (content === undefined ? undefined : numberSpelling(node, content)?.slots) ?? [];
+	}
+	const alone = node.slots.filter((slot) => {
+		const shape = numericSlotShape(slot);
+		return shape !== undefined && spellsItsBase(shape);
+	});
+	if (alone.length < 2) return alone;
+	const partless = alone.filter((slot) => !DECIMAL_PARTS.some((part) => part === slot.propertyName)).map((slot) => slot.propertyName);
+	if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${node.kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
+	return DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []);
 }
 
 export function slotPattern(slot: AssembledNonterminal): string | undefined {

@@ -15750,75 +15750,43 @@ export interface PythonMap extends V.GrammarMap {
 				  >;
 		};
 		readonly 'literal.number.float': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-';
-			readonly fraction: string;
 			readonly imaginary: string;
-			readonly integer: string;
-			readonly marker: 'E' | 'e';
-			readonly $forms: V.Form<'integer'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.float.leading_point': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-';
-			readonly fraction: string;
 			readonly imaginary: string;
-			readonly integer: string;
-			readonly marker: 'E' | 'e';
-			readonly $forms: V.Form<'fraction'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.float.scientific': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-';
-			readonly fraction: never;
 			readonly imaginary: string;
-			readonly integer: string;
-			readonly marker: 'E' | 'e';
-			readonly $forms: V.Form<'exponent' | 'integer' | 'marker'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer': {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big': {
-			readonly content: string;
-			readonly marker: 'L' | 'l';
-			readonly $forms: V.Form<'content' | 'marker'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.binary': {
-			readonly content: string;
-			readonly marker: 'L' | 'l';
-			readonly radixPrefix: '0B' | '0b';
-			readonly $forms: V.Form<'content' | 'marker' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.hex': {
-			readonly content: string;
-			readonly marker: 'L' | 'l';
-			readonly radixPrefix: '0X' | '0x';
-			readonly $forms: V.Form<'content' | 'marker' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.octal': {
-			readonly content: string;
-			readonly marker: 'L' | 'l';
-			readonly radixPrefix: '0O' | '0o';
-			readonly $forms: V.Form<'content' | 'marker', 'radixPrefix'> | V.Form<'content' | 'marker' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.binary': {
-			readonly content: string;
-			readonly radixPrefix: '0B' | '0b';
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.hex': {
-			readonly content: string;
-			readonly radixPrefix: '0X' | '0x';
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.imaginary': {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.octal': {
-			readonly content: string;
-			readonly radixPrefix: '0O' | '0o';
-			readonly $forms: V.Form<'content', 'radixPrefix'> | V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:

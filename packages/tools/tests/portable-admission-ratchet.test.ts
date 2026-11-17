@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computePortableAdmission, formatAdmission } from '../src/index.ts';
 
-const UNTYPED = 45;
+const UNTYPED = 31;
 
 const MEMBERS: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 

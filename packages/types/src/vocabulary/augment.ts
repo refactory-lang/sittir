@@ -100,7 +100,6 @@ import type * as javascriptOperators from './features/javascript-operators/index
 import type * as keyValuePairs from './features/key-value-pairs/index.ts';
 import type * as labeledControlFlow from './features/labeled-control-flow/index.ts';
 import type * as labeledStatements from './features/labeled-control-flow/labeled-statements/index.ts';
-import type * as leadingPointFloats from './features/leading-point-floats/index.ts';
 import type * as letPatterns from './features/match-expressions/let-patterns/index.ts';
 import type * as lifetimes from './features/parametric-polymorphism/lifetimes/index.ts';
 import type * as lineDocComments from './features/line-doc-comments/index.ts';
@@ -3828,20 +3827,11 @@ declare module './literal.ts' {
 		}
 		namespace Number {
 			interface Float<G extends GrammarMap, K extends gate.Under<'literal.number.float'> = 'literal.number.float'> {
-				readonly exponent?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['exponent']>;
-				readonly exponentSign?: gate.In<
-					G,
-					features.LiteralFacets,
-					literalFacets.Literal.Number.Float<G, K>['exponentSign']
-				>;
-				readonly fraction?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['fraction']>;
 				readonly imaginary?: gate.In<
 					G,
 					features.ComplexNumbers,
 					complexNumbers.Literal.Number.Float<G, K>['imaginary']
 				>;
-				readonly integer?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['integer']>;
-				readonly marker?: gate.In<G, features.LiteralFacets, literalFacets.Literal.Number.Float<G, K>['marker']>;
 			}
 			namespace Float {
 				interface LeadingPoint<
@@ -3852,11 +3842,6 @@ declare module './literal.ts' {
 						G,
 						features.ComplexNumbers,
 						complexNumbers.Literal.Number.Float.LeadingPoint<G, K>['imaginary']
-					>;
-					readonly integer?: gate.In<
-						G,
-						features.LeadingPointFloats,
-						leadingPointFloats.Literal.Number.Float.LeadingPoint<G, K>['integer']
 					>;
 				}
 				interface Scientific<
@@ -3908,11 +3893,6 @@ declare module './literal.ts' {
 					G extends GrammarMap,
 					K extends gate.Under<'literal.number.integer.binary'> = 'literal.number.integer.binary'
 				> {
-					readonly radixPrefix?: gate.In<
-						G,
-						features.LiteralFacets,
-						literalFacets.Literal.Number.Integer.Binary<G, K>['radixPrefix']
-					>;
 					readonly suffix?: gate.In<
 						G,
 						features.LiteralSuffixes,
@@ -3923,11 +3903,6 @@ declare module './literal.ts' {
 					G extends GrammarMap,
 					K extends gate.Under<'literal.number.integer.hex'> = 'literal.number.integer.hex'
 				> {
-					readonly radixPrefix?: gate.In<
-						G,
-						features.LiteralFacets,
-						literalFacets.Literal.Number.Integer.Hex<G, K>['radixPrefix']
-					>;
 					readonly suffix?: gate.In<
 						G,
 						features.LiteralSuffixes,
@@ -3942,11 +3917,6 @@ declare module './literal.ts' {
 					G extends GrammarMap,
 					K extends gate.Under<'literal.number.integer.octal'> = 'literal.number.integer.octal'
 				> {
-					readonly radixPrefix?: gate.In<
-						G,
-						features.LiteralFacets,
-						literalFacets.Literal.Number.Integer.Octal<G, K>['radixPrefix']
-					>;
 					readonly suffix?: gate.In<
 						G,
 						features.LiteralSuffixes,

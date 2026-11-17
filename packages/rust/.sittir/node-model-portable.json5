@@ -10481,17 +10481,6 @@
       ],
       "members": [
         {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_literal_binary",
-              "slot": "content"
-            }
-          ]
-        },
-        {
           "name": "suffix",
           "route": "slot",
           "slot": "suffix",
@@ -10516,17 +10505,6 @@
         }
       ],
       "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_literal_decimal",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "suffix",
           "route": "slot",
@@ -10553,17 +10531,6 @@
       ],
       "members": [
         {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_literal_hex",
-              "slot": "content"
-            }
-          ]
-        },
-        {
           "name": "suffix",
           "route": "slot",
           "slot": "suffix",
@@ -10588,17 +10555,6 @@
         }
       ],
       "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_literal_octal",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "suffix",
           "route": "slot",

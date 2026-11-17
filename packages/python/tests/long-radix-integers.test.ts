@@ -38,11 +38,11 @@ describe('long and plain hex, octal and binary integers', () => {
 		expect(py.build.integer.hex.long('FF', { marker: 'l' }).$render()).toBe('0xFFl');
 	});
 
-	it('read each form as its value, a long form with its marker, and rebuild it in the standard spelling', () => {
-		expect(value('x = 0xFFL')).toEqual({ $path: 'literal.number.integer.big.hex', $value: 255n, marker: 'L' });
-		expect(value('x = 0o17l')).toEqual({ $path: 'literal.number.integer.big.octal', $value: 15n, marker: 'l' });
-		expect(value('x = 0B101L')).toEqual({ $path: 'literal.number.integer.big.binary', $value: 5n, marker: 'L' });
+	it('read each form as its value, and rebuild it in the standard spelling with the default long marker', () => {
+		expect(value('x = 0xFFL')).toEqual({ $path: 'literal.number.integer.big.hex', $value: 255n });
+		expect(value('x = 0o17l')).toEqual({ $path: 'literal.number.integer.big.octal', $value: 15n });
+		expect(value('x = 0B101L')).toEqual({ $path: 'literal.number.integer.big.binary', $value: 5n });
 		expect(value('x = 0xff')).toEqual({ $path: 'literal.number.integer.hex', $value: 255 });
-		expect(['x = 0xFFL', 'x = 0o17l', 'x = 0B101L', 'x = 0xff'].map(roundTrip)).toEqual(['x = 0xffL\n', 'x = 0o17l\n', 'x = 0b101L\n', 'x = 0xff\n']);
+		expect(['x = 0xFFL', 'x = 0o17l', 'x = 0B101L', 'x = 0xff'].map(roundTrip)).toEqual(['x = 0xffL\n', 'x = 0o17L\n', 'x = 0b101L\n', 'x = 0xff\n']);
 	});
 });

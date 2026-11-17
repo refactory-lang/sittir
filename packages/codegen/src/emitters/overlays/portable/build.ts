@@ -5,7 +5,6 @@ import type {
 	PortableCallShape,
 	PortableCondition,
 	PortableContainer,
-	PortableDecimalParts,
 	PortableDelimiterToken,
 	PortableMount,
 	PortableFlagStep,
@@ -59,7 +58,7 @@ import {
 import { buildFactoryMap } from '../../factory-map.ts';
 import { includesNonEmpty, patternDfa, type PatternDfa } from '../../../compiler/model/pattern-automaton.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
-import { interiorSlotGuards, kindNumberShape, numberSpelling, numericSlotShape, readsEveryInteger, slotPattern, spellsItsBase, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
+import { interiorSlotGuards, kindNumberShape, numberSpelling, numericSlotShape, readsEveryInteger, slotPattern, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -84,8 +83,6 @@ const ARM_SCALARS = ['integer', 'float', 'bigint'] as const satisfies readonly A
 
 const armScalar = (shape: NumberShape | undefined, value: VocabularyScalar | undefined): ArmScalar | undefined =>
 	shape === undefined || value === undefined ? undefined : value === 'bigint' ? 'bigint' : shape.base === 'float' ? 'float' : 'integer';
-
-const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'exponentSign'] as const satisfies readonly (keyof PortableDecimalParts)[];
 
 export interface PickDiagnostic {
 	readonly code: PickDiagnosticCode;
@@ -1095,21 +1092,16 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const scalar = armScalar(shape, valueScalar === undefined ? undefined : (kindValueScalars.get(kind) ?? valueScalar));
 			if (valueScalar !== undefined && shape === undefined) formDiagnostics.push({ code: 'portable-value-unshaped', path: entry.vocab, kinds: [kind] });
 			const contentSlot = lexedContentSlot(node);
-			const spellsAlone = (slot: AssembledNonterminal): boolean => {
-				const slotShape = numericSlotShape(slot);
-				return slotShape !== undefined && spellsItsBase(slotShape);
-			};
 			const config = builder !== undefined && builders.get(builder) === 'config';
-			const spelled = scalar === undefined || builder === undefined || config || contentSlot === undefined ? undefined : numberSpelling(node, contentSlot);
-			const numericSlots = scalar === undefined || builder === undefined ? [] : config ? node.slots.filter(spellsAlone) : (spelled?.slots ?? []);
+			const stamped = new Set((modelNode(model, node.kind)?.slots ?? []).flatMap((slot) => (slot.valueSource === true ? [slot.name] : [])));
+			const numericSlots = scalar === undefined || builder === undefined ? [] : node.slots.filter((slot) => stamped.has(slot.name));
 			const numericKeys = numericSlots.map((slot) => slot.propertyName);
 			const parts = config && numericKeys.length > 1;
-			const partless = parts ? numericKeys.filter((key) => !DECIMAL_PARTS.some((part) => part === key)) : [];
-			if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
-			const partSlots = parts ? DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []) : [];
-			const numeric: PortableBuildArm['numeric'] =
-				numericKeys.length === 0 ? undefined : parts ? Object.fromEntries(partSlots.map((slot) => [slot.propertyName, slot.propertyName])) : numericKeys;
-			const scientific = partSlots.some((slot) => slot.propertyName === 'exponent' && isRequired(slot));
+			const spelling = parts || numericKeys.length === 0 || config || contentSlot === undefined ? undefined : numberSpelling(node, contentSlot);
+			const spelled =
+				spelling === undefined || spelling.slots.every((slot) => numericSlots.includes(slot)) ? spelling : { shape: { ...spelling.shape, prefix: '' }, pattern: slotPattern(numericSlots[0]!) };
+			const numeric: PortableBuildArm['numeric'] = numericKeys.length === 0 ? undefined : parts ? Object.fromEntries(numericKeys.map((key) => [key, key])) : numericKeys;
+			const scientific = parts && numericSlots.some((slot) => slot.propertyName === 'exponent' && isRequired(slot));
 			const read =
 				numericKeys.length === 0
 					? { shape: wholeTextShape(kind, node), pattern: wholeTextPattern(node) }
@@ -1432,7 +1424,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const lacking = missingOf(arm).filter((name) => !empty.includes(name));
 			const own = tests.get(arm)!;
 			const presence = own.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
-			const required = [...new Set([...(presence === undefined ? [] : presence.required), ...arm.required, ...(textBuilt(builderShapes, arm.arm) ? [VALUE] : [])])].sort();
+			const required = [...new Set([...(presence === undefined ? [] : presence.required), ...arm.required, ...(textBuilt(builderShapes, arm.arm) || arm.scalar !== undefined ? [VALUE] : [])])].sort();
 			const kept = own.filter((test) => test !== presence);
 			const emptied = empty.length === 0 ? kept : [...kept, { empty }];
 			tests.set(arm, lacking.length === 0 && required.length === 0 ? emptied : [...emptied, { absent: lacking, required }]);

@@ -24,9 +24,9 @@ export const escape: V.BuildInput<TypeScriptMap, 'literal.string.escape'> = { $p
 
 type Scientific = V.BuildInput<TypeScriptMap, 'literal.number.float.scientific'>;
 
-export const scientificMarker: Scientific['marker'] = 'E';
-// @ts-expect-error a scientific float's marker is one of the grammar's marker tokens
-export const notScientificMarker: Scientific['marker'] = 'x';
-export const exponentSign: Scientific['exponentSign'] = '-';
-// @ts-expect-error an exponent sign is one of the grammar's sign tokens
-export const notExponentSign: Scientific['exponentSign'] = '~';
+export const scientificRead: V.Read<TypeScriptMap, 'literal.number.float.scientific'> = { $path: 'literal.number.float.scientific', $value: 100000 };
+export const scientificValue: Scientific = { $path: 'literal.number.float.scientific', $value: 100000 };
+// @ts-expect-error an exponent marker is an option, set on the built node, never in the structure
+export const scientificMarker: Scientific = { $path: 'literal.number.float.scientific', $value: 100000, marker: 'E' };
+// @ts-expect-error a radix prefix is an option, set on the built node, never in the structure
+export const binaryPrefix: V.BuildInput<TypeScriptMap, 'literal.number.integer.binary'> = { $path: 'literal.number.integer.binary', $value: 5, radixPrefix: '0B' };

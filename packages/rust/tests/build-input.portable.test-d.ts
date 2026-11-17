@@ -37,6 +37,10 @@ export const readFragment: BindingRead['fragment'] = 'ident';
 type Integer = V.BuildInput<RustMap, 'literal.number.integer'>;
 
 export const suffix: Integer['suffix'] = 'u8';
+export const integerValue: Integer = { $path: 'literal.number.integer', $value: 7, suffix: 'u8' };
+export const integerRead: V.Read<RustMap, 'literal.number.integer'> = { $path: 'literal.number.integer', $value: 7, suffix: 'u8' };
+// @ts-expect-error a number's digits are written from its $value, never given beside it
+export const integerDigits: Integer = { $path: 'literal.number.integer', $value: 7, content: '7' };
 // @ts-expect-error an integer suffix is one of the grammar's suffix tokens
 export const notSuffix: Integer['suffix'] = 'q8';
 // @ts-expect-error a read suffix is one of the grammar's suffix tokens

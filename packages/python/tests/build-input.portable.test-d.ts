@@ -79,10 +79,15 @@ export const yieldContent: V.BuildInput<PythonMap, 'expression.yield'>['content'
 export const formatSpec: NonNullable<V.Read<PythonMap, 'expression.interpolation.format'>['elements']>[number] = '>10';
 
 type Hex = V.BuildInput<PythonMap, 'literal.number.integer.hex'>;
+type Float = V.BuildInput<PythonMap, 'literal.number.float'>;
 
-export const hexPrefix: Hex['radixPrefix'] = '0X';
-// @ts-expect-error a hex integer's radix prefix is one of the grammar's prefix tokens
-export const notHexPrefix: Hex['radixPrefix'] = '0b';
-export const longMarker: V.Read<PythonMap, 'literal.number.integer.big'>['marker'] = 'L';
-// @ts-expect-error a long integer's marker is one of the grammar's marker tokens
-export const notLongMarker: V.Read<PythonMap, 'literal.number.integer.big'>['marker'] = 'n';
+export const hexRead: V.Read<PythonMap, 'literal.number.integer.hex'> = { $path: 'literal.number.integer.hex', $value: 31 };
+export const hexValue: Hex = { $path: 'literal.number.integer.hex', $value: 31 };
+// @ts-expect-error a radix prefix is an option, set on the built node, never in the structure
+export const hexPrefix: Hex = { $path: 'literal.number.integer.hex', $value: 31, radixPrefix: '0X' };
+export const floatValue: Float = { $path: 'literal.number.float', $value: 1.5 };
+// @ts-expect-error a number's digits are written from its $value, never given beside it
+export const floatDigits: Float = { $path: 'literal.number.float', $value: 1.5, integer: '1' };
+export const longValue: V.BuildInput<PythonMap, 'literal.number.integer.big'> = { $path: 'literal.number.integer.big', $value: 10n };
+// @ts-expect-error a long integer's marker is an option, set on the built node, never in the structure
+export const longMarker: V.BuildInput<PythonMap, 'literal.number.integer.big'> = { $path: 'literal.number.integer.big', $value: 10n, marker: 'L' };

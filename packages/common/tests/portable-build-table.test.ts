@@ -57,7 +57,7 @@ describe('the portable build table', () => {
 		const seatOf = (path: string, name: string) => armsOf('python', path).flatMap((arm) => arm.members).find((member) => member.name === name)!.seats[0]!;
 		expect(seatOf('pattern.as', 'pattern')).toMatchObject({ kinds: [] });
 		expect(seatOf('pattern.as', 'pattern').text).toBeUndefined();
-		expect(seatOf('literal.number.float', 'marker').text).toBe(true);
+		expect(seatOf('literal.number.float', 'imaginary').text).toBe(true);
 		expect(armsOf('python', 'literal.string.escape').find((arm) => arm.content !== undefined)!.content!.seats[0]!.text).toBe(true);
 	});
 
@@ -310,11 +310,11 @@ describe('the portable build table', () => {
 		expect(tables.typescript.table.values?.['literal.number']).toBeUndefined();
 	});
 
-	it("tests a boolean arm by the value its binding declares, and names the slots that spell a number: a config builder's, or a radix prefix and its digits", () => {
+	it("tests a boolean arm by the value its binding declares, and names the slots a number's value is written from: a config builder's parts, or the digits, never an option", () => {
 		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
 		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toEqual(['content']);
-		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' });
-		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toEqual(['radixPrefix', 'content']);
+		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', exponentSign: 'exponentSign' });
+		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toEqual(['content']);
 	});
 
 	it("spells a number's decimal parts through its kind's slots, whatever its members are named, and refuses a part it has no slot for", async () => {

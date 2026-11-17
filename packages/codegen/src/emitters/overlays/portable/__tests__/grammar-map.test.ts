@@ -119,7 +119,7 @@ describe('emitGrammarMap, python', () => {
 	});
 
 	it('overrides a member the grammar never reads at a path as never', () => {
-		expect(armsAt(map, 'literal.number.float.scientific', 'fraction')).toEqual(['never']);
+		expect(armsAt(map, 'expression.interpolation.conversion', 'formatSpecifier')).toEqual(['never']);
 	});
 
 	it('reads a capture by the kind its pattern pins, not by the whole slot it sits in', () => {
@@ -129,7 +129,7 @@ describe('emitGrammarMap, python', () => {
 	});
 
 	it("reads a lexed pattern's text group as text", () => {
-		expect(armsAt(map, 'literal.number.float', 'fraction')).toContain('string');
+		expect(armsAt(map, 'literal.number.float', 'imaginary')).toContain('string');
 	});
 
 	it('builds a path whose unnamed slot holds its text from its $value, with no member for that slot', () => {

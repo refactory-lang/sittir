@@ -5,7 +5,7 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, numberMembers, setsOn, textBuilt, tokenText } from './facts.ts';
+import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
@@ -333,7 +333,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			return read === undefined ? [] : [{ arm, value: read }];
 		})[0];
 		if (scalar === undefined && arms.some((arm) => arm.scalar !== undefined)) return kept(node, { reason: 'scalar' }, carried);
-		const beside = scalar === undefined ? [] : scalar.arm.members.filter((member) => !numberMembers(scalar.arm).includes(member));
+		const beside = scalar === undefined ? [] : scalar.arm.members;
 		if (scalar !== undefined && !beside.some((member) => present(memberValue(node, member)))) return { $path: path, $value: scalar.value };
 		if (scalar === undefined) {
 			const content = arms.find((arm) => arm.content !== undefined)?.content;

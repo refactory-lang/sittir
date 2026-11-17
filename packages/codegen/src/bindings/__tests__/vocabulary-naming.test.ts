@@ -10,19 +10,10 @@ const misnamed = [...vocabulary.kinds]
 	})
 	.sort();
 
-const contentTextValues = [
-	'literal.character.content',
-	'literal.number.integer.big.binary.content',
-	'literal.number.integer.big.hex.content',
-	'literal.number.integer.big.octal.content',
-	'literal.number.integer.binary.content',
-	'literal.number.integer.content',
-	'literal.number.integer.hex.content',
-	'literal.number.integer.octal.content'
-];
+const contentTextValues = ['literal.character.content'];
 
 describe('a vocabulary member name', () => {
-	it('never repeats its kind, and is content only where a character or integer literal names its text', () => {
+	it('never repeats its kind, and is content only where a character literal names its text', () => {
 		expect(misnamed).toEqual(contentTextValues);
 	});
 });

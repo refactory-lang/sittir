@@ -76,12 +76,6 @@ export const containerMembers = (table: PortableBuildTable): ReadonlyMap<number,
 
 export const isNumberSlots = (numeric: PortableBuildArm['numeric']): numeric is readonly string[] => Array.isArray(numeric);
 
-export const numericSlots = (arm: PortableBuildArm): readonly string[] =>
-	arm.numeric === undefined ? [] : isNumberSlots(arm.numeric) ? arm.numeric : Object.values(arm.numeric);
-
-export const numberMembers = (arm: PortableBuildArm): readonly PortableMemberStep[] =>
-	arm.numeric === undefined ? arm.members : numericSlots(arm).flatMap((key) => arm.members.filter((member) => member.steps.length === 1 && member.steps[0]!.key === key));
-
 const tokenTexts = new WeakMap<PortableSeat, ReadonlyMap<number, string>>();
 
 export function tokenText(kind: number, seats: readonly PortableSeat[] | undefined): string | undefined {

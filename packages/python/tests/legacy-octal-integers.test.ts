@@ -37,23 +37,26 @@ describe('legacy octal integers', () => {
 		expect(order.indexOf('integer_legacy_octal_long')).toBeLessThan(order.indexOf('integer_decimal_long'));
 	});
 
-	it('take a leading zero followed by octal digits with a nonzero one; every other leading zero stays decimal', () => {
-		const source = 'a = 0377\nb = 0377L\nc = 007\nd = 0\ne = 00\nf = 0L\ng = 0389\nh = 08\ni = 0377j\n';
+	it('take a leading zero followed by octal digits with a nonzero one, apart from the prefixed octal kinds; every other leading zero stays decimal', () => {
+		const source = 'a = 0377\nb = 0377L\nc = 007\nd = 0\ne = 00\nf = 0L\ng = 0389\nh = 08\ni = 0377j\nj = 0o17\nk = 0o17L\n';
 		const root = native.parseAndRead(source, { depth: Infinity }).root;
 		expect(kindsOf(source, py.kinds.IntegerLegacyOctalPlain, root)).toEqual(['0377', '007']);
 		expect(kindsOf(source, py.kinds.IntegerLegacyOctalLong, root)).toEqual(['0377L']);
+		expect(kindsOf(source, py.kinds.IntegerOctalPlain, root)).toEqual(['0o17']);
+		expect(kindsOf(source, py.kinds.IntegerOctalLong, root)).toEqual(['0o17L']);
 		expect(kindsOf(source, py.kinds.IntegerDecimalPlain, root)).toEqual(['0', '00', '0389', '08']);
 		expect(kindsOf(source, py.kinds.IntegerDecimalLong, root)).toEqual(['0L']);
 		expect(kindsOf(source, py.kinds.IntegerDecimalImaginary, root)).toEqual(['0377j']);
 	});
 
-	it('read as the octal value, and rebuild in the standard spelling', () => {
+	it('read as the octal value, and rebuild in the standard spelling with the default long marker', () => {
 		expect(value('x = 0377')).toEqual({ $path: 'literal.number.integer.octal', $value: 255 });
-		expect(value('x = 0377L')).toEqual({ $path: 'literal.number.integer.big.octal', $value: 255n, marker: 'L' });
+		expect(value('x = 0377L')).toEqual({ $path: 'literal.number.integer.big.octal', $value: 255n });
+		expect(value('x = 0377l')).toEqual({ $path: 'literal.number.integer.big.octal', $value: 255n });
 		expect(value('x = 0o17')).toEqual({ $path: 'literal.number.integer.octal', $value: 15 });
 		expect(rendered(read('x = 0377\n'))).toBe('x = 0o377\n');
 		expect(rendered(read('x = 0377L\n'))).toBe('x = 0o377L\n');
-		expect(rendered(read('x = 0377l\n'))).toBe('x = 0o377l\n');
+		expect(rendered(read('x = 0377l\n'))).toBe('x = 0o377L\n');
 	});
 
 	it('build a value at either octal path through the prefixed form, which spells every value', () => {

@@ -19,6 +19,7 @@ import {
 	type GrammarBindings,
 	type MemberRoute,
 	type ModelNode,
+	type ModelSlot,
 	type SlotModel,
 	deriveGrammarBindings,
 	loadBindingsHash,
@@ -304,8 +305,8 @@ describe('deriveGrammarBindings', () => {
 				['call', named(...call)],
 				['let_item', named(...letItem)]
 			]);
-		const derive = (facts: BindingFacts, routedMembers: ReadonlyMap<string, readonly MemberRoute[]>) =>
-			bind({ file: FILE, facts, base, vocabMembers: vocab, routes: { members: routedMembers, vocabOf: new Map([['call', 'expression.call'], ['let_item', 'expression.call']]) }, model: NO_MODEL });
+		const derive = (facts: BindingFacts, routedMembers: ReadonlyMap<string, readonly MemberRoute[]>, model: SlotModel = NO_MODEL) =>
+			bind({ file: FILE, facts, base, vocabMembers: vocab, routes: { members: routedMembers, vocabOf: new Map([['call', 'expression.call'], ['let_item', 'expression.call']]) }, model });
 
 		it("aliases both to the path's name when they supply the same members, as a form restricted to a context does", () => {
 			const { report } = derive(sharing([]), routed(['parameters', 'body'], ['body', 'parameters']));
@@ -317,6 +318,25 @@ describe('deriveGrammarBindings', () => {
 			expect(report.aliases).toEqual({});
 			expect(bindings.renames).toEqual({ call: 'call_expression' });
 			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
+		});
+
+		it('keeps the further kind apart when only an option differs, though no route reads it', () => {
+			const slot = (propertyName: string, extra: Partial<ModelSlot> = {}): ModelSlot => ({ name: propertyName, propertyName, required: true, multiple: false, storage: 'verbatim', kinds: [], terminals: [], ...extra });
+			const option = (propertyName: string) => slot(propertyName, { registered: true });
+			const digits = slot('content', { valueSource: true });
+			const model: SlotModel = new Map([
+				['call', node('call', { slots: [option('radix_prefix'), digits] })],
+				['let_item', node('let_item', { slots: [digits] })]
+			]);
+			const { bindings, report } = derive(sharing([]), routed([], []), model);
+			expect(report.aliases).toEqual({});
+			expect(bindings.renames).toEqual({ call: 'call_expression' });
+			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
+			const sameOptions: SlotModel = new Map([
+				['call', node('call', { slots: [option('radix_prefix'), digits] })],
+				['let_item', node('let_item', { slots: [option('radix_prefix')] })]
+			]);
+			expect(derive(sharing([]), routed([], []), sameOptions).report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
 		});
 
 		it('keeps a terminal and a nonterminal apart even when both supply no portable members', () => {

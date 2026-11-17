@@ -29603,7 +29603,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer': {
-			readonly content: string;
 			readonly suffix:
 				| 'f32'
 				| 'f64'
@@ -29619,10 +29618,9 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.binary': {
-			readonly content: string;
 			readonly suffix:
 				| 'f32'
 				| 'f64'
@@ -29638,10 +29636,9 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.hex': {
-			readonly content: string;
 			readonly suffix:
 				| 'f32'
 				| 'f64'
@@ -29657,10 +29654,9 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.octal': {
-			readonly content: string;
 			readonly suffix:
 				| 'f32'
 				| 'f64'
@@ -29676,7 +29672,7 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:

@@ -10073,19 +10073,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_binary",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_bigint_decimal": {
       "vocab": "literal.number.integer.big",
@@ -10105,19 +10093,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_decimal",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_bigint_hex": {
       "vocab": "literal.number.integer.big.hex",
@@ -10137,19 +10113,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_hex",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_bigint_octal": {
       "vocab": "literal.number.integer.big.octal",
@@ -10169,19 +10133,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_octal",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_binary": {
       "vocab": "literal.number.integer.binary",
@@ -10201,30 +10153,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "number_binary",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_binary",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_decimal": {
       "vocab": "literal.number.integer",
@@ -10264,52 +10193,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "fraction",
-          "route": "slot",
-          "slot": "fraction",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "fraction"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "exponent"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_float_point": {
       "vocab": "literal.number.float",
@@ -10329,63 +10213,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "integer",
-          "route": "slot",
-          "slot": "integer",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "integer"
-            }
-          ]
-        },
-        {
-          "name": "fraction",
-          "route": "slot",
-          "slot": "fraction",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "fraction"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "exponent"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_float_scientific": {
       "vocab": "literal.number.float.scientific",
@@ -10405,52 +10233,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "integer",
-          "route": "slot",
-          "slot": "integer",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "integer"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "exponent"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_hex": {
       "vocab": "literal.number.integer.hex",
@@ -10470,30 +10253,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "number_hex",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_hex",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_keyword": {
       "vocab": "type.primitive",
@@ -10533,19 +10293,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_legacy_octal",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "number_octal": {
       "vocab": "literal.number.integer.octal",
@@ -10565,30 +10313,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "number_octal",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_octal",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "object": {
       "vocab": "expression.collection.object",

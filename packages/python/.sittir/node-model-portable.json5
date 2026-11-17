@@ -3783,61 +3783,6 @@
       ],
       "members": [
         {
-          "name": "integer",
-          "route": "slot",
-          "slot": "integer",
-          "path": [
-            {
-              "owner": "float_leading_point",
-              "slot": "integer"
-            }
-          ]
-        },
-        {
-          "name": "fraction",
-          "route": "slot",
-          "slot": "fraction",
-          "path": [
-            {
-              "owner": "float_leading_point",
-              "slot": "fraction"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "float_leading_point",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "float_leading_point",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "float_leading_point",
-              "slot": "exponent"
-            }
-          ]
-        },
-        {
           "name": "imaginary",
           "route": "slot",
           "slot": "imaginary",
@@ -3863,61 +3808,6 @@
       ],
       "members": [
         {
-          "name": "integer",
-          "route": "slot",
-          "slot": "integer",
-          "path": [
-            {
-              "owner": "float_point",
-              "slot": "integer"
-            }
-          ]
-        },
-        {
-          "name": "fraction",
-          "route": "slot",
-          "slot": "fraction",
-          "path": [
-            {
-              "owner": "float_point",
-              "slot": "fraction"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "float_point",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "float_point",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "float_point",
-              "slot": "exponent"
-            }
-          ]
-        },
-        {
           "name": "imaginary",
           "route": "slot",
           "slot": "imaginary",
@@ -3942,50 +3832,6 @@
         }
       ],
       "members": [
-        {
-          "name": "integer",
-          "route": "slot",
-          "slot": "integer",
-          "path": [
-            {
-              "owner": "float_scientific",
-              "slot": "integer"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "float_scientific",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "float_scientific",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "float_scientific",
-              "slot": "exponent"
-            }
-          ]
-        },
         {
           "name": "imaginary",
           "route": "slot",
@@ -4817,41 +4663,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "integer_binary_long",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_binary_long",
-              "slot": "content"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "integer_binary_long",
-              "slot": "marker"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_binary_plain": {
       "vocab": "literal.number.integer.binary",
@@ -4864,30 +4676,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "integer_binary_plain",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_binary_plain",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_decimal_imaginary": {
       "vocab": "literal.number.integer.imaginary",
@@ -4913,30 +4702,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_decimal_long",
-              "slot": "content"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "integer_decimal_long",
-              "slot": "marker"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_decimal_plain": {
       "vocab": "literal.number.integer",
@@ -4962,41 +4728,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "integer_hex_long",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_hex_long",
-              "slot": "content"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "integer_hex_long",
-              "slot": "marker"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_hex_plain": {
       "vocab": "literal.number.integer.hex",
@@ -5009,30 +4741,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "integer_hex_plain",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_hex_plain",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_legacy_octal_long": {
       "vocab": "literal.number.integer.big.octal",
@@ -5045,30 +4754,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_legacy_octal_long",
-              "slot": "content"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "integer_legacy_octal_long",
-              "slot": "marker"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_legacy_octal_plain": {
       "vocab": "literal.number.integer.octal",
@@ -5081,19 +4767,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_legacy_octal_plain",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_octal_long": {
       "vocab": "literal.number.integer.big.octal",
@@ -5106,41 +4780,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "integer_octal_long",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_octal_long",
-              "slot": "content"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "integer_octal_long",
-              "slot": "marker"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "integer_octal_plain": {
       "vocab": "literal.number.integer.octal",
@@ -5153,30 +4793,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "integer_octal_plain",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "integer_octal_plain",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "interpolation": {
       "vocab": "expression.interpolation",

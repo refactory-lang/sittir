@@ -10918,120 +10918,10 @@ export const build: PortableBuildTable = {
 					numeric: {
 						integer: 'integer',
 						fraction: 'fraction',
-						exponent: 'exponent',
-						marker: 'marker',
-						exponentSign: 'exponentSign'
+						exponentSign: 'exponentSign',
+						exponent: 'exponent'
 					},
 					members: [
-						{
-							name: 'integer',
-							steps: [
-								{
-									key: 'integer'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [101, 'integer'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'fraction',
-							steps: [
-								{
-									key: 'fraction',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [101, 'fraction'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [101, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:e|E)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponentSign',
-							steps: [
-								{
-									key: 'exponentSign',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [101, 'exponentSign'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:-|\\+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponent',
-							steps: [
-								{
-									key: 'exponent',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [101, 'exponent'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'imaginary',
 							steps: [
@@ -11061,7 +10951,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['integer']
+							required: ['$value']
 						}
 					]
 				}
@@ -11079,120 +10969,10 @@ export const build: PortableBuildTable = {
 					numeric: {
 						integer: 'integer',
 						fraction: 'fraction',
-						exponent: 'exponent',
-						marker: 'marker',
-						exponentSign: 'exponentSign'
+						exponentSign: 'exponentSign',
+						exponent: 'exponent'
 					},
 					members: [
-						{
-							name: 'integer',
-							steps: [
-								{
-									key: 'integer',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [102, 'integer'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'fraction',
-							steps: [
-								{
-									key: 'fraction'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [102, 'fraction'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [102, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:e|E)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponentSign',
-							steps: [
-								{
-									key: 'exponentSign',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [102, 'exponentSign'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:-|\\+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponent',
-							steps: [
-								{
-									key: 'exponent',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [102, 'exponent'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'imaginary',
 							steps: [
@@ -11222,7 +11002,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['fraction']
+							required: ['$value']
 						}
 					]
 				}
@@ -11239,97 +11019,11 @@ export const build: PortableBuildTable = {
 					builder: 'floatScientific',
 					numeric: {
 						integer: 'integer',
-						exponent: 'exponent',
-						marker: 'marker',
-						exponentSign: 'exponentSign'
+						exponentSign: 'exponentSign',
+						exponent: 'exponent'
 					},
 					scientific: true,
 					members: [
-						{
-							name: 'integer',
-							steps: [
-								{
-									key: 'integer'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [103, 'integer'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [103, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:e|E)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponentSign',
-							steps: [
-								{
-									key: 'exponentSign',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [103, 'exponentSign'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:-|\\+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponent',
-							steps: [
-								{
-									key: 'exponent'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [103, 'exponent'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'imaginary',
 							steps: [
@@ -11359,7 +11053,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['exponent', 'integer', 'marker']
+							required: ['$value']
 						}
 					]
 				}
@@ -11405,57 +11099,14 @@ export const build: PortableBuildTable = {
 						base: 10,
 						affix: ''
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [98, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-9]+_?))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [98, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:L|l)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
-							required: ['content', 'marker']
+							required: ['$value']
 						}
 					]
 				}
@@ -11470,83 +11121,19 @@ export const build: PortableBuildTable = {
 				{
 					kind: 94,
 					builder: 'integerBinaryLong',
-					numeric: ['radixPrefix', 'content'],
+					numeric: ['content'],
 					digits: {
 						base: 2,
-						affix: '0b'
+						affix: ''
 					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [94, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0b|0B)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [94, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:_?[0-1]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [94, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:L|l)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
-							required: ['content', 'marker', 'radixPrefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -11561,83 +11148,19 @@ export const build: PortableBuildTable = {
 				{
 					kind: 90,
 					builder: 'integerHexLong',
-					numeric: ['radixPrefix', 'content'],
+					numeric: ['content'],
 					digits: {
 						base: 16,
-						affix: '0x'
+						affix: ''
 					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [90, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0x|0X)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [90, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:_?[A-Fa-f0-9]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [90, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:L|l)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
-							required: ['content', 'marker', 'radixPrefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -11650,6 +11173,25 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
+					kind: 92,
+					builder: 'integerOctalLong',
+					numeric: ['content'],
+					digits: {
+						base: 8,
+						affix: ''
+					},
+					members: [],
+					presets: [],
+					flags: {},
+					scalar: 'bigint',
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
 					kind: 96,
 					builder: 'integerLegacyOctalLong',
 					numeric: ['content'],
@@ -11657,140 +11199,14 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: ''
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [96, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0*[1-7][0-7]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [96, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:L|l)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					scalar: 'bigint',
-					when: [
-						{
-							absent: ['radixPrefix'],
-							required: ['content', 'marker']
-						}
-					]
-				},
-				{
-					kind: 92,
-					builder: 'integerOctalLong',
-					numeric: ['radixPrefix', 'content'],
-					digits: {
-						base: 8,
-						affix: '0o'
-					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [92, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0o|0O)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [92, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:_?[0-7]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [92, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:L|l)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
-							required: ['content', 'marker', 'radixPrefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -11805,62 +11221,19 @@ export const build: PortableBuildTable = {
 				{
 					kind: 95,
 					builder: 'integerBinaryPlain',
-					numeric: ['radixPrefix', 'content'],
+					numeric: ['content'],
 					digits: {
 						base: 2,
-						affix: '0b'
+						affix: ''
 					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [95, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0b|0B)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [95, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:_?[0-1]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
 					when: [
 						{
 							absent: [],
-							required: ['content', 'radixPrefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -11875,62 +11248,19 @@ export const build: PortableBuildTable = {
 				{
 					kind: 91,
 					builder: 'integerHexPlain',
-					numeric: ['radixPrefix', 'content'],
+					numeric: ['content'],
 					digits: {
 						base: 16,
-						affix: '0x'
+						affix: ''
 					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [91, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0x|0X)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [91, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:_?[A-Fa-f0-9]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
 					when: [
 						{
 							absent: [],
-							required: ['content', 'radixPrefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -11961,6 +11291,25 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
+					kind: 93,
+					builder: 'integerOctalPlain',
+					numeric: ['content'],
+					digits: {
+						base: 8,
+						affix: ''
+					},
+					members: [],
+					presets: [],
+					flags: {},
+					scalar: 'integer',
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
 					kind: 97,
 					builder: 'integerLegacyOctalPlain',
 					numeric: ['content'],
@@ -11968,98 +11317,14 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: ''
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [97, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0*[1-7][0-7]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					scalar: 'integer',
-					when: [
-						{
-							absent: ['radixPrefix'],
-							required: ['content']
-						}
-					]
-				},
-				{
-					kind: 93,
-					builder: 'integerOctalPlain',
-					numeric: ['radixPrefix', 'content'],
-					digits: {
-						base: 8,
-						affix: '0o'
-					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [93, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0o|0O)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [93, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:_?[0-7]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
 					when: [
 						{
 							absent: [],
-							required: ['content', 'radixPrefix']
+							required: ['$value']
 						}
 					]
 				}

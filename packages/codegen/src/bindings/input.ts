@@ -36,6 +36,8 @@ export interface NodeModelSlot {
 	readonly required?: boolean;
 	readonly multiple?: boolean;
 	readonly storage?: string;
+	readonly registered?: true;
+	readonly valueSource?: true;
 	readonly values?: readonly NodeModelValue[];
 }
 
@@ -158,6 +160,8 @@ export function slotModelOf(record: NodeModelRecord, grammar: Pick<EvaluatedGram
 				kinds: slotKindsOf(s),
 				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : [])),
 				...((s.values ?? []).length > 0 && s.values!.every((v) => v.kind === 'terminal' && v.value !== undefined) ? { fixedTokens: true as const } : {}),
+				...(s.registered === true ? { registered: true as const } : {}),
+				...(s.valueSource === true ? { valueSource: true as const } : {}),
 				...mountsOf(s),
 				...seatShapesOf(s)
 			})),

@@ -20,7 +20,6 @@ describe('a member typed by its token texts reads its token and builds it back, 
 		['rust', 'const X: u8 = 1u8;\n', { $path: 'literal.number.integer', suffix: 'u8' }],
 		['rust', 'const X: u8 = 0x1Fu8;\n', { $path: 'literal.number.integer.hex', suffix: 'u8' }],
 		['rust', 'macro_rules! m { ($x:expr) => {}; }\n', { $path: 'element.macro.token_binding', fragment: 'expr' }],
-		['python', 'x = 10L\n', { $path: 'literal.number.integer.big', marker: 'L' }],
 		['python', 'x = 0X1F\n', { $path: 'literal.number.integer.hex', $value: 31 }],
 		['typescript', 'x = 1E5;\n', { $path: 'literal.number.float.scientific', $value: 100000 }],
 		['typescript', 'x = 0B101;\n', { $path: 'literal.number.integer.binary', $value: 5 }]

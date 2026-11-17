@@ -151,6 +151,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 - A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
+- A number path is its path, its `$value` and its other slots. Two kinds of slot leave it: the slots its value is written from (`valueSource` on the model), and its options, the slots a preference binds (the model's `registered`). The low-level builder writes an option from its preference default. Python loses 32 fields, rust 4 and typescript 24. Two kinds one path claims stay apart when their options differ.
 - Remaining:
   - decision 5;
   - decision 7's bare numbers, by the outermost taker (ruled 2026-11-17); in a member with a number taker a number is a number, and the type stops admitting a fixed word's bare kind id there (ruled 2026-11-17). Measured: no member has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 members take a number);
@@ -242,3 +243,7 @@ What the census checked, so the task needs no new probe:
 - [ ] **Step 2: Add the emit-diagnostic ratchet,** per grammar, at Task 4's counts. An MVP path with any diagnostic fails generation once the user names the sets.
 - [ ] **Step 3: Run every gate:** the ratchets, validate history against base, the suite, the workspace type-check, and the times against the baseline.
 - [ ] **Step 4: Open the PR** with `Owner: sittir-design` on the first line, the API rows (every public export added, changed or removed, before → after), the counts and the times. Brainstorm reviews, and the merge needs the user's word.
+
+## Follow-ups
+
+- **Aliasing a lift that an `options:` key addresses fails enrich.** When the grammar bindings alias an enrich lift and the grammar's `options:` block addresses that lift by name, evaluating the layer throws `resolveLiftNames: '<lift>' carries a variant name but is not a rule enrich minted`. No grammar hits this today, because the bindings keep the two kinds apart. The case: python's `integer_legacy_octal_long` has `{ 'marker:': preference('L') }`. Derive python's bindings with `sameShapeAs` not counting options, and the bindings alias it into `octal_big_integer_number_literal` (`integer_legacy_octal: { "-2": alias(…), "-1": alias(…) }`). `bindings-inventory --write` then fails evaluating the layer it wrote. The fix belongs in the enrich/wire layer: an alias at a lift should carry the lift's options with it, or refuse with the options key named.

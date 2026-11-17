@@ -951,6 +951,7 @@ function membersOf(
 	};
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
 	const textual = !identifier && textValued(input.vocabulary, entry.vocab);
+	const scalarValued = input.vocabulary.kinds.has(entry.vocab) && input.vocabulary.members(entry.vocab).get(VALUE)?.scalar !== undefined;
 	const shaping = input.bindings.members.filter((m) => routesHere(m) && m.route !== 'rename' && m.route !== 'dropped');
 	const deep = shaping.filter((m) => attaches(m, inherited));
 	const paths = new Map(shaping.flatMap((m) => (isDeep(m) ? [[m, deepRoutes(m)] as const] : [])));
@@ -1007,6 +1008,10 @@ function membersOf(
 		if (([...flagSlots.values()].includes(slot) && !slotNames.has(slot.name)) || slotNames.get(slot.name) === null || guaranteed.absent(pathTo(slot))) continue;
 		if (isLayout(input, holder, slot)) {
 			unrouted(slot, 'is layout');
+			continue;
+		}
+		if (scalarValued && (slot.valueSource === true || slot.registered === true)) {
+			unrouted(slot, 'is an option, or a slot the scalar its $value holds is written from');
 			continue;
 		}
 		if (identifier && holdsOnlyText(slot)) {
