@@ -1,8 +1,15 @@
 # A parsed read stores no row for a fixed token or a unit: stage one
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Execution:** the engine-api session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Status:** written 2026-11-17. Not started. It starts when the hydrate-at-parse branch has merged to master; the branch is cut from that merge.
+
+How this line is kept:
+- Each finished task is ticked, and this line names the task in progress.
+- A stop condition replaces this line with the stop and its cases until it is ruled. The stop conditions are:
+  - Task 1: a non-zero `delimiter_disagreements` or `named_fixed_query_units`, reported to brainstorm with every case, for the maintainer to rule on;
+  - Task 8: a placement change that is not beside a named fixed token;
+  - Task 9: a failed gate.
 
 **Goal:** A parsed read writes no run row for a fixed token or a unit, and every reader answers as it does today on every fixture.
 
@@ -98,7 +105,8 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   Run `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/snapshot-fixed-tokens.test.ts`. Expected: PASS. A FAIL is not fixed here: it goes to brainstorm as the `$snapshot` row.
 - [ ] **Step 5: Record and report.**
   - Add the counts to the README under "Stage-one counts".
-  - Send brainstorm the five tallies and the two checks. A non-zero `delimiter_disagreements` or `named_fixed_query_units` stops the plan for a ruling.
+  - Send brainstorm the five tallies and the two checks.
+  - A non-zero `delimiter_disagreements` or `named_fixed_query_units` stops the plan. Report it to brainstorm with every case (source, node kind, span and both answers) and set the Status line to the stop; brainstorm takes it to the maintainer.
   - Commit: `test(parity): keep the read census and count what stage one stamps`.
 
 ### Task 2: Body facts generated per kind
@@ -302,14 +310,20 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - Rerun the census.
 
   Expected: read words at or below the spec's "stage one" column on every corpus, less the choice-list slot entries Task 1 counted.
-- [ ] **Step 5: Run the gates.**
-  - `pnpm run validate:native` then `pnpm run validate:history`: unchanged per row, three grammars compared.
-  - `cargo test --workspace --no-default-features`.
-  - `cargo clippy` in the three configurations.
-  - The `packages/*` suites.
-  - `pnpm type-check` and `pnpm run lint`.
-  - The lock-free census at or under its ceilings.
-  - CI's paired parse and render timings against master's arena, per grammar.
+- [ ] **Step 5: Run the gates.** These are the spec's § Gates, with each result reported as numbers.
+  - **The three-way verification** (working standard 5):
+    1. targeted probes of the cases this stage changes, wrap and render layers: Tasks 4–8's named tests, rerun on the final tree;
+    2. `pnpm run validate:native`, then `pnpm run validate:history` against master's recorded baseline. Every row of all three grammars is compared, and every row must be unchanged;
+    3. the full unit suites, with any new failure isolated by reapplying the stage's diff in reverse and rebuilding before it is accepted as already present:
+       - `cargo test --workspace --no-default-features`;
+       - `cargo clippy` in the three configurations;
+       - the `packages/*` vitest suites, `packages/common` from the root config;
+       - `pnpm type-check`;
+       - `pnpm run lint`.
+  - **Read words:** `CENSUS` rerun on every census corpus. Report each corpus's read words as a share of today, beside the spec's "stage one" column, with each row's lowest in bold.
+  - **Ratchets:** the `deep_read_words` pins from Step 4, and the lock-free census at or under its ceilings.
+  - **Timings:** CI's paired run against master's arena, parse and render per grammar. Report the ratio per grammar and phase, with each row's winner in bold.
+  - Any failure stops the task and is reported with its numbers; nothing is reverted to pass a gate.
 - [ ] **Step 6: Commit and mark the plan.**
   - Commit: `feat(core): a parsed read stores no row for a fixed token or a unit`.
   - Tick this plan's tasks and set its Status line.
