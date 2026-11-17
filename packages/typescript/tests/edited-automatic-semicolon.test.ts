@@ -25,10 +25,10 @@ describe.each(Object.keys(engines) as (keyof typeof engines)[])('an automatic se
 	});
 
 	it.each([
-		['if (c) { x() } else y()\n', 'c'],
-		['f(() => { x() })\n', 'x']
-	])('%j, edited at %j, keeps the source gap after the automatic semicolon', (source, text) => {
-		expect(editedRender(engines[storage], source, text)).toBe(source);
+		['if (c) { x() } else y()\n', 'c', 'if (c) { x() } else y()\n'],
+		['f(() => { x() })\n', 'x', 'f(() => {\n  x()\n})\n']
+	])('%j, edited at %j, takes the options\' gap after the automatic semicolon', (source, text, expected) => {
+		expect(editedRender(engines[storage], source, text)).toBe(expected);
 	});
 
 	it.each(['const x = 1', 'x()', 'if (c) { x() }'])('%j, which ends at its automatic semicolon, renders untouched on source', (source) => {

@@ -122,7 +122,7 @@ fn the_trivia_table_of_blocks_opened_on_one_indented_line_reads_its_indentation_
 }
 
 #[test]
-fn the_record_of_a_chain_of_blocks_tallies_the_same_text_at_each_level() {
+fn a_snapshot_of_a_chain_of_blocks_with_no_comment_tallies_no_record_text() {
     let [one, two, four] = [100, 200, 400].map(|levels| {
         on_deep_stack(move || {
             let tree = parsed_rust(&block_chain(levels));
@@ -130,8 +130,7 @@ fn the_record_of_a_chain_of_blocks_tallies_the_same_text_at_each_level() {
             tree.records_scanned()
         })
     });
-    assert_ne!(one, 0, "the snapshot renders a record");
-    assert_eq!(four - two, 2 * (two - one), "bytes tallied at 100, 200 and 400 levels: {one}, {two}, {four}");
+    assert_eq!([one, two, four], [0, 0, 0], "bytes tallied at 100, 200 and 400 levels: the options decide every gap away from a comment");
 }
 
 #[test]
@@ -172,13 +171,13 @@ fn the_depth_moves_of_every_node_of_a_chain_walk_its_nodes_once() {
 }
 
 #[test]
-fn a_snapshot_renders_one_record_however_deep_its_tree() {
+fn a_snapshot_of_a_tree_with_no_comment_renders_no_record_however_deep_it_is() {
     for levels in [100, 200, 400] {
         let records = on_deep_stack(move || {
             let tree = parsed_rust(&tuple_chain(levels));
             tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
             tree.records_rendered()
         });
-        assert_eq!(records, 1, "{levels} levels");
+        assert_eq!(records, 0, "{levels} levels");
     }
 }

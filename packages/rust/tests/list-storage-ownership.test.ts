@@ -23,7 +23,7 @@ describe('a built node owns its stored lists', () => {
 		const list = items(engines[mode]);
 		const node = build(engines[mode], list);
 		list.pop();
-		expect(node.$render()).toBe('#[a] #[b] x');
+		expect(node.$render()).toBe('#[a]\n#[b] x');
 	});
 
 	it("'runtime' refuses an empty list built from a non-empty one", () => {

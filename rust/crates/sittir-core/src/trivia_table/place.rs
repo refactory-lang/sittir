@@ -1253,11 +1253,12 @@ impl<'t> Placer<'t, '_, '_> {
                             let pushed = Pushed { gap, step, at, until };
                             let carries = self.carries(pushed);
                             let spelled = self.spelled(gap.0, &plan, at, until);
+                            let beside = self.beside(&plan, at, until);
                             let from = self.text_from(pushed);
                             let id = RunId(self.state.runs);
                             self.state.runs += 1;
                             let owner = gap.0;
-                            self.state.published += self.published.runs.set(id.index(), Placed { run: LayoutRun { start: at, end: until, node, side, owner, carries, spelled }, from });
+                            self.state.published += self.published.runs.set(id.index(), Placed { run: LayoutRun { start: at, end: until, node, side, owner, carries, spelled, beside }, from });
                             self.state.order.insert((at, until, order), id);
                             self.push(place, Assigned::Layout { run: id, start: at, end: until, owner, depth }, order);
                         }
@@ -1797,6 +1798,18 @@ impl<'t> Placer<'t, '_, '_> {
             self.state.adjacency.insert(kid.index, stored);
         }
         self.state.adjacency.get(&entry.index).copied().flatten()
+    }
+
+    /// Whether an extra, `ERROR` or member of `plan`'s gap ends where the
+    /// run `at..until` starts or starts where it ends (`LayoutRun::beside`).
+    fn beside(&mut self, plan: &Plan, at: u32, until: u32) -> bool {
+        plan.steps.iter().any(|step| match step {
+            Step::Entry { entry: Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index), .. } => {
+                let kid = self.kid(*index);
+                kid.end == at || kid.start == until
+            }
+            _ => false,
+        })
     }
 
     /// Whether an entry's adjacency spells the run `at..until` of `plan`, a

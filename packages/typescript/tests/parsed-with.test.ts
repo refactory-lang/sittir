@@ -44,8 +44,8 @@ function editedBody(ts: Engine, source: string, edit: (statements: readonly unkn
 
 const moved: readonly (readonly [string, (statements: readonly unknown[]) => readonly unknown[], string])[] = [
 	['reversed', (statements) => [...statements].reverse(), 'function f() {\n c()\n b++\n a();\n}\n'],
-	['the first dropped', (statements) => statements.slice(1), 'function f() {\n b++\n c() }\n'],
-	['the middle dropped', (statements) => [statements[0], ...statements.slice(2)], 'function f() { a();\n c() }\n']
+	['the first dropped', (statements) => statements.slice(1), 'function f() {\n b++\n c()\n}\n'],
+	['the middle dropped', (statements) => [statements[0], ...statements.slice(2)], 'function f() {\n a();\n c()\n}\n']
 ];
 
 describe('a parsed body whose statements move or go renders as it does under object storage', () => {

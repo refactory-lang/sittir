@@ -34,7 +34,7 @@ describe("a unit child's comment renders once and follows the unit through a lis
 	it('frames a unit once when an edit beside it rebuilds its holder', () => {
 		const root = ts.parse('while (a) { /* c */ ; x(); }\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('while (a) { /* c */ ;\n  // lead\n  x(); }\n');
+		expect(root.$render()).toBe('while (a) { /* c */ ;\n  // lead\n  x();\n}\n');
 	});
 
 	const source = '// A\n;\n// B\ndebugger;\n';

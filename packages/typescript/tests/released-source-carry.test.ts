@@ -5,6 +5,7 @@ import { sidesOf, unitSidesOf } from '../../common/src/node-data.ts';
 import typescript from '../src/index.ts';
 
 const SOURCE = 'declare module A { export var foo; };\nlet x = 1;\n';
+const UNIT_SIDED = 'declare module A { export var foo; } /* c */;\nlet x = 1;\n';
 const SIDED = '// lead\nlet x = 1; // trail\n// last\n';
 
 interface Edited {
@@ -64,11 +65,11 @@ describe.each(['arena', 'object'] as const)("a copy of a parsed node whose sourc
 	it('renders and reads its unit sides as one whose source is kept', async () => {
 		const engine = await createEngine(typescript, { nodeStorage });
 		try {
-			const kept = edited(engine);
-			const released = edited(engine);
+			const kept = edited(engine, UNIT_SIDED);
+			const released = edited(engine, UNIT_SIDED);
 			released.root[Symbol.dispose]();
 			expect(released.copy.$render()).toBe(kept.copy.$render());
-			expect(kept.copy.$render()).toBe(SOURCE);
+			expect(kept.copy.$render()).toBe(UNIT_SIDED);
 			expect(unitShape(released.copy)).toEqual(unitShape(kept.copy));
 			expect(unitShape(kept.copy)).not.toEqual([]);
 		} finally {

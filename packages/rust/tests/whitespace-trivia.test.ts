@@ -6,7 +6,7 @@ import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
 const objects = await createEngine(rust, { nodeStorage: 'object' });
-const { Blankline: blankline, Newline: newline, Space: space } = rs.kinds;
+const { Blankline: blankline, Newline: newline } = rs.kinds;
 
 const statementsOf = (source: string, deep = false, engine = rs) => {
 	const item = engine.parse(source, { depth: deep ? Infinity : 1 }).statements()[0];
@@ -14,11 +14,11 @@ const statementsOf = (source: string, deep = false, engine = rs) => {
 	return [...item.body().statements()].filter((statement) => engine.is.expressionStatement(statement));
 };
 
-describe('a read node carries the whitespace before it that differs from the read-time options as whitespace trivia', () => {
-	it('holds the blank line between two statements, where the options write one break, and nothing for the break they write', () => {
+describe('a read node carries the whitespace beside a comment it owns as whitespace trivia, and no other', () => {
+	it('holds nothing for the blank line between two statements, which the options decide', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n');
 		expect(a!.$trivia.leading()).toEqual([]);
-		expect(b!.$trivia.leading()).toEqual([blankline]);
+		expect(b!.$trivia.leading()).toEqual([]);
 	});
 
 	it('gives the last statement nothing for the line break the options write before the closing brace', () => {
@@ -38,24 +38,23 @@ describe('a read node carries the whitespace before it that differs from the rea
 		expect(typeof expression === 'object' ? expression.$trivia.leading() : []).toEqual([]);
 	});
 
-	it('yields the space of a gap on one line where the options break the line', () => {
+	it('holds nothing for a gap on one line where the options break the line', () => {
 		const [, b] = statementsOf('fn f() { a; b; }\n');
-		expect(b!.$trivia.leading()).toEqual([space]);
+		expect(b!.$trivia.leading()).toEqual([]);
 	});
 
 	it('reads the same from a tree read whole as from one read a level at a time', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n', true);
 		expect(a!.$trivia.leading()).toEqual([]);
-		expect(b!.$trivia.leading()).toEqual([blankline]);
+		expect(b!.$trivia.leading()).toEqual([]);
 		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
-	it('renders an untouched statement with its source gap when its parent is rebuilt', () => {
-		const source = 'fn f() {\n    a;\n\n    b;\n}\n\n\nfn g() {}\n';
-		const root = rs.parse(source);
+	it('renders an untouched item as its bytes, and the gap between items from the options, when its parent is rebuilt', () => {
+		const root = rs.parse('fn f() {\n    a;\n\n    b;\n}\n\n\nfn g() {}\n');
 		const [f, g] = [...root.statements()];
 		if (f === undefined || g === undefined) throw new Error('expected two function items');
-		expect(root.$with.statements(f, g).$render()).toBe(source);
+		expect(root.$with.statements(f, g).$render()).toBe('fn f() {\n    a;\n\n    b;\n}\n\nfn g() {}\n');
 	});
 
 	it.each([

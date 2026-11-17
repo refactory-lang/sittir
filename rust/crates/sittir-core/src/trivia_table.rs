@@ -383,8 +383,10 @@ enum Place {
 /// A run of whitespace between two tokens or entries that a side takes,
 /// with or without a line break, and empty where they touch: its bytes, the
 /// side, its owner (`Assigned::Layout`), whether it carries the layout
-/// written between the tokens around it, and whether an entry's adjacency
-/// spells it (`Table::adjacency`). The file's two edges are none.
+/// written between the tokens around it, whether an entry's adjacency
+/// spells it (`Table::adjacency`), and whether an extra, `ERROR` or member
+/// of its gap ends where it starts or starts where it ends (`beside`). The
+/// file's two edges are none.
 ///
 /// Gaps that only a zero-width token parts (an automatic semicolon, a
 /// dedent) are one gap to a render, which writes nothing for the token: the
@@ -399,11 +401,12 @@ pub struct LayoutRun {
     pub owner: NodeIndex,
     pub carries: bool,
     pub spelled: bool,
+    pub beside: bool,
 }
 
 impl HeapBytes for LayoutRun {
     fn heap_bytes(&self) -> usize {
-        let Self { start: _, end: _, node: _, side: _, owner: _, carries: _, spelled: _ } = self;
+        let Self { start: _, end: _, node: _, side: _, owner: _, carries: _, spelled: _, beside: _ } = self;
         0
     }
 }

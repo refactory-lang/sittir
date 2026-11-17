@@ -165,13 +165,20 @@ const RENDERS_AS_READ = {
 	]
 } as const;
 
-describe('a snapshot renders as it reads', () => {
+const RENDERS_WITH_OPTIONS: Readonly<Record<string, string>> = {
+	'x = [\n    1\n        # c\n    ]\n': 'x = [1\n        # c\n    ]\n',
+	'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n': 'fn f() {\n    let x = [1, 2, $ 3, 4,];\n}\n',
+	'type T = { a: 1\n  /* c */ };\n': 'type T = {\n  a: 1\n  /* c */ };\n',
+	'type T = { a: 1\n  // c\n};\n': 'type T = {\n  a: 1\n  // c\n};\n'
+};
+
+describe('a snapshot renders as it reads, each gap away from an entry in the options\' class', () => {
 	it.each(STORAGES.flatMap((nodeStorage) => (['python', 'rust', 'typescript'] as const).map((grammar) => [grammar, nodeStorage] as const)))(
 		'%s, %s: a source with an ERROR, a comment or a line continuation beside a list edge',
 		async (grammar, nodeStorage) => {
 			using engine = await createEngine(await languageByName(grammar), { nodeStorage });
 			const sources = RENDERS_AS_READ[grammar];
-			expect(sources.map((source) => engine.render(snapshotOf(engine.parse(source, WHOLE) as object)).toString())).toEqual(sources);
+			expect(sources.map((source) => engine.render(snapshotOf(engine.parse(source, WHOLE) as object)).toString())).toEqual(sources.map((source) => RENDERS_WITH_OPTIONS[source] ?? source));
 		}
 	);
 });

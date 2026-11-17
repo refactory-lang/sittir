@@ -48,7 +48,7 @@ describe.each([
 	it('is accepted and renders in the whole tree', () => {
 		const root = engine.parse('fn a() {}\nfn b() { let x = 1; }\n');
 		reach(root, 1, 0).$trivia.leading(build.lineComment(' before'));
-		rendersAs(root, 'fn a() {}\nfn b() {\n    // before\n    let x = 1; }\n');
+		rendersAs(root, 'fn a() {}\n\nfn b() {\n    // before\n    let x = 1;\n}\n');
 	});
 
 	it('keeps a deeper-indented comment between its siblings', () => {
@@ -87,7 +87,7 @@ describe('the sides of a parsed node come from its tree', () => {
 		if (!engine.isEmptyNode(body)) throw new Error('expected an empty block');
 		body.$trivia.inner(build.lineComment(' i'));
 		expect(texts(body.$trivia.inner())).toEqual(['// i']);
-		rendersAs(root, 'fn f() {\n    // i\n}\nfn g() {\n    // l\n    a(); // t\n}\n');
+		rendersAs(root, 'fn f() {\n    // i\n}\n\nfn g() {\n    // l\n    a(); // t\n}\n');
 	});
 
 	it('renders a write through a parsed holder in a draft that stores its range unread', () => {
@@ -202,7 +202,7 @@ describe('the owner a side belongs to', () => {
 		const body = functionAt(root, 0).body();
 		if (!engine.isEmptyNode(body)) throw new Error('expected an empty block');
 		body.$trivia.inner(build.lineComment(' i'));
-		rendersAs(root, 'fn f() {\n    // i\n}\nfn g() {\n    // l\n    a(); // t\n}\n');
+		rendersAs(root, 'fn f() {\n    // i\n}\n\nfn g() {\n    // l\n    a(); // t\n}\n');
 	});
 
 	it("gives a file of comments only to the root's inner, and renders it as its source", () => {

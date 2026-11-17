@@ -388,7 +388,7 @@ fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
     let record = |kind, nth| *over.records.get(&index_of(&tree, kind, nth)).expect("its record");
     let call = record(rust_kinds::CALL_EXPRESSION, 0);
     assert_eq!(over.render_at(call, both, &options, false).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
-    assert_eq!(over.render_at(call, ChangedEdges::default(), &options, false).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
+    assert_eq!(over.render_at(call, ChangedEdges::default(), &options, false).expect("a render"), "Ok(None)", "in its holder, it takes the options' gaps, not the block's padding");
     assert_eq!(over.render_at(record(rust_kinds::FUNCTION_ITEM, 1), both, &options, false).expect("a render"), "fn b() { Ok(None) }");
 }
 
