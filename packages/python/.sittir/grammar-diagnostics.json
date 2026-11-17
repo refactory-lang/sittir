@@ -683,6 +683,14 @@
     "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
+    "message": "expression.call.function: expression.binary has no arm that fits function's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
     "message": "element.spread.expression: expression.binary has no arm that fits expression's seats"
   },
   {
@@ -772,6 +780,726 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.conditional.consequence: expression.binary.logical has no arm that fits consequence's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: identifier.qualified has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.boolean.false has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.boolean.true has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.null has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.float has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.float.leading_point has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.float.scientific has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.negative has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.concatenated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.unicode has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.as has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.complex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.complex.add has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.complex.subtract has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: identifier.qualified has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.boolean.false has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.boolean.true has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.null has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.float has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.float.leading_point has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.float.scientific has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.negative has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.concatenated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.unicode has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.as has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.complex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.complex.add has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.complex.subtract has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.or has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.rest.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.struct has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.struct.field has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.or has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.rest.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.struct has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.struct.field has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.defaulted.default: expression.binary has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.defaulted.default: expression.binary.logical has no arm that fits default's seats"
   },
   {
     "scope": "grammar",
@@ -892,6 +1620,230 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.yield.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.defaulted.default: expression.unary has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed.type: expression.binary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed.type: expression.binary.logical has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed.type: expression.unary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.logical has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.baseType: expression.binary has no arm that fits baseType's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.baseType: expression.binary.logical has no arm that fits baseType's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.baseType: expression.unary has no arm that fits baseType's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.left: expression.binary.logical has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.right: expression.binary.logical has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.constraint: expression.binary has no arm that fits constraint's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.constraint: expression.binary.logical has no arm that fits constraint's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.constraint: expression.unary has no arm that fits constraint's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.type: expression.binary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.type: expression.binary.logical has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.type: expression.unary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.default: expression.binary has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.default: expression.binary.logical has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.default: expression.unary has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.body: expression.binary has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.body: expression.binary.logical has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.body: expression.unary has no arm that fits body's seats"
   },
   {
     "scope": "grammar",
@@ -1108,6 +2060,70 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.collection.list.elements: expression.unary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.member has no arm that fits function's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary has no arm that fits function's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.arguments: expression.binary has no arm that fits arguments's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.arguments: expression.binary.logical has no arm that fits arguments's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.arguments: expression.unary has no arm that fits arguments's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.arguments: expression.binary has no arm that fits arguments's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.arguments: expression.binary.logical has no arm that fits arguments's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.arguments: expression.unary has no arm that fits arguments's seats"
   },
   {
     "scope": "grammar",
@@ -2339,7 +3355,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor: typeParameters takes one value or a list"
+    "message": "declaration.constructor: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -2364,926 +3380,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.method.special: a template-spelled member (name)"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: identifier.qualified has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.boolean.false has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.boolean.true has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.null has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.float has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.float.leading_point has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.float.scientific has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.binary has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.hex has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.octal has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.negative has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.concatenated has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.unicode has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.as has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.complex has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.complex.add has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.complex.subtract has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: identifier.qualified has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.boolean.false has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.boolean.true has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.null has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.float has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.float.leading_point has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.float.scientific has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.binary has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.hex has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.octal has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.number.negative has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.concatenated has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.raw has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.raw.multiline has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: literal.string.unicode has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.as has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.complex has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.complex.add has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.complex.subtract has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.map has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.or has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.rest.map has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.struct has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: pattern.struct.field has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.map has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.or has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.rest.map has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.struct has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.struct.field has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.defaulted.default: expression.binary has no arm that fits default's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.defaulted.default: expression.binary.logical has no arm that fits default's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.defaulted.default: expression.unary has no arm that fits default's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed.type: expression.binary has no arm that fits type's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed.type: expression.binary.logical has no arm that fits type's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed.type: expression.unary has no arm that fits type's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.logical has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.unary has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.constrained.baseType: expression.binary has no arm that fits baseType's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.constrained.baseType: expression.binary.logical has no arm that fits baseType's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.constrained.baseType: expression.unary has no arm that fits baseType's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.union.left: expression.binary has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.union.left: expression.binary.logical has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.union.left: expression.unary has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.union.right: expression.binary has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.union.right: expression.binary.logical has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.union.right: expression.unary has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.constrained.constraint: expression.binary has no arm that fits constraint's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.constrained.constraint: expression.binary.logical has no arm that fits constraint's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.constrained.constraint: expression.unary has no arm that fits constraint's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed_default.type: expression.binary has no arm that fits type's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed_default.type: expression.binary.logical has no arm that fits type's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed_default.type: expression.unary has no arm that fits type's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed_default.default: expression.binary has no arm that fits default's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed_default.default: expression.binary.logical has no arm that fits default's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.parameter.typed_default.default: expression.unary has no arm that fits default's seats"
   },
   {
     "scope": "grammar",
@@ -3931,15 +4027,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call: arguments takes one value or a list"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.call.member: arguments takes one value or a list"
+    "message": "expression.call.member: a preset at function that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4004,14 +4092,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.interpolation.expression: expression.unary has no arm that fits expression's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.lambda: parameters takes one value or a list"
   },
   {
     "scope": "grammar",

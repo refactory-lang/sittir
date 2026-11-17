@@ -484,7 +484,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.let.chain: a pick by the render options' variant char_literal"
+    "message": "clause.let.chain: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -548,7 +548,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant: a pick by the render options' variant char_literal"
+    "message": "declaration.constant: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -556,7 +556,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.private: a pick by the render options' variant char_literal"
+    "message": "declaration.constant.private: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -564,7 +564,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public: a pick by the render options' variant char_literal"
+    "message": "declaration.constant.public: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -572,7 +572,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public.internal: a pick by the render options' variant char_literal"
+    "message": "declaration.constant.public.internal: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -580,7 +580,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public.parent: a pick by the render options' variant char_literal"
+    "message": "declaration.constant.public.parent: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -588,7 +588,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public.restricted: a pick by the render options' variant char_literal"
+    "message": "declaration.constant.public.restricted: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -740,7 +740,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple: a pick by the render options' variant char_literal"
+    "message": "declaration.enum_member.tuple: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1052,7 +1052,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module: body takes one value or a list"
+    "message": "declaration.module: a container at attribute that sets flags"
   },
   {
     "scope": "grammar",
@@ -1060,7 +1060,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.foreign: body takes one value or a list"
+    "message": "declaration.module.foreign: a container at attribute that sets flags"
   },
   {
     "scope": "grammar",
@@ -1388,7 +1388,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable: a pick by the render options' variant char_literal"
+    "message": "declaration.variable: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1396,7 +1396,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.private: a pick by the render options' variant char_literal"
+    "message": "declaration.variable.private: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1404,7 +1404,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public: a pick by the render options' variant char_literal"
+    "message": "declaration.variable.public: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1412,7 +1412,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public.internal: a pick by the render options' variant char_literal"
+    "message": "declaration.variable.public.internal: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1420,7 +1420,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public.parent: a pick by the render options' variant char_literal"
+    "message": "declaration.variable.public.parent: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1428,7 +1428,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public.restricted: a pick by the render options' variant char_literal"
+    "message": "declaration.variable.public.restricted: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1564,7 +1564,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.base: a pick by the render options' variant char_literal"
+    "message": "element.struct.base: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1604,7 +1604,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.field: a pick by the render options' variant char_literal"
+    "message": "element.struct.field: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1620,7 +1620,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment: a pick by the render options' variant char_literal"
+    "message": "expression.assignment: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1628,7 +1628,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.add: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.add: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1636,7 +1636,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.bitwise_and: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1644,7 +1644,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.bitwise_or: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1652,7 +1652,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.bitwise_xor: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1660,7 +1660,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.divide: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.divide: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1668,7 +1668,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.modulo: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.modulo: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1676,7 +1676,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.multiply: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.multiply: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1684,7 +1684,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.shift_left: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.shift_left: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1692,7 +1692,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.shift_right: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.shift_right: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1700,7 +1700,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.subtract: a pick by the render options' variant char_literal"
+    "message": "expression.assignment.compound.subtract: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1708,7 +1708,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.await: a pick by the render options' variant char_literal"
+    "message": "expression.await: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1716,7 +1716,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.add: a pick by the render options' variant char_literal"
+    "message": "expression.binary.arithmetic.add: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1724,7 +1724,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.divide: a pick by the render options' variant char_literal"
+    "message": "expression.binary.arithmetic.divide: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1732,7 +1732,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.modulo: a pick by the render options' variant char_literal"
+    "message": "expression.binary.arithmetic.modulo: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1740,7 +1740,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.multiply: a pick by the render options' variant char_literal"
+    "message": "expression.binary.arithmetic.multiply: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1748,7 +1748,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.subtract: a pick by the render options' variant char_literal"
+    "message": "expression.binary.arithmetic.subtract: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1756,7 +1756,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.and: a pick by the render options' variant char_literal"
+    "message": "expression.binary.bitwise.and: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1764,7 +1764,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.or: a pick by the render options' variant char_literal"
+    "message": "expression.binary.bitwise.or: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1772,7 +1772,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.xor: a pick by the render options' variant char_literal"
+    "message": "expression.binary.bitwise.xor: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1780,7 +1780,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.equal: a pick by the render options' variant char_literal"
+    "message": "expression.binary.comparison.equal: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1788,7 +1788,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater: a pick by the render options' variant char_literal"
+    "message": "expression.binary.comparison.greater: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1796,7 +1796,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater_equal: a pick by the render options' variant char_literal"
+    "message": "expression.binary.comparison.greater_equal: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1804,7 +1804,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less: a pick by the render options' variant char_literal"
+    "message": "expression.binary.comparison.less: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1812,7 +1812,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less_equal: a pick by the render options' variant char_literal"
+    "message": "expression.binary.comparison.less_equal: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1820,7 +1820,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.not_equal: a pick by the render options' variant char_literal"
+    "message": "expression.binary.comparison.not_equal: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1828,7 +1828,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.logical.and: a pick by the render options' variant char_literal"
+    "message": "expression.binary.logical.and: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1836,7 +1836,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.logical.or: a pick by the render options' variant char_literal"
+    "message": "expression.binary.logical.or: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1844,7 +1844,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.shift.left: a pick by the render options' variant char_literal"
+    "message": "expression.binary.shift.left: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1852,7 +1852,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.shift.right: a pick by the render options' variant char_literal"
+    "message": "expression.binary.shift.right: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1884,7 +1884,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.cast.conversion: a pick by the render options' variant char_literal"
+    "message": "expression.cast.conversion: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1892,7 +1892,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.list: a pick by the render options' variant char_literal"
+    "message": "expression.collection.list: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1900,7 +1900,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.list.repeat: a pick by the render options' variant char_literal"
+    "message": "expression.collection.list.repeat: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1940,7 +1940,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda: parameters takes one value or a list"
+    "message": "expression.lambda: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1948,7 +1948,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.member: a pick by the render options' variant char_literal"
+    "message": "expression.member: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1956,7 +1956,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.parenthesized: a pick by the render options' variant char_literal"
+    "message": "expression.parenthesized: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1964,7 +1964,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.propagate: a pick by the render options' variant char_literal"
+    "message": "expression.propagate: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1972,7 +1972,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.range: a pick by the render options' variant char_literal"
+    "message": "expression.range: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1980,7 +1980,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.range.exclusive: a pick by the render options' variant char_literal"
+    "message": "expression.range.exclusive: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1988,7 +1988,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.range.inclusive: a pick by the render options' variant char_literal"
+    "message": "expression.range.inclusive: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1996,7 +1996,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.range.inclusive.legacy: a pick by the render options' variant char_literal"
+    "message": "expression.range.inclusive.legacy: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2004,7 +2004,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.reference: a pick by the render options' variant char_literal"
+    "message": "expression.reference: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2012,7 +2012,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.subscript: a pick by the render options' variant char_literal"
+    "message": "expression.subscript: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2020,7 +2020,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.unary.deref: a pick by the render options' variant char_literal"
+    "message": "expression.unary.deref: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2028,7 +2028,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.unary.negation: a pick by the render options' variant char_literal"
+    "message": "expression.unary.negation: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2036,7 +2036,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.unary.not: a pick by the render options' variant char_literal"
+    "message": "expression.unary.not: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2052,7 +2052,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.yield: a pick by the render options' variant char_literal"
+    "message": "expression.yield: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2289,270 +2289,6 @@
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.type: type.generic.turbofish has no arm that fits type's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: expression.block.const has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: expression.call.macro has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: identifier has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: identifier.qualified has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.boolean.false has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.boolean.true has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.character has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.number.float has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.number.integer has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.number.integer.binary has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.number.integer.hex has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.number.integer.octal has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.number.negative has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.string has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.string.bytes has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.string.bytes.raw has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.string.c has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.string.c.raw has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: literal.string.raw has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.as has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.generic has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.list has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.mutable has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.or has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.range has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.range.exclusive has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.range.inclusive has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.range.inclusive.legacy has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.reference has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.reference.value has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.struct has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.tuple has no arm that fits fields's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
@@ -2580,7 +2316,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple: a pick by the render options' variant char_literal"
+    "message": "pattern.tuple: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2604,7 +2340,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.break: a pick by the render options' variant char_literal"
+    "message": "statement.break: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2620,7 +2356,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.if: a pick by the render options' variant char_literal"
+    "message": "statement.if: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2716,7 +2452,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.while: a pick by the render options' variant char_literal"
+    "message": "statement.loop.while: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2724,7 +2460,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.match: a pick by the render options' variant char_literal"
+    "message": "statement.match: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2732,7 +2468,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.return: a pick by the render options' variant char_literal"
+    "message": "statement.return: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2748,7 +2484,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.array: a pick by the render options' variant char_literal"
+    "message": "type.array: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",

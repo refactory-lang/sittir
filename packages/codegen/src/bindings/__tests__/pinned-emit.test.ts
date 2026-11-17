@@ -62,6 +62,56 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).not.toContain('statement_jump');
 	}, 60_000);
 
+	it('reports a member path no arm fits only from a function the module keeps', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			api: 'PythonAPI',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			table: {
+				builders: { exampleStatement: 'config', other: 'nullary' },
+				paths: {
+					'statement.expression': {
+						root: true,
+						arms: [
+							{
+								kind: 1,
+								builder: 'exampleStatement',
+								when: [{ absent: ['label'], required: [] }],
+								members: [{ name: 'expression', steps: [{ key: 'expression' }], multiple: false, seats: [{ at: [1, 'expression'], kinds: [7] }] }],
+								presets: [],
+								flags: {}
+							},
+							{
+								kind: 2,
+								builder: 'exampleStatement',
+								when: [],
+								members: [{ name: 'label', steps: [{ key: 'label', builder: 'other' }, { key: 'name' }], multiple: false, seats: [{ at: [8, 'name'], kinds: [7] }] }],
+								presets: [],
+								flags: {}
+							}
+						]
+					},
+					'expression.await': { root: false, arms: [{ kind: 9, builder: 'other', when: [], members: [], presets: [], flags: {} }] }
+				}
+			},
+			members: {
+				'statement.expression': {
+					expression: { paths: ['expression.await'], texts: [], unmapped: [], string: false, optional: false },
+					label: { paths: [], texts: [], unmapped: [], string: false, optional: true }
+				}
+			},
+			viewed: ['expression.await'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics.map(({ code, path }) => [code, path])).toEqual([['portable-emit-unfit-member', 'statement.expression']]);
+		expect(text).not.toContain('statement_expression');
+	}, 60_000);
+
 	it('spells a text holding a backslash or a quote as escapes in the string it writes', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
@@ -159,6 +209,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain('statements$first === undefined ? undefined : b.blockBody(statement_block$1_statements$item(statements$first), ...statements$rest.map(statement_block$1_statements$item))');
 		expect(text).toContain("input.label === undefined ? missing('statement.block.label') : statement_block$1_label(input.label)");
 		expect(text).toContain("const statement_block$1_label = (value: 'a' | 'b') =>");
+		expect(text).not.toContain('const listed');
 	}, 60_000);
 
 	it('picks a value-built path\'s arm by its scalar, and passes the scalar to the arm\'s builder', async () => {
@@ -196,19 +247,22 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain("return unbuilt('literal.number', input);");
 	}, 60_000);
 
-	it('leaves out a member that takes one value or a list, and wraps a single value in an elements container', async () => {
-		const run = (seats: readonly PortableSeat[]) =>
+	it('builds a member that takes one value or a list by whether it holds a list, and wraps a single value in an elements container', async () => {
+		const run = (seats: readonly PortableSeat[], paths: readonly string[] = []) =>
 			runPinned('portableBuild', {
 				grammar: 'python',
 				api: 'PythonAPI',
 				map: 'PythonMap',
 				imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
 				table: {
-					builders: { call: 'config', argumentList: 'config', argumentListElements: 'elements' },
-					paths: { 'expression.call': { root: true, arms: [{ kind: 1, builder: 'call', when: [], members: [{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, seats }], presets: [], flags: {} }] } }
+					builders: { call: 'config', argumentList: 'config', argumentListElements: 'elements', generatorExpression: 'nullary' },
+					paths: {
+						'expression.call': { root: true, arms: [{ kind: 1, builder: 'call', when: [], members: [{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, seats }], presets: [], flags: {} }] },
+						'expression.generator': { root: false, arms: [{ kind: 2, builder: 'generatorExpression', when: [], members: [], presets: [], flags: {} }] }
+					}
 				},
-				members: { 'expression.call': { arguments: { paths: [], texts: [], unmapped: [], string: false, optional: false } } },
-				viewed: [],
+				members: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, optional: false } } },
+				viewed: [...paths],
 				textPaths: [],
 				textInputs: [],
 				textValues: [],
@@ -216,8 +270,15 @@ describe('the pinned child emits a portable build module', () => {
 				decided: {}
 			});
 		const within: readonly PortableContainer[] = [{ builder: 'argumentList', key: 'arguments' }, { builder: 'argumentListElements', key: 'items' }];
-		const listed = await run([{ at: [1, 'arguments'], kinds: [2] }, { at: [3, 'items'], kinds: [4], within, many: true }]);
-		expect(listed.diagnostics.map(({ code, message }) => [code, message])).toEqual([['portable-emit-unfit-member', 'arguments takes one value or a list']]);
+		const listed = await run([{ at: [1, 'arguments'], kinds: [2] }, { at: [3, 'items'], kinds: [4], within, many: true }], ['expression.generator']);
+		expect(listed.diagnostics).toEqual([]);
+		expect(listed.text).toContain('return expression_generator$2(value);');
+		expect(listed.text).toContain("return unbuilt('expression.call.arguments', value);");
+		expect(listed.text).toContain(
+			'arguments: listed(input.arguments) ? b.argumentList({ arguments: b.argumentListElements(...input.arguments.map(expression_call$1_arguments$item)) }) : expression_call$1_arguments(input.arguments)'
+		);
+		expect(listed.text).toContain('if (seated(value, [4])) return value;');
+		expect(listed.text).not.toContain('seated(value, [2, 4])');
 		const single = await run([{ at: [3, 'items'], kinds: [4], within }]);
 		expect(single.diagnostics).toEqual([]);
 		expect(single.text).toContain('return b.argumentList({ arguments: b.argumentListElements(value) });');

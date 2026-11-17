@@ -33,6 +33,15 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 				readonly $type: T[number];
 		  }
 	> => kinds.includes(typeof value === 'number' ? value : value.$type);
+	const listed = <V>(
+		value: V
+	): value is Exclude<
+		Extract<V, readonly unknown[]>,
+		| number
+		| {
+				readonly $type: number;
+		  }
+	> => Array.isArray(value);
 	const unseated = (
 		owner: string,
 		value:
@@ -340,7 +349,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('argument.named.value', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('argument.named.value', value);
 			case 'expression.collection.list':
@@ -362,7 +371,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('argument.named.value', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('argument.named.value', value);
 			case 'expression.parenthesized':
@@ -732,7 +741,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('clause.comprehension.if.condition', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('clause.comprehension.if.condition', value);
 			case 'expression.collection.list':
@@ -754,7 +763,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('clause.comprehension.if.condition', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('clause.comprehension.if.condition', value);
 			case 'expression.parenthesized':
@@ -1197,7 +1206,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('declaration.parameter.defaulted.default', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('declaration.parameter.defaulted.default', value);
 			case 'expression.collection.list':
@@ -1219,7 +1228,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('declaration.parameter.defaulted.default', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('declaration.parameter.defaulted.default', value);
 			case 'expression.parenthesized':
@@ -1664,7 +1673,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('declaration.parameter.typed.type', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('declaration.parameter.typed.type', value);
 			case 'expression.collection.list':
@@ -1686,7 +1695,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('declaration.parameter.typed.type', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('declaration.parameter.typed.type', value);
 			case 'expression.parenthesized':
@@ -2068,7 +2077,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('declaration.parameter.typed_default.default', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('declaration.parameter.typed_default.default', value);
 			case 'expression.collection.list':
@@ -2090,7 +2099,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('declaration.parameter.typed_default.default', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('declaration.parameter.typed_default.default', value);
 			case 'expression.parenthesized':
@@ -2494,7 +2503,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('declaration.parameter.typed_default.type', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('declaration.parameter.typed_default.type', value);
 			case 'expression.collection.list':
@@ -2516,7 +2525,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('declaration.parameter.typed_default.type', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('declaration.parameter.typed_default.type', value);
 			case 'expression.parenthesized':
@@ -3011,7 +3020,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('declaration.variable.value', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('declaration.variable.value', value);
 			case 'expression.collection.list':
@@ -3035,7 +3044,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('declaration.variable.value', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('declaration.variable.value', value);
 			case 'expression.parenthesized':
@@ -3472,7 +3481,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('declaration.variable.type', value);
 			case 'expression.collection.list':
@@ -3494,7 +3503,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('declaration.variable.type', value);
 			case 'expression.parenthesized':
@@ -3937,7 +3946,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('declaration.variable.type', value);
 			case 'expression.collection.list':
@@ -3959,7 +3968,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('declaration.variable.type', value);
 			case 'expression.parenthesized':
@@ -4357,7 +4366,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('declaration.variable.value', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('declaration.variable.value', value);
 			case 'expression.collection.list':
@@ -4381,7 +4390,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('declaration.variable.value', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('declaration.variable.value', value);
 			case 'expression.parenthesized':
@@ -4757,7 +4766,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('element.pair.key', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('element.pair.key', value);
 			case 'expression.collection.list':
@@ -4779,7 +4788,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('element.pair.key', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('element.pair.key', value);
 			case 'expression.parenthesized':
@@ -5149,7 +5158,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('element.pair.value', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('element.pair.value', value);
 			case 'expression.collection.list':
@@ -5171,7 +5180,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('element.pair.value', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('element.pair.value', value);
 			case 'expression.parenthesized':
@@ -5541,7 +5550,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('element.spread.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('element.spread.expression', value);
 			case 'expression.collection.list':
@@ -5563,7 +5572,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('element.spread.expression', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('element.spread.expression', value);
 			case 'expression.parenthesized':
@@ -5933,7 +5942,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('element.spread.map.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('element.spread.map.expression', value);
 			case 'expression.collection.list':
@@ -5955,7 +5964,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('element.spread.map.expression', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('element.spread.map.expression', value);
 			case 'expression.parenthesized':
@@ -6371,7 +6380,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.right', value);
 			case 'expression.collection.list':
@@ -6393,7 +6402,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.right', value);
 			case 'expression.parenthesized':
@@ -6820,7 +6829,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.add.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.add.right', value);
 			case 'expression.collection.list':
@@ -6844,7 +6853,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.add.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.add.right', value);
 			case 'expression.parenthesized':
@@ -7277,7 +7286,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 			case 'expression.collection.list':
@@ -7301,7 +7310,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 			case 'expression.parenthesized':
@@ -7734,7 +7743,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 			case 'expression.collection.list':
@@ -7758,7 +7767,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 			case 'expression.parenthesized':
@@ -8191,7 +8200,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 			case 'expression.collection.list':
@@ -8215,7 +8224,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 			case 'expression.parenthesized':
@@ -8648,7 +8657,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.divide.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.divide.right', value);
 			case 'expression.collection.list':
@@ -8672,7 +8681,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.divide.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.divide.right', value);
 			case 'expression.parenthesized':
@@ -9105,7 +9114,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.exponent.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.exponent.right', value);
 			case 'expression.collection.list':
@@ -9129,7 +9138,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.exponent.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.exponent.right', value);
 			case 'expression.parenthesized':
@@ -9562,7 +9571,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.floor_divide.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.floor_divide.right', value);
 			case 'expression.collection.list':
@@ -9586,7 +9595,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.floor_divide.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.floor_divide.right', value);
 			case 'expression.parenthesized':
@@ -10019,7 +10028,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 			case 'expression.collection.list':
@@ -10043,7 +10052,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 			case 'expression.parenthesized':
@@ -10476,7 +10485,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.modulo.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.modulo.right', value);
 			case 'expression.collection.list':
@@ -10500,7 +10509,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.modulo.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.modulo.right', value);
 			case 'expression.parenthesized':
@@ -10933,7 +10942,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.multiply.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.multiply.right', value);
 			case 'expression.collection.list':
@@ -10957,7 +10966,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.multiply.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.multiply.right', value);
 			case 'expression.parenthesized':
@@ -11390,7 +11399,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.shift_left.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.shift_left.right', value);
 			case 'expression.collection.list':
@@ -11414,7 +11423,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.shift_left.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.shift_left.right', value);
 			case 'expression.parenthesized':
@@ -11847,7 +11856,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.shift_right.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.shift_right.right', value);
 			case 'expression.collection.list':
@@ -11871,7 +11880,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.shift_right.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.shift_right.right', value);
 			case 'expression.parenthesized':
@@ -12304,7 +12313,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.assignment.compound.subtract.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.assignment.compound.subtract.right', value);
 			case 'expression.collection.list':
@@ -12328,7 +12337,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.assignment.compound.subtract.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.assignment.compound.subtract.right', value);
 			case 'expression.parenthesized':
@@ -12631,7 +12640,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.await.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.await.expression', value);
 			case 'expression.collection.list':
@@ -12944,7 +12953,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.add.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.add.left', value);
 			case 'expression.collection.list':
@@ -13257,7 +13266,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.add.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.add.right', value);
 			case 'expression.collection.list':
@@ -13570,7 +13579,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.divide.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.divide.left', value);
 			case 'expression.collection.list':
@@ -13883,7 +13892,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.divide.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.divide.right', value);
 			case 'expression.collection.list':
@@ -14196,7 +14205,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.exponent.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.exponent.left', value);
 			case 'expression.collection.list':
@@ -14509,7 +14518,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.exponent.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.exponent.right', value);
 			case 'expression.collection.list':
@@ -14822,7 +14831,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 			case 'expression.collection.list':
@@ -15135,7 +15144,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 			case 'expression.collection.list':
@@ -15448,7 +15457,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.modulo.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.modulo.left', value);
 			case 'expression.collection.list':
@@ -15761,7 +15770,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.modulo.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.modulo.right', value);
 			case 'expression.collection.list':
@@ -16074,7 +16083,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.multiply.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.multiply.left', value);
 			case 'expression.collection.list':
@@ -16387,7 +16396,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.multiply.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.multiply.right', value);
 			case 'expression.collection.list':
@@ -16700,7 +16709,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.subtract.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.subtract.left', value);
 			case 'expression.collection.list':
@@ -17013,7 +17022,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.arithmetic.subtract.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.arithmetic.subtract.right', value);
 			case 'expression.collection.list':
@@ -17326,7 +17335,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.bitwise.and.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.bitwise.and.left', value);
 			case 'expression.collection.list':
@@ -17639,7 +17648,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.bitwise.and.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.bitwise.and.right', value);
 			case 'expression.collection.list':
@@ -17952,7 +17961,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.bitwise.or.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.bitwise.or.left', value);
 			case 'expression.collection.list':
@@ -18265,7 +18274,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.bitwise.or.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.bitwise.or.right', value);
 			case 'expression.collection.list':
@@ -18578,7 +18587,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.bitwise.xor.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.bitwise.xor.left', value);
 			case 'expression.collection.list':
@@ -18891,7 +18900,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.bitwise.xor.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.bitwise.xor.right', value);
 			case 'expression.collection.list':
@@ -19277,7 +19286,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.logical.and.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.logical.and.left', value);
 			case 'expression.collection.list':
@@ -19299,7 +19308,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.binary.logical.and.left', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.binary.logical.and.left', value);
 			case 'expression.parenthesized':
@@ -19669,7 +19678,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.logical.and.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.logical.and.right', value);
 			case 'expression.collection.list':
@@ -19691,7 +19700,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.binary.logical.and.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.binary.logical.and.right', value);
 			case 'expression.parenthesized':
@@ -20061,7 +20070,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.logical.or.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.logical.or.left', value);
 			case 'expression.collection.list':
@@ -20083,7 +20092,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.binary.logical.or.left', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.binary.logical.or.left', value);
 			case 'expression.parenthesized':
@@ -20453,7 +20462,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.logical.or.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.logical.or.right', value);
 			case 'expression.collection.list':
@@ -20475,7 +20484,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.binary.logical.or.right', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.binary.logical.or.right', value);
 			case 'expression.parenthesized':
@@ -20772,7 +20781,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.matrix_multiply.left', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.matrix_multiply.left', value);
 			case 'expression.collection.list':
@@ -21085,7 +21094,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.matrix_multiply.right', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.matrix_multiply.right', value);
 			case 'expression.collection.list':
@@ -21398,7 +21407,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.shift.left.count', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.shift.left.count', value);
 			case 'expression.collection.list':
@@ -21711,7 +21720,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.shift.left.operand', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.shift.left.operand', value);
 			case 'expression.collection.list':
@@ -22024,7 +22033,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.shift.right.count', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.shift.right.count', value);
 			case 'expression.collection.list':
@@ -22337,7 +22346,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.binary.shift.right.operand', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.binary.shift.right.operand', value);
 			case 'expression.collection.list':
@@ -22446,6 +22455,1138 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 				return pattern_rest$206(value);
 			default:
 				return unbuilt('expression.binary.shift.right.operand', value);
+		}
+	};
+	const expression_call$229_arguments = (
+		value:
+			| string
+			| BuildInput<PythonMap, 'argument.named'>
+			| PythonMap['nodes']['argument.named']
+			| BuildInput<PythonMap, 'element.spread'>
+			| PythonMap['nodes']['element.spread']
+			| BuildInput<PythonMap, 'element.spread.map'>
+			| PythonMap['nodes']['element.spread.map']
+			| BuildInput<PythonMap, 'element.spread.parenthesized'>
+			| PythonMap['nodes']['element.spread.parenthesized']
+			| BuildInput<PythonMap, 'expression.assignment'>
+			| PythonMap['nodes']['expression.assignment']
+			| BuildInput<PythonMap, 'expression.await'>
+			| PythonMap['nodes']['expression.await']
+			| BuildInput<PythonMap, 'expression.binary'>
+			| PythonMap['nodes']['expression.binary']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+			| PythonMap['nodes']['expression.binary.arithmetic.add']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+			| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+			| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+			| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+			| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+			| PythonMap['nodes']['expression.binary.bitwise.and']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+			| PythonMap['nodes']['expression.binary.bitwise.or']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+			| PythonMap['nodes']['expression.binary.bitwise.xor']
+			| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+			| PythonMap['nodes']['expression.binary.comparison.chain']
+			| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+			| PythonMap['nodes']['expression.binary.comparison.equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+			| PythonMap['nodes']['expression.binary.comparison.greater']
+			| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+			| PythonMap['nodes']['expression.binary.comparison.less']
+			| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.less_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.not_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+			| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+			| BuildInput<PythonMap, 'expression.binary.identity.is'>
+			| PythonMap['nodes']['expression.binary.identity.is']
+			| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+			| PythonMap['nodes']['expression.binary.identity.is_not']
+			| BuildInput<PythonMap, 'expression.binary.logical'>
+			| PythonMap['nodes']['expression.binary.logical']
+			| BuildInput<PythonMap, 'expression.binary.logical.and'>
+			| PythonMap['nodes']['expression.binary.logical.and']
+			| BuildInput<PythonMap, 'expression.binary.logical.or'>
+			| PythonMap['nodes']['expression.binary.logical.or']
+			| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+			| PythonMap['nodes']['expression.binary.matrix_multiply']
+			| BuildInput<PythonMap, 'expression.binary.membership.in'>
+			| PythonMap['nodes']['expression.binary.membership.in']
+			| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+			| PythonMap['nodes']['expression.binary.membership.not_in']
+			| BuildInput<PythonMap, 'expression.binary.shift.left'>
+			| PythonMap['nodes']['expression.binary.shift.left']
+			| BuildInput<PythonMap, 'expression.binary.shift.right'>
+			| PythonMap['nodes']['expression.binary.shift.right']
+			| BuildInput<PythonMap, 'expression.call'>
+			| PythonMap['nodes']['expression.call']
+			| BuildInput<PythonMap, 'expression.call.member'>
+			| PythonMap['nodes']['expression.call.member']
+			| BuildInput<PythonMap, 'expression.collection.list'>
+			| PythonMap['nodes']['expression.collection.list']
+			| BuildInput<PythonMap, 'expression.collection.map'>
+			| PythonMap['nodes']['expression.collection.map']
+			| BuildInput<PythonMap, 'expression.collection.set'>
+			| PythonMap['nodes']['expression.collection.set']
+			| BuildInput<PythonMap, 'expression.collection.tuple'>
+			| PythonMap['nodes']['expression.collection.tuple']
+			| BuildInput<PythonMap, 'expression.comprehension.generator'>
+			| PythonMap['nodes']['expression.comprehension.generator']
+			| BuildInput<PythonMap, 'expression.comprehension.list'>
+			| PythonMap['nodes']['expression.comprehension.list']
+			| BuildInput<PythonMap, 'expression.comprehension.map'>
+			| PythonMap['nodes']['expression.comprehension.map']
+			| BuildInput<PythonMap, 'expression.comprehension.set'>
+			| PythonMap['nodes']['expression.comprehension.set']
+			| BuildInput<PythonMap, 'expression.conditional'>
+			| PythonMap['nodes']['expression.conditional']
+			| BuildInput<PythonMap, 'expression.lambda'>
+			| PythonMap['nodes']['expression.lambda']
+			| BuildInput<PythonMap, 'expression.member'>
+			| PythonMap['nodes']['expression.member']
+			| BuildInput<PythonMap, 'expression.parenthesized'>
+			| PythonMap['nodes']['expression.parenthesized']
+			| BuildInput<PythonMap, 'expression.subscript'>
+			| PythonMap['nodes']['expression.subscript']
+			| BuildInput<PythonMap, 'expression.unary'>
+			| PythonMap['nodes']['expression.unary']
+			| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+			| PythonMap['nodes']['expression.unary.bitwise_not']
+			| BuildInput<PythonMap, 'expression.unary.negation'>
+			| PythonMap['nodes']['expression.unary.negation']
+			| BuildInput<PythonMap, 'expression.unary.not'>
+			| PythonMap['nodes']['expression.unary.not']
+			| BuildInput<PythonMap, 'expression.unary.plus'>
+			| PythonMap['nodes']['expression.unary.plus']
+			| BuildInput<PythonMap, 'identifier'>
+			| PythonMap['nodes']['identifier']
+			| BuildInput<PythonMap, 'literal.boolean.false'>
+			| PythonMap['nodes']['literal.boolean.false']
+			| BuildInput<PythonMap, 'literal.boolean.true'>
+			| PythonMap['nodes']['literal.boolean.true']
+			| BuildInput<PythonMap, 'literal.ellipsis'>
+			| PythonMap['nodes']['literal.ellipsis']
+			| BuildInput<PythonMap, 'literal.null'>
+			| PythonMap['nodes']['literal.null']
+			| BuildInput<PythonMap, 'literal.number.float'>
+			| PythonMap['nodes']['literal.number.float']
+			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+			| PythonMap['nodes']['literal.number.float.leading_point']
+			| BuildInput<PythonMap, 'literal.number.float.scientific'>
+			| PythonMap['nodes']['literal.number.float.scientific']
+			| BuildInput<PythonMap, 'literal.number.integer'>
+			| PythonMap['nodes']['literal.number.integer']
+			| BuildInput<PythonMap, 'literal.number.integer.big'>
+			| PythonMap['nodes']['literal.number.integer.big']
+			| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+			| PythonMap['nodes']['literal.number.integer.big.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+			| PythonMap['nodes']['literal.number.integer.big.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+			| PythonMap['nodes']['literal.number.integer.big.octal']
+			| BuildInput<PythonMap, 'literal.number.integer.binary'>
+			| PythonMap['nodes']['literal.number.integer.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.hex'>
+			| PythonMap['nodes']['literal.number.integer.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+			| PythonMap['nodes']['literal.number.integer.imaginary']
+			| BuildInput<PythonMap, 'literal.number.integer.octal'>
+			| PythonMap['nodes']['literal.number.integer.octal']
+			| BuildInput<PythonMap, 'literal.string'>
+			| PythonMap['nodes']['literal.string']
+			| BuildInput<PythonMap, 'literal.string.bytes'>
+			| PythonMap['nodes']['literal.string.bytes']
+			| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.multiline']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+			| PythonMap['nodes']['literal.string.bytes.raw']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.concatenated'>
+			| PythonMap['nodes']['literal.string.concatenated']
+			| BuildInput<PythonMap, 'literal.string.interpolated'>
+			| PythonMap['nodes']['literal.string.interpolated']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.multiline'>
+			| PythonMap['nodes']['literal.string.multiline']
+			| BuildInput<PythonMap, 'literal.string.raw'>
+			| PythonMap['nodes']['literal.string.raw']
+			| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+			| PythonMap['nodes']['literal.string.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.unicode'>
+			| PythonMap['nodes']['literal.string.unicode']
+			| BuildInput<PythonMap, 'pattern.rest'>
+			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
+	) => {
+		if (typeof value === 'string') {
+			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+				return b.argumentList(b.argumentListElements(b.identifier(value)));
+			return b.argumentList(b.argumentListElements(b.identifier(value)));
+		}
+		if (typeof value === 'number') {
+			if (seated(value, [246])) return value;
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
+						210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+						251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return b.argumentList(b.argumentListElements(value));
+			return unseated('expression.call.arguments', value);
+		}
+		if (engine.isNode(value)) {
+			if (seated(value, [246])) return value;
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
+						210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+						251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return b.argumentList(b.argumentListElements(value));
+			return unseated('expression.call.arguments', value);
+		}
+		switch (value.$path) {
+			case 'argument.named':
+				return b.argumentList(b.argumentListElements(argument_named$237(value)));
+			case 'element.spread':
+				return b.argumentList(b.argumentListElements(element_spread$173(value)));
+			case 'element.spread.map':
+				return b.argumentList(b.argumentListElements(element_spread_map$174(value)));
+			case 'element.spread.parenthesized':
+				return b.argumentList(b.argumentListElements(element_spread_parenthesized$181(value)));
+			case 'expression.assignment':
+				return b.argumentList(b.argumentListElements(expression_assignment$148(value)));
+			case 'expression.await':
+				return b.argumentList(b.argumentListElements(expression_await$262(value)));
+			case 'expression.binary':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.arithmetic.add':
+				return b.argumentList(b.argumentListElements(expression_binary_arithmetic_add$214(value)));
+			case 'expression.binary.arithmetic.divide':
+				return b.argumentList(b.argumentListElements(expression_binary_arithmetic_divide$214(value)));
+			case 'expression.binary.arithmetic.exponent':
+				return b.argumentList(b.argumentListElements(expression_binary_arithmetic_exponent$214(value)));
+			case 'expression.binary.arithmetic.floor_divide':
+				return b.argumentList(b.argumentListElements(expression_binary_arithmetic_floor_divide$214(value)));
+			case 'expression.binary.arithmetic.modulo':
+				return b.argumentList(b.argumentListElements(expression_binary_arithmetic_modulo$214(value)));
+			case 'expression.binary.arithmetic.multiply':
+				return b.argumentList(b.argumentListElements(expression_binary_arithmetic_multiply$214(value)));
+			case 'expression.binary.arithmetic.subtract':
+				return b.argumentList(b.argumentListElements(expression_binary_arithmetic_subtract$214(value)));
+			case 'expression.binary.bitwise.and':
+				return b.argumentList(b.argumentListElements(expression_binary_bitwise_and$214(value)));
+			case 'expression.binary.bitwise.or':
+				return b.argumentList(b.argumentListElements(expression_binary_bitwise_or$214(value)));
+			case 'expression.binary.bitwise.xor':
+				return b.argumentList(b.argumentListElements(expression_binary_bitwise_xor$214(value)));
+			case 'expression.binary.comparison.chain':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.greater':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.greater_equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.less':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.less_equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.not_equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.not_equal.legacy':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.identity.is':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.identity.is_not':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.logical':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.logical.and':
+				return b.argumentList(b.argumentListElements(expression_binary_logical_and$213(value)));
+			case 'expression.binary.logical.or':
+				return b.argumentList(b.argumentListElements(expression_binary_logical_or$213(value)));
+			case 'expression.binary.matrix_multiply':
+				return b.argumentList(b.argumentListElements(expression_binary_matrix_multiply$214(value)));
+			case 'expression.binary.membership.in':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.membership.not_in':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.shift.left':
+				return b.argumentList(b.argumentListElements(expression_binary_shift_left$214(value)));
+			case 'expression.binary.shift.right':
+				return b.argumentList(b.argumentListElements(expression_binary_shift_right$214(value)));
+			case 'expression.call':
+				return b.argumentList(b.argumentListElements(expression_call$229(value)));
+			case 'expression.call.member':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.collection.list':
+				return b.argumentList(b.argumentListElements(expression_collection_list$238(value)));
+			case 'expression.collection.map':
+				return b.argumentList(b.argumentListElements(expression_collection_map$241(value)));
+			case 'expression.collection.set':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.collection.tuple':
+				return b.argumentList(b.argumentListElements(expression_collection_tuple$240(value)));
+			case 'expression.comprehension.generator':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.comprehension.list':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.comprehension.map':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.comprehension.set':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.conditional':
+				return b.argumentList(b.argumentListElements(expression_conditional$251(value)));
+			case 'expression.lambda':
+				return b.argumentList(b.argumentListElements(expression_lambda$219(value)));
+			case 'expression.member':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.parenthesized':
+				return b.argumentList(b.argumentListElements(expression_parenthesized$247(value)));
+			case 'expression.subscript':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.unary':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.unary.bitwise_not':
+				return b.argumentList(b.argumentListElements(expression_unary_bitwise_not$215(value)));
+			case 'expression.unary.negation':
+				return b.argumentList(b.argumentListElements(expression_unary_negation$215(value)));
+			case 'expression.unary.not':
+				return b.argumentList(b.argumentListElements(expression_unary_not$212(value)));
+			case 'expression.unary.plus':
+				return b.argumentList(b.argumentListElements(expression_unary_plus$215(value)));
+			case 'identifier':
+				return b.argumentList(b.argumentListElements(identifier$1(value)));
+			case 'literal.boolean.false':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.boolean.true':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.ellipsis':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.null':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.float':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.float.leading_point':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.float.scientific':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer':
+				return b.argumentList(b.argumentListElements(literal_number_integer$100(value)));
+			case 'literal.number.integer.big':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.big.binary':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.big.hex':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.big.octal':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.binary':
+				return b.argumentList(b.argumentListElements(literal_number_integer_binary$95(value)));
+			case 'literal.number.integer.hex':
+				return b.argumentList(b.argumentListElements(literal_number_integer_hex$91(value)));
+			case 'literal.number.integer.imaginary':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.octal':
+				if (value.content !== undefined && value.radixPrefix === undefined)
+					return b.argumentList(b.argumentListElements(literal_number_integer_octal$97(value)));
+				return b.argumentList(b.argumentListElements(literal_number_integer_octal$93(value)));
+			case 'literal.string':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.concatenated':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.unicode':
+				return unbuilt('expression.call.arguments', value);
+			case 'pattern.rest':
+				return b.argumentList(b.argumentListElements(pattern_rest$206(value)));
+			default:
+				return unbuilt('expression.call.arguments', value);
+		}
+	};
+	const expression_call$229_arguments$item = (
+		value:
+			| string
+			| BuildInput<PythonMap, 'argument.named'>
+			| PythonMap['nodes']['argument.named']
+			| BuildInput<PythonMap, 'element.spread'>
+			| PythonMap['nodes']['element.spread']
+			| BuildInput<PythonMap, 'element.spread.map'>
+			| PythonMap['nodes']['element.spread.map']
+			| BuildInput<PythonMap, 'element.spread.parenthesized'>
+			| PythonMap['nodes']['element.spread.parenthesized']
+			| BuildInput<PythonMap, 'expression.assignment'>
+			| PythonMap['nodes']['expression.assignment']
+			| BuildInput<PythonMap, 'expression.await'>
+			| PythonMap['nodes']['expression.await']
+			| BuildInput<PythonMap, 'expression.binary'>
+			| PythonMap['nodes']['expression.binary']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+			| PythonMap['nodes']['expression.binary.arithmetic.add']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+			| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+			| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+			| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+			| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+			| PythonMap['nodes']['expression.binary.bitwise.and']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+			| PythonMap['nodes']['expression.binary.bitwise.or']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+			| PythonMap['nodes']['expression.binary.bitwise.xor']
+			| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+			| PythonMap['nodes']['expression.binary.comparison.chain']
+			| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+			| PythonMap['nodes']['expression.binary.comparison.equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+			| PythonMap['nodes']['expression.binary.comparison.greater']
+			| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+			| PythonMap['nodes']['expression.binary.comparison.less']
+			| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.less_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.not_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+			| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+			| BuildInput<PythonMap, 'expression.binary.identity.is'>
+			| PythonMap['nodes']['expression.binary.identity.is']
+			| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+			| PythonMap['nodes']['expression.binary.identity.is_not']
+			| BuildInput<PythonMap, 'expression.binary.logical'>
+			| PythonMap['nodes']['expression.binary.logical']
+			| BuildInput<PythonMap, 'expression.binary.logical.and'>
+			| PythonMap['nodes']['expression.binary.logical.and']
+			| BuildInput<PythonMap, 'expression.binary.logical.or'>
+			| PythonMap['nodes']['expression.binary.logical.or']
+			| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+			| PythonMap['nodes']['expression.binary.matrix_multiply']
+			| BuildInput<PythonMap, 'expression.binary.membership.in'>
+			| PythonMap['nodes']['expression.binary.membership.in']
+			| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+			| PythonMap['nodes']['expression.binary.membership.not_in']
+			| BuildInput<PythonMap, 'expression.binary.shift.left'>
+			| PythonMap['nodes']['expression.binary.shift.left']
+			| BuildInput<PythonMap, 'expression.binary.shift.right'>
+			| PythonMap['nodes']['expression.binary.shift.right']
+			| BuildInput<PythonMap, 'expression.call'>
+			| PythonMap['nodes']['expression.call']
+			| BuildInput<PythonMap, 'expression.call.member'>
+			| PythonMap['nodes']['expression.call.member']
+			| BuildInput<PythonMap, 'expression.collection.list'>
+			| PythonMap['nodes']['expression.collection.list']
+			| BuildInput<PythonMap, 'expression.collection.map'>
+			| PythonMap['nodes']['expression.collection.map']
+			| BuildInput<PythonMap, 'expression.collection.set'>
+			| PythonMap['nodes']['expression.collection.set']
+			| BuildInput<PythonMap, 'expression.collection.tuple'>
+			| PythonMap['nodes']['expression.collection.tuple']
+			| BuildInput<PythonMap, 'expression.comprehension.generator'>
+			| PythonMap['nodes']['expression.comprehension.generator']
+			| BuildInput<PythonMap, 'expression.comprehension.list'>
+			| PythonMap['nodes']['expression.comprehension.list']
+			| BuildInput<PythonMap, 'expression.comprehension.map'>
+			| PythonMap['nodes']['expression.comprehension.map']
+			| BuildInput<PythonMap, 'expression.comprehension.set'>
+			| PythonMap['nodes']['expression.comprehension.set']
+			| BuildInput<PythonMap, 'expression.conditional'>
+			| PythonMap['nodes']['expression.conditional']
+			| BuildInput<PythonMap, 'expression.lambda'>
+			| PythonMap['nodes']['expression.lambda']
+			| BuildInput<PythonMap, 'expression.member'>
+			| PythonMap['nodes']['expression.member']
+			| BuildInput<PythonMap, 'expression.parenthesized'>
+			| PythonMap['nodes']['expression.parenthesized']
+			| BuildInput<PythonMap, 'expression.subscript'>
+			| PythonMap['nodes']['expression.subscript']
+			| BuildInput<PythonMap, 'expression.unary'>
+			| PythonMap['nodes']['expression.unary']
+			| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+			| PythonMap['nodes']['expression.unary.bitwise_not']
+			| BuildInput<PythonMap, 'expression.unary.negation'>
+			| PythonMap['nodes']['expression.unary.negation']
+			| BuildInput<PythonMap, 'expression.unary.not'>
+			| PythonMap['nodes']['expression.unary.not']
+			| BuildInput<PythonMap, 'expression.unary.plus'>
+			| PythonMap['nodes']['expression.unary.plus']
+			| BuildInput<PythonMap, 'identifier'>
+			| PythonMap['nodes']['identifier']
+			| BuildInput<PythonMap, 'literal.boolean.false'>
+			| PythonMap['nodes']['literal.boolean.false']
+			| BuildInput<PythonMap, 'literal.boolean.true'>
+			| PythonMap['nodes']['literal.boolean.true']
+			| BuildInput<PythonMap, 'literal.ellipsis'>
+			| PythonMap['nodes']['literal.ellipsis']
+			| BuildInput<PythonMap, 'literal.null'>
+			| PythonMap['nodes']['literal.null']
+			| BuildInput<PythonMap, 'literal.number.float'>
+			| PythonMap['nodes']['literal.number.float']
+			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+			| PythonMap['nodes']['literal.number.float.leading_point']
+			| BuildInput<PythonMap, 'literal.number.float.scientific'>
+			| PythonMap['nodes']['literal.number.float.scientific']
+			| BuildInput<PythonMap, 'literal.number.integer'>
+			| PythonMap['nodes']['literal.number.integer']
+			| BuildInput<PythonMap, 'literal.number.integer.big'>
+			| PythonMap['nodes']['literal.number.integer.big']
+			| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+			| PythonMap['nodes']['literal.number.integer.big.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+			| PythonMap['nodes']['literal.number.integer.big.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+			| PythonMap['nodes']['literal.number.integer.big.octal']
+			| BuildInput<PythonMap, 'literal.number.integer.binary'>
+			| PythonMap['nodes']['literal.number.integer.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.hex'>
+			| PythonMap['nodes']['literal.number.integer.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+			| PythonMap['nodes']['literal.number.integer.imaginary']
+			| BuildInput<PythonMap, 'literal.number.integer.octal'>
+			| PythonMap['nodes']['literal.number.integer.octal']
+			| BuildInput<PythonMap, 'literal.string'>
+			| PythonMap['nodes']['literal.string']
+			| BuildInput<PythonMap, 'literal.string.bytes'>
+			| PythonMap['nodes']['literal.string.bytes']
+			| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.multiline']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+			| PythonMap['nodes']['literal.string.bytes.raw']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.concatenated'>
+			| PythonMap['nodes']['literal.string.concatenated']
+			| BuildInput<PythonMap, 'literal.string.interpolated'>
+			| PythonMap['nodes']['literal.string.interpolated']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.multiline'>
+			| PythonMap['nodes']['literal.string.multiline']
+			| BuildInput<PythonMap, 'literal.string.raw'>
+			| PythonMap['nodes']['literal.string.raw']
+			| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+			| PythonMap['nodes']['literal.string.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.unicode'>
+			| PythonMap['nodes']['literal.string.unicode']
+			| BuildInput<PythonMap, 'pattern.rest'>
+			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
+	) => {
+		if (typeof value === 'string') {
+			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+			return b.identifier(value);
+		}
+		if (typeof value === 'number') {
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
+						210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+						251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return value;
+			return unseated('expression.call.arguments', value);
+		}
+		if (engine.isNode(value)) {
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
+						210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+						251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return value;
+			return unseated('expression.call.arguments', value);
+		}
+		switch (value.$path) {
+			case 'argument.named':
+				return argument_named$237(value);
+			case 'element.spread':
+				return element_spread$173(value);
+			case 'element.spread.map':
+				return element_spread_map$174(value);
+			case 'element.spread.parenthesized':
+				return element_spread_parenthesized$181(value);
+			case 'expression.assignment':
+				return expression_assignment$148(value);
+			case 'expression.await':
+				return expression_await$262(value);
+			case 'expression.binary':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.arithmetic.add':
+				return expression_binary_arithmetic_add$214(value);
+			case 'expression.binary.arithmetic.divide':
+				return expression_binary_arithmetic_divide$214(value);
+			case 'expression.binary.arithmetic.exponent':
+				return expression_binary_arithmetic_exponent$214(value);
+			case 'expression.binary.arithmetic.floor_divide':
+				return expression_binary_arithmetic_floor_divide$214(value);
+			case 'expression.binary.arithmetic.modulo':
+				return expression_binary_arithmetic_modulo$214(value);
+			case 'expression.binary.arithmetic.multiply':
+				return expression_binary_arithmetic_multiply$214(value);
+			case 'expression.binary.arithmetic.subtract':
+				return expression_binary_arithmetic_subtract$214(value);
+			case 'expression.binary.bitwise.and':
+				return expression_binary_bitwise_and$214(value);
+			case 'expression.binary.bitwise.or':
+				return expression_binary_bitwise_or$214(value);
+			case 'expression.binary.bitwise.xor':
+				return expression_binary_bitwise_xor$214(value);
+			case 'expression.binary.comparison.chain':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.greater':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.greater_equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.less':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.less_equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.not_equal':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.comparison.not_equal.legacy':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.identity.is':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.identity.is_not':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.logical':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.logical.and':
+				return expression_binary_logical_and$213(value);
+			case 'expression.binary.logical.or':
+				return expression_binary_logical_or$213(value);
+			case 'expression.binary.matrix_multiply':
+				return expression_binary_matrix_multiply$214(value);
+			case 'expression.binary.membership.in':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.membership.not_in':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.binary.shift.left':
+				return expression_binary_shift_left$214(value);
+			case 'expression.binary.shift.right':
+				return expression_binary_shift_right$214(value);
+			case 'expression.call':
+				return expression_call$229(value);
+			case 'expression.call.member':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.collection.list':
+				return expression_collection_list$238(value);
+			case 'expression.collection.map':
+				return expression_collection_map$241(value);
+			case 'expression.collection.set':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.collection.tuple':
+				return expression_collection_tuple$240(value);
+			case 'expression.comprehension.generator':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.comprehension.list':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.comprehension.map':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.comprehension.set':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.conditional':
+				return expression_conditional$251(value);
+			case 'expression.lambda':
+				return expression_lambda$219(value);
+			case 'expression.member':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.parenthesized':
+				return expression_parenthesized$247(value);
+			case 'expression.subscript':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.unary':
+				return unbuilt('expression.call.arguments', value);
+			case 'expression.unary.bitwise_not':
+				return expression_unary_bitwise_not$215(value);
+			case 'expression.unary.negation':
+				return expression_unary_negation$215(value);
+			case 'expression.unary.not':
+				return expression_unary_not$212(value);
+			case 'expression.unary.plus':
+				return expression_unary_plus$215(value);
+			case 'identifier':
+				return identifier$1(value);
+			case 'literal.boolean.false':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.boolean.true':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.ellipsis':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.null':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.float':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.float.leading_point':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.float.scientific':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer':
+				return literal_number_integer$100(value);
+			case 'literal.number.integer.big':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.big.binary':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.big.hex':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.big.octal':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.binary':
+				return literal_number_integer_binary$95(value);
+			case 'literal.number.integer.hex':
+				return literal_number_integer_hex$91(value);
+			case 'literal.number.integer.imaginary':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.number.integer.octal':
+				if (value.content !== undefined && value.radixPrefix === undefined)
+					return literal_number_integer_octal$97(value);
+				return literal_number_integer_octal$93(value);
+			case 'literal.string':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.bytes.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.concatenated':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.deferred.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.interpolated.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.raw':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.raw.multiline':
+				return unbuilt('expression.call.arguments', value);
+			case 'literal.string.unicode':
+				return unbuilt('expression.call.arguments', value);
+			case 'pattern.rest':
+				return pattern_rest$206(value);
+			default:
+				return unbuilt('expression.call.arguments', value);
+		}
+	};
+	const expression_call$229_function = (
+		value:
+			| string
+			| BuildInput<PythonMap, 'expression.await'>
+			| PythonMap['nodes']['expression.await']
+			| BuildInput<PythonMap, 'expression.binary'>
+			| PythonMap['nodes']['expression.binary']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+			| PythonMap['nodes']['expression.binary.arithmetic.add']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+			| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+			| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+			| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+			| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+			| PythonMap['nodes']['expression.binary.bitwise.and']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+			| PythonMap['nodes']['expression.binary.bitwise.or']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+			| PythonMap['nodes']['expression.binary.bitwise.xor']
+			| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+			| PythonMap['nodes']['expression.binary.matrix_multiply']
+			| BuildInput<PythonMap, 'expression.binary.shift.left'>
+			| PythonMap['nodes']['expression.binary.shift.left']
+			| BuildInput<PythonMap, 'expression.binary.shift.right'>
+			| PythonMap['nodes']['expression.binary.shift.right']
+			| BuildInput<PythonMap, 'expression.call'>
+			| PythonMap['nodes']['expression.call']
+			| BuildInput<PythonMap, 'expression.call.member'>
+			| PythonMap['nodes']['expression.call.member']
+			| BuildInput<PythonMap, 'expression.collection.list'>
+			| PythonMap['nodes']['expression.collection.list']
+			| BuildInput<PythonMap, 'expression.collection.map'>
+			| PythonMap['nodes']['expression.collection.map']
+			| BuildInput<PythonMap, 'expression.collection.set'>
+			| PythonMap['nodes']['expression.collection.set']
+			| BuildInput<PythonMap, 'expression.collection.tuple'>
+			| PythonMap['nodes']['expression.collection.tuple']
+			| BuildInput<PythonMap, 'expression.comprehension.generator'>
+			| PythonMap['nodes']['expression.comprehension.generator']
+			| BuildInput<PythonMap, 'expression.comprehension.list'>
+			| PythonMap['nodes']['expression.comprehension.list']
+			| BuildInput<PythonMap, 'expression.comprehension.map'>
+			| PythonMap['nodes']['expression.comprehension.map']
+			| BuildInput<PythonMap, 'expression.comprehension.set'>
+			| PythonMap['nodes']['expression.comprehension.set']
+			| BuildInput<PythonMap, 'expression.member'>
+			| PythonMap['nodes']['expression.member']
+			| BuildInput<PythonMap, 'expression.parenthesized'>
+			| PythonMap['nodes']['expression.parenthesized']
+			| BuildInput<PythonMap, 'expression.subscript'>
+			| PythonMap['nodes']['expression.subscript']
+			| BuildInput<PythonMap, 'expression.unary'>
+			| PythonMap['nodes']['expression.unary']
+			| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+			| PythonMap['nodes']['expression.unary.bitwise_not']
+			| BuildInput<PythonMap, 'expression.unary.negation'>
+			| PythonMap['nodes']['expression.unary.negation']
+			| BuildInput<PythonMap, 'expression.unary.plus'>
+			| PythonMap['nodes']['expression.unary.plus']
+			| BuildInput<PythonMap, 'identifier'>
+			| PythonMap['nodes']['identifier']
+			| BuildInput<PythonMap, 'literal.boolean.false'>
+			| PythonMap['nodes']['literal.boolean.false']
+			| BuildInput<PythonMap, 'literal.boolean.true'>
+			| PythonMap['nodes']['literal.boolean.true']
+			| BuildInput<PythonMap, 'literal.ellipsis'>
+			| PythonMap['nodes']['literal.ellipsis']
+			| BuildInput<PythonMap, 'literal.null'>
+			| PythonMap['nodes']['literal.null']
+			| BuildInput<PythonMap, 'literal.number.float'>
+			| PythonMap['nodes']['literal.number.float']
+			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+			| PythonMap['nodes']['literal.number.float.leading_point']
+			| BuildInput<PythonMap, 'literal.number.float.scientific'>
+			| PythonMap['nodes']['literal.number.float.scientific']
+			| BuildInput<PythonMap, 'literal.number.integer'>
+			| PythonMap['nodes']['literal.number.integer']
+			| BuildInput<PythonMap, 'literal.number.integer.big'>
+			| PythonMap['nodes']['literal.number.integer.big']
+			| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+			| PythonMap['nodes']['literal.number.integer.big.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+			| PythonMap['nodes']['literal.number.integer.big.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+			| PythonMap['nodes']['literal.number.integer.big.octal']
+			| BuildInput<PythonMap, 'literal.number.integer.binary'>
+			| PythonMap['nodes']['literal.number.integer.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.hex'>
+			| PythonMap['nodes']['literal.number.integer.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+			| PythonMap['nodes']['literal.number.integer.imaginary']
+			| BuildInput<PythonMap, 'literal.number.integer.octal'>
+			| PythonMap['nodes']['literal.number.integer.octal']
+			| BuildInput<PythonMap, 'literal.string'>
+			| PythonMap['nodes']['literal.string']
+			| BuildInput<PythonMap, 'literal.string.bytes'>
+			| PythonMap['nodes']['literal.string.bytes']
+			| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.multiline']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+			| PythonMap['nodes']['literal.string.bytes.raw']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.concatenated'>
+			| PythonMap['nodes']['literal.string.concatenated']
+			| BuildInput<PythonMap, 'literal.string.interpolated'>
+			| PythonMap['nodes']['literal.string.interpolated']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.multiline'>
+			| PythonMap['nodes']['literal.string.multiline']
+			| BuildInput<PythonMap, 'literal.string.raw'>
+			| PythonMap['nodes']['literal.string.raw']
+			| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+			| PythonMap['nodes']['literal.string.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.unicode'>
+			| PythonMap['nodes']['literal.string.unicode']
+			| BuildInput<PythonMap, 'pattern.rest'>
+			| PythonMap['nodes']['pattern.rest']
+	) => {
+		if (typeof value === 'string') {
+			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+			return b.identifier(value);
+		}
+		if (typeof value === 'number') {
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 214, 215, 227, 229, 238,
+						239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return value;
+			return unseated('expression.call.function', value);
+		}
+		if (engine.isNode(value)) {
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 214, 215, 227, 229, 238,
+						239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return value;
+			return unseated('expression.call.function', value);
+		}
+		switch (value.$path) {
+			case 'expression.await':
+				return expression_await$262(value);
+			case 'expression.binary':
+				return unbuilt('expression.call.function', value);
+			case 'expression.binary.arithmetic.add':
+				return expression_binary_arithmetic_add$214(value);
+			case 'expression.binary.arithmetic.divide':
+				return expression_binary_arithmetic_divide$214(value);
+			case 'expression.binary.arithmetic.exponent':
+				return expression_binary_arithmetic_exponent$214(value);
+			case 'expression.binary.arithmetic.floor_divide':
+				return expression_binary_arithmetic_floor_divide$214(value);
+			case 'expression.binary.arithmetic.modulo':
+				return expression_binary_arithmetic_modulo$214(value);
+			case 'expression.binary.arithmetic.multiply':
+				return expression_binary_arithmetic_multiply$214(value);
+			case 'expression.binary.arithmetic.subtract':
+				return expression_binary_arithmetic_subtract$214(value);
+			case 'expression.binary.bitwise.and':
+				return expression_binary_bitwise_and$214(value);
+			case 'expression.binary.bitwise.or':
+				return expression_binary_bitwise_or$214(value);
+			case 'expression.binary.bitwise.xor':
+				return expression_binary_bitwise_xor$214(value);
+			case 'expression.binary.matrix_multiply':
+				return expression_binary_matrix_multiply$214(value);
+			case 'expression.binary.shift.left':
+				return expression_binary_shift_left$214(value);
+			case 'expression.binary.shift.right':
+				return expression_binary_shift_right$214(value);
+			case 'expression.call':
+				return expression_call$229(value);
+			case 'expression.call.member':
+				return unbuilt('expression.call.function', value);
+			case 'expression.collection.list':
+				return expression_collection_list$238(value);
+			case 'expression.collection.map':
+				return expression_collection_map$241(value);
+			case 'expression.collection.set':
+				return unbuilt('expression.call.function', value);
+			case 'expression.collection.tuple':
+				return expression_collection_tuple$240(value);
+			case 'expression.comprehension.generator':
+				return unbuilt('expression.call.function', value);
+			case 'expression.comprehension.list':
+				return unbuilt('expression.call.function', value);
+			case 'expression.comprehension.map':
+				return unbuilt('expression.call.function', value);
+			case 'expression.comprehension.set':
+				return unbuilt('expression.call.function', value);
+			case 'expression.member':
+				return unbuilt('expression.call.function', value);
+			case 'expression.parenthesized':
+				return expression_parenthesized$247(value);
+			case 'expression.subscript':
+				return unbuilt('expression.call.function', value);
+			case 'expression.unary':
+				return unbuilt('expression.call.function', value);
+			case 'expression.unary.bitwise_not':
+				return expression_unary_bitwise_not$215(value);
+			case 'expression.unary.negation':
+				return expression_unary_negation$215(value);
+			case 'expression.unary.plus':
+				return expression_unary_plus$215(value);
+			case 'identifier':
+				return identifier$1(value);
+			case 'literal.boolean.false':
+				return unbuilt('expression.call.function', value);
+			case 'literal.boolean.true':
+				return unbuilt('expression.call.function', value);
+			case 'literal.ellipsis':
+				return unbuilt('expression.call.function', value);
+			case 'literal.null':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.float':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.float.leading_point':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.float.scientific':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.integer':
+				return literal_number_integer$100(value);
+			case 'literal.number.integer.big':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.integer.big.binary':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.integer.big.hex':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.integer.big.octal':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.integer.binary':
+				return literal_number_integer_binary$95(value);
+			case 'literal.number.integer.hex':
+				return literal_number_integer_hex$91(value);
+			case 'literal.number.integer.imaginary':
+				return unbuilt('expression.call.function', value);
+			case 'literal.number.integer.octal':
+				if (value.content !== undefined && value.radixPrefix === undefined)
+					return literal_number_integer_octal$97(value);
+				return literal_number_integer_octal$93(value);
+			case 'literal.string':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.bytes':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.bytes.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.bytes.raw':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.bytes.raw.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.concatenated':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated.deferred':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated.deferred.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated.deferred.raw':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated.deferred.raw.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated.raw':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.interpolated.raw.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.raw':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.raw.multiline':
+				return unbuilt('expression.call.function', value);
+			case 'literal.string.unicode':
+				return unbuilt('expression.call.function', value);
+			case 'pattern.rest':
+				return pattern_rest$206(value);
+			default:
+				return unbuilt('expression.call.function', value);
 		}
 	};
 	const expression_collection_list$238_elements$item = (
@@ -22735,7 +23876,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.collection.list.elements', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.collection.list.elements', value);
 			case 'expression.collection.list':
@@ -22757,7 +23898,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.collection.list.elements', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.collection.list.elements', value);
 			case 'expression.parenthesized':
@@ -23167,7 +24308,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.collection.tuple.elements', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.collection.tuple.elements', value);
 			case 'expression.collection.list':
@@ -23189,7 +24330,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.collection.tuple.elements', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.collection.tuple.elements', value);
 			case 'expression.parenthesized':
@@ -23563,7 +24704,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.conditional.alternative', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.conditional.alternative', value);
 			case 'expression.collection.list':
@@ -23585,7 +24726,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.conditional.alternative', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.conditional.alternative', value);
 			case 'expression.parenthesized':
@@ -23955,7 +25096,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.conditional.condition', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.conditional.condition', value);
 			case 'expression.collection.list':
@@ -23977,7 +25118,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.conditional.condition', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.conditional.condition', value);
 			case 'expression.parenthesized':
@@ -24347,7 +25488,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.conditional.consequence', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.conditional.consequence', value);
 			case 'expression.collection.list':
@@ -24369,7 +25510,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.conditional.consequence', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.conditional.consequence', value);
 			case 'expression.parenthesized':
@@ -24747,7 +25888,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.interpolation.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.interpolation.expression', value);
 			case 'expression.collection.list':
@@ -24771,7 +25912,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.interpolation.expression', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.interpolation.expression', value);
 			case 'expression.parenthesized':
@@ -24928,6 +26069,512 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			return unseated('expression.interpolation.format.elements', value);
 		}
 		return expression_interpolation$360(value);
+	};
+	const expression_lambda$219_body = (
+		value:
+			| string
+			| BuildInput<PythonMap, 'expression.assignment'>
+			| PythonMap['nodes']['expression.assignment']
+			| BuildInput<PythonMap, 'expression.await'>
+			| PythonMap['nodes']['expression.await']
+			| BuildInput<PythonMap, 'expression.binary'>
+			| PythonMap['nodes']['expression.binary']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+			| PythonMap['nodes']['expression.binary.arithmetic.add']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+			| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+			| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+			| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+			| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+			| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+			| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+			| PythonMap['nodes']['expression.binary.bitwise.and']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+			| PythonMap['nodes']['expression.binary.bitwise.or']
+			| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+			| PythonMap['nodes']['expression.binary.bitwise.xor']
+			| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+			| PythonMap['nodes']['expression.binary.comparison.chain']
+			| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+			| PythonMap['nodes']['expression.binary.comparison.equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+			| PythonMap['nodes']['expression.binary.comparison.greater']
+			| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+			| PythonMap['nodes']['expression.binary.comparison.less']
+			| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.less_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+			| PythonMap['nodes']['expression.binary.comparison.not_equal']
+			| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+			| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+			| BuildInput<PythonMap, 'expression.binary.identity.is'>
+			| PythonMap['nodes']['expression.binary.identity.is']
+			| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+			| PythonMap['nodes']['expression.binary.identity.is_not']
+			| BuildInput<PythonMap, 'expression.binary.logical'>
+			| PythonMap['nodes']['expression.binary.logical']
+			| BuildInput<PythonMap, 'expression.binary.logical.and'>
+			| PythonMap['nodes']['expression.binary.logical.and']
+			| BuildInput<PythonMap, 'expression.binary.logical.or'>
+			| PythonMap['nodes']['expression.binary.logical.or']
+			| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+			| PythonMap['nodes']['expression.binary.matrix_multiply']
+			| BuildInput<PythonMap, 'expression.binary.membership.in'>
+			| PythonMap['nodes']['expression.binary.membership.in']
+			| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+			| PythonMap['nodes']['expression.binary.membership.not_in']
+			| BuildInput<PythonMap, 'expression.binary.shift.left'>
+			| PythonMap['nodes']['expression.binary.shift.left']
+			| BuildInput<PythonMap, 'expression.binary.shift.right'>
+			| PythonMap['nodes']['expression.binary.shift.right']
+			| BuildInput<PythonMap, 'expression.call'>
+			| PythonMap['nodes']['expression.call']
+			| BuildInput<PythonMap, 'expression.call.member'>
+			| PythonMap['nodes']['expression.call.member']
+			| BuildInput<PythonMap, 'expression.collection.list'>
+			| PythonMap['nodes']['expression.collection.list']
+			| BuildInput<PythonMap, 'expression.collection.map'>
+			| PythonMap['nodes']['expression.collection.map']
+			| BuildInput<PythonMap, 'expression.collection.set'>
+			| PythonMap['nodes']['expression.collection.set']
+			| BuildInput<PythonMap, 'expression.collection.tuple'>
+			| PythonMap['nodes']['expression.collection.tuple']
+			| BuildInput<PythonMap, 'expression.comprehension.generator'>
+			| PythonMap['nodes']['expression.comprehension.generator']
+			| BuildInput<PythonMap, 'expression.comprehension.list'>
+			| PythonMap['nodes']['expression.comprehension.list']
+			| BuildInput<PythonMap, 'expression.comprehension.map'>
+			| PythonMap['nodes']['expression.comprehension.map']
+			| BuildInput<PythonMap, 'expression.comprehension.set'>
+			| PythonMap['nodes']['expression.comprehension.set']
+			| BuildInput<PythonMap, 'expression.conditional'>
+			| PythonMap['nodes']['expression.conditional']
+			| BuildInput<PythonMap, 'expression.lambda'>
+			| PythonMap['nodes']['expression.lambda']
+			| BuildInput<PythonMap, 'expression.member'>
+			| PythonMap['nodes']['expression.member']
+			| BuildInput<PythonMap, 'expression.parenthesized'>
+			| PythonMap['nodes']['expression.parenthesized']
+			| BuildInput<PythonMap, 'expression.subscript'>
+			| PythonMap['nodes']['expression.subscript']
+			| BuildInput<PythonMap, 'expression.unary'>
+			| PythonMap['nodes']['expression.unary']
+			| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+			| PythonMap['nodes']['expression.unary.bitwise_not']
+			| BuildInput<PythonMap, 'expression.unary.negation'>
+			| PythonMap['nodes']['expression.unary.negation']
+			| BuildInput<PythonMap, 'expression.unary.not'>
+			| PythonMap['nodes']['expression.unary.not']
+			| BuildInput<PythonMap, 'expression.unary.plus'>
+			| PythonMap['nodes']['expression.unary.plus']
+			| BuildInput<PythonMap, 'identifier'>
+			| PythonMap['nodes']['identifier']
+			| BuildInput<PythonMap, 'literal.boolean.false'>
+			| PythonMap['nodes']['literal.boolean.false']
+			| BuildInput<PythonMap, 'literal.boolean.true'>
+			| PythonMap['nodes']['literal.boolean.true']
+			| BuildInput<PythonMap, 'literal.ellipsis'>
+			| PythonMap['nodes']['literal.ellipsis']
+			| BuildInput<PythonMap, 'literal.null'>
+			| PythonMap['nodes']['literal.null']
+			| BuildInput<PythonMap, 'literal.number.float'>
+			| PythonMap['nodes']['literal.number.float']
+			| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+			| PythonMap['nodes']['literal.number.float.leading_point']
+			| BuildInput<PythonMap, 'literal.number.float.scientific'>
+			| PythonMap['nodes']['literal.number.float.scientific']
+			| BuildInput<PythonMap, 'literal.number.integer'>
+			| PythonMap['nodes']['literal.number.integer']
+			| BuildInput<PythonMap, 'literal.number.integer.big'>
+			| PythonMap['nodes']['literal.number.integer.big']
+			| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+			| PythonMap['nodes']['literal.number.integer.big.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+			| PythonMap['nodes']['literal.number.integer.big.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+			| PythonMap['nodes']['literal.number.integer.big.octal']
+			| BuildInput<PythonMap, 'literal.number.integer.binary'>
+			| PythonMap['nodes']['literal.number.integer.binary']
+			| BuildInput<PythonMap, 'literal.number.integer.hex'>
+			| PythonMap['nodes']['literal.number.integer.hex']
+			| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+			| PythonMap['nodes']['literal.number.integer.imaginary']
+			| BuildInput<PythonMap, 'literal.number.integer.octal'>
+			| PythonMap['nodes']['literal.number.integer.octal']
+			| BuildInput<PythonMap, 'literal.string'>
+			| PythonMap['nodes']['literal.string']
+			| BuildInput<PythonMap, 'literal.string.bytes'>
+			| PythonMap['nodes']['literal.string.bytes']
+			| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.multiline']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+			| PythonMap['nodes']['literal.string.bytes.raw']
+			| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+			| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.concatenated'>
+			| PythonMap['nodes']['literal.string.concatenated']
+			| BuildInput<PythonMap, 'literal.string.interpolated'>
+			| PythonMap['nodes']['literal.string.interpolated']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.multiline']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+			| PythonMap['nodes']['literal.string.interpolated.raw']
+			| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+			| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.multiline'>
+			| PythonMap['nodes']['literal.string.multiline']
+			| BuildInput<PythonMap, 'literal.string.raw'>
+			| PythonMap['nodes']['literal.string.raw']
+			| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+			| PythonMap['nodes']['literal.string.raw.multiline']
+			| BuildInput<PythonMap, 'literal.string.unicode'>
+			| PythonMap['nodes']['literal.string.unicode']
+			| BuildInput<PythonMap, 'pattern.rest'>
+			| PythonMap['nodes']['pattern.rest']
+			| Unmapped<'python:as_pattern'>
+	) => {
+		if (typeof value === 'string') {
+			if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+			return b.identifier(value);
+		}
+		if (typeof value === 'number') {
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+						213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
+						261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return value;
+			return unseated('expression.lambda.body', value);
+		}
+		if (engine.isNode(value)) {
+			if (
+				seated(
+					value,
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+						213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
+						261, 262, 291, 292, 293, 294, 295
+					]
+				)
+			)
+				return value;
+			return unseated('expression.lambda.body', value);
+		}
+		switch (value.$path) {
+			case 'expression.assignment':
+				return expression_assignment$148(value);
+			case 'expression.await':
+				return expression_await$262(value);
+			case 'expression.binary':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.arithmetic.add':
+				return expression_binary_arithmetic_add$214(value);
+			case 'expression.binary.arithmetic.divide':
+				return expression_binary_arithmetic_divide$214(value);
+			case 'expression.binary.arithmetic.exponent':
+				return expression_binary_arithmetic_exponent$214(value);
+			case 'expression.binary.arithmetic.floor_divide':
+				return expression_binary_arithmetic_floor_divide$214(value);
+			case 'expression.binary.arithmetic.modulo':
+				return expression_binary_arithmetic_modulo$214(value);
+			case 'expression.binary.arithmetic.multiply':
+				return expression_binary_arithmetic_multiply$214(value);
+			case 'expression.binary.arithmetic.subtract':
+				return expression_binary_arithmetic_subtract$214(value);
+			case 'expression.binary.bitwise.and':
+				return expression_binary_bitwise_and$214(value);
+			case 'expression.binary.bitwise.or':
+				return expression_binary_bitwise_or$214(value);
+			case 'expression.binary.bitwise.xor':
+				return expression_binary_bitwise_xor$214(value);
+			case 'expression.binary.comparison.chain':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.comparison.equal':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.comparison.greater':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.comparison.greater_equal':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.comparison.less':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.comparison.less_equal':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.comparison.not_equal':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.comparison.not_equal.legacy':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.identity.is':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.identity.is_not':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.logical':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.logical.and':
+				return expression_binary_logical_and$213(value);
+			case 'expression.binary.logical.or':
+				return expression_binary_logical_or$213(value);
+			case 'expression.binary.matrix_multiply':
+				return expression_binary_matrix_multiply$214(value);
+			case 'expression.binary.membership.in':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.membership.not_in':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.binary.shift.left':
+				return expression_binary_shift_left$214(value);
+			case 'expression.binary.shift.right':
+				return expression_binary_shift_right$214(value);
+			case 'expression.call':
+				return expression_call$229(value);
+			case 'expression.call.member':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.collection.list':
+				return expression_collection_list$238(value);
+			case 'expression.collection.map':
+				return expression_collection_map$241(value);
+			case 'expression.collection.set':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.collection.tuple':
+				return expression_collection_tuple$240(value);
+			case 'expression.comprehension.generator':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.comprehension.list':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.comprehension.map':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.comprehension.set':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.conditional':
+				return expression_conditional$251(value);
+			case 'expression.lambda':
+				return expression_lambda$219(value);
+			case 'expression.member':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.parenthesized':
+				return expression_parenthesized$247(value);
+			case 'expression.subscript':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.unary':
+				return unbuilt('expression.lambda.body', value);
+			case 'expression.unary.bitwise_not':
+				return expression_unary_bitwise_not$215(value);
+			case 'expression.unary.negation':
+				return expression_unary_negation$215(value);
+			case 'expression.unary.not':
+				return expression_unary_not$212(value);
+			case 'expression.unary.plus':
+				return expression_unary_plus$215(value);
+			case 'identifier':
+				return identifier$1(value);
+			case 'literal.boolean.false':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.boolean.true':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.ellipsis':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.null':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.float':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.float.leading_point':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.float.scientific':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.integer':
+				return literal_number_integer$100(value);
+			case 'literal.number.integer.big':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.integer.big.binary':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.integer.big.hex':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.integer.big.octal':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.integer.binary':
+				return literal_number_integer_binary$95(value);
+			case 'literal.number.integer.hex':
+				return literal_number_integer_hex$91(value);
+			case 'literal.number.integer.imaginary':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.number.integer.octal':
+				if (value.content !== undefined && value.radixPrefix === undefined)
+					return literal_number_integer_octal$97(value);
+				return literal_number_integer_octal$93(value);
+			case 'literal.string':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.bytes':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.bytes.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.bytes.raw':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.bytes.raw.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.concatenated':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated.deferred':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated.deferred.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated.deferred.raw':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated.deferred.raw.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated.raw':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.interpolated.raw.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.raw':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.raw.multiline':
+				return unbuilt('expression.lambda.body', value);
+			case 'literal.string.unicode':
+				return unbuilt('expression.lambda.body', value);
+			case 'pattern.rest':
+				return pattern_rest$206(value);
+			default:
+				return unbuilt('expression.lambda.body', value);
+		}
+	};
+	const expression_lambda$219_parameters = (
+		value:
+			| string
+			| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
+			| PythonMap['nodes']['declaration.parameter.defaulted']
+			| BuildInput<PythonMap, 'declaration.parameter.typed'>
+			| PythonMap['nodes']['declaration.parameter.typed']
+			| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
+			| PythonMap['nodes']['declaration.parameter.typed_default']
+			| BuildInput<PythonMap, 'identifier'>
+			| PythonMap['nodes']['identifier']
+			| BuildInput<PythonMap, 'pattern.rest'>
+			| PythonMap['nodes']['pattern.rest']
+			| BuildInput<PythonMap, 'pattern.rest.map'>
+			| PythonMap['nodes']['pattern.rest.map']
+			| BuildInput<PythonMap, 'pattern.tuple'>
+			| PythonMap['nodes']['pattern.tuple']
+	) => {
+		if (typeof value === 'string') {
+			switch (value) {
+				case '*':
+					return 264;
+				case '/':
+					return 263;
+				default:
+					if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+						return b.lambdaParameters(b.parametersElements(b.identifier(value)));
+					return b.lambdaParameters(b.parametersElements(b.identifier(value)));
+			}
+		}
+		if (typeof value === 'number') {
+			if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return b.lambdaParameters(b.parametersElements(value));
+			return unseated('expression.lambda.parameters', value);
+		}
+		if (engine.isNode(value)) {
+			if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264]))
+				return b.lambdaParameters(b.parametersElements(value));
+			return unseated('expression.lambda.parameters', value);
+		}
+		switch (value.$path) {
+			case 'declaration.parameter.defaulted':
+				return b.lambdaParameters(b.parametersElements(declaration_parameter_defaulted$204(value)));
+			case 'declaration.parameter.typed':
+				return b.lambdaParameters(b.parametersElements(declaration_parameter_typed$230(value)));
+			case 'declaration.parameter.typed_default':
+				return b.lambdaParameters(b.parametersElements(declaration_parameter_typed_default$205(value)));
+			case 'identifier':
+				return b.lambdaParameters(b.parametersElements(identifier$1(value)));
+			case 'pattern.rest':
+				return b.lambdaParameters(b.parametersElements(pattern_rest$206(value)));
+			case 'pattern.rest.map':
+				return b.lambdaParameters(b.parametersElements(pattern_rest_map$207(value)));
+			case 'pattern.tuple':
+				return b.lambdaParameters(b.parametersElements(pattern_tuple$202(value)));
+			default:
+				return unbuilt('expression.lambda.parameters', value);
+		}
+	};
+	const expression_lambda$219_parameters$item = (
+		value:
+			| string
+			| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
+			| PythonMap['nodes']['declaration.parameter.defaulted']
+			| BuildInput<PythonMap, 'declaration.parameter.typed'>
+			| PythonMap['nodes']['declaration.parameter.typed']
+			| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
+			| PythonMap['nodes']['declaration.parameter.typed_default']
+			| BuildInput<PythonMap, 'identifier'>
+			| PythonMap['nodes']['identifier']
+			| BuildInput<PythonMap, 'pattern.rest'>
+			| PythonMap['nodes']['pattern.rest']
+			| BuildInput<PythonMap, 'pattern.rest.map'>
+			| PythonMap['nodes']['pattern.rest.map']
+			| BuildInput<PythonMap, 'pattern.tuple'>
+			| PythonMap['nodes']['pattern.tuple']
+	) => {
+		if (typeof value === 'string') {
+			switch (value) {
+				case '*':
+					return 264;
+				case '/':
+					return 263;
+				default:
+					if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+					return b.identifier(value);
+			}
+		}
+		if (typeof value === 'number') {
+			if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
+			return unseated('expression.lambda.parameters', value);
+		}
+		if (engine.isNode(value)) {
+			if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
+			return unseated('expression.lambda.parameters', value);
+		}
+		switch (value.$path) {
+			case 'declaration.parameter.defaulted':
+				return declaration_parameter_defaulted$204(value);
+			case 'declaration.parameter.typed':
+				return declaration_parameter_typed$230(value);
+			case 'declaration.parameter.typed_default':
+				return declaration_parameter_typed_default$205(value);
+			case 'identifier':
+				return identifier$1(value);
+			case 'pattern.rest':
+				return pattern_rest$206(value);
+			case 'pattern.rest.map':
+				return pattern_rest_map$207(value);
+			case 'pattern.tuple':
+				return pattern_tuple$202(value);
+			default:
+				return unbuilt('expression.lambda.parameters', value);
+		}
 	};
 	const expression_parenthesized$247_expression = (
 		value:
@@ -25208,7 +26855,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.parenthesized.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.parenthesized.expression', value);
 			case 'expression.collection.list':
@@ -25230,7 +26877,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.parenthesized.expression', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.parenthesized.expression', value);
 			case 'expression.parenthesized':
@@ -25531,7 +27178,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.unary.bitwise_not.argument', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.unary.bitwise_not.argument', value);
 			case 'expression.collection.list':
@@ -25844,7 +27491,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.unary.negation.argument', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.unary.negation.argument', value);
 			case 'expression.collection.list':
@@ -26230,7 +27877,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.unary.not.argument', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.unary.not.argument', value);
 			case 'expression.collection.list':
@@ -26252,7 +27899,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.unary.not.argument', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.unary.not.argument', value);
 			case 'expression.parenthesized':
@@ -26549,7 +28196,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.unary.plus.argument', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.unary.plus.argument', value);
 			case 'expression.collection.list':
@@ -26937,7 +28584,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('expression.yield.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('expression.yield.expression', value);
 			case 'expression.collection.list':
@@ -26961,7 +28608,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('expression.yield.expression', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('expression.yield.expression', value);
 			case 'expression.parenthesized':
@@ -27778,7 +29425,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('identifier.qualified.qualifier', value);
 			case 'expression.collection.list':
@@ -27800,7 +29447,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('identifier.qualified.qualifier', value);
 			case 'expression.parenthesized':
@@ -30785,7 +32432,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('statement.delete.expressions', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('statement.delete.expressions', value);
 			case 'expression.collection.list':
@@ -30809,7 +32456,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('statement.delete.expressions', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('statement.delete.expressions', value);
 			case 'expression.parenthesized':
@@ -31272,7 +32919,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('statement.exec.inClauses', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('statement.exec.inClauses', value);
 			case 'expression.collection.list':
@@ -31294,7 +32941,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('statement.exec.inClauses', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('statement.exec.inClauses', value);
 			case 'expression.parenthesized':
@@ -31666,7 +33313,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('statement.return.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('statement.return.expression', value);
 			case 'expression.collection.list':
@@ -31690,7 +33337,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('statement.return.expression', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('statement.return.expression', value);
 			case 'expression.parenthesized':
@@ -32060,7 +33707,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('statement.throw.cause', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('statement.throw.cause', value);
 			case 'expression.collection.list':
@@ -32082,7 +33729,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('statement.throw.cause', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('statement.throw.cause', value);
 			case 'expression.parenthesized':
@@ -32454,7 +34101,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return expression_binary_shift_right$214(value);
 			case 'expression.call':
-				return unbuilt('statement.throw.expression', value);
+				return expression_call$229(value);
 			case 'expression.call.member':
 				return unbuilt('statement.throw.expression', value);
 			case 'expression.collection.list':
@@ -32478,7 +34125,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return expression_conditional$251(value);
 			case 'expression.lambda':
-				return unbuilt('statement.throw.expression', value);
+				return expression_lambda$219(value);
 			case 'expression.member':
 				return unbuilt('statement.throw.expression', value);
 			case 'expression.parenthesized':
@@ -32860,7 +34507,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('type.constrained.baseType', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('type.constrained.baseType', value);
 			case 'expression.collection.list':
@@ -32882,7 +34529,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('type.constrained.baseType', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('type.constrained.baseType', value);
 			case 'expression.parenthesized':
@@ -33276,7 +34923,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('type.constrained.constraint', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('type.constrained.constraint', value);
 			case 'expression.collection.list':
@@ -33298,7 +34945,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('type.constrained.constraint', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('type.constrained.constraint', value);
 			case 'expression.parenthesized':
@@ -33725,7 +35372,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('type.union.left', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('type.union.left', value);
 			case 'expression.collection.list':
@@ -33747,7 +35394,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('type.union.left', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('type.union.left', value);
 			case 'expression.parenthesized':
@@ -34141,7 +35788,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.binary.shift.right':
 				return b.type(expression_binary_shift_right$214(value));
 			case 'expression.call':
-				return unbuilt('type.union.right', value);
+				return b.type(expression_call$229(value));
 			case 'expression.call.member':
 				return unbuilt('type.union.right', value);
 			case 'expression.collection.list':
@@ -34163,7 +35810,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.conditional':
 				return b.type(expression_conditional$251(value));
 			case 'expression.lambda':
-				return unbuilt('type.union.right', value);
+				return b.type(expression_lambda$219(value));
 			case 'expression.member':
 				return unbuilt('type.union.right', value);
 			case 'expression.parenthesized':
@@ -34741,6 +36388,28 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			operator: 9
 		});
 	};
+	const expression_call$229 = (input: PathInput<PythonMap, 'expression.call'>): ReturnType<typeof b.call> => {
+		const arguments$first = (listed(input.arguments) ? input.arguments : [])[0];
+		const arguments$rest = (listed(input.arguments) ? input.arguments : []).slice(1);
+		return b.call({
+			function:
+				input.function === undefined
+					? missing('expression.call.function')
+					: expression_call$229_function(input.function),
+			arguments: listed(input.arguments)
+				? arguments$first === undefined
+					? b.argumentList()
+					: b.argumentList(
+							b.argumentListElements(
+								expression_call$229_arguments$item(arguments$first),
+								...arguments$rest.map(expression_call$229_arguments$item)
+							)
+						)
+				: input.arguments === undefined
+					? missing('expression.call.arguments')
+					: expression_call$229_arguments(input.arguments)
+		});
+	};
 	const expression_collection_list$238 = (
 		input: PathInput<PythonMap, 'expression.collection.list'>
 	): ReturnType<typeof b.list> => {
@@ -34820,6 +36489,25 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: PathInput<PythonMap, 'expression.interpolation.format'>
 	): ReturnType<typeof b.formatSpecifier> => {
 		return b.formatSpecifier(...(input.elements ?? []).map(expression_interpolation_format$259_elements));
+	};
+	const expression_lambda$219 = (input: PathInput<PythonMap, 'expression.lambda'>): ReturnType<typeof b.lambda> => {
+		const parameters$first = (listed(input.parameters) ? input.parameters : [])[0];
+		const parameters$rest = (listed(input.parameters) ? input.parameters : []).slice(1);
+		return b.lambda({
+			parameters: listed(input.parameters)
+				? parameters$first === undefined
+					? undefined
+					: b.lambdaParameters(
+							b.parametersElements(
+								expression_lambda$219_parameters$item(parameters$first),
+								...parameters$rest.map(expression_lambda$219_parameters$item)
+							)
+						)
+				: input.parameters === undefined
+					? undefined
+					: expression_lambda$219_parameters(input.parameters),
+			body: expression_lambda$219_body(input.body)
+		});
 	};
 	const expression_parenthesized$247 = (
 		input: PathInput<PythonMap, 'expression.parenthesized'>
@@ -35248,6 +36936,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	const expression_binary_shift_right = (input: PathInput<PythonMap, 'expression.binary.shift.right'>) => {
 		return expression_binary_shift_right$214(input);
 	};
+	const expression_call = (input: PathInput<PythonMap, 'expression.call'>) => {
+		return expression_call$229(input);
+	};
 	const expression_collection_list = (input: PathInput<PythonMap, 'expression.collection.list'>) => {
 		return expression_collection_list$238(input);
 	};
@@ -35265,6 +36956,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const expression_interpolation_format = (input: PathInput<PythonMap, 'expression.interpolation.format'>) => {
 		return expression_interpolation_format$259(input);
+	};
+	const expression_lambda = (input: PathInput<PythonMap, 'expression.lambda'>) => {
+		return expression_lambda$219(input);
 	};
 	const expression_parenthesized = (input: PathInput<PythonMap, 'expression.parenthesized'>) => {
 		return expression_parenthesized$247(input);
@@ -35450,6 +37144,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 				matrix_multiply: expression_binary_matrix_multiply,
 				shift: { left: expression_binary_shift_left, right: expression_binary_shift_right }
 			},
+			call: expression_call,
 			collection: {
 				list: expression_collection_list,
 				map: expression_collection_map,
@@ -35457,6 +37152,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			},
 			conditional: expression_conditional,
 			interpolation: { conversion: expression_interpolation_conversion, format: expression_interpolation_format },
+			lambda: expression_lambda,
 			parenthesized: expression_parenthesized,
 			unary: {
 				bitwise_not: expression_unary_bitwise_not,
