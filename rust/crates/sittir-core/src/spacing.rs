@@ -960,6 +960,21 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Whether the held seam breaks the line.
+    /// One break of a held breaking seam is already written: the text
+    /// before it ended its line, or the text after it opens with the break.
+    fn take_written_break(&mut self) {
+        if self.seam.is_some() && self.seam_pick.breaks() {
+            let rest = self.seam_pick.without_first_break();
+            if rest.is_empty() {
+                self.clear_payload();
+            } else {
+                self.seam_pick = rest;
+                self.seam_set = rest;
+                self.seam = Some(rest.rank());
+            }
+        }
+    }
+
     fn held_breaks(&self) -> bool {
         self.seam.is_some() && self.seam_pick.breaks()
     }
@@ -1138,6 +1153,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         if s.starts_with('\n') && self.seam == Some(1) && self.seam_token.is_none() {
             self.clear_payload();
+        }
+        if s.starts_with('\n') && self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks() {
+            self.take_written_break();
+            self.line_end_held = None;
         }
         let seam_held = self.seam.is_some() && self.seam_pick != LayoutKinds::TIGHT;
         self.flush_seam()?;
@@ -1567,16 +1586,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn hold_line_end(&mut self, hold: crate::render::LineHold) {
         if self.at_line_start() {
-            if self.seam.is_some() && self.seam_pick.breaks() {
-                let rest = self.seam_pick.without_first_break();
-                if rest.is_empty() {
-                    self.clear_payload();
-                } else {
-                    self.seam_pick = rest;
-                    self.seam_set = rest;
-                    self.seam = Some(rest.rank());
-                }
-            }
+            self.take_written_break();
             return;
         }
         if !self.held_breaks() {
