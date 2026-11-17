@@ -42,7 +42,7 @@ export type {
 	PortableFlagStep,
 	PortableGuard,
 	PortableKind,
-	PortableMemberStep,
+	PortableSlotRoute,
 	PortableKeyedMount,
 	PortableMount,
 	PortableMountCall,

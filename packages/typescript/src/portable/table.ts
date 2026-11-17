@@ -278,7 +278,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 287,
 					builder: 'decoratorCallExpression',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -423,7 +423,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 286,
 					builder: 'decoratorMemberExpression',
-					members: [
+					slots: [
 						{
 							name: 'object',
 							steps: [
@@ -491,7 +491,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 304,
 					builder: 'decoratorParenthesizedExpression',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -533,7 +533,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 231,
 					builder: 'switchDefault',
-					members: [
+					slots: [
 						{
 							name: 'bodies',
 							steps: [
@@ -592,7 +592,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -635,7 +635,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 230,
 					builder: 'switchCase',
-					members: [
+					slots: [
 						{
 							name: 'value',
 							steps: [
@@ -728,7 +728,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -776,7 +776,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 232,
 					builder: 'catchClause',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -895,7 +895,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 374,
 					builder: 'defaultType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -954,7 +954,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 212,
 					builder: 'elseClause',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -1011,7 +1011,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -1059,7 +1059,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 193,
 					builder: 'exportClause',
-					members: [
+					slots: [
 						{
 							name: 'exportSpecifiers',
 							steps: [
@@ -1101,7 +1101,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 192,
 					builder: 'namespaceExport',
-					members: [
+					slots: [
 						{
 							name: 'moduleExportName',
 							steps: [
@@ -1146,7 +1146,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 194,
 					builder: 'exportSpecifier',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -1232,7 +1232,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 194,
 					builder: 'exportSpecifier',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -1328,7 +1328,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 310,
 					builder: 'extendsClause',
-					members: [
+					slots: [
 						{
 							name: 'types',
 							steps: [
@@ -1366,7 +1366,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 321,
 					builder: 'extendsTypeClause',
-					members: [
+					slots: [
 						{
 							name: 'types',
 							steps: [
@@ -1411,7 +1411,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 233,
 					builder: 'finallyClause',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -1446,7 +1446,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 312,
 					builder: 'implementsClause',
-					members: [
+					slots: [
 						{
 							name: 'types',
 							steps: [
@@ -1508,7 +1508,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 204,
 					builder: 'importAttribute',
-					members: [
+					slots: [
 						{
 							name: 'attributeKind',
 							steps: [
@@ -1563,7 +1563,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 199,
 					builder: 'importClause',
-					members: [
+					slots: [
 						{
 							name: 'specifiers',
 							steps: [
@@ -1693,7 +1693,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 201,
 					builder: 'namespaceImport',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -1735,7 +1735,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 309,
 					builder: 'importRequireClause',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -1793,7 +1793,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 414,
 					builder: 'importSpecifierName',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -1844,7 +1844,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 415,
 					builder: 'importSpecifierAs',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -1926,7 +1926,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 414,
 					builder: 'importSpecifierName',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -1987,7 +1987,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 415,
 					builder: 'importSpecifierAs',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -2079,7 +2079,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 361,
 					builder: 'mappedTypeClause',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -2202,7 +2202,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 154,
 					builder: 'commentBlock',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					content: {
@@ -2240,7 +2240,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 154,
 					builder: 'commentBlock',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					content: {
@@ -2278,7 +2278,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 178,
 					builder: 'htmlComment',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -2296,7 +2296,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 153,
 					builder: 'commentLine',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					content: {
@@ -2334,7 +2334,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 313,
 					builder: 'ambientDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -2379,7 +2379,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 314,
 					builder: 'abstractClassDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -2509,7 +2509,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'classBodyMemberMethod',
 											key: 'methodDefinition',
-											members: [
+											slots: [
 												{
 													name: 'decorators',
 													steps: [
@@ -2741,7 +2741,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 246,
 					builder: 'classDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -2871,7 +2871,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'classBodyMemberMethod',
 											key: 'methodDefinition',
-											members: [
+											slots: [
 												{
 													name: 'decorators',
 													steps: [
@@ -3108,7 +3108,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 464,
 					builder: 'constructorDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -3169,7 +3169,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 464,
 					builder: 'constructorDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -3240,7 +3240,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 464,
 					builder: 'constructorDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -3311,7 +3311,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 464,
 					builder: 'constructorDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -3382,7 +3382,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 322,
 					builder: 'enumDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -3471,7 +3471,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 388,
 					builder: 'enumBodyElementName',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -3538,7 +3538,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 324,
 					builder: 'enumAssignment',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -3644,7 +3644,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 462,
 					builder: 'publicFieldDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -3977,7 +3977,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 462,
 					builder: 'publicFieldDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -4320,7 +4320,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 462,
 					builder: 'publicFieldDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -4663,7 +4663,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 462,
 					builder: 'publicFieldDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -5006,7 +5006,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 371,
 					builder: 'propertySignature',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -5209,7 +5209,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 371,
 					builder: 'propertySignature',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -5422,7 +5422,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 371,
 					builder: 'propertySignature',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -5635,7 +5635,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 371,
 					builder: 'propertySignature',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -5848,7 +5848,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 251,
 					builder: 'generatorFunctionDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -6113,7 +6113,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 249,
 					builder: 'functionDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -6383,7 +6383,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 303,
 					builder: 'functionSignature',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -6634,7 +6634,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 320,
 					builder: 'interfaceDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -6788,7 +6788,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 453,
 					builder: 'methodDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -7185,7 +7185,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 453,
 					builder: 'methodDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -7592,7 +7592,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 453,
 					builder: 'methodDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -7999,7 +7999,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 453,
 					builder: 'methodDefinitionPlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -8406,7 +8406,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 456,
 					builder: 'methodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -8779,7 +8779,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 459,
 					builder: 'abstractMethodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -9113,7 +9113,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 459,
 					builder: 'abstractMethodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -9457,7 +9457,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 459,
 					builder: 'abstractMethodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -9801,7 +9801,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 459,
 					builder: 'abstractMethodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -10145,7 +10145,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 456,
 					builder: 'methodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -10528,7 +10528,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 456,
 					builder: 'methodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -10911,7 +10911,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 456,
 					builder: 'methodSignaturePlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -11294,7 +11294,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 316,
 					builder: 'internalModule',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -11352,7 +11352,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 315,
 					builder: 'module',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -11411,7 +11411,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 400,
 					builder: 'ambientDeclarationModule',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -11493,7 +11493,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 329,
 					builder: 'optionalParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -11696,7 +11696,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 468,
 					builder: 'receiverParameterDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -11863,7 +11863,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 328,
 					builder: 'requiredParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -12063,7 +12063,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 450,
 					builder: 'setterParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -12236,7 +12236,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 329,
 					builder: 'optionalParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -12449,7 +12449,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 468,
 					builder: 'receiverParameterDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -12626,7 +12626,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 328,
 					builder: 'requiredParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -12836,7 +12836,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 450,
 					builder: 'setterParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -13019,7 +13019,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 329,
 					builder: 'optionalParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -13232,7 +13232,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 468,
 					builder: 'receiverParameterDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -13409,7 +13409,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 328,
 					builder: 'requiredParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -13619,7 +13619,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 450,
 					builder: 'setterParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -13802,7 +13802,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 329,
 					builder: 'optionalParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -14015,7 +14015,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 468,
 					builder: 'receiverParameterDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -14192,7 +14192,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 328,
 					builder: 'requiredParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -14402,7 +14402,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 450,
 					builder: 'setterParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -14585,7 +14585,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 328,
 					builder: 'requiredParameter',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -14752,7 +14752,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 468,
 					builder: 'receiverParameterDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -14915,7 +14915,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 463,
 					builder: 'publicFieldDefinitionAccessor',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -15162,7 +15162,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 454,
 					builder: 'methodDefinitionGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -15375,7 +15375,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 454,
 					builder: 'methodDefinitionGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -15598,7 +15598,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 454,
 					builder: 'methodDefinitionGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -15821,7 +15821,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 454,
 					builder: 'methodDefinitionGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -16044,7 +16044,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 463,
 					builder: 'publicFieldDefinitionAccessor',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -16301,7 +16301,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 463,
 					builder: 'publicFieldDefinitionAccessor',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -16558,7 +16558,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 463,
 					builder: 'publicFieldDefinitionAccessor',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -16815,7 +16815,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 455,
 					builder: 'methodDefinitionSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -16986,7 +16986,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 455,
 					builder: 'methodDefinitionSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -17167,7 +17167,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 455,
 					builder: 'methodDefinitionSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -17348,7 +17348,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 455,
 					builder: 'methodDefinitionSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -17529,7 +17529,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 463,
 					builder: 'publicFieldDefinitionAccessor',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -17786,7 +17786,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 460,
 					builder: 'abstractMethodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -17970,7 +17970,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 460,
 					builder: 'abstractMethodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -18164,7 +18164,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 460,
 					builder: 'abstractMethodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -18358,7 +18358,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 460,
 					builder: 'abstractMethodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -18552,7 +18552,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 461,
 					builder: 'abstractMethodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -18694,7 +18694,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 461,
 					builder: 'abstractMethodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -18846,7 +18846,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 461,
 					builder: 'abstractMethodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -18998,7 +18998,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 461,
 					builder: 'abstractMethodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -19150,7 +19150,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 457,
 					builder: 'methodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -19347,7 +19347,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 457,
 					builder: 'methodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -19554,7 +19554,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 457,
 					builder: 'methodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -19761,7 +19761,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 457,
 					builder: 'methodSignatureGetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -19968,7 +19968,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 458,
 					builder: 'methodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -20123,7 +20123,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 458,
 					builder: 'methodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -20288,7 +20288,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 458,
 					builder: 'methodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -20453,7 +20453,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 458,
 					builder: 'methodSignatureSetter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -20618,7 +20618,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 370,
 					builder: 'callSignature',
-					members: [
+					slots: [
 						{
 							name: 'typeParameters',
 							steps: [
@@ -20827,7 +20827,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 376,
 					builder: 'constructSignature',
-					members: [
+					slots: [
 						{
 							name: 'typeParameters',
 							steps: [
@@ -20964,7 +20964,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 409,
 					builder: 'indexSignatureColon',
-					members: [
+					slots: [
 						{
 							name: 'sign',
 							steps: [
@@ -21233,7 +21233,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 410,
 					builder: 'indexSignatureMappedTypeClause',
-					members: [
+					slots: [
 						{
 							name: 'sign',
 							steps: [
@@ -21455,7 +21455,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 325,
 					builder: 'typeAliasDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -21569,7 +21569,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 373,
 					builder: 'typeParameter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -21687,7 +21687,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 439,
 					builder: 'variableDeclaratorDefinite',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -21778,7 +21778,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 438,
 					builder: 'variableDeclaratorPlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -21910,7 +21910,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 208,
 					builder: 'lexicalDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'declarators',
 							steps: [
@@ -21957,7 +21957,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 438,
 					builder: 'variableDeclaratorPlain',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -22078,7 +22078,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 208,
 					builder: 'lexicalDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'declarators',
 							steps: [
@@ -22125,7 +22125,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 207,
 					builder: 'variableDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'declarators',
 							steps: [
@@ -22163,7 +22163,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 294,
 					builder: 'pair',
-					members: [
+					slots: [
 						{
 							name: 'key',
 							steps: [
@@ -22282,7 +22282,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 267,
 					builder: 'spreadElement',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -22335,7 +22335,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 347,
 					builder: 'templateType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -22394,7 +22394,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 340,
 					builder: 'tupleParameter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -22486,7 +22486,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 341,
 					builder: 'optionalTupleParameter',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -22578,7 +22578,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 262,
 					builder: 'assignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -22682,7 +22682,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -22767,7 +22767,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -22852,7 +22852,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -22937,7 +22937,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23022,7 +23022,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23107,7 +23107,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23192,7 +23192,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23277,7 +23277,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23362,7 +23362,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23447,7 +23447,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23532,7 +23532,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23617,7 +23617,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23702,7 +23702,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23787,7 +23787,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23872,7 +23872,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 264,
 					builder: 'augmentedAssignmentExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -23957,7 +23957,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 258,
 					builder: 'awaitExpression',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -24010,7 +24010,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24094,7 +24094,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24188,7 +24188,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24282,7 +24282,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24376,7 +24376,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24470,7 +24470,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24564,7 +24564,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24658,7 +24658,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24752,7 +24752,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24846,7 +24846,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -24940,7 +24940,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25034,7 +25034,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25128,7 +25128,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25222,7 +25222,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25316,7 +25316,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25410,7 +25410,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25504,7 +25504,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25598,7 +25598,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25692,7 +25692,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25786,7 +25786,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25880,7 +25880,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -25974,7 +25974,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -26161,7 +26161,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -26255,7 +26255,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'operand',
 							steps: [
@@ -26349,7 +26349,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'operand',
 							steps: [
@@ -26443,7 +26443,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 269,
 					builder: 'binaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'operand',
 							steps: [
@@ -26537,7 +26537,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 423,
 					builder: 'callExpressionMember',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -26689,7 +26689,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 421,
 					builder: 'callExpressionCall',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -26847,7 +26847,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 257,
 					builder: 'newExpression',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -27002,7 +27002,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 257,
 					builder: 'newExpression',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -27109,7 +27109,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 197,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -27122,7 +27122,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 421,
 					builder: 'callExpressionCall',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -27267,7 +27267,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 422,
 					builder: 'callExpressionTemplateCall',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -27335,7 +27335,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 306,
 					builder: 'asExpression',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -27429,7 +27429,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 305,
 					builder: 'typeAssertion',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -27538,7 +27538,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 300,
 					builder: 'nonNullExpression',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -27591,7 +27591,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 307,
 					builder: 'satisfiesExpression',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -27684,7 +27684,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 245,
 					builder: 'class',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -27817,7 +27817,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'classBodyMemberMethod',
 											key: 'methodDefinition',
-											members: [
+											slots: [
 												{
 													name: 'decorators',
 													steps: [
@@ -28051,7 +28051,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 242,
 					builder: 'array',
-					members: [
+					slots: [
 						{
 							name: 'elements',
 							steps: [
@@ -28101,7 +28101,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 238,
 					builder: 'object',
-					members: [
+					slots: [
 						{
 							name: 'properties',
 							steps: [
@@ -28140,7 +28140,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 268,
 					builder: 'ternaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'condition',
 							steps: [
@@ -28261,7 +28261,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 250,
 					builder: 'generatorFunction',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -28528,7 +28528,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 248,
 					builder: 'functionExpression',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -28800,7 +28800,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 308,
 					builder: 'instantiationExpression',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -28964,7 +28964,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 357,
 					builder: 'typeQueryInstantiationExpression',
-					members: [
+					slots: [
 						{
 							name: 'function',
 							steps: [
@@ -29064,7 +29064,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 275,
 					builder: 'templateSubstitution',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -29117,7 +29117,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 252,
 					builder: 'arrowFunction',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -29361,7 +29361,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 259,
 					builder: 'memberExpression',
-					members: [
+					slots: [
 						{
 							name: 'object',
 							steps: [
@@ -29475,7 +29475,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 441,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -29486,7 +29486,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 440,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -29503,7 +29503,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 417,
 					builder: 'parenthesizedExpressionSequence',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -29525,7 +29525,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							member: 'expression',
+							slot: 'expression',
 							kinds: [272]
 						},
 						{
@@ -29537,7 +29537,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 416,
 					builder: 'parenthesizedExpressionTyped',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -29628,7 +29628,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							member: 'expression',
+							slot: 'expression',
 							kinds: [
 								1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245,
 								248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280,
@@ -29649,7 +29649,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 272,
 					builder: 'sequenceExpression',
-					members: [
+					slots: [
 						{
 							name: 'expressions',
 							steps: [
@@ -29705,7 +29705,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 260,
 					builder: 'subscriptExpression',
-					members: [
+					slots: [
 						{
 							name: 'object',
 							steps: [
@@ -29810,7 +29810,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 270,
 					builder: 'unaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -29872,7 +29872,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 270,
 					builder: 'unaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -29934,7 +29934,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 270,
 					builder: 'unaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -29996,7 +29996,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 270,
 					builder: 'unaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30058,7 +30058,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 270,
 					builder: 'unaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30120,7 +30120,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 270,
 					builder: 'unaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30182,7 +30182,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 270,
 					builder: 'unaryExpression',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30248,7 +30248,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 427,
 					builder: 'updateExpressionPrefix',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30309,7 +30309,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 426,
 					builder: 'updateExpressionPostfix',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30375,7 +30375,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 427,
 					builder: 'updateExpressionPrefix',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30436,7 +30436,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 426,
 					builder: 'updateExpressionPostfix',
-					members: [
+					slots: [
 						{
 							name: 'argument',
 							steps: [
@@ -30502,7 +30502,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 237,
 					builder: 'yieldExpression',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -30551,7 +30551,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 237,
 					builder: 'yieldExpression',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -30626,7 +30626,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 190,
 					builder: 'program',
-					members: [
+					slots: [
 						{
 							name: 'shebang',
 							steps: [
@@ -30711,7 +30711,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -30753,7 +30753,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 9,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -30771,7 +30771,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 505,
 					seated: 'direct',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -30835,7 +30835,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 500,
 					seated: 'placed',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -30872,7 +30872,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 501,
 					seated: 'direct',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -30886,7 +30886,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 502,
 					seated: 'direct',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -30903,7 +30903,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 1,
 					builder: 'identifier',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -31033,7 +31033,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 503,
 					seated: 'direct',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -31046,7 +31046,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 354,
 					builder: 'typeQueryMemberExpression',
-					members: [
+					slots: [
 						{
 							name: 'qualifier',
 							steps: [
@@ -31124,7 +31124,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 335,
 					builder: 'typeQueryMemberExpressionInTypeAnnotation',
-					members: [
+					slots: [
 						{
 							name: 'qualifier',
 							steps: [
@@ -31172,135 +31172,135 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [197, 335, 336]
 						},
 						{
@@ -31349,7 +31349,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 244,
 					builder: 'nestedIdentifier',
-					members: [
+					slots: [
 						{
 							name: 'qualifier',
 							steps: [
@@ -31416,7 +31416,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 319,
 					builder: 'nestedTypeIdentifier',
-					members: [
+					slots: [
 						{
 							name: 'qualifier',
 							steps: [
@@ -31468,135 +31468,135 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
-							member: 'qualifier',
+							slot: 'qualifier',
 							kinds: [1, 244]
 						},
 						{
@@ -31654,7 +31654,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 279,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -31666,7 +31666,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 280,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -31681,7 +31681,7 @@ export const build: PortableBuildTable = {
 					literal: {
 						value: false
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -31696,7 +31696,7 @@ export const build: PortableBuildTable = {
 					literal: {
 						value: true
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -31709,7 +31709,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 283,
 					literal: {},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -31722,7 +31722,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 129,
 					literal: {},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -31740,7 +31740,7 @@ export const build: PortableBuildTable = {
 						base: 10,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31764,7 +31764,7 @@ export const build: PortableBuildTable = {
 						base: 2,
 						affix: '0b'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31787,7 +31787,7 @@ export const build: PortableBuildTable = {
 						base: 16,
 						affix: '0x'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31810,7 +31810,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: '0o'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31833,7 +31833,7 @@ export const build: PortableBuildTable = {
 						base: 2,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31856,7 +31856,7 @@ export const build: PortableBuildTable = {
 						base: 16,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31879,7 +31879,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31902,7 +31902,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31926,7 +31926,7 @@ export const build: PortableBuildTable = {
 						exponentSign: 'exponentSign',
 						exponent: 'exponent'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
@@ -31945,7 +31945,7 @@ export const build: PortableBuildTable = {
 						exponentSign: 'exponentSign',
 						exponent: 'exponent'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
@@ -31965,7 +31965,7 @@ export const build: PortableBuildTable = {
 						exponent: 'exponent'
 					},
 					scientific: true,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
@@ -31983,7 +31983,7 @@ export const build: PortableBuildTable = {
 						base: 10,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -32018,7 +32018,7 @@ export const build: PortableBuildTable = {
 						exponentSign: 'exponentSign',
 						exponent: 'exponent'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
@@ -32045,7 +32045,7 @@ export const build: PortableBuildTable = {
 						exponentSign: 'exponentSign',
 						exponent: 'exponent'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
@@ -32073,7 +32073,7 @@ export const build: PortableBuildTable = {
 						exponent: 'exponent'
 					},
 					scientific: true,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
@@ -32099,7 +32099,7 @@ export const build: PortableBuildTable = {
 						base: 10,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -32126,7 +32126,7 @@ export const build: PortableBuildTable = {
 						base: 10,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -32153,7 +32153,7 @@ export const build: PortableBuildTable = {
 						base: 2,
 						affix: '0b'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -32180,7 +32180,7 @@ export const build: PortableBuildTable = {
 						base: 16,
 						affix: '0x'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -32207,7 +32207,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: '0o'
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -32234,7 +32234,7 @@ export const build: PortableBuildTable = {
 						base: 2,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -32261,7 +32261,7 @@ export const build: PortableBuildTable = {
 						base: 16,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -32288,7 +32288,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -32307,7 +32307,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: ''
 					},
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -32334,7 +32334,7 @@ export const build: PortableBuildTable = {
 						key: 'content',
 						holder: 362
 					},
-					members: [
+					slots: [
 						{
 							name: 'value',
 							steps: [
@@ -32369,7 +32369,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 276,
 					builder: 'regex',
-					members: [
+					slots: [
 						{
 							name: 'pattern',
 							steps: [
@@ -32434,7 +32434,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 127,
 					builder: 'regexFlags',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32452,7 +32452,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 126,
 					builder: 'regexPattern',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32470,7 +32470,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 424,
 					builder: 'stringDouble',
-					members: [
+					slots: [
 						{
 							name: 'elements',
 							steps: [
@@ -32509,7 +32509,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 425,
 					builder: 'stringSingle',
-					members: [
+					slots: [
 						{
 							name: 'elements',
 							steps: [
@@ -32552,7 +32552,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 121,
 					builder: 'escapeSequence',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					content: {
@@ -32591,7 +32591,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 274,
 					builder: 'templateString',
-					members: [
+					slots: [
 						{
 							name: 'elements',
 							steps: [
@@ -32629,7 +32629,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 176,
 					builder: 'templateChars',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32646,7 +32646,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 119,
 					builder: 'unescapedDoubleStringFragment',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32660,7 +32660,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 120,
 					builder: 'unescapedSingleStringFragment',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32678,7 +32678,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 34,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32689,7 +32689,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 35,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32700,7 +32700,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 36,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -32716,7 +32716,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 35,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -32728,7 +32728,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 36,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -32740,7 +32740,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 34,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -32753,7 +32753,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 240,
 					builder: 'assignmentPattern',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -32839,7 +32839,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 243,
 					builder: 'arrayPattern',
-					members: [
+					slots: [
 						{
 							name: 'elements',
 							steps: [
@@ -32888,7 +32888,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 239,
 					builder: 'objectPattern',
-					members: [
+					slots: [
 						{
 							name: 'properties',
 							steps: [
@@ -32927,7 +32927,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 241,
 					builder: 'objectAssignmentPattern',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -33003,7 +33003,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 295,
 					builder: 'pairPattern',
-					members: [
+					slots: [
 						{
 							name: 'key',
 							steps: [
@@ -33121,7 +33121,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 292,
 					builder: 'restPattern',
-					members: [
+					slots: [
 						{
 							name: 'pattern',
 							steps: [
@@ -33163,7 +33163,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 211,
 					builder: 'statementBlock',
-					members: [
+					slots: [
 						{
 							name: 'statements',
 							steps: [
@@ -33222,7 +33222,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -33265,7 +33265,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 290,
 					builder: 'classStaticBlock',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -33300,7 +33300,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 222,
 					builder: 'breakStatement',
-					members: [
+					slots: [
 						{
 							name: 'label',
 							steps: [
@@ -33338,7 +33338,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 223,
 					builder: 'continueStatement',
-					members: [
+					slots: [
 						{
 							name: 'label',
 							steps: [
@@ -33376,7 +33376,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 224,
 					builder: 'debuggerStatement',
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -33388,7 +33388,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 227,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -33401,7 +33401,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 419,
 					builder: 'exportStatementEqualsExport',
-					members: [
+					slots: [
 						{
 							name: 'value',
 							steps: [
@@ -33449,7 +33449,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 420,
 					builder: 'exportStatementNamespaceExport',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -33486,7 +33486,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 432,
 					builder: 'exportStatementDefaultDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -33552,7 +33552,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 431,
 					builder: 'exportStatementDefaultFrom',
-					members: [
+					slots: [
 						{
 							name: 'exportClause',
 							steps: [
@@ -33689,7 +33689,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 431,
 					builder: 'exportStatementDefaultFrom',
-					members: [
+					slots: [
 						{
 							name: 'source',
 							steps: [
@@ -33761,7 +33761,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 432,
 					builder: 'exportStatementDefaultDeclaration',
-					members: [
+					slots: [
 						{
 							name: 'decorators',
 							steps: [
@@ -33910,7 +33910,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 213,
 					builder: 'ifStatement',
-					members: [
+					slots: [
 						{
 							name: 'condition',
 							steps: [
@@ -33983,7 +33983,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -34048,7 +34048,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 198,
 					builder: 'importStatement',
-					members: [
+					slots: [
 						{
 							name: 'fromClause',
 							steps: [
@@ -34164,7 +34164,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 318,
 					builder: 'importAlias',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -34229,7 +34229,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 198,
 					builder: 'importStatement',
-					members: [
+					slots: [
 						{
 							name: 'fromClause',
 							steps: [
@@ -34355,7 +34355,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 228,
 					builder: 'labeledStatement',
-					members: [
+					slots: [
 						{
 							name: 'label',
 							steps: [
@@ -34435,7 +34435,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -34483,7 +34483,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 215,
 					builder: 'forStatement',
-					members: [
+					slots: [
 						{
 							name: 'initializer',
 							steps: [
@@ -34645,7 +34645,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -34693,7 +34693,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 219,
 					builder: 'doStatement',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -34750,7 +34750,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -34814,7 +34814,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 216,
 					builder: 'forInStatement',
-					members: [
+					slots: [
 						{
 							name: 'header',
 							steps: [
@@ -34887,7 +34887,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -34949,7 +34949,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 218,
 					builder: 'whileStatement',
-					members: [
+					slots: [
 						{
 							name: 'condition',
 							steps: [
@@ -35022,7 +35022,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -35070,7 +35070,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 225,
 					builder: 'returnStatement',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -35119,7 +35119,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 221,
 					builder: 'withStatement',
-					members: [
+					slots: [
 						{
 							name: 'object',
 							steps: [
@@ -35192,7 +35192,7 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'labeledStatement',
 											key: 'body',
-											members: [
+											slots: [
 												{
 													name: 'label',
 													steps: [
@@ -35240,7 +35240,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 214,
 					builder: 'switchStatement',
-					members: [
+					slots: [
 						{
 							name: 'value',
 							steps: [
@@ -35304,7 +35304,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 226,
 					builder: 'throwStatement',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -35357,7 +35357,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 220,
 					builder: 'tryStatement',
-					members: [
+					slots: [
 						{
 							name: 'body',
 							steps: [
@@ -35426,7 +35426,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 378,
 					builder: 'arrayType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -35485,7 +35485,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 350,
 					builder: 'conditionalType',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -35663,7 +35663,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 364,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -35676,7 +35676,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 383,
 					builder: 'functionType',
-					members: [
+					slots: [
 						{
 							name: 'typeParameters',
 							steps: [
@@ -35859,7 +35859,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 345,
 					builder: 'constructorType',
-					members: [
+					slots: [
 						{
 							name: 'typeParameters',
 							steps: [
@@ -36065,7 +36065,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 351,
 					builder: 'genericType',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -36164,7 +36164,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 356,
 					builder: 'typeQueryCallExpression',
-					members: [
+					slots: [
 						{
 							name: 'source',
 							steps: [
@@ -36190,7 +36190,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							member: 'source',
+							slot: 'source',
 							kinds: [235, 236, 273, 424, 425]
 						},
 						{
@@ -36207,7 +36207,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 336,
 					builder: 'typeQueryCallExpressionInTypeAnnotation',
-					members: [
+					slots: [
 						{
 							name: 'source',
 							steps: [
@@ -36260,7 +36260,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							member: 'source',
+							slot: 'source',
 							kinds: [
 								1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245,
 								248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279,
@@ -36317,7 +36317,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 359,
 					builder: 'indexTypeQuery',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -36376,7 +36376,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 349,
 					builder: 'inferType',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -36459,7 +36459,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 382,
 					builder: 'intersectionType',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [
@@ -36559,7 +36559,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 362,
 					builder: 'literalType',
-					members: [
+					slots: [
 						{
 							name: 'value',
 							steps: [
@@ -36597,7 +36597,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 360,
 					builder: 'lookupType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -36696,7 +36696,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 365,
 					builder: 'flowMaybeType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -36755,7 +36755,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 369,
 					builder: 'objectType',
-					members: [
+					slots: [
 						{
 							name: 'opening',
 							steps: [
@@ -36842,7 +36842,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 342,
 					builder: 'optionalType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -36901,7 +36901,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 366,
 					builder: 'parenthesizedType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -36960,7 +36960,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 352,
 					builder: 'typePredicate',
-					members: [
+					slots: [
 						{
 							name: 'name',
 							steps: [
@@ -37055,7 +37055,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 337,
 					builder: 'asserts',
-					members: [
+					slots: [
 						{
 							name: 'value',
 							steps: [
@@ -37099,7 +37099,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 40,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37110,7 +37110,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 41,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37121,7 +37121,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 42,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37132,7 +37132,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 43,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37143,7 +37143,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 44,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37154,7 +37154,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 144,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37165,7 +37165,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 78,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37176,7 +37176,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 145,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37187,7 +37187,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 146,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37198,7 +37198,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 46,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37214,7 +37214,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 42,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37226,7 +37226,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 41,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37238,7 +37238,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 146,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37250,7 +37250,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 46,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37262,7 +37262,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 43,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37274,7 +37274,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 44,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37285,7 +37285,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 144,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: [
@@ -37301,7 +37301,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 40,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37313,7 +37313,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 145,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37325,7 +37325,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 78,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37338,7 +37338,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 358,
 					builder: 'typeQuery',
-					members: [
+					slots: [
 						{
 							name: 'expression',
 							steps: [
@@ -37383,7 +37383,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 380,
 					builder: 'readonlyType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -37441,7 +37441,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 504,
-					members: [],
+					slots: [],
 					presets: [],
 					flags: {},
 					when: []
@@ -37454,7 +37454,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 343,
 					builder: 'restType',
-					members: [
+					slots: [
 						{
 							name: 'type',
 							steps: [
@@ -37513,7 +37513,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 348,
 					builder: 'templateLiteralType',
-					members: [
+					slots: [
 						{
 							name: 'elements',
 							steps: [
@@ -37551,7 +37551,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 379,
 					builder: 'tupleType',
-					members: [
+					slots: [
 						{
 							name: 'tupleTypeMembers',
 							steps: [
@@ -37617,7 +37617,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 381,
 					builder: 'unionType',
-					members: [
+					slots: [
 						{
 							name: 'left',
 							steps: [

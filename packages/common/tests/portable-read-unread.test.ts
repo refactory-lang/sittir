@@ -24,7 +24,7 @@ const readerOf = (built: PortableBuildTable) =>
 
 const withoutMember = (path: string, name: string): PortableBuildTable => {
 	const at = table.paths[path]!;
-	return { ...table, paths: { ...table.paths, [path]: { ...at, arms: at.arms.map((arm) => ({ ...arm, members: arm.members.filter((member) => member.name !== name) })) } } };
+	return { ...table, paths: { ...table.paths, [path]: { ...at, arms: at.arms.map((arm) => ({ ...arm, slots: arm.slots.filter((member) => member.name !== name) })) } } };
 };
 
 const carriesOf = (built: PortableBuildTable, source: string) => {

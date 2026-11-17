@@ -5,7 +5,7 @@ import { portableRuntime } from '@sittir/common/engine';
 import { sharedEngine } from '@sittir/common/testing';
 import typescript from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 type Spanned = { readonly $type?: unknown; readonly $_layout?: { readonly at?: { readonly $span?: { readonly start: number; readonly end: number } } } };
 
 const ts = await sharedEngine(() => createEngine(typescript));

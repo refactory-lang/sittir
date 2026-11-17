@@ -11,7 +11,7 @@ describe('the pinned child emits a portable build module', () => {
 			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
 			table: {
 				builders: { passStatement: 'nullary' },
-				paths: { 'statement.pass': { root: true, arms: [{ kind: 1, builder: 'passStatement', when: [], members: [], presets: [], flags: {} }] } }
+				paths: { 'statement.pass': { root: true, arms: [{ kind: 1, builder: 'passStatement', when: [], slots: [], presets: [], flags: {} }] } }
 			},
 			members: {},
 			viewed: [],
@@ -41,12 +41,12 @@ describe('the pinned child emits a portable build module', () => {
 			table: {
 				builders: { passStatement: 'nullary', breakStatement: 'nullary' },
 				paths: {
-					'statement.pass': { root: true, arms: [{ kind: 1, builder: 'passStatement', when: [], members: [], presets: [], flags: {} }] },
+					'statement.pass': { root: true, arms: [{ kind: 1, builder: 'passStatement', when: [], slots: [], presets: [], flags: {} }] },
 					'statement.jump': {
 						root: true,
 						arms: [
-							{ kind: 2, builder: 'breakStatement', when: [{ flag: 'loud', set: true }], members: [], presets: [], flags: {} },
-							{ kind: 3, when: [], members: [], presets: [], flags: {} }
+							{ kind: 2, builder: 'breakStatement', when: [{ flag: 'loud', set: true }], slots: [], presets: [], flags: {} },
+							{ kind: 3, when: [], slots: [], presets: [], flags: {} }
 						]
 					}
 				}
@@ -80,7 +80,7 @@ describe('the pinned child emits a portable build module', () => {
 								kind: 1,
 								builder: 'exampleStatement',
 								when: [{ absent: ['label'], required: [] }],
-								members: [{ name: 'expression', steps: [{ key: 'expression' }], multiple: false, seats: [{ at: [1, 'expression'], kinds: [7] }] }],
+								slots: [{ name: 'expression', steps: [{ key: 'expression' }], multiple: false, seats: [{ at: [1, 'expression'], kinds: [7] }] }],
 								presets: [],
 								flags: {}
 							},
@@ -88,13 +88,13 @@ describe('the pinned child emits a portable build module', () => {
 								kind: 2,
 								builder: 'exampleStatement',
 								when: [],
-								members: [{ name: 'label', steps: [{ key: 'label', builder: 'other' }, { key: 'name' }], multiple: false, seats: [{ at: [8, 'name'], kinds: [7] }] }],
+								slots: [{ name: 'label', steps: [{ key: 'label', builder: 'other' }, { key: 'name' }], multiple: false, seats: [{ at: [8, 'name'], kinds: [7] }] }],
 								presets: [],
 								flags: {}
 							}
 						]
 					},
-					'expression.await': { root: false, arms: [{ kind: 9, builder: 'other', when: [], members: [], presets: [], flags: {} }] }
+					'expression.await': { root: false, arms: [{ kind: 9, builder: 'other', when: [], slots: [], presets: [], flags: {} }] }
 				}
 			},
 			members: {
@@ -122,7 +122,7 @@ describe('the pinned child emits a portable build module', () => {
 			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
 			table: {
 				builders: { lineContinuation: 'config' },
-				paths: { 'element.continuation': { root: true, arms: [{ kind: 2, builder: 'lineContinuation', when: [], members: [], presets: [{ steps: [{ key: 'text' }], text: "\\'" }], flags: {} }] } }
+				paths: { 'element.continuation': { root: true, arms: [{ kind: 2, builder: 'lineContinuation', when: [], slots: [], presets: [{ steps: [{ key: 'text' }], text: "\\'" }], flags: {} }] } }
 			},
 			members: {},
 			viewed: [],
@@ -148,7 +148,7 @@ describe('the pinned child emits a portable build module', () => {
 			table: {
 				builders: { array: 'spread' },
 				paths: {
-					'expression.collection.list': { root: true, arms: [{ kind: 1, builder: 'array', when: [], members: [{ name: 'elements', steps: [{ key: 'elements' }], multiple: true, seats: [{ at: [1, 'elements'], kinds: [7, 9] }] }], presets: [], flags: {} }] }
+					'expression.collection.list': { root: true, arms: [{ kind: 1, builder: 'array', when: [], slots: [{ name: 'elements', steps: [{ key: 'elements' }], multiple: true, seats: [{ at: [1, 'elements'], kinds: [7, 9] }] }], presets: [], flags: {} }] }
 				}
 			},
 			members: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, optional: true } } },
@@ -185,7 +185,7 @@ describe('the pinned child emits a portable build module', () => {
 								kind: 1,
 								builder: 'block',
 								when: [],
-								members: [
+								slots: [
 									{ name: 'statements', steps: [{ key: 'body', optional: true }], multiple: false, list: true, seats: [{ at: [1, 'body'], kinds: [7], many: true, within: [{ key: 'body', builder: 'blockBody' }] }] },
 									{ name: 'label', steps: [{ key: 'label' }], multiple: false, seats: [{ at: [1, 'label'], kinds: [8, 9], tokens: { a: 8, b: 9 } }] }
 								],
@@ -235,7 +235,7 @@ describe('the pinned child emits a portable build module', () => {
 								kind: 5,
 								builder: 'dottedName',
 								when: [],
-								members: [
+								slots: [
 									{ name: 'qualifier', steps: [{ key: 'qualifier', optional: true }], multiple: false, seats: [{ at: [5, 'qualifier'], kinds: [5] }] },
 									{ name: 'name', steps: [{ key: 'name' }], multiple: false, seats: [{ at: [5, 'name'], kinds: [1], leaf: 'identifier' }] },
 									{ name: 'marker', steps: [{ key: 'marker', optional: true }], multiple: false, seats: [{ at: [6, 'marker'], kinds: [8], tokens: { '*': 8 }, within: [{ key: 'marker', builder: 'lambdaParameters' }] }] },
@@ -288,7 +288,7 @@ describe('the pinned child emits a portable build module', () => {
 								kind: 3,
 								builder: 'tokenBinding',
 								when: [],
-								members: [{ name: 'fragment', steps: [{ key: 'fragment' }], multiple: false, seats: [{ at: [3, 'fragment'], kinds: [11, 12], tokens: { block: 11, expr: 12 } }] }],
+								slots: [{ name: 'fragment', steps: [{ key: 'fragment' }], multiple: false, seats: [{ at: [3, 'fragment'], kinds: [11, 12], tokens: { block: 11, expr: 12 } }] }],
 								presets: [],
 								flags: {}
 							}
@@ -322,8 +322,8 @@ describe('the pinned child emits a portable build module', () => {
 						root: true,
 						builds: { integer: 5, bigint: 6 },
 						arms: [
-							{ kind: 5, builder: 'numberDecimal', scalar: 'integer', when: [], members: [], presets: [], flags: {} },
-							{ kind: 6, builder: 'numberBigint', scalar: 'bigint', numeric: ['content'], when: [], members: [], presets: [], flags: {} }
+							{ kind: 5, builder: 'numberDecimal', scalar: 'integer', when: [], slots: [], presets: [], flags: {} },
+							{ kind: 6, builder: 'numberBigint', scalar: 'bigint', numeric: ['content'], when: [], slots: [], presets: [], flags: {} }
 						]
 					}
 				}
@@ -358,7 +358,7 @@ describe('the pinned child emits a portable build module', () => {
 					'literal.number.float': {
 						root: true,
 						builds: { float: 7 },
-						arms: [{ kind: 7, builder: 'numberFloatPoint', scalar: 'float', numeric: { integer: 'integer', fraction: 'fraction' }, when: [], members: [], presets: [], flags: {} }]
+						arms: [{ kind: 7, builder: 'numberFloatPoint', scalar: 'float', numeric: { integer: 'integer', fraction: 'fraction' }, when: [], slots: [], presets: [], flags: {} }]
 					},
 					'literal.number.float.scientific': {
 						root: true,
@@ -371,7 +371,7 @@ describe('the pinned child emits a portable build module', () => {
 								numeric: { integer: 'integer', exponent: 'exponent', marker: 'marker' },
 								scientific: true,
 								when: [],
-								members: [],
+								slots: [],
 								presets: [],
 								flags: {}
 							}
@@ -407,8 +407,8 @@ describe('the pinned child emits a portable build module', () => {
 				table: {
 					builders: { call: 'config', argumentList: 'config', argumentListElements: 'elements', generatorExpression: 'nullary' },
 					paths: {
-						'expression.call': { root: true, arms: [{ kind: 1, builder: 'call', when: [], members: [{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, seats }], presets: [], flags: {} }] },
-						'expression.generator': { root: false, arms: [{ kind: 2, builder: 'generatorExpression', when: [], members: [], presets: [], flags: {} }] }
+						'expression.call': { root: true, arms: [{ kind: 1, builder: 'call', when: [], slots: [{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, seats }], presets: [], flags: {} }] },
+						'expression.generator': { root: false, arms: [{ kind: 2, builder: 'generatorExpression', when: [], slots: [], presets: [], flags: {} }] }
 					}
 				},
 				members: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, optional: false } } },
@@ -443,7 +443,7 @@ describe('the pinned child emits a portable build module', () => {
 			node: 'PythonNode',
 			map: 'PythonMap',
 			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
-			table: { builders: { stringFragment: 'text' }, paths: { 'literal.string.text': { root: true, arms: [{ kind: 1, builder: 'stringFragment', when: [], members: [], presets: [], flags: {} }] } } },
+			table: { builders: { stringFragment: 'text' }, paths: { 'literal.string.text': { root: true, arms: [{ kind: 1, builder: 'stringFragment', when: [], slots: [], presets: [], flags: {} }] } } },
 			members: {},
 			viewed: [],
 			textPaths: [],
@@ -468,9 +468,9 @@ describe('the pinned child emits a portable build module', () => {
 			table: {
 				builders: { functionDefinition: 'config', block: 'nullary', dottedName: 'nullary' },
 				paths: {
-					'declaration.function': { root: true, arms: [{ kind: 1, builder: 'functionDefinition', when: [], members: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7, 8] }] }], presets: [], flags: {} }] },
-					'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], members: [], presets: [], flags: {} }] },
-					'identifier.qualified': { root: false, arms: [{ kind: 8, builder: 'dottedName', when: [], members: [], presets: [], flags: {} }] }
+					'declaration.function': { root: true, arms: [{ kind: 1, builder: 'functionDefinition', when: [], slots: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7, 8] }] }], presets: [], flags: {} }] },
+					'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], slots: [], presets: [], flags: {} }] },
+					'identifier.qualified': { root: false, arms: [{ kind: 8, builder: 'dottedName', when: [], slots: [], presets: [], flags: {} }] }
 				}
 			},
 			members: { 'declaration.function': { body: { paths: [...viewed], texts: [], unmapped: [], string: false, optional: false } } },

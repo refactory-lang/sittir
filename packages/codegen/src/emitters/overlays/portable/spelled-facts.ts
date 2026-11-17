@@ -52,5 +52,5 @@ export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: G
 }
 
 export function portableSpelledFactOf(fact: PortableFactRecord, entries: readonly ReadEntry[], model: SlotModel, routes: GrammarRoutes): PortableSpelledFact {
-	return { name: fact.name, ...(fact.flag === undefined ? {} : { flag: fact.flag }), member: fact.member, spellings: entries.map((entry) => portableSpellingOf(entry, model, routes)) };
+	return { name: fact.name, ...(fact.flag === undefined ? {} : { flag: fact.flag }), slot: fact.slot, spellings: entries.map((entry) => portableSpellingOf(entry, model, routes)) };
 }

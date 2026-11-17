@@ -5,7 +5,7 @@ import { portableRuntime } from '@sittir/common/engine';
 import { sharedEngine } from '@sittir/common/testing';
 import python from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 
 const py = await sharedEngine(() => createEngine(python));
 const runtime = await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict' })));

@@ -6,7 +6,7 @@ import python from '../../../python/src/index.ts';
 import rust from '../../../rust/src/index.ts';
 import typescript from '../../../typescript/src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 type Leading = { readonly $trivia: { leading(): readonly unknown[] } };
 interface Runtime {
 	readonly engine: { parse(source: string): { statements(): readonly unknown[] }; render(value: never): unknown };

@@ -3,7 +3,7 @@ import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
 import rust from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 
 const runtime = await portableRuntime(await createEngine(rust, { api: 'strict' }));
 const statementsOf = (source: string) => runtime.engine.parse(source).statements();

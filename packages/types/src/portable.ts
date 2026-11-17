@@ -45,7 +45,7 @@ export interface PortableTable {
 /**
  * A fact a node's container spells beside it, with one item of its `items` slot (a decorator beside the definition it decorates). It holds
  * on the first item `test` holds on where, when `same` is set, the item's text at `same.item` equals the node's text at `same.node`. A
- * holding fact reads the node as `path`, or sets `flag`; the read leaves its item out of the container's `member` and records where it sat
+ * holding fact reads the node as `path`, or sets `flag`; the read leaves its item out of the container's `slot` and records where it sat
  * under `name` in `$at`, with the text of the item's `spelled` slot as its spelling.
  */
 export interface PortableFact {
@@ -53,7 +53,7 @@ export interface PortableFact {
 	readonly path?: string;
 	readonly flag?: string;
 	readonly container: number;
-	readonly member: string;
+	readonly slot: string;
 	readonly items: SlotSubject;
 	readonly test: QueryPlan<QuerySubject>;
 	readonly spelled?: SlotSubject;

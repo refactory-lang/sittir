@@ -15,7 +15,7 @@ describe('a text $value', () => {
 		for (const [grammar, table] of Object.entries(TABLES)) {
 			const paths = Object.entries(table.paths);
 			const fromText = paths
-				.filter(([path, built]) => built.arms.some((arm) => takesTextValue(table, arm)) && built.arms.every((arm) => arm.members.length === 0) && (valueAt(path) === undefined || valueAt(path)?.text === true))
+				.filter(([path, built]) => built.arms.some((arm) => takesTextValue(table, arm)) && built.arms.every((arm) => arm.slots.length === 0) && (valueAt(path) === undefined || valueAt(path)?.text === true))
 				.map(([path]) => path)
 				.sort();
 			const declared = paths.flatMap(([path]) => (textValued(vocabulary, path) ? [path] : [])).sort();

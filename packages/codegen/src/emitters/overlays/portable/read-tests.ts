@@ -217,7 +217,7 @@ export function portableFactOf(
 		name: entry.claim.flag ?? entry.vocab.slice(entry.vocab.lastIndexOf('.') + 1),
 		...(entry.claim.flag === undefined ? { path: entry.vocab } : { flag: entry.claim.flag }),
 		container,
-		member,
+		slot: member,
 		items: { slots: placed[0]!.via[0]!.slots },
 		test: plans.length === 1 ? plans[0]! : { op: 'and', of: plans },
 		...(entered.every((slot) => slot !== undefined) && sameJson(entered) ? { spelled: entered[0]! } : {}),

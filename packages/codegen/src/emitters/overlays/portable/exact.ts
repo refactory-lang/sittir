@@ -206,7 +206,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if ((entriesFor(kind) ?? []).some((entry) => presetCarried.has(entry))) out.push('preset');
 		if (structural.some((arm) => arm.scalar !== undefined && (arm.scalar === 'float' || !totalIntegerReads.has(arm.kind)))) out.push('scalar');
 		const builtWhole = structural.length > 0 && structural.every((arm) => nullaryBuilt(table, arm));
-		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
+		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.slots.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
 		if (readsText && !structural.every((arm) => textBuilt(table, arm))) out.push('text');
 		const buildable = new Set(structural.flatMap(builtFlags));
 		if ((flags.get(kind) ?? []).some((flag) => !buildable.has(flag))) out.push('flags');

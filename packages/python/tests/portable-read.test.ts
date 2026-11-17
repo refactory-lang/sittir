@@ -4,7 +4,7 @@ import { portableRuntime } from '@sittir/common/engine';
 import { Delimiter } from '@sittir/common/utils';
 import python from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 
 const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
 const read = (source: string): Read => runtime.read(runtime.engine.parse(source)) as Read;

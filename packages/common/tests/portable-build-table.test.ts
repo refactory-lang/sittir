@@ -30,10 +30,10 @@ describe('the portable build table', () => {
 		for (const { arms } of Object.values(table.paths))
 			for (const arm of arms) {
 				const presets = [...arm.presets, ...Object.values(arm.flags).flatMap((flag) => [...flag.presets, ...(flag.unset ?? [])])];
-				const seats = arm.members.flatMap((member) => member.seats);
+				const seats = arm.slots.flatMap((member) => member.seats);
 				const builders = [
 					arm.builder,
-					...[...arm.members.flatMap((member) => member.steps), ...presets.flatMap((preset) => preset.steps)].map((step) => step.builder),
+					...[...arm.slots.flatMap((member) => member.steps), ...presets.flatMap((preset) => preset.steps)].map((step) => step.builder),
 					...presets.map((preset) => preset.builder),
 					...seats.map((seat) => seat.leaf),
 					...seats.flatMap((seat) => seat.within ?? []).map((container) => container.builder)
@@ -50,11 +50,11 @@ describe('the portable build table', () => {
 	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: a seat takes text only where its holder spells it, never where its slot holds containers', (grammar) => {
 		for (const { arms } of Object.values(tables[grammar].table.paths))
 			for (const arm of arms)
-				for (const member of [...arm.members, ...(arm.content === undefined ? [] : [arm.content])]) {
+				for (const member of [...arm.slots, ...(arm.content === undefined ? [] : [arm.content])]) {
 					for (const seat of member.seats) if (seat.text) expect([seat.kinds, seat.leaf], `${arm.builder} ${member.name}`).toEqual([[], undefined]);
 					if (member.seats.some((seat) => seat.within !== undefined)) expect(member.seats[0]!.text, `${arm.builder} ${member.name}`).toBeUndefined();
 				}
-		const seatOf = (path: string, name: string) => armsOf('python', path).flatMap((arm) => arm.members).find((member) => member.name === name)!.seats[0]!;
+		const seatOf = (path: string, name: string) => armsOf('python', path).flatMap((arm) => arm.slots).find((member) => member.name === name)!.seats[0]!;
 		expect(seatOf('pattern.as', 'pattern')).toMatchObject({ kinds: [] });
 		expect(seatOf('pattern.as', 'pattern').text).toBeUndefined();
 		expect(seatOf('literal.number.float', 'imaginary').text).toBe(true);
@@ -66,8 +66,8 @@ describe('the portable build table', () => {
 		const tuple = armOf('rust', 'declaration.struct', rust.kinds.StructItemTuple);
 		const unit = armOf('rust', 'declaration.struct', rust.kinds.StructItemUnit);
 		expect(brace.builder).toBe('structItemBrace');
-		expect(brace.when).toContainEqual({ member: 'body', kinds: [rust.kinds.FieldDeclaration] });
-		expect(tuple.when).toContainEqual({ member: 'body', kinds: [rust.kinds.AttributedOrderedField] });
+		expect(brace.when).toContainEqual({ slot: 'body', kinds: [rust.kinds.FieldDeclaration] });
+		expect(tuple.when).toContainEqual({ slot: 'body', kinds: [rust.kinds.AttributedOrderedField] });
 		expect(unit.when).toContainEqual(expect.objectContaining({ absent: expect.arrayContaining(['body']) }));
 	});
 
@@ -126,7 +126,7 @@ describe('the portable build table', () => {
 
 	it("orders a match arm by its body's kinds, narrower first, and keys the last arm by the slot that holds it", () => {
 		expect(armsOf('rust', 'clause.case.match').map((arm) => arm.kind)).toEqual([rust.kinds.MatchArmBlockEnding, rust.kinds.MatchArmWithComma, rust.kinds.LastMatchArm]);
-		expect(armOf('rust', 'clause.case.match', rust.kinds.MatchArmBlockEnding).when).toContainEqual(expect.objectContaining({ member: 'body' }));
+		expect(armOf('rust', 'clause.case.match', rust.kinds.MatchArmBlockEnding).when).toContainEqual(expect.objectContaining({ slot: 'body' }));
 		expect(armOf('rust', 'clause.case.match', rust.kinds.LastMatchArm).holders).toEqual([[rust.kinds.MatchBlockArms, 'arms']]);
 	});
 
@@ -155,40 +155,40 @@ describe('the portable build table', () => {
 
 	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
 		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([
-			{ member: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
+			{ slot: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
 			{ absent: [], required: ['type'] }
 		]);
 		expect(armOf('rust', 'pattern.struct', rust.kinds.TupleStructPattern).when).toEqual([
-			{ member: 'type', kinds: [rust.kinds.Identifier, rust.kinds.GenericTypeWithTurbofish, rust.kinds.ScopedIdentifier] },
+			{ slot: 'type', kinds: [rust.kinds.Identifier, rust.kinds.GenericTypeWithTurbofish, rust.kinds.ScopedIdentifier] },
 			{ absent: [], required: ['type'] }
 		]);
 		expect(armOf('typescript', 'expression.parenthesized', typescript.kinds.ParenthesizedExpressionSequence).when).toContainEqual({
-			member: 'expression',
+			slot: 'expression',
 			kinds: [typescript.kinds.SequenceExpression]
 		});
 	});
 
 	it("builds a form through its holder's mount, the step saying how the mount takes its input", () => {
-		const [left] = armOf('typescript', 'expression.binary.membership.in', typescript.kinds.BinaryExpression).members.filter((member) => member.name === 'left' && member.steps.length > 1);
+		const [left] = armOf('typescript', 'expression.binary.membership.in', typescript.kinds.BinaryExpression).slots.filter((member) => member.name === 'left' && member.steps.length > 1);
 		expect(left!.steps[0]).toEqual({
 			key: 'binaryExpressionIn',
 			builder: 'binaryExpression.in',
 			mounted: { call: 'child', key: 'binaryExpressionIn' }
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
-		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).members.filter((member) => member.name === 'right');
+		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((member) => member.name === 'right');
 		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' } });
 	});
 
 	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {
-		const value = armsOf('typescript', 'statement.export.default')[0]!.members.find((member) => member.name === 'value')!;
+		const value = armsOf('typescript', 'statement.export.default')[0]!.slots.find((member) => member.name === 'value')!;
 		expect(value.steps[1]).toEqual({
 			key: 'content',
 			builder: 'exportStatementDefaultDeclaration.defaultKw.value',
 			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } }
 		});
 		expect(tables.typescript.table.builders['exportStatementDefaultDeclaration.defaultKw.value']).toBe('config');
-		const list = armsOf('python', 'clause.catch')[0]!.members.flatMap((member) => member.seats.flatMap((seat) => seat.within ?? []));
+		const list = armsOf('python', 'clause.catch')[0]!.slots.flatMap((member) => member.seats.flatMap((seat) => seat.within ?? []));
 		expect(list).toContainEqual({
 			builder: 'exceptClause.exception.list',
 			key: 'values',
@@ -215,15 +215,15 @@ describe('the portable build table', () => {
 	it("reads a mounted kind at its holder where the holder's claim is its claim's parent", () => {
 		const delegate = armsOf('python', 'expression.yield.delegate');
 		expect(delegate.map((arm) => [arm.kind, arm.builder, arm.mounted])).toEqual([[python.kinds.Yield, 'yield', undefined]]);
-		expect(delegate[0]!.members.map((member) => member.steps.map((step) => step.key))).toEqual([['content', 'expression']]);
-		expect(delegate[0]!.members[0]!.steps[0]!.mounted).toEqual({ call: 'child', key: 'content' });
+		expect(delegate[0]!.slots.map((member) => member.steps.map((step) => step.key))).toEqual([['content', 'expression']]);
+		expect(delegate[0]!.slots[0]!.steps[0]!.mounted).toEqual({ call: 'child', key: 'content' });
 		expect(delegate[0]!.when).toEqual([{ absent: [], required: ['expression'] }]);
 	});
 
 	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every seat states the kinds a value there has, so a member with several routes takes one that seats it', (grammar) => {
 		for (const { arms } of Object.values(tables[grammar].table.paths))
-			for (const arm of arms) for (const member of arm.members) for (const seat of member.seats) expect(Array.isArray(seat.kinds), `${member.name} at ${seat.at.join('.')}`).toBe(true);
-		const input = armsOf('rust', 'attribute')[0]!.members.filter((member) => member.name === 'input');
+			for (const arm of arms) for (const member of arm.slots) for (const seat of member.seats) expect(Array.isArray(seat.kinds), `${member.name} at ${seat.at.join('.')}`).toBe(true);
+		const input = armsOf('rust', 'attribute')[0]!.slots.filter((member) => member.name === 'input');
 		expect(input.find((route) => route.steps.at(-1)!.key === 'arguments')!.seats[0]!.kinds).toEqual([
 			rust.kinds.DelimTokenTree,
 			rust.kinds.DelimTokenTreeParen,
@@ -248,15 +248,15 @@ describe('the portable build table', () => {
 	});
 
 	it("requires the members that complete the kind a route enters: an except clause's name, its type", () => {
-		const names = armsOf('python', 'clause.catch')[0]!.members.filter((member) => member.name === 'name');
+		const names = armsOf('python', 'clause.catch')[0]!.slots.filter((member) => member.name === 'name');
 		expect(names.map((route) => route.requires)).toEqual([[['type']]]);
 	});
 
 	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: a route requires only members and flags of its own arm', (grammar) => {
 		for (const { arms } of Object.values(tables[grammar].table.paths))
 			for (const arm of arms) {
-				const names = new Set([...arm.members.map((member) => member.name), ...Object.keys(arm.flags)]);
-				for (const member of arm.members)
+				const names = new Set([...arm.slots.map((member) => member.name), ...Object.keys(arm.flags)]);
+				for (const member of arm.slots)
 					for (const group of member.requires ?? []) for (const name of group) expect(names.has(name), `${member.name} requires ${name}`).toBe(true);
 			}
 	});
@@ -294,7 +294,7 @@ describe('the portable build table', () => {
 
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
-		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
+		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ slot: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
 	});
 
 	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {
@@ -321,11 +321,11 @@ describe('the portable build table', () => {
 		const engine = await createEngine(python, { api: 'strict' });
 		const signed = (arm: PortableBuildArm): string | undefined => (arm.numeric === undefined || isNumberSlots(arm.numeric) ? undefined : arm.numeric.exponentSign);
 		const renamed = (arm: PortableBuildArm): PortableBuildArm =>
-			signed(arm) === undefined ? arm : { ...arm, members: arm.members.map((member) => (member.steps[0]?.key === signed(arm) ? { ...member, name: 'signOfExponent' } : member)) };
+			signed(arm) === undefined ? arm : { ...arm, slots: arm.slots.map((member) => (member.steps[0]?.key === signed(arm) ? { ...member, name: 'signOfExponent' } : member)) };
 		const unsigned = (arm: PortableBuildArm): PortableBuildArm => {
 			if (arm.numeric === undefined || isNumberSlots(arm.numeric) || arm.numeric.exponentSign === undefined) return arm;
 			const { exponentSign, ...rest } = arm.numeric;
-			return { ...arm, numeric: rest, members: arm.members.filter((member) => member.steps[0]?.key !== exponentSign) };
+			return { ...arm, numeric: rest, slots: arm.slots.filter((member) => member.steps[0]?.key !== exponentSign) };
 		};
 		const builderWith = (edit: (arm: PortableBuildArm) => PortableBuildArm) =>
 			portableBuilder({
@@ -363,7 +363,7 @@ describe('the portable build table', () => {
 	});
 
 	it('writes the trailing separator on the one item of a list claimed by its own separator, and on no other list', () => {
-		const sole = { member: 'elements', delimiter: Delimiter.Trailing };
+		const sole = { slot: 'elements', delimiter: Delimiter.Trailing };
 		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.Subscripts).sole).toEqual(sole);
 		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.Subjects).sole).toEqual(sole);
 		expect(armOf('python', 'expression.collection.tuple.bare', python.kinds.ExpressionList).sole).toBeUndefined();
@@ -384,7 +384,7 @@ describe('the portable build of a registered option', () => {
 	const table = (options?: PortableBuildTable['options']): PortableBuildTable => ({
 		builders: { holder: 'direct' },
 		...(options === undefined ? {} : { options }),
-		paths: { 'statement.held': { root: true, arms: [{ kind: 1, builder: 'holder', members: [textSeat('value'), textSeat('spelling')], presets: [], flags: {}, when: [] }] } }
+		paths: { 'statement.held': { root: true, arms: [{ kind: 1, builder: 'holder', slots: [textSeat('value'), textSeat('spelling')], presets: [], flags: {}, when: [] }] } }
 	});
 	const build = (options: PortableBuildTable['options'], structure: Readonly<Record<string, string>>) => {
 		const calls: unknown[][] = [];
@@ -418,7 +418,7 @@ describe('the portable build of a registered option', () => {
 				paths: {
 					'literal.number.big': {
 						root: true,
-						arms: [{ kind: 2, builder: 'long', scalar: 'bigint', numeric: ['content'], members: [textSeat('content'), textSeat('marker')], presets: [], flags: {}, when: [] }],
+						arms: [{ kind: 2, builder: 'long', scalar: 'bigint', numeric: ['content'], slots: [textSeat('content'), textSeat('marker')], presets: [], flags: {}, when: [] }],
 						builds: { bigint: 2 }
 					}
 				}
@@ -434,12 +434,12 @@ describe('the portable build of a registered option', () => {
 });
 
 describe("the portable build of a flag that is a member's list's trailing separator", () => {
-	const tableOf = (member: PortableBuildTable['paths'][string]['arms'][number]['members'][number], list: readonly { readonly key: string; readonly builder?: string }[]): PortableBuildTable => ({
+	const tableOf = (member: PortableBuildTable['paths'][string]['arms'][number]['slots'][number], list: readonly { readonly key: string; readonly builder?: string }[]): PortableBuildTable => ({
 		builders: { holder: 'config', items: 'elements' },
 		paths: {
 			'statement.held': {
 				root: true,
-				arms: [{ kind: 1, builder: 'holder', members: [member], presets: [], flags: { trailingComma: { presets: [], delimiter: Delimiter.Trailing, list } }, when: [] }]
+				arms: [{ kind: 1, builder: 'holder', slots: [member], presets: [], flags: { trailingComma: { presets: [], delimiter: Delimiter.Trailing, list } }, when: [] }]
 			}
 		}
 	});
@@ -510,7 +510,7 @@ describe('the portable build of an arm whose routes run through two forms of one
 		paths: {
 			'statement.held': {
 				root: true,
-				arms: [{ kind: 1, builder: 'outer', members: [route('left', 'formA'), route('left', 'formB'), route('right', 'formA', /^z$/), route('right', 'formB')], owners: [[0, 2], [1, 3]], presets: [], flags: {}, when: [] }]
+				arms: [{ kind: 1, builder: 'outer', slots: [route('left', 'formA'), route('left', 'formB'), route('right', 'formA', /^z$/), route('right', 'formB')], owners: [[0, 2], [1, 3]], presets: [], flags: {}, when: [] }]
 			}
 		}
 	};
@@ -544,7 +544,7 @@ describe('the portable build of an arm whose routes run through two forms of one
 
 describe('the portable build of a list whose last element takes a form of its own', () => {
 	const pattern = (holder: number) => ({ name: 'pattern', steps: [{ key: 'pattern' }], multiple: false, seats: [{ at: [holder, 'pattern'] as const, kinds: [], text: true as const }] });
-	const arm = (kind: number, builder: string) => ({ kind, builder, holders: [[1, 'arms']] as const, members: [pattern(kind)], presets: [], flags: {}, when: [] });
+	const arm = (kind: number, builder: string) => ({ kind, builder, holders: [[1, 'arms']] as const, slots: [pattern(kind)], presets: [], flags: {}, when: [] });
 	const table: PortableBuildTable = {
 		builders: { holder: 'config', arm: 'config', last: 'config' },
 		paths: {
@@ -554,7 +554,7 @@ describe('the portable build of a list whose last element takes a form of its ow
 					{
 						kind: 1,
 						builder: 'holder',
-						members: [
+						slots: [
 							{
 								name: 'body',
 								steps: [{ key: 'arms' }],
@@ -626,7 +626,7 @@ describe('the portable build of an element whose container sets a flag by its ow
 					{
 						kind: 1,
 						builder: 'holder',
-						members: [
+						slots: [
 							{
 								name: 'items',
 								steps: [{ key: 'items' }],
@@ -645,7 +645,7 @@ describe('the portable build of an element whose container sets a flag by its ow
 					}
 				]
 			},
-			'element.thing': { root: true, arms: [{ kind: 4, builder: 'thing', members: [name], presets: [], flags: {}, when: [] }] }
+			'element.thing': { root: true, arms: [{ kind: 4, builder: 'thing', slots: [name], presets: [], flags: {}, when: [] }] }
 		}
 	};
 	const build = (items: readonly unknown[]): readonly string[] => {

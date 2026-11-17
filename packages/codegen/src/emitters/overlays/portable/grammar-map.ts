@@ -136,7 +136,7 @@ export function mapFormsOf(
 	const unformed: UnformedTest[] = [];
 	const termOf = (path: string, test: PortablePickTest): FormTerm | undefined => {
 		if ('absent' in test) return { required: test.required, absent: test.absent };
-		if ('kinds' in test) return narrowed(path, test.member, test.kinds);
+		if ('kinds' in test) return narrowed(path, test.slot, test.kinds);
 		if ('boolean' in test) return { member: ['$value', String(test.boolean)] };
 		return undefined;
 	};
