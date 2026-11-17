@@ -5,7 +5,7 @@ This census measures where a parsed read stores byte offsets: for each row a rea
 - **Roles:** slot content, trivia, or fixed token.
 - **Costing:** the census costs removing the fixed-token rows, and one-word parsed cells, in words and as a share of the read.
 
-Measured on `1f0170702`, the head of `feat/arena-hydrate-at-parse`.
+Measured on `1f0170702`, the head of `feat/arena-hydrate-at-parse`. The stage-one counts were measured on `ded238b1d`, a later head of that branch, where every other number here is unchanged.
 
 ## Roles
 
@@ -28,7 +28,7 @@ Today a read keeps a run row (`RunEntry::Row`: facts, start, end, inner) for eve
 
 ## Method
 
-The probe was a throwaway parity test on a `git archive` of `1f0170702`, outside every watched tree, and is not kept. For each source it calls `Engine::parse_records::<AnyNode>` and walks the read from its root record with the arena's public decoders:
+The probe is kept as the ignored test `rust/crates/sittir-parity-tests/tests/read_census.rs`, first committed at `fe7115ea4`. Its module doc gives the run command: one grammar and corpus a run, each appending a line to one file. For each source it calls `Engine::parse_records::<AnyNode>` and walks the read from its root record with the arena's public decoders:
 
 - `header_of` reads the record's header;
 - `RecordCells::shape` gives the record's shape;
@@ -199,7 +199,93 @@ These readers survive:
 | `line_starts_inside_tokens` (re-indent in `SpacingWriter`) | a token ending in a line break with the next token starting at that offset, such as a string's content followed by its closing quote |
 | `Lookups::for_each_descendant` (`probe_slice`) and query `slot_hits` | a token's text |
 
+## Stage-one counts
+
+What a read that writes no row for a fixed token or a unit has to stamp, and what it changes. Each node gets its stage-one fate:
+- a node with a record stays a record;
+- slot content held as a leaf, trivia, and anything inside a kept row are kept;
+- a fixed token, a unit, and anything inside a dropped row are dropped.
+
+A child's role comes from its holder's route: `Route::Slot` is slot content, `Route::Trivia` trivia, and `Route::Separator` and `Route::Layout` fixed tokens.
+
+| tally | what it counts |
+|---|---|
+| abutting leaves | a kept leaf whose text ends in `\n`, followed in the walk by a dropped leaf that starts where it ends |
+| choice lists | lists of a kind whose separator is a choice (`separatorCandidates` in the node model) with at least one gap, from `list_slots::slot_gaps` |
+| choice gaps | the gaps of those lists |
+| choice outliers | gaps whose separator kind is not their list's majority (`list_slots::majority`) |
+| flanked lists | records whose side record stores a `DELIMITER` |
+| delimiter disagreements | flanked lists whose stored `TRAILING` differs from whether `engine::last_list_child` is one of the list's separators |
+| named fixed query items | named nodes `ParsedTree::descendants` yields whose fate is dropped, by their holder's route. Every one counted is a unit (`QueryItem::Unit`) |
+
+| corpus | abutting leaves | choice lists | choice gaps | choice outliers | flanked lists | delimiter disagreements | named fixed query items |
+|---|---|---|---|---|---|---|---|
+| paired rust | 1 | 0 | 0 | 0 | 271 | 0 | 29 |
+| paired typescript | 0 | 14 | 20 | 0 | 208 | 0 | 33 |
+| paired python | 1 | 0 | 0 | 0 | 772 | 0 | 453 |
+| paired regex | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| paired scm | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `engine.rs` | 15 | 0 | 0 | 0 | 213 | 0 | 29 |
+| `create-engine.ts` | 0 | 0 | 0 | 0 | 76 | 0 | 1 |
+| matter.js | 1 | 953 | 2,440 | 0 | 20,300 | 0 | 1,464 |
+| next.js | 243 | 4,673 | 22,401 | 0 | 53,038 | 7 | 27,431 |
+
+No choice list on any corpus has an outlier gap: each list uses one separator throughout.
+
+### Checks
+
+- **Error list:** both parse paths build it from the tree-sitter tree before the tree is dropped, so it reads no record. `parse` uses the tree backing's `error_regions`, and `parseRecords` uses `parsed.errors`, computed over `TreeNodes`.
+- **`$snapshot`:** the snapshot of a parsed rust `fn f(a: u8, b: u8) {}` holds no `(`, `)` or `,` kind (`packages/rust/tests/snapshot-fixed-tokens.test.ts`).
+
+### Delimiter disagreements
+
+All 7 are next.js `object_type_content` lists of one shape:
+- the members are separated by line breaks only: every separator is a zero-width `automatic_semicolon`, and the list holds no `;` or `,`;
+- the last member is followed by a comment on its line, then by a zero-width `automatic_semicolon` at the comment's end.
+
+The list's span ends at that automatic semicolon, past its last item, so `read::delimiter` stores `TRAILING`. `last_list_child` skips the zero-width automatic semicolon and the comment, and answers the member: no trailing separator. In the source there is no separator text either way. What a stored `TRAILING` would render for such a list is not checked.
+
+| source, under next.js | list | last member | comment |
+|---|---|---|---|
+| `apps/bundle-analyzer/lib/treemap-layout.ts` | 469..805 | `sourceIndex?: SourceIndex` 737..762 | line, 763..805 |
+| `packages/next/src/build/webpack/loaders/get-module-build-info.ts` | 1135..1453 | `requests?: string[]` 1392..1411 | line, 1412..1453 |
+| `packages/next/src/build/webpack/plugins/flight-client-entry-plugin.ts` | 25000..25098 | `resolvedModule: any` 25062..25081 | block, 25082..25098 |
+| `packages/next/src/client/components/router-reducer/fetch-server-response.ts` | 4030..4505 | `[NEXT_REQUEST_ID_HEADER]?: string` 4460..4493 | line, 4494..4505 |
+| `packages/next/src/lib/metadata/types/opengraph-types.ts` | 2656..2905 | `releaseDate?: null \| string \| undefined` 2854..2893 | line, 2894..2905 |
+| `packages/next/src/lib/metadata/types/opengraph-types.ts` | 7259..7422 | `releaseDate?: string \| undefined` 7378..7410 | line, 7411..7422 |
+| `packages/next/src/server/dev/turbopack-utils.ts` | 4516..5047 | `hooks?: HandleRouteTypeHooks` 5012..5040 | line, 5041..5047 |
+
+### Named fixed query items
+
+By holder and unit, with the role the holder's route gives. "Listed" means the spec's navigation table names the pair.
+
+| holder > unit | role | listed | paired rust | paired ts | paired python | `engine.rs` | `create-engine.ts` | matter.js | next.js |
+|---|---|---|---|---|---|---|---|---|---|
+| `object_type_content` > `automatic_semicolon` | separator | yes | | 29 | | | 1 | 725 | 26,698 |
+| `method_definition_getter` > `formal_parameters` | layout | yes | | | | | | 647 | 125 |
+| `type_query_call_expression` > `import` | layout | yes | | 1 | | | | 2 | 528 |
+| `_simple_statements` > `newline` | layout | yes | | | 442 | | | | |
+| `receiver_parameter_declaration` > `this` | layout | yes | | 2 | | | | 80 | 79 |
+| `self_parameter` > `self` | layout | yes | 13 | | | 24 | | | |
+| `pointer_type_mut` > `mutable_specifier` | layout | yes | 7 | | | | | | |
+| `reference_expression_mut` > `mutable_specifier` | layout | yes | 1 | | | 5 | | | |
+| `reference_expression_raw_mut` > `mutable_specifier` | layout | yes | 1 | | | | | | |
+| `abstract_method_signature_getter` > `formal_parameters` | layout | no | | 1 | | | | 6 | 1 |
+| `method_signature_getter` > `formal_parameters` | layout | no | | | | | | 4 | |
+| `block_statement` > `newline` | layout | no | | | 6 | | | | |
+| `decorator` > `newline` | layout | no | | | 5 | | | | |
+| `extern_crate_declaration` > `crate` | layout | no | 3 | | | | | | |
+| `mut_pattern` > `mutable_specifier` | layout | no | 3 | | | | | | |
+| rust `receiver_parameter_declaration` > `self` | layout | no | 1 | | | | | | |
+
+Against the spec's table:
+- **Unlisted pairs:** the same families. Two more getter forms write `()`, a rust `extern crate`, `self: Box<Self>` and `move |mut e|` each fix a named unit, and python writes a zero-width `newline` under `block_statement` and `decorator`.
+- **Automatic semicolons:** next.js's 26,698 are the role census's 25,288 separator rows plus the 1,410 rows it left unexplained (`object_type_content > automatic_semicolon, named, leaf, zero-width, in-record`). The holder's route makes all of them separators.
+- **Not yielded:** doc-comment markers lie inside a comment's kept row, so they stay in navigation. Python's `indent` and `dedent` are not among the named nodes `descendants` yields.
+
+The run's `out.jsonl` lists every case, 29,447 in all, under each corpus's `stage_one.cases`.
+
 ## Files
 
-- **`analyze.mjs`:** the role rule's model and render-body lookups and the cost arithmetic. It reads the probe's tallies (`out.jsonl`, not kept here: 401 KB) and `models/<lang>.*`, which are `node-model.json5`, `render-bodies.json` and `.sittir/src/grammar.json`'s `externals` at `1f0170702`.
-- **`report.json`:** what `analyze.mjs` printed: rows by role for each corpus, with the unexplained rows by holder and kind.
+- **`analyze.mjs`:** the role rule's model and render-body lookups and the cost arithmetic. `node analyze.mjs <dir>` reads the probe's tallies (`<dir>/out.jsonl`, not kept here: 401 KB) and `<dir>/models/<lang>.*`, which are `node-model.json5`, `render-bodies.json` and `.sittir/src/grammar.json`'s `externals` at `1f0170702`. It passes each corpus's stage-one tallies through as `stageOne`.
+- **`report.json`:** what `analyze.mjs` printed: rows by role for each corpus, with the unexplained rows by holder and kind, and the stage-one tallies.

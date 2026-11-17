@@ -137,6 +137,23 @@
    "type_parameters_elements > ,, anonymous, leaf, wide, in-record": 1
   },
   "cellWordsToday": 23729,
+  "stageOne": {
+   "abuttingLeaves": 1,
+   "choiceLists": 0,
+   "choiceGaps": 0,
+   "choiceOutliers": 0,
+   "flankedLists": 271,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {
+    "extern_crate_declaration > crate (layout, unit)": 3,
+    "mut_pattern > mutable_specifier (layout, unit)": 3,
+    "pointer_type_mut > mutable_specifier (layout, unit)": 7,
+    "receiver_parameter_declaration > self (layout, unit)": 1,
+    "reference_expression_mut > mutable_specifier (layout, unit)": 1,
+    "reference_expression_raw_mut > mutable_specifier (layout, unit)": 1,
+    "self_parameter > self (layout, unit)": 13
+   }
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -339,6 +356,20 @@
    "tuple_type_members > ,, anonymous, leaf, wide, in-record": 1
   },
   "cellWordsToday": 17296,
+  "stageOne": {
+   "abuttingLeaves": 0,
+   "choiceLists": 14,
+   "choiceGaps": 20,
+   "choiceOutliers": 0,
+   "flankedLists": 208,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {
+    "abstract_method_signature_getter > formal_parameters (layout, unit)": 1,
+    "object_type_content > automatic_semicolon (separator, unit)": 29,
+    "receiver_parameter_declaration > this (layout, unit)": 2,
+    "type_query_call_expression > import (layout, unit)": 1
+   }
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -506,6 +537,19 @@
    "subjects > ,, anonymous, leaf, wide, in-record": 1
   },
   "cellWordsToday": 22236,
+  "stageOne": {
+   "abuttingLeaves": 1,
+   "choiceLists": 0,
+   "choiceGaps": 0,
+   "choiceOutliers": 0,
+   "flankedLists": 772,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {
+    "_simple_statements > newline (layout, unit)": 442,
+    "block_statement > newline (layout, unit)": 6,
+    "decorator > newline (layout, unit)": 5
+   }
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -639,6 +683,15 @@
    "negation > ^, anonymous, leaf, wide, under-unnamed-row, no render body": 1
   },
   "cellWordsToday": 2965,
+  "stageOne": {
+   "abuttingLeaves": 0,
+   "choiceLists": 0,
+   "choiceGaps": 0,
+   "choiceOutliers": 0,
+   "flankedLists": 0,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {}
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -771,6 +824,15 @@
    "anchor > ., anonymous, leaf, wide, under-unnamed-row, no render body": 13
   },
   "cellWordsToday": 2431,
+  "stageOne": {
+   "abuttingLeaves": 0,
+   "choiceLists": 0,
+   "choiceGaps": 0,
+   "choiceOutliers": 0,
+   "flankedLists": 0,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {}
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -923,6 +985,18 @@
    "parameters_elements > ,, anonymous, leaf, wide, in-record": 1
   },
   "cellWordsToday": 14916,
+  "stageOne": {
+   "abuttingLeaves": 15,
+   "choiceLists": 0,
+   "choiceGaps": 0,
+   "choiceOutliers": 0,
+   "flankedLists": 213,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {
+    "reference_expression_mut > mutable_specifier (layout, unit)": 5,
+    "self_parameter > self (layout, unit)": 24
+   }
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -1077,6 +1151,17 @@
    "object_type_content > automatic_semicolon, named, leaf, zero-width, in-record": 1
   },
   "cellWordsToday": 9193,
+  "stageOne": {
+   "abuttingLeaves": 0,
+   "choiceLists": 0,
+   "choiceGaps": 0,
+   "choiceOutliers": 0,
+   "flankedLists": 76,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {
+    "object_type_content > automatic_semicolon (separator, unit)": 1
+   }
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -1281,6 +1366,22 @@
    "tuple_type_members > ,, anonymous, leaf, wide, in-record": 1
   },
   "cellWordsToday": 7143871,
+  "stageOne": {
+   "abuttingLeaves": 1,
+   "choiceLists": 953,
+   "choiceGaps": 2440,
+   "choiceOutliers": 0,
+   "flankedLists": 20300,
+   "delimiterDisagreements": 0,
+   "namedFixedQueryItems": {
+    "abstract_method_signature_getter > formal_parameters (layout, unit)": 6,
+    "method_definition_getter > formal_parameters (layout, unit)": 647,
+    "method_signature_getter > formal_parameters (layout, unit)": 4,
+    "object_type_content > automatic_semicolon (separator, unit)": 725,
+    "receiver_parameter_declaration > this (layout, unit)": 80,
+    "type_query_call_expression > import (layout, unit)": 2
+   }
+  },
   "options": {
    "today": {
     "delta": 0,
@@ -1513,6 +1614,21 @@
    "export_specifiers > ,, anonymous, leaf, wide, in-record": 1
   },
   "cellWordsToday": 14493933,
+  "stageOne": {
+   "abuttingLeaves": 243,
+   "choiceLists": 4673,
+   "choiceGaps": 22401,
+   "choiceOutliers": 0,
+   "flankedLists": 53038,
+   "delimiterDisagreements": 7,
+   "namedFixedQueryItems": {
+    "abstract_method_signature_getter > formal_parameters (layout, unit)": 1,
+    "method_definition_getter > formal_parameters (layout, unit)": 125,
+    "object_type_content > automatic_semicolon (separator, unit)": 26698,
+    "receiver_parameter_declaration > this (layout, unit)": 79,
+    "type_query_call_expression > import (layout, unit)": 528
+   }
+  },
   "options": {
    "today": {
     "delta": 0,

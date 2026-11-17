@@ -2,12 +2,12 @@
 
 > **Execution:** the engine-api session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** written 2026-11-17. Not started. It starts when the hydrate-at-parse branch has merged to master; the branch is cut from that merge.
+**Status:** written 2026-11-17. Tasks 2–9 start when the hydrate-at-parse branch has merged to master; the branch is cut from that merge. Task 1 runs ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It writes no production code, and that branch is merged into the stage-one branch when the stage-one branch is cut. **Stopped at Task 1** until the maintainer rules: `delimiter_disagreements` is 7, all on next.js, and `named_fixed_query_items` is non-zero on seven of the nine corpora. The census README's "Stage-one counts" lists every case.
 
 How this line is kept:
 - Each finished task is ticked, and this line names the task in progress.
 - A stop condition replaces this line with the stop and its cases until it is ruled. The stop conditions are:
-  - Task 1: a non-zero `delimiter_disagreements` or `named_fixed_query_units`, reported to brainstorm with every case, for the maintainer to rule on;
+  - Task 1: a non-zero `delimiter_disagreements` or `named_fixed_query_items`, reported to brainstorm with every case, for the maintainer to rule on;
   - Task 8: a placement change that is not beside a named fixed token;
   - Task 9: a failed gate.
 
@@ -75,39 +75,39 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - `rust/crates/sittir-parity-tests/tests/stage_one_parity.rs`: new; every parity test below.
 - `rust/crates/sittir-parity-tests/tests/read_census.rs`: new; the census probe, kept.
 
-**Commands.** `PARITY` stands for `cargo test -p sittir-parity-tests --no-default-features --features arena --test stage_one_parity`, run from the repository root. `CENSUS` stands for `SITTIR_CENSUS_OUT=<out.jsonl> SITTIR_CENSUS_LISTS=<directory of .list files, one source path a line> cargo test -p sittir-parity-tests --no-default-features --features arena --test read_census -- --ignored`.
+**Commands.** `PARITY` stands for `cargo test -p sittir-parity-tests --no-default-features --features arena --test stage_one_parity`, run from the repository root. `CENSUS` stands for one run per grammar and corpus, with absolute paths, since the test runs in its crate's directory: `SITTIR_CENSUS_GRAMMAR=<lang> SITTIR_CENSUS_CORPUS=<label> SITTIR_CENSUS_SOURCES=<file | list:<file of paths> | json:<paired-run corpus>> SITTIR_CENSUS_OUT=<dir>/out.jsonl cargo test -p sittir-parity-tests --no-default-features --features arena --test read_census -- --ignored`. The runs append to one file. Then run `node docs/superpowers/probes/2026-11-17-read-coordinate-census/analyze.mjs <dir>`, which reads `<dir>/out.jsonl` and the role models in `<dir>/models/` (each grammar's `node-model.json5`, `render-bodies.json` and its `grammar.json` externals).
 
 ---
 
 ### Task 1: Probe
 
 **Files:**
-- Create `rust/crates/sittir-parity-tests/tests/read_census.rs`, from the census probe (`coordinate_census.rs`), `#[ignore]`. It writes JSONL to `$SITTIR_CENSUS_OUT` and reads the file lists in `$SITTIR_CENSUS_LISTS`.
+- Create `rust/crates/sittir-parity-tests/tests/read_census.rs`, from the census probe (`coordinate_census.rs`), `#[ignore]`, run as `CENSUS` describes.
 - Modify `docs/superpowers/probes/2026-11-17-read-coordinate-census/{README.md,analyze.mjs}`.
 - Test: `packages/rust/tests/snapshot-fixed-tokens.test.ts`.
 
 **Interfaces:** Produces counts only; no production code.
 
-- [ ] **Step 1: Run the census unchanged and check the reconciliation.** Run it on the paired corpora, the two `deep_read_words` fixtures, matter.js and next.js (fetching corpora is approved). Command: `CENSUS`, then `node docs/superpowers/probes/2026-11-17-read-coordinate-census/analyze.mjs <out.jsonl>`. Expected: `engine.rs` has 62,092 words and `create-engine.ts` 35,611, as the README reconciles.
-- [ ] **Step 2: Add the tallies the later tasks need.**
+- [x] **Step 1: Run the census unchanged and check the reconciliation.** Run it on the paired corpora, the two `deep_read_words` fixtures, matter.js and next.js (fetching corpora is approved). Command: `CENSUS` for each corpus, then the analyzer. Expected: `engine.rs` has 62,092 words and `create-engine.ts` 35,611, as the README reconciles.
+- [x] **Step 2: Add the tallies the later tasks need.**
   - `abutting_leaves`: variable-text leaves whose text ends in `\n` and whose next token in the token walk starts at their end, that token being a fixed token or a unit.
   - `choice_lists`: parsed lists of a kind with more than one separator candidate and at least one gap.
   - `choice_outliers`: gaps whose kind is not their list's majority.
   - `delimiter_disagreements`: parsed flanked lists where the stamped `DELIMITER`'s `TRAILING` differs from whether `engine::last_list_child` is one of the list's separators.
-  - `named_fixed_query_units`: `QueryItem::Unit` items that `ParsedTree::descendants` yields for a named fixed token (the spec's navigation table).
+  - `named_fixed_query_items`: named nodes that `ParsedTree::descendants` yields whose stage-one fate is dropped, with the role their holder's route gives them (the spec's navigation table). Every one the census found is a `QueryItem::Unit`.
 
   Rerun Step 1's command. Expected: the five tallies are printed per corpus.
-- [ ] **Step 3: Check the error list.** Run `find_all_references` on `engine.rs::error_regions` and confirm every caller passes `TreeNodes` before the tree is dropped. If any caller reads records, stop and report.
-- [ ] **Step 4: Write the `$snapshot` test.**
+- [x] **Step 3: Check the error list.** Run `find_all_references` on `engine.rs::error_regions` and confirm every caller passes `TreeNodes` before the tree is dropped. If any caller reads records, stop and report.
+- [x] **Step 4: Write the `$snapshot` test.**
 
   The test parses rust `fn f(a: u8, b: u8) {}`, takes the function item's `$snapshot()`, and collects every `$type` in it recursively, with a test-local helper. It asserts the set holds neither the kind id of `(` nor that of `,` (from `packages/rust/src/kinds.ts`).
 
   Run `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/snapshot-fixed-tokens.test.ts`. Expected: PASS. A FAIL is not fixed here: it goes to brainstorm as the `$snapshot` row.
-- [ ] **Step 5: Record and report.**
+- [x] **Step 5: Record and report.**
   - Add the counts to the README under "Stage-one counts".
   - Send brainstorm the five tallies and the two checks.
-  - A non-zero `delimiter_disagreements` or `named_fixed_query_units` stops the plan. Report it to brainstorm with every case (source, node kind, span and both answers) and set the Status line to the stop; brainstorm takes it to the maintainer.
-  - Commit: `test(parity): keep the read census and count what stage one stamps`.
+  - A non-zero `delimiter_disagreements` or `named_fixed_query_items` stops the plan. Report it to brainstorm with every case (source, node kind, span and both answers) and set the Status line to the stop; brainstorm takes it to the maintainer.
+  - Commit: landed as `fe7115ea4` on `test/read-census`.
 
 ### Task 2: Body facts generated per kind
 
