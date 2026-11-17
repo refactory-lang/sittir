@@ -175,7 +175,7 @@ pub fn kept<T>(entries: Vec<TriviaEntry<T>>) -> Vec<TriviaEntry<T>> {
         .map(|entry| match entry {
             #[cfg(feature = "arena")]
             TriviaEntry::Record(record) => TriviaEntry::Record(crate::trivia::RecordEntry { store: None, ..record }),
-            entry @ TriviaEntry::Value(_) => entry,
+            entry @ (TriviaEntry::Value(_) | TriviaEntry::Tokens) => entry,
         })
         .collect()
 }
@@ -373,7 +373,7 @@ fn held_records<T>(entries: &[TriviaEntry<T>]) -> Vec<crate::arena::Address> {
         .iter()
         .filter_map(|entry| match entry {
             TriviaEntry::Record(record) => Some(record.record.at),
-            TriviaEntry::Value(_) => None,
+            TriviaEntry::Value(_) | TriviaEntry::Tokens => None,
         })
         .collect()
 }
@@ -429,7 +429,7 @@ impl<T: Clone> TriviaStore<T> {
             .map(|entry| match entry {
                 #[cfg(feature = "arena")]
                 TriviaEntry::Record(record) => TriviaEntry::Record(crate::trivia::RecordEntry { store: Some(self.clone()), ..record.clone() }),
-                entry @ TriviaEntry::Value(_) => entry.clone(),
+                entry @ (TriviaEntry::Value(_) | TriviaEntry::Tokens) => entry.clone(),
             })
             .collect()
     }
@@ -1006,7 +1006,7 @@ mod tests {
     fn store_of(entry: &TriviaEntry<TriviaText>) -> Option<&TriviaStore<TriviaText>> {
         match entry {
             TriviaEntry::Record(record) => record.store.as_ref(),
-            TriviaEntry::Value(_) => None,
+            TriviaEntry::Value(_) | TriviaEntry::Tokens => None,
         }
     }
 

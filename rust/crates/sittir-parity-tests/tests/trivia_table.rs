@@ -50,9 +50,10 @@ impl Case {
         index_of(&self.tree, self.source, kind, text)
     }
 
-    /// The extras and `ERROR`s of `side` of the node at `index`, without its layout runs.
+    /// The extras and `ERROR`s of `side` of the node at `index`, without its
+    /// layout runs or the place of the tokens after it.
     fn entries(&self, index: NodeIndex, side: TriviaSide) -> Vec<Assigned> {
-        self.table.side(index, side).iter().copied().filter(|entry| !matches!(entry, Assigned::Layout { .. } | Assigned::Depth(_))).collect()
+        self.table.side(index, side).iter().copied().filter(|entry| !matches!(entry, Assigned::Layout { .. } | Assigned::Depth(_) | Assigned::Tokens)).collect()
     }
 
     /// Asserts the entry `comment` (of `comment_kind`) is the only extra of `side` of the node `owner` (of `kind`).
@@ -230,7 +231,7 @@ fn every_extra_of_the_probe_inputs_lands_in_one_side() {
             for side in [Leading, Trailing, Inner] {
                 placed.extend(case.entries(index, side).into_iter().map(|entry| match entry {
                     Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => at,
-                    Assigned::Layout { .. } | Assigned::Depth(_) => unreachable!(),
+                    Assigned::Layout { .. } | Assigned::Depth(_) | Assigned::Tokens => unreachable!(),
                 }));
             }
         }

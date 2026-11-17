@@ -72,8 +72,10 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
     /// # Errors
     ///
     /// `ArenaError::Unwritable` for a coordinate naming no read's record,
-    /// before any entry is written, and for a value written as a cell of any
-    /// other form; else what writing a value refuses.
+    /// before any entry is written, for a value written as a cell of any
+    /// other form, and for the place of the tokens after a side's owner
+    /// (`TriviaEntry::Tokens`), which a store has no form for; else what
+    /// writing a value refuses.
     pub fn kept(&mut self, entries: &[TriviaEntry<T>]) -> Result<Vec<CompactEntry>, ArenaError> {
         if entries.iter().any(|entry| matches!(entry, TriviaEntry::Value(SlotValue::Coord(coordinate)) if self.read_record(coordinate).is_none())) {
             return Err(ArenaError::Unwritable("a coordinate in a side naming no record a read left"));
@@ -89,6 +91,7 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
             TriviaEntry::Record(record) => return Ok(CompactEntry::Record { kind: record.record.kind, at: record.record.at }),
             TriviaEntry::Value(SlotValue::Node(value)) => value,
             TriviaEntry::Value(SlotValue::Coord(coordinate)) => return self.read_record(coordinate).ok_or(ArenaError::Unwritable("a coordinate in a side naming no record a read left")),
+            TriviaEntry::Tokens => return Err(ArenaError::Unwritable("the place of the tokens after a side's owner, which a store does not keep")),
         };
         let write = self.trivia;
         let cell = write(value, self)?;

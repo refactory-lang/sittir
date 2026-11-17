@@ -234,12 +234,16 @@ pub enum SideEntry<T> {
     Layout(TriviaEntry<T>),
     /// An entry a write gave the side.
     Written(TriviaEntry<T>),
+    /// Where the anonymous tokens after a trailing side's owner fall
+    /// (`TriviaEntry::Tokens`).
+    Tokens,
 }
 
 impl<T> SideEntry<T> {
     pub fn into_entry(self) -> TriviaEntry<T> {
         match self {
             SideEntry::Source { entry, .. } | SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
+            SideEntry::Tokens => TriviaEntry::Tokens,
         }
     }
 }
@@ -468,7 +472,7 @@ impl<'s> ReadCtx<'s> {
                 if index == snapshot.root && side != TriviaSide::Inner {
                     crate::trivia::without_edge_runs(&mut entries, side, |entry| matches!(entry, SideEntry::Layout(_)));
                 }
-                entries.into_iter().map(|side| self.snapshot_entry(snapshot, side)).collect()
+                entries.into_iter().filter(|entry| !matches!(entry, SideEntry::Tokens)).map(|side| self.snapshot_entry(snapshot, side)).collect()
             }
         };
         (!seated.is_empty()).then_some(seated)
@@ -484,6 +488,7 @@ impl<'s> ReadCtx<'s> {
                 TriviaEntry::new(SlotValue::Node(T::from_text(text)))
             }
             SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
+            SideEntry::Tokens => TriviaEntry::Tokens,
         }
     }
 

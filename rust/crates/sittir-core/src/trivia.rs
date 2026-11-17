@@ -21,6 +21,10 @@ pub enum TriviaEntry<T> {
     Value(SlotValue<T>),
     #[cfg(feature = "arena")]
     Record(RecordEntry<T>),
+    /// Where the anonymous tokens after a trailing side's owner fall: the
+    /// entries after it render after those tokens, as the source has them
+    /// (`NodeTrivia::render_trailing`). It writes nothing itself.
+    Tokens,
 }
 
 impl<T: HeapBytes> HeapBytes for TriviaEntry<T> {
@@ -29,6 +33,7 @@ impl<T: HeapBytes> HeapBytes for TriviaEntry<T> {
             Self::Value(value) => value.heap_bytes(),
             #[cfg(feature = "arena")]
             Self::Record(entry) => entry.heap_bytes(),
+            Self::Tokens => 0,
         }
     }
 }
@@ -38,22 +43,24 @@ impl<T> TriviaEntry<T> {
         Self::Value(value)
     }
 
-    /// The node or coordinate the entry holds; `None` for a record.
+    /// The node or coordinate the entry holds; `None` for a record or the
+    /// tokens' place.
     #[must_use]
     pub fn value(&self) -> Option<&SlotValue<T>> {
         match self {
             Self::Value(value) => Some(value),
             #[cfg(feature = "arena")]
             Self::Record(_) => None,
+            Self::Tokens => None,
         }
     }
 
-    #[cfg_attr(not(feature = "arena"), allow(clippy::unnecessary_wraps, reason = "an entry is a built record only in the arena build"))]
     fn value_mut(&mut self) -> Option<&mut SlotValue<T>> {
         match self {
             Self::Value(value) => Some(value),
             #[cfg(feature = "arena")]
             Self::Record(_) => None,
+            Self::Tokens => None,
         }
     }
 }
@@ -103,6 +110,7 @@ impl<T: Render + 'static> Render for TriviaEntry<T> {
                 let store = entry.store.as_ref().ok_or(crate::render::RenderError::Record(crate::arena::ARENA_RELEASED))?;
                 w.render_record_entry(entry.record, store)
             }
+            Self::Tokens => Ok(()),
         }
     }
 }
@@ -630,7 +638,10 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
     /// Trailing entries, after the owner renders, in source order. The run
     /// before the first breaking layout entry shares the owner's line and is
     /// seated right after the owner; when it is layout alone it writes no
-    /// text to seat, and merges into the gap after the owner. The rest render after it, each layout
+    /// text to seat, and merges into the gap after the owner. Its part after
+    /// the place of the tokens that follow the owner (`TriviaEntry::Tokens`)
+    /// is held instead, so it is written after those tokens, before the next
+    /// owner or line break. The rest render after it, each layout
     /// entry taking the place of the join at its gap and an entry with none
     /// joining the one before it on its line; the seam the owner left (its
     /// after edge) is written after them.
@@ -638,11 +649,18 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
         let trailing = self.trailing.as_deref().unwrap_or(&[]);
         let own = trailing.iter().position(TriviaEntry::breaks).unwrap_or(trailing.len());
         let (same_line, own_line) = trailing.split_at(own);
+        let (same_line, past) = match same_line.iter().position(|entry| matches!(entry, TriviaEntry::Tokens)) {
+            Some(at) => (&same_line[..at], &same_line[at + 1..]),
+            None => (same_line, &[][..]),
+        };
         if same_line.iter().all(TriviaEntry::is_layout) {
             render_joined(same_line, LayoutKinds::SPACE, w)?;
         } else {
             defer_run(same_line, w)?;
             w.seat_trailing()?;
+        }
+        if !past.is_empty() {
+            defer_run(past, w)?;
         }
         if !own_line.is_empty() {
             w.seat_trailing()?;
@@ -775,6 +793,7 @@ impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for TriviaE
                 // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
                 unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?]) }
             }
+            Self::Tokens => Err(::napi::Error::from_reason("the place of the tokens after a side's owner does not cross to JavaScript")),
         }
     }
 }

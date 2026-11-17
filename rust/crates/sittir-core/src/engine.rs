@@ -1618,9 +1618,10 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// The entries of `side` of the node at `index`: the ones a write gave it,
     /// else the assigned ones, each as a value. An extra is its coordinate, an
     /// `ERROR` its kind and source text, and a layout run its whitespace
-    /// member.
+    /// member. The place of the tokens after the owner is no value: it is
+    /// the render's (`TriviaEntry::Tokens`).
     pub fn trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide) -> Vec<TriviaEntry<G::Trivia>> {
-        self.side_entries(index, side, false).into_iter().map(SideEntry::into_entry).collect()
+        self.side_entries(index, side, false).into_iter().filter(|entry| !matches!(entry, SideEntry::Tokens)).map(SideEntry::into_entry).collect()
     }
 
     /// `trivia_side` with where each entry came from, and when `edge_changed`
@@ -1788,11 +1789,11 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
                 |entry| match entry {
                     SideEntry::Layout(_) => true,
                     SideEntry::Written(entry) => entry.is_layout(),
-                    SideEntry::Source { .. } => false,
+                    SideEntry::Source { .. } | SideEntry::Tokens => false,
                 },
                 |entry| match entry {
                     SideEntry::Layout(entry) | SideEntry::Written(entry) => entry.depth(),
-                    SideEntry::Source { .. } => 0,
+                    SideEntry::Source { .. } | SideEntry::Tokens => 0,
                 },
                 ParsedTree::<G>::depth_member,
             );
@@ -2190,7 +2191,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         let ctx = tree.read_ctx();
         let entry = TriviaEntry::new;
         let depth = |count: i32| (0..count.unsigned_abs()).filter_map(move |_| ParsedTree::<G>::depth_member(count));
-        let is_entry = |assigned: &Assigned| matches!(assigned, Assigned::Extra(_) | Assigned::Error(_) | Assigned::Member(_));
+        let is_entry = |assigned: &Assigned| matches!(assigned, Assigned::Extra(_) | Assigned::Error(_) | Assigned::Member(_) | Assigned::Tokens);
         assigned
             .iter()
             .filter(|assigned| layout.is_some() || is_entry(assigned))
@@ -2228,6 +2229,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
                         .into_iter()
                         .collect(),
                     Assigned::Depth(count) => depth(count).collect(),
+                    Assigned::Tokens => vec![SideEntry::Tokens],
                 }
             })
             .filter(|entry| layout.is_some() || !matches!(entry, SideEntry::Layout(_)))
@@ -2243,7 +2245,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
             .iter()
             .filter_map(|entry| match entry {
                 SideEntry::Source { span, .. } => Some(span.start),
-                SideEntry::Layout(_) | SideEntry::Written(_) => None,
+                SideEntry::Layout(_) | SideEntry::Written(_) | SideEntry::Tokens => None,
             })
             .min()
     }
@@ -2303,7 +2305,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         let spans = |side: usize| {
             levels.iter().flat_map(move |level| &level[side]).filter_map(|entry| match entry {
                 SideEntry::Source { span, .. } => Some(*span),
-                SideEntry::Layout(_) | SideEntry::Written(_) => None,
+                SideEntry::Layout(_) | SideEntry::Written(_) | SideEntry::Tokens => None,
             })
         };
         Span {
@@ -2818,7 +2820,7 @@ impl<G: EngineGrammar> Engine<G> {
             let span = crate::types::Span::of(&root);
             let at = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
             drop(built);
-            let whole = at.map(|at| crate::arena::Placed { site: crate::arena::NodeSite::Record(at), side: TriviaSide::Inner, extra: at, kind: KindId::ERROR, span });
+            let whole = at.map(|at| crate::arena::Placed { site: crate::arena::NodeSite::Record(at), side: TriviaSide::Inner, extra: at, kind: KindId::ERROR, span, past: false });
             self.place_extras(crate::types::TreeId(entry.0), whole.into_iter().collect(), Vec::new());
             at
         } else {
