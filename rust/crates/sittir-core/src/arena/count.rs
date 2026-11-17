@@ -364,10 +364,11 @@ impl BuiltChunks {
     /// count reaches zero releases what it holds, on an explicit stack: a
     /// record each entry its cells name, the cells' string chunks, its side
     /// record, and the records its sides in the store hold, which `sides`
-    /// drops and answers. The tree of each link record and side record
-    /// released is kept for `take_trees`. A sealed chunk left with no live
-    /// entry is freed. A read's record takes no release, as a cell naming
-    /// one drops no count of it: it is freed with its arena.
+    /// drops and answers; a side record its slots' token runs. The tree of
+    /// each link record and side record released is kept for `take_trees`.
+    /// A sealed chunk left with no live entry is freed. A read's record
+    /// takes no release, as a cell naming one drops no count of it: it is
+    /// freed with its arena.
     ///
     /// # Errors
     ///
@@ -400,7 +401,14 @@ impl BuiltChunks {
     }
 
     fn drop_count(&mut self, held: Held, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
-        let at = held.at();
+        if self.drop_one(held.at())? {
+            stack.push(held);
+        }
+        Ok(())
+    }
+
+    /// Drops one count of the entry at `at`: true when it was the last.
+    fn drop_one(&mut self, at: Address) -> Result<bool, ArenaError> {
         let byte = self.table(at.chunk())?.count(at.word())?;
         let count = *byte & SATURATED;
         if count == 0 {
@@ -412,13 +420,19 @@ impl BuiltChunks {
                 if *more == 0 {
                     self.overflow.remove(&at.0);
                 }
-                return Ok(());
+                return Ok(false);
             }
         }
         let byte = self.table(at.chunk())?.count(at.word())?;
         *byte -= 1;
-        if *byte & SATURATED == 0 {
-            stack.push(held);
+        Ok(*byte & SATURATED == 0)
+    }
+
+    /// Drops the count of the entry at `at` its one holder holds, an entry
+    /// that holds nothing: a side record's token run.
+    fn retire(&mut self, at: Address) -> Result<(), ArenaError> {
+        if self.drop_one(at)? {
+            self.dead(at)?;
         }
         Ok(())
     }
@@ -467,20 +481,30 @@ impl BuiltChunks {
                 }
             }
             Held::Side(at) => {
-                if let Some(sides) = SideRecord::read(self, at)?.sides {
+                let (side, tokens) = SideRecord::read_held(self, at)?;
+                if let Some(sides) = side.sides {
                     self.trees.push(sides.tree);
+                }
+                for run in tokens {
+                    self.retire(run)?;
                 }
             }
             Held::Text(at) => return Err(malformed("text entry on the release stack", at.0)),
         }
-        let table = self.table(held.at().chunk())?;
+        self.dead(held.at())
+    }
+
+    /// One fewer live entry in the chunk `at` lies in, an entry whose count
+    /// reached zero; a sealed chunk left with none is freed.
+    fn dead(&mut self, at: Address) -> Result<(), ArenaError> {
+        let table = self.table(at.chunk())?;
         let live = table.live();
         if live == 0 {
-            return Err(malformed("released live count", held.at().chunk()));
+            return Err(malformed("released live count", at.chunk()));
         }
         table.set_live(live - 1);
         if live == 1 {
-            self.seal_check(held.at().chunk());
+            self.seal_check(at.chunk());
         }
         Ok(())
     }
@@ -708,6 +732,25 @@ mod tests {
             built.release(read, owned).expect("a read's record takes no release");
         }
         assert!(built.arena.read_chunk(chunk), "the read's chunk is still the arena's");
+    }
+
+    #[test]
+    fn a_released_side_record_releases_its_slots_token_runs() {
+        use crate::arena::side::SideSlot;
+        let mut built = Builder::new();
+        let mut placed = Vec::new();
+        let slot = SideSlot { word: 2, tokens: vec![Some(LEAF)], ..SideSlot::default() };
+        let side = SideRecord { slots: vec![slot], ..SideRecord::default() }
+            .write(&mut |words| {
+                let at = built.place(words, 1);
+                placed.push(at);
+                Ok(at)
+            })
+            .expect("a side record");
+        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), side.0, 0, 0], OWNED | 1);
+        built.release(root, true).expect("released");
+        assert_eq!(placed.last(), Some(&side));
+        assert!(placed.iter().all(|&at| built.arena.released(at)), "the side record and its token run");
     }
 
     #[test]

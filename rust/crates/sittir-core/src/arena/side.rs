@@ -498,17 +498,25 @@ impl SideRecord {
 
     /// The side record at `at`; an empty one at `Address::NONE`.
     pub fn read(arena: &dyn ArenaRead, at: Address) -> Result<SideRecord, ArenaError> {
-        Self::read_parts(arena, at, true).map(|(record, _)| record)
+        Self::read_parts(arena, at, true, None).map(|(record, _)| record)
     }
 
     /// The side record at `at` without its lists, its slots and its run
     /// left empty, and where its run lies: what naming a node and finding
     /// its parent read.
     pub(super) fn read_facts(arena: &dyn ArenaRead, at: Address) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
-        Self::read_parts(arena, at, false)
+        Self::read_parts(arena, at, false, None)
     }
 
-    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
+    /// The side record at `at` as `read_facts` reads it, and the entries it
+    /// holds a count of: its slots' token runs.
+    pub(super) fn read_held(arena: &dyn ArenaRead, at: Address) -> Result<(SideRecord, Vec<Address>), ArenaError> {
+        let mut held = Vec::new();
+        let (record, _) = Self::read_parts(arena, at, false, Some(&mut held))?;
+        Ok((record, held))
+    }
+
+    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool, held: Option<&mut Vec<Address>>) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
         if at == Address::NONE {
             return Ok((SideRecord::default(), None));
         }
@@ -561,6 +569,9 @@ impl SideRecord {
             let [count] = fields.array()?;
             let entries = fields.take(count.checked_mul(SLOT_WORDS).ok_or(malformed("side record slot count", count))?)?;
             let (entries, _) = entries.as_chunks::<{ SLOT_WORDS as usize }>();
+            if let Some(held) = held {
+                held.extend(entries.iter().filter_map(|&[.., run, _]| (run != 0).then_some(Address(run))));
+            }
             record.slots = entries[..if lists { entries.len() } else { 0 }]
                 .iter()
                 .map(|&[word, before, after, separator, space_before, space_after, run, len]| {
