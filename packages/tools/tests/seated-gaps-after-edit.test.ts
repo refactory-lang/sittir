@@ -95,9 +95,9 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		expect(root.$with.statements(b!, a!).$render()).toBe('b = 2\na = 1\n');
 	});
 
-	it('python: a held line end takes the options\' gap after it, not the wider source gap', () => {
+	it('python: a held line end takes one blank line after it where the source set the next statement apart, not the wider source gap', () => {
 		const root = python.parse('a = 1\n\n\nb = 2\n');
-		expect(root.$with.statements(...root.statements()).$render()).toBe('a = 1\nb = 2\n');
+		expect(root.$with.statements(...root.statements()).$render()).toBe('a = 1\n\nb = 2\n');
 	});
 
 	it('keeps the source gap when the items keep their source order', () => {

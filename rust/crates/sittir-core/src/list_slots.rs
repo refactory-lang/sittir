@@ -72,6 +72,66 @@ pub fn slot_gaps(routed: &Routed) -> Vec<SlotGaps> {
         .collect()
 }
 
+/// Each item of a routed node's list slots, in document order, with whether
+/// the source sets it apart from the item before with a blank line
+/// (`sets_apart`); a slot's first item never is.
+#[must_use]
+pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex, bool)> {
+    let mut slots: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
+    for (at, route) in routed.routes.iter().enumerate() {
+        if let Route::Slot { slot, .. } = *route {
+            slots.entry(slot).or_default().push(at);
+        }
+    }
+    let mut items: Vec<(crate::types::NodeIndex, bool)> = Vec::new();
+    for at in slots.values().filter(|at| at.len() >= 2) {
+        items.push((routed.children[at[0]].index, false));
+        items.extend(at.windows(2).map(|pair| {
+            let (before, item) = (&routed.children[pair[0]], &routed.children[pair[1]]);
+            let extras: Vec<crate::types::Span> =
+                (pair[0] + 1..pair[1]).filter(|&between| routed.routes[between] == Route::Trivia).map(|between| routed.children[between].span()).collect();
+            (item.index, sets_apart(source, before.end, item.start, &extras))
+        }));
+    }
+    items.sort_unstable_by_key(|&(item, _)| item);
+    items
+}
+
+/// Whether the source between `from` (an item's end) and `to` (the next
+/// item's start), holding `extras` in document order, sets the next item
+/// apart with a blank line: whether the first run of line breaks after the
+/// item and the extras on its last row breaks two lines before the next
+/// extra, token or the item. A blank line between an extra on a row of its
+/// own and the item does not count: that extra leads the item. An extra
+/// whose bytes end in a line break ends its row.
+#[must_use]
+pub fn sets_apart(source: &str, from: u32, to: u32, extras: &[crate::types::Span]) -> bool {
+    let bytes = source.as_bytes();
+    let mut extras = extras.iter().filter(|extra| extra.start >= from && extra.end <= to).peekable();
+    let mut breaks = 0;
+    let mut at = from;
+    while at < to {
+        if let Some(extra) = extras.next_if(|extra| extra.start <= at) {
+            if breaks > 0 {
+                return breaks >= 2;
+            }
+            if extra.end > extra.start && bytes.get(extra.end as usize - 1) == Some(&b'\n') {
+                breaks = 1;
+            }
+            at = at.max(extra.end);
+            continue;
+        }
+        match bytes.get(at as usize) {
+            Some(b'\n') => breaks += 1,
+            Some(b' ' | b'\t' | b'\r' | b'\x0c') => {}
+            Some(_) if breaks > 0 => return breaks >= 2,
+            _ => {}
+        }
+        at += 1;
+    }
+    breaks >= 2
+}
+
 /// The value most of `values` take. On a tie, `preferred` when it is among
 /// the tied values, else the first of them in order. `None` for no values.
 pub fn majority<T: Copy + PartialEq>(values: &[T], preferred: Option<T>) -> Option<T> {
@@ -169,6 +229,46 @@ mod tests {
         };
         let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
+    }
+
+    fn apart(source: &str, before: &str, item: &str, extras: &[&str]) -> bool {
+        let from = u32::try_from(source.find(before).unwrap() + before.len()).unwrap();
+        let to = u32::try_from(source.rfind(item).unwrap()).unwrap();
+        let spans: Vec<crate::types::Span> = extras
+            .iter()
+            .map(|extra| {
+                let start = u32::try_from(source.find(extra).unwrap()).unwrap();
+                crate::types::Span { start, end: start + u32::try_from(extra.len()).unwrap() }
+            })
+            .collect();
+        sets_apart(source, from, to, &spans)
+    }
+
+    #[test]
+    fn a_blank_line_between_items_sets_the_second_apart_whatever_its_length() {
+        assert!(apart("a();\n\nb();", "a();", "b();", &[]));
+        assert!(apart("a();\n\n\n\nb();", "a();", "b();", &[]));
+        assert!(apart("a();\n  \t\r\n  b();", "a();", "b();", &[]));
+        assert!(!apart("a();\nb();", "a();", "b();", &[]));
+        assert!(!apart("a(); b();", "a();", "b();", &[]));
+    }
+
+    #[test]
+    fn the_blank_line_is_measured_to_the_item_s_first_leading_extra() {
+        assert!(apart("a();\n\n// c\nb();", "a();", "b();", &["// c"]));
+        assert!(!apart("a();\n// d\n\nb();", "a();", "b();", &["// d"]));
+        assert!(apart("a();  // t\n\nb();", "a();", "b();", &["// t"]));
+        assert!(apart("a(); // t\n\n// c\nb();", "a();", "b();", &["// t", "// c"]));
+        assert!(!apart("a(); /* m\n\nn */\nb();", "a();", "b();", &["/* m\n\nn */"]));
+    }
+
+    #[test]
+    fn a_separator_or_an_extra_ending_its_row_counts_as_the_gap_does() {
+        assert!(apart("f(a,\n\n  b)", "a", "b)", &[]));
+        assert!(apart("a\n\nb", "a", "b", &[]));
+        assert!(!apart("a\n, b", "a", "b", &[]));
+        assert!(apart("a # t\n\nb", "a", "b", &["# t\n"]));
+        assert!(!apart("a # t\nb", "a", "b", &["# t\n"]));
     }
 
     #[test]

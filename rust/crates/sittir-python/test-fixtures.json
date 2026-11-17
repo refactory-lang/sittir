@@ -2560,6 +2560,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -11883,7 +11890,7 @@
     "wrappedText": "_ = (~x)"
   },
   {
-    "expectedOutput": "\n.1 - .0\n.1 + .0\n.1 - 0\n.1 + 0\n1 - .0\n1 + .0\n",
+    "expectedOutput": "\n.1 - .0\n.1 + .0\n.1 - 0\n.1 + 0\n\n1 - .0\n1 + .0\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -11986,6 +11993,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -12042,13 +12056,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (binary_operator left: (float_leading_point) right: (float_leading_point)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (binary_operator left: (float_leading_point) right: (float_leading_point)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (binary_operator left: (float_leading_point) right: (integer_decimal_plain)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (binary_operator left: (float_leading_point) right: (integer_decimal_plain)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (binary_operator left: (integer_decimal_plain) right: (float_leading_point)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (binary_operator left: (integer_decimal_plain) right: (float_leading_point)))) (newline)))",
-    "expectedSourceOut": "\n.1 - .0\n.1 + .0\n.1 - 0\n.1 + 0\n1 - .0\n1 + .0\n",
+    "expectedSourceOut": "\n.1 - .0\n.1 + .0\n.1 - 0\n.1 + 0\n\n1 - .0\n1 + .0\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\n.1-.0\n.1+.0\n.1-0\n.1+0\n\n1-.0\n1+.0\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n.1 - .0\n.1 + .0\n.1 - 0\n.1 + 0\n1 - .0\n1 + .0\n"
+    "wrappedText": "\n.1 - .0\n.1 + .0\n.1 - 0\n.1 + 0\n\n1 - .0\n1 + .0\n"
   },
   {
     "expectedOutput": ".1 - .0\n",
@@ -34209,7 +34223,7 @@
     "wrappedText": "_ = ((x async for f in g))"
   },
   {
-    "expectedOutput": "\ndef a():\n    b(1, 2)\n    c = [3]\n",
+    "expectedOutput": "\ndef a():\n    b(1, 2)\n\n    c = [3]\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -34270,6 +34284,13 @@
                   }
                 },
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        131
+                      ]
+                    }
+                  },
                   "$type": 135,
                   "_statements": {
                     "$type": 265,
@@ -34331,16 +34352,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (list elements: (collection_elements item: (integer_decimal_plain)))))) (newline)) (dedent)))))",
-    "expectedSourceOut": "\ndef a():\n    b(1, 2)\n    c = [3]\n",
+    "expectedSourceOut": "\ndef a():\n    b(1, 2)\n\n    c = [3]\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\ndef a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]\n",
     "wrappedOffset": 0,
-    "wrappedText": "\ndef a():\n    b(1, 2)\n    c = [3]\n"
+    "wrappedText": "\ndef a():\n    b(1, 2)\n\n    c = [3]\n"
   },
   {
-    "expectedOutput": "def a():\n    b(1, 2)\n    c = [3]\n",
+    "expectedOutput": "def a():\n    b(1, 2)\n\n    c = [3]\n",
     "grammar": "python",
     "input": {
       "$type": 170,
@@ -34397,6 +34418,13 @@
               }
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    131
+                  ]
+                }
+              },
               "$type": 135,
               "_statements": {
                 "$type": 265,
@@ -34456,13 +34484,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (list elements: (collection_elements item: (integer_decimal_plain)))))) (newline)) (dedent))))",
-    "expectedSourceOut": "def a():\n    b(1, 2)\n    c = [3]\n",
+    "expectedSourceOut": "def a():\n    b(1, 2)\n\n    c = [3]\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "function_definition",
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "wrappedOffset": 0,
-    "wrappedText": "def a():\n    b(1, 2)\n    c = [3]\n"
+    "wrappedText": "def a():\n    b(1, 2)\n\n    c = [3]\n"
   },
   {
     "expectedOutput": "()",
@@ -34486,7 +34514,7 @@
     "wrappedText": "def _f():\n    pass"
   },
   {
-    "expectedOutput": "b(1, 2)\n    c = [3]\n",
+    "expectedOutput": "b(1, 2)\n\n    c = [3]\n",
     "grammar": "python",
     "input": {
       "$type": 309,
@@ -34540,6 +34568,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  131
+                ]
+              }
+            },
             "$type": 135,
             "_statements": {
               "$type": 265,
@@ -34591,16 +34626,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (list elements: (collection_elements item: (integer_decimal_plain)))))) (newline)) (dedent)))",
-    "expectedSourceOut": "b(1, 2)\n    c = [3]\n",
+    "expectedSourceOut": "b(1, 2)\n\n    c = [3]\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "suite_block",
     "sourceIn": "\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "wrappedOffset": 8,
-    "wrappedText": "if a:\n  b(1, 2)\n      c = [3]\n  "
+    "wrappedText": "if a:\n  b(1, 2)\n  \n      c = [3]\n  "
   },
   {
-    "expectedOutput": "b(1, 2)\nc = [3]\n",
+    "expectedOutput": "b(1, 2)\n\nc = [3]\n",
     "grammar": "python",
     "input": {
       "$type": 185,
@@ -34652,6 +34687,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -34702,13 +34744,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (assignment_eq name: (identifier) value: (list elements: (collection_elements item: (integer_decimal_plain)))))) (newline)) (dedent))",
-    "expectedSourceOut": "b(1, 2)\nc = [3]\n",
+    "expectedSourceOut": "b(1, 2)\n\nc = [3]\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "block",
     "sourceIn": "b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "wrappedOffset": 11,
-    "wrappedText": "if a:\n  \n  b(1, 2)\n  c = [3]\n  "
+    "wrappedText": "if a:\n  \n  b(1, 2)\n  \n  c = [3]\n  "
   },
   {
     "expectedOutput": "b(1, 2)\n",
@@ -45066,7 +45108,7 @@
     "wrappedText": "_ = (f'\\N{GREEK CAPITAL LETTER DELTA}')"
   },
   {
-    "expectedOutput": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nrf\"\\{0}\"\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n",
+    "expectedOutput": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nrf\"\\{0}\"\n\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -45286,6 +45328,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -45356,13 +45405,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (escape_sequence_hex) elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (escape_sequence_simple)) string_end: (string_end)))) (newline)) (comment) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) (comment) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (not_escape_sequence)) content: (interpolation expression: (integer_decimal_plain)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)))",
-    "expectedSourceOut": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nrf\"\\{0}\"\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n",
+    "expectedSourceOut": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nrf\"\\{0}\"\n\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nfr\"\\{0}\"\n\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nrf\"\\{0}\"\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n"
+    "wrappedText": "\n'ab\\x00cd'\n\"\\n\"\n\n# no escape sequences in these\nr'ab\\x00cd'\nur\"\\n\"\n\n# raw f-string\nrf\"\\{0}\"\n\nr\"\\\\\"\nr'\"a\\\nde\\\nfg\"'\n"
   },
   {
     "expectedOutput": "'ab\\x00cd'\n",
@@ -47672,7 +47721,7 @@
     "wrappedText": "_ = (r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")"
   },
   {
-    "expectedOutput": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n    return f\"\"\"\n{\"string1\" if True else \"string2\"}\"\"\"\n\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2 # two\n    }''', 'A complex trick: 2')\n",
+    "expectedOutput": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else \"string2\"}\"\"\"\n\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2 # two\n    }''', 'A complex trick: 2')\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -48278,6 +48327,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -48397,6 +48453,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -48538,13 +48601,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module (comment) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (escape_interpolation) elements: (escape_interpolation) elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content elements: (escape_interpolation)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (escape_interpolation) elements: (string_fragment) elements: (escape_interpolation)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content elements: (escape_interpolation)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list elements: (identifier))) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (interpolation expression: (bare_tuple_pattern elements: (rest_pattern pattern: (identifier)))) string_end: (string_end)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (return_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (conditional_expression consequence: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) string_end: (string_end)))) (newline)) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (integer_decimal_plain) (comment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))) (newline)) (dedent)))))",
-    "expectedSourceOut": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n    return f\"\"\"\n{\"string1\" if True else \"string2\"}\"\"\"\n\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2 # two\n    }''', 'A complex trick: 2')\n",
+    "expectedSourceOut": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else \"string2\"}\"\"\"\n\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2 # two\n    }''', 'A complex trick: 2')\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\ndef function():\n    return f\"\"\"\n{\"string1\" if True else \"string2\"}\"\"\"\n\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2 # two\n    }''', 'A complex trick: 2')\n"
+    "wrappedText": "\n# nested!\nf\"a {b(f'c {e} d')} e\"\nf\"\"\"a\"{b}c\"\"\"\nf\"\"\"a\"\"{b}c\"\"\"\nf\"a {{}} e\"\nf\"a {b}}}\"\nf\"a {{{b}\"\nf\"a {{b}}\"\nf\"a {{{b}}}\"\nf\"{c,}\"\nf\"{yield d}\"\nf\"{*a,}\"\n\ndef function():\n    return f\"\"\"\n{\"string1\" if True else \"string2\"}\"\"\"\n\n\ndef test(self):\n    self.assertEqual(f'''A complex trick: {2 # two\n    }''', 'A complex trick: 2')\n"
   },
   {
     "expectedOutput": "f\"a {b(f'c {e} d')} e\"\n",
@@ -60970,7 +61033,7 @@
     "wrappedText": "_ = (\"three\")"
   },
   {
-    "expectedOutput": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n",
+    "expectedOutput": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -61012,6 +61075,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -61055,6 +61125,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -61090,6 +61167,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -61125,6 +61209,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -61168,6 +61259,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -61203,6 +61301,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -61278,13 +61383,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (string_fragment) elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (string_fragment) elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (string string_start: (string_start) content: (string_content elements: (string_fragment) elements: (escape_sequence_simple) elements: (escape_sequence_line_break) elements: (string_fragment) elements: (escape_sequence_simple) elements: (escape_sequence_line_break) elements: (string_fragment) elements: (escape_sequence_simple) elements: (escape_sequence_line_break)) string_end: (string_end)))) (newline)))",
-    "expectedSourceOut": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n",
+    "expectedSourceOut": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n"
+    "wrappedText": "\n\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n\n\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"\n\n\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"\n\n'''\nA single quote hello,\nwithout double or single quotes.\n'''\n\n'''\nA single quote 'hello',\nwith single quotes.\n'''\n\n'''\nA single quote \"hello\",\nwith double quotes.\n'''\n\n\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"\n"
   },
   {
     "expectedOutput": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"\n",
@@ -165216,7 +165321,7 @@
     "wrappedText": "c"
   },
   {
-    "expectedOutput": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\nif a:\n  b\nelse:\n  f\nif a: b\nif a: b; c\n",
+    "expectedOutput": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -165314,6 +165419,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 156,
           "_alternative": [
             {
@@ -165374,6 +165486,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 156,
           "_alternative": [],
           "_condition": {
@@ -165398,6 +165517,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 156,
           "_alternative": [],
           "_condition": {
@@ -165437,13 +165563,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) alternative: (elif_clause condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) alternative: (else_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) alternative: (else_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (if_statement condition: (identifier) consequence: (block_statement statements: (simple_statements_elements item: (expression_statement (identifier))) (newline))) statements: (if_statement condition: (identifier) consequence: (block_statement statements: (simple_statements_elements item: (expression_statement (identifier)) item: (expression_statement (identifier))) (newline))))",
-    "expectedSourceOut": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\nif a:\n  b\nelse:\n  f\nif a: b\nif a: b; c\n",
+    "expectedSourceOut": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\nif a:\n  b\nelse:\n  f\nif a: b\nif a: b; c\n"
+    "wrappedText": "\nif a:\n  b\nelif c:\n  d\nelse:\n  f\n\nif a:\n  b\nelse:\n  f\n\nif a: b\n\nif a: b; c\n"
   },
   {
     "expectedOutput": "if a:\n  b\nelif c:\n  d\nelse:\n  f\n",
@@ -168130,7 +168256,7 @@
     "wrappedText": "if a:\n  b\nelse:\n  if e:\n    f\n"
   },
   {
-    "expectedOutput": "\nwhile a:\n  b\nwhile c:\n  d\nelse:\n  e\n  f\n",
+    "expectedOutput": "\nwhile a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -168168,6 +168294,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 163,
           "_alternative": {
             "$type": 158,
@@ -168250,13 +168383,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (while_statement condition: (identifier) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) statements: (while_statement condition: (identifier) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) alternative: (else_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))))",
-    "expectedSourceOut": "\nwhile a:\n  b\nwhile c:\n  d\nelse:\n  e\n  f\n",
+    "expectedSourceOut": "\nwhile a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nwhile a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nwhile a:\n  b\nwhile c:\n  d\nelse:\n  e\n  f\n"
+    "wrappedText": "\nwhile a:\n  b\n\nwhile c:\n  d\nelse:\n  e\n  f\n"
   },
   {
     "expectedOutput": "while a:\n  b\n",
@@ -169096,7 +169229,7 @@
     "wrappedText": "if a:\n  b\nelse:\n  e\n  f\n"
   },
   {
-    "expectedOutput": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
+    "expectedOutput": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -169249,6 +169382,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 162,
           "_async": false,
           "_body": {
@@ -169343,13 +169483,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) statements: (for_statement left: (bare_tuple_pattern elements: (identifier) elements: (identifier)) right: (identifier) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent)))) (dedent))) alternative: (else_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (identifier))))) (newline)) (dedent))))) statements: (for_statement left: (bare_tuple_pattern elements: (identifier)) right: (list elements: (collection_elements item: (tuple elements: (tuple_elements item: (integer_decimal_plain))) item: (tuple elements: (tuple_elements item: (integer_decimal_plain))) item: (tuple elements: (tuple_elements item: (integer_decimal_plain))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
-    "expectedSourceOut": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
+    "expectedSourceOut": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\nfor x, in [(1,), (2,), (3,)]:\n  x\n"
+    "wrappedText": "\nfor line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n\nfor x, in [(1,), (2,), (3,)]:\n  x\n"
   },
   {
     "expectedOutput": "for line, i in lines:\n  print line\n  for character, j in line:\n    print character\nelse:\n  print x\n",
@@ -171251,7 +171391,7 @@
     "wrappedText": "x"
   },
   {
-    "expectedOutput": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
+    "expectedOutput": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -171439,6 +171579,13 @@
           ]
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 164,
           "_alternative": {
             "$type": 158,
@@ -171576,6 +171723,13 @@
           ]
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 164,
           "_alternative": {
             "$type": 158,
@@ -171747,13 +171901,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (try_statement body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) handlers: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) handlers: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) handlers: (except_clause exception: (except_clause_exception (except_clause_exception_list value: (identifier) value: (identifier))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) handlers: (except_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (try_statement body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) handlers: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) alternative: (else_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finalizer: (finally_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (try_statement body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) handlers: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) handlers: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) alternative: (else_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finalizer: (finally_clause body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))))",
-    "expectedSourceOut": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
+    "expectedSourceOut": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
     "wrappedOffset": 0,
-    "wrappedText": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n"
+    "wrappedText": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept* b:\n  c\nexcept* d as e:\n  f\nelse:\n  g\nfinally:\n  h\n"
   },
   {
     "expectedOutput": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n",
@@ -175745,7 +175899,7 @@
     "wrappedText": "try:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  h\n"
   },
   {
-    "expectedOutput": "\nwith a as b:\n  c\nwith (open('d') as d, open('e') as e):\n  f\nwith e as f, g as h,:\n  i\n",
+    "expectedOutput": "\nwith a as b:\n  c\n\nwith (open('d') as d, open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -175803,6 +175957,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 167,
           "_async": false,
           "_body": {
@@ -175958,6 +176119,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 167,
           "_async": false,
           "_body": {
@@ -176034,13 +176202,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) statements: (with_statement with_clause: (with_clause_paren items: (with_clause_with_items item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) statements: (with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
-    "expectedSourceOut": "\nwith a as b:\n  c\nwith (open('d') as d, open('e') as e):\n  f\nwith e as f, g as h,:\n  i\n",
+    "expectedSourceOut": "\nwith a as b:\n  c\n\nwith (open('d') as d, open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nwith a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nwith a as b:\n  c\nwith (open('d') as d, open('e') as e):\n  f\nwith e as f, g as h,:\n  i\n"
+    "wrappedText": "\nwith a as b:\n  c\n\nwith (open('d') as d, open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n"
   },
   {
     "expectedOutput": "with a as b:\n  c\n",
@@ -178302,6 +178470,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -178347,6 +178522,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -178396,6 +178578,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -178451,6 +178640,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -178513,6 +178709,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -178594,6 +178797,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -178664,6 +178874,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -178720,6 +178937,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": true,
           "_body": {
@@ -182628,6 +182852,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -182680,6 +182911,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -182732,6 +182970,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -182769,6 +183014,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -182864,6 +183116,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -182977,6 +183236,9 @@
         {
           "$_layout": {
             "trivia": {
+              "leading": [
+                131
+              ],
               "trailing": [
                 {
                   "$after": "",
@@ -186545,6 +186807,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 156,
           "_alternative": [],
           "_condition": {
@@ -190056,7 +190325,7 @@
     "wrappedText": "e"
   },
   {
-    "expectedOutput": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
+    "expectedOutput": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -190185,6 +190454,13 @@
                     }
                   },
                   {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          131
+                        ]
+                      }
+                    },
                     "$type": 320,
                     "_decorator": [
                       {
@@ -190247,6 +190523,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 183,
           "_decorator": [
             {
@@ -190326,16 +190609,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (decorated_definition (decorator expression: (attribute object: (identifier) property: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) index: (subscripts elements: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))))) statements: (decorated_definition (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) index: (subscripts elements: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent))))))",
-    "expectedSourceOut": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
+    "expectedSourceOut": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n"
+    "wrappedText": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n"
   },
   {
-    "expectedOutput": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n",
+    "expectedOutput": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
     "grammar": "python",
     "input": {
       "$type": 183,
@@ -190460,6 +190743,13 @@
                 }
               },
               {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      131
+                    ]
+                  }
+                },
                 "$type": 320,
                 "_decorator": [
                   {
@@ -190528,13 +190818,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(decorated_definition (decorator expression: (attribute object: (identifier) property: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) index: (subscripts elements: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent)))))",
-    "expectedSourceOut": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n",
+    "expectedSourceOut": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "decorated_definition",
     "sourceIn": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
     "wrappedOffset": 0,
-    "wrappedText": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n"
+    "wrappedText": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n"
   },
   {
     "expectedOutput": "@buttons[0].clicked.connect\ndef spam():\n  ...\n",
@@ -191045,7 +191335,7 @@
     "wrappedText": "[buttons[0].clicked]"
   },
   {
-    "expectedOutput": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n",
+    "expectedOutput": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
     "grammar": "python",
     "input": {
       "$type": 179,
@@ -191152,6 +191442,13 @@
               }
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    131
+                  ]
+                }
+              },
               "$type": 320,
               "_decorator": [
                 {
@@ -191219,16 +191516,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) index: (subscripts elements: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))))",
-    "expectedSourceOut": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n",
+    "expectedSourceOut": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "class_definition",
     "sourceIn": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
     "wrappedOffset": 0,
-    "wrappedText": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n"
+    "wrappedText": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n"
   },
   {
-    "expectedOutput": "@d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n",
+    "expectedOutput": "@d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
     "grammar": "python",
     "input": {
       "$type": 319,
@@ -191333,6 +191630,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  131
+                ]
+              }
+            },
             "$type": 320,
             "_decorator": [
               {
@@ -191395,16 +191699,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) index: (subscripts elements: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent)))",
-    "expectedSourceOut": "@d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n",
+    "expectedSourceOut": "@d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "suite_block_class_declaration",
     "sourceIn": "\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
     "wrappedOffset": 11,
-    "wrappedText": "class A:\n  @d(1)\n    @e[2].f.g\n    def f():\n      g\n    @f()\n    async def f():\n      g\n  "
+    "wrappedText": "class A:\n  @d(1)\n    @e[2].f.g\n    def f():\n      g\n  \n    @f()\n    async def f():\n      g\n  "
   },
   {
-    "expectedOutput": "@d(1)\n@e[2].f.g\ndef f():\n  g\n@f()\nasync def f():\n  g\n",
+    "expectedOutput": "@d(1)\n@e[2].f.g\ndef f():\n  g\n\n@f()\nasync def f():\n  g\n",
     "grammar": "python",
     "input": {
       "$type": 318,
@@ -191507,6 +191811,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 320,
           "_decorator": [
             {
@@ -191568,13 +191879,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) index: (subscripts elements: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))",
-    "expectedSourceOut": "@d(1)\n@e[2].f.g\ndef f():\n  g\n@f()\nasync def f():\n  g\n",
+    "expectedSourceOut": "@d(1)\n@e[2].f.g\ndef f():\n  g\n\n@f()\nasync def f():\n  g\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "block_class_declaration",
     "sourceIn": "@d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
     "wrappedOffset": 14,
-    "wrappedText": "class A:\n  \n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  @f()\n  async def f():\n    g\n  "
+    "wrappedText": "class A:\n  \n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  \n  @f()\n  async def f():\n    g\n  "
   },
   {
     "expectedOutput": "@d(1)\n@e[2].f.g\ndef f():\n  g\n",
@@ -195370,7 +195681,7 @@
     "wrappedText": "c"
   },
   {
-    "expectedOutput": "\nif a:\n  b\n  # one\n  # two\nif c:\n  d\n    # three\n      # four\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
+    "expectedOutput": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -195424,6 +195735,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 156,
           "_alternative": [],
           "_condition": {
@@ -195477,6 +195795,9 @@
         {
           "$_layout": {
             "trivia": {
+              "leading": [
+                131
+              ],
               "trailing": [
                 131,
                 {
@@ -195581,13 +195902,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent)))) statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (comment) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (comment) (newline)) (dedent)))) (comment))",
-    "expectedSourceOut": "\nif a:\n  b\n  # one\n  # two\nif c:\n  d\n    # three\n      # four\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
+    "expectedSourceOut": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif a:\n  b\n  # one\n  # two\nif c:\n  d\n    # three\n      # four\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n"
+    "wrappedText": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n"
   },
   {
     "expectedOutput": "if a:\n  b\n  # one\n  # two\n",
@@ -198682,7 +199003,7 @@
     "wrappedText": "_ = ({})"
   },
   {
-    "expectedOutput": "\nif a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n",
+    "expectedOutput": "\nif a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -198723,6 +199044,13 @@
                   }
                 },
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        131
+                      ]
+                    }
+                  },
                   "$type": 135,
                   "_statements": {
                     "$type": 265,
@@ -198745,6 +199073,13 @@
                   }
                 },
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        131
+                      ]
+                    }
+                  },
                   "$type": 170,
                   "_async": false,
                   "_body": {
@@ -198786,6 +199121,13 @@
                   }
                 },
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        131
+                      ]
+                    }
+                  },
                   "$type": 135,
                   "_statements": {
                     "$type": 265,
@@ -198820,16 +199162,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))))",
-    "expectedSourceOut": "\nif a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n",
+    "expectedSourceOut": "\nif a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nif a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n"
+    "wrappedText": "\nif a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n"
   },
   {
-    "expectedOutput": "if a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n",
+    "expectedOutput": "if a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
     "grammar": "python",
     "input": {
       "$type": 156,
@@ -198866,6 +199208,13 @@
               }
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    131
+                  ]
+                }
+              },
               "$type": 135,
               "_statements": {
                 "$type": 265,
@@ -198888,6 +199237,13 @@
               }
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    131
+                  ]
+                }
+              },
               "$type": 170,
               "_async": false,
               "_body": {
@@ -198929,6 +199285,13 @@
               }
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    131
+                  ]
+                }
+              },
               "$type": 135,
               "_statements": {
                 "$type": 265,
@@ -198961,16 +199324,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))))",
-    "expectedSourceOut": "if a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n",
+    "expectedSourceOut": "if a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "if_statement",
     "sourceIn": "if a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "wrappedOffset": 0,
-    "wrappedText": "if a:\n    b()\n    c()\n    def d():\n        e()\n    f()\n"
+    "wrappedText": "if a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n"
   },
   {
-    "expectedOutput": "b()\n    c()\n    def d():\n        e()\n    f()\n",
+    "expectedOutput": "b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
     "grammar": "python",
     "input": {
       "$type": 309,
@@ -199000,6 +199363,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  131
+                ]
+              }
+            },
             "$type": 135,
             "_statements": {
               "$type": 265,
@@ -199022,6 +199392,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  131
+                ]
+              }
+            },
             "$type": 170,
             "_async": false,
             "_body": {
@@ -199063,6 +199440,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  131
+                ]
+              }
+            },
             "$type": 135,
             "_statements": {
               "$type": 265,
@@ -199094,13 +199478,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))",
-    "expectedSourceOut": "b()\n    c()\n    def d():\n        e()\n    f()\n",
+    "expectedSourceOut": "b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "suite_block",
     "sourceIn": "\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "wrappedOffset": 8,
-    "wrappedText": "if a:\n  b()\n      c()\n      def d():\n          e()\n      f()\n  "
+    "wrappedText": "if a:\n  b()\n  \n      c()\n  \n      def d():\n          e()\n  \n      f()\n  "
   },
   {
     "expectedOutput": "e()\n",
@@ -199151,7 +199535,7 @@
     "wrappedText": "if a:\n  e()\n  "
   },
   {
-    "expectedOutput": "b()\nc()\ndef d():\n    e()\nf()\n",
+    "expectedOutput": "b()\n\nc()\n\ndef d():\n    e()\n\nf()\n",
     "grammar": "python",
     "input": {
       "$type": 185,
@@ -199179,6 +199563,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -199201,6 +199592,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 170,
           "_async": false,
           "_body": {
@@ -199242,6 +199640,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                131
+              ]
+            }
+          },
           "$type": 135,
           "_statements": {
             "$type": 265,
@@ -199272,13 +199677,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))",
-    "expectedSourceOut": "b()\nc()\ndef d():\n    e()\nf()\n",
+    "expectedSourceOut": "b()\n\nc()\n\ndef d():\n    e()\n\nf()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "block",
     "sourceIn": "b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "wrappedOffset": 11,
-    "wrappedText": "if a:\n  \n  b()\n  c()\n  def d():\n      e()\n  f()\n  "
+    "wrappedText": "if a:\n  \n  b()\n  \n  c()\n  \n  def d():\n      e()\n  \n  f()\n  "
   },
   {
     "expectedOutput": "e()\n",

@@ -113,7 +113,9 @@ const fn default_ascii_table() -> [bool; 128] {
 pub type SeamRank = usize;
 
 /// How firmly a mark holds its gap against the mark meeting it there. A
-/// whitespace trivia entry beats everything: it replaces the gap's default.
+/// whitespace trivia entry beats everything: it replaces the gap's default,
+/// save that a blank-line entry leaves a wider seam standing there, so the
+/// gap takes the larger of the two.
 /// A list slot's stored layout (`layout::SlotLayout`) beats every option
 /// and yields only to a gap's own entry. A declared arm (a grammar row, or a
 /// value set on the node) beats one the kind edge took from its edge token's
@@ -1376,6 +1378,9 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn trivia_seam(&mut self, gap: LayoutKinds) {
+        if gap.rank() >= LayoutKinds::BLANKLINE.rank() && self.seam.is_some_and(|current| current > gap.rank()) {
+            return;
+        }
         self.merge_payload(Payload { set: gap, pick: gap }, SeamStrength::Trivia, false);
         self.seam_token = self.seam.is_some().then_some(SeamToken::Whitespace);
     }

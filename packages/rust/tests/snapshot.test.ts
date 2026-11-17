@@ -8,10 +8,11 @@ const WHOLE = { deep: true, depth: Infinity };
 const namesATree = (value: unknown): boolean => /"\$(treeHandle|end)"|"at":/.test(JSON.stringify(value));
 
 describe('$snapshot()', () => {
-	it('names no tree and renders with the options\' gaps between its items', () => {
-		const snap = engine.parse('\n\nuse a;\n\nuse b;\n', WHOLE).$snapshot();
+	it('names no tree and renders as the source, the blank line before an item the source set apart included', () => {
+		const source = '\n\nuse a;\n\nuse b;\n';
+		const snap = engine.parse(source, WHOLE).$snapshot();
 		expect(namesATree(snap)).toBe(false);
-		expect(engine.render(snap).toString()).toBe('\n\nuse a;\nuse b;\n');
+		expect(engine.render(snap).toString()).toBe(source);
 	});
 	it.each([
 		['a comment leading the first item', '\n/* c */\nfn main() {}\n'],

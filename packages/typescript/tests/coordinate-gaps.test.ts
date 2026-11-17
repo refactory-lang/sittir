@@ -9,7 +9,7 @@ const ts = await createEngine(typescript);
 const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 describe('gaps between coordinates', () => {
-	it('gives a parsed block\'s statements the options\' gaps and seats a statement appended after them', () => {
+	it('keeps the blank lines that set a parsed block\'s statements apart and seats a statement appended after them', () => {
 		const source = 'function f() {\n  a();\n\n  b();\n\n  c();\n}\n';
 		const fn = tsStrict.parse(source).statements()[0]!;
 		if (!ts.is.functionDeclaration(fn)) throw new Error('expected a function declaration');
@@ -21,7 +21,7 @@ describe('gaps between coordinates', () => {
 				{ terminator: ts.kinds.Semi }
 			)
 		);
-		expect(rebuilt.$render()).toBe('{\n  a();\n  b();\n  c();\n  d();\n}\n');
+		expect(rebuilt.$render()).toBe('{\n  a();\n\n  b();\n\n  c();\n  d();\n}\n');
 		expect(ts.render(rebuilt).toString()).toBe(rebuilt.$render());
 	});
 

@@ -27,6 +27,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -2742,7 +2749,7 @@
     "wrappedText": "fn _f() { let _ = yield (); }"
   },
   {
-    "expectedOutput": "\nmod english;\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n",
+    "expectedOutput": "\nmod english;\n\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -2756,6 +2763,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 385,
           "_body": {
             "$type": 195,
@@ -2767,6 +2781,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 385,
           "_body": {
             "$type": 195,
@@ -2801,6 +2822,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 384,
           "_name": {
             "$text": "english",
@@ -2822,13 +2850,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (mod_item_external name: (identifier)) statements: (mod_item_inline name: (identifier) body: (declaration_list)) statements: (mod_item_inline name: (identifier) body: (declaration_list declarations: (mod_item_inline name: (identifier) body: (declaration_list)) declarations: (mod_item_inline name: (identifier) body: (declaration_list)))) statements: (mod_item_external visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier)))",
-    "expectedSourceOut": "\nmod english;\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n",
+    "expectedSourceOut": "\nmod english;\n\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nmod english;\n\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nmod english;\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n"
+    "wrappedText": "\nmod english;\n\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n"
   },
   {
     "expectedOutput": "mod english;",
@@ -3388,6 +3416,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3455,6 +3490,13 @@
           "_return_type": 63
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3537,6 +3579,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3586,6 +3635,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3646,6 +3702,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3663,6 +3726,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3759,6 +3829,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3823,6 +3900,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -3885,6 +3969,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -13246,6 +13337,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -17828,7 +17926,7 @@
     "wrappedText": "fn _f() { let _ = \"\"; }"
   },
   {
-    "expectedOutput": "\nlet Foo::Bar { texts, values, } = foo().bar().await? else {\n    return Err(index)\n};\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
+    "expectedOutput": "\nlet Foo::Bar { texts, values, } = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -17959,6 +18057,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 223,
           "_alternative": {
             "$type": 313,
@@ -18048,13 +18153,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (let_declaration name: (struct_pattern type: (qualified_identifier qualifier: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression argument: (await_expression expression: (call_expression function: (field_expression object: (call_expression function: (identifier) arguments: (arguments)) property: (field_identifier)) arguments: (arguments)))) alternative: (block trailing_expression: (return_expression expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (identifier)))))))) statements: (let_declaration name: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) value: (identifier) alternative: (block statements: (let_declaration name: (identifier) value: (identifier) alternative: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (break_expression))))) statements: (expression_statement (expression_statement_with_semi expression: (continue_expression))))))",
-    "expectedSourceOut": "\nlet Foo::Bar { texts, values, } = foo().bar().await? else {\n    return Err(index)\n};\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
+    "expectedSourceOut": "\nlet Foo::Bar { texts, values, } = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nlet Foo::Bar {\n    texts,\n    values,\n} = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nlet Foo::Bar { texts, values, } = foo().bar().await? else {\n    return Err(index)\n};\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n"
+    "wrappedText": "\nlet Foo::Bar { texts, values, } = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n"
   },
   {
     "expectedOutput": "let Foo::Bar { texts, values, } = foo().bar().await? else {\n    return Err(index)\n};",
@@ -19981,7 +20086,7 @@
     "wrappedText": "fn _f() { let _ = 2; }"
   },
   {
-    "expectedOutput": "\nstruct Proton;\nstruct Electron {}\n\nstruct Person {\n  pub name: String,\n  pub age: u32\n}\n\nstruct Point {\n  x: i32,\n  #[attribute1]\n  y: i32,\n}\n\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
+    "expectedOutput": "\nstruct Proton;\nstruct Electron {}\n\nstruct Person {\n  pub name: String,\n  pub age: u32\n}\n\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\n\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -20101,6 +20206,13 @@
                   }
                 },
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        172
+                      ]
+                    }
+                  },
                   "$type": 427,
                   "_attribute_item": [
                     {
@@ -20240,13 +20352,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (struct_item_unit name: (type_identifier)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (type_identifier))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type))))))",
-    "expectedSourceOut": "\nstruct Proton;\nstruct Electron {}\n\nstruct Person {\n  pub name: String,\n  pub age: u32\n}\n\nstruct Point {\n  x: i32,\n  #[attribute1]\n  y: i32,\n}\n\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
+    "expectedSourceOut": "\nstruct Proton;\nstruct Electron {}\n\nstruct Person {\n  pub name: String,\n  pub age: u32\n}\n\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\n\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nstruct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nstruct Proton;\nstruct Electron {}\n\nstruct Person {\n  pub name: String,\n  pub age: u32\n}\n\nstruct Point {\n  x: i32,\n  #[attribute1]\n  y: i32,\n}\n\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n"
+    "wrappedText": "\nstruct Proton;\nstruct Electron {}\n\nstruct Person {\n  pub name: String,\n  pub age: u32\n}\n\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\n\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n"
   },
   {
     "expectedOutput": "struct Proton;",
@@ -20593,7 +20705,7 @@
     "wrappedText": "struct Person {\n  pub name: String,\n  pub age: u32\n}"
   },
   {
-    "expectedOutput": "struct Point {\n  x: i32,\n  #[attribute1]\n  y: i32,\n}",
+    "expectedOutput": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "grammar": "rust",
     "input": {
       "$type": 423,
@@ -20619,6 +20731,13 @@
               }
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    172
+                  ]
+                }
+              },
               "$type": 427,
               "_attribute_item": [
                 {
@@ -20662,13 +20781,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type))))))",
-    "expectedSourceOut": "struct Point {\n  x: i32,\n  #[attribute1]\n  y: i32,\n}",
+    "expectedSourceOut": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "struct_item_brace",
     "sourceIn": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "wrappedOffset": 0,
-    "wrappedText": "struct Point {\n  x: i32,\n  #[attribute1]\n  y: i32,\n}"
+    "wrappedText": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}"
   },
   {
     "expectedOutput": "{}",
@@ -20767,7 +20886,7 @@
     "wrappedText": "struct A {\n  pub name: String,\n  pub age: u32\n}"
   },
   {
-    "expectedOutput": "{\n  x: i32,\n  #[attribute1]\n  y: i32,\n}",
+    "expectedOutput": "{\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "grammar": "rust",
     "input": {
       "$type": 201,
@@ -20791,6 +20910,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  172
+                ]
+              }
+            },
             "$type": 427,
             "_attribute_item": [
               {
@@ -20826,13 +20952,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))",
-    "expectedSourceOut": "{\n  x: i32,\n  #[attribute1]\n  y: i32,\n}",
+    "expectedSourceOut": "{\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "field_declaration_list",
     "sourceIn": "{\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "wrappedOffset": 9,
-    "wrappedText": "struct A {\n  x: i32,\n  #[attribute1]\n  y: i32,\n}"
+    "wrappedText": "struct A {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}"
   },
   {
     "expectedOutput": "pub name: String,\npub age: u32",
@@ -20907,7 +21033,7 @@
     "wrappedText": "struct A {pub name: String,\npub age: u32}"
   },
   {
-    "expectedOutput": "x: i32,\n#[attribute1]\ny: i32,",
+    "expectedOutput": "x: i32,\n\n#[attribute1]\ny: i32,",
     "grammar": "rust",
     "input": {
       "$type": 344,
@@ -20929,6 +21055,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 427,
           "_attribute_item": [
             {
@@ -20963,13 +21096,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type))))",
-    "expectedSourceOut": "x: i32,\n#[attribute1]\ny: i32,",
+    "expectedSourceOut": "x: i32,\n\n#[attribute1]\ny: i32,",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "field_declaration_list_elements",
     "sourceIn": "x: i32,\n\n  #[attribute1]\n  y: i32,",
     "wrappedOffset": 10,
-    "wrappedText": "struct A {x: i32,\n#[attribute1]\ny: i32,}"
+    "wrappedText": "struct A {x: i32,\n\n#[attribute1]\ny: i32,}"
   },
   {
     "expectedOutput": "pub name: String",
@@ -25572,6 +25705,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 198,
           "_body": {
             "$type": 199,
@@ -34285,7 +34425,7 @@
     "wrappedText": "type _X = B<Self>;"
   },
   {
-    "expectedOutput": "\nconst N: i32 = 5;\ntrait Foo {\n    const X: u8;\n}\n",
+    "expectedOutput": "\nconst N: i32 = 5;\n\ntrait Foo {\n    const X: u8;\n}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -34304,6 +34444,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 214,
           "_body": {
             "$type": 437,
@@ -34336,13 +34483,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) statements: (trait_item name: (type_identifier) body: (trait_interface_declaration_body declarations: (const_item name: (identifier) type: (primitive_type)))))",
-    "expectedSourceOut": "\nconst N: i32 = 5;\ntrait Foo {\n    const X: u8;\n}\n",
+    "expectedSourceOut": "\nconst N: i32 = 5;\n\ntrait Foo {\n    const X: u8;\n}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nconst N: i32 = 5;\n\ntrait Foo {\n    const X: u8;\n}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nconst N: i32 = 5;\ntrait Foo {\n    const X: u8;\n}\n"
+    "wrappedText": "\nconst N: i32 = 5;\n\ntrait Foo {\n    const X: u8;\n}\n"
   },
   {
     "expectedOutput": "const N: i32 = 5;",
@@ -37310,7 +37457,7 @@
     "wrappedText": "fn _f() { let _ = {\n    ;\n}; }"
   },
   {
-    "expectedOutput": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n#[derive(Debug, Eq,)]\nstruct Foo;\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n#[clippy::cyclomatic_complexity = \"100\"]\n",
+    "expectedOutput": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq,)]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity = \"100\"]\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -37341,6 +37488,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 190,
           "_attribute": {
             "$type": 192,
@@ -37376,6 +37530,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 190,
           "_attribute": {
             "$type": 192,
@@ -37426,6 +37587,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 190,
           "_attribute": {
             "$type": 192,
@@ -37482,6 +37650,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 191,
           "_attribute": {
             "$type": 192,
@@ -37518,6 +37693,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 190,
           "_attribute": {
             "$type": 192,
@@ -37559,13 +37741,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) statements: (struct_item_unit name: (type_identifier)) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (struct_item_unit name: (type_identifier)) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))) statements: (mod_item_inline name: (identifier) body: (declaration_list)) statements: (inner_attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) statements: (attribute_item attribute: (attribute path: (qualified_identifier qualifier: (identifier) name: (identifier)) input: (attribute_input value: (string_literal string_open: (string_open) elements: (string_content))))))",
-    "expectedSourceOut": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n#[derive(Debug, Eq,)]\nstruct Foo;\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n#[clippy::cyclomatic_complexity = \"100\"]\n",
+    "expectedSourceOut": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq,)]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity = \"100\"]\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq,)]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity = \"100\"]\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n#[derive(Debug, Eq,)]\nstruct Foo;\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n#[clippy::cyclomatic_complexity = \"100\"]\n"
+    "wrappedText": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq,)]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity = \"100\"]\n"
   },
   {
     "expectedOutput": "#[test]",
@@ -39181,6 +39363,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 292,
@@ -41929,6 +42118,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 190,
           "_attribute": {
             "$type": 192,
@@ -42590,7 +42786,7 @@
     "wrappedText": "fn _f() { let _ = {foo::bar}; }"
   },
   {
-    "expectedOutput": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\nfoo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n",
+    "expectedOutput": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -42676,6 +42872,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 394,
@@ -42819,13 +43022,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) (identifier)) item: (argument (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (delim_token_tree_paren) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (delim_token_tree_paren) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))) (identifier))))))))",
-    "expectedSourceOut": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\nfoo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n",
+    "expectedSourceOut": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\nfoo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n"
+    "wrappedText": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n"
   },
   {
     "expectedOutput": "foo(#[attr(=> arbitrary tokens <=)] x, y);",
@@ -45361,7 +45564,7 @@
     "wrappedText": "fn _f() { mac! (.) }"
   },
   {
-    "expectedOutput": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]\n    OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}\n",
+    "expectedOutput": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]\n    OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -45393,6 +45596,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 190,
           "_attribute": {
             "$type": 192,
@@ -45698,13 +45908,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file (line_comment (line_comment_regular)) statements: (use_declaration argument: (qualified_identifier qualifier: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list elements: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
-    "expectedSourceOut": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]\n    OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}\n",
+    "expectedSourceOut": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]\n    OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]\n    OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}\n"
+    "wrappedText": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)]\n    OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}\n"
   },
   {
     "expectedOutput": "use thiserror::Error;",
@@ -51208,7 +51418,7 @@
     "wrappedText": "fn _f() { let _ = (#[hello] 2, 7, 8); }"
   },
   {
-    "expectedOutput": "\nimpl Person {\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n",
+    "expectedOutput": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -51232,6 +51442,13 @@
                 }
               },
               {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      172
+                    ]
+                  }
+                },
                 "$type": 480,
                 "_body": {
                   "$type": 313,
@@ -51350,6 +51567,13 @@
           "_unsafe": false
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -51403,16 +51627,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) body: (extension_declaration_body declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block)))) statements: (impl_item_body type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (qualified_identifier qualifier: (identifier) name: (identifier))))))) body: (extension_declaration_body)))",
-    "expectedSourceOut": "\nimpl Person {\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n",
+    "expectedSourceOut": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nimpl Person {\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n"
+    "wrappedText": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n"
   },
   {
-    "expectedOutput": "impl Person {\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedOutput": "impl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "input": {
       "$type": 377,
@@ -51432,6 +51656,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  172
+                ]
+              }
+            },
             "$type": 480,
             "_body": {
               "$type": 313,
@@ -51556,13 +51787,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(impl_item_body type: (type_identifier) body: (extension_declaration_body declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block))))",
-    "expectedSourceOut": "impl Person {\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedSourceOut": "impl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "impl_item_body",
     "sourceIn": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "wrappedOffset": 0,
-    "wrappedText": "impl Person {\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}"
+    "wrappedText": "impl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}"
   },
   {
     "expectedOutput": "impl Machine<{\n  State::Init\n}> {}",
@@ -51678,7 +51909,7 @@
     "wrappedText": "type _X = Machine;"
   },
   {
-    "expectedOutput": "{\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedOutput": "{\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "input": {
       "$type": 438,
@@ -51696,6 +51927,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 480,
           "_body": {
             "$type": 313,
@@ -51811,13 +52049,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(extension_declaration_body declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))))) body: (block)) declarations: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block)))",
-    "expectedSourceOut": "{\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "expectedSourceOut": "{\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "extension_declaration_body",
     "sourceIn": "{\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
     "wrappedOffset": 9,
-    "wrappedText": "impl Foo {\n  const leg_count: u32 = 2;\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}"
+    "wrappedText": "impl Foo {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}"
   },
   {
     "expectedOutput": "{}",
@@ -52985,6 +53223,13 @@
           "_unsafe": false
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -54609,6 +54854,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -57675,6 +57927,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 214,
           "_body": {
             "$type": 437,
@@ -59611,6 +59870,13 @@
           "_unsafe": false
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -64119,6 +64385,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -64231,6 +64504,13 @@
           "_unsafe": false
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -64341,6 +64621,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -69544,6 +69831,13 @@
           "_unsafe": false
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 207,
           "_name": {
             "$type": 484,
@@ -73369,6 +73663,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -73513,6 +73814,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$_layout": {
@@ -73708,6 +74016,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -73802,6 +74117,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -73926,6 +74248,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$_layout": {
@@ -74111,6 +74440,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 214,
           "_body": {
             "$type": 437,
@@ -74186,6 +74522,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -74315,6 +74658,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 377,
           "_body": {
             "$type": 438,
@@ -84474,7 +84824,7 @@
     "wrappedText": "type _X = *mut A;"
   },
   {
-    "expectedOutput": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\nextern \"C\" {}\nunsafe extern \"C\" {}\n",
+    "expectedOutput": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n\nunsafe extern \"C\" {}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -84536,6 +84886,13 @@
           "_unsafe": false
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 396,
           "_body": {
             "$type": 195,
@@ -84560,6 +84917,13 @@
           "_unsafe": false
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 396,
           "_body": {
             "$type": 195,
@@ -84592,13 +84956,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (foreign_mod_item_body extern_modifier: (extern_modifier) body: (declaration_list declarations: (function_signature_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_mut writable: (mutable_specifier) type: (type_identifier))))))))) statements: (foreign_mod_item_body extern_modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))) body: (declaration_list)) statements: (foreign_mod_item_body extern_modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))) body: (declaration_list)))",
-    "expectedSourceOut": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\nextern \"C\" {}\nunsafe extern \"C\" {}\n",
+    "expectedSourceOut": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n\nunsafe extern \"C\" {}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n\nunsafe extern \"C\" {}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\nextern \"C\" {}\nunsafe extern \"C\" {}\n"
+    "wrappedText": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n\nunsafe extern \"C\" {}\n"
   },
   {
     "expectedOutput": "extern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}",
@@ -101966,7 +102330,7 @@
     "wrappedText": "f();"
   },
   {
-    "expectedOutput": "\nfn main() {\n  if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n  10\n} else {\n  15\n};\nif foo && bar {}\nif foo && bar || baz {}\n",
+    "expectedOutput": "\nfn main() {\n  if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n  10\n} else {\n  15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -102039,6 +102403,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 223,
           "_mutable": false,
           "_name": {
@@ -102081,6 +102452,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 287,
@@ -102103,6 +102481,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 287,
@@ -102141,13 +102526,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (block)))))))) statements: (let_declaration name: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block trailing_expression: (integer_literal_decimal)) alternative: (else_clause body: (block trailing_expression: (integer_literal_decimal))))) statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (identifier)) consequence: (block))) statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (identifier)) right: (identifier)) consequence: (block))))",
-    "expectedSourceOut": "\nfn main() {\n  if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n  10\n} else {\n  15\n};\nif foo && bar {}\nif foo && bar || baz {}\n",
+    "expectedSourceOut": "\nfn main() {\n  if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n  10\n} else {\n  15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nfn main() {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}\n\nlet y = if x == 5 { 10 } else { 15 };\n\nif foo && bar {}\n\nif foo && bar || baz {}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nfn main() {\n  if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n  10\n} else {\n  15\n};\nif foo && bar {}\nif foo && bar || baz {}\n"
+    "wrappedText": "\nfn main() {\n  if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n  10\n} else {\n  15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}\n"
   },
   {
     "expectedOutput": "fn main() {\n  if n == 1 {} else if n == 2 {} else {}\n}",
@@ -103988,7 +104373,7 @@
     "wrappedText": "fn _f() { let _ = {}; }"
   },
   {
-    "expectedOutput": "\nif let (\"Bacon\", b) = dish {}\nif let Some(\"chained\") = a && b && let (C, D) = e {}\nif foo && let bar = || baz && quux {}\nif a && let b = || c || d && e {}\n",
+    "expectedOutput": "\nif let (\"Bacon\", b) = dish {}\n\nif let Some(\"chained\") = a && b && let (C, D) = e {}\n\nif foo && let bar = || baz && quux {}\n\nif a && let b = || c || d && e {}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -104038,6 +104423,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 287,
@@ -104114,6 +104506,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 287,
@@ -104162,6 +104561,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 287,
@@ -104226,13 +104632,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_condition pattern: (tuple_pattern elements: (tuple_pattern_elements item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier))) value: (identifier)) consequence: (block))) statements: (expression_statement (if_expression condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (string_literal string_open: (string_open) elements: (string_content)))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) value: (identifier))) consequence: (block))) statements: (expression_statement (if_expression condition: (let_chain left: (identifier) right: (let_condition pattern: (identifier) value: (closure_expression_expr parameters: (closure_parameters) body: (binary_expression left: (identifier) right: (identifier))))) consequence: (block))) statements: (expression_statement (if_expression condition: (let_chain left: (identifier) right: (let_condition pattern: (identifier) value: (closure_expression_expr parameters: (closure_parameters) body: (binary_expression left: (identifier) right: (binary_expression left: (identifier) right: (identifier)))))) consequence: (block))))",
-    "expectedSourceOut": "\nif let (\"Bacon\", b) = dish {}\nif let Some(\"chained\") = a && b && let (C, D) = e {}\nif foo && let bar = || baz && quux {}\nif a && let b = || c || d && e {}\n",
+    "expectedSourceOut": "\nif let (\"Bacon\", b) = dish {}\n\nif let Some(\"chained\") = a && b && let (C, D) = e {}\n\nif foo && let bar = || baz && quux {}\n\nif a && let b = || c || d && e {}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nif let (\"Bacon\", b) = dish {\n}\n\nif let Some(\"chained\") = a && b && let (C, D) = e {\n}\n\nif foo && let bar = || baz && quux {}\n\nif a && let b = || c || d && e {}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif let (\"Bacon\", b) = dish {}\nif let Some(\"chained\") = a && b && let (C, D) = e {}\nif foo && let bar = || baz && quux {}\nif a && let b = || c || d && e {}\n"
+    "wrappedText": "\nif let (\"Bacon\", b) = dish {}\n\nif let Some(\"chained\") = a && b && let (C, D) = e {}\n\nif foo && let bar = || baz && quux {}\n\nif a && let b = || c || d && e {}\n"
   },
   {
     "expectedOutput": "if let (\"Bacon\", b) = dish {}",
@@ -106251,7 +106657,7 @@
     "wrappedText": "fn _f() { let _ = {}; }"
   },
   {
-    "expectedOutput": "\nmatch x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
+    "expectedOutput": "\nmatch x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -106355,6 +106761,13 @@
                     }
                   },
                   {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          172
+                        ]
+                      }
+                    },
                     "$type": 397,
                     "_attributes": [
                       {
@@ -106460,6 +106873,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 223,
           "_mutable": false,
           "_name": {
@@ -106715,16 +107135,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_block_ending match: (match_pattern pattern: (integer_literal_decimal)) body: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (float_literal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (string_literal string_open: (string_open) elements: (string_content))))))) statements: (let_declaration name: (identifier) value: (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_block_ending match: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) body: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) arms: (match_arm_with_comma match: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) value: (identifier)))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (string_literal string_open: (string_open) elements: (string_content))))))))",
-    "expectedSourceOut": "\nmatch x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
+    "expectedSourceOut": "\nmatch x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nmatch x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nmatch x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n"
+    "wrappedText": "\nmatch x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n"
   },
   {
-    "expectedOutput": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
+    "expectedOutput": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "grammar": "rust",
     "input": {
       "$type": 179,
@@ -106824,6 +107244,13 @@
                 }
               },
               {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      172
+                    ]
+                  }
+                },
                 "$type": 397,
                 "_attributes": [
                   {
@@ -106935,16 +107362,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_block_ending match: (match_pattern pattern: (integer_literal_decimal)) body: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (float_literal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (string_literal string_open: (string_open) elements: (string_content)))))))",
-    "expectedSourceOut": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
+    "expectedSourceOut": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "expression_statement",
     "sourceIn": "match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "wrappedOffset": 0,
-    "wrappedText": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n"
+    "wrappedText": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n"
   },
   {
-    "expectedOutput": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
+    "expectedOutput": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "grammar": "rust",
     "input": {
       "$type": 292,
@@ -107042,6 +107469,13 @@
               }
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    172
+                  ]
+                }
+              },
               "$type": 397,
               "_attributes": [
                 {
@@ -107152,13 +107586,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_block_ending match: (match_pattern pattern: (integer_literal_decimal)) body: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (float_literal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (string_literal string_open: (string_open) elements: (string_content))))))",
-    "expectedSourceOut": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
+    "expectedSourceOut": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "match_expression",
     "sourceIn": "match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "wrappedOffset": 18,
-    "wrappedText": "fn _f() { let _ = match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}; }"
+    "wrappedText": "fn _f() { let _ = match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}; }"
   },
   {
     "expectedOutput": "match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}",
@@ -107418,7 +107852,7 @@
     "wrappedText": "fn _f() { let _ = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}; }"
   },
   {
-    "expectedOutput": "{\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
+    "expectedOutput": "{\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "grammar": "rust",
     "input": {
       "$type": 293,
@@ -107514,6 +107948,13 @@
             }
           },
           {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  172
+                ]
+              }
+            },
             "$type": 397,
             "_attributes": [
               {
@@ -107619,13 +108060,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_block_ending match: (match_pattern pattern: (integer_literal_decimal)) body: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (float_literal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (string_literal string_open: (string_open) elements: (string_content)))))",
-    "expectedSourceOut": "{\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
+    "expectedSourceOut": "{\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "match_block",
     "sourceIn": "{\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
     "wrappedOffset": 26,
-    "wrappedText": "fn _f() { let _ = match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}; }"
+    "wrappedText": "fn _f() { let _ = match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1] 3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}; }"
   },
   {
     "expectedOutput": "{\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}",
@@ -107878,7 +108319,7 @@
     "wrappedText": "fn _f() { let _ = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}; }"
   },
   {
-    "expectedOutput": "1 => {\n    \"one\"\n}\n2 => \"two\",\n-1 => 1,\n-3.14 => 3,\n#[attr1] 3 => \"three\",\nmacro!(4) => \"four\",\n_ => \"something else\",",
+    "expectedOutput": "1 => {\n    \"one\"\n}\n2 => \"two\",\n-1 => 1,\n-3.14 => 3,\n\n#[attr1] 3 => \"three\",\nmacro!(4) => \"four\",\n_ => \"something else\",",
     "grammar": "rust",
     "input": {
       "$type": 434,
@@ -107972,6 +108413,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 397,
           "_attributes": [
             {
@@ -108076,13 +108524,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(match_block_arms arms: (match_arm_block_ending match: (match_pattern pattern: (integer_literal_decimal)) body: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma match: (match_pattern pattern: (negative_literal value: (float_literal))) body: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) match: (match_pattern pattern: (integer_literal_decimal)) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma match: (match_pattern pattern: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) body: (string_literal string_open: (string_open) elements: (string_content))) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (string_literal string_open: (string_open) elements: (string_content))))",
-    "expectedSourceOut": "1 => {\n    \"one\"\n}\n2 => \"two\",\n-1 => 1,\n-3.14 => 3,\n#[attr1] 3 => \"three\",\nmacro!(4) => \"four\",\n_ => \"something else\",",
+    "expectedSourceOut": "1 => {\n    \"one\"\n}\n2 => \"two\",\n-1 => 1,\n-3.14 => 3,\n\n#[attr1] 3 => \"three\",\nmacro!(4) => \"four\",\n_ => \"something else\",",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "match_block_arms",
     "sourceIn": "1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",",
     "wrappedOffset": 30,
-    "wrappedText": "fn _f() { let _ = match x {\n  1 => {\n      \"one\"\n  }\n  2 => \"two\",\n  -1 => 1,\n  -3.14 => 3,\n  #[attr1] 3 => \"three\",\n  macro!(4) => \"four\",\n  _ => \"something else\",\n}; }"
+    "wrappedText": "fn _f() { let _ = match x {\n  1 => {\n      \"one\"\n  }\n  2 => \"two\",\n  -1 => 1,\n  -3.14 => 3,\n  \n  #[attr1] 3 => \"three\",\n  macro!(4) => \"four\",\n  _ => \"something else\",\n}; }"
   },
   {
     "expectedOutput": "0 | 1 | 10 => \"one of zero, one, or ten\",\ny if y < 20 => \"less than 20, but not zero, one, or ten\",\ny if y == 200 => if a {\n    \"200 (but this is not very stylish)\"\n}\ny if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n_ => \"something else\",",
@@ -111951,7 +112399,7 @@
     "wrappedText": "fn _f() { let _ = break true; }"
   },
   {
-    "expectedOutput": "\nfor e in v {\n    bar(e);\n}\nfor i in 0..256 {\n    bar(i);\n}\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue 'outer;\n        }\n        if y % 2 == 0 {\n            continue 'inner;\n        }\n    }\n}\n",
+    "expectedOutput": "\nfor e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue 'outer;\n        }\n        if y % 2 == 0 {\n            continue 'inner;\n        }\n    }\n}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -112007,6 +112455,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 299,
@@ -112064,6 +112519,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 299,
@@ -112234,13 +112696,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (for_expression left: (identifier) right: (identifier) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (identifier)))))))))) statements: (expression_statement (for_expression left: (identifier) right: (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (identifier)))))))))) statements: (expression_statement (for_expression label: (label name: (identifier)) left: (identifier) right: (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal)) body: (block statements: (expression_statement (for_expression label: (label name: (identifier)) left: (identifier) right: (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal)) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (integer_literal_decimal)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (expression_statement_with_semi expression: (continue_expression label: (label name: (identifier)))))))) statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (integer_literal_decimal)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (expression_statement_with_semi expression: (continue_expression label: (label name: (identifier)))))))))))))))",
-    "expectedSourceOut": "\nfor e in v {\n    bar(e);\n}\nfor i in 0..256 {\n    bar(i);\n}\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue 'outer;\n        }\n        if y % 2 == 0 {\n            continue 'inner;\n        }\n    }\n}\n",
+    "expectedSourceOut": "\nfor e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue 'outer;\n        }\n        if y % 2 == 0 {\n            continue 'inner;\n        }\n    }\n}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nfor e in v {\n  bar(e);\n}\n\nfor i in 0..256 {\n  bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 { continue 'outer; }\n        if y % 2 == 0 { continue 'inner; }\n    }\n}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nfor e in v {\n    bar(e);\n}\nfor i in 0..256 {\n    bar(i);\n}\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue 'outer;\n        }\n        if y % 2 == 0 {\n            continue 'inner;\n        }\n    }\n}\n"
+    "wrappedText": "\nfor e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue 'outer;\n        }\n        if y % 2 == 0 {\n            continue 'inner;\n        }\n    }\n}\n"
   },
   {
     "expectedOutput": "for e in v {\n    bar(e);\n}",
@@ -137995,7 +138457,7 @@
     "wrappedText": "fn _f() { mac! {\n  // one\n  /* two */\n} }"
   },
   {
-    "expectedOutput": "\nmacro_rules! say_hello {() =>(println!(\"Hello!\");)}\nmacro_rules! four {() => {1 + 3};}\nmacro_rules! foo {(x => $e:expr) =>(println!(\"mode X: {}\", $e)); (y => $e:expr) =>(println!(\"mode Y: {}\", $e))}\nmacro_rules! o_O {($($x:expr; [$($y:expr),*]);*) => {$($($x + $e),*),*}}\nmacro_rules! zero_or_one {($($e:expr),?) => {$($e),?};}\nmacro_rules! empty[() => {};];\n",
+    "expectedOutput": "\nmacro_rules! say_hello {() =>(println!(\"Hello!\");)}\n\nmacro_rules! four {() => {1 + 3};}\n\nmacro_rules! foo {(x => $e:expr) =>(println!(\"mode X: {}\", $e)); (y => $e:expr) =>(println!(\"mode Y: {}\", $e))}\n\nmacro_rules! o_O {($($x:expr; [$($y:expr),*]);*) => {$($($x + $e),*),*}}\n\nmacro_rules! zero_or_one {($($e:expr),?) => {$($e),?};}\n\nmacro_rules! empty[() => {};];\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -138087,6 +138549,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 418,
           "_macro_rules": {
             "$_layout": {
@@ -138140,6 +138609,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 418,
           "_macro_rules": {
             "$_layout": {
@@ -138307,6 +138783,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 418,
           "_macro_rules": {
             "$_layout": {
@@ -138420,6 +138903,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 418,
           "_macro_rules": {
             "$_layout": {
@@ -138498,6 +138988,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 417,
           "_macro_rules": {
             "$_layout": {
@@ -138540,13 +139037,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))) tokens: (non_special_token (token_tree_punctuation)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace tokens: (non_special_token (integer_literal_decimal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal_decimal)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) fragment: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_bracket name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace)))))",
-    "expectedSourceOut": "\nmacro_rules! say_hello {() =>(println!(\"Hello!\");)}\nmacro_rules! four {() => {1 + 3};}\nmacro_rules! foo {(x => $e:expr) =>(println!(\"mode X: {}\", $e)); (y => $e:expr) =>(println!(\"mode Y: {}\", $e))}\nmacro_rules! o_O {($($x:expr; [$($y:expr),*]);*) => {$($($x + $e),*),*}}\nmacro_rules! zero_or_one {($($e:expr),?) => {$($e),?};}\nmacro_rules! empty[() => {};];\n",
+    "expectedSourceOut": "\nmacro_rules! say_hello {() =>(println!(\"Hello!\");)}\n\nmacro_rules! four {() => {1 + 3};}\n\nmacro_rules! foo {(x => $e:expr) =>(println!(\"mode X: {}\", $e)); (y => $e:expr) =>(println!(\"mode Y: {}\", $e))}\n\nmacro_rules! o_O {($($x:expr; [$($y:expr),*]);*) => {$($($x + $e),*),*}}\n\nmacro_rules! zero_or_one {($($e:expr),?) => {$($e),?};}\n\nmacro_rules! empty[() => {};];\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nmacro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}\n\nmacro_rules! empty [\n    () => {};\n];\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nmacro_rules! say_hello {() =>(println!(\"Hello!\");)}\nmacro_rules! four {() => {1 + 3};}\nmacro_rules! foo {(x => $e:expr) =>(println!(\"mode X: {}\", $e)); (y => $e:expr) =>(println!(\"mode Y: {}\", $e))}\nmacro_rules! o_O {($($x:expr; [$($y:expr),*]);*) => {$($($x + $e),*),*}}\nmacro_rules! zero_or_one {($($e:expr),?) => {$($e),?};}\nmacro_rules! empty[() => {};];\n"
+    "wrappedText": "\nmacro_rules! say_hello {() =>(println!(\"Hello!\");)}\n\nmacro_rules! four {() => {1 + 3};}\n\nmacro_rules! foo {(x => $e:expr) =>(println!(\"mode X: {}\", $e)); (y => $e:expr) =>(println!(\"mode Y: {}\", $e))}\n\nmacro_rules! o_O {($($x:expr; [$($y:expr),*]);*) => {$($($x + $e),*),*}}\n\nmacro_rules! zero_or_one {($($e:expr),?) => {$($e),?};}\n\nmacro_rules! empty[() => {};];\n"
   },
   {
     "expectedOutput": "macro_rules! say_hello {() =>(println!(\"Hello!\");)}",
@@ -144201,7 +144698,7 @@
     "wrappedText": "fn _f() { let &mut z = (); }"
   },
   {
-    "expectedOutput": "\nmatch x {\n  Person { name, age } if age < 5 => (\"toddler\", name),\n  Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
+    "expectedOutput": "\nmatch x {\n  Person { name, age } if age < 5 => (\"toddler\", name),\n  Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -144390,6 +144887,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 292,
@@ -144517,13 +145021,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) body: (tuple_expression elements: (tuple_expression_elements item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) arms: (last_match_arm match: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) body: (tuple_expression elements: (tuple_expression_elements item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))))))) statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (last_match_arm match: (match_pattern pattern: (tuple_struct_pattern type: (qualified_identifier qualifier: (identifier) name: (identifier)) fields: (patterns item: (wildcard_pattern) item: (tuple_struct_pattern type: (generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (primitive_type))))) fields: (patterns item: (identifier)))))) body: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))))",
-    "expectedSourceOut": "\nmatch x {\n  Person { name, age } if age < 5 => (\"toddler\", name),\n  Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
+    "expectedSourceOut": "\nmatch x {\n  Person { name, age } if age < 5 => (\"toddler\", name),\n  Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nmatch x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nmatch x {\n  Person { name, age } if age < 5 => (\"toddler\", name),\n  Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n"
+    "wrappedText": "\nmatch x {\n  Person { name, age } if age < 5 => (\"toddler\", name),\n  Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n"
   },
   {
     "expectedOutput": "match x {\n  Person { name, age } if age < 5 => (\"toddler\", name),\n  Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}",
@@ -149141,7 +149645,7 @@
     "wrappedText": "fn _f() { let _ = a.f; }"
   },
   {
-    "expectedOutput": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1...5 => a,\n  Some(1...5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @..=5 => a\n}\nmatch name {\n  | \"IPV6_FLOWINFO\" | \"IPV6_FLOWLABEL_MGR\" | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
+    "expectedOutput": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1...5 => a,\n  Some(1...5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\" | \"IPV6_FLOWLABEL_MGR\" | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -149425,6 +149929,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 292,
@@ -149517,13 +150028,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix right: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) body: (identifier)))))) statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) body: (boolean_literal)) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (boolean_literal)))))))",
-    "expectedSourceOut": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1...5 => a,\n  Some(1...5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @..=5 => a\n}\nmatch name {\n  | \"IPV6_FLOWINFO\" | \"IPV6_FLOWLABEL_MGR\" | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
+    "expectedSourceOut": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1...5 => a,\n  Some(1...5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\" | \"IPV6_FLOWLABEL_MGR\" | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1...5 => a,\n  Some(1...5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @..=5 => a\n}\nmatch name {\n  | \"IPV6_FLOWINFO\" | \"IPV6_FLOWLABEL_MGR\" | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n"
+    "wrappedText": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1...5 => a,\n  Some(1...5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\" | \"IPV6_FLOWLABEL_MGR\" | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n"
   },
   {
     "expectedOutput": "match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1...5 => a,\n  Some(1...5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @..=5 => a\n}",
@@ -153156,7 +153667,7 @@
     "wrappedText": "fn _f() { let _ = \"IPV6_FLOWINFO_SEND\"; }"
   },
   {
-    "expectedOutput": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\nlet Ok(index) | Err(index) = slice.binary_search(&x);\nfor ref a | b in c {}\nlet Ok(x) | Err(x) = binary_search(x);\nfor A | B | C in c {}\n|(Ok(x) | Err(x))| expr();\nlet ref mut x @ (A | B | C);\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n",
+    "expectedOutput": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index) | Err(index) = slice.binary_search(&x);\n\nfor ref a | b in c {}\n\nlet Ok(x) | Err(x) = binary_search(x);\n\nfor A | B | C in c {}\n\n|(Ok(x) | Err(x))| expr();\n\nlet ref mut x @ (A | B | C);\n\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -153248,6 +153759,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 297,
@@ -153333,6 +153851,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 223,
           "_mutable": false,
           "_name": {
@@ -153411,6 +153936,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 299,
@@ -153439,6 +153971,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 223,
           "_mutable": false,
           "_name": {
@@ -153504,6 +154043,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 299,
@@ -153536,6 +154082,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 394,
@@ -153612,6 +154165,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 223,
           "_mutable": false,
           "_name": {
@@ -153656,6 +154216,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -153711,6 +154278,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 179,
           "_content": {
             "$type": 287,
@@ -153758,13 +154332,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern_binary left: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) right: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier)))) value: (identifier)) consequence: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (identifier)))))))))) statements: (expression_statement (while_expression condition: (let_condition pattern: (or_pattern_binary left: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) right: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier)))) value: (identifier)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (identifier)))))))))) statements: (let_declaration name: (or_pattern_binary left: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) right: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier)))) value: (call_expression function: (field_expression object: (identifier) property: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (argument (reference_expression_bare argument: (identifier))))))) statements: (expression_statement (for_expression left: (or_pattern_binary left: (ref_pattern pattern: (identifier)) right: (identifier)) right: (identifier) body: (block))) statements: (let_declaration name: (or_pattern_binary left: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) right: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier)))) value: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (argument (identifier)))))) statements: (expression_statement (for_expression left: (or_pattern_binary left: (or_pattern_binary left: (identifier) right: (identifier)) right: (identifier)) right: (identifier) body: (block))) statements: (expression_statement (expression_statement_with_semi expression: (closure_expression_expr parameters: (closure_parameters parameters: (closure_parameter (tuple_pattern elements: (tuple_pattern_elements item: (or_pattern_binary left: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier))) right: (tuple_struct_pattern type: (identifier) fields: (patterns item: (identifier)))))))) body: (call_expression function: (identifier) arguments: (arguments))))) statements: (let_declaration name: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern name: (identifier) pattern: (tuple_pattern elements: (tuple_pattern_elements item: (or_pattern_binary left: (or_pattern_binary left: (identifier) right: (identifier)) right: (identifier)))))))) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_elements item: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal)))) type: (primitive_type))))) body: (block)) statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern_binary left: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren)) right: (macro_invocation function: (identifier) arguments: (delim_token_tree_paren))) value: (unit_expression)) consequence: (block))))",
-    "expectedSourceOut": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\nlet Ok(index) | Err(index) = slice.binary_search(&x);\nfor ref a | b in c {}\nlet Ok(x) | Err(x) = binary_search(x);\nfor A | B | C in c {}\n|(Ok(x) | Err(x))| expr();\nlet ref mut x @ (A | B | C);\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n",
+    "expectedSourceOut": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index) | Err(index) = slice.binary_search(&x);\n\nfor ref a | b in c {}\n\nlet Ok(x) | Err(x) = binary_search(x);\n\nfor A | B | C in c {}\n\n|(Ok(x) | Err(x))| expr();\n\nlet ref mut x @ (A | B | C);\n\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index) | Err(index) = slice.binary_search(&x);\n\nfor ref a | b in c {}\n\nlet Ok(x) | Err(x) = binary_search(x);\n\nfor A | B | C in c {}\n\n|(Ok(x) | Err(x))| expr();\n\nlet ref mut x @ (A | B | C);\n\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\nlet Ok(index) | Err(index) = slice.binary_search(&x);\nfor ref a | b in c {}\nlet Ok(x) | Err(x) = binary_search(x);\nfor A | B | C in c {}\n|(Ok(x) | Err(x))| expr();\nlet ref mut x @ (A | B | C);\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n"
+    "wrappedText": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index) | Err(index) = slice.binary_search(&x);\n\nfor ref a | b in c {}\n\nlet Ok(x) | Err(x) = binary_search(x);\n\nfor A | B | C in c {}\n\n|(Ok(x) | Err(x))| expr();\n\nlet ref mut x @ (A | B | C);\n\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n"
   },
   {
     "expectedOutput": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}",
@@ -158648,6 +159222,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -167930,6 +168511,13 @@
           "_return_type": 63
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -168018,6 +168606,13 @@
           "_return_type": 63
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 208,
           "_body": {
             "$type": 313,
@@ -168117,6 +168712,13 @@
           "_return_type": 63
         },
         {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                172
+              ]
+            }
+          },
           "$type": 207,
           "_name": {
             "$type": 484,

@@ -8,21 +8,22 @@ async function rebuilt(source: string): Promise<string> {
 	return module.$with.statements(...module.statements()).$render();
 }
 
-const HEADS: readonly (readonly [string, string])[] = [
+const HEADS: readonly (readonly [string, string | undefined])[] = [
 	['def a(b):', '\n\n\n'],
 	['class A:', '\n\n\n'],
 	['def a(b):\n    pass', '\n\n\n'],
 	['class A:\n    y = 1', '\n\n\n'],
-	['if d:', '\n'],
-	['y = 1', '\n']
+	['if d:', undefined],
+	['y = 1', undefined]
 ];
 const GAPS = ['\n', '\n\n', '\n\n\n'];
+const SET_APART = '\n\n';
 
-describe('a module rebuilt from its parsed statements takes the options\' gap after each head, whatever its source gap', () => {
+describe('a module rebuilt from its parsed statements writes after each head the options\' gap, or one blank line where the source set the next statement apart, whichever is larger', () => {
 	for (const [head, written] of HEADS) {
 		for (const gap of GAPS) {
 			it(`${JSON.stringify(head)} then ${JSON.stringify(gap)}`, async () => {
-				expect(await rebuilt(`${head}${gap}x = 1\n`)).toBe(`${head}${written}x = 1\n`);
+				expect(await rebuilt(`${head}${gap}x = 1\n`)).toBe(`${head}${written ?? (gap === '\n' ? gap : SET_APART)}x = 1\n`);
 			}, 120_000);
 		}
 	}

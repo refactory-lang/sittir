@@ -1426,6 +1426,14 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         Some(Siblings { previous: (0..at).rev().find_map(item), next: (at + 1..routed.children.len()).find_map(item) })
     }
 
+    /// The grammar's whitespace member of the class `gap`, with its own text;
+    /// none when the grammar's layout kinds hold no member it reads as.
+    fn layout_member(&self, gap: crate::layout_kinds::LayoutKinds) -> Option<G::Trivia> {
+        let (table, _) = self.grammar.whitespace();
+        let kind = self.layout_kind(gap.default_text())?;
+        G::Trivia::from_layout(TriviaText::of(kind, (table.text_of)(kind)))
+    }
+
     /// The whitespace member a run reads as: among the grammar's layout kinds
     /// whose text holds a line break when the run holds one, and none when it
     /// does not, the one of its seam rank (`classify_whitespace`).
@@ -1471,7 +1479,7 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     }
 
     fn lookups_over<'t>(&'t self, nodes: Navigation<'t>) -> Lookups<'t, G, B> {
-        Lookups { tree: self, nodes, record: None, aligned: HashMap::default() }
+        Lookups { tree: self, nodes, record: None, aligned: HashMap::default(), apart: HashMap::default() }
     }
 
     /// This tree's sides and source table for one call (`Seating`), lent
@@ -1743,6 +1751,11 @@ struct Lookups<'t, G: EngineGrammar, B: Backing> {
     /// Each frame a gap no anchor measures was read from, by its record and
     /// its node, with the record it is a frame of (`aligned`).
     aligned: HashMap<(usize, NodeIndex), (Record, std::rc::Rc<Aligned>), crate::heap::IndexState>,
+    /// Each routed child of a node one of whose children's leading side was
+    /// asked, by its index: for an item of a list slot, whether the source
+    /// sets it apart with a blank line (`list_slots::list_items`), and none
+    /// for any other child.
+    apart: HashMap<NodeIndex, Option<bool>, crate::heap::IndexState>,
 }
 
 impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
@@ -1977,7 +1990,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// cursor (`TreeNodes::region`).
     fn around(&mut self, index: NodeIndex) -> Self {
         let region = enclosing(&mut self.nodes.copy(), index);
-        Self { tree: self.tree, nodes: self.nodes.region(region.index..region.index + region.count), record: None, aligned: HashMap::default() }
+        self.tree.lookups_over(self.nodes.region(region.index..region.index + region.count))
     }
 
     /// The node `enclosing` the node at `index`, found on a copy of the
@@ -2121,6 +2134,46 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// with whitespace beside it, `Table::adjacency`) is no layout: it is an
     /// entry of the source, as an `ERROR` is.
     fn assigned(&mut self, index: NodeIndex, side: TriviaSide, layout: Option<Lent<'_>>) -> Vec<SideEntry<G::Trivia>> {
+        let mut entries = self.placement_side(index, side, layout);
+        if side == TriviaSide::Leading && layout.is_some() {
+            self.list_item_leading(index, &mut entries);
+        }
+        entries
+    }
+
+    /// The leading side of the node at `index` as a rebuilt list writes it
+    /// when the node is an item of a list slot the source sets apart
+    /// (`list_slots::list_items`): a blank-line member first, in place of the
+    /// runs before its first extra.
+    fn list_item_leading(&mut self, index: NodeIndex, entries: &mut Vec<SideEntry<G::Trivia>>) {
+        if let std::collections::hash_map::Entry::Vacant(unasked) = self.apart.entry(index) {
+            unasked.insert(None);
+            let tree = self.tree;
+            if let Some(parent) = self.nodes.parent(index) {
+                let at = self.nodes.kid(parent);
+                if let Some(routed) = tree.grammar.slot_routes(&mut self.nodes, &at) {
+                    self.apart.extend(routed.children.iter().map(|child| (child.index, None)));
+                    self.apart.extend(crate::list_slots::list_items(&routed, &tree.source).into_iter().map(|(item, apart)| (item, Some(apart))));
+                }
+            }
+        }
+        if self.apart[&index] != Some(true) {
+            return;
+        }
+        let first = entries.iter().position(|entry| !matches!(entry, SideEntry::Layout(_))).unwrap_or(entries.len());
+        let mut at = 0;
+        entries.retain(|entry| {
+            let run = at < first && matches!(entry, SideEntry::Layout(run) if run.depth() == 0);
+            at += 1;
+            !run
+        });
+        let blank = self.tree.layout_member(crate::layout_kinds::LayoutKinds::BLANKLINE);
+        entries.splice(0..0, blank.map(|member| SideEntry::Layout(TriviaEntry::new(SlotValue::Node(member)))));
+    }
+
+    /// The entries the placement gives `side` of the node at `index`
+    /// (`assigned`), before a list writes its item's leading side.
+    fn placement_side(&mut self, index: NodeIndex, side: TriviaSide, layout: Option<Lent<'_>>) -> Vec<SideEntry<G::Trivia>> {
         let tree = self.tree;
         let Some(table) = tree.cover_side(&mut self.nodes, index, side) else { return Vec::new() };
         let assigned = table.side(index, side);

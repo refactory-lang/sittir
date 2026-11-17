@@ -14,11 +14,11 @@ const statementsOf = (source: string, deep = false, engine = rs) => {
 	return [...item.body().statements()].filter((statement) => engine.is.expressionStatement(statement));
 };
 
-describe('a read node carries the whitespace beside a comment it owns as whitespace trivia, and no other', () => {
-	it('holds nothing for the blank line between two statements, which the options decide', () => {
+describe('a read node carries the whitespace beside a comment it owns, and the blank line that sets a list item apart, as whitespace trivia, and no other', () => {
+	it('holds the blank line that sets the second of two statements apart, and nothing on the first', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n');
 		expect(a!.$trivia.leading()).toEqual([]);
-		expect(b!.$trivia.leading()).toEqual([]);
+		expect(b!.$trivia.leading()).toEqual([blankline]);
 	});
 
 	it('gives the last statement nothing for the line break the options write before the closing brace', () => {
@@ -46,7 +46,7 @@ describe('a read node carries the whitespace beside a comment it owns as whitesp
 	it('reads the same from a tree read whole as from one read a level at a time', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n', true);
 		expect(a!.$trivia.leading()).toEqual([]);
-		expect(b!.$trivia.leading()).toEqual([]);
+		expect(b!.$trivia.leading()).toEqual([blankline]);
 		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
