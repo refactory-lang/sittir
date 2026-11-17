@@ -274,7 +274,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 
 **Interfaces:**
 - Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
-- Produces: `types::NodeId` and the rows that follow from it (the public `NodeCoordinate`, the side record's fields, `Cell::Child`/`Cell::LinkedLeaf`, the `SourceTable` methods and the addon calls). Each row needs the maintainer's approval before code.
+- Produces: `types::NodeId` and the rows that follow from it (the public `NodeCoordinate`, the side record's fields, `Cell::Child`/`Cell::LinkedLeaf`, the `SourceTable` methods and the addon calls). Each row needs the maintainer's approval before code. **Ruled 2026-11-17 ("Prototype, inside #1227"):** the rows not yet produced (the Rust `NodeCoordinate` type, which still holds `tree`, `index` and `end`; the `SourceTable` signatures; `Cell::Child`/`Cell::LinkedLeaf`) are prototype's, and they are built inside Task 6's PR, evaluated at the end with the PR's other public rows.
 - Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
 - Produces: `BuiltRender::render_built_leaf(built, kind, entry, sides, changed, options, entries)`, arena only, internal pub, referencing no tree (approved by the maintainer, 2026-11-14, in place of the `entry_sources_holding` row of 2026-11-12, which is not added).
 
@@ -290,6 +290,8 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 - [ ] **Step 4: Implement.**
 - [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
 - [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
+
+**Public rows inside Task 6's PR are evaluated at the end** (the maintainer, 2026-11-17: "it can just code - it doesn't have to keep checking with you", then "Across all of 1227 - we can evaluate at the end"). Work on this PR's branch and on branches cut from it does not send a public row for approval before code. Each piece follows the specs' rulings, and the PR body lists every public item added, changed or removed, with a before and after, for the maintainer to evaluate with the merge question. A question the specs do not answer still goes to the maintainer.
 
 **Gates while Task 6's PR is being assembled** (the maintainer, 2026-11-16: "can we bypass the full gates for now?"). Until the PR is ready for its paired run, a commit or a merge into its branch does not wait on the full local three-way verification:
 - **Before each commit or merge into the branch:** the targeted tests of what changed, `cargo check` and clippy on the touched crates, and the type-check. Minutes, not the full suite.

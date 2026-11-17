@@ -171,7 +171,7 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
     - It gives the slot separator: `slot_separator`, and `separator_kind` where the list's separator is a choice.
     - It gives each gap that takes another: `separator_before`, which is what prepare puts in `SlotLayout::tokens` (`SlotTarget::separators`).
 - **After.**
-  - **The delimiter takes no new stamp.** `last_list_child_kind` reads the trailing flag of the `DELIMITER` the source list's record already holds, and `last_list_child` goes with the rows. The parity step proves, on every parsed list, that the stamp's trailing flag and `last_list_child`'s answer agree before the rows go.
+  - **The delimiter takes no new stamp.** `last_list_child_kind` reads the trailing flag of the `DELIMITER` the source list's record already holds, and `last_list_child` goes with the rows. The stamp takes the kind rule (Decided: a separator-kind child follows the last item, of any width), so it no longer equals `last_list_child`'s width test: the stage-one census counts the lists whose flag moves from none to TRAILING (26 on paired typescript, 1 on create-engine.ts, 725 on matter.js, 5,466 on next.js, all `object_type_content` whose last member ends in a zero-width automatic semicolon; none moves the other way). The parity step proves, on every parsed list, that the stamp's trailing flag equals the kind rule read over the rows, before the rows go.
   - **The separators are stamped by the walk**, while its working list still holds the separator tokens, into the side record's existing slot entry:
     - `SideSlot::separator`: the kind the gaps' majority takes;
     - `SideSlot::tokens`: each gap whose kind is another, by its item's place, the form `SlotLayout::tokens` already has.
