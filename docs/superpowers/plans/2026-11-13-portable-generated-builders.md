@@ -142,7 +142,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
   - the header comment;
   - number spelling;
-  - Step 3 (generated-module type errors left: python 72, rust 14, typescript 15) and Step 4.
+  - Step 3 (generated-module type errors left: python 72, rust 11, typescript 13) and Step 4.
 
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child
