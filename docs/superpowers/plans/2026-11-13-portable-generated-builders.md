@@ -29,7 +29,7 @@
 
 ### Task 1: The pin loads only pinned
 
-**Status:** the `pinned-build-unpinned` guard (Steps 1–3, first half) comes from sittir-implement. The child's emit mode remains.
+**Status:** the `pinned-build-unpinned` guard (Steps 1–3, first half) comes from sittir-implement. The child's emit mode (`portableBuild`) is built on `feat/portable-build-emitter`, with Task 4.
 
 **Files:**
 - Modify: `packages/codegen/src/bootstrap/pinned.ts`
@@ -129,15 +129,30 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 
 ### Task 4: The build emitter
 
+**Status:** in progress on `feat/portable-build-emitter`.
+- Built:
+  - the emitter in the pinned child;
+  - gen writing `portable/table.ts` and `portable/build.ts`;
+  - the corpus test (Step 1), green in all three grammars and both storages.
+- Built of Step 2, decisions 1, 2 and 4. A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers decimal-part numbers, holders, owners, mounts and options.
+- Remaining:
+  - decisions 5 and 7;
+  - python's getter;
+  - decision 9's tails;
+  - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
+  - the header comment;
+  - number spelling;
+  - Step 3 (generated-module type errors left: python 72, rust 14, typescript 15) and Step 4.
+
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child
 - Generated: `packages/<lang>/src/portable/build.ts` becomes `portableBuild(engine)`
 - Test: `packages/tools/src/__tests__/portable-generated-build.test.ts`
 
-- [ ] **Step 1: The failing test.** For every corpus file in all three grammars, in both storages, project each node with today's reader. Then build the projection with the generated function and with the interpreter. The two renders are identical.
+- [x] **Step 1: The failing test.** For every corpus file in all three grammars, in both storages, project each node with today's reader. Then build the projection with the generated function and with the interpreter. The two renders are identical.
   - The known differences are rows: python's root getter and static method, which the interpreter refuses. Every other difference stops the task for review.
 - [ ] **Step 2: Implement** the emitter over every path:
-  - decisions 1, 4 and 5;
+  - decisions 1, 4, 5 and 7;
   - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that member's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
   - decision 9's tails. Each slot's tails are computed beside its exact set, written as `$path` spellings on the map's input side and as `case` labels in the member function, and checked by `portable-emit-tail-is-path`. The type and build tests gain:
     - rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`, and the generated build gives `$y`;
