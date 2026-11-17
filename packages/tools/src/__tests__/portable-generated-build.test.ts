@@ -1,5 +1,6 @@
 import { createEngine } from '@sittir/common';
-import { portableRuntime } from '@sittir/common/engine';
+import { portableRuntime, scopeBuilders } from '@sittir/common/engine';
+import { recordOf } from '@sittir/common/utils';
 import type { PortableStructure } from '@sittir/types';
 import { describe, expect, it } from 'vitest';
 import { languageByName } from '../languages.ts';
@@ -41,22 +42,20 @@ const outcomeOf = (run: () => string): Outcome => {
 describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 	it.each(STORAGES)('builds every corpus structure as the interpreter does, in %s storage', async (nodeStorage) => {
 		const language = await languageByName(grammar);
-		using strict = await createEngine(language, { api: 'strict', nodeStorage });
-		using engine = await createEngine(language, { nodeStorage });
-		const runtime = await portableRuntime(strict);
-		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: (engine: unknown) => object };
-		const generated = portableBuild(engine);
+		using engine = await createEngine(language, { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const generated = scopeBuilders(engine, portableBuild);
 		const functionOf = (path: string) => path.split('.').reduce<unknown>((at, segment) => (typeof at === 'object' && at !== null && Object.hasOwn(at, segment) ? (at as Record<string, unknown>)[segment] : typeof at === 'function' && Object.hasOwn(at, segment) ? (at as unknown as Record<string, unknown>)[segment] : undefined), generated) as PathFunction | undefined;
 		const render = (node: unknown): string => engine.render(node as never).toString();
-		const renderStrict = (node: unknown): string => strict.render(node as never).toString();
 		const differences: string[] = [];
 		const rows: string[] = [];
 		const ungenerated = new Map<string, number>();
 		for (const { name, source } of loadCorpusEntries(grammar)) {
-			for (const structure of structuresIn(runtime.read(strict.parse(source)))) {
+			for (const structure of structuresIn(runtime.read(engine.parse(source)))) {
 				const path = structure.$path;
 				const run = functionOf(path);
-				const interpreted = outcomeOf(() => renderStrict(runtime.build(structure)));
+				const interpreted = outcomeOf(() => render(runtime.build(structure)));
 				const built: Outcome = typeof run === 'function' ? outcomeOf(() => render(run(structure))) : { error: `${path}: ${path} is not generated` };
 				if ('text' in interpreted && 'text' in built && interpreted.text === built.text) continue;
 				if ('error' in interpreted && 'error' in built) continue;
@@ -70,4 +69,28 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 		expect(differences.length).toBe(0);
 		expect([...ungenerated.values()].reduce((sum, count) => sum + count, 0)).toBeLessThanOrEqual(UNGENERATED_CEILINGS[grammar]);
 	}, 600_000);
+});
+
+type Returning = { readonly statement: { readonly return: (input: { readonly $path: 'statement.return'; readonly expression: unknown }) => object } };
+
+const pythonBuild = async (): Promise<Returning> => ((await import('../../../python/src/portable/build.ts')) as unknown as { readonly portableBuild: Returning }).portableBuild;
+
+describe('the generated portable build, by the engine that scopes it', () => {
+	it('builds arena records inside an arena engine, and object nodes unscoped', async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict', nodeStorage: 'arena' });
+		const portableBuild = await pythonBuild();
+		const scoped = scopeBuilders(engine, portableBuild).statement.return({ $path: 'statement.return', expression: 'x' });
+		expect(recordOf(scoped)).toBeTypeOf('number');
+		expect(engine.render(scoped as never).toString()).toBe('return x');
+		expect(recordOf(portableBuild.statement.return({ $path: 'statement.return', expression: 'x' }))).toBeUndefined();
+	});
+
+	it('refuses a node another grammar built, naming both languages', async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
+		using other = await createEngine(await languageByName('typescript'));
+		const portableBuild = scopeBuilders(engine, await pythonBuild());
+		expect(() => portableBuild.statement.return({ $path: 'statement.return', expression: other.build.identifier('x') })).toThrow(
+			/^cannot build a python return_statement with a typescript node in its /
+		);
+	});
 });

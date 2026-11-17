@@ -6,7 +6,7 @@
 
 ## The end state
 
-- Codegen writes each grammar's portable layer as code: one typed function per vocabulary path that calls the grammar's low-level loose builders, and one generated projection from a node's kind to its portable structure.
+- Codegen writes each grammar's portable layer as code: one typed function per vocabulary path that calls the grammar's strict builders, and one generated projection from a node's kind to its portable structure.
 - Nothing interprets a table at run time. The build table and the read table are the emitter's input inside codegen. They aren't shipped, and no run-time code walks them.
 - The portable engine is `createEngine(language, { api: 'portable' })`. It carries the generated `build` namespace, `parse(source)` (which returns the source's projection), `project(node)`, `render`, `kinds` and `is`.
 - The emitter is the compiler's first dogfooded consumer. It writes every node of the generated modules through the `@sittir/typescript` builders of the pinned build (`bootstrap.json`), never through strings.
@@ -59,7 +59,7 @@ The same calls against typescript give `get x() {\n  return 1;\n}`. A portable g
 
 ## What codegen writes per grammar
 
-`packages/<lang>/src/portable/build.ts` exports `portableBuild(engine)`, which returns the namespace. Inside it:
+`packages/<lang>/src/portable/build.ts` exports `portableBuild`, the namespace. It is a table of functions that take no engine, like `ir-strict.ts`, and they call the strict builders it imports (`import { ir as b } from '../ir-strict.js'`). A caller runs it inside an engine with `scopeBuilders(engine, portableBuild)` from `@sittir/common/engine`, as `createEngine` scopes `ir.ts`: each call then builds in that engine's storage, and the engine settles the result under its `verifyStructure`. Called unscoped, it builds object nodes. Inside it:
 
 - **A path function** for each root path, typed `(input: BuildInput<Map, P>)`. When a path has one arm and no facts, the arm function is the path function. Otherwise the path function picks:
   - by the `$value`'s type when the path builds values (`builds`);
@@ -67,8 +67,8 @@ The same calls against typescript give `get x() {\n  return 1;\n}`. A portable g
 - **An arm function** for each arm something reaches, named `<path>$<kind>`, which makes the low-level call. Arms reached only from a holder (python `statement.block`'s suites) have no path function. The holder's member function calls them.
 - **A member function** per (arm, member) that admits a nested value, named `<arm>_<member>`. In order:
   - a list hole returns `null`, only where the member's list takes holes;
-  - a string goes to a token kind (a `switch` over the seat's token texts), else to the seat's leaf builder, else to the loose builder unchanged;
-  - a built or parsed node passes through, placed by its kind (decision 2);
+  - a string goes to a token kind (a `switch` over the seat's token texts), placed in that token's seat containers; else to the seat's leaf builder; else through the one path among the member's paths whose arm fits the seat and takes the string as its only required member; else the member refuses it (`untexted`), as the interpreter refuses a text no route seats;
+  - a built or parsed node (`isNode` from `@sittir/common/utils`) passes through, placed by its kind (decision 2);
   - a structure goes through a `switch (value.$path)` over the member's paths (decision 1). Each case calls the arm function the seat takes and wraps it in the seat's containers.
 - **Facts spelled in a container** (python `@property`, `@staticmethod`, `@override`) are written where the node meets its container. The root function of a path with facts builds the container itself when any fact is set.
 
@@ -103,9 +103,9 @@ const declaration_property_getter = (input: BuildInput<PythonMap, 'declaration.p
 - **What it reads:** the grammar's build table and read routes, which are the same facts that write `map.ts` today.
 - **What it writes:** every node of the module through the pinned engine's builders (`t.callExpressionCall`, `t.arrowFunction.callSignature`, `t.switchStatement`, …), then `engine.render` gives the text.
   - The header comment is `statement.$trivia.leading(t.comment.line(' Auto-generated …'))`.
-  - The export is `t.exportStatementDefaultDeclaration({ content })`, which writes `export function portableBuild`.
+  - The export is `t.exportStatementDefaultDeclaration({ content })`, which writes `export const portableBuild`.
 - **Gaps:** a construct the pinned builders can't express fails generation with `portable-emit-pinned-gap`, naming the construct and the pinned sha. There's no string or parsed-snippet fallback. The fix lands in `@sittir/typescript` on master, and a later commit bumps the pin.
-  - Known today: `binaryExpression.in` throws on any input, so the emitter writes no `in` test. It checks a built node with `engine.isNode`.
+  - Known today: `binaryExpression.in` throws on any input, so the emitter writes no `in` test. It checks a built node with `isNode`.
 - **The emitter is type-checked against the pinned build's declarations, as a gate.** The loose builders drop an unknown key silently (`{ $trivia: … }`, or `body` written for `bodies`), and the emitter only finds out when the text comes out wrong.
   - `sittir bootstrap` writes a tsconfig that maps `@sittir/*` to the pinned directory's `dist` declarations.
   - The emitter's modules type-check under it in `pnpm run type-check`.
@@ -140,7 +140,7 @@ Each row shows the case, then the answer. Decision 7 changes the call the user w
 **Answer (approved 2026-11-14).** The member's read type is the source, because a portable input is what a read returns (`InputOf`).
 - The emitter takes each member's path set from the same read-route facts that write the `map.ts` override. Every path in it gets a case.
 - Each case's placement comes from the build table. A path with no fitting arm fails generation as `portable-emit-unplaced-path`.
-- A string the type admits but no leaf or token seat takes goes to the loose builder unchanged, and the loose builder coerces it. The interpreter does the same today.
+- A string the type admits but no leaf, text or token seat takes builds through the member's one path whose arm takes it as its only required member: python `qualifier: 'a'` writes `identifier_qualified({ name: 'a' })`, which builds `dottedName({ name: identifier('a') })`. Where no path or more than one does, the member refuses the string (`untexted`), as the interpreter refuses a text no route seats.
 - A build-only convenience, like a root path that picks its arm by the `$value`'s type (typescript `literal.number`), joins the member's type through `G['inputs']`. That's written from the build rows that carry `builds`, so the case list still equals the type.
 
 ```ts
@@ -151,13 +151,13 @@ switch (value.$path) {
 	case 'literal.number': return literal_number(value); // admitted through G['inputs']
 	…
 }
-// python getter type: the text goes to methodDeclaration's loose returnType
-if (typeof value === 'string') return value;
+// python qualifier: a text builds through identifier.qualified, whose only required member takes it
+if (typeof value === 'string') return identifier_qualified$187({ name: value });
 ```
 
 ### 2. A node passed as input
 
-**The case.** `Slot` adds `Unmapped` (`{ readonly $type: number }`) to every member. So `engine.isNode(value)` narrows the input to the whole `PythonNode` union, and the pass-through fails its slot:
+**The case.** `Slot` adds `Unmapped` (`{ readonly $type: number }`) to every member. So the node guard narrows the input to the whole `PythonNode` union, and the pass-through fails its slot:
 ```
 methodDeclaration({ name: getter_name(input.name), … })
 TS2322: Type 'PythonNode' is not assignable to type 'string | ({ readonly $type: TSKindId.Identifier; } & NodeMarker)'.
@@ -166,18 +166,18 @@ TS2322: Type 'PythonNode' is not assignable to type 'string | ({ readonly $type:
 **Answer (approved 2026-11-14).** In an input, a member's node arm is the language's node types for the kinds its paths read, never `{ $type: number }`.
 - `map.ts` gains `nodes`, one entry per path: the kinds whose read entries read as that path, never a subpath's (approved 2026-11-15). `readonly 'statement.block': T.Block.Bound | T.Block.Parsed | T.SuiteEmpty.Bound | …`. `PortableIds` keeps the whole family, because the `is` guards test a family. A path's nodes come from the same read entries its read arms do, so python's `identifier` takes an `Identifier` node and refuses a `DottedName`, which reads as `identifier.qualified`.
 - An unmapped kind keeps its `UnmappedKinds` entry, which is already a real node type.
-- `engine.isNode` then narrows to exactly those types, and the generated code places the node by its kind:
+- The module's own guard, `const isNode = (value: unknown): value is PythonNode => isAnyNode(value)` (`isAnyNode` is `isNode` from `@sittir/common/utils`), narrows as `engine.isNode` does, without its language check. It then narrows to exactly those types, and the generated code places the node by its kind:
 
 ```ts
 type BodyItem = BuildInput<PythonMap, 'statement.block'> | PythonMap['nodes']['statement.block'];
-if (engine.isNode(value)) return value.$type === TSKindId.Block ? b.suiteBlock(value) : value;
+if (isNode(value)) return value.$type === TSKindId.Block ? b.suiteBlock(value) : value;
 ```
 
 | passed | compile time | run time |
 |---|---|---|
 | a python `Block` node into a getter `body` | accepted, wrapped in `suite_block` | builds |
-| a typescript node | TS2345, not assignable (probed) | `isNode` is false, and the `$path` switch's default refuses, naming the member |
-| a python node of a kind the member doesn't take (a `Block` as a `name`) | TS2345 (probed) | the low-level builder's slot check refuses; it always runs |
+| a typescript node | TS2345, not assignable (probed) | inside a python engine (`scopeBuilders`), the builder that takes it refuses: `cannot build a python return_statement with a typescript node in its …` (tested); where its kind matches no seat, `unseated` refuses first, naming the member and the kind. Unscoped, nothing checks its language, as nothing does for `ir.ts` called unscoped |
+| a python node of a kind the member doesn't take (a `Block` as a `name`) | TS2345 (probed) | `unseated` refuses it before any builder runs, naming the member and the kind |
 
 ### 3. Flags
 
@@ -191,7 +191,7 @@ if (engine.isNode(value)) return value.$type === TSKindId.Block ? b.suiteBlock(v
 | python `declaration.method` | per the vocabulary | `'async' \| 'static' \| 'override' \| 'privateName'` |
 | typescript `declaration.property.getter` | per the vocabulary | `'static' \| 'override' \| 'privateName' \| 'computed'` |
 
-A keyword flag is a boolean on the loose surface (`static: …includes('static')`), not a token id.
+A keyword flag is a boolean on the strict builders (`static: …includes('static')`), not a token id.
 
 A flag a container sets on what it unwraps is among its element path's flags. Rust's `expression.call.macro` has `'terminated'`, which an expression statement sets on the macro call it unwraps: `a!();` reads `{ $path: 'expression.call.macro', $flags: ['terminated'], … }`, and an item macro (`foo! { }`) reads with no flags (the user, 2026-11-16: "Flag `terminated` on the macro call"). The build takes the expression-statement seat for a flagged macro call and the item seat for an unflagged one, so both round-trip (bindings spec §9).
 
@@ -206,7 +206,7 @@ A flag a container sets on what it unwraps is among its element path's flags. Ru
 | `b.x(...items)`, `items: (T \| null)[]` | TS2345 | — |
 | `b.x(f(first), ...rest.map(f))` | — | type-checks |
 
-**Answer (emitter-internal, accepted 2026-11-14).** The loose surface doesn't change, because a non-empty list stays non-empty in its type.
+**Answer (emitter-internal, accepted 2026-11-14).** The builders don't change: a non-empty list stays non-empty in the strict builders' types, as in the loose ones'.
 - The emitter spreads a typed array for a list that may be empty.
 - For a non-empty list it writes `f(first), ...rest.map(f)`. When the list's container is optional, it guards with `first === undefined`.
 - It returns `null` only from members whose list takes holes (typescript `Elisions`).
@@ -234,7 +234,7 @@ The largest member measured holds the expressions a python statement can be: 107
 type Item = string | BuildInput<PythonMap, 'expression.assignment'> | … /* 107 paths */ | T.Attribute.Bound | T.Attribute.Parsed | … /* 25 kinds */ | V.Unmapped<'python:as_pattern'>;
 const expression_item = (value: Item): T.ExpressionStatement.Bound | … => {
 	if (typeof value === 'string') return …;
-	if (engine.isNode(value)) return value;
+	if (isNode(value)) return value;
 	switch (value.$path) { case 'expression.assignment': return …; /* 107 cases */ }
 };
 ```
@@ -387,7 +387,7 @@ Python's tail is `add` in 171 slots and `arithmetic.add` in 2, its statement lis
 
 ### Ruled while the emitter was built (2026-11-17)
 
-- **The generated builders call the strict builders, not the loose ones** ("We should have the portable builder call the strict api", confirmed "Yes, generated builders call the strict API"). This replaces "calls the grammar's low-level loose builders" in The end state and wherever this spec routes a value "to the loose builder": the generated function knows each member's paths, so it writes the exact strict call itself, and no coercion is left to a loose builder. Python `{ $path: 'identifier.qualified', qualifier: 'a', name: 'b' }` builds `a.b` because the generated code writes `dottedName({ name: identifier('a') })`. The portable input still behaves like the loose API for its caller (bare scalars, an optional `$path`). Two answers given earlier the same day fall away with it: no loose slot gains `string`, and the loose list arguments are not widened for `null`. The strict list arguments are ("Strict list args admit null on hole-taking kinds"): on kinds whose model says `hasOptionalElements` (typescript `object`, `array_pattern`, `object_pattern`) the strict list argument goes through the `withHoles` type the storage and setters use, so `arrayPattern([a, null, b])` builds `[a,, b]` and a read is a valid build input. Neither surface took `null` there before. The generated module imports the strict builder functions directly, as it imports the loose ones today; it does not take an engine to reach them ("It doesn't need to take an engine - it can import the strict functions directly just like loose does", on seeing the re-costing, which proposed `portableBuild(engine)` over a strict engine). The re-costing: one file (`emit/build.ts`), about 100–200 lines; the pin needs nothing; no arm stops generating; the run-time coercions become explicit generated calls (a string to the member's outermost text-built path, a kind id wrapped in its seat's container builder, a bigint spelled before the radix integer builders).
+- **The generated builders call the strict builders, not the loose ones** ("We should have the portable builder call the strict api", confirmed "Yes, generated builders call the strict API"). This replaces "calls the grammar's low-level loose builders" in The end state and wherever this spec routes a value "to the loose builder": the generated function knows each member's paths, so it writes the exact strict call itself, and no coercion is left to a loose builder. Python `{ $path: 'identifier.qualified', qualifier: 'a', name: 'b' }` builds `a.b` because the generated code writes `dottedName({ name: identifier('a') })`. The portable input still behaves like the loose API for its caller (bare scalars, an optional `$path`). Two answers given earlier the same day fall away with it: no loose slot gains `string`, and the loose list arguments are not widened for `null`. The strict list arguments are ("Strict list args admit null on hole-taking kinds"): on kinds whose model says `hasOptionalElements` (typescript `arguments`, `array`, `array_pattern`, `object`, `object_pattern`; regex `alternation`) the strict list argument goes through the `withHoles` type the storage and setters use, so `arrayPattern([a, null, b])` builds `[a,, b]` and a read is a valid build input. Neither surface took `null` there before. The generated module imports the strict builder table directly, as `ir.ts` imports the loose builders; it does not take an engine to reach them ("It doesn't need to take an engine - it can import the strict functions directly just like loose does", on seeing the re-costing, which proposed `portableBuild(engine)` over a strict engine). The re-costing: one file (`emit/build.ts`), about 100–200 lines; the pin needs nothing; no arm stops generating; the run-time coercions become explicit generated calls (a string through the one path whose arm takes it as its only required member, a token's kind id wrapped in its seat's container builder, an integer passed to its builder once per scalar type, since TypeScript infers a radix builder's literal parameter from a number or a bigint but not from their union).
 - **A member whose grammar slot is a fixed set of tokens is typed as those texts** ("The map narrows them to their token texts"): rust `fragment` and the integer `suffix` read and build as the union the grammar admits (`'u8' | 'i32' | …`), derived from the grammar's token list, not `string`. One rule for every such member; the count per grammar is reported before code.
 - **`decimalSpelling` is exported** from `@sittir/common/portable/utils` ("Approve"): `decimalSpelling(value: number | bigint, parts, scientific: boolean): DecimalSpelling<P> | undefined` in `packages/common/src/number.ts`. The interpreter's spelling bodies move into it unchanged, and the generated build calls it; `undefined` means unspellable and each caller throws its own message.
 
@@ -428,7 +428,7 @@ Approved by the user, 2026-11-14.
 | `@sittir/types/vocabulary` | `Identifier`, `Literal.String.Text`, `Comment.Text`, `Comment.Html`, `Literal.Regex.Flags`, `Literal.Regex.Pattern`, `Clause.Import.Relative.Prefix`, `Expression.Interpolation.Conversion` | changed: gain `readonly $value: string`; the structural identifier subkinds declare `$value?: never` (decision 8, approved 2026-11-15) |
 | `@sittir/types/vocabulary` | `Read<G, P>`, `InputOf<R, G>`, `BuildInput<G, P>`, `Slot` | changed: a path that declares a text `$value` also reads and builds from its bare text (decision 8, approved 2026-11-15) |
 | `@sittir/types/vocabulary` | `Unmapped` | changed: in an input, a member's node arm is `G['nodes'][P]` |
-| generated `<lang>/src/portable/build.ts` | `build` (the table) | replaced: `portableBuild(engine)` |
+| generated `<lang>/src/portable/build.ts` | `build` (the table) | replaced: `portableBuild`, a table of functions a caller scopes with `scopeBuilders(engine, portableBuild)` |
 | generated `<lang>/src/portable/project.ts` | `project` | added |
 | generated `<lang>/src/portable/index.ts` | `rows` | removed |
 | generated `<lang>` descriptor | `portable: rows`, `portableBuild` | changed: the descriptor's portable entry is `{ build: portableBuild, project }` |

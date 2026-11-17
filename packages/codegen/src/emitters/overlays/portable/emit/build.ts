@@ -149,6 +149,15 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	);
 	const unspelledHelper = constant('unspelled', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' cannot spell ')), '+', id('value')))), 'never', [['value', union(['number', 'bigint'])]]));
 	const missingHelper = constant('missing', arrow('owner', 'string', block(raise(binary(id('owner'), '+', str(' is required')))), 'never'));
+	const isNodeHelper = constant(
+		'isNode',
+		t.arrowFunction.callSignature({
+			parameters: t.formalParameters(t.formalParametersElements(t.requiredParameter({ name: 'value', type: t.typeAnnotation('unknown') }))),
+			returnType: t.typePredicateAnnotation(t.typePredicate({ name: 'value', type: input.node })),
+			body: call(id('isAnyNode'), id('value'))
+		})
+	);
+	const untextedHelper = constant('untexted', arrow('owner', 'string', block(raise(binary(binary(binary(id('owner'), '+', str(' has no route that seats the text "')), '+', id('value')), '+', str('"')))), 'never', [['value', 'string']]));
 	const unseatedHelper = constant('unseated', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' has no seat for kind ')), '+', paren(kindOf(id('value')))))), 'never', [['value', kinded]]));
 	const holes = new Set(input.holes.map(([holder, key]) => `${holder} ${key}`));
 	const takesHoles = (member: PortableMemberStep): boolean => member.seats.some((seat) => holes.has(`${seat.at[0]} ${seat.at[1]}`));
@@ -239,14 +248,30 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	let armFunctions = new Map<string, Statement>();
 	let grew = false;
 
-	const stringBranch = (member: PortableMemberStep, skip: number, value: Expression): Statement[] | undefined => {
+	const wrappedText = (owner: string, member: PortableMemberStep, skip: number, value: Expression, every: readonly PortableSeat[]): Statement[] => {
+		const exact = input.members[owner]![member.name]!;
+		const takesText = (path: string, name: string): boolean => {
+			const set = input.members[path]?.[name];
+			return set !== undefined && (set.string || set.texts.length > 0 || set.paths.some((at) => textPaths.has(at) || textInputs.has(at)));
+		};
+		const wrappers = exact.paths.flatMap((path) => {
+			const fitting = viewed.has(path) ? fittingOf(path, member.seats) : [];
+			if (fitting.length !== 1) return [];
+			const required = fitting[0]!.arm.members.filter((step) => input.members[path]?.[step.name]?.optional !== true);
+			return required.length === 1 && takesText(path, required[0]!.name) ? [[path, required[0]!.name] as const] : [];
+		});
+		const outermost = wrappers.filter(([path]) => !wrappers.some(([other]) => path.startsWith(`${other}.`)));
+		if (outermost.length !== 1) return [ret(call(id(uses('untexted')), str(`${owner}.${member.name}`), value))];
+		const [path, name] = outermost[0]!;
+		return caseOf(owner, path, member, skip, obj([[name, value]]), every);
+	};
+
+	const stringBranch = (owner: string, member: PortableMemberStep, skip: number, value: Expression, every: readonly PortableSeat[], texted: boolean): Statement[] | undefined => {
 		const tokens = [...new Map(member.seats.flatMap((seat) => Object.entries(seat.tokens ?? {}))).entries()];
 		const leafSeats = member.seats.filter((seat) => seat.leaf !== undefined);
 		const textSeat = member.seats.find((seat) => seat.text === true);
-		const place = (seat: PortableSeat) => {
-			const built = seat.leaf === undefined ? value : call(builderRef(seat.leaf), value);
-			return wrapOne((seat.within ?? []).slice(skip), built);
-		};
+		const place = (seat: PortableSeat, built: Expression = seat.leaf === undefined ? value : call(builderRef(seat.leaf), value)) => wrapOne((seat.within ?? []).slice(skip), built);
+		const tokenSeat = (kind: number): PortableSeat => member.seats.find((seat) => seat.kinds.includes(kind)) ?? member.seats[0]!;
 		const placed: Statement[] = [];
 		for (const seat of leafSeats) {
 			if (seat.pattern === undefined) {
@@ -258,11 +283,12 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 		if (leafSeats.length > 0 && leafSeats.every((seat) => seat.pattern !== undefined)) placed.push(ret(place(leafSeats[0]!)));
 		if (leafSeats.length === 0 && textSeat !== undefined) placed.push(ret(place(textSeat)));
+		if (placed.length === 0 && (texted || tokens.length > 0)) placed.push(...wrappedText(owner, member, skip, value, every));
 		if (tokens.length === 0) return placed.length === 0 ? undefined : placed;
 		return [
 			t.switchStatement({
 				value: paren(value),
-				body: t.switchBody(...tokens.map(([text, kind]) => t.switchCase({ value: str(text), bodies: [ret(num(kind))] })), t.switchDefault({ bodies: placed.length === 0 ? [ret(value)] : placed }))
+				body: t.switchBody(...tokens.map(([text, kind]) => t.switchCase({ value: str(text), bodies: [ret(place(tokenSeat(kind), num(kind)))] })), t.switchDefault({ bodies: placed }))
 			})
 		];
 	};
@@ -327,11 +353,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const decided = input.decided[owner]?.[member.name];
 		const free = exact!.string || exact!.paths.some((path) => textPaths.has(path) || textInputs.has(path));
 		const texted = free || exact!.texts.length > 0;
-		const text = stringBranch(member, skip, value);
+		const text = stringBranch(owner, member, skip, value, every, texted);
 		if (text !== undefined) statements.push(when(typeIs(value, 'string'), block(...text)));
-		else if (texted) statements.push(when(typeIs(value, 'string'), ret(value)));
 		statements.push(when(typeIs(value, 'number'), block(...placedByKind(owner, member, skip, value, true))));
-		statements.push(when(call(dot(id('engine'), 'isNode'), value), block(...placedByKind(owner, member, skip, value, false))));
+		statements.push(when(call(id(uses('isNode')), value), block(...placedByKind(owner, member, skip, value, false))));
 		if (structures.length === 0) statements.push(t.throwStatement(t.newExpression({ function: 'Error', arguments: t.arguments(str(`${owner}.${member.name} takes no structure`)) })));
 		else if (decided !== undefined && structures.length === 1 && structures[0] === decided) statements.push(...caseOf(owner, decided, member, skip, value, every));
 		else {
@@ -387,7 +412,11 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const spelled = (member: PortableMemberStep): boolean => numeric === undefined || (member.steps.length === 1 && slots.includes(member.steps[0]!.key));
 		const others = arm.members.filter((member) => !spelled(member));
 		const scalar = dot(input(), '$value');
-		if (numeric === undefined || shapeOf(arm.builder!) !== 'config') return others.length > 0 ? fail(`${path}'s number arm takes members beside its value`) : [ret(call(callee, scalar))];
+		if (numeric === undefined || shapeOf(arm.builder!) !== 'config') {
+			if (others.length > 0) return fail(`${path}'s number arm takes members beside its value`);
+			if (arm.scalar !== 'integer') return [ret(call(callee, scalar))];
+			return [constant('value', scalar), ret(ternary(typeIs(id('value'), 'bigint'), call(callee, id('value')), call(callee, id('value'))))];
+		}
 		const entries = others.map((member): [string, Expression] => [member.steps[0]?.key ?? member.name, memberValue(path, arm, member, input())]);
 		if (parts === undefined) return [ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
 		const options = new Set(table.options?.[arm.builder!] ?? []);
@@ -557,11 +586,13 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	for (const name of roots) reach(name);
 	const kept = (functions: ReadonlyMap<string, Statement>): Statement[] => sorted([...functions].filter(([name]) => live.has(name)), ([name]) => name).map(([, statement]) => statement);
 	const helpers: readonly (readonly [string, Statement])[] = [
+		['isNode', isNodeHelper],
 		['unbuilt', unbuiltHelper],
 		['missing', missingHelper],
 		['seated', seatedHelper],
 		['listed', listedHelper],
 		['unseated', unseatedHelper],
+		['untexted', untextedHelper],
 		['unspelled', unspelledHelper]
 	];
 
@@ -573,29 +604,29 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const clauseOf = (names: readonly string[]) => t.importClause(t.namedImports(...names.map((name) => t.importSpecifier.name({ name }))));
 	const typeImport = (names: readonly string[], source: string) => t.importStatement.clauseFrom({ typeKeyword: 'type', importClause: clauseOf(names), source: str(source) });
 	const valueImport = (names: readonly string[], source: string) => t.importStatement.clauseFrom({ importClause: clauseOf(names), source: str(source) });
-	const built = pathFunctions.length > 0;
+	const header = t.comment.line(' Auto-generated by @sittir/codegen — do not edit');
+	const exported = t.exportStatementDefaultDeclaration({ content: constant('portableBuild', surface(root)) });
 	const program = t.program({
-		statements: [
-			typeImport(['Engine'], '@sittir/types').$trivia.leading(t.comment.line(' Auto-generated by @sittir/codegen — do not edit')),
-			...(built ? [typeImport(['BuildInput', 'PathInput', 'Unmapped'].filter((name) => live.has(name)), input.imports.vocabulary)] : []),
-			typeImport([input.api], input.imports.api),
-			...(built ? [typeImport([input.map], input.imports.map)] : []),
-			...(live.has('decimalSpelling') ? [valueImport(['decimalSpelling'], input.imports.utils)] : []),
-			t.exportStatementDefaultDeclaration({
-				content: t.functionDeclaration({
-					name: 'portableBuild',
-					parameters: t.formalParameters(t.requiredParameter({ name: built ? 'engine' : '_engine', type: t.typeAnnotation(typeRef('Engine', input.api)) })),
-					body: block(
-						...(built ? [constant('b', dot(id('engine'), 'build'))] : []),
+		statements:
+			pathFunctions.length === 0
+				? [exported.$trivia.leading(header)]
+				: [
+						t.importStatement.clauseFrom({ importClause: t.importClause(t.namedImports(t.importSpecifier.as({ name: 'ir', alias: 'b' }))), source: str(input.imports.builders) }).$trivia.leading(header),
+						typeImport(['BuildInput', 'PathInput', 'Unmapped'].filter((name) => live.has(name)), input.imports.vocabulary),
+						typeImport([input.map], input.imports.map),
+						...(live.has('decimalSpelling') ? [valueImport(['decimalSpelling'], input.imports.utils)] : []),
+						...(live.has('isNode')
+							? [
+									typeImport([input.node], input.imports.types),
+									t.importStatement.clauseFrom({ importClause: t.importClause(t.namedImports(t.importSpecifier.as({ name: 'isNode', alias: 'isAnyNode' }))), source: str(input.imports.nodes) })
+								]
+							: []),
 						...helpers.filter(([name]) => live.has(name)).map(([, helper]) => helper),
 						...kept(memberFunctions),
 						...kept(armFunctions),
 						...pathFunctions,
-						ret(surface(root))
-					)
-				})
-			})
-		]
+						exported
+					]
 	});
 	return { program, diagnostics: found.filter(([, at]) => at === undefined || live.has(at)).map(([diagnostic]) => diagnostic) };
 }

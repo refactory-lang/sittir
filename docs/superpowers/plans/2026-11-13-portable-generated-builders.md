@@ -130,11 +130,11 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 ### Task 4: The build emitter
 
 **Status:** in progress on `feat/portable-build-emitter`.
-- The maintainer ruled (2026-11-17) that generated builders call the strict API. The re-costing is with brainstorm; the emitter isn't retargeted until it's accepted.
+- The generated builders call the strict API (ruled 2026-11-17). The module is a table of functions that take no engine; it imports the strict table (`ir-strict.ts`), and a caller scopes it with `scopeBuilders(engine, portableBuild)`. The strict list arguments of the six hole-taking kinds take `null`.
 - Built:
   - the emitter in the pinned child;
   - gen writing `portable/table.ts` and `portable/build.ts`;
-  - the corpus test (Step 1), green in all three grammars and both storages.
+  - the corpus test (Step 1), green in all three grammars and both storages, the interpreter and the generated module on one strict engine.
 - Built of Step 2:
   - decisions 1, 2 and 4;
   - the header comment;
@@ -143,22 +143,25 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - containers whose builder takes an elements or spread input, holding a single value;
   - decision 7's optional `$path`: the map's `decided` names each member's one structure-built path, and a path function's input is `PathInput<Map, P>`;
   - members that take one value or a list, built by whether the value is a list;
-  - number spelling in decimal parts (exponent forms included) through `decimalSpelling`, with a part the builder takes as an option passed in the call's options.
+  - number spelling in decimal parts (exponent forms included) through `decimalSpelling`, with a part the builder takes as an option passed in the call's options;
+  - strict calls for what the loose builders coerced: a token's kind id in its seat's containers, a text through the one path that takes it as its only required member (else `untexted`), an integer passed to a direct builder once per scalar type;
+  - the module's own `isNode` guard, typed by the grammar's node union.
 - Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 828, rust 1335, typescript 1315.
 - A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
 - Remaining:
   - decision 5;
+  - token-only members narrowed to their token texts, read and build (ruled 2026-11-17);
   - decision 7's bare scalars, by the outermost taker (ruled 2026-11-17). Measured: no member has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 members take a number);
   - python's getter;
   - decision 9's tails;
   - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
-  - Step 3 (generated-module type errors left: python 1, rust 5, typescript 3, each outside the emitter) and Step 4.
+  - Step 3 (generated-module type errors left: python 0, rust 4, typescript 0; rust's are the integer `suffix`, which the token-text narrowing types) and Step 4.
 
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child
-- Generated: `packages/<lang>/src/portable/build.ts` becomes `portableBuild(engine)`
+- Generated: `packages/<lang>/src/portable/build.ts` becomes `portableBuild`, a table a caller scopes with `scopeBuilders(engine, portableBuild)`
 - Test: `packages/tools/src/__tests__/portable-generated-build.test.ts`
 
 - [x] **Step 1: The failing test.** For every corpus file in all three grammars, in both storages, project each node with today's reader. Then build the projection with the generated function and with the interpreter. The two renders are identical.

@@ -8,9 +8,9 @@ export interface PortableEmitMember {
 
 export interface PortableEmitInput<Table> {
 	readonly grammar: string;
-	readonly api: string;
 	readonly map: string;
-	readonly imports: { readonly vocabulary: string; readonly api: string; readonly map: string; readonly utils: string };
+	readonly node: string;
+	readonly imports: { readonly vocabulary: string; readonly builders: string; readonly map: string; readonly utils: string; readonly nodes: string; readonly types: string };
 	readonly table: Table;
 	readonly members: Readonly<Record<string, Readonly<Record<string, PortableEmitMember>>>>;
 	readonly viewed: readonly string[];

@@ -3,7 +3,7 @@ import { byCodepoint, compositionOf } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
-import { PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, grammarNodeTypeName, languageApiName, moduleSpecifier } from '../../../grammars.ts';
+import { PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, grammarNodeTypeName, moduleSpecifier } from '../../../grammars.ts';
 import { valueParseKindsOf } from '../../../compiler/model/node-map.ts';
 import { isSlotBearingCompound } from '../../shared.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -80,9 +80,9 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		build: build.source,
 		emit: {
 			grammar: input.grammar,
-			api: languageApiName(input.grammar),
 			map: grammarMapName(input.grammar),
-			imports: { vocabulary: VOCABULARY_MODULE, api: moduleSpecifier(PORTABLE_BUILD_FILE, 'api.ts'), map: moduleSpecifier(PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE), utils: '@sittir/common/portable/utils' },
+			node: grammarNodeTypeName(nodeMap.name),
+			imports: { vocabulary: VOCABULARY_MODULE, builders: moduleSpecifier(PORTABLE_BUILD_FILE, 'ir-strict.ts'), map: moduleSpecifier(PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE), utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: moduleSpecifier(PORTABLE_BUILD_FILE, 'types.ts') },
 			table: build.table,
 			members: emitMembersOf(typed.slots, (path, member) => input.vocabulary.members(path).get(member)?.optional === true),
 			viewed: typed.reads.viewed,
