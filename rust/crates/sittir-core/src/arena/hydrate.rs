@@ -142,6 +142,11 @@ pub struct Hydration<'a> {
     /// Each extra a walk met, on the side of the node it is placed on
     /// (`OpenRun::placed`), in document order within a record.
     placed: Vec<Placed>,
+    /// The source the walk reads.
+    text: &'a str,
+    /// Where each list item the source sets apart from the item before it
+    /// with a blank line is kept (`Hydration::list`).
+    apart: Vec<super::NodeSite>,
 }
 
 /// An extra or an `ERROR` placed on a side of a node: where the node is
@@ -423,7 +428,7 @@ impl<'a> Hydration<'a> {
     /// A hydration into `tree` whose walks hold no extra: `hydrate_into`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new() }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new() }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -537,7 +542,8 @@ impl<'a> Hydration<'a> {
 
     /// Writes the list of the slot of shape `shape` of `draft`, its items
     /// `items`, a `None` item absent: their run, reserved now its length is
-    /// known, and the one word naming it.
+    /// known, and the one word naming it. Each item after the first the
+    /// source sets apart from the one before is noted (`set_apart`).
     ///
     /// # Errors
     ///
@@ -553,6 +559,7 @@ impl<'a> Hydration<'a> {
         let cell = draft.place(shape.word, 1)?;
         let bits = self.tree.kind_bits();
         let items = items.map(|item| item.map(|item| self.held(draft, item)).transpose()).collect::<Result<Vec<_>, _>>()?;
+        self.set_apart(draft, &items);
         let run = self.tree.alloc(words)?;
         let out = self.tree.words_mut(run, words)?;
         out[0] = len;
@@ -561,6 +568,27 @@ impl<'a> Hydration<'a> {
         }
         self.tree.words_mut(cell, 1)?[0] = ListCell::word(run)?.0;
         Ok(())
+    }
+
+    /// Notes where each of `items`, the list of `draft` as its run holds
+    /// them, is kept when the source sets it apart from the item before it
+    /// with a blank line (`list_slots::sets_apart`), the extras and `ERROR`s
+    /// between the two among the run's entries.
+    fn set_apart(&mut self, draft: Draft, items: &[Option<Hydrated>]) {
+        let Some(open) = self.open.iter().rfind(|open| open.at == draft.at) else { return };
+        let entry = |item: &Hydrated| match *item {
+            Hydrated::Record { at, .. } => open.entries.iter().position(|entry| matches!(*entry, RunEntry::Record { at: held, .. } if held == at)),
+            Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. } => row.get().checked_sub(2).map(|entry| entry as usize),
+            Hydrated::Unit { row: None, .. } | Hydrated::Text { .. } => None,
+        };
+        let entries: Vec<usize> = items.iter().flatten().filter_map(entry).collect();
+        for pair in entries.windows(2) {
+            let (before, item) = (open.beside[pair[0]].span, open.beside[pair[1]].span);
+            let extras: Vec<Span> = (pair[0] + 1..pair[1]).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span).collect();
+            if crate::list_slots::sets_apart(self.text, before.end, item.start, &extras) {
+                self.apart.push(open.site(pair[1]));
+            }
+        }
     }
 
     /// The facts of the node `cursor` stands on (`Kid::at`), met by the
@@ -909,19 +937,22 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// The whole tree `cursor` walks, read as `N`, its records written into
 /// `into` in one walk, each naming the entry `source` of the source they
 /// are read from and stamped with its depth move, by the depth members of
-/// `kinds`: the root's record, `None` when it has none.
+/// `kinds`: the root's record, `None` when it has none. Each extra and
+/// `ERROR` it places goes to `placed`, and where each list item the source
+/// sets apart is kept to `apart`.
 ///
 /// # Errors
 ///
 /// What the hydration refuses; what it wrote before stays written.
-pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), ..Hydration::new(into) };
+pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<super::NodeSite>) -> Result<Option<Address>, HydrateError> {
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, ..Hydration::new(into) };
     crate::read::goto(cursor, NodeIndex::ROOT);
     records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;
     let root = N::hydrate(cursor, ctx, records)?;
     placed.append(&mut records.placed);
+    apart.append(&mut records.apart);
     Ok(match root {
         Hydrated::Record { at, .. } => Some(at),
         _ => None,

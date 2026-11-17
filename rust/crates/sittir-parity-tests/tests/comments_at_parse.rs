@@ -1,7 +1,9 @@
 //! A parse places its extras and `ERROR`s: for every node of every fixture,
 //! the records the engine's side store names for a side of the node, right
 //! after an arena parse and before anything reads a side, are those of the
-//! extras and `ERROR`s the tree's placement assigns that side, in order.
+//! extras and `ERROR`s the tree's placement assigns that side, in order. A
+//! list item the source sets apart with a blank line holds a blank-line
+//! member first on its leading side, there as in the tree's lookup.
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::source::Source;
@@ -9,7 +11,10 @@ use sittir_core::arena::{HydrateNode, RunNodes, RunTable};
 use sittir_core::engine::{Engine, ParsedTree};
 use sittir_core::nodes::Nodes;
 use sittir_core::options::ResolvedOptions;
-use sittir_core::trivia::TriviaEntry;
+use sittir_core::layout_kinds::LayoutKinds;
+use sittir_core::read::SideEntry;
+use sittir_core::slot::SlotValue;
+use sittir_core::trivia::{TriviaEntry, TriviaSeam};
 use sittir_core::trivia_store::Place;
 use sittir_core::trivia_table::{Assigned, TriviaSide};
 use sittir_core::types::NodeIndex;
@@ -53,8 +58,10 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                     _ => None,
                 })
                 .unwrap_or_default();
+            let blank_first = stored.first().is_some_and(is_blank_line);
             let placed: Vec<Option<Bytes>> = stored
                 .iter()
+                .skip(usize::from(blank_first))
                 .map(|entry| match entry {
                     TriviaEntry::Record(entry) => runs.index_of(entry.record.at).ok().map(|at| runs.kid(at)).map(|kid| (kid.start, kid.end)),
                     TriviaEntry::Value(_) => None,
@@ -65,11 +72,26 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 let kid = theirs.kid(row);
                 apart.push(format!("{}..{} {} {side:?}: parse placed {placed:?}, the tree's placement {kept:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
             }
+            if side == TriviaSide::Leading {
+                let looked_up = tree.side_entries(row, side, false).first().is_some_and(|entry| match entry {
+                    SideEntry::Layout(entry) => is_blank_line(entry),
+                    SideEntry::Source { .. } | SideEntry::Written(_) => false,
+                });
+                if blank_first != looked_up {
+                    let kid = theirs.kid(row);
+                    apart.push(format!("{}..{} {}: parse set it apart {blank_first}, the tree's lookup {looked_up}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                }
+            }
         }
         let (met, kept) = (ours.kids(run), theirs.kids(row));
         pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
     }
     (apart, assigned)
+}
+
+/// Whether `entry` is a blank-line whitespace member.
+fn is_blank_line<T: TriviaSeam>(entry: &TriviaEntry<T>) -> bool {
+    matches!(entry.value(), Some(SlotValue::Node(member)) if member.seam_gap() == Some(LayoutKinds::BLANKLINE))
 }
 
 fn fixtures_apart<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (Vec<String>, usize) {
