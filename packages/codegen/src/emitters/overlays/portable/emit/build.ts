@@ -4,7 +4,6 @@ import type {
 	PortableBuildPath,
 	PortableBuildTable,
 	PortableContainer,
-	PortableDecimalParts,
 	PortableMemberStep,
 	PortablePickTest,
 	PortableSeat
@@ -349,16 +348,17 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		return input.members[owner]?.[member.name]?.optional === true ? ternary(binary(given, '===', id('undefined')), call(id(uses('missing')), str(`${owner}.${member.name}`)), single) : single;
 	};
 
-	const numberBody = (path: string, arm: PortableBuildArm, value: Expression): Statement[] => {
+	const numberBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
 		const callee = builderRef(arm.builder!);
-		const given = dot(value, '$value');
-		if (arm.digits !== undefined) return fail(`${path}'s integer arm reads its number in base ${arm.digits.base}`);
 		const numeric = arm.numeric;
-		if (numeric === undefined) return [ret(call(callee, call(id('String'), given)))];
-		if (Array.isArray(numeric)) return shapeOf(arm.builder!) === 'config' ? [ret(call(callee, obj([[numeric.at(-1)!, call(id('String'), given)]])))] : [ret(call(callee, call(id('String'), given)))];
-		const parts = numeric as PortableDecimalParts;
-		if (parts.exponent !== undefined || parts.marker !== undefined || parts.exponentSign !== undefined) return fail(`${path}'s number spells an exponent`);
-		return fail(`${path}'s number is spelled in decimal parts`);
+		if (numeric !== undefined && !Array.isArray(numeric)) return fail(`${path}'s number is spelled in decimal parts`);
+		const slots: readonly string[] = numeric ?? [];
+		const spelled = (member: PortableMemberStep): boolean => numeric === undefined || (member.steps.length === 1 && slots.includes(member.steps[0]!.key));
+		const others = arm.members.filter((member) => !spelled(member));
+		const scalar = dot(input(), '$value');
+		if (numeric === undefined || shapeOf(arm.builder!) !== 'config') return others.length > 0 ? fail(`${path}'s number arm takes members beside its value`) : [ret(call(callee, scalar))];
+		const entries = others.map((member): [string, Expression] => [member.steps[0]?.key ?? member.name, memberValue(path, arm, member, input())]);
+		return [ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
 	};
 
 	const armBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
@@ -370,7 +370,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (arm.content !== undefined) return fail(`arm ${arm.kind} builds its text through a content slot`);
 		if (arm.literal !== undefined) return fail(`arm ${arm.kind} is a literal token`);
 		if ((arm.facts ?? []).length > 0) return fail(`arm ${arm.kind} spells facts in its container`);
-		if (arm.scalar !== undefined) return numberBody(path, arm, input());
+		if (arm.scalar !== undefined) return numberBody(path, arm, input);
 		const shape = shapeOf(arm.builder);
 		if (shape === 'text' || shape === 'placed') return fail(`arm ${arm.kind}'s builder takes its text`);
 		const entries: [string, Expression][] = [];
@@ -426,6 +426,23 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 	}
 
+	const scalarDispatch = (path: string, builds: NonNullable<PortableBuildPath['builds']>, arms: readonly PortableBuildArm[], value: Built<B['identifier']>): Statement[] => {
+		const scalars = arms.filter((arm) => arm.scalar !== undefined && builds[arm.scalar] === arm.kind);
+		if (scalars.length === 0) return fail('a path that picks its arm by its value builds no scalar');
+		const armFor = (...wanted: readonly string[]): PortableBuildArm => wanted.map((scalar) => scalars.find((arm) => arm.scalar === scalar)).find((arm) => arm !== undefined) ?? scalars[0]!;
+		const built = (arm: PortableBuildArm): Expression => {
+			const name = armName(path, arm);
+			return name === undefined ? call(id(uses('unbuilt')), str(path), value) : call(id(name), value);
+		};
+		const given = dot(value, '$value');
+		const [integer, float] = [armFor('integer'), armFor('float')];
+		return [
+			when(typeIs(given, 'bigint'), ret(built(armFor('bigint', 'integer')))),
+			when(typeIs(given, 'number'), ret(integer === float ? built(integer) : ternary(call(dot(id('Number'), 'isSafeInteger'), given), built(integer), built(float)))),
+			ret(call(id(uses('unbuilt')), str(path), value))
+		];
+	};
+
 	let pathFunctions: Statement[] = [];
 	let roots: string[] = [];
 	let root: Trie = { children: new Map() };
@@ -439,13 +456,17 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		roots = [];
 		root = { children: new Map() };
 		for (const [path, row] of sorted(Object.entries(table.paths), ([path]) => path)) {
-			if (!row.root || row.builds !== undefined) continue;
+			if (!row.root) continue;
 			const arms = row.arms.filter((arm) => arm.holders === undefined);
 			const statements: Statement[] = [];
 			const value = id('input');
 			let generated = arms.length > 0;
 			try {
 				tracked(identifierOf(path), () => {
+					if (row.builds !== undefined) {
+						statements.push(...scalarDispatch(path, row.builds, arms, value));
+						return;
+					}
 					for (const [i, arm] of arms.entries()) {
 						const name = armName(path, arm);
 						if (name === undefined) {
@@ -481,7 +502,6 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			node.path = path;
 		}
 	} while (grew);
-	for (const [path, row] of Object.entries(table.paths)) if (row.root && row.builds !== undefined) diagnostics.push({ code: 'portable-emit-unfit-member', path, message: 'a path that picks its arm by its value' });
 	const live = new Set<string>();
 	const reach = (name: string): void => {
 		if (live.has(name)) return;
@@ -507,7 +527,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const built = pathFunctions.length > 0;
 	const program = t.program({
 		statements: [
-			typeImport(['Engine'], '@sittir/types'),
+			typeImport(['Engine'], '@sittir/types').$trivia.leading(t.comment.line(' Auto-generated by @sittir/codegen — do not edit')),
 			...(built ? [typeImport(['BuildInput', ...(live.has('Unmapped') ? ['Unmapped'] : [])], input.imports.vocabulary)] : []),
 			typeImport([input.api], input.imports.api),
 			...(built ? [typeImport([input.map], input.imports.map)] : []),

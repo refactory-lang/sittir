@@ -2893,45 +2893,5 @@
     "severity": "warning",
     "canProceed": true,
     "message": "type.unit: arm 244 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.float: a path that picks its arm by its value"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer: a path that picks its arm by its value"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.binary: a path that picks its arm by its value"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.hex: a path that picks its arm by its value"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.octal: a path that picks its arm by its value"
   }
 ]
