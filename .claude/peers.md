@@ -9,7 +9,7 @@ For every peer:
 1. **On start, and after a restart or compaction,** read your row, then your spec and your plan task, before anything else.
 2. **Answer from the text.** A design question in your area is answered from the spec, quoting the sentence. If the spec doesn't say, say that.
 3. **A finding that contradicts a sentence** in your spec or plan is reported to `sittir-brainstorm` as a row that quotes the sentence. Don't build past it.
-4. **Your plan task's Status line is the tracker.** A PR ticks its task and updates that line.
+4. **Your plan task's Status line is the tracker, and you keep it current as you go.** With each push, tick the steps that push built and update the task's Status line (branch, head, what is left), in the plan file on your branch. A long-lived PR does not wait for its merge to tick. When code or a probe shows a sentence of your spec or plan is wrong or stale (a name, a path, a count, an owner, a claim about today's behaviour), correct it the same day: on your branch if the PR carries the file, otherwise tell brainstorm, who owns rulings text on master. A PR still ticks its task and writes the final line.
 
 5. **A table that compares alternatives bolds the winning cell in each row** (lowest for time, memory and failures; highest for passes; every tied cell on a tie), in reports, PR bodies, specs and plans.
 6. **Code and architecture are drawn in Mermaid:** a flow through the code, a memory or record layout, a class, type or module structure. A fenced `mermaid` block in the markdown file or the report, with a sentence above it saying what it shows. Not for work plans, task order or merge decisions; those stay prose, lists and tables.
