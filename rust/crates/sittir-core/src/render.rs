@@ -106,12 +106,18 @@ impl WhitespaceTable {
         admitted.and(crate::layout_kinds::LayoutKinds(gap.0.wrapping_sub(1))).widest()
     }
 
+    /// The kind id the grammar gives the gap kind `gap` (`gap_of` read
+    /// backwards); none when it has no member of that kind.
+    #[must_use]
+    pub fn gap_kind(&self, gap: crate::layout_kinds::LayoutKinds) -> Option<KindId> {
+        self.gaps.iter().find(|(bit, _)| *bit == gap.0).map(|(_, id)| *id)
+    }
+
     /// The text the grammar spells a gap with, as it admits it (`admit`); a
     /// kind it has no member for writes nothing.
     #[must_use]
     pub fn text_of_gap(&self, gap: crate::layout_kinds::LayoutKinds) -> &'static str {
-        let gap = self.admit(gap);
-        self.gaps.iter().find(|(bit, _)| *bit == gap.0).map_or("", |(_, id)| (self.text_of)(*id))
+        self.gap_kind(self.admit(gap)).map_or("", self.text_of)
     }
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
