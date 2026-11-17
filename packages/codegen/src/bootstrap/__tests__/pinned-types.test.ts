@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { explainFiles, pinnedTypeEscapes } from '../pinned-types.ts';
 
-function project(): { readonly checkout: string; readonly sibling: string; readonly pinned: string } {
+function project(admitted = 'export type Table = { readonly paths: number };\n'): { readonly checkout: string; readonly sibling: string; readonly pinned: string } {
 	const top = realpathSync(mkdtempSync(join(tmpdir(), 'sittir-pinned-types-')));
 	const checkout = join(top, 'checkout');
 	const sibling = join(top, 'sibling');
@@ -31,7 +31,7 @@ function project(): { readonly checkout: string; readonly sibling: string; reado
 	file(join(checkout, 'packages', 'live', 'root.d.ts'), 'declare const rooted: number;\n');
 	file(join(checkout, 'packages', 'other', 'other.ts'), 'export const other = 1;\n');
 	file(join(checkout, 'packages', 'types', 'package.json'), JSON.stringify({ name: '@sittir/types' }));
-	file(join(checkout, 'packages', 'types', 'src', 'portable-build.ts'), 'export type Table = { readonly paths: number };\n');
+	file(join(checkout, 'packages', 'types', 'src', 'portable-build.ts'), admitted);
 	file(join(checkout, 'packages', 'types', 'src', 'query.ts'), 'export type Query = number;\n');
 	file(join(checkout, 'packages', 'codegen', 'helper.ts'), 'export const helper = 1;\n');
 	file(
@@ -101,5 +101,16 @@ describe('the pinned build\'s type boundary', () => {
 		const files = pinnedTypeEscapes(explainFiles(join(checkout, 'tsconfig.json'), cwd), { cwd, checkout, pinned }).map(({ file }) => file);
 		expect(files).not.toContain(join(checkout, 'packages', 'types', 'src', 'portable-build.ts'));
 		expect(files).toContain(join(checkout, 'packages', 'types', 'src', 'query.ts'));
+	});
+
+	it.each([
+		["import type { Query } from './query.ts';\nexport type Table = { readonly paths: Query };\n"],
+		["export type * from './query.ts';\nexport type Table = { readonly paths: number };\n"]
+	])('stops admitting the build table declarations once they import anything: %s', (admitted) => {
+		const { checkout, pinned } = project(admitted);
+		const cwd = process.cwd();
+		const escapes = pinnedTypeEscapes(explainFiles(join(checkout, 'tsconfig.json'), cwd), { cwd, checkout, pinned });
+		const input = escapes.find(({ file }) => file === join(checkout, 'packages', 'types', 'src', 'portable-build.ts'));
+		expect(input?.reason).toMatch(/imports nothing/);
 	});
 });
