@@ -29618,8 +29618,7 @@ export interface RustMap extends V.GrammarMap {
 				| 'u32'
 				| 'u64'
 				| 'u8'
-				| 'usize'
-				| string;
+				| 'usize';
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.number.integer.binary': {
@@ -29638,8 +29637,7 @@ export interface RustMap extends V.GrammarMap {
 				| 'u32'
 				| 'u64'
 				| 'u8'
-				| 'usize'
-				| string;
+				| 'usize';
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.number.integer.hex': {
@@ -29658,8 +29656,7 @@ export interface RustMap extends V.GrammarMap {
 				| 'u32'
 				| 'u64'
 				| 'u8'
-				| 'usize'
-				| string;
+				| 'usize';
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.number.integer.octal': {
@@ -29678,8 +29675,7 @@ export interface RustMap extends V.GrammarMap {
 				| 'u32'
 				| 'u64'
 				| 'u8'
-				| 'usize'
-				| string;
+				| 'usize';
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.number.negative': {

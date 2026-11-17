@@ -272,6 +272,43 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).not.toMatch(/if \(typeof value === 'string'\) return value;/);
 	}, 60_000);
 
+	it('types a member\'s text by its tokens and its text paths\' own text types, never a bare string', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'rust',
+			map: 'RustMap',
+			node: 'RustNode',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table: {
+				builders: { tokenBinding: 'config' },
+				paths: {
+					'element.macro.token_binding': {
+						root: true,
+						arms: [
+							{
+								kind: 3,
+								builder: 'tokenBinding',
+								when: [],
+								members: [{ name: 'fragment', steps: [{ key: 'fragment' }], multiple: false, seats: [{ at: [3, 'fragment'], kinds: [11, 12], tokens: { block: 11, expr: 12 } }] }],
+								presets: [],
+								flags: {}
+							}
+						]
+					}
+				}
+			},
+			members: { 'element.macro.token_binding': { fragment: { paths: ['element.macro.fragment'], texts: ['block', 'expr'], unmapped: [], string: false, optional: false } } },
+			viewed: [],
+			textPaths: ['element.macro.fragment'],
+			textInputs: [],
+			textValues: [],
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("const element_macro_token_binding$3_fragment = (value: 'block' | 'expr' | Text<RustMap, 'element.macro.fragment'>) =>");
+		expect(text).toContain("import type { PathInput, Text } from '@sittir/types/vocabulary';");
+	}, 60_000);
+
 	it('picks a value-built path\'s arm by its scalar, and passes the scalar to the arm\'s builder', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'typescript',

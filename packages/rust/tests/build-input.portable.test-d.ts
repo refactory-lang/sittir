@@ -28,3 +28,16 @@ declare const call: V.Read<RustMap, 'expression.call'>;
 export const statements: V.BuildInput<RustMap, 'statement.block'>['statements'] = [call];
 // @ts-expect-error a statement list holds an expression itself, so no expression statement wraps it
 export const expressionStatement: V.BuildInput<RustMap, 'statement.expression'> = { $path: 'statement.expression' };
+
+export const fragment: Binding['fragment'] = 'expr';
+// @ts-expect-error a fragment specifier is one of the grammar's fragment tokens
+export const notFragment: Binding['fragment'] = 'expression';
+export const readFragment: BindingRead['fragment'] = 'ident';
+
+type Integer = V.BuildInput<RustMap, 'literal.number.integer'>;
+
+export const suffix: Integer['suffix'] = 'u8';
+// @ts-expect-error an integer suffix is one of the grammar's suffix tokens
+export const notSuffix: Integer['suffix'] = 'q8';
+// @ts-expect-error a read suffix is one of the grammar's suffix tokens
+export const notReadSuffix: V.Read<RustMap, 'literal.number.integer.hex'>['suffix'] = 'q8';

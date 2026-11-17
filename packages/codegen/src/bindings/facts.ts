@@ -170,6 +170,7 @@ export interface ModelSlot {
 	readonly storage: string;
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
+	readonly fixedTokens?: true;
 	readonly mounts?: Readonly<Record<string, ModelMount>>;
 	readonly flattens?: readonly string[];
 	readonly tuples?: readonly string[];

@@ -239,7 +239,8 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 					const slotKinds = route.route === 'kind' ? [route.kind] : route.route === 'slot' || route.route === 'nested' ? (route.slot?.kinds ?? []).filter((k) => !except.has(k)) : [];
 					const last = route.path?.at(-1);
 					const owner = last === undefined ? undefined : modelNode(model, last.owner);
-					if (owner?.modelType === 'lexedPattern' && owner.slots.find((at) => at.name === last?.slot)?.storage !== 'boolean') interior = true;
+					const lexed = owner?.modelType === 'lexedPattern' ? owner.slots.find((at) => at.name === last?.slot) : undefined;
+					if (owner?.modelType === 'lexedPattern' && lexed?.storage !== 'boolean' && lexed?.fixedTokens !== true) interior = true;
 					const pinned = route.route === 'nested' ? route.selector.kind : null;
 					const held = new Set(concreteKinds(model, slotKinds));
 					const tested = route.path === undefined ? undefined : sure.present(route.path);

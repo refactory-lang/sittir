@@ -367,7 +367,9 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			statements.push(t.switchStatement({ value: paren(dot(value, '$path')), body: t.switchBody(...cases, t.switchDefault({ bodies: [unbuilt(`${owner}.${member.name}`, value)] })) }));
 		}
 		const items: TypeNode[] = [
-			...(free || (text !== undefined && exact!.texts.length === 0) ? ['string'] : exact!.texts.map((literal) => t.literalType(str(literal)))),
+			...(exact!.string || (text !== undefined && !free && exact!.texts.length === 0) ? ['string'] : []),
+			...exact!.texts.map((literal) => t.literalType(str(literal))),
+			...exact!.paths.filter((path) => textPaths.has(path) || textInputs.has(path)).map((path) => typeRef(uses('Text'), input.map, t.literalType(str(path)))),
 			...structures.flatMap((path) => [path === decided ? pathInputType(path) : pathType(path), nodesType(path)]),
 			...exact!.unmapped.map((name) => typeRef(uses('Unmapped'), t.literalType(str(name))))
 		];
@@ -612,7 +614,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				? [exported.$trivia.leading(header)]
 				: [
 						t.importStatement.clauseFrom({ importClause: t.importClause(t.namedImports(t.importSpecifier.as({ name: 'ir', alias: 'b' }))), source: str(input.imports.builders) }).$trivia.leading(header),
-						typeImport(['BuildInput', 'PathInput', 'Unmapped'].filter((name) => live.has(name)), input.imports.vocabulary),
+						typeImport(['BuildInput', 'PathInput', 'Text', 'Unmapped'].filter((name) => live.has(name)), input.imports.vocabulary),
 						typeImport([input.map], input.imports.map),
 						...(live.has('decimalSpelling') ? [valueImport(['decimalSpelling'], input.imports.utils)] : []),
 						...(live.has('isNode')

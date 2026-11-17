@@ -145,19 +145,20 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - members that take one value or a list, built by whether the value is a list;
   - number spelling in decimal parts (exponent forms included) through `decimalSpelling`, with a part the builder takes as an option passed in the call's options;
   - strict calls for what the loose builders coerced: a token's kind id in its seat's containers, a text through the one path that takes it as its only required member (else `untexted`), an integer passed to a direct builder once per scalar type;
-  - the module's own `isNode` guard, typed by the grammar's node union.
+  - the module's own `isNode` guard, typed by the grammar's node union;
+  - token-only members typed as their token texts, read and build (python 16, rust 5, typescript 9), the generated member taking its text type from the map.
 - Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 828, rust 1335, typescript 1315.
 - A path the emitter can't compile whole is left out with `portable-emit-unfit-member` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
 - Remaining:
   - decision 5;
-  - token-only members narrowed to their token texts, read and build (ruled 2026-11-17);
-  - decision 7's bare scalars, by the outermost taker (ruled 2026-11-17). Measured: no member has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 members take a number);
+  - decision 7's bare numbers, by the outermost taker (ruled 2026-11-17); in a member with a number taker a number is a number, and the type stops admitting a fixed word's bare kind id there (ruled 2026-11-17). Measured: no member has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 members take a number);
   - python's getter;
   - decision 9's tails;
   - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
-  - Step 3 (generated-module type errors left: python 0, rust 4, typescript 0; rust's are the integer `suffix`, which the token-text narrowing types) and Step 4.
+  - decision 7's bare booleans, once the emitter builds literal arms (`literal.boolean.*` arms are literal arms, unfit today), since a bare `true` has no generated path to go to until then;
+  - Step 3 (generated-module type errors: 0 in all three grammars) and Step 4.
 
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child

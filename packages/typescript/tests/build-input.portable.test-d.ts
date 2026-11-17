@@ -21,3 +21,12 @@ export const clauseContent: V.BuildInput<TypeScriptMap, 'clause.import.names'>['
 export const ambientContent: V.BuildInput<TypeScriptMap, 'declaration.ambient'>['content'] = 'x';
 export const comment: V.BuildInput<TypeScriptMap, 'comment.line'> = { $path: 'comment.line', $value: ' x' };
 export const escape: V.BuildInput<TypeScriptMap, 'literal.string.escape'> = { $path: 'literal.string.escape', $value: 'n' };
+
+type Scientific = V.BuildInput<TypeScriptMap, 'literal.number.float.scientific'>;
+
+export const scientificMarker: Scientific['marker'] = 'E';
+// @ts-expect-error a scientific float's marker is one of the grammar's marker tokens
+export const notScientificMarker: Scientific['marker'] = 'x';
+export const exponentSign: Scientific['exponentSign'] = '-';
+// @ts-expect-error an exponent sign is one of the grammar's sign tokens
+export const notExponentSign: Scientific['exponentSign'] = '~';

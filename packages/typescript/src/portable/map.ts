@@ -28229,25 +28229,25 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'literal.number.float': {
 			readonly exponent: string;
-			readonly exponentSign: '+' | '-' | string;
+			readonly exponentSign: '+' | '-';
 			readonly fraction: string;
 			readonly integer: string;
-			readonly marker: 'E' | 'e' | string;
+			readonly marker: 'E' | 'e';
 			readonly $forms: V.Form<'integer'>;
 		};
 		readonly 'literal.number.float.leading_point': {
 			readonly exponent: string;
-			readonly exponentSign: '+' | '-' | string;
+			readonly exponentSign: '+' | '-';
 			readonly fraction: string;
-			readonly marker: 'E' | 'e' | string;
+			readonly marker: 'E' | 'e';
 			readonly $forms: V.Form<'fraction'>;
 		};
 		readonly 'literal.number.float.scientific': {
 			readonly exponent: string;
-			readonly exponentSign: '+' | '-' | string;
+			readonly exponentSign: '+' | '-';
 			readonly fraction: never;
 			readonly integer: string;
-			readonly marker: 'E' | 'e' | string;
+			readonly marker: 'E' | 'e';
 			readonly $forms: V.Form<'exponent' | 'integer' | 'marker'>;
 		};
 		readonly 'literal.number.integer': {
@@ -28271,17 +28271,17 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'literal.number.integer.binary': {
 			readonly content: string;
-			readonly radixPrefix: '0B' | '0b' | string;
+			readonly radixPrefix: '0B' | '0b';
 			readonly $forms: V.Form<'content' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.integer.hex': {
 			readonly content: string;
-			readonly radixPrefix: '0X' | '0x' | string;
+			readonly radixPrefix: '0X' | '0x';
 			readonly $forms: V.Form<'content' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.integer.octal': {
 			readonly content: string;
-			readonly radixPrefix: '0O' | '0o' | string;
+			readonly radixPrefix: '0O' | '0o';
 			readonly $forms: V.Form<'content', 'radixPrefix'> | V.Form<'content' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.negative': {

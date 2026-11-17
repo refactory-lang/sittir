@@ -157,6 +157,7 @@ export function slotModelOf(record: NodeModelRecord, grammar: Pick<EvaluatedGram
 				storage: s.storage ?? 'verbatim',
 				kinds: slotKindsOf(s),
 				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : [])),
+				...((s.values ?? []).length > 0 && s.values!.every((v) => v.kind === 'terminal' && v.value !== undefined) ? { fixedTokens: true as const } : {}),
 				...mountsOf(s),
 				...seatShapesOf(s)
 			})),

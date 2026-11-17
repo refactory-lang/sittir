@@ -77,3 +77,12 @@ export const escape: V.BuildInput<PythonMap, 'literal.string.escape'> = { $path:
 export const yieldContent: V.BuildInput<PythonMap, 'expression.yield'>['content'] = 'x';
 
 export const formatSpec: NonNullable<V.Read<PythonMap, 'expression.interpolation.format'>['elements']>[number] = '>10';
+
+type Hex = V.BuildInput<PythonMap, 'literal.number.integer.hex'>;
+
+export const hexPrefix: Hex['radixPrefix'] = '0X';
+// @ts-expect-error a hex integer's radix prefix is one of the grammar's prefix tokens
+export const notHexPrefix: Hex['radixPrefix'] = '0b';
+export const longMarker: V.Read<PythonMap, 'literal.number.integer.big'>['marker'] = 'L';
+// @ts-expect-error a long integer's marker is one of the grammar's marker tokens
+export const notLongMarker: V.Read<PythonMap, 'literal.number.integer.big'>['marker'] = 'n';
