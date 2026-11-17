@@ -237,6 +237,27 @@ pub fn for_each_edge_child(nodes: &mut dyn Nodes<'_>, holder: &Kid, side: Side, 
     }
 }
 
+/// The last node with bytes at `holder`'s end, level by level down: at
+/// each level the last child, stepping back past zero-width ones (a dedent,
+/// a newline token) to the sibling that ends where its holder does. A
+/// zero-width child is the only case that lists a node's children.
+pub(crate) fn spelled_end(nodes: &mut dyn Nodes<'_>, holder: &Kid) -> Kid {
+    let mut holder = *holder;
+    while let Some(mut child) = nodes.edge(holder.index, Side::After) {
+        while child.start == child.end {
+            match nodes.previous(child.index) {
+                Some(before) => child = before,
+                None => return holder,
+            }
+        }
+        if child.end != holder.end {
+            return holder;
+        }
+        holder = child;
+    }
+    holder
+}
+
 /// Navigation over a tree-sitter tree: one cursor, created at the tree's
 /// root, moved from where it last stood (`read::goto_from`). The root's
 /// facts are read without a move. Its moves count in the

@@ -724,10 +724,18 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// a line break of its own; a run whose text ended its line already wrote
     /// one break of that seam. A line-terminated entry's break is held as
     /// such. At the render's end (`next` is `None`) nothing follows the
-    /// seam, so only the held break remains.
+    /// seam, so only the held break remains. Text that ended in a
+    /// line-terminated token holds a break no run may share: one break of the
+    /// held seam is written first, and the runs start the next line.
     fn write_deferred(&mut self, next: Option<&str>) -> std::fmt::Result {
         if self.deferring.is_some() || self.deferred.is_empty() {
             return Ok(());
+        }
+        if self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks() && !self.at_line_start() {
+            let text = self.payload_text(Payload { set: LayoutKinds::NEWLINE, pick: LayoutKinds::NEWLINE });
+            self.write_text(text)?;
+            self.line_end_held = None;
+            crate::render::RenderSink::hold_line_end(self, crate::render::LineHold::Break);
         }
         let mut last = None;
         for run in std::mem::take(&mut self.deferred) {
@@ -1399,6 +1407,9 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 first = false;
                 crate::render::RenderSink::end_line_after(self, kind);
             });
+            if let Some(kind) = sources.spelled_end_kind(coord) {
+                crate::render::RenderSink::end_line_after(self, kind);
+            }
         }
         if first {
             if let Some(stamp) = coord.kind {

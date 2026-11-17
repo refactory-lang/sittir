@@ -2306,6 +2306,12 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         });
     }
 
+    fn spelled_end_kind(&mut self, coord: &NodeCoordinate) -> Option<KindId> {
+        let kid = self.kid(coord.index).filter(|kid| kid.span() == coord.span)?;
+        let end = crate::nodes::spelled_end(&mut self.nodes, &kid);
+        (end.index != kid.index).then_some(end.grammar)
+    }
+
     /// The levels the node a coordinate of the tree names opens net of those
     /// it closes (`SourceTable::depth_move`), its node found only when the
     /// grammar has depth members.
@@ -2581,6 +2587,10 @@ impl<G: EngineGrammar, B: Backing> SourceTable for Seating<'_, G, B> {
         if let Some(mut lookups) = self.own(coord.tree) {
             lookups.edge_levels(coord, side, f);
         }
+    }
+
+    fn spelled_end_kind(&self, coord: &NodeCoordinate) -> Option<KindId> {
+        self.own(coord.tree)?.spelled_end_kind(coord)
     }
 
     fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
@@ -3213,6 +3223,10 @@ impl<G: EngineGrammar, B: Backing> SourceTable for ReadTrees<'_, G, B> {
         if let Some(seating) = self.seating(coord.tree) {
             seating.for_each_edge_level(coord, side, f);
         }
+    }
+
+    fn spelled_end_kind(&self, coord: &NodeCoordinate) -> Option<KindId> {
+        self.seating(coord.tree)?.spelled_end_kind(coord)
     }
 
     fn depth_move(&self, coord: &NodeCoordinate) -> i32 {

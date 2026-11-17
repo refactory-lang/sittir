@@ -215,6 +215,17 @@ pub trait SourceTable {
         }
     }
 
+    /// The grammar kind of the last node with bytes at the end of a
+    /// coordinate's bytes (`nodes::spelled_end`), where that is a node below
+    /// the edge chain `for_each_edge_level` visits: a line comment a block
+    /// ends in, before the zero-width tokens that close the block. The line
+    /// end its text owes is held after the coordinate. A table of bare
+    /// sources cannot answer and says so.
+    fn spelled_end_kind(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        let _ = coord;
+        None
+    }
+
     /// The levels the node a coordinate names opens net of those it closes:
     /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
     /// over its subtree. A slice moves the writer's depth by it, as the
@@ -416,6 +427,10 @@ impl SourceTable for ThroughTemplates<'_> {
 
     fn for_each_edge_level(&self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {
         self.0.for_each_edge_level(coord, side, f);
+    }
+
+    fn spelled_end_kind(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        self.0.spelled_end_kind(coord)
     }
 
     fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {

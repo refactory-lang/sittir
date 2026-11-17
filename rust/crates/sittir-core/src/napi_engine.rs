@@ -2216,6 +2216,10 @@ where
         self.trees.for_each_edge_level(coord, side, f);
     }
 
+    fn spelled_end_kind(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+        self.trees.spelled_end_kind(coord)
+    }
+
     fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
         self.trees.depth_move(coord)
     }
