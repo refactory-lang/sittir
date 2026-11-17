@@ -568,10 +568,914 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "argument.named: arm 237's builder keywordArgument takes a config input, which is not compiled yet"
+    "message": "expression.await.expression: expression.binary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.add.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.divide.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.exponent.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.floor_divide.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.modulo.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.multiply.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.subtract.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.and.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.or.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.xor.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.matrix_multiply.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.operand: expression.binary has no arm that fits operand's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.operand: expression.binary has no arm that fits operand's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.expression: expression.binary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.expression: expression.binary.logical has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and.left: expression.binary.logical has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or.left: expression.binary.logical has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair.key: expression.binary has no arm that fits key's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair.key: expression.binary.logical has no arm that fits key's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.tuple.elements: expression.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.tuple.elements: expression.binary.logical has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.consequence: expression.binary has no arm that fits consequence's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.consequence: expression.binary.logical has no arm that fits consequence's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.parenthesized.expression: expression.binary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.parenthesized.expression: expression.binary.logical has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.parenthesized.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.bitwise_not.argument: expression.binary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.bitwise_not.argument: expression.unary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.negation.argument: expression.binary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.negation.argument: expression.unary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.plus.argument: expression.binary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.plus.argument: expression.unary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.not.argument: expression.binary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.not.argument: expression.binary.logical has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.not.argument: expression.unary has no arm that fits argument's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield.expression: expression.binary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield.expression: expression.binary.logical has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.consequence: expression.unary has no arm that fits consequence's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.condition: expression.binary has no arm that fits condition's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.condition: expression.binary.logical has no arm that fits condition's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.condition: expression.unary has no arm that fits condition's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.alternative: expression.binary has no arm that fits alternative's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.alternative: expression.binary.logical has no arm that fits alternative's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional.alternative: expression.unary has no arm that fits alternative's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.tuple.elements: expression.unary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair.key: expression.unary has no arm that fits key's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair.value: expression.binary has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair.value: expression.binary.logical has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair.value: expression.unary has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.map.expression: expression.binary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.map.expression: expression.binary.logical has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.map.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or.right: expression.binary.logical has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and.right: expression.binary.logical has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.elements: expression.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.elements: expression.binary.logical has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.elements: expression.unary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.operand: expression.unary has no arm that fits operand's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.count: expression.binary has no arm that fits count's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.count: expression.unary has no arm that fits count's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.operand: expression.unary has no arm that fits operand's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.count: expression.binary has no arm that fits count's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.count: expression.unary has no arm that fits count's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.matrix_multiply.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.matrix_multiply.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.matrix_multiply.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.xor.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.xor.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.xor.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.or.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.or.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.or.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.and.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.and.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.and.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.subtract.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.subtract.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.subtract.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.multiply.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.multiply.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.multiply.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.modulo.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.modulo.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.modulo.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.floor_divide.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.floor_divide.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.floor_divide.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.exponent.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.exponent.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.exponent.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.divide.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.divide.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.divide.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.add.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.add.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.add.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.await.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.right: expression.binary.logical has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "argument.named.value: expression.binary has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "argument.named.value: expression.binary.logical has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "argument.named.value: expression.unary has no arm that fits value's seats"
   },
   {
     "scope": "grammar",
@@ -579,7 +1483,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.case.match: arm 161's builder caseClause takes a config input, which is not compiled yet"
+    "message": "clause.case.match: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -587,7 +1491,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.catch: arm 165's builder exceptClause takes a config input, which is not compiled yet"
+    "message": "clause.catch: arm 165 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -595,7 +1499,31 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.comprehension.for: arm 249's builder forInClause takes a config input, which is not compiled yet"
+    "message": "clause.comprehension.for: rights requires other members or reads only some kinds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.comprehension.if.condition: expression.binary has no arm that fits condition's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.comprehension.if.condition: expression.binary.logical has no arm that fits condition's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.comprehension.if.condition: expression.unary has no arm that fits condition's seats"
   },
   {
     "scope": "grammar",
@@ -603,7 +1531,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.comprehension.if: arm 250's builder ifClause takes a direct input, which is not compiled yet"
+    "message": "clause.else: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -611,7 +1539,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.else: arm 158's builder elseClause takes a direct input, which is not compiled yet"
+    "message": "clause.else_if: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -619,7 +1547,743 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.else_if: arm 157's builder elifClause takes a config input, which is not compiled yet"
+    "message": "clause.finally: a pick by the render options' variant _suite"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.assignment has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.await has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.add has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.divide has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.exponent has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.floor_divide has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.modulo has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.multiply has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.subtract has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.bitwise.and has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.bitwise.or has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.bitwise.xor has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.chain has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.equal has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.greater has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.greater_equal has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.less has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.less_equal has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.not_equal has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.not_equal.legacy has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.identity.is has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.identity.is_not has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.logical has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.logical.and has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.logical.or has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.matrix_multiply has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.membership.in has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.membership.not_in has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.shift.left has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.shift.right has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.call has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.call.member has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.list has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.map has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.set has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.tuple has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.generator has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.list has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.map has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.set has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.conditional has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.lambda has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.member has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.parenthesized has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.subscript has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.bitwise_not has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.negation has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.not has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.plus has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: identifier has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.boolean.false has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.boolean.true has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.ellipsis has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.null has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.float has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.float.leading_point has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.float.scientific has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big.binary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big.hex has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big.octal has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.binary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.hex has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.imaginary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.octal has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes.raw has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes.raw.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.concatenated has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.raw has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.raw.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.raw has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.raw.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.raw has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.raw.multiline has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.unicode has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: pattern.rest has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.constrained has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.generic has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.nullable has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.rest has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.union has no arm that fits qualifier's seats"
   },
   {
     "scope": "grammar",
@@ -627,31 +2291,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.finally: arm 166's builder finallyClause takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.alias: arm 142's builder aliasedImport takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.relative: arm 138's builder relativeImport takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.relative.prefix: arm 137's builder importPrefix takes a text input, which is not compiled yet"
+    "message": "clause.import.relative.prefix: arm 137's builder takes its text"
   },
   {
     "scope": "grammar",
@@ -667,7 +2307,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.resource: 2 arms, whose pick is not compiled yet"
+    "message": "clause.resource: items requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -675,7 +2315,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.resource.item: arm 169's builder withItem takes a direct input, which is not compiled yet"
+    "message": "clause.resource.item: arm 169 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -683,7 +2323,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line: arm 72's builder comment takes a direct input, which is not compiled yet"
+    "message": "comment.line: arm 72 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -691,7 +2331,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.class: arm 179's builder classDefinition takes a config input, which is not compiled yet"
+    "message": "declaration.class: arm 179 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -699,7 +2339,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant: 3 arms, whose pick is not compiled yet"
+    "message": "declaration.constant: a preset at name that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -707,7 +2347,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.constructor: a container builder typeParamsItems taking a elements input"
   },
   {
     "scope": "grammar",
@@ -715,7 +2355,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function: arm 170's builder functionDefinition takes a config input, which is not compiled yet"
+    "message": "declaration.function: arm 170 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -723,7 +2363,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method: arm 361 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -731,7 +2371,927 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.special: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.special: a template-spelled member (name)"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: identifier.qualified has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.boolean.false has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.boolean.true has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.null has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.float has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.float.leading_point has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.float.scientific has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.integer.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.number.negative has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.concatenated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: literal.string.unicode has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.as has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.complex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.complex.add has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.complex.subtract has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: identifier.qualified has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.boolean.false has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.boolean.true has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.null has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.float has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.float.leading_point has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.float.scientific has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.binary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.hex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.integer.octal has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.number.negative has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.concatenated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.raw has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.raw.multiline has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: literal.string.unicode has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.as has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.complex has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.complex.add has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.complex.subtract has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.or has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.rest.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.struct has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: pattern.struct.field has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.or has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.rest.map has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.struct has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: pattern.struct.field has no arm that fits elements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.defaulted.default: expression.binary has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.defaulted.default: expression.binary.logical has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.defaulted.default: expression.unary has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed.type: expression.binary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed.type: expression.binary.logical has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed.type: expression.unary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.logical has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.baseType: expression.binary has no arm that fits baseType's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.baseType: expression.binary.logical has no arm that fits baseType's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.baseType: expression.unary has no arm that fits baseType's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.left: expression.binary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.left: expression.binary.logical has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.left: expression.unary has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.right: expression.binary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.right: expression.binary.logical has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union.right: expression.unary has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.constraint: expression.binary has no arm that fits constraint's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.constraint: expression.binary.logical has no arm that fits constraint's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.constrained.constraint: expression.unary has no arm that fits constraint's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.type: expression.binary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.type: expression.binary.logical has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.type: expression.unary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.default: expression.binary has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.default: expression.binary.logical has no arm that fits default's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.typed_default.default: expression.unary has no arm that fits default's seats"
   },
   {
     "scope": "grammar",
@@ -739,7 +3299,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.parameter.defaulted: arm 204's builder defaultParameter takes a config input, which is not compiled yet"
+    "message": "declaration.property.getter: arm 361 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -747,7 +3307,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.parameter.typed: arm 230's builder typedParameter takes a config input, which is not compiled yet"
+    "message": "declaration.property.setter: arm 361 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -755,7 +3315,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.parameter.typed_default: arm 205's builder typedDefaultParameter takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias: typeParameters reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -763,55 +3323,119 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.type_parameter: bounds is a list with no list container seat"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.setter: arm 361's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.variable.type: expression.binary has no arm that fits type's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias: arm 178's builder typeAliasStatement takes a config input, which is not compiled yet"
+    "message": "declaration.variable.type: expression.binary.logical has no arm that fits type's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter: arm 313's builder typeParamTypeVar takes a config input, which is not compiled yet"
+    "message": "declaration.variable.type: expression.unary has no arm that fits type's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter.parameters: arm 315's builder typeParamParamSpec takes a forwarded input, which is not compiled yet"
+    "message": "declaration.variable.type: expression.binary has no arm that fits type's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter.variadic: arm 314's builder typeParamTypeVarTuple takes a forwarded input, which is not compiled yet"
+    "message": "declaration.variable.type: expression.binary.logical has no arm that fits type's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable: 3 arms, whose pick is not compiled yet"
+    "message": "declaration.variable.type: expression.unary has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: declaration.constant has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: declaration.variable has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: expression.binary has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: expression.binary.logical has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: expression.unary has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: expression.binary has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: expression.binary.logical has no arm that fits value's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: expression.unary has no arm that fits value's seats"
   },
   {
     "scope": "grammar",
@@ -904,338 +3528,314 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.pair: arm 242's builder pair takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.spread: arm 173's builder listSplat takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.spread.map: arm 174's builder dictionarySplat takes a direct input, which is not compiled yet"
+    "message": "expression.assignment.compound.add.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.spread.parenthesized: arm 181's builder parenthesizedListSplat takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment: arm 148's builder namedExpression takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.add.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.add: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.add.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_and.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_and.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_and.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.divide: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_or.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.exponent: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_or.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.floor_divide: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_or.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.matrix_multiply: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_xor.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.modulo: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_xor.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.multiply: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_xor.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.shift_left: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.divide.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.shift_right: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.divide.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.subtract: arm 222's builder augmentedAssignment takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.divide.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.await: arm 262's builder await takes a direct input, which is not compiled yet"
+    "message": "expression.assignment.compound.exponent.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.add: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.exponent.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.divide: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.exponent.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.exponent: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.floor_divide.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.floor_divide: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.floor_divide.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.modulo: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.floor_divide.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.multiply: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.matrix_multiply.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.subtract: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.matrix_multiply.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.and: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.matrix_multiply.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.or: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.modulo.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.xor: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.modulo.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.chain: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.modulo.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.multiply.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.multiply.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater_equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.multiply.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_left.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less_equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_left.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.not_equal: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_left.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.not_equal.legacy: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_right.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.identity.is: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_right.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.identity.is_not: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_right.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.logical.and: arm 213's builder booleanOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.subtract.right: expression.binary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.logical.or: arm 213's builder booleanOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.subtract.right: expression.binary.logical has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.matrix_multiply: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.subtract.right: expression.unary has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
@@ -1243,7 +3843,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.membership.in: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.chain: comparators requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1251,7 +3851,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.membership.not_in: arm 218's builder comparisonOperator takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.equal: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1259,7 +3859,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.shift.left: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.greater: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1267,7 +3867,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.shift.right: arm 214's builder binaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.greater_equal: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1275,7 +3875,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call: arm 229's builder call takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.less: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1283,7 +3883,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.member: arm 229's builder call takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.less_equal: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1291,7 +3891,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.list: arm 238's builder list takes a forwarded input, which is not compiled yet"
+    "message": "expression.binary.comparison.not_equal: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1299,7 +3899,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.map: arm 241's builder dictionary takes a forwarded input, which is not compiled yet"
+    "message": "expression.binary.comparison.not_equal.legacy: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1307,7 +3907,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.set: arm 239's builder set takes a forwarded input, which is not compiled yet"
+    "message": "expression.binary.identity.is: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1315,7 +3915,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.tuple: arm 240's builder tuple takes a forwarded input, which is not compiled yet"
+    "message": "expression.binary.identity.is_not: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1323,7 +3923,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.generator: arm 246's builder generatorExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.membership.in: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1331,7 +3931,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.list: arm 243's builder listComprehension takes a config input, which is not compiled yet"
+    "message": "expression.binary.membership.not_in: right reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1339,7 +3939,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.map: arm 244's builder dictionaryComprehension takes a config input, which is not compiled yet"
+    "message": "expression.call: a container builder argumentListElements taking a elements input"
   },
   {
     "scope": "grammar",
@@ -1347,7 +3947,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.set: arm 245's builder setComprehension takes a config input, which is not compiled yet"
+    "message": "expression.call.member: a container builder argumentListElements taking a elements input"
   },
   {
     "scope": "grammar",
@@ -1355,7 +3955,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.conditional: arm 251's builder conditionalExpression takes a config input, which is not compiled yet"
+    "message": "expression.collection.set: elements requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1363,7 +3963,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.interpolation.conversion: arm 65's builder typeConversion takes a text input, which is not compiled yet"
+    "message": "expression.comprehension.generator: clauses requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1371,7 +3971,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.interpolation.format: arm 259's builder formatSpecifier takes a spread input, which is not compiled yet"
+    "message": "expression.comprehension.list: clauses requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1379,7 +3979,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda: 2 arms, whose pick is not compiled yet"
+    "message": "expression.comprehension.map: clauses requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1387,7 +3987,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.member: arm 226's builder attribute takes a config input, which is not compiled yet"
+    "message": "expression.comprehension.set: clauses requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1395,31 +3995,31 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.parenthesized: arm 247's builder parenthesizedExpression takes a direct input, which is not compiled yet"
+    "message": "expression.interpolation.conversion: arm 65's builder takes its text"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.slice: arm 228's builder slice takes a config input, which is not compiled yet"
+    "message": "expression.interpolation.expression: expression.binary has no arm that fits expression's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.subscript: arm 227's builder subscript takes a config input, which is not compiled yet"
+    "message": "expression.interpolation.expression: expression.binary.logical has no arm that fits expression's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.unary.bitwise_not: arm 215's builder unaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.interpolation.expression: expression.unary has no arm that fits expression's seats"
   },
   {
     "scope": "grammar",
@@ -1427,7 +4027,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.unary.negation: arm 215's builder unaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.lambda: a container builder parametersElements taking a elements input"
   },
   {
     "scope": "grammar",
@@ -1435,7 +4035,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.unary.not: arm 212's builder notOperator takes a direct input, which is not compiled yet"
+    "message": "expression.member: flag privateName spells text, a delimiter or an unset preset"
   },
   {
     "scope": "grammar",
@@ -1443,7 +4043,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.unary.plus: arm 215's builder unaryOperator takes a config input, which is not compiled yet"
+    "message": "expression.slice: a flattened container at expression"
   },
   {
     "scope": "grammar",
@@ -1451,7 +4051,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.yield: arm 225's builder yield takes a direct input, which is not compiled yet"
+    "message": "expression.subscript: a seat at index holding refined kinds"
   },
   {
     "scope": "grammar",
@@ -1459,7 +4059,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.yield.delegate: arm 225's builder yield takes a direct input, which is not compiled yet"
+    "message": "expression.yield.delegate: expression reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1467,7 +4067,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "file: arm 133's builder module takes a spread input, which is not compiled yet"
+    "message": "file: a container at definition that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1475,7 +4075,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier: arm 1's builder identifier takes a text input, which is not compiled yet"
+    "message": "identifier: arm 1's builder takes its text"
   },
   {
     "scope": "grammar",
@@ -1515,7 +4115,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.float: arm 101's builder floatPoint takes a config input, which is not compiled yet"
+    "message": "literal.number.integer.imaginary: arm 99's builder takes its text"
   },
   {
     "scope": "grammar",
@@ -1523,7 +4123,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.float.leading_point: arm 102's builder floatLeadingPoint takes a config input, which is not compiled yet"
+    "message": "literal.string: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1531,7 +4131,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.float.scientific: arm 103's builder floatScientific takes a config input, which is not compiled yet"
+    "message": "literal.string.bytes: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1539,7 +4139,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer: arm 100's builder integerDecimal.plain takes a text input, which is not compiled yet"
+    "message": "literal.string.bytes.multiline: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1547,7 +4147,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.big: arm 98's builder integerDecimalLong takes a direct input, which is not compiled yet"
+    "message": "literal.string.bytes.raw: arm 253 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -1555,7 +4155,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.big.binary: arm 94's builder integerBinaryLong takes a direct input, which is not compiled yet"
+    "message": "literal.string.bytes.raw.multiline: arm 253 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -1563,7 +4163,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.big.hex: arm 90's builder integerHexLong takes a direct input, which is not compiled yet"
+    "message": "literal.string.concatenated: strings requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1571,7 +4171,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.big.octal: 2 arms, whose pick is not compiled yet"
+    "message": "literal.string.escape: arm 109 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -1579,7 +4179,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.binary: arm 95's builder integerBinaryPlain takes a direct input, which is not compiled yet"
+    "message": "literal.string.interpolated: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1587,7 +4187,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.hex: arm 91's builder integerHexPlain takes a direct input, which is not compiled yet"
+    "message": "literal.string.interpolated.deferred: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1595,7 +4195,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.imaginary: arm 99's builder integerDecimal.imaginary takes a text input, which is not compiled yet"
+    "message": "literal.string.interpolated.deferred.multiline: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1603,7 +4203,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.octal: 2 arms, whose pick is not compiled yet"
+    "message": "literal.string.interpolated.deferred.raw: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1611,7 +4211,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "literal.string.interpolated.deferred.raw.multiline: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1619,7 +4219,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "literal.string.interpolated.multiline: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1627,7 +4227,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "literal.string.interpolated.raw: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1635,7 +4235,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "literal.string.interpolated.raw.multiline: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1643,7 +4243,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "literal.string.multiline: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1651,7 +4251,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.concatenated: arm 252's builder concatenatedString takes a spread input, which is not compiled yet"
+    "message": "literal.string.raw: arm 253 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -1659,7 +4259,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.escape: 8 arms, whose pick is not compiled yet"
+    "message": "literal.string.raw.multiline: arm 253 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -1667,7 +4267,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "literal.string.text: arm 125's builder takes its text"
   },
   {
     "scope": "grammar",
@@ -1675,151 +4275,159 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "literal.string.unicode: a container builder stringContent taking a spread input"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.as.pattern: pattern.complex has no arm that fits pattern's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.list.elements: expression.member has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.list.elements: expression.subscript has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.list.elements: identifier has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.list.elements: pattern.complex has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.rest.pattern: expression.member has no arm that fits pattern's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.rest.pattern: expression.subscript has no arm that fits pattern's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.raw: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.rest.map.pattern: expression.member has no arm that fits pattern's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.raw.multiline: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.rest.map.pattern: expression.subscript has no arm that fits pattern's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.text: arm 125's builder stringFragment takes a text input, which is not compiled yet"
+    "message": "pattern.or.left: literal.number.negative has no arm that fits left's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.unicode: arm 253's builder string takes a config input, which is not compiled yet"
+    "message": "pattern.or.left: pattern.complex has no arm that fits left's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.as: arm 190's builder caseAsPattern takes a config input, which is not compiled yet"
+    "message": "pattern.struct.fields: pattern.complex has no arm that fits fields's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.complex.add: arm 197's builder complexPattern takes a config input, which is not compiled yet"
+    "message": "pattern.struct.field.pattern: pattern.complex has no arm that fits pattern's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.complex.subtract: arm 197's builder complexPattern takes a config input, which is not compiled yet"
+    "message": "pattern.tuple.elements: expression.member has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.map: arm 192's builder dictPattern takes a forwarded input, which is not compiled yet"
+    "message": "pattern.tuple.elements: expression.subscript has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.or: arm 191's builder unionPattern takes a config input, which is not compiled yet"
+    "message": "pattern.tuple.elements: identifier has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.struct: arm 196's builder classPattern takes a config input, which is not compiled yet"
+    "message": "pattern.tuple.elements: pattern.complex has no arm that fits elements's seats"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.struct.field: arm 194's builder keywordPattern takes a config input, which is not compiled yet"
+    "message": "pattern.or.right: literal.number.negative has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.or.right: pattern.complex has no arm that fits right's seats"
   },
   {
     "scope": "grammar",
@@ -1835,7 +4443,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.assert: arm 146's builder assertStatement takes a spread input, which is not compiled yet"
+    "message": "statement.assert: expressions requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1856,10 +4464,26 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.delete: arm 151's builder deleteStatement takes a direct input, which is not compiled yet"
+    "message": "statement.delete.expressions: expression.binary has no arm that fits expressions's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.delete.expressions: expression.binary.logical has no arm that fits expressions's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.delete.expressions: expression.unary has no arm that fits expressions's seats"
   },
   {
     "scope": "grammar",
@@ -1872,10 +4496,26 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.exec: arm 177's builder execStatement takes a config input, which is not compiled yet"
+    "message": "statement.exec.inClauses: expression.binary has no arm that fits inClauses's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.exec.inClauses: expression.binary.logical has no arm that fits inClauses's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.exec.inClauses: expression.unary has no arm that fits inClauses's seats"
   },
   {
     "scope": "grammar",
@@ -1883,7 +4523,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.global: arm 175's builder globalStatement takes a spread input, which is not compiled yet"
+    "message": "statement.global: names requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1891,7 +4531,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.if: arm 156's builder ifStatement takes a config input, which is not compiled yet"
+    "message": "statement.if: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -1899,7 +4539,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import: arm 136's builder importStatement takes a forwarded input, which is not compiled yet"
+    "message": "statement.import: names requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1907,7 +4547,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.from: arm 140's builder importFromStatement takes a config input, which is not compiled yet"
+    "message": "statement.import.from: names requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1915,7 +4555,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.future: arm 139's builder futureImportStatement takes a direct input, which is not compiled yet"
+    "message": "statement.import.future: names requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1923,7 +4563,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.for_each: arm 162's builder forStatement takes a config input, which is not compiled yet"
+    "message": "statement.loop.for_each: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -1931,7 +4571,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.while: arm 163's builder whileStatement takes a config input, which is not compiled yet"
+    "message": "statement.loop.while: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -1939,7 +4579,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.match: arm 159's builder matchStatement takes a config input, which is not compiled yet"
+    "message": "statement.match: a seat at subject holding refined kinds"
   },
   {
     "scope": "grammar",
@@ -1947,7 +4587,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.nonlocal: arm 176's builder nonlocalStatement takes a spread input, which is not compiled yet"
+    "message": "statement.nonlocal: names requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1955,7 +4595,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.print: 2 arms, whose pick is not compiled yet"
+    "message": "statement.print: arguments requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1963,7 +4603,79 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.resource: arm 167's builder withStatement takes a config input, which is not compiled yet"
+    "message": "statement.resource: a pick by the render options' variant _suite"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.return.expression: expression.binary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.return.expression: expression.binary.logical has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.return.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw.expression: expression.binary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw.expression: expression.binary.logical has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw.expression: expression.unary has no arm that fits expression's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw.cause: expression.binary has no arm that fits cause's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw.cause: expression.binary.logical has no arm that fits cause's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw.cause: expression.unary has no arm that fits cause's seats"
   },
   {
     "scope": "grammar",
@@ -1971,7 +4683,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.return: arm 150's builder returnStatement takes a direct input, which is not compiled yet"
+    "message": "statement.try: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -1979,7 +4691,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.throw: arm 152's builder raiseStatement takes a config input, which is not compiled yet"
+    "message": "type.generic: typeArguments reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1987,7 +4699,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.try: arm 164's builder tryStatement takes a config input, which is not compiled yet"
+    "message": "type.nullable: type reaches its slot in 3 steps"
   },
   {
     "scope": "grammar",
@@ -1995,7 +4707,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.constrained: arm 235's builder constrainedType takes a config input, which is not compiled yet"
+    "message": "literal.number.float: a path that picks its arm by its value"
   },
   {
     "scope": "grammar",
@@ -2003,7 +4715,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic: arm 233's builder genericType takes a config input, which is not compiled yet"
+    "message": "literal.number.float.leading_point: a path that picks its arm by its value"
   },
   {
     "scope": "grammar",
@@ -2011,7 +4723,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.nullable: arm 233's builder genericType takes a config input, which is not compiled yet"
+    "message": "literal.number.float.scientific: a path that picks its arm by its value"
   },
   {
     "scope": "grammar",
@@ -2019,7 +4731,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.rest: arm 232's builder splatType takes a direct input, which is not compiled yet"
+    "message": "literal.number.integer: a path that picks its arm by its value"
   },
   {
     "scope": "grammar",
@@ -2027,6 +4739,54 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.union: arm 234's builder unionType takes a config input, which is not compiled yet"
+    "message": "literal.number.integer.big: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.big.binary: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.big.hex: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.big.octal: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.binary: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.hex: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.octal: a path that picks its arm by its value"
   }
 ]

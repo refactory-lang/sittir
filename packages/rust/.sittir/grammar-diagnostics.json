@@ -452,7 +452,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "attribute: arm 192's builder attribute takes a config input, which is not compiled yet"
+    "message": "attribute: input reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -460,79 +460,15 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.bounds.higher_ranked: arm 217's builder higherRankedTraitBound takes a config input, which is not compiled yet"
+    "message": "clause.bounds.higher_ranked: typeParameters requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.bounds.removed: arm 218's builder removedTraitBound takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.bounds.use: arm 249's builder useBounds takes a forwarded input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.else: arm 291's builder elseClause takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.alias: arm 228's builder useAsClause takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.list: arm 227's builder useList takes a forwarded input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.list.scoped: arm 226's builder scopedUseList takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.wildcard: arm 229's builder useWildcard takes a forwarded input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.let: arm 288's builder letCondition takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.let.chain: arm 289's builder letChain takes a config input, which is not compiled yet"
+    "message": "identifier.qualified.qualifier: type.generic has no arm that fits qualifier's seats"
   },
   {
     "scope": "grammar",
@@ -540,7 +476,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.macro.rule: arm 181's builder macroRule takes a config input, which is not compiled yet"
+    "message": "clause.let: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -548,7 +484,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.where: arm 211's builder whereClause takes a forwarded input, which is not compiled yet"
+    "message": "clause.let.chain: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -556,7 +492,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.where.predicate: arm 212's builder wherePredicate takes a config input, which is not compiled yet"
+    "message": "clause.where.predicate: bounds reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -564,7 +500,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block: arm 340's builder blockComment takes a direct input, which is not compiled yet"
+    "message": "comment.block: arm 340 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -572,7 +508,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block.doc: arm 340's builder blockComment takes a direct input, which is not compiled yet"
+    "message": "comment.block.doc: arm 340 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -580,7 +516,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block.doc.inner: arm 340's builder blockComment takes a direct input, which is not compiled yet"
+    "message": "comment.block.doc.inner: arm 340 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -588,7 +524,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line: 2 arms, whose pick is not compiled yet"
+    "message": "comment.line: a preset at content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -596,7 +532,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line.doc: arm 337's builder lineComment takes a direct input, which is not compiled yet"
+    "message": "comment.line.doc: arm 337 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -604,7 +540,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line.doc.inner: arm 337's builder lineComment takes a direct input, which is not compiled yet"
+    "message": "comment.line.doc.inner: arm 337 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -612,7 +548,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant: arm 205's builder constItem takes a config input, which is not compiled yet"
+    "message": "declaration.constant: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -620,7 +556,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.private: arm 205's builder constItem takes a config input, which is not compiled yet"
+    "message": "declaration.constant.private: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -628,7 +564,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public: arm 205's builder constItem takes a config input, which is not compiled yet"
+    "message": "declaration.constant.public: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -636,7 +572,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public.internal: arm 205's builder constItem takes a config input, which is not compiled yet"
+    "message": "declaration.constant.public.internal: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -644,7 +580,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public.parent: arm 205's builder constItem takes a config input, which is not compiled yet"
+    "message": "declaration.constant.public.parent: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -652,7 +588,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constant.public.restricted: arm 205's builder constItem takes a config input, which is not compiled yet"
+    "message": "declaration.constant.public.restricted: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -660,7 +596,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum: arm 198's builder enumItem takes a config input, which is not compiled yet"
+    "message": "declaration.enum: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -668,7 +604,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.private: arm 198's builder enumItem takes a config input, which is not compiled yet"
+    "message": "declaration.enum.private: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -676,7 +612,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public: arm 198's builder enumItem takes a config input, which is not compiled yet"
+    "message": "declaration.enum.public: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -684,7 +620,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.internal: arm 198's builder enumItem takes a config input, which is not compiled yet"
+    "message": "declaration.enum.public.internal: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -692,7 +628,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.parent: arm 198's builder enumItem takes a config input, which is not compiled yet"
+    "message": "declaration.enum.public.parent: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -700,7 +636,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.restricted: arm 198's builder enumItem takes a config input, which is not compiled yet"
+    "message": "declaration.enum.public.restricted: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -708,7 +644,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member: body is a list with no list container seat"
   },
   {
     "scope": "grammar",
@@ -716,7 +652,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.private: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.private: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -724,7 +660,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.public: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -732,7 +668,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.internal: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.public.internal: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -740,7 +676,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.parent: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.public.parent: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -748,7 +684,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.restricted: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.public.restricted: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -756,7 +692,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.struct: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -764,7 +700,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.private: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.struct.private: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -772,7 +708,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.struct.public: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -780,7 +716,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.internal: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.struct.public.internal: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -788,7 +724,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.parent: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.struct.public.parent: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -796,7 +732,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.restricted: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.struct.public.restricted: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -804,7 +740,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.tuple: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -812,7 +748,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.private: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.tuple.private: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -820,7 +756,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.tuple.public: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -828,7 +764,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.internal: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.tuple.public.internal: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -836,7 +772,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.parent: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.tuple.public.parent: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -844,7 +780,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.restricted: arm 200's builder enumVariant takes a config input, which is not compiled yet"
+    "message": "declaration.enum_member.tuple.public.restricted: a container at fieldDeclaration that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -852,7 +788,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.extension: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.extension: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -860,7 +796,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.extension.conformance: arm 377's builder implItemBody takes a config input, which is not compiled yet"
+    "message": "declaration.extension.conformance: arm 377 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -868,7 +804,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function: arm 208's builder functionItem takes a config input, which is not compiled yet"
+    "message": "declaration.function: arm 208 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -876,7 +812,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.private: arm 208's builder functionItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.private: arm 208 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -884,7 +820,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.public: arm 208's builder functionItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.public: arm 208 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -892,7 +828,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.public.internal: arm 208's builder functionItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.public.internal: arm 208 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -900,7 +836,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.public.parent: arm 208's builder functionItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.public.parent: arm 208 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -908,7 +844,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.public.restricted: arm 208's builder functionItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.public.restricted: arm 208 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -916,7 +852,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature: arm 209's builder functionSignatureItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.signature: arm 209 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -924,7 +860,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature.private: arm 209's builder functionSignatureItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.signature.private: arm 209 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -932,7 +868,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature.public: arm 209's builder functionSignatureItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.signature.public: arm 209 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -940,7 +876,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature.public.internal: arm 209's builder functionSignatureItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.signature.public.internal: arm 209 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -948,7 +884,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature.public.parent: arm 209's builder functionSignatureItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.signature.public.parent: arm 209 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -956,7 +892,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature.public.restricted: arm 209's builder functionSignatureItem takes a config input, which is not compiled yet"
+    "message": "declaration.function.signature.public.restricted: arm 209 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -964,7 +900,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait: arm 214's builder traitItem takes a config input, which is not compiled yet"
+    "message": "declaration.interface.trait: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -972,7 +908,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.private: arm 214's builder traitItem takes a config input, which is not compiled yet"
+    "message": "declaration.interface.trait.private: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -980,7 +916,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public: arm 214's builder traitItem takes a config input, which is not compiled yet"
+    "message": "declaration.interface.trait.public: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -988,7 +924,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.internal: arm 214's builder traitItem takes a config input, which is not compiled yet"
+    "message": "declaration.interface.trait.public.internal: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -996,7 +932,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.parent: arm 214's builder traitItem takes a config input, which is not compiled yet"
+    "message": "declaration.interface.trait.public.parent: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1004,7 +940,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.restricted: arm 214's builder traitItem takes a config input, which is not compiled yet"
+    "message": "declaration.interface.trait.public.restricted: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1012,7 +948,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.macro: 3 arms, whose pick is not compiled yet"
+    "message": "declaration.macro: a pick by the render options' variant macro_definition"
   },
   {
     "scope": "grammar",
@@ -1020,7 +956,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.macro.brace: arm 418's builder macroDefinitionBrace takes a config input, which is not compiled yet"
+    "message": "declaration.method: arm 480 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1028,7 +964,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.macro.bracket: arm 417's builder macroDefinitionBracket takes a config input, which is not compiled yet"
+    "message": "declaration.method.private: arm 480 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1036,7 +972,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.macro.paren: arm 416's builder macroDefinitionParen takes a config input, which is not compiled yet"
+    "message": "declaration.method.public: arm 480 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1044,7 +980,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 480's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.public.internal: arm 480 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1052,7 +988,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private: arm 480's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.public.parent: arm 480 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1060,7 +996,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public: arm 480's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.public.restricted: arm 480 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1068,7 +1004,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.internal: arm 480's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.signature: arm 483 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1076,7 +1012,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.parent: arm 480's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.signature.private: arm 483 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1084,7 +1020,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.restricted: arm 480's builder methodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.signature.public: arm 483 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1092,7 +1028,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature: arm 483's builder signatureMethodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.signature.public.internal: arm 483 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1100,7 +1036,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.private: arm 483's builder signatureMethodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.signature.public.parent: arm 483 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1108,7 +1044,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public: arm 483's builder signatureMethodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.method.signature.public.restricted: arm 483 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1116,7 +1052,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public.internal: arm 483's builder signatureMethodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.module: a container at attribute that sets flags"
   },
   {
     "scope": "grammar",
@@ -1124,7 +1060,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public.parent: arm 483's builder signatureMethodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.module.foreign: a container at attribute that sets flags"
   },
   {
     "scope": "grammar",
@@ -1132,7 +1068,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public.restricted: arm 483's builder signatureMethodDeclaration takes a config input, which is not compiled yet"
+    "message": "declaration.module.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1140,7 +1076,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.module.public: a preset at visibilityModifier.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1148,7 +1084,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.foreign: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.module.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1156,7 +1092,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.private: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.module.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1164,7 +1100,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.public: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.module.public.restricted: scope reaches its slot in 5 steps"
   },
   {
     "scope": "grammar",
@@ -1172,7 +1108,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.public.internal: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.parameter.variadic: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1180,7 +1116,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.public.parent: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.struct: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1188,7 +1124,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.public.restricted: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.struct.private: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1196,7 +1132,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.parameter.variadic: arm 232's builder variadicParameter takes a config input, which is not compiled yet"
+    "message": "declaration.struct.public: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1204,7 +1140,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct: 3 arms, whose pick is not compiled yet"
+    "message": "declaration.struct.public.internal: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1212,7 +1148,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.private: arm 423's builder structItemBrace takes a config input, which is not compiled yet"
+    "message": "declaration.struct.public.parent: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1220,7 +1156,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public: arm 423's builder structItemBrace takes a config input, which is not compiled yet"
+    "message": "declaration.struct.public.restricted: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1228,7 +1164,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.internal: arm 423's builder structItemBrace takes a config input, which is not compiled yet"
+    "message": "declaration.struct.tuple: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1236,7 +1172,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.parent: arm 423's builder structItemBrace takes a config input, which is not compiled yet"
+    "message": "declaration.struct.tuple.private: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1244,7 +1180,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.restricted: arm 423's builder structItemBrace takes a config input, which is not compiled yet"
+    "message": "declaration.struct.tuple.public: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1252,7 +1188,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple: arm 424's builder structItemTuple takes a config input, which is not compiled yet"
+    "message": "declaration.struct.tuple.public.internal: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1260,7 +1196,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.private: arm 424's builder structItemTuple takes a config input, which is not compiled yet"
+    "message": "declaration.struct.tuple.public.parent: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1268,7 +1204,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public: arm 424's builder structItemTuple takes a config input, which is not compiled yet"
+    "message": "declaration.struct.tuple.public.restricted: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1276,7 +1212,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.internal: arm 424's builder structItemTuple takes a config input, which is not compiled yet"
+    "message": "declaration.struct.unit: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1284,7 +1220,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.parent: arm 424's builder structItemTuple takes a config input, which is not compiled yet"
+    "message": "declaration.struct.unit.private: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1292,7 +1228,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.restricted: arm 424's builder structItemTuple takes a config input, which is not compiled yet"
+    "message": "declaration.struct.unit.public: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1300,7 +1236,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit: arm 425's builder structItemUnit takes a config input, which is not compiled yet"
+    "message": "declaration.struct.unit.public.internal: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1308,7 +1244,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.private: arm 425's builder structItemUnit takes a config input, which is not compiled yet"
+    "message": "declaration.struct.unit.public.parent: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1316,7 +1252,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public: arm 425's builder structItemUnit takes a config input, which is not compiled yet"
+    "message": "declaration.struct.unit.public.restricted: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1324,7 +1260,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.internal: arm 425's builder structItemUnit takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1332,7 +1268,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.parent: arm 425's builder structItemUnit takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias.associated: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1340,7 +1276,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.restricted: arm 425's builder structItemUnit takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias.private: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1348,7 +1284,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias: arm 207's builder typeItem takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias.public: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1356,7 +1292,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.associated: arm 215's builder associatedType takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias.public.internal: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1364,7 +1300,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.private: arm 207's builder typeItem takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias.public.parent: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1372,7 +1308,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public: arm 207's builder typeItem takes a config input, which is not compiled yet"
+    "message": "declaration.type_alias.public.restricted: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1380,7 +1316,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.internal: arm 207's builder typeItem takes a config input, which is not compiled yet"
+    "message": "declaration.type_parameter: bounds reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1388,7 +1324,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.parent: arm 207's builder typeItem takes a config input, which is not compiled yet"
+    "message": "declaration.type_parameter.lifetime: bounds reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -1396,7 +1332,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.restricted: arm 207's builder typeItem takes a config input, which is not compiled yet"
+    "message": "declaration.type_parameter.value: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1404,7 +1340,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter: arm 221's builder typeParameter takes a config input, which is not compiled yet"
+    "message": "declaration.union: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1412,7 +1348,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter.lifetime: arm 222's builder lifetimeParameter takes a config input, which is not compiled yet"
+    "message": "declaration.union.private: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1420,7 +1356,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter.value: arm 220's builder constParameter takes a config input, which is not compiled yet"
+    "message": "declaration.union.public: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1428,7 +1364,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union: arm 197's builder unionItem takes a config input, which is not compiled yet"
+    "message": "declaration.union.public.internal: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1436,7 +1372,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.private: arm 197's builder unionItem takes a config input, which is not compiled yet"
+    "message": "declaration.union.public.parent: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1444,7 +1380,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public: arm 197's builder unionItem takes a config input, which is not compiled yet"
+    "message": "declaration.union.public.restricted: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -1452,7 +1388,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.internal: arm 197's builder unionItem takes a config input, which is not compiled yet"
+    "message": "declaration.variable: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1460,7 +1396,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.parent: arm 197's builder unionItem takes a config input, which is not compiled yet"
+    "message": "declaration.variable.private: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1468,7 +1404,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.restricted: arm 197's builder unionItem takes a config input, which is not compiled yet"
+    "message": "declaration.variable.public: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1476,7 +1412,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable: 2 arms, whose pick is not compiled yet"
+    "message": "declaration.variable.public.internal: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1484,7 +1420,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.private: arm 206's builder staticItem takes a config input, which is not compiled yet"
+    "message": "declaration.variable.public.parent: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1492,7 +1428,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public: arm 206's builder staticItem takes a config input, which is not compiled yet"
+    "message": "declaration.variable.public.restricted: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1500,7 +1436,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public.internal: arm 206's builder staticItem takes a config input, which is not compiled yet"
+    "message": "element.attributed: attributes requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1508,7 +1444,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public.parent: arm 206's builder staticItem takes a config input, which is not compiled yet"
+    "message": "element.macro.fragment: arm 11 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -1516,7 +1452,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.public.restricted: arm 206's builder staticItem takes a config input, which is not compiled yet"
+    "message": "element.macro.token_repetition: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1524,7 +1460,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.attributed: arm 363's builder attributedElement takes a config input, which is not compiled yet"
+    "message": "element.macro.token_repetition.pattern: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1532,7 +1468,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.fragment: 15 arms, whose pick is not compiled yet"
+    "message": "element.macro.token_tree: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1540,7 +1476,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_binding: arm 184's builder tokenBindingPattern takes a config input, which is not compiled yet"
+    "message": "element.macro.token_tree.brace: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1548,7 +1484,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_repetition: arm 188's builder tokenRepetition takes a config input, which is not compiled yet"
+    "message": "element.macro.token_tree.bracket: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1556,7 +1492,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_repetition.pattern: arm 185's builder tokenRepetitionPattern takes a config input, which is not compiled yet"
+    "message": "element.macro.token_tree.delimited: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1564,7 +1500,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree: 3 arms, whose pick is not compiled yet"
+    "message": "element.macro.token_tree.delimited.brace: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1572,7 +1508,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.brace: arm 410's builder tokenTreeBrace takes a spread input, which is not compiled yet"
+    "message": "element.macro.token_tree.delimited.bracket: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1580,7 +1516,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.bracket: arm 409's builder tokenTreeBracket takes a spread input, which is not compiled yet"
+    "message": "element.macro.token_tree.delimited.paren: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1588,7 +1524,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.delimited: 3 arms, whose pick is not compiled yet"
+    "message": "element.macro.token_tree.paren: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1596,7 +1532,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.delimited.brace: arm 413's builder delimTokenTreeBrace takes a spread input, which is not compiled yet"
+    "message": "element.macro.token_tree.pattern: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1604,7 +1540,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.delimited.bracket: arm 412's builder delimTokenTreeBracket takes a spread input, which is not compiled yet"
+    "message": "element.macro.token_tree.pattern.brace: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1612,7 +1548,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.delimited.paren: arm 411's builder delimTokenTreeParen takes a spread input, which is not compiled yet"
+    "message": "element.macro.token_tree.pattern.bracket: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1620,7 +1556,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.paren: arm 408's builder tokenTreeParen takes a spread input, which is not compiled yet"
+    "message": "element.macro.token_tree.pattern.paren: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1628,39 +1564,39 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.pattern: 3 arms, whose pick is not compiled yet"
+    "message": "element.struct.base: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.pattern.brace: arm 407's builder tokenTreePatternBrace takes a spread input, which is not compiled yet"
+    "message": "element.struct.field.name: literal.number.integer has no arm that fits name's seats"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.pattern.bracket: arm 406's builder tokenTreePatternBracket takes a spread input, which is not compiled yet"
+    "message": "element.struct.field.name: literal.number.integer.binary has no arm that fits name's seats"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_tree.pattern.paren: arm 405's builder tokenTreePatternParen takes a spread input, which is not compiled yet"
+    "message": "element.struct.field.name: literal.number.integer.hex has no arm that fits name's seats"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unfit-member",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.base: arm 286's builder baseFieldInitializer takes a direct input, which is not compiled yet"
+    "message": "element.struct.field.name: literal.number.integer.octal has no arm that fits name's seats"
   },
   {
     "scope": "grammar",
@@ -1668,7 +1604,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.field: 2 arms, whose pick is not compiled yet"
+    "message": "element.struct.field: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1684,7 +1620,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.type_binding: arm 251's builder typeBinding takes a config input, which is not compiled yet"
+    "message": "expression.assignment: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1692,7 +1628,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment: arm 271's builder assignmentExpression takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.add: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1700,7 +1636,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.add: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_and: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1708,7 +1644,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_or: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1716,7 +1652,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.bitwise_xor: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1724,7 +1660,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.divide: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1732,7 +1668,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.divide: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.modulo: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1740,7 +1676,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.modulo: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.multiply: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1748,7 +1684,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.multiply: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_left: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1756,7 +1692,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.shift_left: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.shift_right: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1764,7 +1700,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.shift_right: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.assignment.compound.subtract: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1772,7 +1708,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.subtract: arm 272's builder compoundAssignmentExpr takes a config input, which is not compiled yet"
+    "message": "expression.await: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1780,7 +1716,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.await: arm 307's builder awaitExpression takes a direct input, which is not compiled yet"
+    "message": "expression.binary.arithmetic.add: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1788,7 +1724,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.add: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.arithmetic.divide: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1796,7 +1732,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.divide: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.arithmetic.modulo: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1804,7 +1740,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.modulo: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.arithmetic.multiply: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1812,7 +1748,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.multiply: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.arithmetic.subtract: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1820,7 +1756,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.arithmetic.subtract: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.bitwise.and: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1828,7 +1764,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.and: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.bitwise.or: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1836,7 +1772,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.or: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.bitwise.xor: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1844,7 +1780,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.bitwise.xor: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.equal: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1852,7 +1788,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.equal: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.greater: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1860,7 +1796,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.greater_equal: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1868,7 +1804,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater_equal: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.less: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1876,7 +1812,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.less_equal: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1884,7 +1820,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less_equal: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.comparison.not_equal: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1892,7 +1828,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.not_equal: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.logical.and: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1900,7 +1836,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.logical.and: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.logical.or: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1908,7 +1844,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.logical.or: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.shift.left: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1916,7 +1852,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.shift.left: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.binary.shift.right: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1924,7 +1860,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.shift.right: arm 270's builder binaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.call: arm 276 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1932,7 +1868,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.block.async: arm 310's builder asyncBlock takes a config input, which is not compiled yet"
+    "message": "expression.call.member: arm 276 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1940,7 +1876,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.block.const: arm 300's builder constBlock takes a forwarded input, which is not compiled yet"
+    "message": "expression.call.qualified: arm 276 builds through one of several forms"
   },
   {
     "scope": "grammar",
@@ -1948,7 +1884,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.block.generator: arm 311's builder genBlock takes a config input, which is not compiled yet"
+    "message": "expression.cast.conversion: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1956,7 +1892,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.block.try: arm 312's builder tryBlock takes a forwarded input, which is not compiled yet"
+    "message": "expression.collection.list: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -1964,7 +1900,23 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.block.unsafe: arm 309's builder unsafeBlock takes a forwarded input, which is not compiled yet"
+    "message": "expression.collection.list.repeat: a pick by the render options' variant char_literal"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.bracketed has no arm that fits qualifier's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.generic has no arm that fits qualifier's seats"
   },
   {
     "scope": "grammar",
@@ -1972,7 +1924,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call: arm 276's builder callExpression takes a config input, which is not compiled yet"
+    "message": "expression.collection.tuple: elements requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1980,7 +1932,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.macro: arm 259's builder macroInvocation takes a config input, which is not compiled yet"
+    "message": "expression.instantiation: typeArguments requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1988,7 +1940,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.member: arm 276's builder callExpression takes a config input, which is not compiled yet"
+    "message": "expression.lambda: a container builder closureParameters taking a spread input"
   },
   {
     "scope": "grammar",
@@ -1996,7 +1948,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.qualified: arm 276's builder callExpression takes a config input, which is not compiled yet"
+    "message": "expression.member: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2004,7 +1956,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.cast.conversion: arm 273's builder typeCastExpression takes a config input, which is not compiled yet"
+    "message": "expression.parenthesized: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2012,7 +1964,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.list: arm 436's builder arrayExpressionList takes a forwarded input, which is not compiled yet"
+    "message": "expression.propagate: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2020,7 +1972,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.list.repeat: arm 435's builder arrayExpressionSemi takes a config input, which is not compiled yet"
+    "message": "expression.range: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2028,7 +1980,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.struct: arm 282's builder structExpression takes a config input, which is not compiled yet"
+    "message": "expression.range.exclusive: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2036,7 +1988,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.tuple: arm 280's builder tupleExpression takes a forwarded input, which is not compiled yet"
+    "message": "expression.range.inclusive: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2044,7 +1996,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.instantiation: arm 245's builder genericFunction takes a config input, which is not compiled yet"
+    "message": "expression.range.inclusive.legacy: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2052,7 +2004,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda: 2 arms, whose pick is not compiled yet"
+    "message": "expression.reference: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2060,7 +2012,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.member: arm 308's builder fieldExpression takes a config input, which is not compiled yet"
+    "message": "expression.subscript: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2068,7 +2020,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.parenthesized: arm 279's builder parenthesizedExpression takes a direct input, which is not compiled yet"
+    "message": "expression.unary.deref: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2076,7 +2028,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.propagate: arm 268's builder tryExpression takes a direct input, which is not compiled yet"
+    "message": "expression.unary.negation: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2084,71 +2036,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.range: 3 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.range.exclusive: 4 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.range.inclusive: arm 390's builder rangeExpressionBinary takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.range.inclusive.legacy: arm 390's builder rangeExpressionBinary takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.reference: 4 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.subscript: arm 306's builder indexExpression takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.deref: arm 267's builder unaryExpression takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.negation: arm 267's builder unaryExpression takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.not: arm 267's builder unaryExpression takes a config input, which is not compiled yet"
+    "message": "expression.unary.not: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2164,7 +2052,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.yield: arm 275's builder yieldExpression takes a direct input, which is not compiled yet"
+    "message": "expression.yield: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2172,7 +2060,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "file: arm 176's builder sourceFile takes a config input, which is not compiled yet"
+    "message": "file: shebang reaches its slot in 2 steps"
   },
   {
     "scope": "grammar",
@@ -2180,23 +2068,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.label: arm 303's builder label takes a forwarded input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.lifetime: arm 239's builder lifetime takes a forwarded input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.metavariable: arm 127's builder metavariable takes a direct input, which is not compiled yet"
+    "message": "identifier.metavariable: arm 127 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2212,7 +2084,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean: 2 arms, whose pick is not compiled yet"
+    "message": "literal.boolean: arm 116 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2236,7 +2108,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.character: 6 arms, whose pick is not compiled yet"
+    "message": "literal.character: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2244,7 +2116,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.float: arm 162's builder floatLiteral takes a text input, which is not compiled yet"
+    "message": "literal.string: a preset at stringOpen that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2252,7 +2124,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer: arm 141's builder integerLiteralDecimal takes a config input, which is not compiled yet"
+    "message": "literal.string.bytes: a preset at stringOpen that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2260,7 +2132,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.binary: arm 143's builder integerLiteralBinary takes a config input, which is not compiled yet"
+    "message": "literal.string.bytes.raw: arm 333 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2268,7 +2140,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.hex: arm 142's builder integerLiteralHex takes a config input, which is not compiled yet"
+    "message": "literal.string.c: a preset at stringOpen that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2276,7 +2148,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.octal: arm 144's builder integerLiteralOctal takes a config input, which is not compiled yet"
+    "message": "literal.string.c.raw: arm 333 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2284,7 +2156,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.negative: arm 330's builder negativeLiteral takes a direct input, which is not compiled yet"
+    "message": "literal.string.escape: arm 151 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2292,7 +2164,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string: arm 332's builder stringLiteral takes a config input, which is not compiled yet"
+    "message": "literal.string.raw: arm 333 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2300,7 +2172,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes: arm 332's builder stringLiteral takes a config input, which is not compiled yet"
+    "message": "modifier.visibility.private: arm 381 mounts into its holder"
   },
   {
     "scope": "grammar",
@@ -2308,7 +2180,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw: arm 333's builder rawStringLiteral takes a config input, which is not compiled yet"
+    "message": "modifier.visibility.public: arm 381 mounts into its holder"
   },
   {
     "scope": "grammar",
@@ -2316,7 +2188,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.c: arm 332's builder stringLiteral takes a config input, which is not compiled yet"
+    "message": "modifier.visibility.public.internal: arm 477 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2324,7 +2196,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.c.raw: arm 333's builder rawStringLiteral takes a config input, which is not compiled yet"
+    "message": "modifier.visibility.public.parent: arm 381 mounts into its holder"
   },
   {
     "scope": "grammar",
@@ -2332,7 +2204,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.escape: 4 arms, whose pick is not compiled yet"
+    "message": "modifier.visibility.public.restricted: arm 381 mounts into its holder"
   },
   {
     "scope": "grammar",
@@ -2340,7 +2212,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.raw: arm 333's builder rawStringLiteral takes a config input, which is not compiled yet"
+    "message": "pattern.as: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2348,7 +2220,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.extern: arm 234's builder externModifier takes a forwarded input, which is not compiled yet"
+    "message": "pattern.generic: typeArguments requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2356,7 +2228,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.private: arm 381's builder visibilityModifier.pub takes a forwarded input, which is not compiled yet"
+    "message": "pattern.list: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2364,7 +2236,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.public: arm 381's builder visibilityModifier.pub takes a forwarded input, which is not compiled yet"
+    "message": "pattern.mutable: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2372,7 +2244,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.public.internal: 2 arms, whose pick is not compiled yet"
+    "message": "pattern.or: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2380,7 +2252,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.public.parent: arm 381's builder visibilityModifier.pub takes a forwarded input, which is not compiled yet"
+    "message": "pattern.range.exclusive: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2388,7 +2260,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.public.restricted: arm 381's builder visibilityModifier.pub takes a forwarded input, which is not compiled yet"
+    "message": "pattern.range.inclusive: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2396,7 +2268,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.as: arm 325's builder capturedPattern takes a config input, which is not compiled yet"
+    "message": "pattern.range.inclusive.legacy: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2404,7 +2276,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.generic: arm 315's builder genericPattern takes a config input, which is not compiled yet"
+    "message": "pattern.reference: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2412,7 +2284,271 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list: arm 317's builder slicePattern takes a forwarded input, which is not compiled yet"
+    "message": "pattern.reference.value: a pick by the render options' variant char_literal"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.type: type.generic.turbofish has no arm that fits type's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: expression.block.const has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: expression.call.macro has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: identifier has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: identifier.qualified has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.boolean.false has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.boolean.true has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.character has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.number.float has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.number.integer has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.number.integer.binary has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.number.integer.hex has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.number.integer.octal has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.number.negative has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.string has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.string.bytes has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.string.bytes.raw has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.string.c has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.string.c.raw has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: literal.string.raw has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.as has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.generic has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.list has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.mutable has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.or has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.range has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.range.exclusive has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.range.inclusive has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.range.inclusive.legacy has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.reference has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.reference.value has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.struct has no arm that fits fields's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.fields: pattern.tuple has no arm that fits fields's seats"
   },
   {
     "scope": "grammar",
@@ -2420,7 +2556,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.mutable: arm 322's builder mutPattern takes a direct input, which is not compiled yet"
+    "message": "pattern.struct: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2428,63 +2564,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.or: 2 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.range.exclusive: 2 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.range.inclusive: 2 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.range.inclusive.legacy: arm 422's builder rangePatternWithLeft takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.reference: arm 324's builder refPattern takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.reference.value: arm 326's builder referencePattern takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct: 2 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.field: 2 arms, whose pick is not compiled yet"
+    "message": "pattern.struct.field: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2500,7 +2580,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple: arm 316's builder tuplePattern takes a forwarded input, which is not compiled yet"
+    "message": "pattern.tuple: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2516,7 +2596,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block: arm 313's builder block takes a config input, which is not compiled yet"
+    "message": "statement.block: a container at expression standing in for others"
   },
   {
     "scope": "grammar",
@@ -2524,15 +2604,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.break: arm 304's builder breakExpression takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.continue: arm 305's builder continueExpression takes a forwarded input, which is not compiled yet"
+    "message": "statement.break: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2548,7 +2620,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.if: arm 287's builder ifExpression takes a config input, which is not compiled yet"
+    "message": "statement.if: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2556,7 +2628,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import: arm 224's builder useDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.package.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2564,7 +2636,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.package: arm 204's builder externCrateDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.package.public: a preset at visibilityModifier.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2572,7 +2644,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.package.private: arm 204's builder externCrateDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.package.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2580,7 +2652,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.package.public: arm 204's builder externCrateDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.package.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2588,7 +2660,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.package.public.internal: arm 204's builder externCrateDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.package.public.restricted: scope reaches its slot in 5 steps"
   },
   {
     "scope": "grammar",
@@ -2596,7 +2668,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.package.public.parent: arm 204's builder externCrateDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2604,7 +2676,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.package.public.restricted: arm 204's builder externCrateDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.public: a preset at visibilityModifier.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2612,7 +2684,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.private: arm 224's builder useDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2620,7 +2692,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.public: arm 224's builder useDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -2628,7 +2700,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.public.internal: arm 224's builder useDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.import.public.restricted: scope reaches its slot in 5 steps"
   },
   {
     "scope": "grammar",
@@ -2636,7 +2708,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.public.parent: arm 224's builder useDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.loop.for_each: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2644,7 +2716,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.public.restricted: arm 224's builder useDeclaration takes a config input, which is not compiled yet"
+    "message": "statement.loop.while: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2652,7 +2724,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop: arm 298's builder loopExpression takes a config input, which is not compiled yet"
+    "message": "statement.match: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2660,7 +2732,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.for_each: arm 299's builder forExpression takes a config input, which is not compiled yet"
+    "message": "statement.return: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2668,7 +2740,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.while: arm 297's builder whileExpression takes a config input, which is not compiled yet"
+    "message": "type.abstract: a container at content that holds members of its own"
   },
   {
     "scope": "grammar",
@@ -2676,7 +2748,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.match: arm 292's builder matchExpression takes a config input, which is not compiled yet"
+    "message": "type.array: a pick by the render options' variant char_literal"
   },
   {
     "scope": "grammar",
@@ -2684,7 +2756,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.return: arm 274's builder returnExpression takes a direct input, which is not compiled yet"
+    "message": "type.function: parameters reaches its slot in 3 steps"
   },
   {
     "scope": "grammar",
@@ -2692,7 +2764,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.abstract: arm 255's builder abstractType takes a config input, which is not compiled yet"
+    "message": "type.generic: typeArguments requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2700,7 +2772,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.array: arm 240's builder arrayType takes a config input, which is not compiled yet"
+    "message": "type.generic.turbofish: typeArguments requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2708,63 +2780,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.bounded: arm 248's builder boundedType takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.bracketed: arm 237's builder bracketedType takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.dynamic: arm 256's builder dynamicType takes a direct input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.function: 2 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.generic: arm 246's builder genericType takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.generic.turbofish: arm 247's builder genericTypeWithTurbofish takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.pointer: 2 arms, whose pick is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.primitive: 17 arms, whose pick is not compiled yet"
+    "message": "type.primitive: arm 58 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2804,7 +2820,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int128: 2 arms, whose pick is not compiled yet"
+    "message": "type.primitive.integral.int128: arm 66 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2812,7 +2828,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int16: 2 arms, whose pick is not compiled yet"
+    "message": "type.primitive.integral.int16: arm 60 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2820,7 +2836,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int32: 2 arms, whose pick is not compiled yet"
+    "message": "type.primitive.integral.int32: arm 62 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2828,7 +2844,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int64: 2 arms, whose pick is not compiled yet"
+    "message": "type.primitive.integral.int64: arm 64 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2836,7 +2852,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int8: 2 arms, whose pick is not compiled yet"
+    "message": "type.primitive.integral.int8: arm 58 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2844,7 +2860,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.size: 2 arms, whose pick is not compiled yet"
+    "message": "type.primitive.integral.size: arm 68 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -2868,23 +2884,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.qualified: arm 238's builder qualifiedType takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.reference: arm 252's builder referenceType takes a config input, which is not compiled yet"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.tuple: arm 243's builder tupleType takes a forwarded input, which is not compiled yet"
+    "message": "type.tuple: types requires other members or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2893,5 +2893,45 @@
     "severity": "warning",
     "canProceed": true,
     "message": "type.unit: arm 244 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.binary: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.hex: a path that picks its arm by its value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-member",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.octal: a path that picks its arm by its value"
   }
 ]

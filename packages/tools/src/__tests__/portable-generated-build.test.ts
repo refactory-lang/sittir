@@ -11,7 +11,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 1479, rust: 1626, typescript: 1426 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 1317, rust: 1492, typescript: 1350 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -46,7 +46,7 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 		const runtime = await portableRuntime(strict);
 		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: (engine: unknown) => object };
 		const generated = portableBuild(engine);
-		const functionOf = (path: string) => path.split('.').reduce<unknown>((at, segment) => (at as Record<string, unknown> | undefined)?.[segment], generated) as PathFunction | undefined;
+		const functionOf = (path: string) => path.split('.').reduce<unknown>((at, segment) => (typeof at === 'object' && at !== null && Object.hasOwn(at, segment) ? (at as Record<string, unknown>)[segment] : typeof at === 'function' && Object.hasOwn(at, segment) ? (at as unknown as Record<string, unknown>)[segment] : undefined), generated) as PathFunction | undefined;
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const renderStrict = (node: unknown): string => strict.render(node as never).toString();
 		const differences: string[] = [];

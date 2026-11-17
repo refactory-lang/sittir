@@ -14,7 +14,7 @@ import { portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
 import { grammarMapName, VOCABULARY_MODULE } from './grammar-map.ts';
-import type { ExactSlots } from './exact.ts';
+import type { ExactSet } from './exact.ts';
 import type { PortableBuildTable } from '@sittir/types';
 import type { PortableEmitInput, PortableEmitMember } from './emit-input.ts';
 
@@ -84,7 +84,10 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			map: grammarMapName(input.grammar),
 			imports: { vocabulary: VOCABULARY_MODULE, api: moduleSpecifier(PORTABLE_BUILD_FILE, 'api.ts'), map: moduleSpecifier(PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE) },
 			table: build.table,
-			members: emitMembersOf(typed.exact)
+			members: emitMembersOf(typed.slots),
+			viewed: typed.reads.viewed,
+			textPaths: typed.reads.textPaths,
+			holes: build.holes
 		},
 		typed,
 		pickDiagnostics: [
@@ -110,7 +113,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	};
 }
 
-function emitMembersOf(exact: ExactSlots): PortableEmitInput<PortableBuildTable>['members'] {
+function emitMembersOf(exact: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>): PortableEmitInput<PortableBuildTable>['members'] {
 	return Object.fromEntries(
 		[...exact].map(([path, members]) => [
 			path,
