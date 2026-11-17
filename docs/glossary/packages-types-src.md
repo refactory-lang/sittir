@@ -1786,18 +1786,6 @@ Type expressions: an interface marked `'type-expressions': true`. A type is read
 
 The `type` node read as an expression, claimed by the `prt` claim tag only. Its optional `content` slot holds the type.
 
-### `packages/types/src/vocabulary/features/c-family-expression-statements/index.ts::CFamilyExpressionStatements`
-
-C-family expression statements: an interface marked `'c-family-expression-statements': true`. An expression statement whose expression is its member.
-
-### `packages/types/src/vocabulary/features/c-family-expression-statements/statement.ts::Statement`
-
-The `Statement` namespace of C-family expression statements. It groups the `Expression` arm. The namespace declares no slots of its own.
-
-### `packages/types/src/vocabulary/features/c-family-expression-statements/statement.ts::Statement::Expression`
-
-The `statement.expression` node, claimed by the `t` claim tag only. Its optional `expression` slot holds a module declaration, an expression, an identifier or a literal.
-
 ### `packages/types/src/vocabulary/features/c-family-unary-operators/expression.ts::Expression`
 
 The `Expression` namespace of C-family unary operators. It groups the `Unary` namespace. The namespace declares no slots of its own.

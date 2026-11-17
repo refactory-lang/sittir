@@ -2086,6 +2086,14 @@ The slot names that must be present for the entry to match.
 
 `true` when the entry's items are separated by the list's separator.
 
+### `packages/codegen/src/bindings/routes.ts::entryRoutes`
+
+The routes a read entry offers: its member routes, followed by its value route when the entry has a value. An entry without a value offers its members alone, and the array is the entry's own members array when there is no value to add.
+
+### `packages/codegen/src/bindings/routes.ts::VALUE`
+
+The field name `$value` under which a read entry keeps its own value, beside its members. `entryRoutes` appends the value route under this name after the member routes.
+
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::vocabularyFlagPaths`
 
 The flag paths of a vocabulary: each path with its segment and flag.
