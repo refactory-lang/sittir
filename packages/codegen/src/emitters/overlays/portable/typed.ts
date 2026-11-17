@@ -39,6 +39,7 @@ export interface PortableTypedOutput {
 	readonly slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
 	readonly reads: Pick<ExactReads, 'viewed' | 'textPaths'>;
 	readonly textInputs: readonly string[];
+	readonly textValues: readonly string[];
 }
 
 export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
@@ -436,5 +437,5 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	}
 	emit('', ...unmappedKindsBlock(VOCABULARY_INDEX, input.grammar, nodeMap, unmappedViews));
 	const grammarMap = emitGrammarMap(typedInput, exact);
-	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs };
+	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues };
 }

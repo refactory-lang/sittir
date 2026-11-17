@@ -214,6 +214,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const viewed = new Set(input.viewed);
 	const textPaths = new Set(input.textPaths);
 	const textInputs = new Set(input.textInputs);
+	const textValues = new Set(input.textValues);
 	const failed = new Map<string, string>();
 	let memberFunctions = new Map<string, Statement>();
 	let armFunctions = new Map<string, Statement>();
@@ -373,6 +374,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if ((arm.facts ?? []).length > 0) return fail(`arm ${arm.kind} spells facts in its container`);
 		if (arm.scalar !== undefined) return numberBody(path, arm, input);
 		const shape = shapeOf(arm.builder);
+		if (shape === 'text' && textValues.has(path) && arm.members.length === 0 && arm.presets.length === 0 && Object.keys(arm.flags).length === 0) {
+			const given = input();
+			return [ret(call(builderRef(arm.builder), ternary(typeIs(given, 'string'), given, dot(given, '$value'))))];
+		}
 		if (shape === 'text' || shape === 'placed') return fail(`arm ${arm.kind}'s builder takes its text`);
 		const entries: [string, Expression][] = [];
 		const seen = new Set<string>();

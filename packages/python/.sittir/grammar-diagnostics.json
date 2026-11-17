@@ -2291,14 +2291,6 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.import.relative.prefix: arm 137's builder takes its text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
     "message": "clause.import.wildcard: arm 143 builds through its holder"
   },
   {
@@ -3992,14 +3984,6 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.interpolation.conversion: arm 65's builder takes its text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
     "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
@@ -4068,14 +4052,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "file: a container at definition that holds members of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier: arm 1's builder takes its text"
   },
   {
     "scope": "grammar",
@@ -4260,14 +4236,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.string.raw.multiline: arm 253 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.text: arm 125's builder takes its text"
   },
   {
     "scope": "grammar",

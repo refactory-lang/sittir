@@ -60,7 +60,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('argument.named.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('argument.named.name', value);
 		}
@@ -380,7 +380,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('argument.named.value', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('argument.named.value', value);
 			case 'literal.boolean.true':
@@ -772,7 +772,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('clause.comprehension.if.condition', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('clause.comprehension.if.condition', value);
 			case 'literal.boolean.true':
@@ -884,7 +884,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('clause.import.alias.rename', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('clause.import.alias.rename', value);
 		}
@@ -909,7 +909,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'clause.import.relative.prefix':
-				return unbuilt('clause.import.relative.dots', value);
+				return clause_import_relative_prefix$137(value);
 			default:
 				return unbuilt('clause.import.relative.dots', value);
 		}
@@ -1247,7 +1247,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('declaration.parameter.defaulted.default', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('declaration.parameter.defaulted.default', value);
 			case 'literal.boolean.true':
@@ -1346,7 +1346,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.parameter.defaulted.name', value);
+				return identifier$1(value);
 			case 'pattern.tuple':
 				return pattern_tuple$202(value);
 			default:
@@ -1377,7 +1377,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.parameter.typed.name', value);
+				return identifier$1(value);
 			case 'pattern.rest':
 				return pattern_rest$206(value);
 			case 'pattern.rest.map':
@@ -1713,7 +1713,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('declaration.parameter.typed.type', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -2117,7 +2117,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('declaration.parameter.typed_default.default', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('declaration.parameter.typed_default.default', value);
 			case 'literal.boolean.true':
@@ -2211,7 +2211,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.parameter.typed_default.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('declaration.parameter.typed_default.name', value);
 		}
@@ -2543,7 +2543,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('declaration.parameter.typed_default.type', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -2649,7 +2649,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.type_parameter.parameters.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('declaration.type_parameter.parameters.name', value);
 		}
@@ -2671,7 +2671,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.type_parameter.variadic.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('declaration.type_parameter.variadic.name', value);
 		}
@@ -2712,7 +2712,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('declaration.variable.name', value);
 			case 'identifier':
-				return unbuilt('declaration.variable.name', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -3066,7 +3066,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('declaration.variable.value', value);
 			case 'identifier':
-				return unbuilt('declaration.variable.value', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('declaration.variable.value', value);
 			case 'literal.boolean.true':
@@ -3181,7 +3181,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('declaration.variable.name', value);
 			case 'identifier':
-				return unbuilt('declaration.variable.name', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -3521,7 +3521,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -3646,7 +3646,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('declaration.variable.name', value);
 			case 'identifier':
-				return unbuilt('declaration.variable.name', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -3986,7 +3986,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('declaration.variable.type', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -4412,7 +4412,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('declaration.variable.value', value);
 			case 'identifier':
-				return unbuilt('declaration.variable.value', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('declaration.variable.value', value);
 			case 'literal.boolean.true':
@@ -4806,7 +4806,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('element.pair.key', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('element.pair.key', value);
 			case 'literal.boolean.true':
@@ -5198,7 +5198,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('element.pair.value', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('element.pair.value', value);
 			case 'literal.boolean.true':
@@ -5590,7 +5590,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('element.spread.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('element.spread.expression', value);
 			case 'literal.boolean.true':
@@ -5982,7 +5982,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('element.spread.map.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('element.spread.map.expression', value);
 			case 'literal.boolean.true':
@@ -6100,7 +6100,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('expression.assignment.left', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('expression.assignment.left', value);
 		}
@@ -6420,7 +6420,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.assignment.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.right', value);
 			case 'literal.boolean.true':
@@ -6533,7 +6533,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.add.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.add.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -6875,7 +6875,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.add.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.add.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.add.right', value);
 			case 'literal.boolean.true':
@@ -6990,7 +6990,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -7332,7 +7332,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 			case 'literal.boolean.true':
@@ -7447,7 +7447,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -7789,7 +7789,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 			case 'literal.boolean.true':
@@ -7904,7 +7904,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -8246,7 +8246,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 			case 'literal.boolean.true':
@@ -8361,7 +8361,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.divide.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.divide.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -8703,7 +8703,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.divide.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.divide.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.divide.right', value);
 			case 'literal.boolean.true':
@@ -8818,7 +8818,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.exponent.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.exponent.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -9160,7 +9160,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.exponent.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.exponent.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.exponent.right', value);
 			case 'literal.boolean.true':
@@ -9275,7 +9275,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.floor_divide.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.floor_divide.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -9617,7 +9617,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.floor_divide.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.floor_divide.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.floor_divide.right', value);
 			case 'literal.boolean.true':
@@ -9732,7 +9732,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.matrix_multiply.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.matrix_multiply.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -10074,7 +10074,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 			case 'literal.boolean.true':
@@ -10189,7 +10189,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.modulo.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.modulo.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -10531,7 +10531,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.modulo.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.modulo.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.modulo.right', value);
 			case 'literal.boolean.true':
@@ -10646,7 +10646,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.multiply.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.multiply.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -10988,7 +10988,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.multiply.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.multiply.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.multiply.right', value);
 			case 'literal.boolean.true':
@@ -11103,7 +11103,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.shift_left.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.shift_left.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -11445,7 +11445,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.shift_left.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.shift_left.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.shift_left.right', value);
 			case 'literal.boolean.true':
@@ -11560,7 +11560,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.shift_right.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.shift_right.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -11902,7 +11902,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.shift_right.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.shift_right.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.shift_right.right', value);
 			case 'literal.boolean.true':
@@ -12017,7 +12017,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('expression.assignment.compound.subtract.left', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.subtract.left', value);
+				return identifier$1(value);
 			case 'pattern.list':
 				return pattern_list$203(value);
 			case 'pattern.rest':
@@ -12359,7 +12359,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.assignment.compound.subtract.right', value);
 			case 'identifier':
-				return unbuilt('expression.assignment.compound.subtract.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.assignment.compound.subtract.right', value);
 			case 'literal.boolean.true':
@@ -12674,7 +12674,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.await.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.await.expression', value);
 			case 'literal.boolean.true':
@@ -12987,7 +12987,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.add.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.add.left', value);
 			case 'literal.boolean.true':
@@ -13300,7 +13300,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.add.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.add.right', value);
 			case 'literal.boolean.true':
@@ -13613,7 +13613,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.divide.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.divide.left', value);
 			case 'literal.boolean.true':
@@ -13926,7 +13926,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.divide.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.divide.right', value);
 			case 'literal.boolean.true':
@@ -14239,7 +14239,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.exponent.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.exponent.left', value);
 			case 'literal.boolean.true':
@@ -14552,7 +14552,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.exponent.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.exponent.right', value);
 			case 'literal.boolean.true':
@@ -14865,7 +14865,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 			case 'literal.boolean.true':
@@ -15178,7 +15178,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 			case 'literal.boolean.true':
@@ -15491,7 +15491,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.modulo.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.modulo.left', value);
 			case 'literal.boolean.true':
@@ -15804,7 +15804,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.modulo.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.modulo.right', value);
 			case 'literal.boolean.true':
@@ -16117,7 +16117,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.multiply.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.multiply.left', value);
 			case 'literal.boolean.true':
@@ -16430,7 +16430,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.multiply.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.multiply.right', value);
 			case 'literal.boolean.true':
@@ -16743,7 +16743,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.subtract.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.subtract.left', value);
 			case 'literal.boolean.true':
@@ -17056,7 +17056,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.arithmetic.subtract.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.arithmetic.subtract.right', value);
 			case 'literal.boolean.true':
@@ -17369,7 +17369,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.bitwise.and.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.bitwise.and.left', value);
 			case 'literal.boolean.true':
@@ -17682,7 +17682,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.bitwise.and.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.bitwise.and.right', value);
 			case 'literal.boolean.true':
@@ -17995,7 +17995,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.bitwise.or.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.bitwise.or.left', value);
 			case 'literal.boolean.true':
@@ -18308,7 +18308,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.bitwise.or.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.bitwise.or.right', value);
 			case 'literal.boolean.true':
@@ -18621,7 +18621,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.bitwise.xor.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.bitwise.xor.left', value);
 			case 'literal.boolean.true':
@@ -18934,7 +18934,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.bitwise.xor.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.bitwise.xor.right', value);
 			case 'literal.boolean.true':
@@ -19326,7 +19326,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.logical.and.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.logical.and.left', value);
 			case 'literal.boolean.true':
@@ -19718,7 +19718,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.logical.and.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.logical.and.right', value);
 			case 'literal.boolean.true':
@@ -20110,7 +20110,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.logical.or.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.logical.or.left', value);
 			case 'literal.boolean.true':
@@ -20502,7 +20502,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.logical.or.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.logical.or.right', value);
 			case 'literal.boolean.true':
@@ -20815,7 +20815,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.matrix_multiply.left', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.matrix_multiply.left', value);
 			case 'literal.boolean.true':
@@ -21128,7 +21128,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.matrix_multiply.right', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.matrix_multiply.right', value);
 			case 'literal.boolean.true':
@@ -21441,7 +21441,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.shift.left.count', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.shift.left.count', value);
 			case 'literal.boolean.true':
@@ -21754,7 +21754,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.shift.left.operand', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.shift.left.operand', value);
 			case 'literal.boolean.true':
@@ -22067,7 +22067,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.shift.right.count', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.shift.right.count', value);
 			case 'literal.boolean.true':
@@ -22380,7 +22380,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.binary.shift.right.operand', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.binary.shift.right.operand', value);
 			case 'literal.boolean.true':
@@ -22788,7 +22788,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.collection.list.elements', value);
 			case 'identifier':
-				return unbuilt('expression.collection.list.elements', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.collection.list.elements', value);
 			case 'literal.boolean.true':
@@ -23220,7 +23220,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.collection.tuple.elements', value);
 			case 'identifier':
-				return unbuilt('expression.collection.tuple.elements', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.collection.tuple.elements', value);
 			case 'literal.boolean.true':
@@ -23612,7 +23612,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.conditional.alternative', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.conditional.alternative', value);
 			case 'literal.boolean.true':
@@ -24004,7 +24004,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.conditional.condition', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.conditional.condition', value);
 			case 'literal.boolean.true':
@@ -24396,7 +24396,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.conditional.consequence', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.conditional.consequence', value);
 			case 'literal.boolean.true':
@@ -24802,7 +24802,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.interpolation.expression', value);
 			case 'identifier':
-				return unbuilt('expression.interpolation.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.interpolation.expression', value);
 			case 'literal.boolean.true':
@@ -24921,7 +24921,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'expression.interpolation.conversion':
-				return unbuilt('expression.interpolation.typeConversion', value);
+				return expression_interpolation_conversion$65(value);
 			default:
 				return unbuilt('expression.interpolation.typeConversion', value);
 		}
@@ -25271,7 +25271,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.yield.delegate':
 				return unbuilt('expression.parenthesized.expression', value);
 			case 'identifier':
-				return unbuilt('expression.parenthesized.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.parenthesized.expression', value);
 			case 'literal.boolean.true':
@@ -25584,7 +25584,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.unary.bitwise_not.argument', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.unary.bitwise_not.argument', value);
 			case 'literal.boolean.true':
@@ -25897,7 +25897,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.unary.negation.argument', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.unary.negation.argument', value);
 			case 'literal.boolean.true':
@@ -26289,7 +26289,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.unary.not.argument', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.unary.not.argument', value);
 			case 'literal.boolean.true':
@@ -26602,7 +26602,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.unary.plus.argument', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.unary.plus.argument', value);
 			case 'literal.boolean.true':
@@ -26998,7 +26998,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('expression.yield.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('expression.yield.expression', value);
 			case 'literal.boolean.true':
@@ -27092,7 +27092,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('identifier.qualified.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('identifier.qualified.name', value);
 		}
@@ -27505,7 +27505,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('identifier.qualified.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('identifier.qualified.name', value);
 		}
@@ -27837,7 +27837,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -27943,7 +27943,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('pattern.as.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('pattern.as.name', value);
 		}
@@ -28601,7 +28601,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.list.elements', value);
 			case 'identifier':
-				return unbuilt('pattern.list.elements', value);
+				return identifier$1(value);
 			case 'identifier.qualified':
 				return unbuilt('pattern.list.elements', value);
 			case 'literal.boolean.false':
@@ -29450,7 +29450,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.rest.pattern', value);
 			case 'identifier':
-				return unbuilt('pattern.rest.pattern', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('pattern.rest.pattern', value);
 		}
@@ -29488,7 +29488,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.rest.pattern', value);
 			case 'identifier':
-				return unbuilt('pattern.rest.pattern', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('pattern.rest.pattern', value);
 		}
@@ -29521,7 +29521,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.rest.map.pattern', value);
 			case 'identifier':
-				return unbuilt('pattern.rest.map.pattern', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('pattern.rest.map.pattern', value);
 		}
@@ -29559,7 +29559,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.rest.map.pattern', value);
 			case 'identifier':
-				return unbuilt('pattern.rest.map.pattern', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('pattern.rest.map.pattern', value);
 		}
@@ -29834,7 +29834,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('pattern.struct.field.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('pattern.struct.field.name', value);
 		}
@@ -30186,7 +30186,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.tuple.elements', value);
 			case 'identifier':
-				return unbuilt('pattern.tuple.elements', value);
+				return identifier$1(value);
 			case 'identifier.qualified':
 				return unbuilt('pattern.tuple.elements', value);
 			case 'literal.boolean.false':
@@ -30851,7 +30851,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('statement.delete.expressions', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('statement.delete.expressions', value);
 			case 'literal.boolean.true':
@@ -30982,7 +30982,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('statement.exec.code', value);
+				return identifier$1(value);
 			case 'literal.string':
 				return unbuilt('statement.exec.code', value);
 			case 'literal.string.bytes':
@@ -31336,7 +31336,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('statement.exec.inClauses', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('statement.exec.inClauses', value);
 			case 'literal.boolean.true':
@@ -31732,7 +31732,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('statement.return.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('statement.return.expression', value);
 			case 'literal.boolean.true':
@@ -32124,7 +32124,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('statement.throw.cause', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('statement.throw.cause', value);
 			case 'literal.boolean.true':
@@ -32520,7 +32520,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return expression_unary_plus$215(value);
 			case 'identifier':
-				return unbuilt('statement.throw.expression', value);
+				return identifier$1(value);
 			case 'literal.boolean.false':
 				return unbuilt('statement.throw.expression', value);
 			case 'literal.boolean.true':
@@ -32924,7 +32924,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('type.constrained.baseType', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -33340,7 +33340,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('type.constrained.constraint', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -33453,7 +33453,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('type.rest.type', value);
+				return identifier$1(value);
 			case 'type.generic':
 				return unbuilt('type.rest.type', value);
 			case 'type.nullable':
@@ -33789,7 +33789,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('type.union.left', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -34205,7 +34205,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			case 'expression.unary.plus':
 				return b.type(expression_unary_plus$215(value));
 			case 'identifier':
-				return unbuilt('type.union.right', value);
+				return b.type(identifier$1(value));
 			case 'identifier.qualified':
 				return b.type(identifier_qualified$236(value));
 			case 'literal.boolean.false':
@@ -34321,6 +34321,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 				input.dots === undefined ? missing('clause.import.relative.dots') : clause_import_relative$138_dots(input.dots),
 			name: input.name === undefined ? undefined : clause_import_relative$138_name(input.name)
 		});
+	};
+	const clause_import_relative_prefix$137 = (
+		input: BuildInput<PythonMap, 'clause.import.relative.prefix'>
+	): ReturnType<typeof b.importPrefix> => {
+		return b.importPrefix(typeof input === 'string' ? input : input.$value);
 	};
 	const declaration_parameter_defaulted$204 = (
 		input: BuildInput<PythonMap, 'declaration.parameter.defaulted'>
@@ -34830,6 +34835,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			debug: (input.$flags ?? []).includes('debug')
 		});
 	};
+	const expression_interpolation_conversion$65 = (
+		input: BuildInput<PythonMap, 'expression.interpolation.conversion'>
+	): ReturnType<typeof b.typeConversion> => {
+		return b.typeConversion(typeof input === 'string' ? input : input.$value);
+	};
 	const expression_interpolation_format$259 = (
 		input: BuildInput<PythonMap, 'expression.interpolation.format'>
 	): ReturnType<typeof b.formatSpecifier> => {
@@ -34862,6 +34872,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const expression_yield$225 = (input: BuildInput<PythonMap, 'expression.yield'>): ReturnType<typeof b.yield> => {
 		return b.yield(input.expression === undefined ? undefined : expression_yield$225_expression(input.expression));
+	};
+	const identifier$1 = (input: BuildInput<PythonMap, 'identifier'>): ReturnType<typeof b.identifier> => {
+		return b.identifier(typeof input === 'string' ? input : input.$value);
 	};
 	const identifier_qualified$187 = (
 		input: BuildInput<PythonMap, 'identifier.qualified'>
@@ -34906,6 +34919,11 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		input: BuildInput<PythonMap, 'literal.number.integer.octal'>
 	): ReturnType<typeof b.integerLegacyOctalPlain> => {
 		return b.integerLegacyOctalPlain(input.$value);
+	};
+	const literal_string_text$125 = (
+		input: BuildInput<PythonMap, 'literal.string.text'>
+	): ReturnType<typeof b.stringFragment> => {
+		return b.stringFragment(typeof input === 'string' ? input : input.$value);
 	};
 	const pattern_as$190 = (input: BuildInput<PythonMap, 'pattern.as'>): ReturnType<typeof b.caseAsPattern> => {
 		return b.caseAsPattern({
@@ -35095,6 +35113,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	const clause_import_relative = (input: BuildInput<PythonMap, 'clause.import.relative'>) => {
 		return clause_import_relative$138(input);
 	};
+	const clause_import_relative_prefix = (input: BuildInput<PythonMap, 'clause.import.relative.prefix'>) => {
+		return clause_import_relative_prefix$137(input);
+	};
 	const declaration_parameter_defaulted = (input: BuildInput<PythonMap, 'declaration.parameter.defaulted'>) => {
 		return declaration_parameter_defaulted$204(input);
 	};
@@ -35265,6 +35286,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	const expression_conditional = (input: BuildInput<PythonMap, 'expression.conditional'>) => {
 		return expression_conditional$251(input);
 	};
+	const expression_interpolation_conversion = (input: BuildInput<PythonMap, 'expression.interpolation.conversion'>) => {
+		return expression_interpolation_conversion$65(input);
+	};
 	const expression_interpolation_format = (input: BuildInput<PythonMap, 'expression.interpolation.format'>) => {
 		return expression_interpolation_format$259(input);
 	};
@@ -35285,6 +35309,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 	};
 	const expression_yield = (input: BuildInput<PythonMap, 'expression.yield'>) => {
 		return expression_yield$225(input);
+	};
+	const identifier = (input: BuildInput<PythonMap, 'identifier'>) => {
+		return identifier$1(input);
 	};
 	const literal_number_float = (input: BuildInput<PythonMap, 'literal.number.float'>) => {
 		if (typeof input.$value === 'bigint') return unbuilt('literal.number.float', input);
@@ -35341,6 +35368,9 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		if (typeof input.$value === 'number') return literal_number_integer_octal$93(input);
 		return unbuilt('literal.number.integer.octal', input);
 	};
+	const literal_string_text = (input: BuildInput<PythonMap, 'literal.string.text'>) => {
+		return literal_string_text$125(input);
+	};
 	const pattern_as = (input: BuildInput<PythonMap, 'pattern.as'>) => {
 		return pattern_as$190(input);
 	};
@@ -35387,7 +35417,10 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 		argument: { named: argument_named },
 		clause: {
 			comprehension: { if: clause_comprehension_if },
-			import: { alias: clause_import_alias, relative: clause_import_relative }
+			import: {
+				alias: clause_import_alias,
+				relative: Object.assign(clause_import_relative, { prefix: clause_import_relative_prefix })
+			}
 		},
 		declaration: {
 			parameter: {
@@ -35449,7 +35482,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 				tuple: expression_collection_tuple
 			},
 			conditional: expression_conditional,
-			interpolation: { format: expression_interpolation_format },
+			interpolation: { conversion: expression_interpolation_conversion, format: expression_interpolation_format },
 			parenthesized: expression_parenthesized,
 			unary: {
 				bitwise_not: expression_unary_bitwise_not,
@@ -35459,6 +35492,7 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 			},
 			yield: expression_yield
 		},
+		identifier: identifier,
 		literal: {
 			number: {
 				float: Object.assign(literal_number_float, {
@@ -35475,7 +35509,8 @@ export function portableBuild(engine: Engine<PythonAPI>) {
 					hex: literal_number_integer_hex,
 					octal: literal_number_integer_octal
 				})
-			}
+			},
+			string: { text: literal_string_text }
 		},
 		pattern: {
 			as: pattern_as,

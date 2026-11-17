@@ -284,7 +284,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('clause.import.alias.rename', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('clause.import.alias.rename', value);
 		}
@@ -509,7 +509,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.macro.brace.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('declaration.macro.brace.name', value);
 		}
@@ -549,7 +549,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.macro.bracket.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('declaration.macro.bracket.name', value);
 		}
@@ -589,7 +589,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.macro.paren.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('declaration.macro.paren.name', value);
 		}
@@ -723,7 +723,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('element.struct.field.name', value);
+				return identifier$1(value);
 			case 'literal.number.integer':
 				return unbuilt('element.struct.field.name', value);
 			case 'literal.number.integer.binary':
@@ -1045,7 +1045,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('expression.call.macro.function', value);
+				return identifier$1(value);
 			case 'identifier.qualified':
 				return identifier_qualified$263(value);
 			default:
@@ -1127,7 +1127,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('identifier.label.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('identifier.label.name', value);
 		}
@@ -1149,7 +1149,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('identifier.lifetime.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('identifier.lifetime.name', value);
 		}
@@ -1594,7 +1594,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('statement.import.package.alias', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('statement.import.package.alias', value);
 		}
@@ -1616,7 +1616,7 @@ export function portableBuild(engine: Engine<RustAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('statement.import.package.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('statement.import.package.name', value);
 		}
@@ -2998,6 +2998,9 @@ export function portableBuild(engine: Engine<RustAPI>) {
 							)
 						)
 		});
+	};
+	const identifier$1 = (input: BuildInput<RustMap, 'identifier'>): ReturnType<typeof b.identifier> => {
+		return b.identifier(typeof input === 'string' ? input : input.$value);
 	};
 	const identifier_label$303 = (input: BuildInput<RustMap, 'identifier.label'>): ReturnType<typeof b.label> => {
 		return b.label(input.name === undefined ? missing('identifier.label.name') : identifier_label$303_name(input.name));

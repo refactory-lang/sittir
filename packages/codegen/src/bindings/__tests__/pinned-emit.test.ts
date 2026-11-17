@@ -17,6 +17,7 @@ describe('the pinned child emits a portable build module', () => {
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
+			textValues: [],
 			holes: []
 		});
 		expect(diagnostics).toEqual([]);
@@ -51,6 +52,7 @@ describe('the pinned child emits a portable build module', () => {
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
+			textValues: [],
 			holes: []
 		});
 		expect(diagnostics.map(({ code, path }) => [code, path])).toEqual([['portable-emit-unfit-member', 'statement.jump']]);
@@ -72,6 +74,7 @@ describe('the pinned child emits a portable build module', () => {
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
+			textValues: [],
 			holes: []
 		});
 		expect(diagnostics).toEqual([]);
@@ -97,6 +100,7 @@ describe('the pinned child emits a portable build module', () => {
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
+			textValues: [],
 			holes
 		});
 		expect(diagnostics).toEqual([]);
@@ -141,6 +145,7 @@ describe('the pinned child emits a portable build module', () => {
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
+			textValues: [],
 			holes: []
 		});
 		expect(diagnostics).toEqual([]);
@@ -174,6 +179,7 @@ describe('the pinned child emits a portable build module', () => {
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
+			textValues: [],
 			holes: []
 		});
 		expect(diagnostics).toEqual([]);
@@ -199,6 +205,7 @@ describe('the pinned child emits a portable build module', () => {
 				viewed: [],
 				textPaths: [],
 				textInputs: [],
+				textValues: [],
 				holes: []
 			});
 		const within: readonly PortableContainer[] = [{ builder: 'argumentList', key: 'arguments' }, { builder: 'argumentListElements', key: 'items' }];
@@ -207,5 +214,26 @@ describe('the pinned child emits a portable build module', () => {
 		const single = await run([{ at: [3, 'items'], kinds: [4], within }]);
 		expect(single.diagnostics).toEqual([]);
 		expect(single.text).toContain('return b.argumentList({ arguments: b.argumentListElements(value) });');
+	}, 60_000);
+
+	it.each([
+		[['literal.string.text'], true],
+		[[], false]
+	] as const)('builds a text-built arm from its text only where the path reads its $value as text: %j', async (textValues, built) => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			api: 'PythonAPI',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+			table: { builders: { stringFragment: 'text' }, paths: { 'literal.string.text': { root: true, arms: [{ kind: 1, builder: 'stringFragment', when: [], members: [], presets: [], flags: {} }] } } },
+			members: {},
+			viewed: [],
+			textPaths: [],
+			textInputs: ['literal.string.text'],
+			textValues,
+			holes: []
+		});
+		expect(text.includes("return b.stringFragment(typeof input === 'string' ? input : input.$value);")).toBe(built);
+		expect(diagnostics.map(({ code }) => code)).toEqual(built ? [] : ['portable-emit-unfit-member']);
 	}, 60_000);
 });

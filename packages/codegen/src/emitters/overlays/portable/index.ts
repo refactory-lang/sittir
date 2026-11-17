@@ -88,6 +88,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			viewed: typed.reads.viewed,
 			textPaths: typed.reads.textPaths,
 			textInputs: typed.textInputs,
+			textValues: typed.textValues,
 			holes: build.holes
 		},
 		typed,

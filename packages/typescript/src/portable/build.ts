@@ -77,7 +77,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			case 'attribute.member':
 				return attribute_member$286(value);
 			case 'identifier':
-				return unbuilt('attribute.member.object', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('attribute.member.object', value);
 		}
@@ -142,7 +142,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			case 'attribute.member':
 				return attribute_member$286(value);
 			case 'identifier':
-				return unbuilt('attribute.parenthesized.expression', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('attribute.parenthesized.expression', value);
 		}
@@ -251,7 +251,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('clause.import.namespace.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('clause.import.namespace.name', value);
 		}
@@ -381,7 +381,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('declaration.enum.name', value);
+				return identifier$1(value);
 			default:
 				return unbuilt('declaration.enum.name', value);
 		}
@@ -663,7 +663,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return identifier$1(value);
 			case 'identifier.qualified':
 				return identifier_qualified$244(value);
 			case 'type.import':
@@ -729,7 +729,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return identifier$1(value);
 			case 'identifier.qualified':
 				return identifier_qualified$244(value);
 			case 'type.import':
@@ -800,7 +800,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('identifier.qualified.qualifier', value);
+				return identifier$1(value);
 			case 'identifier.qualified':
 				return identifier_qualified$354(value);
 			case 'type.import':
@@ -826,7 +826,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'literal.regex.flags':
-				return unbuilt('literal.regex.flags', value);
+				return literal_regex_flags$127(value);
 			default:
 				return unbuilt('literal.regex.flags', value);
 		}
@@ -849,7 +849,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'literal.regex.pattern':
-				return unbuilt('literal.regex.pattern', value);
+				return literal_regex_pattern$126(value);
 			default:
 				return unbuilt('literal.regex.pattern', value);
 		}
@@ -882,7 +882,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			case 'literal.string.escape':
 				return unbuilt('literal.string.interpolated.elements', value);
 			case 'literal.string.text':
-				return unbuilt('literal.string.interpolated.elements', value);
+				return literal_string_text$176(value);
 			default:
 				return unbuilt('literal.string.interpolated.elements', value);
 		}
@@ -937,7 +937,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.list.elements', value);
 			case 'identifier':
-				return unbuilt('pattern.list.elements', value);
+				return b.lhsExpression(identifier$1(value));
 			case 'literal.null.undefined':
 				return unbuilt('pattern.list.elements', value);
 			case 'pattern.assignment':
@@ -1038,7 +1038,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			case 'expression.subscript':
 				return unbuilt('pattern.rest.pattern', value);
 			case 'identifier':
-				return unbuilt('pattern.rest.pattern', value);
+				return identifier$1(value);
 			case 'literal.null.undefined':
 				return unbuilt('pattern.rest.pattern', value);
 			case 'pattern.list':
@@ -1610,7 +1610,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		}
 		switch (value.$path) {
 			case 'identifier':
-				return unbuilt('type.predicate.asserts.value', value);
+				return identifier$1(value);
 			case 'type.predicate':
 				return unbuilt('type.predicate.asserts.value', value);
 			default:
@@ -1656,7 +1656,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			case 'expression.instantiation':
 				return unbuilt('type.query.expression', value);
 			case 'identifier':
-				return unbuilt('type.query.expression', value);
+				return identifier$1(value);
 			case 'identifier.qualified':
 				return identifier_qualified$354(value);
 			case 'type.import':
@@ -1689,7 +1689,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			case 'element.template.substitution':
 				return element_template_substitution$347(value);
 			case 'literal.string.text':
-				return unbuilt('type.template.elements', value);
+				return literal_string_text$176(value);
 			default:
 				return unbuilt('type.template.elements', value);
 		}
@@ -1737,6 +1737,9 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 	): ReturnType<typeof b.namespaceImport> => {
 		return b.namespaceImport(clause_import_namespace$201_name(input.name));
 	};
+	const comment_html$178 = (input: BuildInput<TypeScriptMap, 'comment.html'>): ReturnType<typeof b.htmlComment> => {
+		return b.htmlComment(typeof input === 'string' ? input : input.$value);
+	};
 	const declaration_ambient$313 = (
 		input: BuildInput<TypeScriptMap, 'declaration.ambient'>
 	): ReturnType<typeof b.ambientDeclaration> => {
@@ -1770,6 +1773,9 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 		input: BuildInput<TypeScriptMap, 'expression.collection.object'>
 	): ReturnType<typeof b.object> => {
 		return b.object(...(input.properties ?? []).map(expression_collection_object$238_properties));
+	};
+	const identifier$1 = (input: BuildInput<TypeScriptMap, 'identifier'>): ReturnType<typeof b.identifier> => {
+		return b.identifier(typeof input === 'string' ? input : input.$value);
 	};
 	const identifier_qualified$244 = (
 		input: BuildInput<TypeScriptMap, 'identifier.qualified'>
@@ -1862,10 +1868,25 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			flags: input.flags === undefined ? undefined : literal_regex$276_flags(input.flags)
 		});
 	};
+	const literal_regex_flags$127 = (
+		input: BuildInput<TypeScriptMap, 'literal.regex.flags'>
+	): ReturnType<typeof b.regexFlags> => {
+		return b.regexFlags(typeof input === 'string' ? input : input.$value);
+	};
+	const literal_regex_pattern$126 = (
+		input: BuildInput<TypeScriptMap, 'literal.regex.pattern'>
+	): ReturnType<typeof b.regexPattern> => {
+		return b.regexPattern(typeof input === 'string' ? input : input.$value);
+	};
 	const literal_string_interpolated$274 = (
 		input: BuildInput<TypeScriptMap, 'literal.string.interpolated'>
 	): ReturnType<typeof b.templateString> => {
 		return b.templateString(...(input.elements ?? []).map(literal_string_interpolated$274_elements));
+	};
+	const literal_string_text$176 = (
+		input: BuildInput<TypeScriptMap, 'literal.string.text'>
+	): ReturnType<typeof b.templateChars> => {
+		return b.templateChars(typeof input === 'string' ? input : input.$value);
 	};
 	const pattern_list$243 = (input: BuildInput<TypeScriptMap, 'pattern.list'>): ReturnType<typeof b.arrayPattern> => {
 		return b.arrayPattern(...(input.elements ?? []).map(pattern_list$243_elements));
@@ -1934,6 +1955,9 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 	};
 	const clause_import_namespace = (input: BuildInput<TypeScriptMap, 'clause.import.namespace'>) => {
 		return clause_import_namespace$201(input);
+	};
+	const comment_html = (input: BuildInput<TypeScriptMap, 'comment.html'>) => {
+		return comment_html$178(input);
 	};
 	const declaration_ambient = (input: BuildInput<TypeScriptMap, 'declaration.ambient'>) => {
 		return declaration_ambient$313(input);
@@ -2013,6 +2037,12 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 	const literal_regex = (input: BuildInput<TypeScriptMap, 'literal.regex'>) => {
 		return literal_regex$276(input);
 	};
+	const literal_regex_flags = (input: BuildInput<TypeScriptMap, 'literal.regex.flags'>) => {
+		return literal_regex_flags$127(input);
+	};
+	const literal_regex_pattern = (input: BuildInput<TypeScriptMap, 'literal.regex.pattern'>) => {
+		return literal_regex_pattern$126(input);
+	};
 	const literal_string_interpolated = (input: BuildInput<TypeScriptMap, 'literal.string.interpolated'>) => {
 		return literal_string_interpolated$274(input);
 	};
@@ -2053,6 +2083,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 			finally: clause_finally,
 			import: { attribute: clause_import_attribute, namespace: clause_import_namespace }
 		},
+		comment: { html: comment_html },
 		declaration: { ambient: declaration_ambient, enum: declaration_enum },
 		element: { template: { substitution: element_template_substitution } },
 		expression: { collection: { object: expression_collection_object } },
@@ -2073,7 +2104,7 @@ export function portableBuild(engine: Engine<TypescriptAPI>) {
 					octal: literal_number_integer_octal
 				})
 			}),
-			regex: literal_regex,
+			regex: Object.assign(literal_regex, { flags: literal_regex_flags, pattern: literal_regex_pattern }),
 			string: { interpolated: literal_string_interpolated }
 		},
 		pattern: { list: pattern_list, object: pattern_object, rest: pattern_rest },

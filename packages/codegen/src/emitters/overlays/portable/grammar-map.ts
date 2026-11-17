@@ -1,4 +1,4 @@
-import { byCodepoint, compositionOf, lineageOf } from '../../../bindings/vocabulary.ts';
+import { byCodepoint, compositionOf, lineageOf, textValued } from '../../../bindings/vocabulary.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE, grammarDisplayName, moduleSpecifier, type GrammarName } from '../../../grammars.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { builtFlags, containerSetFlags, textBuilt } from '@sittir/common/engine';
@@ -227,6 +227,7 @@ export interface GrammarMapOutput {
 	readonly unformed: readonly UnformedTest[];
 	readonly slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
 	readonly textInputs: readonly string[];
+	readonly textValues: readonly string[];
 }
 
 export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots): GrammarMapOutput {
@@ -281,5 +282,6 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		`export type ${map}Fits = V.Assert<V.Fits<${map}>>;`,
 		''
 	);
-	return { source: lines.join('\n'), unformed, slots, textInputs: textBuiltPaths(typedInput) };
+	const textInputs = textBuiltPaths(typedInput);
+	return { source: lines.join('\n'), unformed, slots, textInputs, textValues: textInputs.filter((path) => textValued(typedInput.input.vocabulary, path)) };
 }

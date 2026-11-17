@@ -3334,14 +3334,6 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.html: arm 178's builder takes its text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
     "message": "comment.line: arm 153 builds its text through a content slot"
   },
   {
@@ -5407,22 +5399,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.number.negative: arm 402 mounts into its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.regex.flags: arm 127's builder takes its text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-member",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.regex.pattern: arm 126's builder takes its text"
   },
   {
     "scope": "grammar",
