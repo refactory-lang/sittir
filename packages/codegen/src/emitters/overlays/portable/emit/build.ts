@@ -165,7 +165,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (container.builder === undefined) return fail(`a container at ${container.key} with no builder of its own`);
 		const shape = shapeOf(container.builder);
 		if (shape === 'config') return call(builderRef(container.builder), obj([[container.key, inner]]));
-		if (shape === 'forwarded' || shape === 'direct') return call(builderRef(container.builder), inner);
+		if (shape === 'forwarded' || shape === 'direct' || shape === 'spread' || shape === 'elements') return call(builderRef(container.builder), inner);
 		return fail(`a container builder ${container.builder} taking a ${shape} input`);
 	};
 	const wrapOne = (within: readonly PortableContainer[] | undefined, value: Expression): Expression => [...(within ?? [])].reverse().reduce((inner, container) => placeOne(container, inner), value);
@@ -332,6 +332,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (member.requires !== undefined || member.reads !== undefined || member.nonEmpty === true) return fail(`${member.name} requires other members or reads only some kinds`);
 		const given = dot(value, member.name);
 		if (member.multiple) return call(dot(listOf(given), 'map'), id(memberFunction(owner, arm, member, 0)));
+		if (member.list !== true && member.seats.some((seat) => seat.many === true && !(member.list === false && (seat.within ?? []).length === 0))) return fail(`${member.name} takes one value or a list`);
 		if (member.list === true) {
 			const seat = member.seats.find((candidate) => candidate.many === true && (candidate.within ?? []).length > 0);
 			if (seat === undefined) return fail(`${member.name} is a list with no list container seat`);

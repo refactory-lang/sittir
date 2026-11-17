@@ -1052,7 +1052,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module: a container at attribute that sets flags"
+    "message": "declaration.module: body takes one value or a list"
   },
   {
     "scope": "grammar",
@@ -1060,7 +1060,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module.foreign: a container at attribute that sets flags"
+    "message": "declaration.module.foreign: body takes one value or a list"
   },
   {
     "scope": "grammar",
@@ -1940,7 +1940,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda: a container builder closureParameters taking a spread input"
+    "message": "expression.lambda: parameters takes one value or a list"
   },
   {
     "scope": "grammar",

@@ -1,3 +1,4 @@
+import type { PortableContainer, PortableSeat } from '@sittir/types';
 import { describe, expect, it } from 'vitest';
 import { runPinned } from '../read.ts';
 
@@ -181,5 +182,30 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain('return b.numberDecimal(input.$value);');
 		expect(text).toContain('return b.numberBigint(input.$value);');
 		expect(text).toContain("return unbuilt('literal.number', input);");
+	}, 60_000);
+
+	it('leaves out a member that takes one value or a list, and wraps a single value in an elements container', async () => {
+		const run = (seats: readonly PortableSeat[]) =>
+			runPinned('portableBuild', {
+				grammar: 'python',
+				api: 'PythonAPI',
+				map: 'PythonMap',
+				imports: { vocabulary: '@sittir/types/vocabulary', api: '../api.js', map: './map.js' },
+				table: {
+					builders: { call: 'config', argumentList: 'config', argumentListElements: 'elements' },
+					paths: { 'expression.call': { root: true, arms: [{ kind: 1, builder: 'call', when: [], members: [{ name: 'arguments', steps: [{ key: 'arguments' }], multiple: false, seats }], presets: [], flags: {} }] } }
+				},
+				members: { 'expression.call': { arguments: { paths: [], texts: [], unmapped: [], string: false, optional: false } } },
+				viewed: [],
+				textPaths: [],
+				textInputs: [],
+				holes: []
+			});
+		const within: readonly PortableContainer[] = [{ builder: 'argumentList', key: 'arguments' }, { builder: 'argumentListElements', key: 'items' }];
+		const listed = await run([{ at: [1, 'arguments'], kinds: [2] }, { at: [3, 'items'], kinds: [4], within, many: true }]);
+		expect(listed.diagnostics.map(({ code, message }) => [code, message])).toEqual([['portable-emit-unfit-member', 'arguments takes one value or a list']]);
+		const single = await run([{ at: [3, 'items'], kinds: [4], within }]);
+		expect(single.diagnostics).toEqual([]);
+		expect(single.text).toContain('return b.argumentList({ arguments: b.argumentListElements(value) });');
 	}, 60_000);
 });

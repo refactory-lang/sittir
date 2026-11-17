@@ -2347,7 +2347,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor: a container builder typeParamsItems taking a elements input"
+    "message": "declaration.constructor: typeParameters takes one value or a list"
   },
   {
     "scope": "grammar",
@@ -3939,7 +3939,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call: a container builder argumentListElements taking a elements input"
+    "message": "expression.call: arguments takes one value or a list"
   },
   {
     "scope": "grammar",
@@ -3947,7 +3947,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.member: a container builder argumentListElements taking a elements input"
+    "message": "expression.call.member: arguments takes one value or a list"
   },
   {
     "scope": "grammar",
@@ -4027,7 +4027,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda: a container builder parametersElements taking a elements input"
+    "message": "expression.lambda: parameters takes one value or a list"
   },
   {
     "scope": "grammar",
@@ -4123,7 +4123,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string: a container builder stringContent taking a spread input"
+    "message": "literal.string: string takes options"
   },
   {
     "scope": "grammar",
@@ -4131,7 +4131,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes: a container builder stringContent taking a spread input"
+    "message": "literal.string.bytes: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4139,7 +4139,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.multiline: a container builder stringContent taking a spread input"
+    "message": "literal.string.bytes.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4179,7 +4179,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4187,7 +4187,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated.deferred: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4195,7 +4195,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.multiline: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated.deferred.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4203,7 +4203,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated.deferred.raw: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4211,7 +4211,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw.multiline: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated.deferred.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4219,7 +4219,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.multiline: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4227,7 +4227,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated.raw: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4235,7 +4235,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw.multiline: a container builder stringContent taking a spread input"
+    "message": "literal.string.interpolated.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4243,7 +4243,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.multiline: a container builder stringContent taking a spread input"
+    "message": "literal.string.multiline: a preset at stringStart.quote that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4275,7 +4275,7 @@
     "code": "portable-emit-unfit-member",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.unicode: a container builder stringContent taking a spread input"
+    "message": "literal.string.unicode: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
