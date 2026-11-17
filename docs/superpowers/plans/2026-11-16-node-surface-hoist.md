@@ -76,15 +76,17 @@
 
 ### Task 5: `$with` setters
 
+**Status:** done. The setter reads the holder's existing wrapper and sets through its own setter, else builds; one hook in the shared setter emitter covers arena, object and factory-built nodes.
+
 **Files:**
 - Modify: `packages/codegen/src/emitters/node-members.ts`, `packages/codegen/src/emitters/record-construction.ts`
 - Test: `packages/{typescript,python,rust}/tests/hoist-set.test.ts`
 
-- [ ] **Step 1: Set through.** On a holder that has the wrapper, the setter replaces what the innermost wrapper holds and keeps every wrapper's own facts: `$with.parameters([a, b, c])` on `def f(a, b,):` writes `def f(a, b, c,):`.
-- [ ] **Step 2: Build.** On a holder with no wrapper, the setter builds each wrapper with its own builder, innermost first, each spelling its fixed tokens.
-- [ ] **Step 3: The rows of §7.** Rust `extern_modifier` (`undefined` removes the ABI and keeps `extern`), the receiver forms, `template_string`, `object`, the typescript setter signatures reading their one `SetterParameter`.
-- [ ] **Step 4: The pinned neighbours of §8.** `objectType.$with.members` sets through `object_type_content`, and `opening` and `closing` stay without setters.
-- [ ] **Step 5: The setters** read the stamp.
+- [x] **Step 1: Set through.** On a holder that has the wrapper, the setter replaces what the innermost wrapper holds and keeps every wrapper's own facts: `$with.parameters([a, b, c])` on `def f(a, b,):` writes `def f(a, b, c,):`.
+- [x] **Step 2: Build.** On a holder with no wrapper, the setter builds each wrapper with its own builder, innermost first, each spelling its fixed tokens.
+- [x] **Step 3: The rows of §7.** Rust `extern_modifier` (`undefined` removes the ABI and keeps `extern`), the receiver forms, `template_string`, `object`, the typescript setter signatures reading their one `SetterParameter`.
+- [x] **Step 4: The pinned neighbours of §8.** `objectType.$with.members` sets through `object_type_content`, and `opening` and `closing` stay without setters.
+- [x] **Step 5: The setters** read the stamp.
 
 ### Task 6: Factories and the loose `from`
 
