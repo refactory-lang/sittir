@@ -2247,7 +2247,7 @@ export namespace Alternation {
 	}
 	export type Loose = LooseFor<TSKindId.Alternation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Alternation>;
-	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Term>>];
+	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Term> | null>];
 	export type LooseArgs =
 		| [
 				...children: NonEmptyArray<

@@ -1521,7 +1521,7 @@ function resolveConfigFactorySurface(
 					label: 'children',
 					optional: false,
 					rest: true,
-					strictType: slotListTypeOf(spreadFacts.slot, (s) => (nonEmpty ? admitNodes(strictOf(s)) : strictOf(s)), 'mutable'),
+					strictType: slotListTypeOf(spreadFacts.slot, (s) => withHoles(spreadFacts.slot, nonEmpty ? admitNodes(strictOf(s)) : strictOf(s)), 'mutable'),
 					looseType: slotListTypeOf(spreadFacts.slot, looseElementOf, 'mutable'),
 					rowLooseType: slotListTypeOf(spreadFacts.slot, (s) => `T.${node.typeName}.Loose | ${looseElementOf(s)}`, 'mutable'),
 					...(nonEmpty ? {} : { admitsNodes: true as const })

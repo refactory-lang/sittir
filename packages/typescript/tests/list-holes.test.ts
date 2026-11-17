@@ -47,6 +47,21 @@ describe.each(STORAGES)('a list whose element admits a hole keeps it as null, in
 	});
 });
 
+describe('the strict builders of a list that admits a hole', () => {
+	it('take null at a hole in their types', async () => {
+		const b = (await createEngine(typescript, { api: 'strict' })).build;
+		const x = b.identifier('x');
+		const pattern = b.lhsExpression(b.identifier('p'));
+		const spread = b.spreadElement(x);
+		const rest = b.restPattern(b.identifier('r'));
+		expect(String(b.array(x, null, x))).toBe('[x,, x]');
+		expect(String(b.arguments(x, null, x))).toBe('(x,, x)');
+		expect(String(b.arrayPattern(pattern, null, pattern))).toBe('[p,, p]');
+		expect(String(b.object(spread, null, spread))).toBe('{ ...x,, ...x }');
+		expect(String(b.objectPattern(rest, null, rest))).toBe('{ ...r,, ...r }');
+	});
+});
+
 describe('a list whose element admits no hole', () => {
 	it('refuses an absent item in its type', async () => {
 		const b = (await createEngine(typescript)).build;
