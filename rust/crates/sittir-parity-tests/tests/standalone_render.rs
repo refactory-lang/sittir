@@ -28,7 +28,7 @@ fn outside_entries<G: EngineGrammar>(grammar: &G, tree: &tree_sitter::Tree, sour
         let mut held = Vec::new();
         for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
             for entry in placed.side(at, side) {
-                if let Assigned::Extra(entry) | Assigned::Error(entry) | Assigned::Member(entry) = *entry {
+                if let Assigned::Extra { at: entry, .. } | Assigned::Error(entry) | Assigned::Member(entry) = *entry {
                     held.push(spans[entry.0 as usize]);
                 }
             }

@@ -10,7 +10,7 @@ const storages = {
 
 describe.each(Object.entries(storages))('a comment that ends its row past the tokens after a node, read in %s storage', (_, ts) => {
 	type Root = ReturnType<typeof ts.parse>;
-	type Sided = { $trivia: { leading(): readonly unknown[]; trailing(): readonly unknown[] } };
+	type Sided = { $trivia: { leading(): readonly unknown[]; trailing(): readonly unknown[]; trailing(...items: unknown[]): unknown } };
 
 	const texts = (entries: readonly unknown[]): string[] => entries.filter((entry) => typeof entry === 'object').map((entry) => String(ts.render(entry as never)).trim());
 	const sided = (node: unknown): Sided => {
@@ -29,7 +29,10 @@ describe.each(Object.entries(storages))('a comment that ends its row past the to
 	function interfaceMembers(root: Root) {
 		const [declaration] = root.statements();
 		if (declaration === undefined || !ts.is.interfaceDeclaration(declaration)) throw new Error('expected an interface');
-		return { declaration, body: declaration.body(), members: declaration.body().members() };
+		const body = declaration.body();
+		const members = body.members();
+		if (members === undefined) throw new Error('expected members');
+		return { declaration, body, members };
 	}
 
 	describe.each([';', ','])('an interface member followed by `%s`', (separator) => {
@@ -62,13 +65,13 @@ describe.each(Object.entries(storages))('a comment that ends its row past the to
 		const [declaration] = root.statements();
 		if (declaration === undefined || !ts.is.enumDeclaration(declaration)) throw new Error('expected an enum');
 		const body = declaration.body();
-		const [a, b] = body.elements();
+		const [a, b] = body.elements() ?? [];
 		expect(owns(a)).toEqual({ leading: [], trailing: ['// c'] });
 		expect(owns(b)).toEqual({ leading: [], trailing: [] });
 		const [z] = (() => {
 			const [other] = ts.parse('enum F {\n  Z\n}\n').statements();
 			if (other === undefined || !ts.is.enumDeclaration(other)) throw new Error('expected an enum');
-			return other.body().elements();
+			return other.body().elements() ?? [];
 		})();
 		rendersAs(root.$with.statements(declaration.$with.body(body.$with.elements(a!, z!))), 'enum E {\n  A, // c\n  Z\n}\n');
 	});
@@ -94,7 +97,7 @@ describe.each(Object.entries(storages))('a comment that ends its row past the to
 		const root = ts.parse('x([a, // c\n  b])\n');
 		const { statement, call, args } = callOf(root);
 		const [array] = args.elements();
-		if (!ts.is.array(array)) throw new Error('expected an array');
+		if (array === undefined || array === null || !ts.is.array(array)) throw new Error('expected an array');
 		const [a, b] = array.elements();
 		expect(owns(a)).toEqual({ leading: [], trailing: ['// c'] });
 		expect(owns(b)).toEqual({ leading: [], trailing: [] });
@@ -133,7 +136,7 @@ describe.each(Object.entries(storages))('a comment that ends its row past the to
 	it('leaves a comment before an array item on its row leading that item', () => {
 		const { args } = callOf(ts.parse('x([/* A */ a, /* B */ b])\n'));
 		const [array] = args.elements();
-		if (!ts.is.array(array)) throw new Error('expected an array');
+		if (array === undefined || array === null || !ts.is.array(array)) throw new Error('expected an array');
 		const [a, b] = array.elements();
 		expect(owns(a)).toEqual({ leading: ['/* A */'], trailing: [] });
 		expect(owns(b)).toEqual({ leading: ['/* B */'], trailing: [] });
@@ -152,14 +155,14 @@ describe.each(Object.entries(storages))('a comment that ends its row past the to
 		const [declaration] = root.statements();
 		if (declaration === undefined || !ts.is.lexicalDeclaration(declaration)) throw new Error('expected a declaration');
 		const [declarator] = declaration.declarators();
-		if (declarator === undefined || !ts.is.variableDeclarator(declarator)) throw new Error('expected a declarator');
+		if (declarator === undefined || !ts.is.variableDeclaratorPlain(declarator)) throw new Error('expected a declarator with a value');
 		return { declaration, declarator, value: declarator.value() };
 	}
 
 	it('gives the comment after an operator to the operand before it, and keeps it when the operand after it is replaced', () => {
 		const root = ts.parse('const x = b + // c\n  d\n');
 		const { declaration, declarator, value } = valueOf(root);
-		if (!ts.is.binaryExpression(value)) throw new Error('expected a binary expression');
+		if (value === undefined || !ts.is.binaryExpression(value)) throw new Error('expected a binary expression');
 		expect(owns(value.left())).toEqual({ leading: [], trailing: ['// c'] });
 		expect(owns(value.right())).toEqual({ leading: [], trailing: [] });
 		rendersAs(root.$with.statements(declaration.$with.declarators(declarator.$with.value(value.$with.right(ts.build.identifier('z'))))), 'const x = b + // c\nz\n');

@@ -15,52 +15,76 @@ use crate::slot::SlotValue;
 
 /// One trivia entry: the node, the coordinate of one, or a record of an
 /// engine's built arena, which renders from that arena where the side that
-/// holds it renders, as a coordinate renders from its tree.
+/// holds it renders, as a coordinate renders from its tree. A trailing entry
+/// with `tokens_between` has the anonymous tokens after its owner (a list's
+/// separator, an operator) between the owner and it, and renders after them
+/// (`NodeTrivia::render_trailing`).
 #[derive(Debug, Clone, PartialEq)]
 pub enum TriviaEntry<T> {
-    Value(SlotValue<T>),
+    Value { value: SlotValue<T>, tokens_between: bool },
     #[cfg(feature = "arena")]
-    Record(RecordEntry<T>),
-    /// Where the anonymous tokens after a trailing side's owner fall: the
-    /// entries after it render after those tokens, as the source has them
-    /// (`NodeTrivia::render_trailing`). It writes nothing itself.
-    Tokens,
+    Record { entry: RecordEntry<T>, tokens_between: bool },
 }
 
 impl<T: HeapBytes> HeapBytes for TriviaEntry<T> {
     fn heap_bytes(&self) -> usize {
         match self {
-            Self::Value(value) => value.heap_bytes(),
+            Self::Value { value, tokens_between: _ } => value.heap_bytes(),
             #[cfg(feature = "arena")]
-            Self::Record(entry) => entry.heap_bytes(),
-            Self::Tokens => 0,
+            Self::Record { entry, tokens_between: _ } => entry.heap_bytes(),
         }
     }
 }
 
 impl<T> TriviaEntry<T> {
     pub fn new(value: SlotValue<T>) -> Self {
-        Self::Value(value)
+        Self::Value { value, tokens_between: false }
     }
 
-    /// The node or coordinate the entry holds; `None` for a record or the
-    /// tokens' place.
+    #[cfg(feature = "arena")]
     #[must_use]
-    pub fn value(&self) -> Option<&SlotValue<T>> {
-        match self {
-            Self::Value(value) => Some(value),
+    pub fn record(entry: RecordEntry<T>) -> Self {
+        Self::Record { entry, tokens_between: false }
+    }
+
+    /// The entry, with `tokens_between` set as given.
+    #[must_use]
+    pub fn with_tokens_between(mut self, set: bool) -> Self {
+        match &mut self {
+            Self::Value { tokens_between, .. } => *tokens_between = set,
             #[cfg(feature = "arena")]
-            Self::Record(_) => None,
-            Self::Tokens => None,
+            Self::Record { tokens_between, .. } => *tokens_between = set,
+        }
+        self
+    }
+
+    /// Whether the anonymous tokens after the entry's owner lie between the
+    /// owner and it.
+    #[must_use]
+    pub fn tokens_between(&self) -> bool {
+        match self {
+            Self::Value { tokens_between, .. } => *tokens_between,
+            #[cfg(feature = "arena")]
+            Self::Record { tokens_between, .. } => *tokens_between,
         }
     }
 
+    /// The node or coordinate the entry holds; `None` for a record.
+    #[must_use]
+    pub fn value(&self) -> Option<&SlotValue<T>> {
+        match self {
+            Self::Value { value, .. } => Some(value),
+            #[cfg(feature = "arena")]
+            Self::Record { .. } => None,
+        }
+    }
+
+    #[cfg_attr(not(feature = "arena"), allow(clippy::unnecessary_wraps, reason = "an entry is a built record only in the arena build"))]
     fn value_mut(&mut self) -> Option<&mut SlotValue<T>> {
         match self {
-            Self::Value(value) => Some(value),
+            Self::Value { value, .. } => Some(value),
             #[cfg(feature = "arena")]
-            Self::Record(_) => None,
-            Self::Tokens => None,
+            Self::Record { .. } => None,
         }
     }
 }
@@ -104,13 +128,12 @@ impl<T> HeapBytes for RecordEntry<T> {
 impl<T: Render + 'static> Render for TriviaEntry<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match self {
-            Self::Value(value) => value.render(w),
+            Self::Value { value, .. } => value.render(w),
             #[cfg(feature = "arena")]
-            Self::Record(entry) => {
+            Self::Record { entry, .. } => {
                 let store = entry.store.as_ref().ok_or(crate::render::RenderError::Record(crate::arena::ARENA_RELEASED))?;
                 w.render_record_entry(entry.record, store)
             }
-            Self::Tokens => Ok(()),
         }
     }
 }
@@ -638,10 +661,11 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
     /// Trailing entries, after the owner renders, in source order. The run
     /// before the first breaking layout entry shares the owner's line and is
     /// seated right after the owner; when it is layout alone it writes no
-    /// text to seat, and merges into the gap after the owner. Its part after
-    /// the place of the tokens that follow the owner (`TriviaEntry::Tokens`)
-    /// is held instead, so it is written after those tokens, before the next
-    /// owner or line break. The rest render after it, each layout
+    /// text to seat, and merges into the gap after the owner. Its part from
+    /// the first entry with `tokens_between`, the layout right before that
+    /// entry included, is held instead, so it is written after the tokens
+    /// that follow the owner, before the next owner or line break. The rest
+    /// render after it, each layout
     /// entry taking the place of the join at its gap and an entry with none
     /// joining the one before it on its line; the seam the owner left (its
     /// after edge) is written after them.
@@ -649,10 +673,8 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
         let trailing = self.trailing.as_deref().unwrap_or(&[]);
         let own = trailing.iter().position(TriviaEntry::breaks).unwrap_or(trailing.len());
         let (same_line, own_line) = trailing.split_at(own);
-        let (same_line, past) = match same_line.iter().position(|entry| matches!(entry, TriviaEntry::Tokens)) {
-            Some(at) => (&same_line[..at], &same_line[at + 1..]),
-            None => (same_line, &[][..]),
-        };
+        let held = same_line.iter().position(TriviaEntry::tokens_between).map_or(same_line.len(), |first| same_line[..first].iter().rposition(|entry| !entry.is_layout()).map_or(0, |at| at + 1));
+        let (same_line, past) = same_line.split_at(held);
         if same_line.iter().all(TriviaEntry::is_layout) {
             render_joined(same_line, LayoutKinds::SPACE, w)?;
         } else {
@@ -724,23 +746,27 @@ impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue
     /// A built record is `{ $type, $record }`, its kind and its address.
     /// Any other entry is a slot value: a node, a coordinate, bare text, a
     /// whitespace member's kind id, or text with its stamped kind (`{ $type,
-    /// $text }`, which the entry type decodes).
+    /// $text }`, which the entry type decodes). An object entry with
+    /// `$tokensBetween` set has the tokens after its owner before it.
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        #[cfg(feature = "arena")]
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        if unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::Object {
+        let object = unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::Object;
+        // SAFETY: `napi_val` is a live object in `env` when `object` holds.
+        let tokens_between = object && unsafe { crate::boundary::flag(env, napi_val, c"$tokensBetween", "TriviaEntry")? };
+        #[cfg(feature = "arena")]
+        if object {
             // SAFETY: `napi_val` is a live object in `env`.
             if let Some(at) = unsafe { crate::boundary::property_whole::<u32>(env, napi_val, c"$record", "TriviaEntry")? } {
                 // SAFETY: `napi_val` is a live object in `env`.
                 let kind = unsafe { crate::boundary::required(env, napi_val, c"$type", "TriviaEntry")? };
-                return Ok(Self::Record(RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None }));
+                return Ok(Self::Record { entry: RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None }, tokens_between });
             }
         }
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        Ok(Self::new(unsafe { SlotValue::from_napi_value(env, napi_val)? }))
+        Ok(Self::Value { value: unsafe { SlotValue::from_napi_value(env, napi_val)? }, tokens_between })
     }
 }
 
@@ -782,18 +808,30 @@ impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for NodeTri
 
 #[cfg(feature = "napi-bindings")]
 impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
-    /// The value's own form; a built record, its `{ $type, $record }`.
+    /// The value's own form; a built record, its `{ $type, $record }`. An
+    /// entry with `tokens_between` carries `$tokensBetween: true`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::present;
+        let tokens_between = val.tokens_between().then_some(true);
         match val {
-            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Value(value) => unsafe { SlotValue::to_napi_value(env, value) },
-            #[cfg(feature = "arena")]
-            Self::Record(RecordEntry { record: BuiltEntry { kind, at }, .. }) => {
-                use crate::boundary::{object_with_present, present};
+            Self::Value { value, .. } => {
                 // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-                unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?]) }
+                let encoded = unsafe { SlotValue::to_napi_value(env, value)? };
+                if tokens_between.is_some() {
+                    // SAFETY: `encoded` was created in `env` just above.
+                    if unsafe { crate::slot::node_value_type(env, encoded)? } != ::napi::ValueType::Object {
+                        return Err(::napi::Error::from_reason("an entry with the tokens after its owner before it is a node or a coordinate"));
+                    }
+                    // SAFETY: `encoded` is a live object in `env`, and the flag is created in it.
+                    unsafe { crate::boundary::define_present(env, encoded, &[present(env, c"$tokensBetween", tokens_between)?])? };
+                }
+                Ok(encoded)
             }
-            Self::Tokens => Err(::napi::Error::from_reason("the place of the tokens after a side's owner does not cross to JavaScript")),
+            #[cfg(feature = "arena")]
+            Self::Record { entry: RecordEntry { record: BuiltEntry { kind, at }, .. }, .. } => {
+                // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+                unsafe { crate::boundary::object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?, present(env, c"$tokensBetween", tokens_between)?]) }
+            }
         }
     }
 }

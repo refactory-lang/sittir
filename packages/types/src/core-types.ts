@@ -170,8 +170,18 @@ export interface ErrorNode extends AnyUntypedNode, TriviaFlanks {
 	$text(): string;
 }
 
+/**
+ * A trailing trivia item with the anonymous tokens after its owner (a list's separator, an operator)
+ * between the owner and it. A read sets `$tokensBetween` on a comment that follows those tokens and
+ * is last on its row, and a builder may set it on an item it writes to a trailing position; the
+ * render writes the item after those tokens. An ERROR node never carries it.
+ */
+export interface TriviaTokensBetween {
+	readonly $tokensBetween?: true;
+}
+
 /** An item a trivia position holds: one of the grammar's trivia nodes, or an ERROR node read there. */
-export type TriviaItem<Trivia> = Trivia | ErrorNode;
+export type TriviaItem<Trivia> = (Trivia & TriviaTokensBetween) | ErrorNode;
 
 export type GrammarTriviaEntry<Trivia> = TriviaItem<Trivia> | string;
 

@@ -174,8 +174,8 @@ pub fn kept<T>(entries: Vec<TriviaEntry<T>>) -> Vec<TriviaEntry<T>> {
         .into_iter()
         .map(|entry| match entry {
             #[cfg(feature = "arena")]
-            TriviaEntry::Record(record) => TriviaEntry::Record(crate::trivia::RecordEntry { store: None, ..record }),
-            entry @ (TriviaEntry::Value(_) | TriviaEntry::Tokens) => entry,
+            TriviaEntry::Record { entry, tokens_between } => TriviaEntry::Record { entry: crate::trivia::RecordEntry { store: None, ..entry }, tokens_between },
+            entry @ TriviaEntry::Value { .. } => entry,
         })
         .collect()
 }
@@ -190,14 +190,16 @@ fn row_bytes<K, V: HeapBytes>(value: &V) -> usize {
 /// bytes: a built record, a read's among them, by its kind and address; a
 /// layout member by its kind, as it carries nothing else; and an entry that
 /// holds text by its kind and the leaf entry of the built arena's string
-/// pool holding the text. A side holds a count of each leaf entry it names
-/// and of each record a value of it was written as.
+/// pool holding the text. A record and a text entry keep whether the tokens
+/// after their owner lie between the owner and them
+/// (`TriviaEntry::tokens_between`). A side holds a count of each leaf entry
+/// it names and of each record a value of it was written as.
 #[cfg(feature = "arena")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompactEntry {
-    Record { kind: KindId, at: Address },
+    Record { kind: KindId, at: Address, tokens_between: bool },
     Layout { kind: KindId },
-    Text { kind: KindId, at: Address },
+    Text { kind: KindId, at: Address, tokens_between: bool },
 }
 
 #[cfg(feature = "arena")]
@@ -216,6 +218,17 @@ impl CompactEntry {
         match self {
             Self::Record { at, .. } | Self::Text { at, .. } => Some(at),
             Self::Layout { .. } => None,
+        }
+    }
+
+    /// The entry with `tokens_between` set as given; `None` for a layout
+    /// member given it set, which keeps no such fact.
+    #[must_use]
+    pub fn with_tokens_between(self, set: bool) -> Option<Self> {
+        match self {
+            Self::Record { kind, at, .. } => Some(Self::Record { kind, at, tokens_between: set }),
+            Self::Text { kind, at, .. } => Some(Self::Text { kind, at, tokens_between: set }),
+            Self::Layout { .. } => (!set).then_some(self),
         }
     }
 
@@ -372,8 +385,8 @@ fn held_records<T>(entries: &[TriviaEntry<T>]) -> Vec<crate::arena::Address> {
     entries
         .iter()
         .filter_map(|entry| match entry {
-            TriviaEntry::Record(record) => Some(record.record.at),
-            TriviaEntry::Value(_) | TriviaEntry::Tokens => None,
+            TriviaEntry::Record { entry, .. } => Some(entry.record.at),
+            TriviaEntry::Value { .. } => None,
         })
         .collect()
 }
@@ -428,8 +441,8 @@ impl<T: Clone> TriviaStore<T> {
             .iter()
             .map(|entry| match entry {
                 #[cfg(feature = "arena")]
-                TriviaEntry::Record(record) => TriviaEntry::Record(crate::trivia::RecordEntry { store: Some(self.clone()), ..record.clone() }),
-                entry @ (TriviaEntry::Value(_) | TriviaEntry::Tokens) => entry.clone(),
+                TriviaEntry::Record { entry, tokens_between } => TriviaEntry::Record { entry: crate::trivia::RecordEntry { store: Some(self.clone()), ..entry.clone() }, tokens_between: *tokens_between },
+                entry @ TriviaEntry::Value { .. } => entry.clone(),
             })
             .collect()
     }
@@ -447,12 +460,12 @@ impl<T: Clone> TriviaStore<T> {
         kept.iter()
             .map(|&entry| {
                 Ok(match entry {
-                    CompactEntry::Record { kind, at } => TriviaEntry::Record(RecordEntry { record: BuiltEntry { kind, at }, store: Some(self.clone()) }),
+                    CompactEntry::Record { kind, at, tokens_between } => TriviaEntry::Record { entry: RecordEntry { record: BuiltEntry { kind, at }, store: Some(self.clone()) }, tokens_between },
                     CompactEntry::Layout { kind } => {
                         let member = T::from_layout(TriviaText::of(kind, "")).ok_or(ArenaError::Malformed { what: "layout member kind", word: u32::from(kind.0) })?;
                         TriviaEntry::new(SlotValue::Node(member))
                     }
-                    CompactEntry::Text { kind, at } => TriviaEntry::new(SlotValue::Node(T::from_text(TriviaText::of(kind, leaf_text(arena, at, kind, self.kind_bits)?)))),
+                    CompactEntry::Text { kind, at, tokens_between } => TriviaEntry::new(SlotValue::Node(T::from_text(TriviaText::of(kind, leaf_text(arena, at, kind, self.kind_bits)?)))).with_tokens_between(tokens_between),
                 })
             })
             .collect()
@@ -795,7 +808,7 @@ impl<T: Clone> TriviaStore<T> {
             for (side, entries) in [(TriviaSide::Leading, sides.leading), (TriviaSide::Trailing, sides.trailing), (TriviaSide::Inner, sides.inner)] {
                 if let Some(entries) = entries {
                     let kept = store.compact(&entries)?;
-                    made.extend(entries.iter().zip(&kept).filter(|(entry, _)| matches!(entry, TriviaEntry::Value(_))).map(|(_, &kept)| kept));
+                    made.extend(entries.iter().zip(&kept).filter(|(entry, _)| matches!(entry, TriviaEntry::Value { .. })).map(|(_, &kept)| kept));
                     store.write_kept(Place::ROOT_LEAF, side, kept);
                 }
             }
@@ -999,14 +1012,14 @@ mod tests {
 
     #[cfg(feature = "arena")]
     fn record(at: u32, store: Option<TriviaStore<TriviaText>>) -> TriviaEntry<TriviaText> {
-        TriviaEntry::Record(crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(at) }, store })
+        TriviaEntry::record(crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(at) }, store })
     }
 
     #[cfg(feature = "arena")]
     fn store_of(entry: &TriviaEntry<TriviaText>) -> Option<&TriviaStore<TriviaText>> {
         match entry {
-            TriviaEntry::Record(record) => record.store.as_ref(),
-            TriviaEntry::Value(_) | TriviaEntry::Tokens => None,
+            TriviaEntry::Record { entry, .. } => entry.store.as_ref(),
+            TriviaEntry::Value { .. } => None,
         }
     }
 
@@ -1105,14 +1118,39 @@ mod tests {
         let store = TriviaStore::<Probe>::new();
         let place = Place::Record(Address(5));
         let record = BuiltEntry { kind: KindId(2), at: Address(7) };
-        store.write_side(place, TriviaSide::Leading, &[TriviaEntry::Record(RecordEntry { record, store: None }), member(), text("// x")]).expect("kept");
+        store.write_side(place, TriviaSide::Leading, &[TriviaEntry::record(RecordEntry { record, store: None }), member(), text("// x")]).expect("kept");
         let kept = store.read().get(place, TriviaSide::Leading).map(<[CompactEntry]>::to_vec).expect("written");
         assert!(
-            matches!(kept[..], [CompactEntry::Record { kind: KindId(2), at: Address(7) }, CompactEntry::Layout { kind: NEWLINE }, CompactEntry::Text { kind: KindId(1), .. }]),
+            matches!(kept[..], [CompactEntry::Record { kind: KindId(2), at: Address(7), tokens_between: false }, CompactEntry::Layout { kind: NEWLINE }, CompactEntry::Text { kind: KindId(1), tokens_between: false, .. }]),
             "a record by its kind and address, a member by its kind, text by its kind and its leaf entry: {kept:?}"
         );
         let read = read_side(&store, place, TriviaSide::Leading);
-        assert_eq!(read, Some(vec![TriviaEntry::Record(RecordEntry { record, store: Some(store) }), member(), text("// x")]));
+        assert_eq!(read, Some(vec![TriviaEntry::record(RecordEntry { record, store: Some(store) }), member(), text("// x")]));
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_record_and_a_text_entry_keep_the_tokens_between_their_owner_and_them() {
+        use crate::trivia::{BuiltEntry, RecordEntry};
+        let store = TriviaStore::<Probe>::new();
+        let place = Place::Record(Address(5));
+        let record = TriviaEntry::record(RecordEntry { record: BuiltEntry { kind: KindId(2), at: Address(7) }, store: None }).with_tokens_between(true);
+        store.write_side(place, TriviaSide::Trailing, &[text("// x"), text("// y").with_tokens_between(true), record]).expect("kept");
+        let kept = store.read().get(place, TriviaSide::Trailing).map(<[CompactEntry]>::to_vec).expect("written");
+        assert!(
+            matches!(kept[..], [CompactEntry::Text { tokens_between: false, .. }, CompactEntry::Text { tokens_between: true, .. }, CompactEntry::Record { tokens_between: true, .. }]),
+            "{kept:?}"
+        );
+        let read = read_side(&store, place, TriviaSide::Trailing).expect("written");
+        assert_eq!(read.iter().map(TriviaEntry::tokens_between).collect::<Vec<_>>(), [false, true, true]);
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_layout_member_with_the_tokens_between_its_owner_and_it_is_refused() {
+        let store = TriviaStore::<Probe>::new();
+        let refused = store.write_side(Place::Record(Address(5)), TriviaSide::Trailing, &[member().with_tokens_between(true)]);
+        assert!(matches!(refused, Err(crate::arena::ArenaError::Unwritable(_))), "{refused:?}");
     }
 
     #[cfg(feature = "arena")]
@@ -1140,7 +1178,7 @@ mod tests {
         coordinate.kind = Some(KindId(2));
         let place = Place::Record(Address(5));
         store.write_held_side(place, TriviaSide::Leading, &[TriviaEntry::new(SlotValue::Coord(coordinate))]).expect("kept");
-        assert_eq!(read_side(&store, place, TriviaSide::Leading), Some(vec![TriviaEntry::Record(RecordEntry { record: BuiltEntry { kind: KindId(2), at: read }, store: Some(store.clone()) })]));
+        assert_eq!(read_side(&store, place, TriviaSide::Leading), Some(vec![TriviaEntry::record(RecordEntry { record: BuiltEntry { kind: KindId(2), at: read }, store: Some(store.clone()) })]));
     }
 
     #[cfg(feature = "arena")]

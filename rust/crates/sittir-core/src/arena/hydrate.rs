@@ -158,9 +158,9 @@ pub struct Placed {
     pub extra: Address,
     pub kind: KindId,
     pub span: Span,
-    /// Whether the entry lies past the tokens after the node it trails
-    /// (`trivia_table::Owner::Trailing`).
-    pub past: bool,
+    /// Whether the tokens after the node it trails lie between that node
+    /// and it (`trivia_table::Owner::Trailing`).
+    pub tokens_between: bool,
 }
 
 /// What placing reads of a child a walk met, beside its entry: whether it
@@ -382,12 +382,12 @@ impl OpenRun {
             for (position, &child) in children.iter().enumerate() {
                 let (Some(kind), RunEntry::Record { at: extra, .. }) = (self.beside[child].extra, self.entries[child]) else { continue };
                 let span = self.beside[child].span;
-                let (site, side, past) = match owner(&siblings[..position], span, kind == KindId::ERROR, &siblings[position + 1..], text) {
-                    Owner::Trailing { at, past } => (self.target(children[at], false, kinds), TriviaSide::Trailing, past),
+                let (site, side, tokens_between) = match owner(&siblings[..position], span, kind == KindId::ERROR, &siblings[position + 1..], text) {
+                    Owner::Trailing { at, tokens_between } => (self.target(children[at], false, kinds), TriviaSide::Trailing, tokens_between),
                     Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading, false),
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner, false),
                 };
-                out.push(Placed { site, side, extra, kind, span, past });
+                out.push(Placed { site, side, extra, kind, span, tokens_between });
             }
         };
         for (at, entry) in self.entries.iter().enumerate() {

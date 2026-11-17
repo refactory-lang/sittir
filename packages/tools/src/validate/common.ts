@@ -50,6 +50,7 @@ import {
 	type TriviaSideName,
 	isCoordinate,
 	metricsEnabled,
+	carryTokensBetween,
 	mapTriviaEntries,
 	projectInterior,
 	isDataKey,
@@ -1626,7 +1627,7 @@ export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, bui
 			const comment = isCoordinate(entry) ? hydrateTriviaEntry(entry) : entry;
 			const built = build(materializeHoldingTree(comment, accessorOf));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
-			return [built];
+			return [carryTokensBetween(comment, built)];
 		});
 	const [leading, trailing, inner] = [entries('leading'), entries('trailing'), entries('inner')];
 	if (leading.length === 0 && trailing.length === 0 && inner.length === 0) return undefined;
@@ -1637,7 +1638,7 @@ function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | 
 	const tree = treeOf(source as object);
 	if (tree !== undefined) return tableSides(source, opts.accessorOf, (read) => resolveChild(read, { ...childOpts(opts), tree }));
 	const carried = writtenSides(source as object);
-	return carried &&(mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
+	return carried &&(mapTriviaEntries(carried, (entries) => entries.map((entry) => carryTokensBetween(entry, resolveChild(entry, childOpts(opts))))) as NodeTrivia);
 }
 
 function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {

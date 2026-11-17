@@ -1,6 +1,6 @@
 import type { CellSite } from './record-cell.ts';
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts, UnitSidesWire, WireNode } from '@sittir/types';
-import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
+import { carryTokensBetween, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, triviaOf, unitSidesOf, writtenSides } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
@@ -283,7 +283,7 @@ function entryWire(node: object): (entry: TriviaEntry) => WireNode {
 	const built = builtRefOf(node)?.arena;
 	const arena = built ?? (tree === undefined ? undefined : treeBuiltArena(tree));
 	const holder = built?.engine() ?? engineOf(node);
-	return (entry) => (typeof entry === 'number' ? entry : (sideEntryOf(entry, arena, holder) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
+	return (entry) => (typeof entry === 'number' ? entry : carryTokensBetween(entry, sideEntryOf(entry, arena, holder) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
 }
 
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
@@ -319,8 +319,8 @@ function hydratedEntries(entries: readonly TriviaEntry[], tree: TreeHandle | und
 }
 
 export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEntry {
-	if (isCoordinate(entry)) return hydrateStored(entry) as TriviaEntry;
-	return (tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
+	if (isCoordinate(entry)) return carryTokensBetween(entry, hydrateStored(entry)) as TriviaEntry;
+	return (tree === undefined ? entry : carryTokensBetween(entry, hydrateOn(tree, entry))) as TriviaEntry;
 }
 
 function sourcedRecord<R extends object>(source: object, built: R, own: boolean): R {
@@ -963,7 +963,7 @@ export {
 	type InteriorSlot,
 	type ProjectedInterior
 } from './interior.ts';
-export { mapTriviaEntries, wrapRegistered };
+export { carryTokensBetween, mapTriviaEntries, wrapRegistered };
 export * from './runtime.ts';
 export {
 	positionWords,

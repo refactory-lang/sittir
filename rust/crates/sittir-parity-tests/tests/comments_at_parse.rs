@@ -42,15 +42,16 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
     while let Some((run, row)) = pending.pop() {
         for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
-            let kept: Vec<Bytes> = placement
+            let kept: Vec<(Bytes, bool)> = placement
                 .tables()
                 .flat_map(|table| table.side(row, side).iter())
                 .filter_map(|entry| match *entry {
-                    Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => Some(at),
+                    Assigned::Extra { at, tokens_between } => Some((at, tokens_between)),
+                    Assigned::Error(at) | Assigned::Member(at) => Some((at, false)),
                     _ => None,
                 })
-                .map(|at| theirs.kid(at))
-                .map(|kid| (kid.start, kid.end))
+                .map(|(at, tokens_between)| (theirs.kid(at), tokens_between))
+                .map(|(kid, tokens_between)| ((kid.start, kid.end), tokens_between))
                 .collect();
             let stored = records
                 .place(run)
@@ -60,12 +61,12 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 })
                 .unwrap_or_default();
             let blank_first = stored.first().is_some_and(is_blank_line);
-            let placed: Vec<Option<Bytes>> = stored
+            let placed: Vec<Option<(Bytes, bool)>> = stored
                 .iter()
                 .skip(usize::from(blank_first))
                 .map(|entry| match entry {
-                    TriviaEntry::Record(entry) => runs.index_of(entry.record.at).ok().map(|at| runs.kid(at)).map(|kid| (kid.start, kid.end)),
-                    TriviaEntry::Value(_) | TriviaEntry::Tokens => None,
+                    TriviaEntry::Record { entry, tokens_between } => runs.index_of(entry.record.at).ok().map(|at| runs.kid(at)).map(|kid| ((kid.start, kid.end), *tokens_between)),
+                    TriviaEntry::Value { .. } => None,
                 })
                 .collect();
             assigned += kept.len();
@@ -76,7 +77,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
             if side == TriviaSide::Leading {
                 let looked_up = tree.side_entries(row, side, false).first().is_some_and(|entry| match entry {
                     SideEntry::Layout(entry) => is_blank_line(entry),
-                    SideEntry::Source { .. } | SideEntry::Written(_) | SideEntry::Tokens => false,
+                    SideEntry::Source { .. } | SideEntry::Written(_) => false,
                 });
                 if blank_first != looked_up {
                     let kid = theirs.kid(row);
@@ -142,21 +143,20 @@ fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar:
     placed
 }
 
-/// The bytes of the extras and `ERROR`s a parse places past the tokens
-/// after the node they trail (`Placed::past`), and of those the tree's
-/// placement sets after the place of those tokens on a trailing side
-/// (`Assigned::Tokens`), each in source order.
-fn placed_past<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> (Vec<Bytes>, Vec<Bytes>) {
+/// The bytes of the extras a parse places with the tokens after the node
+/// they trail between that node and them (`Placed::tokens_between`), and of
+/// those the tree's placement marks so (`Assigned::Extra`), each in source
+/// order.
+fn tokens_between<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> (Vec<Bytes>, Vec<Bytes>) {
     let tree = parsed(grammar, options(), source);
     let mut theirs = tree.nodes();
     let placement = tree.placed_trivia();
     let mut kept: Vec<Bytes> = placement
         .tables()
         .flat_map(sittir_core::trivia_table::Table::sides)
-        .filter(|&((_, side), _)| side == TriviaSide::Trailing)
-        .flat_map(|(_, entries)| entries.iter().skip_while(|entry| !matches!(entry, Assigned::Tokens)).copied().collect::<Vec<_>>())
+        .flat_map(|(_, entries)| entries.iter().copied())
         .filter_map(|entry| match entry {
-            Assigned::Extra(at) | Assigned::Error(at) => Some(at),
+            Assigned::Extra { at, tokens_between: true } => Some(at),
             _ => None,
         })
         .map(|at| theirs.kid(at))
@@ -172,13 +172,13 @@ fn placed_past<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G,
     let mut ctx = sittir_core::read::ReadCtx::new(source, sittir_core::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
     let (mut placed, mut apart) = (Vec::new(), Vec::new());
     sittir_core::arena::hydrate_whole::<N>(&mut syntax.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut sittir_core::arena::ReadWriter::new(&mut built), &mut placed, &mut apart).expect("the records");
-    let mut past: Vec<Bytes> = placed.iter().filter(|placed| placed.past).map(|placed| (placed.span.start, placed.span.end)).collect();
-    past.sort_unstable();
-    (past, kept)
+    let mut marked: Vec<Bytes> = placed.iter().filter(|placed| placed.tokens_between).map(|placed| (placed.span.start, placed.span.end)).collect();
+    marked.sort_unstable();
+    (marked, kept)
 }
 
 #[test]
-fn a_parse_marks_past_the_tokens_after_a_node_the_entries_the_tree_s_placement_sets_after_them() {
+fn a_parse_marks_the_tokens_between_a_node_and_the_entries_the_tree_s_placement_marks() {
     let cases = [
         ("interface I {\n  a: string; // c\n  b: number\n}\n", vec![(27, 31)]),
         ("enum E {\n  A, // c\n  B\n}\n", vec![(14, 18)]),
@@ -189,9 +189,9 @@ fn a_parse_marks_past_the_tokens_after_a_node_the_entries_the_tree_s_placement_s
         ("const x = [a, b, // c\n]\n", vec![]),
     ];
     for (source, expected) in cases {
-        let (past, kept) = placed_past::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source);
+        let (marked, kept) = tokens_between::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source);
         assert_eq!(kept, expected, "{source:?}: the tree's placement");
-        assert_eq!(past, kept, "{source:?}: the parse");
+        assert_eq!(marked, kept, "{source:?}: the parse");
     }
 }
 
@@ -249,6 +249,6 @@ fn a_placed_error_is_the_entry_a_built_side_holds_for_it() {
     let Some(Place::Read { tree, site }) = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
     let stored = engine.written().side(Place::Placed { tree, site }, TriviaSide::Inner, &*built).expect("a placed side").expect("the root's inner side");
     assert_eq!(stored.len(), 1, "the root's inner holds the ERROR alone");
-    let TriviaEntry::Record(entry) = &stored[0] else { panic!("the ERROR is named by its record, as a built side names it: {:?}", stored[0]) };
+    let TriviaEntry::Record { entry, .. } = &stored[0] else { panic!("the ERROR is named by its record, as a built side names it: {:?}", stored[0]) };
     assert_eq!((entry.record.kind, entry.record.at), (sittir_core::types::KindId::ERROR, at), "the entry names the ERROR's own record");
 }

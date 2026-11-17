@@ -14,10 +14,10 @@
 //! at the file's edges. Its entries go to the owner's named children, the
 //! same answer an arena parse gives (`owner`): an entry starting on token
 //! *k*'s row trails the child ending at token *k*, the rest lead the child
-//! starting at token *k + 1*. An entry past tokens of the owner's own, on the
-//! row the named child before them ends on and last on that row, trails
-//! that child, after the place of those tokens on its side
-//! (`Assigned::Tokens`), which a render writes it after. With no child on
+//! starting at token *k + 1*. An extra past tokens of the owner's own, on
+//! the row the named child before them ends on and last on that row, trails
+//! that child with those tokens between them (`tokens_between`), and a
+//! render writes it after them. With no child on
 //! one side, every entry goes to the child on the other; an owner with no
 //! named child takes them as its `inner`; an owner whose named children are
 //! not beside the gap gives an extra or an `ERROR` to the nearest of them,
@@ -61,7 +61,8 @@ impl HeapBytes for TriviaSide {
 
 
 /// An entry the assignment gives a side: an extra or an `ERROR` by its
-/// descendant index; a run of whitespace between two tokens or entries, with
+/// descendant index, an extra with whether the anonymous tokens after its
+/// owner lie between the owner and it (`Owner::Trailing`); a run of whitespace between two tokens or entries, with
 /// or without a line break, by its place among the table's runs
 /// (`Placement::run`), its bytes, the descendant index of its owner (the smallest node holding the tokens
 /// on both sides of the run's gap, or the node itself for its `inner` side)
@@ -83,21 +84,17 @@ impl HeapBytes for TriviaSide {
 /// its last child that holds trivia, or its `inner` side when no child does.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Assigned {
-    Extra(NodeIndex),
+    Extra { at: NodeIndex, tokens_between: bool },
     Error(NodeIndex),
     Layout { run: RunId, start: u32, end: u32, owner: NodeIndex, depth: i32 },
     Member(NodeIndex),
     Depth(i32),
-    /// Where the anonymous tokens after a trailing side's owner fall: the
-    /// entries after it lie past those tokens in the source (`Owner::Trailing`'s
-    /// `past`).
-    Tokens,
 }
 
 impl HeapBytes for Assigned {
     fn heap_bytes(&self) -> usize {
         match self {
-            Self::Extra(_) | Self::Error(_) | Self::Member(_) | Self::Depth(_) | Self::Tokens | Self::Layout { run: _, start: _, end: _, owner: _, depth: _ } => 0,
+            Self::Extra { at: _, tokens_between: _ } | Self::Error(_) | Self::Member(_) | Self::Depth(_) | Self::Layout { run: _, start: _, end: _, owner: _, depth: _ } => 0,
         }
     }
 }
@@ -121,12 +118,13 @@ impl Sibling {
 }
 
 /// The side an extra or `ERROR` goes to among its siblings: trailing the
-/// one at `at` of the siblings before it, `past` the tokens between them;
+/// one at `at` of the siblings before it, with or without the tokens
+/// between them (`tokens_between`);
 /// leading the one at `at` of the siblings after it; or the `inner` side of
 /// the node holding them, which has no child that holds sides.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Owner {
-    Trailing { at: usize, past: bool },
+    Trailing { at: usize, tokens_between: bool },
     Leading { at: usize },
     Inner,
 }
@@ -144,7 +142,7 @@ pub fn same_row(source: &str, a: u32, b: u32) -> bool {
 ///    starts on the row that holder ends on;
 /// 2. for an extra, not an `ERROR` (`error`), which keeps its in-line
 ///    adjacency: trailing the nearest holder before it across the tokens
-///    between them, past those tokens, when it starts on the row that holder
+///    between them, those tokens between them, when it starts on the row that holder
 ///    ends on and the nearest holder after it starts on a later row than it
 ///    ends on;
 /// 3. leading the holder after it with only entries between;
@@ -158,18 +156,18 @@ pub fn owner(before: &[Sibling], entry: Span, error: bool, after: &[Sibling], so
     let prev = before.iter().rposition(|sibling| sibling.holder);
     let next = after.iter().position(|sibling| sibling.holder);
     if let Some(at) = beside_before.filter(|&at| same_row(source, before[at].span.end, entry.start)) {
-        return Owner::Trailing { at, past: false };
+        return Owner::Trailing { at, tokens_between: false };
     }
     if let (Some(at), Some(next), false) = (prev, next, error) {
         if same_row(source, before[at].span.end, entry.start) && !same_row(source, entry.end, after[next].span.start) {
-            return Owner::Trailing { at, past: true };
+            return Owner::Trailing { at, tokens_between: true };
         }
     }
     match (beside_after, beside_before, next, prev) {
         (Some(at), ..) => Owner::Leading { at },
-        (None, Some(at), ..) => Owner::Trailing { at, past: false },
+        (None, Some(at), ..) => Owner::Trailing { at, tokens_between: false },
         (None, None, Some(at), _) => Owner::Leading { at },
-        (None, None, None, Some(at)) => Owner::Trailing { at, past: false },
+        (None, None, None, Some(at)) => Owner::Trailing { at, tokens_between: false },
         (None, None, None, None) => Owner::Inner,
     }
 }

@@ -234,16 +234,12 @@ pub enum SideEntry<T> {
     Layout(TriviaEntry<T>),
     /// An entry a write gave the side.
     Written(TriviaEntry<T>),
-    /// Where the anonymous tokens after a trailing side's owner fall
-    /// (`TriviaEntry::Tokens`).
-    Tokens,
 }
 
 impl<T> SideEntry<T> {
     pub fn into_entry(self) -> TriviaEntry<T> {
         match self {
             SideEntry::Source { entry, .. } | SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
-            SideEntry::Tokens => TriviaEntry::Tokens,
         }
     }
 }
@@ -472,23 +468,22 @@ impl<'s> ReadCtx<'s> {
                 if index == snapshot.root && side != TriviaSide::Inner {
                     crate::trivia::without_edge_runs(&mut entries, side, |entry| matches!(entry, SideEntry::Layout(_)));
                 }
-                entries.into_iter().filter(|entry| !matches!(entry, SideEntry::Tokens)).map(|side| self.snapshot_entry(snapshot, side)).collect()
+                entries.into_iter().map(|side| self.snapshot_entry(snapshot, side)).collect()
             }
         };
         (!seated.is_empty()).then_some(seated)
     }
 
     /// A seated entry in a snapshot: an extra as its text, an `ERROR` with
-    /// its span, both measured from the holder; a layout run or a written
-    /// entry as it is.
+    /// its span, both measured from the holder, with the tokens before it
+    /// that it had; a layout run or a written entry as it is.
     fn snapshot_entry<T: crate::trivia::FromTriviaText>(&self, snapshot: &SnapshotCtx<'_>, side: SideEntry<T>) -> TriviaEntry<T> {
         match side {
-            SideEntry::Source { kind, span, adjacent, .. } => {
+            SideEntry::Source { entry, kind, span, adjacent } => {
                 let text = crate::trivia::TriviaText::of_source(kind, self.source, span, adjacent, Some(snapshot.span_of(span)));
-                TriviaEntry::new(SlotValue::Node(T::from_text(text)))
+                TriviaEntry::new(SlotValue::Node(T::from_text(text))).with_tokens_between(entry.tokens_between())
             }
             SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
-            SideEntry::Tokens => TriviaEntry::Tokens,
         }
     }
 

@@ -1191,11 +1191,11 @@ impl<'t> Placer<'t, '_, '_> {
             let held = &entries[from..end as usize];
             from = end as usize;
             let spans = held.iter().filter_map(|entry| match *entry {
-                Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => {
+                Assigned::Extra { at, .. } | Assigned::Error(at) | Assigned::Member(at) => {
                     let kid = self.kid(at);
                     Some((kid.start, kid.end))
                 }
-                Assigned::Layout { .. } | Assigned::Depth(_) | Assigned::Tokens => None,
+                Assigned::Layout { .. } | Assigned::Depth(_) => None,
             });
             let reach = match side {
                 TriviaSide::Leading => spans.map(|(start, _)| start).min(),
@@ -1280,7 +1280,7 @@ impl<'t> Placer<'t, '_, '_> {
         match place {
             Place::Side(node, side) => self.placed.entry((node, side)).or_default().push(entry),
             Place::Unowned => {
-                if let Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index) = entry {
+                if let Assigned::Extra { at: index, .. } | Assigned::Error(index) | Assigned::Member(index) = entry {
                     self.state.unowned.insert(order, index);
                 }
             }
@@ -1445,15 +1445,14 @@ impl<'t> Placer<'t, '_, '_> {
         let entries = self.gap_entries(shape, left, right);
         let default = self.place(shape, gap);
         let mut placed = Vec::with_capacity(entries.len());
-        let mut past = Vec::with_capacity(entries.len());
+        let mut tokens_between = Vec::with_capacity(entries.len());
         for entry in &entries {
             let owned = (!self.kinds.layout.contains(&entry.grammar)).then(|| self.owned(shape, gap, entry));
             placed.push(owned.map(|(place, _)| place));
-            past.push(owned.is_some_and(|(_, past)| past));
+            tokens_between.push(owned.is_some_and(|(_, between)| between));
         }
         let trailed = placed.iter().rposition(|placed| matches!(placed, Some(Place::Side(_, TriviaSide::Trailing))));
         let moved = trailed.and_then(|last| placed[last]).filter(|&side| side != default);
-        let tokens = past.iter().position(|&past| past);
         let source = self.text();
         let mut steps = Vec::new();
         let run = |steps: &mut Vec<Step>, at: u32, until: u32, place: Place| {
@@ -1468,15 +1467,12 @@ impl<'t> Placer<'t, '_, '_> {
                 Some(last) if i <= last => placed[last],
                 _ => led,
             };
-            if let Some(place) = placed[i].filter(|_| tokens == Some(i)) {
-                steps.push(Step::Entry { place, entry: Assigned::Tokens });
-            }
             run(&mut steps, at, entry.start, beside.unwrap_or(default));
             match placed[i] {
                 None => steps.push(Step::Entry { place: beside.unwrap_or(default), entry: Assigned::Member(entry.index) }),
                 Some(place) => {
                     led = matches!(place, Place::Side(_, TriviaSide::Leading)).then_some(place);
-                    let assigned = if entry.error() { Assigned::Error(entry.index) } else { Assigned::Extra(entry.index) };
+                    let assigned = if entry.error() { Assigned::Error(entry.index) } else { Assigned::Extra { at: entry.index, tokens_between: tokens_between[i] } };
                     steps.push(Step::Entry { place, entry: assigned });
                 }
             }
@@ -1570,8 +1566,8 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// Where `entry`, an extra or `ERROR` of the gap, goes (`trivia_table::owner`),
-    /// the segments before and after the gap its siblings, and whether it
-    /// lies past the tokens after the node it trails. A child is a holder
+    /// the segments before and after the gap its siblings, and whether the
+    /// tokens after the node it trails lie between that node and it. A child is a holder
     /// beside the gap only where its tokens reach the gap; one the answer
     /// reaches beside the gap or past tokens passes the entry to a list's
     /// item at its edge (`side_holder`), and one it reaches across other
@@ -1589,14 +1585,14 @@ impl<'t> Placer<'t, '_, '_> {
         let after: Vec<Sibling> = shape.segments[gap..].iter().map(|segment| sibling(segment, |kid, segment| kid.start == segment.first.start)).collect();
         let kid = |at: usize| shape.segments[at].kid.map(|kid| shape.kids[kid]);
         match owner(&before, entry.span(), entry.error(), &after, self.text()) {
-            Owner::Trailing { at, past } => {
+            Owner::Trailing { at, tokens_between } => {
                 let segment = shape.segments[at];
-                let node = if past || at + 1 == gap {
+                let node = if tokens_between || at + 1 == gap {
                     self.side_holder(shape, segment.kid, true, TriviaSide::Trailing, segment.last.end)
                 } else {
                     kid(at).map(|kid| self.through_lists(&kid, TriviaSide::Trailing))
                 };
-                (node.map_or(Place::Unowned, |node| Place::Side(node, TriviaSide::Trailing)), past)
+                (node.map_or(Place::Unowned, |node| Place::Side(node, TriviaSide::Trailing)), tokens_between)
             }
             Owner::Leading { at } => {
                 let segment = shape.segments[gap + at];
@@ -1831,7 +1827,7 @@ impl<'t> Placer<'t, '_, '_> {
         };
         seated
             && plan.steps.iter().any(|step| match step {
-                Step::Entry { entry: Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index), .. } => {
+                Step::Entry { entry: Assigned::Extra { at: index, .. } | Assigned::Error(index) | Assigned::Member(index), .. } => {
                     let kid = self.kid(*index);
                     kid.end == at || kid.start == until
                 }
@@ -1854,7 +1850,7 @@ impl<'t> Placer<'t, '_, '_> {
             .steps
             .iter()
             .filter_map(|step| match step {
-                Step::Entry { entry: Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index), .. } => Some(*index),
+                Step::Entry { entry: Assigned::Extra { at: index, .. } | Assigned::Error(index) | Assigned::Member(index), .. } => Some(*index),
                 _ => None,
             })
             .collect();

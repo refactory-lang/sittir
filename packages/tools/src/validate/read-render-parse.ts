@@ -18,6 +18,7 @@ import {
 	isCoordinate,
 	isDataKey,
 	isStorageKey,
+	carryTokensBetween,
 	mapTriviaEntries,
 	markEdited,
 	hydrateStored,
@@ -512,12 +513,12 @@ export function selfContainedRenderInput(
 			const record = entry as Record<string, unknown>;
 			const text = textOf(record);
 			if (text === undefined) return walk(entry);
-			return {
+			return carryTokensBetween(record, {
 				...(typeof record.$type === 'number' ? { $type: record.$type } : {}),
 				$text: text,
 				...(typeof record.$before === 'string' ? { $before: record.$before } : {}),
 				...(typeof record.$after === 'string' ? { $after: record.$after } : {})
-			};
+			});
 		});
 	const layoutOf = (layout: NodeDataLayout): Record<string, unknown> => ({
 		...(layout.trivia === undefined ? {} : { trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, walkTrivia) }),

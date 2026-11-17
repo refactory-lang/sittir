@@ -1621,10 +1621,9 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// The entries of `side` of the node at `index`: the ones a write gave it,
     /// else the assigned ones, each as a value. An extra is its coordinate, an
     /// `ERROR` its kind and source text, and a layout run its whitespace
-    /// member. The place of the tokens after the owner is no value: it is
-    /// the render's (`TriviaEntry::Tokens`).
+    /// member.
     pub fn trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide) -> Vec<TriviaEntry<G::Trivia>> {
-        self.side_entries(index, side, false).into_iter().filter(|entry| !matches!(entry, SideEntry::Tokens)).map(SideEntry::into_entry).collect()
+        self.side_entries(index, side, false).into_iter().map(SideEntry::into_entry).collect()
     }
 
     /// `trivia_side` with where each entry came from, and when `edge_changed`
@@ -1782,11 +1781,11 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
                 |entry| match entry {
                     SideEntry::Layout(_) => true,
                     SideEntry::Written(entry) => entry.is_layout(),
-                    SideEntry::Source { .. } | SideEntry::Tokens => false,
+                    SideEntry::Source { .. } => false,
                 },
                 |entry| match entry {
                     SideEntry::Layout(entry) | SideEntry::Written(entry) => entry.depth(),
-                    SideEntry::Source { .. } | SideEntry::Tokens => 0,
+                    SideEntry::Source { .. } => 0,
                 },
                 ParsedTree::<G>::depth_member,
             );
@@ -2184,18 +2183,18 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         let ctx = tree.read_ctx();
         let entry = TriviaEntry::new;
         let depth = |count: i32| (0..count.unsigned_abs()).filter_map(move |_| ParsedTree::<G>::depth_member(count));
-        let is_entry = |assigned: &Assigned| matches!(assigned, Assigned::Extra(_) | Assigned::Error(_) | Assigned::Member(_) | Assigned::Tokens);
+        let is_entry = |assigned: &Assigned| matches!(assigned, Assigned::Extra { .. } | Assigned::Error(_) | Assigned::Member(_));
         assigned
             .iter()
             .filter(|assigned| layout.is_some() || is_entry(assigned))
             .flat_map(|assigned| -> Vec<SideEntry<G::Trivia>> {
                 match *assigned {
-                    Assigned::Extra(at) => self
+                    Assigned::Extra { at, tokens_between } => self
                         .kid(at)
                         .and_then(|kid| {
                             let coord = ctx.coordinate_of(&kid);
                             let (kind, span) = (coord.kind?, coord.span);
-                            Some(SideEntry::Source { entry: entry(SlotValue::Coord(coord)), kind, span, adjacent: None })
+                            Some(SideEntry::Source { entry: entry(SlotValue::Coord(coord)).with_tokens_between(tokens_between), kind, span, adjacent: None })
                         })
                         .into_iter()
                         .collect(),
@@ -2222,7 +2221,6 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
                         .into_iter()
                         .collect(),
                     Assigned::Depth(count) => depth(count).collect(),
-                    Assigned::Tokens => vec![SideEntry::Tokens],
                 }
             })
             .filter(|entry| layout.is_some() || !matches!(entry, SideEntry::Layout(_)))
@@ -2238,7 +2236,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
             .iter()
             .filter_map(|entry| match entry {
                 SideEntry::Source { span, .. } => Some(span.start),
-                SideEntry::Layout(_) | SideEntry::Written(_) | SideEntry::Tokens => None,
+                SideEntry::Layout(_) | SideEntry::Written(_) => None,
             })
             .min()
     }
@@ -2298,7 +2296,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         let spans = |side: usize| {
             levels.iter().flat_map(move |level| &level[side]).filter_map(|entry| match entry {
                 SideEntry::Source { span, .. } => Some(*span),
-                SideEntry::Layout(_) | SideEntry::Written(_) | SideEntry::Tokens => None,
+                SideEntry::Layout(_) | SideEntry::Written(_) => None,
             })
         };
         Span {
@@ -2785,7 +2783,7 @@ impl<G: EngineGrammar> Engine<G> {
         if let Some(kind) = self.grammar.whitespace().0.gap_kind(crate::layout_kinds::LayoutKinds::BLANKLINE) {
             entries.extend(apart.into_iter().map(|site| ((site, TriviaSide::Leading), CompactEntry::Layout { kind })));
         }
-        entries.extend(placed.into_iter().map(|extra| ((extra.site, extra.side), CompactEntry::Record { kind: extra.kind, at: extra.extra })));
+        entries.extend(placed.into_iter().map(|extra| ((extra.site, extra.side), CompactEntry::Record { kind: extra.kind, at: extra.extra, tokens_between: extra.tokens_between })));
         entries.sort_by_key(|&(key, _)| key);
         for run in entries.chunk_by(|(one, _), (other, _)| one == other) {
             let ((site, side), _) = run[0];
@@ -2809,7 +2807,7 @@ impl<G: EngineGrammar> Engine<G> {
             let span = crate::types::Span::of(&root);
             let at = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
             drop(built);
-            let whole = at.map(|at| crate::arena::Placed { site: crate::arena::NodeSite::Record(at), side: TriviaSide::Inner, extra: at, kind: KindId::ERROR, span, past: false });
+            let whole = at.map(|at| crate::arena::Placed { site: crate::arena::NodeSite::Record(at), side: TriviaSide::Inner, extra: at, kind: KindId::ERROR, span, tokens_between: false });
             self.place_extras(crate::types::TreeId(entry.0), whole.into_iter().collect(), Vec::new());
             at
         } else {
@@ -3878,7 +3876,7 @@ mod tests {
             if read_first {
                 assert_eq!(tree.trivia_side(f, TriviaSide::Leading).len(), 2, "the comment and its line break");
             }
-            let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
+            let note = TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
             tree.write_trivia_side(f, TriviaSide::Leading, vec![note.clone()]).expect("a side write");
             assert_eq!(tree.trivia_side(f, TriviaSide::Leading), [note], "the side reads the write alone");
             let source: Vec<TriviaEntry<TestTrivia>> = tree.lookups().assigned(f, TriviaSide::Leading, None).into_iter().map(SideEntry::into_entry).collect();
@@ -3965,7 +3963,7 @@ mod tests {
         let read = tree.native_bytes();
         assert!(read > parsed, "the read's caches add to the count");
         assert_eq!(tree.cached.load(std::sync::atomic::Ordering::Relaxed), tree.cached_by_walk(), "the count kept at each insert is what a walk of the caches finds");
-        let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
+        let note = TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
         tree.write_trivia_side(f, TriviaSide::Leading, vec![note]).expect("a side write");
         assert!(tree.take_grown(), "a write to a row marks its tree grown");
         let row = std::mem::size_of::<((NodeIndex, TriviaSide), Vec<TriviaEntry<TestTrivia>>)>();
@@ -3982,7 +3980,7 @@ mod tests {
         let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
         assert!(!tree.release_sides(), "a tree with no sides");
         let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
-        tree.sides.insert(NodeIndex::ROOT, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
+        tree.sides.insert(NodeIndex::ROOT, TriviaSide::Leading, vec![TriviaEntry::record(record)]);
         assert!(tree.release_sides(), "its side held a built record");
         assert!(!tree.release_sides(), "once released, none is left");
     }
@@ -3993,12 +3991,12 @@ mod tests {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
         let mut tree = engine.parse("fn f() {}\n", claim()).expect("parse");
         let record = crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(5) }, store: None };
-        tree.sides.insert(NodeIndex::ROOT, TriviaSide::Leading, vec![TriviaEntry::Record(record)]);
+        tree.sides.insert(NodeIndex::ROOT, TriviaSide::Leading, vec![TriviaEntry::record(record)]);
         let _ = tree.take_grown();
-        let note = TriviaEntry::Value(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
+        let note = TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText::of(KindId(3), "// a note"))));
         assert!(tree.write_trivia_side(NodeIndex::ROOT, TriviaSide::Leading, vec![note]).is_err(), "the record the side named holds no count to release");
         let written = tree.sides.get(NodeIndex::ROOT, TriviaSide::Leading).expect("a written side");
-        assert!(matches!(written, [TriviaEntry::Value(_)]), "the new side was written before the release was refused");
+        assert!(matches!(written, [TriviaEntry::Value { .. }]), "the new side was written before the release was refused");
         assert!(tree.take_grown(), "so its tree grew");
     }
 

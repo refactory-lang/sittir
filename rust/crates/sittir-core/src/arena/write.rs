@@ -73,35 +73,40 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
     ///
     /// `ArenaError::Unwritable` for a coordinate naming no read's record,
     /// before any entry is written, for a value written as a cell of any
-    /// other form, and for the place of the tokens after a side's owner
-    /// (`TriviaEntry::Tokens`), which a store has no form for; else what
-    /// writing a value refuses.
+    /// other form, and for a layout member with the tokens after its owner
+    /// before it, which a store keeps no such fact of; else what writing a
+    /// value refuses.
     pub fn kept(&mut self, entries: &[TriviaEntry<T>]) -> Result<Vec<CompactEntry>, ArenaError> {
-        if entries.iter().any(|entry| matches!(entry, TriviaEntry::Value(SlotValue::Coord(coordinate)) if self.read_record(coordinate).is_none())) {
+        if entries.iter().any(|entry| matches!(entry.value(), Some(SlotValue::Coord(coordinate)) if self.read_record(coordinate).is_none())) {
             return Err(ArenaError::Unwritable("a coordinate in a side naming no record a read left"));
         }
         let nested = std::mem::replace(&mut self.nested, true);
-        let kept = entries.iter().map(|entry| self.kept_entry(entry)).collect();
+        let mut kept = Vec::with_capacity(entries.len());
+        let written = entries.iter().try_for_each(|entry| {
+            kept.push(self.kept_entry(entry)?);
+            Ok(())
+        });
         self.nested = nested;
-        kept
+        written.map(|()| kept)
     }
 
     fn kept_entry(&mut self, entry: &TriviaEntry<T>) -> Result<CompactEntry, ArenaError> {
-        let value = match entry {
-            TriviaEntry::Record(record) => return Ok(CompactEntry::Record { kind: record.record.kind, at: record.record.at }),
-            TriviaEntry::Value(SlotValue::Node(value)) => value,
-            TriviaEntry::Value(SlotValue::Coord(coordinate)) => return self.read_record(coordinate).ok_or(ArenaError::Unwritable("a coordinate in a side naming no record a read left")),
-            TriviaEntry::Tokens => return Err(ArenaError::Unwritable("the place of the tokens after a side's owner, which a store does not keep")),
+        let kept = match entry {
+            TriviaEntry::Record { entry, .. } => CompactEntry::Record { kind: entry.record.kind, at: entry.record.at, tokens_between: false },
+            TriviaEntry::Value { value: SlotValue::Coord(coordinate), .. } => self.read_record(coordinate).ok_or(ArenaError::Unwritable("a coordinate in a side naming no record a read left"))?,
+            TriviaEntry::Value { value: SlotValue::Node(value), .. } => {
+                let write = self.trivia;
+                let cell = write(value, self)?;
+                match Cell::decode_built(cell, &self.writer, self.writer.kind_bits())? {
+                    Cell::Unit { kind, .. } if kind != KindId::BLANK => CompactEntry::Layout { kind },
+                    Cell::Child { kind, at, link: None, .. } => CompactEntry::Record { kind, at, tokens_between: false },
+                    Cell::BuiltLeaf { kind, .. } => CompactEntry::Text { kind, at: cell.address(), tokens_between: false },
+                    Cell::BuiltText { .. } => CompactEntry::Text { kind: KindId::BLANK, at: cell.address(), tokens_between: false },
+                    _ => return Err(ArenaError::Unwritable("a trivia value written as no record, layout member or leaf entry")),
+                }
+            }
         };
-        let write = self.trivia;
-        let cell = write(value, self)?;
-        match Cell::decode_built(cell, &self.writer, self.writer.kind_bits())? {
-            Cell::Unit { kind, .. } if kind != KindId::BLANK => Ok(CompactEntry::Layout { kind }),
-            Cell::Child { kind, at, link: None, .. } => Ok(CompactEntry::Record { kind, at }),
-            Cell::BuiltLeaf { kind, .. } => Ok(CompactEntry::Text { kind, at: cell.address() }),
-            Cell::BuiltText { .. } => Ok(CompactEntry::Text { kind: KindId::BLANK, at: cell.address() }),
-            _ => Err(ArenaError::Unwritable("a trivia value written as no record, layout member or leaf entry")),
-        }
+        kept.with_tokens_between(entry.tokens_between()).ok_or(ArenaError::Unwritable("a layout member with the tokens after its owner before it"))
     }
 
     /// The record a read left of the node `coordinate` names by its own
@@ -110,7 +115,7 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
     fn read_record(&self, coordinate: &NodeCoordinate) -> Option<CompactEntry> {
         let kind = coordinate.kind?;
         match coordinate.name()? {
-            crate::types::NodeName { node, site: None } if super::ArenaRead::read_entry(&self.writer, Address(node.0)) => Some(CompactEntry::Record { kind, at: Address(node.0) }),
+            crate::types::NodeName { node, site: None } if super::ArenaRead::read_entry(&self.writer, Address(node.0)) => Some(CompactEntry::Record { kind, at: Address(node.0), tokens_between: false }),
             _ => None,
         }
     }
@@ -613,6 +618,13 @@ mod tests {
         assert_eq!(chunks.text(text), Ok("x"));
         assert_eq!(store.side(Place::Leaf(Site { holder: record, word: 3, item: ItemIndex(0) }), TriviaSide::Trailing, &chunks).expect("read"), Some(vec![entry("// x")]), "a leaf has no record: its sides are kept at its site");
         assert_eq!(items, Vec::<Cell>::new());
+    }
+
+    #[test]
+    fn a_kept_side_takes_the_room_of_its_entries() {
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
+        let kept = RecordSink::built(&mut chunks, &store, &mut unlinked).kept(&[entry("// a")]).expect("kept");
+        assert_eq!(kept.capacity(), 1);
     }
 
     #[test]
