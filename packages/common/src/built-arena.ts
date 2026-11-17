@@ -177,6 +177,12 @@ class Chunks<A extends WritableWords | Uint8Array> {
 		return open < 0 || !this.has(open) ? undefined : { chunk: open, word: this.#marks.at(open), data: this.chunks[open]! };
 	}
 
+	claimTail(size: number): { readonly chunk: number; readonly word: number; readonly data: A } {
+		units(size, 0);
+		if (this.tail() === undefined) throw new Error(`a built arena has no open chunk to claim ${size} units of`);
+		return this.#claim(this.#open, size);
+	}
+
 	alloc(size: number): { readonly chunk: number; readonly word: number; readonly data: A } {
 		units(size, 0);
 		if (size > this.#limit) return this.#claim(this.#push(size), size);
@@ -962,7 +968,8 @@ export class BuiltArena {
 		const length = inPlace ?? bytes!.length;
 		const { kindBits } = this.format;
 		if (length >= 2 ** (32 - kindBits)) throw new Error(`a built leaf's text of ${length} bytes is past what a leaf entry's length holds`);
-		const target = this.#bytes.alloc((ENTRY_HEAD_BYTES + length + 3) & ~3);
+		const size = (ENTRY_HEAD_BYTES + length + 3) & ~3;
+		const target = bytes === undefined ? this.#bytes.claimTail(size) : this.#bytes.alloc(size);
 		if (bytes !== undefined) target.data.set(bytes, target.word + ENTRY_HEAD_BYTES);
 		const heads = this.#heads[target.chunk]!;
 		heads[target.word >>> 2] = (withKind(kind, kindBits) | (length * 2 ** kindBits)) >>> 0;

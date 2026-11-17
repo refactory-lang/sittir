@@ -337,6 +337,18 @@ describe('a built arena', () => {
 		expect(arena.entryText(arena.entryAt(entry.at).entry)).toBe('name');
 	});
 
+	it('writes a text past a chunk of its own in place at the open chunk when that one has the room', () => {
+		const limit = 2 ** format!.chunkShift;
+		let made = 30;
+		const bytes = (least: number) => ({ chunk: ++made, data: new Uint8Array(Math.max(least, 2 * limit + 64)), meta: new Uint8Array(8), freed: [] });
+		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
+		arena.entry(4, 'a');
+		const wide = 'x'.repeat(limit + 8);
+		const entry = arena.entry(4, wide);
+		expect([chunkOf(entry.at, format!), wordOf(entry.at, format!)]).toEqual([31, 8]);
+		expect(arena.entryText(arena.entryAt(entry.at).entry)).toBe(wide);
+	});
+
 	it('asks for a string chunk with the room an entry needs, and appends to it while it has room', () => {
 		let made = 20;
 		const asked: number[] = [];
