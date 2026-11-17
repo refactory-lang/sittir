@@ -261,6 +261,6 @@ describe('the portable read', () => {
 		expect(roundTrip('impl T for S {}')).toBe('impl T for S {}\n');
 		expect(roundTrip('unsafe impl<T> Tr<T> for S<T> where T: Copy { fn f(&self) {} }')).toBe('unsafe impl<T> Tr<T> for S<T> where T: Copy {\n    fn f(&self) {}\n}\n');
 		expect(roundTrip('fn g() { a.b.c(); }')).toBe('fn g() {\n    a.b.c();\n}\n');
-		expect(() => runtime.build({ $path: 'expression.call.member', arguments: ['x'] } as Read)).toThrow('no rust form of expression.call.member builds this structure (members arguments)');
+		expect(() => runtime.build({ $path: 'expression.call.member', arguments: ['x'] } as Read)).toThrow('no rust form of expression.call.member builds this structure (slots arguments)');
 	});
 });

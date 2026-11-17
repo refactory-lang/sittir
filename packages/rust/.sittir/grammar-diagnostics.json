@@ -460,7 +460,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.bounds.higher_ranked: typeParameters requires other members or reads only some kinds"
+    "message": "clause.bounds.higher_ranked: typeParameters requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -596,7 +596,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum: a container at content that holds members of its own"
+    "message": "declaration.enum: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -604,7 +604,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.private: a container at content that holds members of its own"
+    "message": "declaration.enum.private: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -612,7 +612,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public: a container at content that holds members of its own"
+    "message": "declaration.enum.public: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -620,7 +620,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.internal: a container at content that holds members of its own"
+    "message": "declaration.enum.public.internal: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -628,7 +628,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.parent: a container at content that holds members of its own"
+    "message": "declaration.enum.public.parent: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -636,7 +636,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.restricted: a container at content that holds members of its own"
+    "message": "declaration.enum.public.restricted: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -652,7 +652,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.private: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.private: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -660,7 +660,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.public: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -668,7 +668,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.internal: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.public.internal: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -676,7 +676,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.parent: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.public.parent: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -684,7 +684,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.restricted: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.public.restricted: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -692,7 +692,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.struct: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -700,7 +700,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.private: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.struct.private: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -708,7 +708,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.struct.public: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -716,7 +716,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.internal: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.struct.public.internal: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -724,7 +724,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.parent: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.struct.public.parent: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -732,7 +732,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.restricted: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.struct.public.restricted: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -748,7 +748,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.private: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.tuple.private: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -756,7 +756,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.tuple.public: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -764,7 +764,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.internal: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.tuple.public.internal: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -772,7 +772,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.parent: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.tuple.public.parent: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -780,7 +780,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.restricted: a container at fieldDeclaration that holds members of its own"
+    "message": "declaration.enum_member.tuple.public.restricted: a container at fieldDeclaration that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -788,7 +788,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.extension: a container at content that holds members of its own"
+    "message": "declaration.extension: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -900,7 +900,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait: a container at content that holds members of its own"
+    "message": "declaration.interface.trait: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -908,7 +908,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.private: a container at content that holds members of its own"
+    "message": "declaration.interface.trait.private: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -916,7 +916,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public: a container at content that holds members of its own"
+    "message": "declaration.interface.trait.public: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -924,7 +924,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.internal: a container at content that holds members of its own"
+    "message": "declaration.interface.trait.public.internal: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -932,7 +932,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.parent: a container at content that holds members of its own"
+    "message": "declaration.interface.trait.public.parent: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -940,7 +940,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.restricted: a container at content that holds members of its own"
+    "message": "declaration.interface.trait.public.restricted: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1116,7 +1116,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct: a container at content that holds members of its own"
+    "message": "declaration.struct: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1124,7 +1124,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.private: a container at content that holds members of its own"
+    "message": "declaration.struct.private: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1132,7 +1132,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public: a container at content that holds members of its own"
+    "message": "declaration.struct.public: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1140,7 +1140,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.internal: a container at content that holds members of its own"
+    "message": "declaration.struct.public.internal: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1148,7 +1148,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.parent: a container at content that holds members of its own"
+    "message": "declaration.struct.public.parent: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1156,7 +1156,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.restricted: a container at content that holds members of its own"
+    "message": "declaration.struct.public.restricted: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1164,7 +1164,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple: a container at content that holds members of its own"
+    "message": "declaration.struct.tuple: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1172,7 +1172,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.private: a container at content that holds members of its own"
+    "message": "declaration.struct.tuple.private: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1180,7 +1180,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public: a container at content that holds members of its own"
+    "message": "declaration.struct.tuple.public: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1188,7 +1188,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.internal: a container at content that holds members of its own"
+    "message": "declaration.struct.tuple.public.internal: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1196,7 +1196,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.parent: a container at content that holds members of its own"
+    "message": "declaration.struct.tuple.public.parent: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1204,7 +1204,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.restricted: a container at content that holds members of its own"
+    "message": "declaration.struct.tuple.public.restricted: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1212,7 +1212,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit: a container at content that holds members of its own"
+    "message": "declaration.struct.unit: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1220,7 +1220,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.private: a container at content that holds members of its own"
+    "message": "declaration.struct.unit.private: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1228,7 +1228,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public: a container at content that holds members of its own"
+    "message": "declaration.struct.unit.public: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1236,7 +1236,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.internal: a container at content that holds members of its own"
+    "message": "declaration.struct.unit.public.internal: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1244,7 +1244,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.parent: a container at content that holds members of its own"
+    "message": "declaration.struct.unit.public.parent: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1252,7 +1252,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.restricted: a container at content that holds members of its own"
+    "message": "declaration.struct.unit.public.restricted: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1260,7 +1260,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias: a container at content that holds members of its own"
+    "message": "declaration.type_alias: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1268,7 +1268,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.associated: a container at content that holds members of its own"
+    "message": "declaration.type_alias.associated: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1276,7 +1276,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.private: a container at content that holds members of its own"
+    "message": "declaration.type_alias.private: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1284,7 +1284,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public: a container at content that holds members of its own"
+    "message": "declaration.type_alias.public: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1292,7 +1292,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.internal: a container at content that holds members of its own"
+    "message": "declaration.type_alias.public.internal: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1300,7 +1300,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.parent: a container at content that holds members of its own"
+    "message": "declaration.type_alias.public.parent: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1308,7 +1308,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.restricted: a container at content that holds members of its own"
+    "message": "declaration.type_alias.public.restricted: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1340,7 +1340,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union: a container at content that holds members of its own"
+    "message": "declaration.union: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1348,7 +1348,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.private: a container at content that holds members of its own"
+    "message": "declaration.union.private: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1356,7 +1356,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public: a container at content that holds members of its own"
+    "message": "declaration.union.public: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1364,7 +1364,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.internal: a container at content that holds members of its own"
+    "message": "declaration.union.public.internal: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1372,7 +1372,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.parent: a container at content that holds members of its own"
+    "message": "declaration.union.public.parent: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1380,7 +1380,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.restricted: a container at content that holds members of its own"
+    "message": "declaration.union.public.restricted: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -1436,7 +1436,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.attributed: attributes requires other members or reads only some kinds"
+    "message": "element.attributed: attributes requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1924,7 +1924,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.tuple: elements requires other members or reads only some kinds"
+    "message": "expression.collection.tuple: elements requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -1932,7 +1932,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.instantiation: typeArguments requires other members or reads only some kinds"
+    "message": "expression.instantiation: typeArguments requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2220,7 +2220,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.generic: typeArguments requires other members or reads only some kinds"
+    "message": "pattern.generic: typeArguments requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2476,7 +2476,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.abstract: a container at content that holds members of its own"
+    "message": "type.abstract: a container at content that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -2500,7 +2500,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic: typeArguments requires other members or reads only some kinds"
+    "message": "type.generic: typeArguments requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2508,7 +2508,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic.turbofish: typeArguments requires other members or reads only some kinds"
+    "message": "type.generic.turbofish: typeArguments requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -2620,7 +2620,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.tuple: types requires other members or reads only some kinds"
+    "message": "type.tuple: types requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",

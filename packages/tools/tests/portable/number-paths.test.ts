@@ -44,9 +44,9 @@ describe('a number path is its path, its value and its other slots', () => {
 	it.each(['python', 'typescript'] as const)('%s refuses an option beside the $value, and the value slots without one', async (grammar) => {
 		using engine = await engineOf(grammar);
 		const runtime = await portableRuntime(engine);
-		expect(() => runtime.build({ $path: 'literal.number.float.scientific', $value: 100000, marker: 'E' } as never)).toThrow(/ has no \S+ marker$/);
+		expect(() => runtime.build({ $path: 'literal.number.float.scientific', $value: 100000, marker: 'E' } as never)).toThrow(/ has no slot marker$/);
 		expect(() => runtime.build({ $path: 'literal.number.float.scientific', integer: '1', exponent: '5' } as never)).toThrow();
-		if (grammar === 'python') expect(() => runtime.build({ $path: 'literal.number.integer.big', $value: 10n, marker: 'l' } as never)).toThrow(/ has no \S+ marker$/);
+		if (grammar === 'python') expect(() => runtime.build({ $path: 'literal.number.integer.big', $value: 10n, marker: 'l' } as never)).toThrow(/ has no slot marker$/);
 	});
 
 	it.each([

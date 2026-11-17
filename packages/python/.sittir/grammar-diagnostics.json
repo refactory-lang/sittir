@@ -2515,7 +2515,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.comprehension.for: rights requires other members or reads only some kinds"
+    "message": "clause.comprehension.for: rights requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -3315,7 +3315,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.resource: items requires other members or reads only some kinds"
+    "message": "clause.resource: items requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -3379,7 +3379,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.special: a template-spelled member (name)"
+    "message": "declaration.method.special: a template-spelled slot (name)"
   },
   {
     "scope": "grammar",
@@ -3931,7 +3931,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.chain: comparators requires other members or reads only some kinds"
+    "message": "expression.binary.comparison.chain: comparators requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4035,7 +4035,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.set: elements requires other members or reads only some kinds"
+    "message": "expression.collection.set: elements requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4043,7 +4043,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.generator: clauses requires other members or reads only some kinds"
+    "message": "expression.comprehension.generator: clauses requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4051,7 +4051,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.list: clauses requires other members or reads only some kinds"
+    "message": "expression.comprehension.list: clauses requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4059,7 +4059,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.map: clauses requires other members or reads only some kinds"
+    "message": "expression.comprehension.map: clauses requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4067,7 +4067,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.set: clauses requires other members or reads only some kinds"
+    "message": "expression.comprehension.set: clauses requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4131,7 +4131,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "file: a container at definition that holds members of its own"
+    "message": "file: a container at definition that holds slots of its own"
   },
   {
     "scope": "grammar",
@@ -4219,7 +4219,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.concatenated: strings requires other members or reads only some kinds"
+    "message": "literal.string.concatenated: strings requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4491,7 +4491,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.assert: expressions requires other members or reads only some kinds"
+    "message": "statement.assert: expressions requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4571,7 +4571,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.global: names requires other members or reads only some kinds"
+    "message": "statement.global: names requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4587,7 +4587,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import: names requires other members or reads only some kinds"
+    "message": "statement.import: names requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4595,7 +4595,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.from: names requires other members or reads only some kinds"
+    "message": "statement.import.from: names requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4603,7 +4603,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.future: names requires other members or reads only some kinds"
+    "message": "statement.import.future: names requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4635,7 +4635,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.nonlocal: names requires other members or reads only some kinds"
+    "message": "statement.nonlocal: names requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4643,7 +4643,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.print: arguments requires other members or reads only some kinds"
+    "message": "statement.print: arguments requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",

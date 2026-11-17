@@ -57,6 +57,6 @@ describe('a label belongs to the loop or block it names', () => {
 	});
 
 	it('refuses a labeled loop built as the root, since its label is its envelope', () => {
-		expect(() => runtime.build(labeledWhile as never)).toThrow(/while_statement has no member label/);
+		expect(() => runtime.build(labeledWhile as never)).toThrow(/while_statement has no slot label/);
 	});
 });

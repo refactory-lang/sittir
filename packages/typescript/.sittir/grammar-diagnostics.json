@@ -3246,7 +3246,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.extends: types requires other members or reads only some kinds"
+    "message": "clause.extends: types requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -3254,7 +3254,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.extends.type: types requires other members or reads only some kinds"
+    "message": "clause.extends.type: types requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -3262,7 +3262,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.implements: types requires other members or reads only some kinds"
+    "message": "clause.implements: types requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -3886,7 +3886,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.constant: declarators requires other members or reads only some kinds"
+    "message": "declaration.variable.constant: declarators requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -3902,7 +3902,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.reassignable: declarators requires other members or reads only some kinds"
+    "message": "declaration.variable.reassignable: declarators requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -3910,7 +3910,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.reassignable.function_scoped: declarators requires other members or reads only some kinds"
+    "message": "declaration.variable.reassignable.function_scoped: declarators requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4462,7 +4462,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.sequence: expressions requires other members or reads only some kinds"
+    "message": "expression.sequence: expressions requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",
@@ -4926,7 +4926,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic: typeArguments requires other members or reads only some kinds"
+    "message": "type.generic: typeArguments requires other slots or reads only some kinds"
   },
   {
     "scope": "grammar",

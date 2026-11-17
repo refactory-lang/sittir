@@ -176,7 +176,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (container.mounted !== undefined) fail(`a mounted container at ${container.key}`);
 		if (container.flatten === true) fail(`a flattened container at ${container.key}`);
 		if (container.through !== undefined) fail(`a container at ${container.key} standing in for others`);
-		if (container.slots !== undefined) fail(`a container at ${container.key} that holds members of its own`);
+		if (container.slots !== undefined) fail(`a container at ${container.key} that holds slots of its own`);
 		if (container.sets !== undefined) fail(`a container at ${container.key} that sets flags`);
 	};
 	const checkSeat = (seat: PortableSeat): void => {
@@ -381,7 +381,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (member.steps.length !== 1) return fail(`${member.name} reaches its slot in ${member.steps.length} steps`);
 		const [step] = member.steps;
 		if (step!.mounted !== undefined || step!.flatten === true || step!.seated !== undefined || step!.many === true) return fail(`${member.name}'s step at ${step!.key} is not a plain slot`);
-		if (member.requires !== undefined || member.reads !== undefined || member.nonEmpty === true) return fail(`${member.name} requires other members or reads only some kinds`);
+		if (member.requires !== undefined || member.reads !== undefined || member.nonEmpty === true) return fail(`${member.name} requires other slots or reads only some kinds`);
 		const given = dot(value, member.name);
 		if (member.multiple) return call(dot(listOf(given), 'map'), id(memberFunction(owner, arm, member, 0)));
 		const either = member.list !== true && member.seats.some((seat) => seat.many === true && !(member.list === false && (seat.within ?? []).length === 0));
@@ -415,14 +415,14 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const others = arm.slots.filter((member) => !spelled(member));
 		const scalar = dot(input(), '$value');
 		if (numeric === undefined || shapeOf(arm.builder!) !== 'config') {
-			if (others.length > 0) return fail(`${path}'s number arm takes members beside its value`);
+			if (others.length > 0) return fail(`${path}'s number arm takes slots beside its value`);
 			if (arm.scalar !== 'integer') return [ret(call(callee, scalar))];
 			return [constant('value', scalar), ret(ternary(typeIs(id('value'), 'bigint'), call(callee, id('value')), call(callee, id('value'))))];
 		}
 		const entries = others.map((member): [string, Expression] => [member.steps[0]?.key ?? member.name, memberValue(path, arm, member, input())]);
 		if (parts === undefined) return [ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
 		const options = new Set(table.options?.[arm.builder!] ?? []);
-		if (entries.some(([key]) => options.has(key))) return fail(`${path}'s number arm takes a member through its builder's options`);
+		if (entries.some(([key]) => options.has(key))) return fail(`${path}'s number arm takes a slot through its builder's options`);
 		const written = slots.map((slot): [string, Expression] => [slot, dot(id('parts'), slot)]);
 		const optioned = written.filter(([slot]) => options.has(slot));
 		return [
@@ -435,7 +435,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const armBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
 		if (arm.builder === undefined) return fail(`arm ${arm.kind} builds through its holder`);
 		if (arm.mounted !== undefined) return fail(`arm ${arm.kind} mounts into its holder`);
-		if (arm.template !== undefined) return fail(`a template-spelled member (${arm.template.slot})`);
+		if (arm.template !== undefined) return fail(`a template-spelled slot (${arm.template.slot})`);
 		if (arm.sole !== undefined) return fail(`a sole-item delimiter on ${arm.sole.slot}`);
 		if (arm.owners !== undefined) return fail(`arm ${arm.kind} builds through one of several forms`);
 		if (arm.content !== undefined) return fail(`arm ${arm.kind} builds its text through a content slot`);
@@ -476,7 +476,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const callee = builderRef(arm.builder);
 		if (shape === 'config') return [ret(call(callee, obj(entries)))];
 		if (shape === 'constant' || shape === 'nullary') return entries.length === 0 ? [ret(call(callee))] : fail(`${arm.builder} takes nothing but the arm fills ${entries.length} slots`);
-		if (entries.length > 1) return fail(`${arm.builder} (${shape}) takes one member but the arm has ${entries.length}`);
+		if (entries.length > 1) return fail(`${arm.builder} (${shape}) takes one slot but the arm has ${entries.length}`);
 		if (shape === 'spread' || shape === 'elements') return [ret(entries.length === 0 ? call(callee) : call(callee, t.spreadElement(entries[0]![1])))];
 		if (shape === 'forwarded' || shape === 'direct') return [ret(entries.length === 0 ? call(callee) : call(callee, entries[0]![1]))];
 		return fail(`${arm.builder} takes a ${shape} input`);
