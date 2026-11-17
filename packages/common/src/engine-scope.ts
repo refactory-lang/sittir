@@ -4,6 +4,7 @@ import type {
 	EngineIdentity,
 	LanguageAPI,
 	LanguageHooks,
+	NativeSlots,
 	NodeStorage,
 	NodeStorageOptions,
 	Pending,
@@ -35,6 +36,7 @@ export interface EngineHandle {
 export interface TreeEngineHandle extends EngineHandle {
 	hydrate: LanguageHooks<LanguageAPI>['hydrate'];
 	readonly querySlots: QuerySlots;
+	readonly nativeSlots?: NativeSlots;
 	readonly structure: StructureTable;
 }
 
@@ -169,6 +171,10 @@ export function hydrateStored(value: unknown): unknown {
 
 export function treeSlotTable(tree: object): QuerySlots | undefined {
 	return treeHandles.get(tree)?.querySlots;
+}
+
+export function treeNativeSlots(tree: object): NativeSlots | undefined {
+	return treeHandles.get(tree)?.nativeSlots;
 }
 
 export function treeStructureTable(tree: object): StructureTable | undefined {

@@ -72,7 +72,7 @@ import {
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NativeSlots, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptySourceFile } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
@@ -1060,6 +1060,21 @@ function wrapUnionItem$with$body(this: Received<Held>, ...args: unknown[]): unkn
 	return wrapUnionItem$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapUnionItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapUnionItem$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapUnionItem$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FieldDeclarationList>(this, '_body', tree);
+}
+
 export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1221,6 +1236,21 @@ function wrapEnumItem$with$body(this: Received<Held>, ...args: unknown[]): unkno
 	return wrapEnumItem$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapEnumItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapEnumItem$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapEnumItem$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.EnumVariantList>(this, '_body', tree);
+}
+
 const wrapEnumVariantList$wrapper = {
 	kind: TSKindId.AttributedEnumVariant,
 	content: 'enumVariant',
@@ -1334,6 +1364,11 @@ function wrapEnumVariantList$with$elements(this: Received<Held>, ...args: unknow
 	return wrapEnumVariantList$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapEnumVariantList$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.EnumVariantListElements | undefined>(this, '_elements', tree);
+}
+
 export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVariant.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1430,6 +1465,11 @@ function wrapEnumVariant$with$body(this: Received<Held>, ...args: unknown[]): un
 }
 function wrapEnumVariant$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapEnumVariant$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+function wrapEnumVariant$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
 }
 
 const wrapFieldDeclarationList$wrapper = {
@@ -1553,6 +1593,11 @@ function wrapFieldDeclarationList$with$elements(this: Received<Held>, ...args: u
 	return wrapFieldDeclarationList$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapFieldDeclarationList$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FieldDeclarationListElements | undefined>(this, '_elements', tree);
+}
+
 export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle): T.FieldDeclaration.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1636,6 +1681,11 @@ function wrapFieldDeclaration$with$name(this: Received<Held>, ...args: unknown[]
 }
 function wrapFieldDeclaration$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFieldDeclaration$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapFieldDeclaration$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
 }
 
 const wrapOrderedFieldDeclarationList$wrapper = {
@@ -1759,6 +1809,11 @@ function wrapOrderedFieldDeclarationList$with$elements(this: Received<Held>, ...
 	return wrapOrderedFieldDeclarationList$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapOrderedFieldDeclarationList$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.OrderedFieldDeclarationListElements | undefined>(this, '_elements', tree);
+}
+
 export function wrapExternCrateDeclaration(
 	data: T.ExternCrateDeclaration,
 	tree: TreeHandle
@@ -1854,6 +1909,11 @@ function wrapExternCrateDeclaration$with$name(this: Received<Held>, ...args: unk
 }
 function wrapExternCrateDeclaration$with$alias(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapExternCrateDeclaration$with(receiverOf(this, '$with.alias'), 'alias', args);
+}
+
+function wrapExternCrateDeclaration$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
 }
 
 export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.Parsed {
@@ -1952,6 +2012,11 @@ function wrapConstItem$with$type(this: Received<Held>, ...args: unknown[]): unkn
 }
 function wrapConstItem$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapConstItem$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+function wrapConstItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
 }
 
 export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticItem.Parsed {
@@ -2076,6 +2141,11 @@ function wrapStaticItem$with$type(this: Received<Held>, ...args: unknown[]): unk
 }
 function wrapStaticItem$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapStaticItem$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+function wrapStaticItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
 }
 
 export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Parsed {
@@ -2237,6 +2307,16 @@ function wrapTypeItem$with$value(this: Received<Held>, ...args: unknown[]): unkn
 }
 function wrapTypeItem$with$trailingWhereClause(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeItem$with(receiverOf(this, '$with.trailingWhereClause'), 'trailingWhereClause', args);
+}
+
+function wrapTypeItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapTypeItem$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
 }
 
 export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.FunctionItem.Parsed {
@@ -2437,6 +2517,21 @@ function wrapFunctionItem$with$whereClause(this: Received<Held>, ...args: unknow
 }
 function wrapFunctionItem$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFunctionItem$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapFunctionItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapFunctionItem$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapFunctionItem$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Parameters>(this, '_parameters', tree);
 }
 
 export function wrapFunctionSignatureItem(
@@ -2644,6 +2739,21 @@ function wrapFunctionSignatureItem$with$whereClause(this: Received<Held>, ...arg
 	return wrapFunctionSignatureItem$with(receiverOf(this, '$with.whereClause'), 'whereClause', args);
 }
 
+function wrapFunctionSignatureItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapFunctionSignatureItem$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapFunctionSignatureItem$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+}
+
 export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandle): T.FunctionModifiers.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -2804,6 +2914,11 @@ function wrapWhereClause$with$wherePredicates(this: Received<Held>, ...args: unk
 	return wrapWhereClause$with(receiverOf(this, '$with.wherePredicates'), 'wherePredicates', args);
 }
 
+function wrapWhereClause$wherePredicates$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.WherePredicates | undefined>(this, '_where_predicates', tree);
+}
+
 export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.WherePredicate.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -2894,6 +3009,11 @@ function wrapWherePredicate$with$left(this: Received<Held>, ...args: unknown[]):
 }
 function wrapWherePredicate$with$bounds(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapWherePredicate$with(receiverOf(this, '$with.bounds'), 'bounds', args);
+}
+
+function wrapWherePredicate$bounds$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TraitBounds>(this, '_bounds', tree);
 }
 
 export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.Parsed {
@@ -3081,6 +3201,26 @@ function wrapTraitItem$with$body(this: Received<Held>, ...args: unknown[]): unkn
 	return wrapTraitItem$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapTraitItem$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapTraitItem$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapTraitItem$bounds$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TraitBounds | undefined>(this, '_bounds', tree);
+}
+
+function wrapTraitItem$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TraitInterfaceDeclarationBody>(this, '_body', tree);
+}
+
 export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.AssociatedType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3206,6 +3346,16 @@ function wrapAssociatedType$with$bounds(this: Received<Held>, ...args: unknown[]
 }
 function wrapAssociatedType$with$whereClause(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAssociatedType$with(receiverOf(this, '$with.whereClause'), 'whereClause', args);
+}
+
+function wrapAssociatedType$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapAssociatedType$bounds$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TraitBounds | undefined>(this, '_bounds', tree);
 }
 
 export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitBounds.Parsed {
@@ -3348,6 +3498,11 @@ function wrapHigherRankedTraitBound$with$typeParameters(this: Received<Held>, ..
 }
 function wrapHigherRankedTraitBound$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapHigherRankedTraitBound$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapHigherRankedTraitBound$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters>(this, '_type_parameters', tree);
 }
 
 export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandle): T.RemovedTraitBound.Parsed {
@@ -3508,6 +3663,11 @@ function wrapTypeParameters$with$elements(this: Received<Held>, ...args: unknown
 	return wrapTypeParameters$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapTypeParameters$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+}
+
 export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.ConstParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3664,6 +3824,11 @@ function wrapTypeParameter$with$default(this: Received<Held>, ...args: unknown[]
 	return wrapTypeParameter$with(receiverOf(this, '$with.default'), 'default', args);
 }
 
+function wrapTypeParameter$bounds$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TraitBounds | undefined>(this, '_bounds', tree);
+}
+
 export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandle): T.LifetimeParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3730,6 +3895,11 @@ function wrapLifetimeParameter$with$name(this: Received<Held>, ...args: unknown[
 }
 function wrapLifetimeParameter$with$bounds(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapLifetimeParameter$with(receiverOf(this, '$with.bounds'), 'bounds', args);
+}
+
+function wrapLifetimeParameter$bounds$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TraitBounds | undefined>(this, '_bounds', tree);
 }
 
 export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.LetDeclaration.Parsed {
@@ -3918,6 +4088,11 @@ function wrapUseDeclaration$with$argument(this: Received<Held>, ...args: unknown
 	return wrapUseDeclaration$with(receiverOf(this, '$with.argument'), 'argument', args);
 }
 
+function wrapUseDeclaration$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
 export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.ScopedUseList.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4008,6 +4183,11 @@ function wrapScopedUseList$with$path(this: Received<Held>, ...args: unknown[]): 
 }
 function wrapScopedUseList$with$list(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapScopedUseList$with(receiverOf(this, '$with.list'), 'list', args);
+}
+
+function wrapScopedUseList$list$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.UseList>(this, '_list', tree);
 }
 
 function wrapUseList$listRead(this: { readonly useClauses: () => unknown }): readonly unknown[] {
@@ -4119,6 +4299,11 @@ function wrapUseList$with(node: Held, setter: string, args: readonly unknown[]):
 }
 function wrapUseList$with$useClauses(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapUseList$with(receiverOf(this, '$with.useClauses'), 'useClauses', args);
+}
+
+function wrapUseList$useClauses$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.UseClauses | undefined>(this, '_use_clauses', tree);
 }
 
 export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsClause.Parsed {
@@ -4922,6 +5107,11 @@ function wrapForLifetimes$with$lifetimes(this: Received<Held>, ...args: unknown[
 	return wrapForLifetimes$with(receiverOf(this, '$with.lifetimes'), 'lifetimes', args);
 }
 
+function wrapForLifetimes$lifetimes$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Lifetimes>(this, '_lifetimes', tree);
+}
+
 export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.FunctionType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5043,6 +5233,16 @@ function wrapFunctionType$with$returnType(this: Received<Held>, ...args: unknown
 	return wrapFunctionType$with(receiverOf(this, '$with.returnType'), 'returnType', args);
 }
 
+function wrapFunctionType$forLifetimes$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ForLifetimes | undefined>(this, '_for_lifetimes', tree);
+}
+
+function wrapFunctionType$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+}
+
 function wrapTupleType$listRead(this: { readonly types: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.types(), 'items'), undefined);
 }
@@ -5143,6 +5343,11 @@ function wrapTupleType$with$types(this: Received<Held>, ...args: unknown[]): unk
 	return wrapTupleType$with(receiverOf(this, '$with.types'), 'types', args);
 }
 
+function wrapTupleType$types$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Types>(this, '_types', tree);
+}
+
 export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): T.GenericFunction.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5231,6 +5436,11 @@ function wrapGenericFunction$with$typeArguments(this: Received<Held>, ...args: u
 	return wrapGenericFunction$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
 }
 
+function wrapGenericFunction$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
+}
+
 export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.GenericType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5310,6 +5520,11 @@ function wrapGenericType$with$type(this: Received<Held>, ...args: unknown[]): un
 }
 function wrapGenericType$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapGenericType$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+
+function wrapGenericType$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
 }
 
 export function wrapGenericTypeWithTurbofish(
@@ -5404,6 +5619,11 @@ function wrapGenericTypeWithTurbofish$with$type(this: Received<Held>, ...args: u
 }
 function wrapGenericTypeWithTurbofish$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapGenericTypeWithTurbofish$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+
+function wrapGenericTypeWithTurbofish$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
 }
 
 export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle): T.BoundedType.Parsed {
@@ -5563,6 +5783,11 @@ function wrapUseBounds$with$bounds(this: Received<Held>, ...args: unknown[]): un
 	return wrapUseBounds$with(receiverOf(this, '$with.bounds'), 'bounds', args);
 }
 
+function wrapUseBounds$bounds$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.UseBoundsElements | undefined>(this, '_bounds', tree);
+}
+
 const wrapTypeArguments$wrapper = { kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] };
 function wrapTypeArguments$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), wrapTypeArguments$wrapper);
@@ -5672,6 +5897,11 @@ function wrapTypeArguments$with$elements(this: Received<Held>, ...args: unknown[
 	return wrapTypeArguments$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapTypeArguments$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArgumentsElements>(this, '_elements', tree);
+}
+
 export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBinding.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5768,6 +5998,11 @@ function wrapTypeBinding$with$typeArguments(this: Received<Held>, ...args: unkno
 }
 function wrapTypeBinding$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeBinding$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapTypeBinding$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
 }
 
 export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.ReferenceType.Parsed {
@@ -5935,6 +6170,11 @@ function wrapAbstractType$with$typeParameters(this: Received<Held>, ...args: unk
 }
 function wrapAbstractType$with$trait(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAbstractType$with(receiverOf(this, '$with.trait'), 'trait', args);
+}
+
+function wrapAbstractType$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
 }
 
 export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.DynamicType.Parsed {
@@ -6933,6 +7173,11 @@ function wrapCallExpression$with$arguments(this: Received<Held>, ...args: unknow
 	return wrapCallExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
+function wrapCallExpression$arguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+}
+
 const wrapArguments$wrapper = { kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] };
 function wrapArguments$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), wrapArguments$wrapper);
@@ -7037,6 +7282,11 @@ function wrapArguments$with(node: Held, setter: string, args: readonly unknown[]
 }
 function wrapArguments$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapArguments$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapArguments$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ArgumentsElements | undefined>(this, '_elements', tree);
 }
 
 export function wrapParenthesizedExpression(
@@ -7197,6 +7447,11 @@ function wrapTupleExpression$with$elements(this: Received<Held>, ...args: unknow
 	return wrapTupleExpression$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapTupleExpression$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TupleExpressionElements>(this, '_elements', tree);
+}
+
 export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle): T.StructExpression.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7276,6 +7531,11 @@ function wrapStructExpression$with$name(this: Received<Held>, ...args: unknown[]
 }
 function wrapStructExpression$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapStructExpression$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapStructExpression$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FieldInitializerList>(this, '_body', tree);
 }
 
 function wrapFieldInitializerList$listRead(this: { readonly initializers: () => unknown }): readonly unknown[] {
@@ -7392,6 +7652,11 @@ function wrapFieldInitializerList$with$initializers(this: Received<Held>, ...arg
 	return wrapFieldInitializerList$with(receiverOf(this, '$with.initializers'), 'initializers', args);
 }
 
+function wrapFieldInitializerList$initializers$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FieldInitializerListElements | undefined>(this, '_initializers', tree);
+}
+
 export function wrapShorthandFieldInitializer(
 	data: T.ShorthandFieldInitializer,
 	tree: TreeHandle
@@ -7471,6 +7736,11 @@ function wrapShorthandFieldInitializer$with$attributes(this: Received<Held>, ...
 }
 function wrapShorthandFieldInitializer$with$name(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapShorthandFieldInitializer$with(receiverOf(this, '$with.name'), 'name', args);
+}
+
+function wrapShorthandFieldInitializer$attributes$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 }
 
 export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle): T.FieldInitializer.Parsed {
@@ -7559,6 +7829,11 @@ function wrapFieldInitializer$with$name(this: Received<Held>, ...args: unknown[]
 }
 function wrapFieldInitializer$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFieldInitializer$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+function wrapFieldInitializer$attributes$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 }
 
 export function wrapBaseFieldInitializer(
@@ -7698,6 +7973,11 @@ function wrapIfExpression$with$consequence(this: Received<Held>, ...args: unknow
 }
 function wrapIfExpression$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapIfExpression$with(receiverOf(this, '$with.alternative'), 'alternative', args);
+}
+
+function wrapIfExpression$alternative$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
 }
 
 export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetCondition.Parsed {
@@ -7928,6 +8208,11 @@ function wrapMatchExpression$with$subject(this: Received<Held>, ...args: unknown
 }
 function wrapMatchExpression$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMatchExpression$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapMatchExpression$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.MatchBlock>(this, '_body', tree);
 }
 
 export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
@@ -9203,6 +9488,11 @@ function wrapGenericPattern$with$typeArguments(this: Received<Held>, ...args: un
 	return wrapGenericPattern$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
 }
 
+function wrapGenericPattern$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
+}
+
 function wrapTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
@@ -9301,6 +9591,11 @@ function wrapTuplePattern$with(node: Held, setter: string, args: readonly unknow
 }
 function wrapTuplePattern$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTuplePattern$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapTuplePattern$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TuplePatternElements | undefined>(this, '_elements', tree);
 }
 
 function wrapSlicePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
@@ -9403,6 +9698,11 @@ function wrapSlicePattern$with$elements(this: Received<Held>, ...args: unknown[]
 	return wrapSlicePattern$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapSlicePattern$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Patterns | undefined>(this, '_elements', tree);
+}
+
 export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHandle): T.TupleStructPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -9479,6 +9779,11 @@ function wrapTupleStructPattern$with$fields(this: Received<Held>, ...args: unkno
 	return wrapTupleStructPattern$with(receiverOf(this, '$with.fields'), 'fields', args);
 }
 
+function wrapTupleStructPattern$fields$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Patterns | undefined>(this, '_fields', tree);
+}
+
 export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle): T.StructPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -9547,6 +9852,11 @@ function wrapStructPattern$with$type(this: Received<Held>, ...args: unknown[]): 
 }
 function wrapStructPattern$with$fields(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapStructPattern$with(receiverOf(this, '$with.fields'), 'fields', args);
+}
+
+function wrapStructPattern$fields$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.StructPatternElements | undefined>(this, '_fields', tree);
 }
 
 export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPattern.Parsed {
@@ -12074,6 +12384,11 @@ function wrapAttributedElement$with$expression(this: Received<Held>, ...args: un
 	return wrapAttributedElement$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
+function wrapAttributedElement$attributes$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
+}
+
 function wrapArrayExpressionListElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
 }
@@ -13358,6 +13673,11 @@ function wrapClosureExpressionBlock$with$body(this: Received<Held>, ...args: unk
 	return wrapClosureExpressionBlock$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapClosureExpressionBlock$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClosureParameters>(this, '_parameters', tree);
+}
+
 export function wrapClosureExpressionExpr(
 	data: T.ClosureExpressionExpr,
 	tree: TreeHandle
@@ -13482,6 +13802,11 @@ function wrapClosureExpressionExpr$with$parameters(this: Received<Held>, ...args
 }
 function wrapClosureExpressionExpr$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapClosureExpressionExpr$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapClosureExpressionExpr$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClosureParameters>(this, '_parameters', tree);
 }
 
 export function wrapReferenceExpressionRawConst(
@@ -13946,6 +14271,16 @@ function wrapImplItemBody$with$body(this: Received<Held>, ...args: unknown[]): u
 	return wrapImplItemBody$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapImplItemBody$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapImplItemBody$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ExtensionDeclarationBody>(this, '_body', tree);
+}
+
 export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.ImplItemSemi.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -14079,6 +14414,11 @@ function wrapImplItemSemi$with$type(this: Received<Held>, ...args: unknown[]): u
 }
 function wrapImplItemSemi$with$whereClause(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapImplItemSemi$with(receiverOf(this, '$with.whereClause'), 'whereClause', args);
+}
+
+function wrapImplItemSemi$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
 }
 
 export function wrapVisibilityModifierPubScopeInPath(
@@ -14265,6 +14605,11 @@ function wrapVisibilityModifierPub$with$visibilityModifierPubScope(this: Receive
 	);
 }
 
+function wrapVisibilityModifierPub$visibilityModifierPubScope$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifierPubScope | undefined>(this, '_visibility_modifier_pub_scope', tree);
+}
+
 export function wrapFunctionTypeTraitForm(
 	data: T.FunctionTypeTraitForm,
 	tree: TreeHandle
@@ -14439,6 +14784,11 @@ function wrapModItemExternal$with$name(this: Received<Held>, ...args: unknown[])
 	return wrapModItemExternal$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
+function wrapModItemExternal$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
 export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle): T.ModItemInline.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -14530,6 +14880,16 @@ function wrapModItemInline$with$name(this: Received<Held>, ...args: unknown[]): 
 }
 function wrapModItemInline$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapModItemInline$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapModItemInline$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapModItemInline$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.DeclarationList>(this, '_body', tree);
 }
 
 export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): T.OrPatternBinary.Parsed {
@@ -15061,6 +15421,11 @@ function wrapForeignModItemSemi$with$externModifier(this: Received<Held>, ...arg
 	return wrapForeignModItemSemi$with(receiverOf(this, '$with.externModifier'), 'externModifier', args);
 }
 
+function wrapForeignModItemSemi$externModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ExternModifier>(this, '_extern_modifier', tree);
+}
+
 export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHandle): T.ForeignModItemBody.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -15158,6 +15523,16 @@ function wrapForeignModItemBody$with$externModifier(this: Received<Held>, ...arg
 }
 function wrapForeignModItemBody$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapForeignModItemBody$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapForeignModItemBody$externModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ExternModifier>(this, '_extern_modifier', tree);
+}
+
+function wrapForeignModItemBody$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.DeclarationList>(this, '_body', tree);
 }
 
 export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandle): T.MatchArmWithComma.Parsed {
@@ -16409,6 +16784,11 @@ function wrapMacroDefinitionParen$with$macroRules(this: Received<Held>, ...args:
 	return wrapMacroDefinitionParen$with(receiverOf(this, '$with.macroRules'), 'macroRules', args);
 }
 
+function wrapMacroDefinitionParen$macroRules$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.MacroRules | undefined>(this, '_macro_rules', tree);
+}
+
 export function wrapMacroDefinitionBracket(
 	data: T.MacroDefinitionBracket,
 	tree: TreeHandle
@@ -16492,6 +16872,11 @@ function wrapMacroDefinitionBracket$with$macroRules(this: Received<Held>, ...arg
 	return wrapMacroDefinitionBracket$with(receiverOf(this, '$with.macroRules'), 'macroRules', args);
 }
 
+function wrapMacroDefinitionBracket$macroRules$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.MacroRules | undefined>(this, '_macro_rules', tree);
+}
+
 export function wrapMacroDefinitionBrace(
 	data: T.MacroDefinitionBrace,
 	tree: TreeHandle
@@ -16573,6 +16958,11 @@ function wrapMacroDefinitionBrace$with$name(this: Received<Held>, ...args: unkno
 }
 function wrapMacroDefinitionBrace$with$macroRules(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMacroDefinitionBrace$with(receiverOf(this, '$with.macroRules'), 'macroRules', args);
+}
+
+function wrapMacroDefinitionBrace$macroRules$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.MacroRules | undefined>(this, '_macro_rules', tree);
 }
 
 export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHandle): T.RangePatternPrefix.Parsed {
@@ -16970,6 +17360,21 @@ function wrapStructItemBrace$with$body(this: Received<Held>, ...args: unknown[])
 	return wrapStructItemBrace$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapStructItemBrace$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapStructItemBrace$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapStructItemBrace$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FieldDeclarationList>(this, '_body', tree);
+}
+
 export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): T.StructItemTuple.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -17134,6 +17539,21 @@ function wrapStructItemTuple$with$whereClause(this: Received<Held>, ...args: unk
 	return wrapStructItemTuple$with(receiverOf(this, '$with.whereClause'), 'whereClause', args);
 }
 
+function wrapStructItemTuple$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapStructItemTuple$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapStructItemTuple$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.OrderedFieldDeclarationList>(this, '_body', tree);
+}
+
 export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.StructItemUnit.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -17243,6 +17663,16 @@ function wrapStructItemUnit$with$typeParameters(this: Received<Held>, ...args: u
 	return wrapStructItemUnit$with(receiverOf(this, '$with.typeParameters'), 'typeParameters', args);
 }
 
+function wrapStructItemUnit$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapStructItemUnit$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
 export function wrapAttributedFieldDeclaration(
 	data: T.AttributedFieldDeclaration,
 	tree: TreeHandle
@@ -17332,6 +17762,11 @@ function wrapAttributedFieldDeclaration$with$fieldDeclaration(this: Received<Hel
 	return wrapAttributedFieldDeclaration$with(receiverOf(this, '$with.fieldDeclaration'), 'fieldDeclaration', args);
 }
 
+function wrapAttributedFieldDeclaration$attributeItems$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attribute_item', tree);
+}
+
 export function wrapAttributedEnumVariant(
 	data: T.AttributedEnumVariant,
 	tree: TreeHandle
@@ -17418,6 +17853,11 @@ function wrapAttributedEnumVariant$with$enumVariant(this: Received<Held>, ...arg
 	return wrapAttributedEnumVariant$with(receiverOf(this, '$with.enumVariant'), 'enumVariant', args);
 }
 
+function wrapAttributedEnumVariant$attributeItems$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attribute_item', tree);
+}
+
 export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeHandle): T.AttributedParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -17491,6 +17931,11 @@ function wrapAttributedParameter$with$attributeItem(this: Received<Held>, ...arg
 }
 function wrapAttributedParameter$with$content(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAttributedParameter$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+function wrapAttributedParameter$attributeItem$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.AttributeItem | undefined>(this, '_attribute_item', tree);
 }
 
 export function wrapAttributedTypeParameter(
@@ -17583,6 +18028,11 @@ function wrapAttributedTypeParameter$with$content(this: Received<Held>, ...args:
 	return wrapAttributedTypeParameter$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
+function wrapAttributedTypeParameter$attributeItems$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attribute_item', tree);
+}
+
 export function wrapArgument(data: T.Argument, tree: TreeHandle): T.Argument.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -17656,6 +18106,11 @@ function wrapArgument$with$attributeItems(this: Received<Held>, ...args: unknown
 }
 function wrapArgument$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapArgument$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+
+function wrapArgument$attributeItems$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attribute_item', tree);
 }
 
 export function wrapAttributedOrderedField(
@@ -17771,6 +18226,16 @@ function wrapAttributedOrderedField$with$type(this: Received<Held>, ...args: unk
 	return wrapAttributedOrderedField$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
+function wrapAttributedOrderedField$attributeItems$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.AttributeItem>(this, '_attribute_item', tree);
+}
+
+function wrapAttributedOrderedField$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
 export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle): T.TypeArgument.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -17841,6 +18306,11 @@ function wrapTypeArgument$with$content(this: Received<Held>, ...args: unknown[])
 }
 function wrapTypeArgument$with$traitBounds(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeArgument$with(receiverOf(this, '$with.traitBounds'), 'traitBounds', args);
+}
+
+function wrapTypeArgument$traitBounds$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TraitBounds | undefined>(this, '_trait_bounds', tree);
 }
 
 export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.MatchBlockArms.Parsed {
@@ -18063,6 +18533,11 @@ function wrapArrayExpressionList$with(node: Held, setter: string, args: readonly
 }
 function wrapArrayExpressionList$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapArrayExpressionList$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapArrayExpressionList$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ArrayExpressionListElements | undefined>(this, '_elements', tree);
 }
 
 export function wrapRawStringLiteralStart(
@@ -18452,6 +18927,11 @@ function wrapAttributedParameterReceiver$with$content(this: Received<Held>, ...a
 	return wrapAttributedParameterReceiver$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
+function wrapAttributedParameterReceiver$attributeItem$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.AttributeItem | undefined>(this, '_attribute_item', tree);
+}
+
 export function wrapParametersElementsReceiver(
 	data: T.ParametersElementsReceiver,
 	tree: TreeHandle
@@ -18739,6 +19219,11 @@ function wrapParametersElementsReceiverGroup$with(node: Held, setter: string, ar
 }
 function wrapParametersElementsReceiverGroup$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapParametersElementsReceiverGroup$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapParametersElementsReceiverGroup$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree);
 }
 
 export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.TypeIdentifier.Parsed {
@@ -19156,6 +19641,21 @@ function wrapMethodDeclaration$with$body(this: Received<Held>, ...args: unknown[
 	return wrapMethodDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapMethodDeclaration$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapMethodDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapMethodDeclaration$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+}
+
 export function wrapSignatureMethodDeclaration(
 	data: T.SignatureMethodDeclaration,
 	tree: TreeHandle
@@ -19362,6 +19862,21 @@ function wrapSignatureMethodDeclaration$with$returnType(this: Received<Held>, ..
 }
 function wrapSignatureMethodDeclaration$with$whereClause(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSignatureMethodDeclaration$with(receiverOf(this, '$with.whereClause'), 'whereClause', args);
+}
+
+function wrapSignatureMethodDeclaration$visibilityModifier$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+}
+
+function wrapSignatureMethodDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapSignatureMethodDeclaration$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Parameters>(this, '_parameters', tree);
 }
 
 function viewSourceFile$shebang(this: RecordHandle) {
@@ -19859,6 +20374,15 @@ function viewUnionItem$body(this: RecordHandle) {
 		true
 	);
 }
+function viewUnionItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewUnionItem$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 21, 5, 8, 5, 4);
+}
+function viewUnionItem$body$native(this: RecordHandle) {
+	return viewSlot<T.FieldDeclarationList>(this, 31, 5, 8, 5, 6);
+}
 function viewUnionItem(data: RecordPosition, tree: TreeHandle): T.UnionItem.Parsed {
 	const node = {
 		$type: TSKindId.UnionItem as const,
@@ -19939,6 +20463,15 @@ function viewEnumItem$body(this: RecordHandle) {
 		true
 	);
 }
+function viewEnumItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewEnumItem$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 21, 5, 8, 5, 4);
+}
+function viewEnumItem$body$native(this: RecordHandle) {
+	return viewSlot<T.EnumVariantList>(this, 31, 5, 8, 5, 6);
+}
 function viewEnumItem(data: RecordPosition, tree: TreeHandle): T.EnumItem.Parsed {
 	const node = {
 		$type: TSKindId.EnumItem as const,
@@ -19984,6 +20517,9 @@ function viewEnumVariantList$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewEnumVariantList$elements$native(this: RecordHandle) {
+	return viewSlot<T.EnumVariantListElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 const viewEnumVariantList$wrapper = {
 	kind: TSKindId.AttributedEnumVariant,
@@ -20073,6 +20609,9 @@ function viewEnumVariant$body(this: RecordHandle) {
 function viewEnumVariant$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 24, 4, 3, 0, 5);
 }
+function viewEnumVariant$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
 function viewEnumVariant(data: RecordPosition, tree: TreeHandle): T.EnumVariant.Parsed {
 	const node = {
 		$type: TSKindId.EnumVariant as const,
@@ -20116,6 +20655,9 @@ function viewFieldDeclarationList$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewFieldDeclarationList$elements$native(this: RecordHandle) {
+	return viewSlot<T.FieldDeclarationListElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 const viewFieldDeclarationList$wrapper = {
 	kind: TSKindId.AttributedFieldDeclaration,
@@ -20202,6 +20744,9 @@ function viewFieldDeclaration$name(this: RecordHandle) {
 function viewFieldDeclaration$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 21, 4, 3, 0, 4);
 }
+function viewFieldDeclaration$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
 function viewFieldDeclaration(data: RecordPosition, tree: TreeHandle): T.FieldDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.FieldDeclaration as const,
@@ -20238,6 +20783,9 @@ function viewOrderedFieldDeclarationList$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewOrderedFieldDeclarationList$elements$native(this: RecordHandle) {
+	return viewSlot<T.OrderedFieldDeclarationListElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 const viewOrderedFieldDeclarationList$wrapper = {
 	kind: TSKindId.AttributedOrderedField,
@@ -20324,6 +20872,9 @@ function viewExternCrateDeclaration$name(this: RecordHandle) {
 function viewExternCrateDeclaration$alias(this: RecordHandle) {
 	return viewSlot<T.Identifier | undefined>(this, 19, 3, 1, 0, 4);
 }
+function viewExternCrateDeclaration$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
 function viewExternCrateDeclaration(data: RecordPosition, tree: TreeHandle): T.ExternCrateDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.ExternCrateDeclaration as const,
@@ -20369,6 +20920,9 @@ function viewConstItem$type(this: RecordHandle) {
 }
 function viewConstItem$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 23, 4, 3, 0, 5);
+}
+function viewConstItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
 }
 function viewConstItem(data: RecordPosition, tree: TreeHandle): T.ConstItem.Parsed {
 	const node = {
@@ -20428,6 +20982,9 @@ function viewStaticItem$type(this: RecordHandle) {
 }
 function viewStaticItem$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 24, 4, 3, 0, 6);
+}
+function viewStaticItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 3, 14, 8, 14, 3);
 }
 function viewStaticItem(data: RecordPosition, tree: TreeHandle): T.StaticItem.Parsed {
 	const node = {
@@ -20502,6 +21059,12 @@ function viewTypeItem$value(this: RecordHandle) {
 }
 function viewTypeItem$trailingWhereClause(this: RecordHandle) {
 	return viewSlot<T.WhereClause | undefined>(this, 35, 5, 8, 5, 7);
+}
+function viewTypeItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewTypeItem$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 21, 5, 8, 5, 4);
 }
 function viewTypeItem(data: RecordPosition, tree: TreeHandle): T.TypeItem.Parsed {
 	const node = {
@@ -20590,6 +21153,15 @@ function viewFunctionItem$whereClause(this: RecordHandle) {
 }
 function viewFunctionItem$body(this: RecordHandle) {
 	return viewSlot<T.Block>(this, 43, 3, 1, 0, 9);
+}
+function viewFunctionItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewFunctionItem$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 26, 5, 8, 5, 5);
+}
+function viewFunctionItem$parameters$native(this: RecordHandle) {
+	return viewSlot<T.Parameters>(this, 31, 3, 1, 0, 6);
 }
 function viewFunctionItem(data: RecordPosition, tree: TreeHandle): T.FunctionItem.Parsed {
 	const node = {
@@ -20680,6 +21252,15 @@ function viewFunctionSignatureItem$returnType(this: RecordHandle) {
 function viewFunctionSignatureItem$whereClause(this: RecordHandle) {
 	return viewSlot<T.WhereClause | undefined>(this, 38, 5, 8, 5, 8);
 }
+function viewFunctionSignatureItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewFunctionSignatureItem$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 26, 5, 8, 5, 5);
+}
+function viewFunctionSignatureItem$parameters$native(this: RecordHandle) {
+	return viewSlot<T.Parameters>(this, 31, 3, 1, 0, 6);
+}
 function viewFunctionSignatureItem(data: RecordPosition, tree: TreeHandle): T.FunctionSignatureItem.Parsed {
 	const node = {
 		$type: TSKindId.FunctionSignatureItem as const,
@@ -20758,6 +21339,9 @@ function viewWhereClause$wherePredicates(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewWhereClause$wherePredicates$native(this: RecordHandle) {
+	return viewSlot<T.WherePredicates | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewWhereClause$listRead(this: { readonly wherePredicates: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.wherePredicates(), 'items'), undefined);
@@ -20863,6 +21447,9 @@ function viewWherePredicate$bounds(this: RecordHandle) {
 		true
 	);
 }
+function viewWherePredicate$bounds$native(this: RecordHandle) {
+	return viewSlot<T.TraitBounds>(this, 6, 3, 8, 3, 3);
+}
 function viewWherePredicate(data: RecordPosition, tree: TreeHandle): T.WherePredicate.Parsed {
 	const node = {
 		$type: TSKindId.WherePredicate as const,
@@ -20944,6 +21531,18 @@ function viewTraitItem$body(this: RecordHandle) {
 		true
 	);
 }
+function viewTraitItem$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 3, 14, 8, 14, 3);
+}
+function viewTraitItem$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 22, 5, 8, 5, 5);
+}
+function viewTraitItem$bounds$native(this: RecordHandle) {
+	return viewSlot<T.TraitBounds | undefined>(this, 27, 3, 8, 3, 6);
+}
+function viewTraitItem$body$native(this: RecordHandle) {
+	return viewSlot<T.TraitInterfaceDeclarationBody>(this, 35, 3, 8, 3, 8);
+}
 function viewTraitItem(data: RecordPosition, tree: TreeHandle): T.TraitItem.Parsed {
 	const node = {
 		$type: TSKindId.TraitItem as const,
@@ -21013,6 +21612,12 @@ function viewAssociatedType$bounds(this: RecordHandle) {
 }
 function viewAssociatedType$whereClause(this: RecordHandle) {
 	return viewSlot<T.WhereClause | undefined>(this, 15, 5, 8, 5, 5);
+}
+function viewAssociatedType$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 7, 5, 8, 5, 3);
+}
+function viewAssociatedType$bounds$native(this: RecordHandle) {
+	return viewSlot<T.TraitBounds | undefined>(this, 12, 3, 8, 3, 4);
 }
 function viewAssociatedType(data: RecordPosition, tree: TreeHandle): T.AssociatedType.Parsed {
 	const node = {
@@ -21091,6 +21696,9 @@ function viewHigherRankedTraitBound$typeParameters(this: RecordHandle) {
 function viewHigherRankedTraitBound$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 7, 4, 3, 0, 3);
 }
+function viewHigherRankedTraitBound$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters>(this, 2, 5, 8, 5, 2);
+}
 function viewHigherRankedTraitBound(data: RecordPosition, tree: TreeHandle): T.HigherRankedTraitBound.Parsed {
 	const node = {
 		$type: TSKindId.HigherRankedTraitBound as const,
@@ -21153,6 +21761,9 @@ function viewTypeParameters$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewTypeParameters$elements$native(this: RecordHandle) {
+	return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
 }
 const viewTypeParameters$wrapper = {
 	kind: TSKindId.AttributedTypeParameter,
@@ -21274,6 +21885,9 @@ function viewTypeParameter$bounds(this: RecordHandle) {
 function viewTypeParameter$default(this: RecordHandle) {
 	return viewSlot<T.Type | undefined>(this, 10, 4, 3, 0, 4);
 }
+function viewTypeParameter$bounds$native(this: RecordHandle) {
+	return viewSlot<T.TraitBounds | undefined>(this, 7, 3, 8, 3, 3);
+}
 function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParameter.Parsed {
 	const node = {
 		$type: TSKindId.TypeParameter as const,
@@ -21313,6 +21927,9 @@ function viewLifetimeParameter$bounds(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewLifetimeParameter$bounds$native(this: RecordHandle) {
+	return viewSlot<T.TraitBounds | undefined>(this, 7, 3, 8, 3, 3);
 }
 function viewLifetimeParameter(data: RecordPosition, tree: TreeHandle): T.LifetimeParameter.Parsed {
 	const node = {
@@ -21414,6 +22031,9 @@ function viewUseDeclaration$argument(this: RecordHandle) {
 		| T.UseWildcard
 	>(this, 16, 4, 3, 0, 3);
 }
+function viewUseDeclaration$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
 function viewUseDeclaration(data: RecordPosition, tree: TreeHandle): T.UseDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.UseDeclaration as const,
@@ -21475,6 +22095,9 @@ function viewScopedUseList$list(this: RecordHandle) {
 		true
 	);
 }
+function viewScopedUseList$list$native(this: RecordHandle) {
+	return viewSlot<T.UseList>(this, 6, 5, 8, 5, 3);
+}
 function viewScopedUseList(data: RecordPosition, tree: TreeHandle): T.ScopedUseList.Parsed {
 	const node = {
 		$type: TSKindId.ScopedUseList as const,
@@ -21521,6 +22144,9 @@ function viewUseList$useClauses(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewUseList$useClauses$native(this: RecordHandle) {
+	return viewSlot<T.UseClauses | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewUseList$listRead(this: { readonly useClauses: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.useClauses(), 'items'), undefined);
@@ -21959,6 +22585,9 @@ function viewForLifetimes$lifetimes(this: RecordHandle) {
 		true
 	);
 }
+function viewForLifetimes$lifetimes$native(this: RecordHandle) {
+	return viewSlot<T.Lifetimes>(this, 2, 3, 8, 3, 2);
+}
 function viewForLifetimes$listRead(this: { readonly lifetimes: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.lifetimes(), 'items'), undefined);
 }
@@ -22053,6 +22682,12 @@ function viewFunctionType$parameters(this: RecordHandle) {
 function viewFunctionType$returnType(this: RecordHandle) {
 	return viewSlot<T.Type | undefined>(this, 13, 4, 3, 0, 5);
 }
+function viewFunctionType$forLifetimes$native(this: RecordHandle) {
+	return viewSlot<T.ForLifetimes | undefined>(this, 2, 5, 8, 5, 2);
+}
+function viewFunctionType$parameters$native(this: RecordHandle) {
+	return viewSlot<T.Parameters>(this, 10, 3, 1, 0, 4);
+}
 function viewFunctionType(data: RecordPosition, tree: TreeHandle): T.FunctionType.Parsed {
 	const node = {
 		$type: TSKindId.FunctionType as const,
@@ -22096,6 +22731,9 @@ function viewTupleType$types(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewTupleType$types$native(this: RecordHandle) {
+	return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
 }
 function viewTupleType$listRead(this: { readonly types: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.types(), 'items'), undefined);
@@ -22177,6 +22815,9 @@ function viewGenericFunction$typeArguments(this: RecordHandle) {
 		true
 	);
 }
+function viewGenericFunction$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 5, 5, 8, 5, 3);
+}
 function viewGenericFunction(data: RecordPosition, tree: TreeHandle): T.GenericFunction.Parsed {
 	const node = {
 		$type: TSKindId.GenericFunction as const,
@@ -22219,6 +22860,9 @@ function viewGenericType$typeArguments(this: RecordHandle) {
 		true
 	);
 }
+function viewGenericType$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 5, 5, 8, 5, 3);
+}
 function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.Parsed {
 	const node = {
 		$type: TSKindId.GenericType as const,
@@ -22260,6 +22904,9 @@ function viewGenericTypeWithTurbofish$typeArguments(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewGenericTypeWithTurbofish$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 5, 5, 8, 5, 3);
 }
 function viewGenericTypeWithTurbofish(data: RecordPosition, tree: TreeHandle): T.GenericTypeWithTurbofish.Parsed {
 	const node = {
@@ -22327,6 +22974,9 @@ function viewUseBounds$bounds(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewUseBounds$bounds$native(this: RecordHandle) {
+	return viewSlot<T.UseBoundsElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewUseBounds$listRead(this: { readonly bounds: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.bounds(), 'items'), undefined);
@@ -22401,6 +23051,9 @@ function viewTypeArguments$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewTypeArguments$elements$native(this: RecordHandle) {
+	return viewSlot<T.TypeArgumentsElements>(this, 2, 3, 8, 3, 2);
 }
 const viewTypeArguments$wrapper = { kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] };
 function viewTypeArguments$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
@@ -22485,6 +23138,9 @@ function viewTypeBinding$typeArguments(this: RecordHandle) {
 }
 function viewTypeBinding$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 12, 4, 3, 0, 4);
+}
+function viewTypeBinding$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments | undefined>(this, 7, 5, 8, 5, 3);
 }
 function viewTypeBinding(data: RecordPosition, tree: TreeHandle): T.TypeBinding.Parsed {
 	const node = {
@@ -22571,6 +23227,9 @@ function viewAbstractType$trait(this: RecordHandle) {
 		| T.TupleType
 		| T.BoundedType
 	>(this, 7, 3, 1, 0, 3);
+}
+function viewAbstractType$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 2, 5, 8, 5, 2);
 }
 function viewAbstractType(data: RecordPosition, tree: TreeHandle): T.AbstractType.Parsed {
 	const node = {
@@ -23084,6 +23743,9 @@ function viewCallExpression$arguments(this: RecordHandle) {
 		true
 	);
 }
+function viewCallExpression$arguments$native(this: RecordHandle) {
+	return viewSlot<T.Arguments>(this, 6, 5, 8, 5, 3);
+}
 function viewCallExpression(data: RecordPosition, tree: TreeHandle): T.CallExpression.Parsed {
 	const node = {
 		$type: TSKindId.CallExpression as const,
@@ -23119,6 +23781,9 @@ function viewArguments$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewArguments$elements$native(this: RecordHandle) {
+	return viewSlot<T.ArgumentsElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 const viewArguments$wrapper = { kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] };
 function viewArguments$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
@@ -23222,6 +23887,9 @@ function viewTupleExpression$elements(this: RecordHandle) {
 		true
 	);
 }
+function viewTupleExpression$elements$native(this: RecordHandle) {
+	return viewSlot<T.TupleExpressionElements>(this, 2, 3, 8, 3, 2);
+}
 function viewTupleExpression$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
@@ -23317,6 +23985,9 @@ function viewStructExpression$body(this: RecordHandle) {
 		true
 	);
 }
+function viewStructExpression$body$native(this: RecordHandle) {
+	return viewSlot<T.FieldInitializerList>(this, 5, 5, 8, 5, 3);
+}
 function viewStructExpression(data: RecordPosition, tree: TreeHandle): T.StructExpression.Parsed {
 	const node = {
 		$type: TSKindId.StructExpression as const,
@@ -23360,6 +24031,9 @@ function viewFieldInitializerList$initializers(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewFieldInitializerList$initializers$native(this: RecordHandle) {
+	return viewSlot<T.FieldInitializerListElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewFieldInitializerList$listRead(this: { readonly initializers: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.initializers(), 'items'), undefined);
@@ -23438,6 +24112,9 @@ function viewShorthandFieldInitializer$attributes(this: RecordHandle) {
 function viewShorthandFieldInitializer$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
+function viewShorthandFieldInitializer$attributes$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
+}
 function viewShorthandFieldInitializer(data: RecordPosition, tree: TreeHandle): T.ShorthandFieldInitializer.Parsed {
 	const node = {
 		$type: TSKindId.ShorthandFieldInitializer as const,
@@ -23479,6 +24156,9 @@ function viewFieldInitializer$name(this: RecordHandle) {
 }
 function viewFieldInitializer$value(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 11, 4, 3, 0, 4);
+}
+function viewFieldInitializer$attributes$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewFieldInitializer(data: RecordPosition, tree: TreeHandle): T.FieldInitializer.Parsed {
 	const node = {
@@ -23549,6 +24229,9 @@ function viewIfExpression$alternative(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewIfExpression$alternative$native(this: RecordHandle) {
+	return viewSlot<T.ElseClause | undefined>(this, 9, 3, 1, 0, 4);
 }
 function viewIfExpression(data: RecordPosition, tree: TreeHandle): T.IfExpression.Parsed {
 	const node = {
@@ -23686,6 +24369,9 @@ function viewMatchExpression$body(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewMatchExpression$body$native(this: RecordHandle) {
+	return viewSlot<T.MatchBlock>(this, 6, 5, 8, 5, 3);
 }
 function viewMatchExpression(data: RecordPosition, tree: TreeHandle): T.MatchExpression.Parsed {
 	const node = {
@@ -24333,6 +25019,9 @@ function viewGenericPattern$typeArguments(this: RecordHandle) {
 		true
 	);
 }
+function viewGenericPattern$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 5, 5, 8, 5, 3);
+}
 function viewGenericPattern(data: RecordPosition, tree: TreeHandle): T.GenericPattern.Parsed {
 	const node = {
 		$type: TSKindId.GenericPattern as const,
@@ -24368,6 +25057,9 @@ function viewTuplePattern$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewTuplePattern$elements$native(this: RecordHandle) {
+	return viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -24442,6 +25134,9 @@ function viewSlicePattern$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewSlicePattern$elements$native(this: RecordHandle) {
+	return viewSlot<T.Patterns | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewSlicePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -24520,6 +25215,9 @@ function viewTupleStructPattern$fields(this: RecordHandle) {
 		true
 	);
 }
+function viewTupleStructPattern$fields$native(this: RecordHandle) {
+	return viewSlot<T.Patterns | undefined>(this, 5, 3, 8, 3, 3);
+}
 function viewTupleStructPattern(data: RecordPosition, tree: TreeHandle): T.TupleStructPattern.Parsed {
 	const node = {
 		$type: TSKindId.TupleStructPattern as const,
@@ -24558,6 +25256,9 @@ function viewStructPattern$fields(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewStructPattern$fields$native(this: RecordHandle) {
+	return viewSlot<T.StructPatternElements | undefined>(this, 5, 3, 8, 3, 3);
 }
 function viewStructPattern(data: RecordPosition, tree: TreeHandle): T.StructPattern.Parsed {
 	const node = {
@@ -26135,6 +26836,9 @@ function viewAttributedElement$attributes(this: RecordHandle) {
 function viewAttributedElement$expression(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 3, 4, 3, 0, 3);
 }
+function viewAttributedElement$attributes$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
+}
 function viewAttributedElement(data: RecordPosition, tree: TreeHandle): T.AttributedElement.Parsed {
 	const node = {
 		$type: TSKindId.AttributedElement as const,
@@ -26830,6 +27534,9 @@ function viewClosureExpressionBlock$returnType(this: RecordHandle) {
 function viewClosureExpressionBlock$body(this: RecordHandle) {
 	return viewSlot<T.Block>(this, 10, 3, 1, 0, 5);
 }
+function viewClosureExpressionBlock$parameters$native(this: RecordHandle) {
+	return viewSlot<T.ClosureParameters>(this, 3, 3, 8, 3, 3);
+}
 function viewClosureExpressionBlock(data: RecordPosition, tree: TreeHandle): T.ClosureExpressionBlock.Parsed {
 	const node = {
 		$type: TSKindId.ClosureExpressionBlock as const,
@@ -26889,6 +27596,9 @@ function viewClosureExpressionExpr$parameters(this: RecordHandle) {
 }
 function viewClosureExpressionExpr$body(this: RecordHandle) {
 	return viewSlot<T.Expression | TSKindId.Underscore>(this, 6, 4, 3, 0, 4);
+}
+function viewClosureExpressionExpr$parameters$native(this: RecordHandle) {
+	return viewSlot<T.ClosureParameters>(this, 3, 3, 8, 3, 3);
 }
 function viewClosureExpressionExpr(data: RecordPosition, tree: TreeHandle): T.ClosureExpressionExpr.Parsed {
 	const node = {
@@ -27124,6 +27834,12 @@ function viewImplItemBody$body(this: RecordHandle) {
 		true
 	);
 }
+function viewImplItemBody$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3);
+}
+function viewImplItemBody$body$native(this: RecordHandle) {
+	return viewSlot<T.ExtensionDeclarationBody>(this, 22, 3, 8, 3, 7);
+}
 function viewImplItemBody(data: RecordPosition, tree: TreeHandle): T.ImplItemBody.Parsed {
 	const node = {
 		$type: TSKindId.ImplItemBody as const,
@@ -27186,6 +27902,9 @@ function viewImplItemSemi$type(this: RecordHandle) {
 }
 function viewImplItemSemi$whereClause(this: RecordHandle) {
 	return viewSlot<T.WhereClause | undefined>(this, 17, 5, 8, 5, 6);
+}
+function viewImplItemSemi$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3);
 }
 function viewImplItemSemi(data: RecordPosition, tree: TreeHandle): T.ImplItemSemi.Parsed {
 	const node = {
@@ -27306,6 +28025,9 @@ function viewVisibilityModifierPub$visibilityModifierPubScope(this: RecordHandle
 		false
 	);
 }
+function viewVisibilityModifierPub$visibilityModifierPubScope$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifierPubScope | undefined>(this, 2, 9, 8, 9, 2);
+}
 function viewVisibilityModifierPub(data: RecordPosition, tree: TreeHandle): T.VisibilityModifierPub.Parsed {
 	const node = {
 		$type: TSKindId.VisibilityModifierPub as const,
@@ -27398,6 +28120,9 @@ function viewModItemExternal$visibilityModifier(this: RecordHandle) {
 function viewModItemExternal$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 16, 3, 1, 0, 3);
 }
+function viewModItemExternal$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
 function viewModItemExternal(data: RecordPosition, tree: TreeHandle): T.ModItemExternal.Parsed {
 	const node = {
 		$type: TSKindId.ModItemExternal as const,
@@ -27447,6 +28172,12 @@ function viewModItemInline$body(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewModItemInline$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewModItemInline$body$native(this: RecordHandle) {
+	return viewSlot<T.DeclarationList>(this, 19, 3, 8, 3, 4);
 }
 function viewModItemInline(data: RecordPosition, tree: TreeHandle): T.ModItemInline.Parsed {
 	const node = {
@@ -27739,6 +28470,9 @@ function viewForeignModItemSemi$externModifier(this: RecordHandle) {
 		false
 	);
 }
+function viewForeignModItemSemi$externModifier$native(this: RecordHandle) {
+	return viewSlot<T.ExternModifier>(this, 3, 8, 8, 8, 3);
+}
 function viewForeignModItemSemi(data: RecordPosition, tree: TreeHandle): T.ForeignModItemSemi.Parsed {
 	const node = {
 		$type: TSKindId.ForeignModItemSemi as const,
@@ -27788,6 +28522,12 @@ function viewForeignModItemBody$body(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewForeignModItemBody$externModifier$native(this: RecordHandle) {
+	return viewSlot<T.ExternModifier>(this, 3, 8, 8, 8, 3);
+}
+function viewForeignModItemBody$body$native(this: RecordHandle) {
+	return viewSlot<T.DeclarationList>(this, 11, 3, 8, 3, 4);
 }
 function viewForeignModItemBody(data: RecordPosition, tree: TreeHandle): T.ForeignModItemBody.Parsed {
 	const node = {
@@ -28374,6 +29114,9 @@ function viewMacroDefinitionParen$macroRules(this: RecordHandle) {
 		true
 	);
 }
+function viewMacroDefinitionParen$macroRules$native(this: RecordHandle) {
+	return viewSlot<T.MacroRules | undefined>(this, 5, 3, 8, 3, 3);
+}
 function viewMacroDefinitionParen(data: RecordPosition, tree: TreeHandle): T.MacroDefinitionParen.Parsed {
 	const node = {
 		$type: TSKindId.MacroDefinitionParen as const,
@@ -28413,6 +29156,9 @@ function viewMacroDefinitionBracket$macroRules(this: RecordHandle) {
 		true
 	);
 }
+function viewMacroDefinitionBracket$macroRules$native(this: RecordHandle) {
+	return viewSlot<T.MacroRules | undefined>(this, 5, 3, 8, 3, 3);
+}
 function viewMacroDefinitionBracket(data: RecordPosition, tree: TreeHandle): T.MacroDefinitionBracket.Parsed {
 	const node = {
 		$type: TSKindId.MacroDefinitionBracket as const,
@@ -28451,6 +29197,9 @@ function viewMacroDefinitionBrace$macroRules(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewMacroDefinitionBrace$macroRules$native(this: RecordHandle) {
+	return viewSlot<T.MacroRules | undefined>(this, 5, 3, 8, 3, 3);
 }
 function viewMacroDefinitionBrace(data: RecordPosition, tree: TreeHandle): T.MacroDefinitionBrace.Parsed {
 	const node = {
@@ -28642,6 +29391,15 @@ function viewStructItemBrace$body(this: RecordHandle) {
 		true
 	);
 }
+function viewStructItemBrace$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewStructItemBrace$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 21, 5, 8, 5, 4);
+}
+function viewStructItemBrace$body$native(this: RecordHandle) {
+	return viewSlot<T.FieldDeclarationList>(this, 31, 5, 8, 5, 6);
+}
 function viewStructItemBrace(data: RecordPosition, tree: TreeHandle): T.StructItemBrace.Parsed {
 	const node = {
 		$type: TSKindId.StructItemBrace as const,
@@ -28722,6 +29480,15 @@ function viewStructItemTuple$body(this: RecordHandle) {
 function viewStructItemTuple$whereClause(this: RecordHandle) {
 	return viewSlot<T.WhereClause | undefined>(this, 31, 5, 8, 5, 6);
 }
+function viewStructItemTuple$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewStructItemTuple$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 21, 5, 8, 5, 4);
+}
+function viewStructItemTuple$body$native(this: RecordHandle) {
+	return viewSlot<T.OrderedFieldDeclarationList>(this, 26, 5, 8, 5, 5);
+}
 function viewStructItemTuple(data: RecordPosition, tree: TreeHandle): T.StructItemTuple.Parsed {
 	const node = {
 		$type: TSKindId.StructItemTuple as const,
@@ -28785,6 +29552,12 @@ function viewStructItemUnit$typeParameters(this: RecordHandle) {
 		true
 	);
 }
+function viewStructItemUnit$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewStructItemUnit$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 21, 5, 8, 5, 4);
+}
 function viewStructItemUnit(data: RecordPosition, tree: TreeHandle): T.StructItemUnit.Parsed {
 	const node = {
 		$type: TSKindId.StructItemUnit as const,
@@ -28830,6 +29603,9 @@ function viewAttributedFieldDeclaration$attributeItems(this: RecordHandle) {
 function viewAttributedFieldDeclaration$fieldDeclaration(this: RecordHandle) {
 	return viewSlot<T.FieldDeclaration>(this, 3, 25, 8, 25, 3);
 }
+function viewAttributedFieldDeclaration$attributeItems$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
+}
 function viewAttributedFieldDeclaration(data: RecordPosition, tree: TreeHandle): T.AttributedFieldDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.AttributedFieldDeclaration as const,
@@ -28868,6 +29644,9 @@ function viewAttributedEnumVariant$attributeItems(this: RecordHandle) {
 }
 function viewAttributedEnumVariant$enumVariant(this: RecordHandle) {
 	return viewSlot<T.EnumVariant>(this, 3, 28, 8, 28, 3);
+}
+function viewAttributedEnumVariant$attributeItems$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewAttributedEnumVariant(data: RecordPosition, tree: TreeHandle): T.AttributedEnumVariant.Parsed {
 	const node = {
@@ -28908,6 +29687,9 @@ function viewAttributedParameter$attributeItem(this: RecordHandle) {
 function viewAttributedParameter$content(this: RecordHandle) {
 	return viewSlot<T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(this, 5, 4, 3, 0, 3);
 }
+function viewAttributedParameter$attributeItem$native(this: RecordHandle) {
+	return viewSlot<T.AttributeItem | undefined>(this, 2, 3, 1, 0, 2);
+}
 function viewAttributedParameter(data: RecordPosition, tree: TreeHandle): T.AttributedParameter.Parsed {
 	const node = {
 		$type: TSKindId.AttributedParameter as const,
@@ -28947,6 +29729,9 @@ function viewAttributedTypeParameter$attributeItems(this: RecordHandle) {
 function viewAttributedTypeParameter$content(this: RecordHandle) {
 	return viewSlot<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(this, 3, 14, 8, 14, 3);
 }
+function viewAttributedTypeParameter$attributeItems$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
+}
 function viewAttributedTypeParameter(data: RecordPosition, tree: TreeHandle): T.AttributedTypeParameter.Parsed {
 	const node = {
 		$type: TSKindId.AttributedTypeParameter as const,
@@ -28985,6 +29770,9 @@ function viewArgument$attributeItems(this: RecordHandle) {
 }
 function viewArgument$expression(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 3, 4, 3, 0, 3);
+}
+function viewArgument$attributeItems$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewArgument(data: RecordPosition, tree: TreeHandle): T.Argument.Parsed {
 	const node = {
@@ -29036,6 +29824,12 @@ function viewAttributedOrderedField$visibilityModifier(this: RecordHandle) {
 function viewAttributedOrderedField$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 17, 4, 3, 0, 4);
 }
+function viewAttributedOrderedField$attributeItems$native(this: RecordHandle) {
+	return viewSlots<T.AttributeItem>(this, 2, 1, 3, 1, 0, 2);
+}
+function viewAttributedOrderedField$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 3, 14, 8, 14, 3);
+}
 function viewAttributedOrderedField(data: RecordPosition, tree: TreeHandle): T.AttributedOrderedField.Parsed {
 	const node = {
 		$type: TSKindId.AttributedOrderedField as const,
@@ -29080,6 +29874,9 @@ function viewTypeArgument$traitBounds(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewTypeArgument$traitBounds$native(this: RecordHandle) {
+	return viewSlot<T.TraitBounds | undefined>(this, 6, 3, 8, 3, 3);
 }
 function viewTypeArgument(data: RecordPosition, tree: TreeHandle): T.TypeArgument.Parsed {
 	const node = {
@@ -29174,6 +29971,9 @@ function viewArrayExpressionList$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewArrayExpressionList$elements$native(this: RecordHandle) {
+	return viewSlot<T.ArrayExpressionListElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewArrayExpressionList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -29405,6 +30205,9 @@ function viewAttributedParameterReceiver$attributeItem(this: RecordHandle) {
 function viewAttributedParameterReceiver$content(this: RecordHandle) {
 	return viewSlot<T.ReceiverParameterDeclaration | T.SelfParameter>(this, 5, 3, 1, 0, 3);
 }
+function viewAttributedParameterReceiver$attributeItem$native(this: RecordHandle) {
+	return viewSlot<T.AttributeItem | undefined>(this, 2, 3, 1, 0, 2);
+}
 function viewAttributedParameterReceiver(data: RecordPosition, tree: TreeHandle): T.AttributedParameterReceiver.Parsed {
 	const node = {
 		$type: TSKindId.AttributedParameterReceiver as const,
@@ -29487,6 +30290,9 @@ function viewParametersElementsReceiverGroup$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewParametersElementsReceiverGroup$elements$native(this: RecordHandle) {
+	return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 const viewParametersElementsReceiverGroup$wrapper = {
 	kind: TSKindId.AttributedParameter,
@@ -29718,6 +30524,15 @@ function viewMethodDeclaration$whereClause(this: RecordHandle) {
 function viewMethodDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.Block>(this, 43, 3, 1, 0, 9);
 }
+function viewMethodDeclaration$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewMethodDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 26, 5, 8, 5, 5);
+}
+function viewMethodDeclaration$parameters$native(this: RecordHandle) {
+	return viewSlot<T.Parameters>(this, 31, 3, 1, 0, 6);
+}
 function viewMethodDeclaration(data: RecordPosition, tree: TreeHandle): T.MethodDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.MethodDeclaration as const,
@@ -29806,6 +30621,15 @@ function viewSignatureMethodDeclaration$returnType(this: RecordHandle) {
 }
 function viewSignatureMethodDeclaration$whereClause(this: RecordHandle) {
 	return viewSlot<T.WhereClause | undefined>(this, 38, 5, 8, 5, 8);
+}
+function viewSignatureMethodDeclaration$visibilityModifier$native(this: RecordHandle) {
+	return viewSlot<T.VisibilityModifier | undefined>(this, 2, 14, 8, 14, 2);
+}
+function viewSignatureMethodDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 26, 5, 8, 5, 5);
+}
+function viewSignatureMethodDeclaration$parameters$native(this: RecordHandle) {
+	return viewSlot<T.Parameters>(this, 31, 3, 1, 0, 6);
 }
 function viewSignatureMethodDeclaration(data: RecordPosition, tree: TreeHandle): T.SignatureMethodDeclaration.Parsed {
 	const node = {
@@ -30730,6 +31554,676 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.MethodDeclaration]: viewMethodDeclaration,
 	[TSKindId.SignatureMethodDeclaration]: viewSignatureMethodDeclaration
 };
+
+export const nativeSlots: NativeSlots = Object.freeze({
+	[TSKindId.UnionItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewUnionItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapUnionItem$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewUnionItem$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapUnionItem$typeParameters$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewUnionItem$body$native.call(this as unknown as RecordHandle)
+				: wrapUnionItem$body$native.call(this);
+		}
+	}),
+	[TSKindId.EnumItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewEnumItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapEnumItem$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewEnumItem$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapEnumItem$typeParameters$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewEnumItem$body$native.call(this as unknown as RecordHandle)
+				: wrapEnumItem$body$native.call(this);
+		}
+	}),
+	[TSKindId.EnumVariantList]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewEnumVariantList$elements$native.call(this as unknown as RecordHandle)
+				: wrapEnumVariantList$elements$native.call(this);
+		}
+	}),
+	[TSKindId.EnumVariant]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewEnumVariant$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapEnumVariant$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.FieldDeclarationList]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewFieldDeclarationList$elements$native.call(this as unknown as RecordHandle)
+				: wrapFieldDeclarationList$elements$native.call(this);
+		}
+	}),
+	[TSKindId.FieldDeclaration]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewFieldDeclaration$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapFieldDeclaration$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.OrderedFieldDeclarationList]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewOrderedFieldDeclarationList$elements$native.call(this as unknown as RecordHandle)
+				: wrapOrderedFieldDeclarationList$elements$native.call(this);
+		}
+	}),
+	[TSKindId.ExternCrateDeclaration]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewExternCrateDeclaration$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapExternCrateDeclaration$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.ConstItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewConstItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapConstItem$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.StaticItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewStaticItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapStaticItem$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.TypeItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewTypeItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapTypeItem$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewTypeItem$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapTypeItem$typeParameters$native.call(this);
+		}
+	}),
+	[TSKindId.FunctionItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapFunctionItem$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionItem$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionItem$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionItem$parameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionItem$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.FunctionSignatureItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionSignatureItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapFunctionSignatureItem$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionSignatureItem$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionSignatureItem$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionSignatureItem$parameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionSignatureItem$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.WhereClause]: Object.freeze({
+		wherePredicates(this: object) {
+			return isRecordPosition(this)
+				? viewWhereClause$wherePredicates$native.call(this as unknown as RecordHandle)
+				: wrapWhereClause$wherePredicates$native.call(this);
+		}
+	}),
+	[TSKindId.WherePredicate]: Object.freeze({
+		bounds(this: object) {
+			return isRecordPosition(this)
+				? viewWherePredicate$bounds$native.call(this as unknown as RecordHandle)
+				: wrapWherePredicate$bounds$native.call(this);
+		}
+	}),
+	[TSKindId.TraitItem]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewTraitItem$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapTraitItem$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewTraitItem$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapTraitItem$typeParameters$native.call(this);
+		},
+		bounds(this: object) {
+			return isRecordPosition(this)
+				? viewTraitItem$bounds$native.call(this as unknown as RecordHandle)
+				: wrapTraitItem$bounds$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewTraitItem$body$native.call(this as unknown as RecordHandle)
+				: wrapTraitItem$body$native.call(this);
+		}
+	}),
+	[TSKindId.AssociatedType]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewAssociatedType$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapAssociatedType$typeParameters$native.call(this);
+		},
+		bounds(this: object) {
+			return isRecordPosition(this)
+				? viewAssociatedType$bounds$native.call(this as unknown as RecordHandle)
+				: wrapAssociatedType$bounds$native.call(this);
+		}
+	}),
+	[TSKindId.HigherRankedTraitBound]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewHigherRankedTraitBound$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapHigherRankedTraitBound$typeParameters$native.call(this);
+		}
+	}),
+	[TSKindId.TypeParameters]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewTypeParameters$elements$native.call(this as unknown as RecordHandle)
+				: wrapTypeParameters$elements$native.call(this);
+		}
+	}),
+	[TSKindId.TypeParameter]: Object.freeze({
+		bounds(this: object) {
+			return isRecordPosition(this)
+				? viewTypeParameter$bounds$native.call(this as unknown as RecordHandle)
+				: wrapTypeParameter$bounds$native.call(this);
+		}
+	}),
+	[TSKindId.LifetimeParameter]: Object.freeze({
+		bounds(this: object) {
+			return isRecordPosition(this)
+				? viewLifetimeParameter$bounds$native.call(this as unknown as RecordHandle)
+				: wrapLifetimeParameter$bounds$native.call(this);
+		}
+	}),
+	[TSKindId.UseDeclaration]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewUseDeclaration$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapUseDeclaration$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.ScopedUseList]: Object.freeze({
+		list(this: object) {
+			return isRecordPosition(this)
+				? viewScopedUseList$list$native.call(this as unknown as RecordHandle)
+				: wrapScopedUseList$list$native.call(this);
+		}
+	}),
+	[TSKindId.UseList]: Object.freeze({
+		useClauses(this: object) {
+			return isRecordPosition(this)
+				? viewUseList$useClauses$native.call(this as unknown as RecordHandle)
+				: wrapUseList$useClauses$native.call(this);
+		}
+	}),
+	[TSKindId.ForLifetimes]: Object.freeze({
+		lifetimes(this: object) {
+			return isRecordPosition(this)
+				? viewForLifetimes$lifetimes$native.call(this as unknown as RecordHandle)
+				: wrapForLifetimes$lifetimes$native.call(this);
+		}
+	}),
+	[TSKindId.FunctionType]: Object.freeze({
+		forLifetimes(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionType$forLifetimes$native.call(this as unknown as RecordHandle)
+				: wrapFunctionType$forLifetimes$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionType$parameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionType$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.TupleType]: Object.freeze({
+		types(this: object) {
+			return isRecordPosition(this)
+				? viewTupleType$types$native.call(this as unknown as RecordHandle)
+				: wrapTupleType$types$native.call(this);
+		}
+	}),
+	[TSKindId.GenericFunction]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewGenericFunction$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapGenericFunction$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.GenericType]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewGenericType$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapGenericType$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.GenericTypeWithTurbofish]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewGenericTypeWithTurbofish$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapGenericTypeWithTurbofish$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.UseBounds]: Object.freeze({
+		bounds(this: object) {
+			return isRecordPosition(this)
+				? viewUseBounds$bounds$native.call(this as unknown as RecordHandle)
+				: wrapUseBounds$bounds$native.call(this);
+		}
+	}),
+	[TSKindId.TypeArguments]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewTypeArguments$elements$native.call(this as unknown as RecordHandle)
+				: wrapTypeArguments$elements$native.call(this);
+		}
+	}),
+	[TSKindId.TypeBinding]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewTypeBinding$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapTypeBinding$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.AbstractType]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractType$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapAbstractType$typeParameters$native.call(this);
+		}
+	}),
+	[TSKindId.CallExpression]: Object.freeze({
+		arguments(this: object) {
+			return isRecordPosition(this)
+				? viewCallExpression$arguments$native.call(this as unknown as RecordHandle)
+				: wrapCallExpression$arguments$native.call(this);
+		}
+	}),
+	[TSKindId.Arguments]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewArguments$elements$native.call(this as unknown as RecordHandle)
+				: wrapArguments$elements$native.call(this);
+		}
+	}),
+	[TSKindId.TupleExpression]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewTupleExpression$elements$native.call(this as unknown as RecordHandle)
+				: wrapTupleExpression$elements$native.call(this);
+		}
+	}),
+	[TSKindId.StructExpression]: Object.freeze({
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewStructExpression$body$native.call(this as unknown as RecordHandle)
+				: wrapStructExpression$body$native.call(this);
+		}
+	}),
+	[TSKindId.FieldInitializerList]: Object.freeze({
+		initializers(this: object) {
+			return isRecordPosition(this)
+				? viewFieldInitializerList$initializers$native.call(this as unknown as RecordHandle)
+				: wrapFieldInitializerList$initializers$native.call(this);
+		}
+	}),
+	[TSKindId.ShorthandFieldInitializer]: Object.freeze({
+		attributes(this: object) {
+			return isRecordPosition(this)
+				? viewShorthandFieldInitializer$attributes$native.call(this as unknown as RecordHandle)
+				: wrapShorthandFieldInitializer$attributes$native.call(this);
+		}
+	}),
+	[TSKindId.FieldInitializer]: Object.freeze({
+		attributes(this: object) {
+			return isRecordPosition(this)
+				? viewFieldInitializer$attributes$native.call(this as unknown as RecordHandle)
+				: wrapFieldInitializer$attributes$native.call(this);
+		}
+	}),
+	[TSKindId.IfExpression]: Object.freeze({
+		alternative(this: object) {
+			return isRecordPosition(this)
+				? viewIfExpression$alternative$native.call(this as unknown as RecordHandle)
+				: wrapIfExpression$alternative$native.call(this);
+		}
+	}),
+	[TSKindId.MatchExpression]: Object.freeze({
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewMatchExpression$body$native.call(this as unknown as RecordHandle)
+				: wrapMatchExpression$body$native.call(this);
+		}
+	}),
+	[TSKindId.GenericPattern]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewGenericPattern$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapGenericPattern$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.TuplePattern]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewTuplePattern$elements$native.call(this as unknown as RecordHandle)
+				: wrapTuplePattern$elements$native.call(this);
+		}
+	}),
+	[TSKindId.SlicePattern]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewSlicePattern$elements$native.call(this as unknown as RecordHandle)
+				: wrapSlicePattern$elements$native.call(this);
+		}
+	}),
+	[TSKindId.TupleStructPattern]: Object.freeze({
+		fields(this: object) {
+			return isRecordPosition(this)
+				? viewTupleStructPattern$fields$native.call(this as unknown as RecordHandle)
+				: wrapTupleStructPattern$fields$native.call(this);
+		}
+	}),
+	[TSKindId.StructPattern]: Object.freeze({
+		fields(this: object) {
+			return isRecordPosition(this)
+				? viewStructPattern$fields$native.call(this as unknown as RecordHandle)
+				: wrapStructPattern$fields$native.call(this);
+		}
+	}),
+	[TSKindId.AttributedElement]: Object.freeze({
+		attributes(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedElement$attributes$native.call(this as unknown as RecordHandle)
+				: wrapAttributedElement$attributes$native.call(this);
+		}
+	}),
+	[TSKindId.ClosureExpressionBlock]: Object.freeze({
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewClosureExpressionBlock$parameters$native.call(this as unknown as RecordHandle)
+				: wrapClosureExpressionBlock$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.ClosureExpressionExpr]: Object.freeze({
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewClosureExpressionExpr$parameters$native.call(this as unknown as RecordHandle)
+				: wrapClosureExpressionExpr$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.ImplItemBody]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewImplItemBody$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapImplItemBody$typeParameters$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewImplItemBody$body$native.call(this as unknown as RecordHandle)
+				: wrapImplItemBody$body$native.call(this);
+		}
+	}),
+	[TSKindId.ImplItemSemi]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewImplItemSemi$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapImplItemSemi$typeParameters$native.call(this);
+		}
+	}),
+	[TSKindId.VisibilityModifierPub]: Object.freeze({
+		visibilityModifierPubScope(this: object) {
+			return isRecordPosition(this)
+				? viewVisibilityModifierPub$visibilityModifierPubScope$native.call(this as unknown as RecordHandle)
+				: wrapVisibilityModifierPub$visibilityModifierPubScope$native.call(this);
+		}
+	}),
+	[TSKindId.ModItemExternal]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewModItemExternal$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapModItemExternal$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.ModItemInline]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewModItemInline$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapModItemInline$visibilityModifier$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewModItemInline$body$native.call(this as unknown as RecordHandle)
+				: wrapModItemInline$body$native.call(this);
+		}
+	}),
+	[TSKindId.ForeignModItemSemi]: Object.freeze({
+		externModifier(this: object) {
+			return isRecordPosition(this)
+				? viewForeignModItemSemi$externModifier$native.call(this as unknown as RecordHandle)
+				: wrapForeignModItemSemi$externModifier$native.call(this);
+		}
+	}),
+	[TSKindId.ForeignModItemBody]: Object.freeze({
+		externModifier(this: object) {
+			return isRecordPosition(this)
+				? viewForeignModItemBody$externModifier$native.call(this as unknown as RecordHandle)
+				: wrapForeignModItemBody$externModifier$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewForeignModItemBody$body$native.call(this as unknown as RecordHandle)
+				: wrapForeignModItemBody$body$native.call(this);
+		}
+	}),
+	[TSKindId.MacroDefinitionParen]: Object.freeze({
+		macroRules(this: object) {
+			return isRecordPosition(this)
+				? viewMacroDefinitionParen$macroRules$native.call(this as unknown as RecordHandle)
+				: wrapMacroDefinitionParen$macroRules$native.call(this);
+		}
+	}),
+	[TSKindId.MacroDefinitionBracket]: Object.freeze({
+		macroRules(this: object) {
+			return isRecordPosition(this)
+				? viewMacroDefinitionBracket$macroRules$native.call(this as unknown as RecordHandle)
+				: wrapMacroDefinitionBracket$macroRules$native.call(this);
+		}
+	}),
+	[TSKindId.MacroDefinitionBrace]: Object.freeze({
+		macroRules(this: object) {
+			return isRecordPosition(this)
+				? viewMacroDefinitionBrace$macroRules$native.call(this as unknown as RecordHandle)
+				: wrapMacroDefinitionBrace$macroRules$native.call(this);
+		}
+	}),
+	[TSKindId.StructItemBrace]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemBrace$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapStructItemBrace$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemBrace$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapStructItemBrace$typeParameters$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemBrace$body$native.call(this as unknown as RecordHandle)
+				: wrapStructItemBrace$body$native.call(this);
+		}
+	}),
+	[TSKindId.StructItemTuple]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemTuple$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapStructItemTuple$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemTuple$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapStructItemTuple$typeParameters$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemTuple$body$native.call(this as unknown as RecordHandle)
+				: wrapStructItemTuple$body$native.call(this);
+		}
+	}),
+	[TSKindId.StructItemUnit]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemUnit$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapStructItemUnit$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewStructItemUnit$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapStructItemUnit$typeParameters$native.call(this);
+		}
+	}),
+	[TSKindId.AttributedFieldDeclaration]: Object.freeze({
+		attributeItems(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedFieldDeclaration$attributeItems$native.call(this as unknown as RecordHandle)
+				: wrapAttributedFieldDeclaration$attributeItems$native.call(this);
+		}
+	}),
+	[TSKindId.AttributedEnumVariant]: Object.freeze({
+		attributeItems(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedEnumVariant$attributeItems$native.call(this as unknown as RecordHandle)
+				: wrapAttributedEnumVariant$attributeItems$native.call(this);
+		}
+	}),
+	[TSKindId.AttributedParameter]: Object.freeze({
+		attributeItem(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedParameter$attributeItem$native.call(this as unknown as RecordHandle)
+				: wrapAttributedParameter$attributeItem$native.call(this);
+		}
+	}),
+	[TSKindId.AttributedTypeParameter]: Object.freeze({
+		attributeItems(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedTypeParameter$attributeItems$native.call(this as unknown as RecordHandle)
+				: wrapAttributedTypeParameter$attributeItems$native.call(this);
+		}
+	}),
+	[TSKindId.Argument]: Object.freeze({
+		attributeItems(this: object) {
+			return isRecordPosition(this)
+				? viewArgument$attributeItems$native.call(this as unknown as RecordHandle)
+				: wrapArgument$attributeItems$native.call(this);
+		}
+	}),
+	[TSKindId.AttributedOrderedField]: Object.freeze({
+		attributeItems(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedOrderedField$attributeItems$native.call(this as unknown as RecordHandle)
+				: wrapAttributedOrderedField$attributeItems$native.call(this);
+		},
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedOrderedField$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapAttributedOrderedField$visibilityModifier$native.call(this);
+		}
+	}),
+	[TSKindId.TypeArgument]: Object.freeze({
+		traitBounds(this: object) {
+			return isRecordPosition(this)
+				? viewTypeArgument$traitBounds$native.call(this as unknown as RecordHandle)
+				: wrapTypeArgument$traitBounds$native.call(this);
+		}
+	}),
+	[TSKindId.ArrayExpressionList]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewArrayExpressionList$elements$native.call(this as unknown as RecordHandle)
+				: wrapArrayExpressionList$elements$native.call(this);
+		}
+	}),
+	[TSKindId.AttributedParameterReceiver]: Object.freeze({
+		attributeItem(this: object) {
+			return isRecordPosition(this)
+				? viewAttributedParameterReceiver$attributeItem$native.call(this as unknown as RecordHandle)
+				: wrapAttributedParameterReceiver$attributeItem$native.call(this);
+		}
+	}),
+	[TSKindId.ParametersElementsReceiverGroup]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewParametersElementsReceiverGroup$elements$native.call(this as unknown as RecordHandle)
+				: wrapParametersElementsReceiverGroup$elements$native.call(this);
+		}
+	}),
+	[TSKindId.MethodDeclaration]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewMethodDeclaration$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapMethodDeclaration$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodDeclaration$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodDeclaration$parameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodDeclaration$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.SignatureMethodDeclaration]: Object.freeze({
+		visibilityModifier(this: object) {
+			return isRecordPosition(this)
+				? viewSignatureMethodDeclaration$visibilityModifier$native.call(this as unknown as RecordHandle)
+				: wrapSignatureMethodDeclaration$visibilityModifier$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewSignatureMethodDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapSignatureMethodDeclaration$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewSignatureMethodDeclaration$parameters$native.call(this as unknown as RecordHandle)
+				: wrapSignatureMethodDeclaration$parameters$native.call(this);
+		}
+	})
+});
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type SourceFileTree = EmptySourceFile.Parsed & ParsedRoot;

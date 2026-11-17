@@ -51,7 +51,7 @@ import {
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NativeSlots, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
@@ -367,6 +367,11 @@ function wrapLookaheadAssertion$with$pattern(this: Received<Held>, ...args: unkn
 	return wrapLookaheadAssertion$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapLookaheadAssertion$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+}
+
 export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeHandle): T.LookbehindAssertion.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -440,6 +445,11 @@ function wrapLookbehindAssertion$with$operator(this: Received<Held>, ...args: un
 }
 function wrapLookbehindAssertion$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapLookbehindAssertion$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapLookbehindAssertion$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 }
 
 export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.CharacterClass.Parsed {
@@ -715,6 +725,11 @@ function wrapAnonymousCapturingGroup$with$pattern(this: Received<Held>, ...args:
 	return wrapAnonymousCapturingGroup$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapAnonymousCapturingGroup$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+}
+
 export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -806,6 +821,11 @@ function wrapNamedCapturingGroup$with$pattern(this: Received<Held>, ...args: unk
 	return wrapNamedCapturingGroup$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapNamedCapturingGroup$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+}
+
 export function wrapNonCapturingGroup(data: T.NonCapturingGroup, tree: TreeHandle): T.NonCapturingGroup.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -860,6 +880,11 @@ function wrapNonCapturingGroup$with(node: Held, setter: string, args: readonly u
 }
 function wrapNonCapturingGroup$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapNonCapturingGroup$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapNonCapturingGroup$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 }
 
 export function wrapZeroOrMore(data: T.ZeroOrMore, tree: TreeHandle): T.ZeroOrMore.Parsed {
@@ -1801,6 +1826,11 @@ function wrapInlineFlagsGroupEnable$with$pattern(this: Received<Held>, ...args: 
 	return wrapInlineFlagsGroupEnable$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapInlineFlagsGroupEnable$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+}
+
 export function wrapInlineFlagsGroupToggle(
 	data: T.InlineFlagsGroupToggle,
 	tree: TreeHandle
@@ -1895,6 +1925,11 @@ function wrapInlineFlagsGroupToggle$with$pattern(this: Received<Held>, ...args: 
 	return wrapInlineFlagsGroupToggle$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapInlineFlagsGroupToggle$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+}
+
 export function wrapInlineFlagsGroupDisable(
 	data: T.InlineFlagsGroupDisable,
 	tree: TreeHandle
@@ -1971,6 +2006,11 @@ function wrapInlineFlagsGroupDisable$with$disabled(this: Received<Held>, ...args
 }
 function wrapInlineFlagsGroupDisable$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapInlineFlagsGroupDisable$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapInlineFlagsGroupDisable$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
 }
 
 function viewPattern$content(this: RecordHandle) {
@@ -2097,6 +2137,9 @@ function viewLookaheadAssertion$pattern(this: RecordHandle) {
 		false
 	);
 }
+function viewLookaheadAssertion$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern>(this, 3, 5, 8, 5, 3);
+}
 function viewLookaheadAssertion(data: RecordPosition, tree: TreeHandle): T.LookaheadAssertion.Parsed {
 	const node = {
 		$type: TSKindId.LookaheadAssertion as const,
@@ -2135,6 +2178,9 @@ function viewLookbehindAssertion$pattern(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewLookbehindAssertion$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern>(this, 3, 5, 8, 5, 3);
 }
 function viewLookbehindAssertion(data: RecordPosition, tree: TreeHandle): T.LookbehindAssertion.Parsed {
 	const node = {
@@ -2283,6 +2329,9 @@ function viewAnonymousCapturingGroup$pattern(this: RecordHandle) {
 		false
 	);
 }
+function viewAnonymousCapturingGroup$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern>(this, 2, 5, 8, 5, 2);
+}
 function viewAnonymousCapturingGroup(data: RecordPosition, tree: TreeHandle): T.AnonymousCapturingGroup.Parsed {
 	const node = {
 		$type: TSKindId.AnonymousCapturingGroup as const,
@@ -2324,6 +2373,9 @@ function viewNamedCapturingGroup$pattern(this: RecordHandle) {
 		false
 	);
 }
+function viewNamedCapturingGroup$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern>(this, 6, 5, 8, 5, 4);
+}
 function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
 	const node = {
 		$type: TSKindId.NamedCapturingGroup as const,
@@ -2360,6 +2412,9 @@ function viewNonCapturingGroup$pattern(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewNonCapturingGroup$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern>(this, 2, 5, 8, 5, 2);
 }
 function viewNonCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NonCapturingGroup.Parsed {
 	const node = {
@@ -2845,6 +2900,9 @@ function viewInlineFlagsGroupEnable$pattern(this: RecordHandle) {
 		false
 	);
 }
+function viewInlineFlagsGroupEnable$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern | undefined>(this, 5, 5, 8, 5, 3);
+}
 function viewInlineFlagsGroupEnable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupEnable.Parsed {
 	const node = {
 		$type: TSKindId.InlineFlagsGroupEnable as const,
@@ -2887,6 +2945,9 @@ function viewInlineFlagsGroupToggle$pattern(this: RecordHandle) {
 		false
 	);
 }
+function viewInlineFlagsGroupToggle$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern | undefined>(this, 8, 5, 8, 5, 4);
+}
 function viewInlineFlagsGroupToggle(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupToggle.Parsed {
 	const node = {
 		$type: TSKindId.InlineFlagsGroupToggle as const,
@@ -2926,6 +2987,9 @@ function viewInlineFlagsGroupDisable$pattern(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewInlineFlagsGroupDisable$pattern$native(this: RecordHandle) {
+	return viewSlot<T.Pattern | undefined>(this, 5, 5, 8, 5, 3);
 }
 function viewInlineFlagsGroupDisable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupDisable.Parsed {
 	const node = {
@@ -3149,6 +3213,65 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.InlineFlagsGroupToggle]: viewInlineFlagsGroupToggle,
 	[TSKindId.InlineFlagsGroupDisable]: viewInlineFlagsGroupDisable
 };
+
+export const nativeSlots: NativeSlots = Object.freeze({
+	[TSKindId.LookaheadAssertion]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewLookaheadAssertion$pattern$native.call(this as unknown as RecordHandle)
+				: wrapLookaheadAssertion$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.LookbehindAssertion]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewLookbehindAssertion$pattern$native.call(this as unknown as RecordHandle)
+				: wrapLookbehindAssertion$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.AnonymousCapturingGroup]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewAnonymousCapturingGroup$pattern$native.call(this as unknown as RecordHandle)
+				: wrapAnonymousCapturingGroup$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.NamedCapturingGroup]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewNamedCapturingGroup$pattern$native.call(this as unknown as RecordHandle)
+				: wrapNamedCapturingGroup$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.NonCapturingGroup]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewNonCapturingGroup$pattern$native.call(this as unknown as RecordHandle)
+				: wrapNonCapturingGroup$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.InlineFlagsGroupEnable]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewInlineFlagsGroupEnable$pattern$native.call(this as unknown as RecordHandle)
+				: wrapInlineFlagsGroupEnable$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.InlineFlagsGroupToggle]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewInlineFlagsGroupToggle$pattern$native.call(this as unknown as RecordHandle)
+				: wrapInlineFlagsGroupToggle$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.InlineFlagsGroupDisable]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewInlineFlagsGroupDisable$pattern$native.call(this as unknown as RecordHandle)
+				: wrapInlineFlagsGroupDisable$pattern$native.call(this);
+		}
+	})
+});
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type PatternTree = T.ParsedByKindId[TSKindId.Pattern] & ParsedRoot;

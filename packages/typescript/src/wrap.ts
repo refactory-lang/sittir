@@ -74,7 +74,7 @@ import {
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { Admit, AnyUntypedNode as _UntypedNode, NativeSlots, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptyProgram } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
@@ -382,6 +382,11 @@ function wrapExportClause$with(node: Held, setter: string, args: readonly unknow
 }
 function wrapExportClause$with$exportSpecifiers(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapExportClause$with(receiverOf(this, '$with.exportSpecifiers'), 'exportSpecifiers', args);
+}
+
+function wrapExportClause$exportSpecifiers$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ExportSpecifiers | undefined>(this, '_export_specifiers', tree);
 }
 
 export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): T.ExportSpecifier.Parsed {
@@ -753,6 +758,11 @@ function wrapNamedImports$with$importSpecifiers(this: Received<Held>, ...args: u
 	return wrapNamedImports$with(receiverOf(this, '$with.importSpecifiers'), 'importSpecifiers', args);
 }
 
+function wrapNamedImports$importSpecifiers$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ImportSpecifiers | undefined>(this, '_import_specifiers', tree);
+}
+
 export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle): T.ImportAttribute.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -827,6 +837,11 @@ function wrapImportAttribute$with$attributeKind(this: Received<Held>, ...args: u
 }
 function wrapImportAttribute$with$object(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapImportAttribute$with(receiverOf(this, '$with.object'), 'object', args);
+}
+
+function wrapImportAttribute$object$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Object>(this, '_object', tree);
 }
 
 export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle): T.ExpressionStatement.Parsed {
@@ -1324,6 +1339,11 @@ function wrapIfStatement$with$alternative(this: Received<Held>, ...args: unknown
 	return wrapIfStatement$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
 
+function wrapIfStatement$alternative$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ElseClause | undefined>(this, '_alternative', tree);
+}
+
 export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle): T.SwitchStatement.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1387,6 +1407,11 @@ function wrapSwitchStatement$with$value(this: Received<Held>, ...args: unknown[]
 }
 function wrapSwitchStatement$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSwitchStatement$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapSwitchStatement$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.SwitchBody>(this, '_body', tree);
 }
 
 export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForStatement.Parsed {
@@ -1772,6 +1797,11 @@ function wrapTryStatement$with$handlers(this: Received<Held>, ...args: unknown[]
 }
 function wrapTryStatement$with$finalizer(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTryStatement$with(receiverOf(this, '$with.finalizer'), 'finalizer', args);
+}
+
+function wrapTryStatement$finalizer$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FinallyClause | undefined>(this, '_finalizer', tree);
 }
 
 export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.WithStatement.Parsed {
@@ -3113,6 +3143,26 @@ function wrapClass$with$body(this: Received<Held>, ...args: unknown[]): unknown 
 	return wrapClass$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapClass$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapClass$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapClass$heritage$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree);
+}
+
+function wrapClass$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClassBody>(this, '_body', tree);
+}
+
 export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle): T.ClassDeclaration.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3284,6 +3334,26 @@ function wrapClassDeclaration$with$body(this: Received<Held>, ...args: unknown[]
 }
 function wrapClassDeclaration$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapClassDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+
+function wrapClassDeclaration$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapClassDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapClassDeclaration$heritage$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree);
+}
+
+function wrapClassDeclaration$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClassBody>(this, '_body', tree);
 }
 
 export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle): T.ClassHeritage.Parsed {
@@ -3488,6 +3558,16 @@ function wrapFunctionExpression$with$body(this: Received<Held>, ...args: unknown
 	return wrapFunctionExpression$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapFunctionExpression$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapFunctionExpression$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+}
+
 export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeHandle): T.FunctionDeclaration.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3670,6 +3750,16 @@ function wrapFunctionDeclaration$with$terminator(this: Received<Held>, ...args: 
 	return wrapFunctionDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
+function wrapFunctionDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapFunctionDeclaration$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+}
+
 export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandle): T.GeneratorFunction.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -3822,6 +3912,16 @@ function wrapGeneratorFunction$with$returnType(this: Received<Held>, ...args: un
 }
 function wrapGeneratorFunction$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapGeneratorFunction$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapGeneratorFunction$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapGeneratorFunction$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 export function wrapGeneratorFunctionDeclaration(
@@ -4012,6 +4112,16 @@ function wrapGeneratorFunctionDeclaration$with$terminator(this: Received<Held>, 
 	return wrapGeneratorFunctionDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
+function wrapGeneratorFunctionDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapGeneratorFunctionDeclaration$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+}
+
 export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle): T.ArrowFunction.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -4177,6 +4287,11 @@ function wrapNewExpression$with$typeArguments(this: Received<Held>, ...args: unk
 }
 function wrapNewExpression$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapNewExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
+}
+
+function wrapNewExpression$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
 }
 
 export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): T.AwaitExpression.Parsed {
@@ -5479,6 +5594,16 @@ function wrapDecoratorCallExpression$with$arguments(this: Received<Held>, ...arg
 	return wrapDecoratorCallExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
+function wrapDecoratorCallExpression$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+}
+
+function wrapDecoratorCallExpression$arguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+}
+
 export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6081,6 +6206,16 @@ function wrapFunctionSignature$with$terminator(this: Received<Held>, ...args: un
 	return wrapFunctionSignature$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
+function wrapFunctionSignature$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapFunctionSignature$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+}
+
 export function wrapDecoratorParenthesizedExpression(
 	data: T.DecoratorParenthesizedExpression,
 	tree: TreeHandle
@@ -6217,6 +6352,11 @@ function wrapTypeAssertion$with$typeArguments(this: Received<Held>, ...args: unk
 }
 function wrapTypeAssertion$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeAssertion$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+
+function wrapTypeAssertion$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
 }
 
 export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle): T.AsExpression.Parsed {
@@ -6432,6 +6572,11 @@ function wrapInstantiationExpression$with$typeArguments(this: Received<Held>, ..
 	return wrapInstantiationExpression$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
 }
 
+function wrapInstantiationExpression$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
+}
+
 export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeHandle): T.ImportRequireClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6628,6 +6773,11 @@ function wrapExtendsClauseSingle$with$value(this: Received<Held>, ...args: unkno
 }
 function wrapExtendsClauseSingle$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapExtendsClauseSingle$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+
+function wrapExtendsClauseSingle$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
 }
 
 export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle): T.ImplementsClause.Parsed {
@@ -6897,6 +7047,26 @@ function wrapAbstractClassDeclaration$with$heritage(this: Received<Held>, ...arg
 }
 function wrapAbstractClassDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAbstractClassDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapAbstractClassDeclaration$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapAbstractClassDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapAbstractClassDeclaration$heritage$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClassHeritage | undefined>(this, '_heritage', tree);
+}
+
+function wrapAbstractClassDeclaration$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ClassBody>(this, '_body', tree);
 }
 
 export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
@@ -7286,6 +7456,16 @@ function wrapInterfaceDeclaration$with$body(this: Received<Held>, ...args: unkno
 	return wrapInterfaceDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapInterfaceDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapInterfaceDeclaration$extendsTypeClause$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ExtendsTypeClause | undefined>(this, '_extends_type_clause', tree);
+}
+
 export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandle): T.ExtendsTypeClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7424,6 +7604,11 @@ function wrapEnumDeclaration$with$body(this: Received<Held>, ...args: unknown[])
 	return wrapEnumDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapEnumDeclaration$body$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.EnumBody>(this, '_body', tree);
+}
+
 function wrapEnumBody$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
 }
@@ -7522,6 +7707,11 @@ function wrapEnumBody$with(node: Held, setter: string, args: readonly unknown[])
 }
 function wrapEnumBody$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapEnumBody$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapEnumBody$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.EnumBodyElements | undefined>(this, '_elements', tree);
 }
 
 export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle): T.EnumAssignment.Parsed {
@@ -7704,6 +7894,11 @@ function wrapTypeAliasDeclaration$with$terminator(this: Received<Held>, ...args:
 	return wrapTypeAliasDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
+function wrapTypeAliasDeclaration$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
 export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandle): T.RequiredParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7869,6 +8064,16 @@ function wrapRequiredParameter$with$value(this: Received<Held>, ...args: unknown
 	return wrapRequiredParameter$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
+function wrapRequiredParameter$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapRequiredParameter$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandle): T.OptionalParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -8032,6 +8237,16 @@ function wrapOptionalParameter$with$type(this: Received<Held>, ...args: unknown[
 }
 function wrapOptionalParameter$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapOptionalParameter$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+function wrapOptionalParameter$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapOptionalParameter$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
 }
 
 export function wrapOmittingTypeAnnotation(
@@ -8405,6 +8620,11 @@ function wrapTypeQueryCallExpressionInTypeAnnotation$with$arguments(this: Receiv
 	return wrapTypeQueryCallExpressionInTypeAnnotation$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
+function wrapTypeQueryCallExpressionInTypeAnnotation$arguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+}
+
 export function wrapAsserts(data: T.Asserts, tree: TreeHandle): T.Asserts.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -8506,6 +8726,11 @@ function wrapAssertsAnnotation$with$asserts(this: Received<Held>, ...args: unkno
 	return wrapAssertsAnnotation$with(receiverOf(this, '$with.asserts'), 'asserts', args);
 }
 
+function wrapAssertsAnnotation$asserts$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Asserts>(this, '_asserts', tree);
+}
+
 export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle): T.TupleParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -8569,6 +8794,11 @@ function wrapTupleParameter$with$name(this: Received<Held>, ...args: unknown[]):
 }
 function wrapTupleParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTupleParameter$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapTupleParameter$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation>(this, '_type', tree);
 }
 
 export function wrapOptionalTupleParameter(
@@ -8647,6 +8877,11 @@ function wrapOptionalTupleParameter$with$name(this: Received<Held>, ...args: unk
 }
 function wrapOptionalTupleParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapOptionalTupleParameter$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapOptionalTupleParameter$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation>(this, '_type', tree);
 }
 
 export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle): T.OptionalType.Parsed {
@@ -8861,6 +9096,16 @@ function wrapConstructorType$with$parameters(this: Received<Held>, ...args: unkn
 }
 function wrapConstructorType$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapConstructorType$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapConstructorType$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapConstructorType$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 export function wrapTemplateType(data: T.TemplateType, tree: TreeHandle): T.TemplateType.Parsed {
@@ -9183,6 +9428,11 @@ function wrapGenericType$with$name(this: Received<Held>, ...args: unknown[]): un
 }
 function wrapGenericType$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapGenericType$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+
+function wrapGenericType$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
 }
 
 export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle): T.TypePredicate.Parsed {
@@ -9565,6 +9815,11 @@ function wrapTypeQueryCallExpression$with$arguments(this: Received<Held>, ...arg
 	return wrapTypeQueryCallExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
+function wrapTypeQueryCallExpression$arguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+}
+
 export function wrapTypeQueryInstantiationExpression(
 	data: T.TypeQueryInstantiationExpression,
 	tree: TreeHandle
@@ -9656,6 +9911,11 @@ function wrapTypeQueryInstantiationExpression$with$function(this: Received<Held>
 }
 function wrapTypeQueryInstantiationExpression$with$typeArguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeQueryInstantiationExpression$with(receiverOf(this, '$with.typeArguments'), 'typeArguments', args);
+}
+
+function wrapTypeQueryInstantiationExpression$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
 }
 
 export function wrapTypeQuery(data: T.TypeQuery, tree: TreeHandle): T.TypeQuery.Parsed {
@@ -10129,6 +10389,11 @@ function wrapTypeArguments$with$types(this: Received<Held>, ...args: unknown[]):
 	return wrapTypeArguments$with(receiverOf(this, '$with.types'), 'types', args);
 }
 
+function wrapTypeArguments$types$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Types>(this, '_types', tree);
+}
+
 export function wrapObjectType(data: T.ObjectType, tree: TreeHandle): T.ObjectType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10198,6 +10463,11 @@ function wrapObjectType$with(node: Held, setter: string, args: readonly unknown[
 }
 function wrapObjectType$with$members(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapObjectType$with(receiverOf(this, '$with.members'), 'members', args);
+}
+
+function wrapObjectType$members$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ObjectTypeContent | undefined>(this, '_members', tree);
 }
 
 export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle): T.CallSignature.Parsed {
@@ -10313,6 +10583,16 @@ function wrapCallSignature$with$parameters(this: Received<Held>, ...args: unknow
 }
 function wrapCallSignature$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapCallSignature$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+
+function wrapCallSignature$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapCallSignature$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandle): T.PropertySignature.Parsed {
@@ -10469,6 +10749,11 @@ function wrapPropertySignature$with$type(this: Received<Held>, ...args: unknown[
 	return wrapPropertySignature$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
+function wrapPropertySignature$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 const wrapTypeParameters$wrapper = {
 	kind: TSKindId.TypeParameter,
 	content: 'name',
@@ -10577,6 +10862,11 @@ function wrapTypeParameters$with$elements(this: Received<Held>, ...args: unknown
 	return wrapTypeParameters$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+function wrapTypeParameters$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParametersElements>(this, '_elements', tree);
+}
+
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.TypeParameter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -10673,6 +10963,11 @@ function wrapTypeParameter$with$constraint(this: Received<Held>, ...args: unknow
 }
 function wrapTypeParameter$with$default(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeParameter$with(receiverOf(this, '$with.default'), 'default', args);
+}
+
+function wrapTypeParameter$default$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.DefaultType | undefined>(this, '_default', tree);
 }
 
 export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle): T.DefaultType.Parsed {
@@ -10909,6 +11204,21 @@ function wrapConstructSignature$with$type(this: Received<Held>, ...args: unknown
 	return wrapConstructSignature$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
+function wrapConstructSignature$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapConstructSignature$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
+}
+
+function wrapConstructSignature$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -11059,6 +11369,11 @@ function wrapTupleType$with(node: Held, setter: string, args: readonly unknown[]
 }
 function wrapTupleType$with$tupleTypeMembers(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTupleType$with(receiverOf(this, '$with.tupleTypeMembers'), 'tupleTypeMembers', args);
+}
+
+function wrapTupleType$tupleTypeMembers$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TupleTypeMembers | undefined>(this, '_tuple_type_members', tree);
 }
 
 export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle): T.ReadonlyType.Parsed {
@@ -11326,6 +11641,16 @@ function wrapFunctionType$with$parameters(this: Received<Held>, ...args: unknown
 }
 function wrapFunctionType$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFunctionType$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+
+function wrapFunctionType$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapFunctionType$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 const wrapExportSpecifiers$wrapper = {
@@ -12191,6 +12516,11 @@ function wrapCatchClauseGroup$with$parameter(this: Received<Held>, ...args: unkn
 }
 function wrapCatchClauseGroup$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapCatchClauseGroup$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapCatchClauseGroup$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
 }
 
 export function wrapGetAccessorSignature(
@@ -13574,6 +13904,11 @@ function wrapClassBodyMemberMethod$with$terminator(this: Received<Held>, ...args
 	return wrapClassBodyMemberMethod$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
+function wrapClassBodyMemberMethod$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
 export function wrapClassBodyMemberMethodSig(
 	data: T.ClassBodyMemberMethodSig,
 	tree: TreeHandle
@@ -14031,6 +14366,11 @@ function wrapImportStatementClauseFrom$with$source(this: Received<Held>, ...args
 	return wrapImportStatementClauseFrom$with(receiverOf(this, '$with.source'), 'source', args);
 }
 
+function wrapImportStatementClauseFrom$importClause$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ImportClause>(this, '_import_clause', tree);
+}
+
 export function wrapYieldExpressionDelegate(
 	data: T.YieldExpressionDelegate,
 	tree: TreeHandle
@@ -14307,6 +14647,11 @@ function wrapParenthesizedExpressionTyped$with$type(this: Received<Held>, ...arg
 	return wrapParenthesizedExpressionTyped$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
+function wrapParenthesizedExpressionTyped$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 export function wrapParenthesizedExpressionSequence(
 	data: T.ParenthesizedExpressionSequence,
 	tree: TreeHandle
@@ -14374,6 +14719,11 @@ function wrapParenthesizedExpressionSequence$with$sequenceExpression(
 		'sequenceExpression',
 		args
 	);
+}
+
+function wrapParenthesizedExpressionSequence$sequenceExpression$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.SequenceExpression>(this, '_sequence_expression', tree);
 }
 
 export function wrapExportStatementEqualsExport(
@@ -14623,6 +14973,16 @@ function wrapCallExpressionCall$with$arguments(this: Received<Held>, ...args: un
 	return wrapCallExpressionCall$with(receiverOf(this, '$with.arguments'), 'arguments', args);
 }
 
+function wrapCallExpressionCall$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+}
+
+function wrapCallExpressionCall$arguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Arguments>(this, '_arguments', tree);
+}
+
 export function wrapCallExpressionTemplateCall(
 	data: T.CallExpressionTemplateCall,
 	tree: TreeHandle
@@ -14699,6 +15059,11 @@ function wrapCallExpressionTemplateCall$with$function(this: Received<Held>, ...a
 }
 function wrapCallExpressionTemplateCall$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapCallExpressionTemplateCall$with(receiverOf(this, '$with.arguments'), 'arguments', args);
+}
+
+function wrapCallExpressionTemplateCall$arguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TemplateString>(this, '_arguments', tree);
 }
 
 export function wrapCallExpressionMember(
@@ -14809,6 +15174,16 @@ function wrapCallExpressionMember$with$typeArguments(this: Received<Held>, ...ar
 }
 function wrapCallExpressionMember$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapCallExpressionMember$with(receiverOf(this, '$with.arguments'), 'arguments', args);
+}
+
+function wrapCallExpressionMember$typeArguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeArguments | undefined>(this, '_type_arguments', tree);
+}
+
+function wrapCallExpressionMember$arguments$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Arguments>(this, '_arguments', tree);
 }
 
 export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle): T.StringDouble.Parsed {
@@ -15190,6 +15565,16 @@ function wrapClassHeritageExtendsClause$with$implementsClause(this: Received<Hel
 	return wrapClassHeritageExtendsClause$with(receiverOf(this, '$with.implementsClause'), 'implementsClause', args);
 }
 
+function wrapClassHeritageExtendsClause$extendsClause$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ExtendsClause>(this, '_extends_clause', tree);
+}
+
+function wrapClassHeritageExtendsClause$implementsClause$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ImplementsClause | undefined>(this, '_implements_clause', tree);
+}
+
 export function wrapImportClauseDefaultImport(
 	data: T.ImportClauseDefaultImport,
 	tree: TreeHandle
@@ -15269,6 +15654,11 @@ function wrapImportClauseDefaultImport$with$identifier(this: Received<Held>, ...
 }
 function wrapImportClauseDefaultImport$with$importClauseGroup(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapImportClauseDefaultImport$with(receiverOf(this, '$with.importClauseGroup'), 'importClauseGroup', args);
+}
+
+function wrapImportClauseDefaultImport$importClauseGroup$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ImportClauseGroup | undefined>(this, '_import_clause_group', tree);
 }
 
 export function wrapExportStatementDefaultFrom(
@@ -15450,6 +15840,11 @@ function wrapExportStatementDefaultDeclaration$with$decorators(this: Received<He
 }
 function wrapExportStatementDefaultDeclaration$with$content(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapExportStatementDefaultDeclaration$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+function wrapExportStatementDefaultDeclaration$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
 }
 
 export function wrapExportStatementDefaultFromStarFrom(
@@ -15663,6 +16058,11 @@ function wrapExportStatementDefaultFromClauseFrom$with$exportClause(this: Receiv
 }
 function wrapExportStatementDefaultFromClauseFrom$with$source(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapExportStatementDefaultFromClauseFrom$with(receiverOf(this, '$with.source'), 'source', args);
+}
+
+function wrapExportStatementDefaultFromClauseFrom$exportClause$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ExportClause>(this, '_export_clause', tree);
 }
 
 export function wrapExportStatementDefaultDeclarationDefaultKw(
@@ -15917,6 +16317,11 @@ function wrapVariableDeclaratorPlain$with$value(this: Received<Held>, ...args: u
 	return wrapVariableDeclaratorPlain$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
+function wrapVariableDeclaratorPlain$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 export function wrapVariableDeclaratorDefinite(
 	data: T.VariableDeclaratorDefinite,
 	tree: TreeHandle
@@ -15993,6 +16398,11 @@ function wrapVariableDeclaratorDefinite$with$name(this: Received<Held>, ...args:
 }
 function wrapVariableDeclaratorDefinite$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapVariableDeclaratorDefinite$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapVariableDeclaratorDefinite$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation>(this, '_type', tree);
 }
 
 export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle): T.ForHeaderLhs.Parsed {
@@ -16649,6 +17059,16 @@ function wrapSetterParameter$with$type(this: Received<Held>, ...args: unknown[])
 	return wrapSetterParameter$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
+function wrapSetterParameter$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapSetterParameter$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 export function wrapMethodDefinitionPlain(
 	data: T.MethodDefinitionPlain,
 	tree: TreeHandle
@@ -16917,6 +17337,16 @@ function wrapMethodDefinitionPlain$with$returnType(this: Received<Held>, ...args
 }
 function wrapMethodDefinitionPlain$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMethodDefinitionPlain$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapMethodDefinitionPlain$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapMethodDefinitionPlain$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 export function wrapMethodDefinitionGetter(
@@ -17220,6 +17650,11 @@ function wrapMethodDefinitionSetter$with$body(this: Received<Held>, ...args: unk
 	return wrapMethodDefinitionSetter$with(receiverOf(this, '$with.body'), 'body', args);
 }
 
+function wrapMethodDefinitionSetter$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
+}
+
 export function wrapMethodSignaturePlain(
 	data: T.MethodSignaturePlain,
 	tree: TreeHandle
@@ -17472,6 +17907,16 @@ function wrapMethodSignaturePlain$with$parameters(this: Received<Held>, ...args:
 }
 function wrapMethodSignaturePlain$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMethodSignaturePlain$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+
+function wrapMethodSignaturePlain$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapMethodSignaturePlain$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 export function wrapMethodSignatureGetter(
@@ -17735,6 +18180,11 @@ function wrapMethodSignatureSetter$with$parameters(this: Received<Held>, ...args
 	return wrapMethodSignatureSetter$with(receiverOf(this, '$with.parameters'), 'parameters', args);
 }
 
+function wrapMethodSignatureSetter$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
+}
+
 export function wrapAbstractMethodSignaturePlain(
 	data: T.AbstractMethodSignaturePlain,
 	tree: TreeHandle
@@ -17946,6 +18396,16 @@ function wrapAbstractMethodSignaturePlain$with$parameters(this: Received<Held>, 
 }
 function wrapAbstractMethodSignaturePlain$with$returnType(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAbstractMethodSignaturePlain$with(receiverOf(this, '$with.returnType'), 'returnType', args);
+}
+
+function wrapAbstractMethodSignaturePlain$typeParameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+}
+
+function wrapAbstractMethodSignaturePlain$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 export function wrapAbstractMethodSignatureGetter(
@@ -18189,6 +18649,11 @@ function wrapAbstractMethodSignatureSetter$with$name(this: Received<Held>, ...ar
 }
 function wrapAbstractMethodSignatureSetter$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAbstractMethodSignatureSetter$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+
+function wrapAbstractMethodSignatureSetter$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
 }
 
 export function wrapPublicFieldDefinitionPlain(
@@ -18438,6 +18903,16 @@ function wrapPublicFieldDefinitionPlain$with$value(this: Received<Held>, ...args
 	return wrapPublicFieldDefinitionPlain$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
+function wrapPublicFieldDefinitionPlain$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapPublicFieldDefinitionPlain$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 export function wrapPublicFieldDefinitionAccessor(
 	data: T.PublicFieldDefinitionAccessor,
 	tree: TreeHandle
@@ -18645,6 +19120,16 @@ function wrapPublicFieldDefinitionAccessor$with$value(this: Received<Held>, ...a
 	return wrapPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
+function wrapPublicFieldDefinitionAccessor$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapPublicFieldDefinitionAccessor$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
+}
+
 export function wrapConstructorDeclaration(
 	data: T.ConstructorDeclaration,
 	tree: TreeHandle
@@ -18748,6 +19233,11 @@ function wrapConstructorDeclaration$with$parameters(this: Received<Held>, ...arg
 }
 function wrapConstructorDeclaration$with$body(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapConstructorDeclaration$with(receiverOf(this, '$with.body'), 'body', args);
+}
+
+function wrapConstructorDeclaration$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParameters>(this, '_parameters', tree);
 }
 
 export function wrapReceiverParameterDeclaration(
@@ -18916,6 +19406,16 @@ function wrapReceiverParameterDeclaration$with$type(this: Received<Held>, ...arg
 }
 function wrapReceiverParameterDeclaration$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapReceiverParameterDeclaration$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+function wrapReceiverParameterDeclaration$decorators$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlots<T.Decorator>(this, '_decorator', tree);
+}
+
+function wrapReceiverParameterDeclaration$type$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.TypeAnnotation | undefined>(this, '_type', tree);
 }
 
 export function wrapFormalParametersElementsReceiver(
@@ -19130,6 +19630,11 @@ function wrapFormalParametersElementsReceiverGroup$with(node: Held, setter: stri
 }
 function wrapFormalParametersElementsReceiverGroup$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFormalParametersElementsReceiverGroup$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+function wrapFormalParametersElementsReceiverGroup$elements$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FormalParametersElements | undefined>(this, '_elements', tree);
 }
 
 export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeHandle): T.StatementIdentifier.Parsed {
@@ -19471,6 +19976,11 @@ function wrapInterfaceBody$with$members(this: Received<Held>, ...args: unknown[]
 	return wrapInterfaceBody$with(receiverOf(this, '$with.members'), 'members', args);
 }
 
+function wrapInterfaceBody$members$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.ObjectTypeContent | undefined>(this, '_members', tree);
+}
+
 function viewProgram$shebang(this: RecordHandle) {
 	return viewSlot<T.HashBangLine | undefined>(this, 2, 6, 8, 6, 2);
 }
@@ -19570,6 +20080,9 @@ function viewExportClause$exportSpecifiers(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewExportClause$exportSpecifiers$native(this: RecordHandle) {
+	return viewSlot<T.ExportSpecifiers | undefined>(this, 2, 3, 8, 3, 2);
 }
 const viewExportClause$wrapper = {
 	kind: TSKindId.ExportSpecifier,
@@ -19784,6 +20297,9 @@ function viewNamedImports$importSpecifiers(this: RecordHandle) {
 		true
 	);
 }
+function viewNamedImports$importSpecifiers$native(this: RecordHandle) {
+	return viewSlot<T.ImportSpecifiers | undefined>(this, 2, 3, 8, 3, 2);
+}
 function viewNamedImports$listRead(this: { readonly importSpecifiers: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.importSpecifiers(), 'items'), undefined);
 }
@@ -19868,6 +20384,9 @@ function viewImportAttribute$object(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewImportAttribute$object$native(this: RecordHandle) {
+	return viewSlot<T.Object>(this, 3, 3, 8, 3, 3);
 }
 function viewImportAttribute(data: RecordPosition, tree: TreeHandle): T.ImportAttribute.Parsed {
 	const node = {
@@ -20105,6 +20624,9 @@ function viewIfStatement$alternative(this: RecordHandle) {
 		false
 	);
 }
+function viewIfStatement$alternative$native(this: RecordHandle) {
+	return viewSlot<T.ElseClause | undefined>(this, 9, 3, 1, 0, 4);
+}
 function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.Parsed {
 	const node = {
 		$type: TSKindId.IfStatement as const,
@@ -20149,6 +20671,9 @@ function viewSwitchStatement$body(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewSwitchStatement$body$native(this: RecordHandle) {
+	return viewSlot<T.SwitchBody>(this, 5, 3, 8, 3, 3);
 }
 function viewSwitchStatement(data: RecordPosition, tree: TreeHandle): T.SwitchStatement.Parsed {
 	const node = {
@@ -20339,6 +20864,9 @@ function viewTryStatement$finalizer(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewTryStatement$finalizer$native(this: RecordHandle) {
+	return viewSlot<T.FinallyClause | undefined>(this, 21, 6, 8, 6, 4);
 }
 function viewTryStatement(data: RecordPosition, tree: TreeHandle): T.TryStatement.Parsed {
 	const node = {
@@ -21034,6 +21562,18 @@ function viewClass$body(this: RecordHandle) {
 		true
 	);
 }
+function viewClass$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+}
+function viewClass$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4);
+}
+function viewClass$heritage$native(this: RecordHandle) {
+	return viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5);
+}
+function viewClass$body$native(this: RecordHandle) {
+	return viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6);
+}
 function viewClass(data: RecordPosition, tree: TreeHandle): T.Class.Parsed {
 	const node = {
 		$type: TSKindId.Class as const,
@@ -21123,6 +21663,18 @@ function viewClassDeclaration$body(this: RecordHandle) {
 }
 function viewClassDeclaration$terminator(this: RecordHandle) {
 	return blankArmRead(childSlot(this, 26, 1, 18, 0, 7));
+}
+function viewClassDeclaration$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+}
+function viewClassDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4);
+}
+function viewClassDeclaration$heritage$native(this: RecordHandle) {
+	return viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5);
+}
+function viewClassDeclaration$body$native(this: RecordHandle) {
+	return viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6);
 }
 function viewClassDeclaration(data: RecordPosition, tree: TreeHandle): T.ClassDeclaration.Parsed {
 	const node = {
@@ -21232,6 +21784,12 @@ function viewFunctionExpression$returnType(this: RecordHandle) {
 function viewFunctionExpression$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 17, 4, 8, 4, 7);
 }
+function viewFunctionExpression$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+}
+function viewFunctionExpression$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+}
 function viewFunctionExpression(data: RecordPosition, tree: TreeHandle): T.FunctionExpression.Parsed {
 	const node = {
 		$type: TSKindId.FunctionExpression as const,
@@ -21316,6 +21874,12 @@ function viewFunctionDeclaration$body(this: RecordHandle) {
 function viewFunctionDeclaration$terminator(this: RecordHandle) {
 	return blankArmRead(childSlot(this, 21, 1, 18, 0, 8));
 }
+function viewFunctionDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+}
+function viewFunctionDeclaration$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+}
 function viewFunctionDeclaration(data: RecordPosition, tree: TreeHandle): T.FunctionDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.FunctionDeclaration as const,
@@ -21398,6 +21962,12 @@ function viewGeneratorFunction$returnType(this: RecordHandle) {
 }
 function viewGeneratorFunction$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 17, 4, 8, 4, 7);
+}
+function viewGeneratorFunction$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+}
+function viewGeneratorFunction$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
 }
 function viewGeneratorFunction(data: RecordPosition, tree: TreeHandle): T.GeneratorFunction.Parsed {
 	const node = {
@@ -21482,6 +22052,12 @@ function viewGeneratorFunctionDeclaration$body(this: RecordHandle) {
 }
 function viewGeneratorFunctionDeclaration$terminator(this: RecordHandle) {
 	return blankArmRead(childSlot(this, 21, 1, 18, 0, 8));
+}
+function viewGeneratorFunctionDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+}
+function viewGeneratorFunctionDeclaration$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
 }
 function viewGeneratorFunctionDeclaration(
 	data: RecordPosition,
@@ -21579,6 +22155,9 @@ function viewNewExpression$typeArguments(this: RecordHandle) {
 }
 function viewNewExpression$arguments(this: RecordHandle) {
 	return viewSlot<T.Arguments | undefined>(this, 11, 3, 8, 3, 4);
+}
+function viewNewExpression$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
 }
 function viewNewExpression(data: RecordPosition, tree: TreeHandle): T.NewExpression.Parsed {
 	const node = {
@@ -22246,6 +22825,12 @@ function viewDecoratorCallExpression$arguments(this: RecordHandle) {
 		true
 	);
 }
+function viewDecoratorCallExpression$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments | undefined>(this, 5, 5, 8, 5, 3);
+}
+function viewDecoratorCallExpression$arguments$native(this: RecordHandle) {
+	return viewSlot<T.Arguments>(this, 10, 3, 8, 3, 4);
+}
 function viewDecoratorCallExpression(data: RecordPosition, tree: TreeHandle): T.DecoratorCallExpression.Parsed {
 	const node = {
 		$type: TSKindId.DecoratorCallExpression as const,
@@ -22571,6 +23156,12 @@ function viewFunctionSignature$returnType(this: RecordHandle) {
 function viewFunctionSignature$terminator(this: RecordHandle) {
 	return childSlot(this, 17, 1, 2, 0, 7);
 }
+function viewFunctionSignature$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 6, 5, 8, 5, 4);
+}
+function viewFunctionSignature$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 11, 3, 1, 0, 5);
+}
 function viewFunctionSignature(data: RecordPosition, tree: TreeHandle): T.FunctionSignature.Parsed {
 	const node = {
 		$type: TSKindId.FunctionSignature as const,
@@ -22654,6 +23245,9 @@ function viewTypeAssertion$typeArguments(this: RecordHandle) {
 }
 function viewTypeAssertion$expression(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 3);
+}
+function viewTypeAssertion$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 2, 5, 8, 5, 2);
 }
 function viewTypeAssertion(data: RecordPosition, tree: TreeHandle): T.TypeAssertion.Parsed {
 	const node = {
@@ -22759,6 +23353,9 @@ function viewInstantiationExpression$typeArguments(this: RecordHandle) {
 		true
 	);
 }
+function viewInstantiationExpression$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 6, 5, 8, 5, 3);
+}
 function viewInstantiationExpression(data: RecordPosition, tree: TreeHandle): T.InstantiationExpression.Parsed {
 	const node = {
 		$type: TSKindId.InstantiationExpression as const,
@@ -22858,6 +23455,9 @@ function viewExtendsClauseSingle$typeArguments(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewExtendsClauseSingle$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
 }
 function viewExtendsClauseSingle(data: RecordPosition, tree: TreeHandle): T.ExtendsClauseSingle.Parsed {
 	const node = {
@@ -22989,6 +23589,18 @@ function viewAbstractClassDeclaration$body(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewAbstractClassDeclaration$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+}
+function viewAbstractClassDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 8, 5, 8, 5, 4);
+}
+function viewAbstractClassDeclaration$heritage$native(this: RecordHandle) {
+	return viewSlot<T.ClassHeritage | undefined>(this, 13, 10, 8, 10, 5);
+}
+function viewAbstractClassDeclaration$body$native(this: RecordHandle) {
+	return viewSlot<T.ClassBody>(this, 23, 3, 8, 3, 6);
 }
 function viewAbstractClassDeclaration(data: RecordPosition, tree: TreeHandle): T.AbstractClassDeclaration.Parsed {
 	const node = {
@@ -23184,6 +23796,12 @@ function viewInterfaceDeclaration$extendsTypeClause(this: RecordHandle) {
 function viewInterfaceDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.InterfaceBody>(this, 15, 7, 8, 7, 5);
 }
+function viewInterfaceDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 7, 5, 8, 5, 3);
+}
+function viewInterfaceDeclaration$extendsTypeClause$native(this: RecordHandle) {
+	return viewSlot<T.ExtendsTypeClause | undefined>(this, 12, 3, 8, 3, 4);
+}
 function viewInterfaceDeclaration(data: RecordPosition, tree: TreeHandle): T.InterfaceDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.InterfaceDeclaration as const,
@@ -23264,6 +23882,9 @@ function viewEnumDeclaration$body(this: RecordHandle) {
 		true
 	);
 }
+function viewEnumDeclaration$body$native(this: RecordHandle) {
+	return viewSlot<T.EnumBody>(this, 6, 5, 8, 5, 4);
+}
 function viewEnumDeclaration(data: RecordPosition, tree: TreeHandle): T.EnumDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.EnumDeclaration as const,
@@ -23300,6 +23921,9 @@ function viewEnumBody$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewEnumBody$elements$native(this: RecordHandle) {
+	return viewSlot<T.EnumBodyElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewEnumBody$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -23425,6 +24049,9 @@ function viewTypeAliasDeclaration$value(this: RecordHandle) {
 function viewTypeAliasDeclaration$terminator(this: RecordHandle) {
 	return childSlot(this, 16, 1, 2, 0, 5);
 }
+function viewTypeAliasDeclaration$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 7, 5, 8, 5, 3);
+}
 function viewTypeAliasDeclaration(data: RecordPosition, tree: TreeHandle): T.TypeAliasDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.TypeAliasDeclaration as const,
@@ -23496,6 +24123,12 @@ function viewRequiredParameter$type(this: RecordHandle) {
 }
 function viewRequiredParameter$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 11, 4, 3, 0, 7);
+}
+function viewRequiredParameter$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+}
+function viewRequiredParameter$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 8, 3, 1, 0, 6);
 }
 function viewRequiredParameter(data: RecordPosition, tree: TreeHandle): T.RequiredParameter.Parsed {
 	const node = {
@@ -23574,6 +24207,12 @@ function viewOptionalParameter$type(this: RecordHandle) {
 }
 function viewOptionalParameter$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 12, 4, 3, 0, 7);
+}
+function viewOptionalParameter$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+}
+function viewOptionalParameter$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 9, 3, 1, 0, 6);
 }
 function viewOptionalParameter(data: RecordPosition, tree: TreeHandle): T.OptionalParameter.Parsed {
 	const node = {
@@ -23772,6 +24411,9 @@ function viewTypeQueryCallExpressionInTypeAnnotation$arguments(this: RecordHandl
 		true
 	);
 }
+function viewTypeQueryCallExpressionInTypeAnnotation$arguments$native(this: RecordHandle) {
+	return viewSlot<T.Arguments>(this, 6, 3, 8, 3, 3);
+}
 function viewTypeQueryCallExpressionInTypeAnnotation(
 	data: RecordPosition,
 	tree: TreeHandle
@@ -23838,6 +24480,9 @@ function viewAssertsAnnotation$asserts(this: RecordHandle) {
 		false
 	);
 }
+function viewAssertsAnnotation$asserts$native(this: RecordHandle) {
+	return viewSlot<T.Asserts>(this, 2, 3, 1, 0, 2);
+}
 function viewAssertsAnnotation(data: RecordPosition, tree: TreeHandle): T.AssertsAnnotation.Parsed {
 	const node = {
 		$type: TSKindId.AssertsAnnotation as const,
@@ -23875,6 +24520,9 @@ function viewTupleParameter$type(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewTupleParameter$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation>(this, 9, 3, 1, 0, 3);
 }
 function viewTupleParameter(data: RecordPosition, tree: TreeHandle): T.TupleParameter.Parsed {
 	const node = {
@@ -23914,6 +24562,9 @@ function viewOptionalTupleParameter$type(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewOptionalTupleParameter$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation>(this, 5, 3, 1, 0, 3);
 }
 function viewOptionalTupleParameter(data: RecordPosition, tree: TreeHandle): T.OptionalTupleParameter.Parsed {
 	const node = {
@@ -24031,6 +24682,12 @@ function viewConstructorType$parameters(this: RecordHandle) {
 }
 function viewConstructorType$type(this: RecordHandle) {
 	return viewSlot<T.Type>(this, 11, 4, 3, 0, 5);
+}
+function viewConstructorType$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3);
+}
+function viewConstructorType$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 8, 3, 1, 0, 4);
 }
 function viewConstructorType(data: RecordPosition, tree: TreeHandle): T.ConstructorType.Parsed {
 	const node = {
@@ -24211,6 +24868,9 @@ function viewGenericType$typeArguments(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewGenericType$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 12, 5, 8, 5, 3);
 }
 function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.Parsed {
 	const node = {
@@ -24417,6 +25077,9 @@ function viewTypeQueryCallExpression$arguments(this: RecordHandle) {
 		true
 	);
 }
+function viewTypeQueryCallExpression$arguments$native(this: RecordHandle) {
+	return viewSlot<T.Arguments>(this, 2, 3, 8, 3, 2);
+}
 function viewTypeQueryCallExpression(data: RecordPosition, tree: TreeHandle): T.TypeQueryCallExpression.Parsed {
 	const node = {
 		$type: TSKindId.TypeQueryCallExpression as const,
@@ -24464,6 +25127,9 @@ function viewTypeQueryInstantiationExpression$typeArguments(this: RecordHandle) 
 		],
 		true
 	);
+}
+function viewTypeQueryInstantiationExpression$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments>(this, 6, 5, 8, 5, 3);
 }
 function viewTypeQueryInstantiationExpression(
 	data: RecordPosition,
@@ -24720,6 +25386,9 @@ function viewTypeArguments$types(this: RecordHandle) {
 		true
 	);
 }
+function viewTypeArguments$types$native(this: RecordHandle) {
+	return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+}
 function viewTypeArguments$listRead(this: { readonly types: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.types(), 'items'), undefined);
 }
@@ -24807,6 +25476,9 @@ function viewObjectType$members(this: RecordHandle) {
 function viewObjectType$closing(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 4);
 }
+function viewObjectType$members$native(this: RecordHandle) {
+	return viewSlot<T.ObjectTypeContent | undefined>(this, 3, 3, 8, 3, 3);
+}
 function viewObjectType(data: RecordPosition, tree: TreeHandle): T.ObjectType.Parsed {
 	const node = {
 		$type: TSKindId.ObjectType as const,
@@ -24867,6 +25539,12 @@ function viewCallSignature$parameters(this: RecordHandle) {
 }
 function viewCallSignature$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 10, 3, 1, 0, 4);
+}
+function viewCallSignature$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 2, 5, 8, 5, 2);
+}
+function viewCallSignature$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 7, 3, 1, 0, 3);
 }
 function viewCallSignature(data: RecordPosition, tree: TreeHandle): T.CallSignature.Parsed {
 	const node = {
@@ -24935,6 +25613,9 @@ function viewPropertySignature$type(this: RecordHandle) {
 		false
 	);
 }
+function viewPropertySignature$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 19, 3, 1, 0, 5);
+}
 function viewPropertySignature(data: RecordPosition, tree: TreeHandle): T.PropertySignature.Parsed {
 	const node = {
 		$type: TSKindId.PropertySignature as const,
@@ -24984,6 +25665,9 @@ function viewTypeParameters$elements(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewTypeParameters$elements$native(this: RecordHandle) {
+	return viewSlot<T.TypeParametersElements>(this, 2, 3, 8, 3, 2);
 }
 const viewTypeParameters$wrapper = {
 	kind: TSKindId.TypeParameter,
@@ -25072,6 +25756,9 @@ function viewTypeParameter$default(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewTypeParameter$default$native(this: RecordHandle) {
+	return viewSlot<T.DefaultType | undefined>(this, 15, 6, 8, 6, 5);
 }
 function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParameter.Parsed {
 	const node = {
@@ -25210,6 +25897,15 @@ function viewConstructSignature$type(this: RecordHandle) {
 		false
 	);
 }
+function viewConstructSignature$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 3, 5, 8, 5, 3);
+}
+function viewConstructSignature$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 8, 3, 1, 0, 4);
+}
+function viewConstructSignature$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 11, 3, 1, 0, 5);
+}
 function viewConstructSignature(data: RecordPosition, tree: TreeHandle): T.ConstructSignature.Parsed {
 	const node = {
 		$type: TSKindId.ConstructSignature as const,
@@ -25288,6 +25984,9 @@ function viewTupleType$tupleTypeMembers(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewTupleType$tupleTypeMembers$native(this: RecordHandle) {
+	return viewSlot<T.TupleTypeMembers | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewTupleType$listRead(this: { readonly tupleTypeMembers: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.tupleTypeMembers(), 'items'), undefined);
@@ -25475,6 +26174,12 @@ function viewFunctionType$parameters(this: RecordHandle) {
 }
 function viewFunctionType$returnType(this: RecordHandle) {
 	return viewSlot<T.Type | T.Asserts | T.TypePredicate>(this, 10, 4, 3, 0, 4);
+}
+function viewFunctionType$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 2, 5, 8, 5, 2);
+}
+function viewFunctionType$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 7, 3, 1, 0, 3);
 }
 function viewFunctionType(data: RecordPosition, tree: TreeHandle): T.FunctionType.Parsed {
 	const node = {
@@ -26054,6 +26759,9 @@ function viewCatchClauseGroup$type(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewCatchClauseGroup$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3);
 }
 function viewCatchClauseGroup(data: RecordPosition, tree: TreeHandle): T.CatchClauseGroup.Parsed {
 	const node = {
@@ -26763,6 +27471,9 @@ function viewClassBodyMemberMethod$methodDefinition(this: RecordHandle) {
 function viewClassBodyMemberMethod$terminator(this: RecordHandle) {
 	return blankArmRead(childSlot(this, 42, 1, 18, 0, 4));
 }
+function viewClassBodyMemberMethod$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+}
 function viewClassBodyMemberMethod(data: RecordPosition, tree: TreeHandle): T.ClassBodyMemberMethod.Parsed {
 	const node = {
 		$type: TSKindId.ClassBodyMemberMethod as const,
@@ -26989,6 +27700,9 @@ function viewImportStatementClauseFrom$importClause(this: RecordHandle) {
 function viewImportStatementClauseFrom$source(this: RecordHandle) {
 	return viewSlot<T.String>(this, 16, 3, 8, 3, 3);
 }
+function viewImportStatementClauseFrom$importClause$native(this: RecordHandle) {
+	return viewSlot<T.ImportClause>(this, 2, 14, 8, 14, 2);
+}
 function viewImportStatementClauseFrom(data: RecordPosition, tree: TreeHandle): T.ImportStatementClauseFrom.Parsed {
 	const node = {
 		$type: TSKindId.ImportStatementClauseFrom as const,
@@ -27121,6 +27835,9 @@ function viewParenthesizedExpressionTyped$type(this: RecordHandle) {
 		false
 	);
 }
+function viewParenthesizedExpressionTyped$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3);
+}
 function viewParenthesizedExpressionTyped(
 	data: RecordPosition,
 	tree: TreeHandle
@@ -27159,6 +27876,9 @@ function viewParenthesizedExpressionSequence$sequenceExpression(this: RecordHand
 		],
 		true
 	);
+}
+function viewParenthesizedExpressionSequence$sequenceExpression$native(this: RecordHandle) {
+	return viewSlot<T.SequenceExpression>(this, 2, 3, 8, 3, 2);
 }
 function viewParenthesizedExpressionSequence(
 	data: RecordPosition,
@@ -27280,6 +28000,12 @@ function viewCallExpressionCall$arguments(this: RecordHandle) {
 		true
 	);
 }
+function viewCallExpressionCall$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
+}
+function viewCallExpressionCall$arguments$native(this: RecordHandle) {
+	return viewSlot<T.Arguments>(this, 11, 3, 8, 3, 4);
+}
 function viewCallExpressionCall(data: RecordPosition, tree: TreeHandle): T.CallExpressionCall.Parsed {
 	const node = {
 		$type: TSKindId.CallExpressionCall as const,
@@ -27324,6 +28050,9 @@ function viewCallExpressionTemplateCall$arguments(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewCallExpressionTemplateCall$arguments$native(this: RecordHandle) {
+	return viewSlot<T.TemplateString>(this, 6, 3, 8, 3, 3);
 }
 function viewCallExpressionTemplateCall(data: RecordPosition, tree: TreeHandle): T.CallExpressionTemplateCall.Parsed {
 	const node = {
@@ -27377,6 +28106,12 @@ function viewCallExpressionMember$arguments(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewCallExpressionMember$typeArguments$native(this: RecordHandle) {
+	return viewSlot<T.TypeArguments | undefined>(this, 6, 5, 8, 5, 3);
+}
+function viewCallExpressionMember$arguments$native(this: RecordHandle) {
+	return viewSlot<T.Arguments>(this, 11, 3, 8, 3, 4);
 }
 function viewCallExpressionMember(data: RecordPosition, tree: TreeHandle): T.CallExpressionMember.Parsed {
 	const node = {
@@ -27574,6 +28309,12 @@ function viewClassHeritageExtendsClause$implementsClause(this: RecordHandle) {
 		true
 	);
 }
+function viewClassHeritageExtendsClause$extendsClause$native(this: RecordHandle) {
+	return viewSlot<T.ExtendsClause>(this, 2, 3, 8, 3, 2);
+}
+function viewClassHeritageExtendsClause$implementsClause$native(this: RecordHandle) {
+	return viewSlot<T.ImplementsClause | undefined>(this, 5, 3, 8, 3, 3);
+}
 function viewClassHeritageExtendsClause(data: RecordPosition, tree: TreeHandle): T.ClassHeritageExtendsClause.Parsed {
 	const node = {
 		$type: TSKindId.ClassHeritageExtendsClause as const,
@@ -27612,6 +28353,9 @@ function viewImportClauseDefaultImport$importClauseGroup(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewImportClauseDefaultImport$importClauseGroup$native(this: RecordHandle) {
+	return viewSlot<T.ImportClauseGroup | undefined>(this, 5, 7, 8, 7, 3);
 }
 function viewImportClauseDefaultImport(data: RecordPosition, tree: TreeHandle): T.ImportClauseDefaultImport.Parsed {
 	const node = {
@@ -27690,6 +28434,9 @@ function viewExportStatementDefaultDeclaration$decorators(this: RecordHandle) {
 }
 function viewExportStatementDefaultDeclaration$content(this: RecordHandle) {
 	return viewSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(this, 3, 3, 1, 0, 3);
+}
+function viewExportStatementDefaultDeclaration$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewExportStatementDefaultDeclaration(
 	data: RecordPosition,
@@ -27800,6 +28547,9 @@ function viewExportStatementDefaultFromClauseFrom$exportClause(this: RecordHandl
 function viewExportStatementDefaultFromClauseFrom$source(this: RecordHandle) {
 	return viewSlot<T.String | undefined>(this, 7, 3, 8, 3, 3);
 }
+function viewExportStatementDefaultFromClauseFrom$exportClause$native(this: RecordHandle) {
+	return viewSlot<T.ExportClause>(this, 2, 5, 8, 5, 2);
+}
 function viewExportStatementDefaultFromClauseFrom(
 	data: RecordPosition,
 	tree: TreeHandle
@@ -27909,6 +28659,9 @@ function viewVariableDeclaratorPlain$type(this: RecordHandle) {
 function viewVariableDeclaratorPlain$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 9, 4, 3, 0, 4);
 }
+function viewVariableDeclaratorPlain$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 6, 3, 1, 0, 3);
+}
 function viewVariableDeclaratorPlain(data: RecordPosition, tree: TreeHandle): T.VariableDeclaratorPlain.Parsed {
 	const node = {
 		$type: TSKindId.VariableDeclaratorPlain as const,
@@ -27948,6 +28701,9 @@ function viewVariableDeclaratorDefinite$type(this: RecordHandle) {
 		],
 		false
 	);
+}
+function viewVariableDeclaratorDefinite$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation>(this, 5, 3, 1, 0, 3);
 }
 function viewVariableDeclaratorDefinite(data: RecordPosition, tree: TreeHandle): T.VariableDeclaratorDefinite.Parsed {
 	const node = {
@@ -28243,6 +28999,12 @@ function viewSetterParameter$type(this: RecordHandle) {
 		false
 	);
 }
+function viewSetterParameter$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+}
+function viewSetterParameter$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 9, 3, 1, 0, 6);
+}
 function viewSetterParameter(data: RecordPosition, tree: TreeHandle): T.SetterParameter.Parsed {
 	const node = {
 		$type: TSKindId.SetterParameter as const,
@@ -28348,6 +29110,12 @@ function viewMethodDefinitionPlain$returnType(this: RecordHandle) {
 }
 function viewMethodDefinitionPlain$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 30, 4, 8, 4, 8);
+}
+function viewMethodDefinitionPlain$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
+}
+function viewMethodDefinitionPlain$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
 }
 function viewMethodDefinitionPlain(data: RecordPosition, tree: TreeHandle): T.MethodDefinitionPlain.Parsed {
 	const node = {
@@ -28496,6 +29264,9 @@ function viewMethodDefinitionSetter$parameters(this: RecordHandle) {
 function viewMethodDefinitionSetter$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 35, 4, 8, 4, 6);
 }
+function viewMethodDefinitionSetter$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
+}
 function viewMethodDefinitionSetter(data: RecordPosition, tree: TreeHandle): T.MethodDefinitionSetter.Parsed {
 	const node = {
 		$type: TSKindId.MethodDefinitionSetter as const,
@@ -28598,6 +29369,12 @@ function viewMethodSignaturePlain$parameters(this: RecordHandle) {
 }
 function viewMethodSignaturePlain$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
+}
+function viewMethodSignaturePlain$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
+}
+function viewMethodSignaturePlain$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
 }
 function viewMethodSignaturePlain(data: RecordPosition, tree: TreeHandle): T.MethodSignaturePlain.Parsed {
 	const node = {
@@ -28736,6 +29513,9 @@ function viewMethodSignatureSetter$parameters(this: RecordHandle) {
 		false
 	);
 }
+function viewMethodSignatureSetter$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
+}
 function viewMethodSignatureSetter(data: RecordPosition, tree: TreeHandle): T.MethodSignatureSetter.Parsed {
 	const node = {
 		$type: TSKindId.MethodSignatureSetter as const,
@@ -28827,6 +29607,12 @@ function viewAbstractMethodSignaturePlain$parameters(this: RecordHandle) {
 }
 function viewAbstractMethodSignaturePlain$returnType(this: RecordHandle) {
 	return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this, 27, 3, 1, 0, 7);
+}
+function viewAbstractMethodSignaturePlain$typeParameters$native(this: RecordHandle) {
+	return viewSlot<T.TypeParameters | undefined>(this, 19, 5, 8, 5, 5);
+}
+function viewAbstractMethodSignaturePlain$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 24, 3, 1, 0, 6);
 }
 function viewAbstractMethodSignaturePlain(
 	data: RecordPosition,
@@ -28957,6 +29743,9 @@ function viewAbstractMethodSignatureSetter$parameters(this: RecordHandle) {
 		false
 	);
 }
+function viewAbstractMethodSignatureSetter$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParametersSetAccessorSignature>(this, 19, 16, 8, 16, 5);
+}
 function viewAbstractMethodSignatureSetter(
 	data: RecordPosition,
 	tree: TreeHandle
@@ -29050,6 +29839,12 @@ function viewPublicFieldDefinitionPlain$type(this: RecordHandle) {
 }
 function viewPublicFieldDefinitionPlain$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 24, 4, 3, 0, 8);
+}
+function viewPublicFieldDefinitionPlain$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+}
+function viewPublicFieldDefinitionPlain$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 21, 3, 1, 0, 7);
 }
 function viewPublicFieldDefinitionPlain(data: RecordPosition, tree: TreeHandle): T.PublicFieldDefinitionPlain.Parsed {
 	const node = {
@@ -29147,6 +29942,12 @@ function viewPublicFieldDefinitionAccessor$type(this: RecordHandle) {
 function viewPublicFieldDefinitionAccessor$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 23, 4, 3, 0, 7);
 }
+function viewPublicFieldDefinitionAccessor$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+}
+function viewPublicFieldDefinitionAccessor$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 20, 3, 1, 0, 6);
+}
 function viewPublicFieldDefinitionAccessor(
 	data: RecordPosition,
 	tree: TreeHandle
@@ -29215,6 +30016,9 @@ function viewConstructorDeclaration$parameters(this: RecordHandle) {
 function viewConstructorDeclaration$body(this: RecordHandle) {
 	return viewSlot<T.StatementBlock>(this, 6, 4, 8, 4, 4);
 }
+function viewConstructorDeclaration$parameters$native(this: RecordHandle) {
+	return viewSlot<T.FormalParameters>(this, 3, 3, 1, 0, 3);
+}
 function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.ConstructorDeclaration.Parsed {
 	const node = {
 		$type: TSKindId.ConstructorDeclaration as const,
@@ -29281,6 +30085,12 @@ function viewReceiverParameterDeclaration$type(this: RecordHandle) {
 }
 function viewReceiverParameterDeclaration$value(this: RecordHandle) {
 	return viewSlot<T.Expression | undefined>(this, 8, 4, 3, 0, 6);
+}
+function viewReceiverParameterDeclaration$decorators$native(this: RecordHandle) {
+	return viewSlots<T.Decorator>(this, 3, 1, 3, 1, 0, 3);
+}
+function viewReceiverParameterDeclaration$type$native(this: RecordHandle) {
+	return viewSlot<T.TypeAnnotation | undefined>(this, 5, 3, 1, 0, 5);
 }
 function viewReceiverParameterDeclaration(
 	data: RecordPosition,
@@ -29370,6 +30180,9 @@ function viewFormalParametersElementsReceiverGroup$elements(this: RecordHandle) 
 		],
 		true
 	);
+}
+function viewFormalParametersElementsReceiverGroup$elements$native(this: RecordHandle) {
+	return viewSlot<T.FormalParametersElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewFormalParametersElementsReceiverGroup$listRead(this: {
 	readonly elements: () => unknown;
@@ -29600,6 +30413,9 @@ function viewInterfaceBody$members(this: RecordHandle) {
 }
 function viewInterfaceBody$closing(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 4);
+}
+function viewInterfaceBody$members$native(this: RecordHandle) {
+	return viewSlot<T.ObjectTypeContent | undefined>(this, 3, 3, 8, 3, 3);
 }
 function viewInterfaceBody(data: RecordPosition, tree: TreeHandle): T.InterfaceBody.Parsed {
 	const node = {
@@ -30553,6 +31369,657 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.TypeIdentifier]: viewTypeIdentifier,
 	[TSKindId.InterfaceBody]: viewInterfaceBody
 };
+
+export const nativeSlots: NativeSlots = Object.freeze({
+	[TSKindId.ExportClause]: Object.freeze({
+		exportSpecifiers(this: object) {
+			return isRecordPosition(this)
+				? viewExportClause$exportSpecifiers$native.call(this as unknown as RecordHandle)
+				: wrapExportClause$exportSpecifiers$native.call(this);
+		}
+	}),
+	[TSKindId.NamedImports]: Object.freeze({
+		importSpecifiers(this: object) {
+			return isRecordPosition(this)
+				? viewNamedImports$importSpecifiers$native.call(this as unknown as RecordHandle)
+				: wrapNamedImports$importSpecifiers$native.call(this);
+		}
+	}),
+	[TSKindId.ImportAttribute]: Object.freeze({
+		object(this: object) {
+			return isRecordPosition(this)
+				? viewImportAttribute$object$native.call(this as unknown as RecordHandle)
+				: wrapImportAttribute$object$native.call(this);
+		}
+	}),
+	[TSKindId.IfStatement]: Object.freeze({
+		alternative(this: object) {
+			return isRecordPosition(this)
+				? viewIfStatement$alternative$native.call(this as unknown as RecordHandle)
+				: wrapIfStatement$alternative$native.call(this);
+		}
+	}),
+	[TSKindId.SwitchStatement]: Object.freeze({
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewSwitchStatement$body$native.call(this as unknown as RecordHandle)
+				: wrapSwitchStatement$body$native.call(this);
+		}
+	}),
+	[TSKindId.TryStatement]: Object.freeze({
+		finalizer(this: object) {
+			return isRecordPosition(this)
+				? viewTryStatement$finalizer$native.call(this as unknown as RecordHandle)
+				: wrapTryStatement$finalizer$native.call(this);
+		}
+	}),
+	[TSKindId.Class]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewClass$decorators$native.call(this as unknown as RecordHandle)
+				: wrapClass$decorators$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewClass$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapClass$typeParameters$native.call(this);
+		},
+		heritage(this: object) {
+			return isRecordPosition(this)
+				? viewClass$heritage$native.call(this as unknown as RecordHandle)
+				: wrapClass$heritage$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewClass$body$native.call(this as unknown as RecordHandle)
+				: wrapClass$body$native.call(this);
+		}
+	}),
+	[TSKindId.ClassDeclaration]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewClassDeclaration$decorators$native.call(this as unknown as RecordHandle)
+				: wrapClassDeclaration$decorators$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewClassDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapClassDeclaration$typeParameters$native.call(this);
+		},
+		heritage(this: object) {
+			return isRecordPosition(this)
+				? viewClassDeclaration$heritage$native.call(this as unknown as RecordHandle)
+				: wrapClassDeclaration$heritage$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewClassDeclaration$body$native.call(this as unknown as RecordHandle)
+				: wrapClassDeclaration$body$native.call(this);
+		}
+	}),
+	[TSKindId.FunctionExpression]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionExpression$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionExpression$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionExpression$parameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionExpression$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.FunctionDeclaration]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionDeclaration$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionDeclaration$parameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionDeclaration$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.GeneratorFunction]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewGeneratorFunction$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapGeneratorFunction$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewGeneratorFunction$parameters$native.call(this as unknown as RecordHandle)
+				: wrapGeneratorFunction$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.GeneratorFunctionDeclaration]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewGeneratorFunctionDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapGeneratorFunctionDeclaration$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewGeneratorFunctionDeclaration$parameters$native.call(this as unknown as RecordHandle)
+				: wrapGeneratorFunctionDeclaration$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.NewExpression]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewNewExpression$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapNewExpression$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.DecoratorCallExpression]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewDecoratorCallExpression$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapDecoratorCallExpression$typeArguments$native.call(this);
+		},
+		arguments(this: object) {
+			return isRecordPosition(this)
+				? viewDecoratorCallExpression$arguments$native.call(this as unknown as RecordHandle)
+				: wrapDecoratorCallExpression$arguments$native.call(this);
+		}
+	}),
+	[TSKindId.FunctionSignature]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionSignature$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionSignature$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionSignature$parameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionSignature$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.TypeAssertion]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewTypeAssertion$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapTypeAssertion$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.InstantiationExpression]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewInstantiationExpression$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapInstantiationExpression$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.ExtendsClauseSingle]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewExtendsClauseSingle$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapExtendsClauseSingle$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.AbstractClassDeclaration]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractClassDeclaration$decorators$native.call(this as unknown as RecordHandle)
+				: wrapAbstractClassDeclaration$decorators$native.call(this);
+		},
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractClassDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapAbstractClassDeclaration$typeParameters$native.call(this);
+		},
+		heritage(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractClassDeclaration$heritage$native.call(this as unknown as RecordHandle)
+				: wrapAbstractClassDeclaration$heritage$native.call(this);
+		},
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractClassDeclaration$body$native.call(this as unknown as RecordHandle)
+				: wrapAbstractClassDeclaration$body$native.call(this);
+		}
+	}),
+	[TSKindId.InterfaceDeclaration]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewInterfaceDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapInterfaceDeclaration$typeParameters$native.call(this);
+		},
+		extendsTypeClause(this: object) {
+			return isRecordPosition(this)
+				? viewInterfaceDeclaration$extendsTypeClause$native.call(this as unknown as RecordHandle)
+				: wrapInterfaceDeclaration$extendsTypeClause$native.call(this);
+		}
+	}),
+	[TSKindId.EnumDeclaration]: Object.freeze({
+		body(this: object) {
+			return isRecordPosition(this)
+				? viewEnumDeclaration$body$native.call(this as unknown as RecordHandle)
+				: wrapEnumDeclaration$body$native.call(this);
+		}
+	}),
+	[TSKindId.EnumBody]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewEnumBody$elements$native.call(this as unknown as RecordHandle)
+				: wrapEnumBody$elements$native.call(this);
+		}
+	}),
+	[TSKindId.TypeAliasDeclaration]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewTypeAliasDeclaration$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapTypeAliasDeclaration$typeParameters$native.call(this);
+		}
+	}),
+	[TSKindId.RequiredParameter]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewRequiredParameter$decorators$native.call(this as unknown as RecordHandle)
+				: wrapRequiredParameter$decorators$native.call(this);
+		},
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewRequiredParameter$type$native.call(this as unknown as RecordHandle)
+				: wrapRequiredParameter$type$native.call(this);
+		}
+	}),
+	[TSKindId.OptionalParameter]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewOptionalParameter$decorators$native.call(this as unknown as RecordHandle)
+				: wrapOptionalParameter$decorators$native.call(this);
+		},
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewOptionalParameter$type$native.call(this as unknown as RecordHandle)
+				: wrapOptionalParameter$type$native.call(this);
+		}
+	}),
+	[TSKindId.TypeQueryCallExpressionInTypeAnnotation]: Object.freeze({
+		arguments(this: object) {
+			return isRecordPosition(this)
+				? viewTypeQueryCallExpressionInTypeAnnotation$arguments$native.call(this as unknown as RecordHandle)
+				: wrapTypeQueryCallExpressionInTypeAnnotation$arguments$native.call(this);
+		}
+	}),
+	[TSKindId.AssertsAnnotation]: Object.freeze({
+		asserts(this: object) {
+			return isRecordPosition(this)
+				? viewAssertsAnnotation$asserts$native.call(this as unknown as RecordHandle)
+				: wrapAssertsAnnotation$asserts$native.call(this);
+		}
+	}),
+	[TSKindId.TupleParameter]: Object.freeze({
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewTupleParameter$type$native.call(this as unknown as RecordHandle)
+				: wrapTupleParameter$type$native.call(this);
+		}
+	}),
+	[TSKindId.OptionalTupleParameter]: Object.freeze({
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewOptionalTupleParameter$type$native.call(this as unknown as RecordHandle)
+				: wrapOptionalTupleParameter$type$native.call(this);
+		}
+	}),
+	[TSKindId.ConstructorType]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewConstructorType$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapConstructorType$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewConstructorType$parameters$native.call(this as unknown as RecordHandle)
+				: wrapConstructorType$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.GenericType]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewGenericType$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapGenericType$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.TypeQueryCallExpression]: Object.freeze({
+		arguments(this: object) {
+			return isRecordPosition(this)
+				? viewTypeQueryCallExpression$arguments$native.call(this as unknown as RecordHandle)
+				: wrapTypeQueryCallExpression$arguments$native.call(this);
+		}
+	}),
+	[TSKindId.TypeQueryInstantiationExpression]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewTypeQueryInstantiationExpression$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapTypeQueryInstantiationExpression$typeArguments$native.call(this);
+		}
+	}),
+	[TSKindId.TypeArguments]: Object.freeze({
+		types(this: object) {
+			return isRecordPosition(this)
+				? viewTypeArguments$types$native.call(this as unknown as RecordHandle)
+				: wrapTypeArguments$types$native.call(this);
+		}
+	}),
+	[TSKindId.ObjectType]: Object.freeze({
+		members(this: object) {
+			return isRecordPosition(this)
+				? viewObjectType$members$native.call(this as unknown as RecordHandle)
+				: wrapObjectType$members$native.call(this);
+		}
+	}),
+	[TSKindId.CallSignature]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewCallSignature$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapCallSignature$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewCallSignature$parameters$native.call(this as unknown as RecordHandle)
+				: wrapCallSignature$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.PropertySignature]: Object.freeze({
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewPropertySignature$type$native.call(this as unknown as RecordHandle)
+				: wrapPropertySignature$type$native.call(this);
+		}
+	}),
+	[TSKindId.TypeParameters]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewTypeParameters$elements$native.call(this as unknown as RecordHandle)
+				: wrapTypeParameters$elements$native.call(this);
+		}
+	}),
+	[TSKindId.TypeParameter]: Object.freeze({
+		default(this: object) {
+			return isRecordPosition(this)
+				? viewTypeParameter$default$native.call(this as unknown as RecordHandle)
+				: wrapTypeParameter$default$native.call(this);
+		}
+	}),
+	[TSKindId.ConstructSignature]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewConstructSignature$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapConstructSignature$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewConstructSignature$parameters$native.call(this as unknown as RecordHandle)
+				: wrapConstructSignature$parameters$native.call(this);
+		},
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewConstructSignature$type$native.call(this as unknown as RecordHandle)
+				: wrapConstructSignature$type$native.call(this);
+		}
+	}),
+	[TSKindId.TupleType]: Object.freeze({
+		tupleTypeMembers(this: object) {
+			return isRecordPosition(this)
+				? viewTupleType$tupleTypeMembers$native.call(this as unknown as RecordHandle)
+				: wrapTupleType$tupleTypeMembers$native.call(this);
+		}
+	}),
+	[TSKindId.FunctionType]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionType$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionType$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewFunctionType$parameters$native.call(this as unknown as RecordHandle)
+				: wrapFunctionType$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.CatchClauseGroup]: Object.freeze({
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewCatchClauseGroup$type$native.call(this as unknown as RecordHandle)
+				: wrapCatchClauseGroup$type$native.call(this);
+		}
+	}),
+	[TSKindId.ClassBodyMemberMethod]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewClassBodyMemberMethod$decorators$native.call(this as unknown as RecordHandle)
+				: wrapClassBodyMemberMethod$decorators$native.call(this);
+		}
+	}),
+	[TSKindId.ImportStatementClauseFrom]: Object.freeze({
+		importClause(this: object) {
+			return isRecordPosition(this)
+				? viewImportStatementClauseFrom$importClause$native.call(this as unknown as RecordHandle)
+				: wrapImportStatementClauseFrom$importClause$native.call(this);
+		}
+	}),
+	[TSKindId.ParenthesizedExpressionTyped]: Object.freeze({
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewParenthesizedExpressionTyped$type$native.call(this as unknown as RecordHandle)
+				: wrapParenthesizedExpressionTyped$type$native.call(this);
+		}
+	}),
+	[TSKindId.ParenthesizedExpressionSequence]: Object.freeze({
+		sequenceExpression(this: object) {
+			return isRecordPosition(this)
+				? viewParenthesizedExpressionSequence$sequenceExpression$native.call(this as unknown as RecordHandle)
+				: wrapParenthesizedExpressionSequence$sequenceExpression$native.call(this);
+		}
+	}),
+	[TSKindId.CallExpressionCall]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewCallExpressionCall$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapCallExpressionCall$typeArguments$native.call(this);
+		},
+		arguments(this: object) {
+			return isRecordPosition(this)
+				? viewCallExpressionCall$arguments$native.call(this as unknown as RecordHandle)
+				: wrapCallExpressionCall$arguments$native.call(this);
+		}
+	}),
+	[TSKindId.CallExpressionTemplateCall]: Object.freeze({
+		arguments(this: object) {
+			return isRecordPosition(this)
+				? viewCallExpressionTemplateCall$arguments$native.call(this as unknown as RecordHandle)
+				: wrapCallExpressionTemplateCall$arguments$native.call(this);
+		}
+	}),
+	[TSKindId.CallExpressionMember]: Object.freeze({
+		typeArguments(this: object) {
+			return isRecordPosition(this)
+				? viewCallExpressionMember$typeArguments$native.call(this as unknown as RecordHandle)
+				: wrapCallExpressionMember$typeArguments$native.call(this);
+		},
+		arguments(this: object) {
+			return isRecordPosition(this)
+				? viewCallExpressionMember$arguments$native.call(this as unknown as RecordHandle)
+				: wrapCallExpressionMember$arguments$native.call(this);
+		}
+	}),
+	[TSKindId.ClassHeritageExtendsClause]: Object.freeze({
+		extendsClause(this: object) {
+			return isRecordPosition(this)
+				? viewClassHeritageExtendsClause$extendsClause$native.call(this as unknown as RecordHandle)
+				: wrapClassHeritageExtendsClause$extendsClause$native.call(this);
+		},
+		implementsClause(this: object) {
+			return isRecordPosition(this)
+				? viewClassHeritageExtendsClause$implementsClause$native.call(this as unknown as RecordHandle)
+				: wrapClassHeritageExtendsClause$implementsClause$native.call(this);
+		}
+	}),
+	[TSKindId.ImportClauseDefaultImport]: Object.freeze({
+		importClauseGroup(this: object) {
+			return isRecordPosition(this)
+				? viewImportClauseDefaultImport$importClauseGroup$native.call(this as unknown as RecordHandle)
+				: wrapImportClauseDefaultImport$importClauseGroup$native.call(this);
+		}
+	}),
+	[TSKindId.ExportStatementDefaultDeclaration]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewExportStatementDefaultDeclaration$decorators$native.call(this as unknown as RecordHandle)
+				: wrapExportStatementDefaultDeclaration$decorators$native.call(this);
+		}
+	}),
+	[TSKindId.ExportStatementDefaultFromClauseFrom]: Object.freeze({
+		exportClause(this: object) {
+			return isRecordPosition(this)
+				? viewExportStatementDefaultFromClauseFrom$exportClause$native.call(this as unknown as RecordHandle)
+				: wrapExportStatementDefaultFromClauseFrom$exportClause$native.call(this);
+		}
+	}),
+	[TSKindId.VariableDeclaratorPlain]: Object.freeze({
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewVariableDeclaratorPlain$type$native.call(this as unknown as RecordHandle)
+				: wrapVariableDeclaratorPlain$type$native.call(this);
+		}
+	}),
+	[TSKindId.VariableDeclaratorDefinite]: Object.freeze({
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewVariableDeclaratorDefinite$type$native.call(this as unknown as RecordHandle)
+				: wrapVariableDeclaratorDefinite$type$native.call(this);
+		}
+	}),
+	[TSKindId.SetterParameter]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewSetterParameter$decorators$native.call(this as unknown as RecordHandle)
+				: wrapSetterParameter$decorators$native.call(this);
+		},
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewSetterParameter$type$native.call(this as unknown as RecordHandle)
+				: wrapSetterParameter$type$native.call(this);
+		}
+	}),
+	[TSKindId.MethodDefinitionPlain]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodDefinitionPlain$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodDefinitionPlain$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodDefinitionPlain$parameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodDefinitionPlain$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.MethodDefinitionSetter]: Object.freeze({
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodDefinitionSetter$parameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodDefinitionSetter$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.MethodSignaturePlain]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodSignaturePlain$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodSignaturePlain$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodSignaturePlain$parameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodSignaturePlain$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.MethodSignatureSetter]: Object.freeze({
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewMethodSignatureSetter$parameters$native.call(this as unknown as RecordHandle)
+				: wrapMethodSignatureSetter$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.AbstractMethodSignaturePlain]: Object.freeze({
+		typeParameters(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractMethodSignaturePlain$typeParameters$native.call(this as unknown as RecordHandle)
+				: wrapAbstractMethodSignaturePlain$typeParameters$native.call(this);
+		},
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractMethodSignaturePlain$parameters$native.call(this as unknown as RecordHandle)
+				: wrapAbstractMethodSignaturePlain$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.AbstractMethodSignatureSetter]: Object.freeze({
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewAbstractMethodSignatureSetter$parameters$native.call(this as unknown as RecordHandle)
+				: wrapAbstractMethodSignatureSetter$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.PublicFieldDefinitionPlain]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewPublicFieldDefinitionPlain$decorators$native.call(this as unknown as RecordHandle)
+				: wrapPublicFieldDefinitionPlain$decorators$native.call(this);
+		},
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewPublicFieldDefinitionPlain$type$native.call(this as unknown as RecordHandle)
+				: wrapPublicFieldDefinitionPlain$type$native.call(this);
+		}
+	}),
+	[TSKindId.PublicFieldDefinitionAccessor]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewPublicFieldDefinitionAccessor$decorators$native.call(this as unknown as RecordHandle)
+				: wrapPublicFieldDefinitionAccessor$decorators$native.call(this);
+		},
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewPublicFieldDefinitionAccessor$type$native.call(this as unknown as RecordHandle)
+				: wrapPublicFieldDefinitionAccessor$type$native.call(this);
+		}
+	}),
+	[TSKindId.ConstructorDeclaration]: Object.freeze({
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewConstructorDeclaration$parameters$native.call(this as unknown as RecordHandle)
+				: wrapConstructorDeclaration$parameters$native.call(this);
+		}
+	}),
+	[TSKindId.ReceiverParameterDeclaration]: Object.freeze({
+		decorators(this: object) {
+			return isRecordPosition(this)
+				? viewReceiverParameterDeclaration$decorators$native.call(this as unknown as RecordHandle)
+				: wrapReceiverParameterDeclaration$decorators$native.call(this);
+		},
+		type(this: object) {
+			return isRecordPosition(this)
+				? viewReceiverParameterDeclaration$type$native.call(this as unknown as RecordHandle)
+				: wrapReceiverParameterDeclaration$type$native.call(this);
+		}
+	}),
+	[TSKindId.FormalParametersElementsReceiverGroup]: Object.freeze({
+		elements(this: object) {
+			return isRecordPosition(this)
+				? viewFormalParametersElementsReceiverGroup$elements$native.call(this as unknown as RecordHandle)
+				: wrapFormalParametersElementsReceiverGroup$elements$native.call(this);
+		}
+	}),
+	[TSKindId.InterfaceBody]: Object.freeze({
+		members(this: object) {
+			return isRecordPosition(this)
+				? viewInterfaceBody$members$native.call(this as unknown as RecordHandle)
+				: wrapInterfaceBody$members$native.call(this);
+		}
+	})
+});
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type ProgramTree = EmptyProgram.Parsed & ParsedRoot;

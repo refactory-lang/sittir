@@ -18,6 +18,8 @@ export type {
 	FlagOf,
 	QueryPlan,
 	QuerySlotEntry,
+	NativeSlotReader,
+	NativeSlots,
 	QuerySlots,
 	QuerySubject,
 	Recorder,

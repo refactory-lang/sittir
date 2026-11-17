@@ -250,6 +250,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		current: identity,
 		hydrate: hooks.hydrate,
 		querySlots: hooks.querySlots,
+		nativeSlots: hooks.nativeSlots,
 		structure: hooks.structure,
 		settle: keepingBuilt(settlerOf(options?.verifyStructure, hooks.structure, hooks.membership), records === undefined),
 		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),

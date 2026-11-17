@@ -137,7 +137,7 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		if (!node.rawFactoryName) return;
-		output.push(renameUnusedTreeParam(emitFieldCarryingWrap(node, kindEntries, nodeMap)));
+		output.push(renameUnusedTreeParam(emitFieldCarryingWrap(node, kindEntries, nodeMap)), ...objectNativeReaders(node, kindEntries, nodeMap));
 	}
 
 	export function separatedList(
@@ -147,7 +147,7 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
-		if (result !== undefined) output.push(renameUnusedTreeParam(result));
+		if (result !== undefined) output.push(renameUnusedTreeParam(result), ...objectNativeReaders(node, kindEntries, nodeMap));
 	}
 
 	export function view(
@@ -336,6 +336,23 @@ function objectAccessorLines(node: AuthoredCompound | AssembledList, kindEntries
 	return accessorSlotsOf(node, kindEntries, nodeMap).map((accessor) => `    ${accessor.slot.propertyName}() { ${slotAccessorBody(accessor)}; },`);
 }
 
+function nativeReaderName(storage: 'object' | 'record', node: AuthoredCompound | AssembledList, accessor: AccessorSlot): string {
+	return `${storage === 'object' ? 'wrap' : 'view'}${node.typeName}$${accessor.slot.propertyName}$native`;
+}
+
+function objectNativeReaders(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string[] {
+	return accessorSlotsOf(node, kindEntries, nodeMap)
+		.filter(({ hoist }) => hoist !== undefined)
+		.map((accessor) =>
+			[
+				`function ${nativeReaderName('object', node, accessor)}(this: object) {`,
+				'  const tree = (this as Held)[READ_TREE]!;',
+				`  return ${slotReadExpr(accessor.slot, accessor.config)};`,
+				'}'
+			].join('\n')
+		);
+}
+
 function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const canonical = canonicalSeparatedListField(node);
@@ -522,7 +539,9 @@ function emitRecordHandle(node: AuthoredCompound | AssembledList, kindEntries: r
 		functions.push(`function ${fn}(this: RecordHandle) {`, `  ${body};`, '}');
 		return fn;
 	};
-	const fields = accessorSlotsOf(node, kindEntries, nodeMap).map((accessor) => `    ${accessor.slot.propertyName}: ${member(accessor.slot.propertyName, handleAccessorBody(accessor, places, nodeMap))},`);
+	const accessors = accessorSlotsOf(node, kindEntries, nodeMap);
+	const fields = accessors.map((accessor) => `    ${accessor.slot.propertyName}: ${member(accessor.slot.propertyName, handleAccessorBody(accessor, places, nodeMap))},`);
+	for (const accessor of accessors.filter(({ hoist }) => hoist !== undefined)) member(`${accessor.slot.propertyName}$native`, `return ${handleReadExpr(accessor, places)}`);
 	const presence: string[] = [];
 	for (const { hint } of plan.groups) {
 		const args = cellArgs(placeIn(places, hint.stored));
@@ -722,8 +741,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		}
 	}
 
-	#wrapTableRows(): { readonly wraps: Map<string, string>; readonly views: Map<string, string> } {
-		const rows = new Map<string, { row: string; view: string | undefined; exact: boolean }>();
+	#wrapTableRows(): { readonly wraps: Map<string, string>; readonly views: Map<string, string>; readonly natives: Map<string, string> } {
+		const rows = new Map<string, { row: string; view: string | undefined; native: string | undefined; exact: boolean }>();
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (!isSlotBearingCompound(node) || !this.#emittedStructuralKinds.has(kind)) continue;
 			const entry = findKindEntry(this.#kindEntries, kind);
@@ -742,11 +761,13 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			const row = `  [TSKindId.${memberName}]: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`;
 			const view = this.#viewKinds.has(kind) ? `  [TSKindId.${memberName}]: view${node.typeName},` : undefined;
 			const exact = node instanceof AssembledAlias || entry.kind === kind;
+			const native = this.#nativeRow(node, memberName);
 			const existing = rows.get(memberName);
-			if (existing === undefined || (exact && !existing.exact)) rows.set(memberName, { row, view, exact });
+			if (existing === undefined || (exact && !existing.exact)) rows.set(memberName, { row, view, native, exact });
 		}
 		const table = new Map([...rows].map(([member, { row }]) => [member, row]));
 		const views = new Map([...rows].flatMap(([member, { view }]) => (view === undefined ? [] : [[member, view] as const])));
+		const natives = new Map([...rows].flatMap(([member, { native }]) => (native === undefined ? [] : [[member, native] as const])));
 		for (const { kind } of storedTextKinds(this.#nodeMap, this.#kindEntries)) {
 			const entry = findKindEntry(this.#kindEntries, kind);
 			if (entry === undefined) continue;
@@ -759,7 +780,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const error = errorKindEntry(this.#kindEntries, 'wrap dispatch').member;
 		this.#leafWraps.add('wrapLeaf');
 		table.set(error, `  [TSKindId.${error}]: (d, t) => wrapLeaf(d, t),`);
-		return { wraps: table, views };
+		return { wraps: table, views, natives };
+	}
+
+	#nativeRow(node: AuthoredCompound | AssembledList, member: string): string | undefined {
+		const hoisted = accessorSlotsOf(node, this.#kindEntries, this.#nodeMap).filter(({ hoist }) => hoist !== undefined);
+		if (hoisted.length === 0) return undefined;
+		const entries = hoisted.map((accessor) => {
+			const object = nativeReaderName('object', node, accessor);
+			const record = nativeReaderName('record', node, accessor);
+			const read = this.#viewKinds.has(node.kind) ? `isRecordPosition(this) ? ${record}.call(this as unknown as RecordHandle) : ${object}.call(this)` : `${object}.call(this)`;
+			return `${accessor.slot.propertyName}(this: object) { return ${read}; }`;
+		});
+		return `  [TSKindId.${member}]: Object.freeze({ ${entries.join(', ')} }),`;
 	}
 
 	#rootTreeLines(rows: ReadonlyMap<string, string>): string[] {
@@ -783,14 +816,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	}
 
 	finalize(): string {
-		const { wraps: rows, views } = this.#wrapTableRows();
+		const { wraps: rows, views, natives } = this.#wrapTableRows();
 		const lines: string[] = [
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'',
 			`import { ${['restItems', 'admitSplicedEnvelope', 'admitSlot', 'markEdited as $edited', 'RECEIVER', 'carryReadTree', 'treeHandleOf', 'hydrateWith', 'hydrateSlotWith', 'hydrateSlotsWith', 'contentRole', 'inTreeEngine', 'currentHandle', 'listSlotWith', 'elementsWith', 'seatWith', 'groupField', 'LIST_METHODS', 'listIterator', 'listItems', 'holdReadItems', 'listSeparatorOf', 'listSeparator', 'storedElements', 'ownerView', 'ownerRead', 'ownerElements', 'isCoordinate', 'readNode', 'listOption', 'checkDelimited', 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'SOURCE', 'Source', 'TREE', 'treeTokenOf', 'queryOf', 'snapshotOf', 'HANDLE', 'INPUT', 'READ_TREE', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing', 'objectInner', 'textOf', 'isRecordPosition', 'positionWords', 'recordSlot', 'recordPresent', 'recordFlag', 'childSlot', 'childItems', 'recordLength', 'recordDelimiter', 'rowData', 'rowOf', 'rowWith', 'handleTrivia', 'handleRender', 'handleSave', 'handleToString', 'handleEngine', 'handleDispose', 'handleQuery', 'handleSnapshot', 'hoistRead', ...blankArmImports(this.#nodeMap), ...spelledReadImports(this.#nodeMap)].join(', ')} } from '@sittir/common/utils';`,
 			"import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
-			"import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
+			"import type { Admit, AnyUntypedNode as _UntypedNode, NativeSlots, NonEmptyArray } from '@sittir/types';",
 			"import { TSKindId } from './kinds.js';",
 			...(this.#rootEmptyForm() !== undefined ? [`import type { ${this.#rootEmptyForm()} } from './types.js';`] : []),
 			DELIMITER_IMPORT,
@@ -848,6 +881,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => object> = {',
 			...views.values(),
 			'};',
+			'',
+			'export const nativeSlots: NativeSlots = Object.freeze({',
+			...natives.values(),
+			'});',
 			'',
 			...this.#rootTreeLines(rows),
 			"/** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */"

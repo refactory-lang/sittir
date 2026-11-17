@@ -2,7 +2,7 @@ import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, Trivia
 import type { IndentOption } from './options.ts';
 import type { Admit, HoldsSource, HoldsTree, Snapshot } from './node-surface.ts';
 import type { IsExactly } from './type-utils.ts';
-import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
+import type { KindMembership, QueryFacet, QueryFlags, NativeSlots, QuerySlotFlags, QuerySlots } from './query.ts';
 import type { PortableBuildTable, PortableRows, PortableSurface } from './portable.ts';
 
 export interface TriviaFacts<Kind extends number = number> {
@@ -264,6 +264,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	/** The kinds of the grammar's root, stamped at generation. */
 	readonly rootKinds: readonly number[];
 	readonly querySlots: QuerySlots;
+	readonly nativeSlots?: NativeSlots;
 	readonly queryFlags?: QueryFlags;
 	readonly querySlotFlags?: QuerySlotFlags;
 	readonly structure: StructureTable;

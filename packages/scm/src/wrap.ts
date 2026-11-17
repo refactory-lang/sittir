@@ -51,7 +51,7 @@ import {
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NativeSlots, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptyProgram } from './types.js';
 import type * as T from './types-internal.js';
@@ -293,6 +293,11 @@ function wrapString$with$stringContent(this: Received<Held>, ...args: unknown[])
 	return wrapString$with(receiverOf(this, '$with.stringContent'), 'stringContent', args);
 }
 
+function wrapString$stringContent$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree);
+}
+
 export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): T.ImmediateString.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -347,6 +352,11 @@ function wrapImmediateString$with(node: Held, setter: string, args: readonly unk
 }
 function wrapImmediateString$with$stringContent(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapImmediateString$with(receiverOf(this, '$with.stringContent'), 'stringContent', args);
+}
+
+function wrapImmediateString$stringContent$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.StringContent | undefined>(this, '_string_content', tree);
 }
 
 export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.StringContent.Parsed {
@@ -948,6 +958,11 @@ function wrapPredicate$with$type(this: Received<Held>, ...args: unknown[]): unkn
 }
 function wrapPredicate$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapPredicate$with(receiverOf(this, '$with.parameters'), 'parameters', args);
+}
+
+function wrapPredicate$parameters$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Parameters | undefined>(this, '_parameters', tree);
 }
 
 export function wrapListElementQuantifier(
@@ -1673,6 +1688,9 @@ function viewString$stringContent(this: RecordHandle) {
 		true
 	);
 }
+function viewString$stringContent$native(this: RecordHandle) {
+	return viewSlot<T.StringContent | undefined>(this, 2, 3, 8, 3, 2);
+}
 function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 	const node = {
 		$type: TSKindId.String as const,
@@ -1707,6 +1725,9 @@ function viewImmediateString$stringContent(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewImmediateString$stringContent$native(this: RecordHandle) {
+	return viewSlot<T.StringContent | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewImmediateString(data: RecordPosition, tree: TreeHandle): T.ImmediateString.Parsed {
 	const node = {
@@ -2014,6 +2035,9 @@ function viewPredicate$parameters(this: RecordHandle) {
 		],
 		true
 	);
+}
+function viewPredicate$parameters$native(this: RecordHandle) {
+	return viewSlot<T.Parameters | undefined>(this, 7, 3, 8, 3, 5);
 }
 function viewPredicate(data: RecordPosition, tree: TreeHandle): T.Predicate.Parsed {
 	const node = {
@@ -2469,6 +2493,30 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.NamedNodeGroupChildren]: viewNamedNodeGroupChildren,
 	[TSKindId.NamedNodeGroupAnchoredLast]: viewNamedNodeGroupAnchoredLast
 };
+
+export const nativeSlots: NativeSlots = Object.freeze({
+	[TSKindId.String]: Object.freeze({
+		stringContent(this: object) {
+			return isRecordPosition(this)
+				? viewString$stringContent$native.call(this as unknown as RecordHandle)
+				: wrapString$stringContent$native.call(this);
+		}
+	}),
+	[TSKindId.ImmediateString]: Object.freeze({
+		stringContent(this: object) {
+			return isRecordPosition(this)
+				? viewImmediateString$stringContent$native.call(this as unknown as RecordHandle)
+				: wrapImmediateString$stringContent$native.call(this);
+		}
+	}),
+	[TSKindId.Predicate]: Object.freeze({
+		parameters(this: object) {
+			return isRecordPosition(this)
+				? viewPredicate$parameters$native.call(this as unknown as RecordHandle)
+				: wrapPredicate$parameters$native.call(this);
+		}
+	})
+});
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type ProgramTree = EmptyProgram.Parsed & ParsedRoot;

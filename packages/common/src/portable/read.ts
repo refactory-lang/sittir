@@ -7,6 +7,7 @@ import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
 import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, numberMembers, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
+import { slotReader } from '../record-view.ts';
 
 type Node = { readonly $type: number };
 
@@ -108,7 +109,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 	const accessed = (node: object, key: string): unknown => {
 		if (frames.length > 0) touch(node).keys.add(key);
 		(touched.get(node) ?? touched.set(node, new Set()).get(node)!).add(key);
-		const read = (node as Record<string, unknown>)[key];
+		const read = slotReader(node, key);
 		return typeof read === 'function' ? (read as () => unknown).call(node) : read;
 	};
 	const walk = (value: unknown, hops: readonly Hop[]): unknown => {
