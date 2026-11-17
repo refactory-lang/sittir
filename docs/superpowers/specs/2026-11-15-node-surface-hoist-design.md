@@ -36,7 +36,7 @@ Condition 2 accepts these tokens:
 - **A zero-width token the parser always produces**, such as python's `_indent` and `_dedent`, which open and close a block.
 - **The tokens around a polymorph's forms.** A polymorph whose forms sit between tokens it always spells is an ordinary wrapper, and conditions 1–3 decide it. An example is rust's `visibility_modifier_pub_scope`, `(` … `)`.
 
-The rule composes. When the wrapper's own slot admits only another wrapper that meets the rule, the holder reads through both (§6). A chain stops at a slot that admits more than one kind, so the read there is that slot's node.
+The rule composes. When the wrapper's own slot admits only another wrapper that meets the rule, the holder reads through both (§6). A chain stops at a slot that admits more than one kind, so the read there is that slot's node. It also stops where a list of wrappers meets a wrapper that holds a list, since reading through would flatten the arms: regex's `alternation.terms` holds `term` wrappers that are each a list of `term_group`, and `a|b` and `ab` would read the same.
 
 A wrapper reached under an alias meets the rule as the kind its alias site names in the holder's rule, a hidden rule the holder inlines included. Python's `block_statement` is `block` under `suite_block` and `suite_inline` elsewhere. Typescript's setter signatures reach `formal_parameters` as the hidden `_formal_parameters_set_accessor_signature`, whose one slot admits only a one-parameter envelope (§7).
 
