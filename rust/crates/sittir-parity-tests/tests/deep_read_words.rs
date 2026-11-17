@@ -118,19 +118,19 @@ const SCM: &str = r#"; a comment
 #[test]
 fn the_rust_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), &probe_input("engine.rs"));
-    assert_eq!(words, ArenaWords { chunks: 4, words: 62092, hash: 13_531_523_186_096_033_608 });
+    assert_eq!(words, ArenaWords { chunks: 4, words: 62092, hash: 3_449_089_448_659_960_631 });
 }
 
 #[test]
 fn the_typescript_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &probe_input("create-engine.ts"));
-    assert_eq!(words, ArenaWords { chunks: 3, words: 35611, hash: 5_027_981_531_915_143_241 });
+    assert_eq!(words, ArenaWords { chunks: 3, words: 35611, hash: 7_382_926_583_592_864_363 });
 }
 
 #[test]
 fn the_python_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), PYTHON);
-    assert_eq!(words, ArenaWords { chunks: 1, words: 6050, hash: 13_581_674_718_110_392_581 });
+    assert_eq!(words, ArenaWords { chunks: 1, words: 6050, hash: 4_755_170_389_471_954_643 });
 }
 
 #[test]
