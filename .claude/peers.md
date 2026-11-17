@@ -14,12 +14,13 @@ For every peer:
 5. **A table that compares alternatives bolds the winning cell in each row** (lowest for time, memory and failures; highest for passes; every tied cell on a tie), in reports, PR bodies, specs and plans.
 6. **Code and architecture are drawn in Mermaid:** a flow through the code, a memory or record layout, a class, type or module structure. A fenced `mermaid` block in the markdown file or the report, with a sentence above it saying what it shows. Not for work plans, task order or merge decisions; those stay prose, lists and tables.
 7. **Before proposing or costing a change, look the fact up where the architecture already holds it.** Search the glossary and the docs through Infigraph (`search` with `scope="docs"`, `get_doc_context` on the symbol) and read the generated artifacts, before deriving a fact by hand or re-deriving it in a proposal. A fact about a grammar's nodes is in that grammar's `packages/<lang>/.sittir/node-model.json5` (which kinds are leaves whose text varies, which are fixed tokens, hidden kinds, supertypes); what the parser itself saw is `.sittir/src/grammar.json`; the phases and the two-pipeline model are in `docs/compiler-phase-glossary.md` and `.claude/architecture.md`. A proposal names the artifact or glossary entry each such fact came from. A count of "every token" or "every leaf" that the model splits (fixed text against variable text) is given split.
+8. **No invented concepts, principles or terms.** A report, proposal or spec uses the words the architecture, the specs, the glossary and the code already use, with the meaning they give them, and classifies a thing by the role the architecture gives it. A token of a parse is slot content (a node, a leaf whose text varies, or a unit whose kind id is the slot's value), or trivia (an extra), or a fixed token (the rule's own literal text, which no slot holds and the template writes): "fixed token is what isn't a slot or trivia or a leaf". A model, a category or a label a peer makes up for a costing ("model L", "zero-width fixed rows") is marked as its own shorthand where it is introduced, tied to the existing terms it is made of, and never carried into a spec or relayed as if the architecture held it. Where no existing term fits, say so and ask; a new term enters through the spec it is defined in.
 
 For `sittir-brainstorm`:
 
-8. **A ruling goes into the spec first,** and the plan task if it changes the work. The message to a peer then cites the path and section; it doesn't carry the ruling as its only copy.
-9. **A new design that changes an existing spec** amends that spec, or is linked from it with the superseded sentences named.
-10. **This table changes with the work.** A row is updated in the same commit that hands a peer a new task.
+9. **A ruling goes into the spec first,** and the plan task if it changes the work. The message to a peer then cites the path and section; it doesn't carry the ruling as its only copy.
+10. **A new design that changes an existing spec** amends that spec, or is linked from it with the superseded sentences named.
+11. **This table changes with the work.** A row is updated in the same commit that hands a peer a new task.
 
 ## Bindings
 
