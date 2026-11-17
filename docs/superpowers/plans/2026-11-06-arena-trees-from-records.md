@@ -348,6 +348,22 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 
 **Status:** ruled 2026-11-16, not designed. **It lands inside Task 6's PR** (the maintainer, 2026-11-16: "all of 6 should be in 1227"). A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
 
+**The proposal, approved 2026-11-16 ("Approve"):** releasing a parsed root behaves as releasing a built one. No parse cost is added, since every read record is already placed with a count at parse.
+
+| what | before | after |
+|---|---|---|
+| releasing a parsed root (`engine.release(root)`, dispose) | not released; its records stay until the engine is disposed | drops the root's count and runs the same cascade as a built record: cells, runs, side record, store entries |
+| a built cell naming a read record | takes a count that is never dropped | the count is dropped when the built record is released |
+| `BuiltChunks::release` | returns at once for a read chunk | no early return |
+| the cascade over a parsed record | none | walks the record's parsed cells, since a parsed record's layout differs from a built one's |
+| a parsed node's placed sides | dropped with the arena | dropped where a built record's sides are |
+| the source entry | held once, freed with the arena | held by the root and by each link record; freed when the last holder goes |
+| read chunks | freed at dispose | freed when their last live entry dies, as built chunks are |
+
+Example: parse a large file, keep one function rebuilt from it, release the root. Before, every read chunk stays until dispose; after, every chunk is freed except those holding the records the kept function names. `Engine.release`'s JSDoc changes with it. No new public item.
+
+**Who and where:** built on the branch cut from Task 6's for Tasks 6b and 6e, on Task 6e's `CellWord` accessors and `side_of`; `count.rs` is not touched by Task 6c's steps 3 and 4.
+
 ### Task 6e: One reader for each fact a record's words hold
 
 **Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16. **It lands inside Task 6's PR** (the maintainer, 2026-11-16: "all of 6 should be in 1227"), which replaces the earlier "no code until Task 6 merges". It is built on Task 6's branch after Task 6c's steps 3 and 4, which delete some of the functions it lists; a reader in a file those steps don't touch may be added earlier. The list is re-taken on the branch as it stands when the work starts.
@@ -358,7 +374,7 @@ None of the 15 can go through a typed, derived view: each walks a record by its 
 
 1. **`ArenaRead::side_of(at)`,** beside `header_kind` in `borrowed.rs`: the side record's address, header word 1. Replaces the literal `words[1]` or `header[1]` in `admit.rs` `admit`, `count.rs` `release_record`, `run_nodes.rs` `source_of` and `read`, `prep.rs` `SlotAt::of`, and `view.rs` `record_of` and `linked_leaf_place`.
 2. **`CellWord` accessors in `cell.rs`** (`address()`, `edges()`, a constructor from an address or an entry): the built cell word's bits. Replaces `word >> 2`, `word & 3`, `at << 2` and `entry * 4` in `count.rs` `drop_cell`, `release`, `release_record` and `reaches`, and `built.rs` `admitted_leaf`.
-3. **One walker over a built record's cells,** yielding each cell's shape, item and raw word, with decoding left to the caller: `admit.rs` `for_each_built_cell`, moved beside `view.rs` `parsed_cells`. Admission decodes what it yields, since it validates bytes JavaScript wrote before a view may trust them. Release counts the raw words and decodes no text. `count.rs` `reaches` and `release_record` use it in place of their own walks.
+3. **One walker over a built record's cells,** yielding each cell's shape, item and raw word, with decoding left to the caller: `admit.rs` `for_each_built_cell`, moved to `cell.rs` beside `CellWord` (2026-11-16: `view.rs` is held for Task 6c's steps 3 and 4, and Task 6d's cascade needs the walker before then; it may move beside `view.rs` `parsed_cells` after step 4). Admission decodes what it yields, since it validates bytes JavaScript wrote before a view may trust them. Release counts the raw words and decodes no text. `count.rs` `reaches` and `release_record` use it in place of their own walks.
 4. **`parsed_cells`,** as it is, for `site.rs` `site_row` and `row_sites`; and `cell.rs` `linked` and `ListCell::items`, as they are, for `count.rs` `release_held`.
 
 Any new `pub` item among these is a row for the maintainer before code.
