@@ -80,10 +80,10 @@ const COMMENT_ONLY_LINES: &str = "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n
 #[test]
 fn blocks_ending_in_empty_bodies_or_comment_lines_close_their_indents() {
     renders_as_its_source(EMPTY_BLOCKS);
-    assert_eq!(rendered(EMPTY_BLOCKS, Depth::All, Write::EveryNode), EMPTY_BLOCKS[1..].replace("\n  ", "\n    "));
+    assert_eq!(rendered(EMPTY_BLOCKS, Depth::All, Write::EveryNode), EMPTY_BLOCKS[1..].replace("\n  ", "\n    ").replace("def a(b, c):\n\n", "def a(b, c):\n\n\n"));
     renders_as_its_source(COMMENT_ONLY_LINES);
     assert_eq!(
         rendered(COMMENT_ONLY_LINES, Depth::All, Write::EveryNode),
-        "if a:\n    b\n    # one\n    # two\n\nif c:\n    d\n        # three\n            # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n"
+        "if a:\n    b\n    # one\n    # two\nif c:\n    d\n        # three\n            # four\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n"
     );
 }

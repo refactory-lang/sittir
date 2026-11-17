@@ -10,14 +10,14 @@ import typescript from '../src/index.ts';
 const ts = await createEngine(typescript);
 
 describe('a flat alias display rebuilt around its read slots, rendered alone', () => {
-	it('an interface body on its own line renders its bytes', () => {
+	it('an interface body on its own line renders in the options\' layout', () => {
 		const declaration = ts.parse('interface I\n{ x(): number }\n').statements()[0];
 		if (declaration === undefined || !ts.is.interfaceDeclaration(declaration)) throw new Error('expected an interface');
 		const body = declaration.body();
 		const members = body.members();
 		if (members === undefined) throw new Error('expected members');
-		expect(ts.render(body.$with.members(members)).toString()).toBe('{ x(): number }');
-		expect(ts.render(declaration.$with.body(body.$with.members(members))).toString()).toBe('interface I\n{ x(): number }');
+		expect(ts.render(body.$with.members(members)).toString()).toBe('{\n  x(): number\n}');
+		expect(ts.render(declaration.$with.body(body.$with.members(members))).toString()).toBe('interface I {\n  x(): number\n}');
 	});
 });
 

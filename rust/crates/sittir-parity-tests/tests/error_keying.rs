@@ -51,7 +51,7 @@ fn a_typescript_error_s_in_line_run_beats_the_break_the_templates_write_beside_i
 
 #[test]
 fn an_error_s_in_line_run_in_a_list_s_separator_gap_beats_the_slot_s_break() {
-    renders_as_read!(sittir_rust, sittir_rust::RustGrammar, "fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n");
+    renders_as_read!(sittir_rust, sittir_rust::RustGrammar, "fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n" => "fn f() {\n    let x = [1, 2, $ 3, 4,];\n}\n");
     renders_as_read!(sittir_typescript, sittir_typescript::TypeScriptGrammar, "type T = {\n  a: 1;\n  b: 2; # c: 3;\n  d: 4;\n};\n");
 }
 

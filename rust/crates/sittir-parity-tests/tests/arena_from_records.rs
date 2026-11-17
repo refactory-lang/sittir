@@ -33,6 +33,8 @@ struct Case<G: EngineGrammar, N> {
     bare: fn(&mut N),
     source: &'static str,
     edited: &'static str,
+    /// The root's render once its edited node's inner side is written back.
+    codemod: &'static str,
 }
 
 impl<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells> Case<G, N> {
@@ -110,6 +112,7 @@ fn rust() -> Case<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {
         },
         source: "// a file\nfn f(a: i32,  b: i32) -> i32 {\n    // leading\n    let x = g(a, b);\n    if x > 0 {\n        h(x, /* inside */ 1);\n    }\n    x\n}\n\nstruct S { a: i32, b: u8 }\n",
         edited: "expression_statement:0",
+        codemod: "// a file\nfn f(a: i32,  b: i32) -> i32 {\n    // leading\n    let x = g(a, b);\n    if x > 0 {\n        h(x, /* inside */ 1);\n    }\n    x\n}\n\nstruct S { a: i32, b: u8 }\n",
     }
 }
 
@@ -129,6 +132,7 @@ fn python() -> Case<sittir_python::PythonGrammar, sittir_python::render::AnyNode
         },
         source: "class C:\n    # comment\n    def f(self, a,  b):\n        if a:\n            return [a, b]\n        return None\n\n\ndef g():\n    while x:\n        y(1, 2)\n",
         edited: "expression_statement:0",
+        codemod: "class C:\n    # comment\n    def f(self, a,  b):\n        if a:\n            return [a, b]\n        return None\n\n\ndef g():\n    while x:\n        y(1, 2)\n",
     }
 }
 
@@ -148,6 +152,7 @@ fn typescript() -> Case<sittir_typescript::TypeScriptGrammar, sittir_typescript:
         },
         source: "const a = [1, 2,  3]\nfunction f(x: number, y: number) {\n  // note\n  if (x) {\n    g(x, y)\n  }\n  return { x, y }\n}\nclass K {\n  m() { return 1 }\n}\n",
         edited: "expression_statement:0",
+        codemod: "const a = [1, 2,  3]\nfunction f(x: number, y: number) {\n  // note\n  if (x) {\n    g(x, y)\n  }\n  return { x, y }\n}\n\nclass K {\n  m() { return 1 }\n}\n",
     }
 }
 
@@ -161,7 +166,7 @@ fn renders_from_records<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell
     let (rebuilt, native) = case.rebuilt(&tree);
     assert_eq!(rebuilt, native, "{}: rebuilt", case.name);
     over.edit_in_place(nth_of_kind(&tree, case.edited));
-    assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.source, "{}: codemod", case.name);
+    assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.codemod, "{}: codemod", case.name);
 }
 
 #[test]
@@ -335,8 +340,8 @@ const REBUILT: &str = "fn f() {\n    x = f(a) + g(b);\n    let c = |p: A ,q: B| 
 /// A built node rebuilt from a parsed one renders from its record as it does
 /// natively: the sides written on it and on its unit child from the store,
 /// each side it holds none of from the node it was rebuilt from, and its list
-/// slot's layout from its side record or, when it stores none, from that
-/// node.
+/// slot's layout from its side record or, when it stores none, from the
+/// options.
 #[test]
 fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_natively() {
     use sittir_rust::render::AnyNode;
@@ -344,15 +349,16 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
     let written = |layout: &mut NodeLayout<_>| layout.trivia = Some(sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// node")), ..Default::default() });
     let cases: [(&str, Edit, &str); 3] = [
         ("binary_expression:0", |layout, _| layout.units.push(UnitSides { slot: "_operator".into(), item: sittir_core::types::ItemIndex(0), trivia: sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// unit")), ..Default::default() } }), "// unit"),
-        ("closure_parameters:0", |layout, _| assert!(layout.slots.is_empty(), "a read stores no slot layout: prepare takes its tree's"), "|p: A ,q: B|"),
+        ("closure_parameters:0", |layout, _| assert!(layout.slots.is_empty(), "a read stores no slot layout: prepare takes its tree's"), "|p: A, q: B|"),
         (
             "closure_parameters:0",
             |layout, tree| {
                 let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"), sittir_core::render::Lent::NONE);
-                assert!(!source.is_empty(), "the source spaces the list apart from the options");
-                layout.slots = source.into_iter().map(|slot| sittir_core::layout::SlotLayout { before: slot.after, after: slot.before, ..slot }).collect();
+                assert!(source.is_empty(), "a read stores no slot layout: the options decide its gaps");
+                let (space, tight) = (sittir_rust::render::kind_ids::_SPACE, sittir_rust::render::kind_ids::_TIGHT);
+                layout.slots = vec![sittir_core::layout::SlotLayout { slot: "_parameters".into(), before: Some(space), after: Some(tight), ..Default::default() }];
             },
-            "|p: A, q: B|",
+            "|p: A ,q: B|",
         ),
     ];
     let options = sittir_rust::render::options::defaults();

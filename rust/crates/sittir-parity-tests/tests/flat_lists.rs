@@ -1,9 +1,6 @@
-//! A snapshot of a flat list whose members are unit kinds measures each gap
-//! between them from the list's frame: a record writes a unit kind with no
-//! anchor of its own, so no gap there reads its whitespace from the bytes
-//! around it (`Baseline::between`). The frame's source items and their
-//! alignment to what it wrote are built once and every gap reads them, so a
-//! list twice as long takes twice the steps (`LayoutWork::gap_items`).
+//! A snapshot of a flat list whose members are unit kinds reads no gap's
+//! baseline: the options decide every gap away from a comment, so the gap
+//! steps it takes are none however long the list (`LayoutWork::gap_items`).
 
 use sittir_core::engine::{EngineGrammar, ParsedTree};
 use sittir_core::types::NodeIndex;
@@ -16,7 +13,7 @@ fn gap_items<G: EngineGrammar>(tree: &ParsedTree<G>) -> u32 {
 }
 
 #[test]
-fn a_snapshot_of_a_flat_list_of_unit_kinds_takes_the_same_gap_steps_for_each_member() {
+fn a_snapshot_of_a_flat_list_of_unit_kinds_takes_no_gap_steps() {
     let python = [100, 200, 400].map(|members| {
         on_deep_stack(move || {
             let tree = parsed(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), &format!("x = [{}]\n", vec!["True"; members].join(", ")));
@@ -29,8 +26,7 @@ fn a_snapshot_of_a_flat_list_of_unit_kinds_takes_the_same_gap_steps_for_each_mem
             gap_items(&tree)
         })
     });
-    for (name, [one, two, four]) in [("python [True, …]", python), ("typescript [number, …]", typescript)] {
-        assert_ne!(one, 0, "{name}: the gaps between unit kinds read their frame");
-        assert_eq!(four - two, 2 * (two - one), "{name}: gap steps at 100, 200 and 400 members: {one}, {two}, {four}");
+    for (name, steps) in [("python [True, …]", python), ("typescript [number, …]", typescript)] {
+        assert_eq!(steps, [0, 0, 0], "{name}: gap steps at 100, 200 and 400 members");
     }
 }

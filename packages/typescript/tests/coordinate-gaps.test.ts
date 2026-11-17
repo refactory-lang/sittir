@@ -9,7 +9,7 @@ const ts = await createEngine(typescript);
 const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 describe('gaps between coordinates', () => {
-	it('keeps the blank lines a parsed block spelled and seats a statement appended after them', () => {
+	it('gives a parsed block\'s statements the options\' gaps and seats a statement appended after them', () => {
 		const source = 'function f() {\n  a();\n\n  b();\n\n  c();\n}\n';
 		const fn = tsStrict.parse(source).statements()[0]!;
 		if (!ts.is.functionDeclaration(fn)) throw new Error('expected a function declaration');
@@ -21,13 +21,11 @@ describe('gaps between coordinates', () => {
 				{ terminator: ts.kinds.Semi }
 			)
 		);
-		// The blank lines are the claim; the indent width is the format's.
-		const text = rebuilt.$render().replace(/\n[ \t]+/g, '\n');
-		expect(text).toContain('a();\n\nb();\n\nc();\nd();');
+		expect(rebuilt.$render()).toBe('{\n  a();\n  b();\n  c();\n  d();\n}\n');
 		expect(ts.render(rebuilt).toString()).toBe(rebuilt.$render());
 	});
 
-	it('spells the gaps around a replaced argument with the class its list slot takes', () => {
+	it('spells the gaps around a replaced argument in the options\' class', () => {
 		const statement = ts.parse('f(a,b,c);\n').statements()[0]!;
 		if (!ts.is.expressionStatement(statement)) throw new Error('expected an expression statement');
 		const call = statement.expression();
@@ -36,12 +34,12 @@ describe('gaps between coordinates', () => {
 		if (!ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b, c] = args.elements();
 		const rebuilt = args.$with.elements(a!, ts.build.identifier('x'), c!);
-		expect(rebuilt.$render()).toBe('(a,x,c)');
-		expect(ts.render(rebuilt).toString()).toBe('(a,x,c)');
-		expect(args.$with.elements(a!, b!, c!).$render()).toBe('(a,b,c)');
+		expect(rebuilt.$render()).toBe('(a, x, c)');
+		expect(ts.render(rebuilt).toString()).toBe('(a, x, c)');
+		expect(args.$with.elements(a!, b!, c!).$render()).toBe('(a, b, c)');
 	});
 
-	it('keeps the source gaps around an edited argument', () => {
+	it('gives the gaps around an edited argument the options\' class', () => {
 		const statement = ts.parse('f(a.x,b.x,c.x);\n').statements()[0]!;
 		if (!ts.is.expressionStatement(statement)) throw new Error('expected an expression statement');
 		const call = statement.expression();
@@ -51,6 +49,6 @@ describe('gaps between coordinates', () => {
 		const [a, b, c] = args.elements();
 		if (b == null || typeof b === 'number' || !ts.is.memberExpression(b)) throw new Error('expected a member expression');
 		const edited = b.$with.object(ts.build.identifier('y'));
-		expect(args.$with.elements(a!, edited, c!).$render()).toBe('(a.x,y.x,c.x)');
+		expect(args.$with.elements(a!, edited, c!).$render()).toBe('(a.x, y.x, c.x)');
 	});
 });

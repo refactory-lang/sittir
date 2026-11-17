@@ -25,7 +25,7 @@ for (const nodeStorage of ['object', 'arena'] as const) {
 		it("returns a list node, or sets a separator over the list's own", () => {
 			const content = members();
 			expect(coerceToObjectTypeContent(content)).toBe(content);
-			expect(String(ts.render(coerceToObjectTypeContent({ separator: TSKindId.Semi }, content)))).toBe('a: string; b: number');
+			expect(String(ts.render(coerceToObjectTypeContent({ separator: TSKindId.Semi }, content)))).toBe('a: string;\nb: number');
 			expect(String(ts.render(content))).toBe('a: string, b: number');
 		});
 

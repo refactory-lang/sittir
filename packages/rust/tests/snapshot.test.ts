@@ -8,11 +8,10 @@ const WHOLE = { deep: true, depth: Infinity };
 const namesATree = (value: unknown): boolean => /"\$(treeHandle|end)"|"at":/.test(JSON.stringify(value));
 
 describe('$snapshot()', () => {
-	it('names no tree and renders as the source', () => {
-		const source = '\n\nuse a;\n\nuse b;\n';
-		const snap = engine.parse(source, WHOLE).$snapshot();
+	it('names no tree and renders with the options\' gaps between its items', () => {
+		const snap = engine.parse('\n\nuse a;\n\nuse b;\n', WHOLE).$snapshot();
 		expect(namesATree(snap)).toBe(false);
-		expect(engine.render(snap).toString()).toBe(source);
+		expect(engine.render(snap).toString()).toBe('\n\nuse a;\nuse b;\n');
 	});
 	it.each([
 		['a comment leading the first item', '\n/* c */\nfn main() {}\n'],
@@ -66,13 +65,13 @@ describe('$snapshot()', () => {
 		expect(fn.$_layout.trivia.leading[0].span).toEqual({ start: { row: 0, column: 0 }, end: { row: 0, column: 4 } });
 	});
 	it.each([
-		['a doc comment', 'struct S {\n    /// a\n    x: u8,\n}\n'],
-		['a block comment', 'struct S { /* a */ x: u8 }\n'],
-		['a comment before a parameter', 'fn f(\n    // a\n    x: u8,\n) {}\n'],
-	])('measures a first item past %s its list passes it', (_, source) => {
+		['a doc comment', 'struct S {\n    /// a\n    x: u8,\n}\n', 'struct S {\n    /// a\n    x: u8,\n}\n'],
+		['a block comment', 'struct S { /* a */ x: u8 }\n', 'struct S { /* a */ x: u8\n}\n'],
+		['a comment before a parameter', 'fn f(\n    // a\n    x: u8,\n) {}\n', 'fn f(\n    // a\n    x: u8,) {}\n'],
+	])('measures a first item past %s its list passes it', (_, source, expected) => {
 		const snap = engine.parse(source, WHOLE).$snapshot();
 		expect(JSON.stringify(snap)).not.toMatch(/4294967\d\d\d/);
-		expect(engine.render(snap).toString()).toBe(source);
+		expect(engine.render(snap).toString()).toBe(expected);
 	});
 	it('is a new graph of plain data, not the node', () => {
 		const root = engine.parse('fn f() {}\n', WHOLE);

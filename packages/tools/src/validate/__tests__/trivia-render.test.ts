@@ -21,7 +21,7 @@ afterAll(() => {
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() { a; // note\n b; }');
+		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n a; // note\n b;\n}');
 		expect(render('fn f() {\n    a; // c\n    // d\n}\n')).toBe('fn f() {\n    a; // c\n    // d\n}\n');
 	});
 
@@ -30,7 +30,7 @@ describe('read trivia layout, rendered detached', () => {
 	});
 
 	it('joins a same-line leading block comment with a space', async () => {
-		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() { /* c */ a; }');
+		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() { /* c */ a;\n}');
 	});
 
 	it('lays out inner comments by the gap they sit in', async () => {
@@ -43,7 +43,7 @@ describe('read trivia layout, rendered detached', () => {
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() { x = a + /* x */ b; }');
+		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
 	it('seats a leading entry after an anonymous token kept as a source coordinate', async () => {
@@ -58,7 +58,7 @@ describe('read trivia layout, rendered detached', () => {
 		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
 		if (comment === undefined) throw new Error('expected the comment as a coordinate');
 		binary._operator = carryReadTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
-		expect((await fixtureReplayOf('rust'))(data as never as AnyUntypedNode, source)).toBe(source);
+		expect((await fixtureReplayOf('rust'))(data as never as AnyUntypedNode, source)).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
 	it('keeps a same-line trailing entry on its owner\'s row, before the separator', async () => {
@@ -149,19 +149,18 @@ describe('an ERROR node, rendered detached', () => {
 });
 
 describe('a list, rendered detached', () => {
-	it('keeps the source flanks and gaps of a multi-line argument list', async () => {
-		const source = 'fn f() {\n    g(\n        a,\n        b\n    );\n}\n';
-		expect((await detachedRenderer('rust'))(source)).toBe(source);
+	it('gives a multi-line argument list the options\' flanks and gaps', async () => {
+		expect((await detachedRenderer('rust'))('fn f() {\n    g(\n        a,\n        b\n    );\n}\n')).toBe('fn f() {\n    g(a, b);\n}\n');
 	});
 });
 
 describe('a detached copy of a read node', () => {
 	const renderCopy = async (node: unknown): Promise<string> => (await loadNativeEngine('rust')).render(materializeDetached(node, await loadSlotAccessorOf('rust'))).toString();
 
-	it('renders a copied multi-line parameter list with its source breaks and depth', async () => {
+	it('renders a copied multi-line parameter list in the options\' layout', async () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i32\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
-		expect(await renderCopy(item.parameters())).toBe('(\n    a: u8,\n    b: i32\n)');
+		expect(await renderCopy(item.parameters())).toBe('(a: u8, b: i32)');
 	});
 
 	it('renders a copied function item with the block comment before it', async () => {
@@ -215,10 +214,11 @@ describe('depth is one fact per position', () => {
 		}
 	});
 
-	it('closes the depth a list flank opens although the closer shares the last item\'s line', async () => {
+	it('joins a list whose flank breaks onto one line, the statement after it at its level', async () => {
+		const joined = 'fn f() {\n    g(a, b);\n    h();\n}';
 		const fn = firstOf(rust.parse(`${flankBreak}\n`).statements());
 		if (typeof fn === 'number' || !rust.is.functionItem(fn)) throw new Error('expected a function item');
-		expect(await copy('rust', fn)).toBe(flankBreak);
+		expect(await copy('rust', fn)).toBe(joined);
 		const [statement, next] = fn.body().statements();
 		if (statement === undefined || typeof statement === 'number' || !rust.is.expressionStatement(statement)) throw new Error('expected an expression statement');
 		if (next === undefined) throw new Error('expected a second statement');
@@ -231,7 +231,7 @@ describe('depth is one fact per position', () => {
 		const wrapper2 = wrapper.$with.expression(call2);
 		const statement2 = statement.$with.content(wrapper2);
 		const body = fn.body().$with.statements(statement2, next);
-		expect(fn.$with.body(body).$render()).toBe(flankBreak);
+		expect(fn.$with.body(body).$render()).toBe(joined);
 	});
 
 	it('gives a string no list flanks, so a body of string statements keeps its depth', async () => {

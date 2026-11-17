@@ -157,9 +157,15 @@ macro_rules! edited_rendered {
 }
 
 /// Each `$source` renders as it reads with every node edited
-/// (`edited_rendered`).
+/// (`edited_rendered`), or, given as `$source => $expected`, renders as
+/// `$expected`.
 #[macro_export]
 macro_rules! renders_as_read {
+    ($krate:ident, $grammar:expr, $($source:expr => $expected:expr),+ $(,)?) => {
+        for (source, expected) in [$(($source, $expected)),+] {
+            assert_eq!($crate::edited_rendered!($krate, $grammar, source), expected, "{source:?}");
+        }
+    };
     ($krate:ident, $grammar:expr, $($source:expr),+ $(,)?) => {
         for source in [$($source),+] {
             assert_eq!($crate::edited_rendered!($krate, $grammar, source), source);

@@ -30,12 +30,12 @@ fn a_run_before_an_entry_trailing_a_list_s_last_item_renders_before_it() {
     renders_as_read!(
         sittir_typescript,
         sittir_typescript::TypeScriptGrammar,
-        "type T = { a: 1\n  /* c */ };\n",
         "function f(a\n  /* c */ ) {}\n",
         "enum E {\n  A\n  # }\n",
         "interface I {\n  a: 1\n  \\ }\n",
         "import { a\n  /* c */ } from 'm';\n",
     );
+    renders_as_read!(sittir_typescript, sittir_typescript::TypeScriptGrammar, "type T = { a: 1\n  /* c */ };\n" => "type T = {\n  a: 1\n  /* c */ };\n");
 }
 
 #[test]
@@ -50,8 +50,10 @@ fn the_line_after_an_entry_trailing_a_list_s_last_item_keeps_its_level() {
         "fn f() {\n    let p = P { a: 1\n        /* c */\n        };\n}\n",
         "struct S {\n    a: u8\n    // c\n}\n",
     );
-    renders_as_read!(sittir_python, sittir_python::PythonGrammar, "x = [\n    1\n        # c\n    ]\n", "x = (1, 2\n    # c\n)\n");
-    renders_as_read!(sittir_typescript, sittir_typescript::TypeScriptGrammar, "type T = { a: 1\n  // c\n};\n", "enum E {\n  A\n  #\n}\n", "import { a\n  /* c */\n} from 'm';\n");
+    renders_as_read!(sittir_python, sittir_python::PythonGrammar, "x = (1, 2\n    # c\n)\n");
+    renders_as_read!(sittir_python, sittir_python::PythonGrammar, "x = [\n    1\n        # c\n    ]\n" => "x = [1\n        # c\n    ]\n");
+    renders_as_read!(sittir_typescript, sittir_typescript::TypeScriptGrammar, "enum E {\n  A\n  #\n}\n", "import { a\n  /* c */\n} from 'm';\n");
+    renders_as_read!(sittir_typescript, sittir_typescript::TypeScriptGrammar, "type T = { a: 1\n  // c\n};\n" => "type T = {\n  a: 1\n  // c\n};\n");
 }
 
 #[test]

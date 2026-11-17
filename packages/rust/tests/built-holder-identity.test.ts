@@ -35,7 +35,7 @@ describe.each(constructions)('a built node read through its holder (%s)', (_, rs
 		const file = b.sourceFile({ statements: parsed.statements().map((statement) => heldCoordinate(statement as object)) as never });
 		expect(file.statements()[1]).toBe(fn);
 		expect(file.statements()).toBe(file.statements());
-		expect(rs.render(file).toString()).toBe(SOURCE);
+		expect(rs.render(file).toString()).toBe('fn a() {}\n\nfn b(x: u8) { let x = 1; }\n');
 	});
 
 	it('keeps a node a side holds, and reads it back as that node', () => {

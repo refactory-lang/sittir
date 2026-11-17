@@ -83,9 +83,9 @@ describe('a parsed tree stores only the layout its read-time options do not rend
 		expect(storedOf('fn f() { x; }\n')).toEqual({ deviations: 2, slots: 0, separators: 0 });
 	});
 
-	it("stores a list slot's class where its gaps break apart from the options", async () => {
+	it('stores no list slot class where its gaps break apart from the options, which decide them', async () => {
 		const storedOf = await storedLayoutOf('rust');
-		expect(storedOf('fn f(a: u8,\n    b: u8,\n    c: u8) {}\n')).toMatchObject({ slots: 1, separators: 0 });
+		expect(storedOf('fn f(a: u8,\n    b: u8,\n    c: u8) {}\n')).toMatchObject({ slots: 0, separators: 0 });
 	});
 
 	it('stores the separator of an item whose gap holds another than its slot renders', async () => {

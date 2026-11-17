@@ -730,12 +730,10 @@ pub enum NodeRead<T> {
 }
 
 /// A node's list slots as its tree measures them (`ParsedTree::node_slots`):
-/// each slot's stored layout, and the slot and side of each run that lies in
-/// one of its gaps, by the run's place among the table's runs.
+/// each slot's stored separator.
 #[derive(Debug, Default)]
 struct NodeSlots {
     layouts: Vec<crate::layout::SlotLayout>,
-    runs: crate::heap::CountedMap<RunId, (usize, crate::list_slots::SlotSide)>,
     /// The separator before each item whose gap holds another than its
     /// slot's, by the item's index.
     separators: crate::heap::CountedMap<NodeIndex, KindId>,
@@ -751,8 +749,8 @@ struct SlotItems {
 
 impl HeapBytes for NodeSlots {
     fn heap_bytes(&self) -> usize {
-        let Self { layouts, runs, separators } = self;
-        layouts.heap_bytes() + runs.heap_bytes() + separators.heap_bytes()
+        let Self { layouts, separators } = self;
+        layouts.heap_bytes() + separators.heap_bytes()
     }
 }
 
@@ -1790,10 +1788,8 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// is not whitespace: the trailing whitespace of the token before it (a
     /// shebang's line end) counts, back to the run before it at most.
     ///
-    /// A run in a gap of a list slot (`node_slots`) measures against the
-    /// class the slot stores on its side instead, where it stores one. A run
-    /// an entry's adjacency spells (`LayoutRun::spelled`) stores none: the
-    /// adjacency is its one carrier.
+    /// A run an entry's adjacency spells (`LayoutRun::spelled`) stores none:
+    /// the adjacency is its one carrier.
     fn deviation(&mut self, at: RunId, lent: Lent<'_>) -> Option<G::Trivia> {
         let tree = self.tree;
         if tree.trivia.run(at).spelled {
@@ -1801,7 +1797,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         }
         let text = tree.run_text(at);
         let kind = tree.layout_kind(text)?;
-        let class = self.slot_class(at, lent).unwrap_or_else(|| self.baseline_class(at, lent));
+        let class = self.baseline_class(at, lent);
         (class != Some(kind)).then(|| G::Trivia::from_layout(TriviaText::of(kind, text))).flatten()
     }
 
@@ -1826,26 +1822,6 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         gap
     }
 
-    /// The class the run at `at` takes as a side of a list slot's gap: the
-    /// slot's stored class on that side, else the run's baseline class
-    /// (`None` where no baseline reaches it). `None` outside a slot's gaps,
-    /// and for a run that does not carry the layout around it.
-    #[allow(clippy::option_option, reason = "`None` outside a slot's gaps; `Some(None)` inside one that no baseline reaches")]
-    fn slot_class(&mut self, at: RunId, lent: Lent<'_>) -> Option<Option<KindId>> {
-        use crate::list_slots::SlotSide;
-        let run = self.tree.trivia.run(at);
-        if !run.carries {
-            return None;
-        }
-        let slots = self.node_slots(run.owner, lent);
-        let &(slot, side) = slots.runs.get(&at)?;
-        let layout = &slots.layouts[slot];
-        let stored = match side {
-            SlotSide::Before => layout.before,
-            SlotSide::After => layout.after,
-        };
-        Some(stored.or_else(|| self.baseline_class(at, lent)))
-    }
 
     /// The list slots of the node at `index`, measured on first use and
     /// kept (`list_slots::slot_gaps`). Each side of a slot's gaps takes the
@@ -1857,31 +1833,15 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// going to the one the region's record writes there, stored only where
     /// it differs from that one, or where the record names none.
     fn node_slots(&mut self, index: crate::types::NodeIndex, lent: Lent<'_>) -> Arc<NodeSlots> {
-        use crate::list_slots::{majority, SlotGap, SlotGaps, SlotSide};
+        use crate::list_slots::{majority, SlotGaps};
         let tree = self.tree;
         if let Some(slots) = tree.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&index) {
             return Arc::clone(slots);
         }
-        tree.cover_side(&mut self.nodes, index, TriviaSide::Inner);
-        let table = &tree.trivia;
-        let run_at = |start: u32, end: u32| table.run_at(start, end);
         let at = self.nodes.kid(index);
-        let slots = tree.grammar.slot_routes(&mut self.nodes, &at).map_or_else(Vec::new, |routed| crate::list_slots::slot_gaps(&routed, run_at));
+        let slots = tree.grammar.slot_routes(&mut self.nodes, &at).map_or_else(Vec::new, |routed| crate::list_slots::slot_gaps(&routed));
         let mut measured = NodeSlots::default();
-        for (slot, SlotGaps { key, gaps }) in slots.iter().enumerate() {
-            let mut side = |side: SlotSide, of: fn(&SlotGap) -> Option<RunId>| {
-                let carried: Vec<RunId> = gaps.iter().filter_map(of).filter(|&at| {
-                    let run = table.run(at);
-                    run.carries && !run.spelled
-                }).collect();
-                measured.runs.extend(carried.iter().map(|&at| (at, (slot, side))));
-                let classes: Vec<(KindId, KindId)> = carried.iter().filter_map(|&at| Some((tree.layout_kind(tree.run_text(at))?, self.baseline_class(at, lent)?))).collect();
-                let baseline = classes.first()?.1;
-                let sources: Vec<KindId> = classes.iter().map(|&(source, _)| source).collect();
-                majority(&sources, Some(baseline)).filter(|&class| class != baseline)
-            };
-            let before = side(SlotSide::Before, |gap| gap.before);
-            let after = side(SlotSide::After, |gap| gap.after);
+        for SlotGaps { key, gaps } in &slots {
             let separators: Vec<crate::list_slots::Separator> = gaps.iter().map(|gap| gap.separator).collect();
             let text = |separator: &crate::list_slots::Separator| &tree.source[separator.start as usize..separator.end as usize];
             let written = gaps.first().and_then(|gap| self.written_separator(index, gap.items, lent));
@@ -1890,7 +1850,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
             let effective = majority(&kinds, preferred);
             let separator = effective.filter(|&kind| Some(kind) != preferred || written.is_none());
             measured.separators.extend(gaps.iter().filter(|gap| Some(gap.separator.kind) != effective).map(|gap| (gap.items.1, gap.separator.kind)));
-            measured.layouts.push(crate::layout::SlotLayout { slot: (*key).to_string(), before, after, separator, tokens: Vec::new() });
+            measured.layouts.push(crate::layout::SlotLayout { slot: (*key).to_string(), separator, ..crate::layout::SlotLayout::default() });
         }
         let measured = Arc::new(measured);
         let replaced = tree.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert(index, Arc::clone(&measured));
@@ -2151,8 +2111,9 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
 
     /// The entries the assignment gives `side` of the node at `index`: each
     /// extra, `ERROR` and member, and when `layout` its layout: each run
-    /// that deviates from the read-time options as its member
-    /// (`deviation`), the layout members, and the depth members. A member
+    /// beside one of those entries that deviates from the read-time options,
+    /// as its member (`deviation`), and the depth members. Every other gap
+    /// takes the options. A member
     /// the source fixes in place with its adjacency (a line continuation
     /// with whitespace beside it, `Table::adjacency`) is no layout: it is an
     /// entry of the source, as an `ERROR` is.
@@ -2166,9 +2127,10 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         let ctx = tree.read_ctx();
         let entry = TriviaEntry::new;
         let depth = |count: i32| (0..count.unsigned_abs()).filter_map(move |_| ParsedTree::<G>::depth_member(count));
+        let is_entry = |assigned: &Assigned| matches!(assigned, Assigned::Extra(_) | Assigned::Error(_) | Assigned::Member(_));
         assigned
             .iter()
-            .filter(|assigned| layout.is_some() || matches!(assigned, Assigned::Extra(_) | Assigned::Error(_) | Assigned::Member(_)))
+            .filter(|assigned| layout.is_some() || is_entry(assigned))
             .flat_map(|assigned| -> Vec<SideEntry<G::Trivia>> {
                 match *assigned {
                     Assigned::Extra(at) => self
@@ -2190,8 +2152,8 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
                         .into_iter()
                         .collect(),
                     Assigned::Layout { run, depth: count, .. } => {
-                        let deviation = layout.and_then(|lent| self.deviation(run, lent));
-                        deviation.map(|member| SideEntry::Layout(entry(SlotValue::Node(member)))).into_iter().chain(depth(count)).collect()
+                        let beside = layout.filter(|_| tree.trivia.run(run).beside).and_then(|lent| self.deviation(run, lent));
+                        beside.map(|member| SideEntry::Layout(entry(SlotValue::Node(member)))).into_iter().chain(depth(count)).collect()
                     }
                     Assigned::Member(at) => self
                         .kid(at)
@@ -3772,13 +3734,13 @@ mod tests {
     }
 
     #[test]
-    fn a_structure_only_read_records_no_region_and_a_side_read_records_its_runs_region() {
-        let (tree, root) = parsed("fn f() {\n    x;\n}\nfn g() {}\n");
+    fn a_structure_only_read_records_no_region_and_a_side_read_records_the_region_of_each_run_beside_its_comment() {
+        let (tree, root) = parsed("fn f() {\n    x;\n}\n// c\nfn g() {}\n");
         tree.placed_trivia();
         walk(&tree, root, &[], None, 8);
         assert_eq!(tree.records_rendered(), 0);
         tree.trivia_side(index_of_kind(&tree, "function_item", 1), TriviaSide::Leading);
-        assert_eq!(tree.records_rendered(), 1);
+        assert_eq!(tree.records_rendered(), 2);
     }
 
     #[test]
@@ -3791,12 +3753,12 @@ mod tests {
 
     #[test]
     fn a_changed_edge_drops_the_layout_runs_between_the_side_and_its_neighbour() {
-        let (tree, _) = parsed("mod m {\n    // c\n    fn f() {}\n}\n");
+        let (tree, _) = parsed("mod m {\n    // c\n    fn f() {}\n    // d\n}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let runs = |side, changed| tree.side_entries(f, side, changed).into_iter().map(|entry| SideEntry::into_entry(entry).value().cloned()).collect::<Vec<_>>();
         assert_eq!(runs(TriviaSide::Leading, true), runs(TriviaSide::Leading, false)[1..], "the run between the comment and its owner stays");
-        assert_eq!(runs(TriviaSide::Trailing, false).len(), 1);
-        assert_eq!(runs(TriviaSide::Trailing, true), [], "the run after the owner spelled the gap to its old neighbour");
+        assert_eq!(runs(TriviaSide::Trailing, false).len(), 3);
+        assert_eq!(runs(TriviaSide::Trailing, true), runs(TriviaSide::Trailing, false)[..2], "the run after the comment spelled the gap to its old neighbour");
     }
 
     #[test]
@@ -4014,7 +3976,8 @@ mod tests {
         let sources = ReadTrees::new(&trees);
         let sides = sources.sides(&f, Lent::NONE).expect("the function has sides");
         let sides = sides.as_any().downcast_ref::<crate::trivia::NodeTrivia<TestTrivia>>().expect("the grammar's trivia");
-        assert_eq!((sides.leading.as_deref(), sides.trailing.as_deref(), sides.inner.as_deref()), (Some(&leading[..]), Some(&trailing[..]), None));
+        let held = |entries: &[TriviaEntry<TestTrivia>]| (!entries.is_empty()).then(|| entries.to_vec());
+        assert_eq!((sides.leading.clone(), sides.trailing.clone(), sides.inner.clone()), (held(&leading), held(&trailing), None));
     }
 
     #[test]

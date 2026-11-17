@@ -26,7 +26,7 @@ describe('a layout run carries its excess indentation as depth members', () => {
 		if (fn === undefined || !ts.is.functionDeclaration(fn) || call === undefined || next === undefined) throw new Error('expected a function and two statements');
 		const body = fn.body();
 		const moved = root.$with.statements(fn.$with.body(body.$with.statements(...body.statements(), call)), call, next);
-		expect(moved.$render()).toBe('function f() {\n  g();\n  foo(a,\n    b,\n    c);\n}\nfoo(a,\n  b,\n  c);\nnext();\n');
+		expect(moved.$render()).toBe('function f() {\n  g();\n  foo(a,\n    b,\n    c);\n}\n\nfoo(a,\n  b,\n  c);\nnext();\n');
 	});
 
 	it('starts a reordered statement written off its level at its new place, without shifting the statement after it', () => {
@@ -37,7 +37,7 @@ describe('a layout run carries its excess indentation as depth members', () => {
 		const [g, h] = body.statements();
 		if (g === undefined || h === undefined) throw new Error('expected two statements');
 		const reordered = root.$with.statements(fn.$with.body(body.$with.statements(h, g)), next);
-		expect(reordered.$render()).toBe('function f() {\n  // c\n  h();\n  g();\n}\nnext();\n');
+		expect(reordered.$render()).toBe('function f() {\n  // c\n  h();\n  g();\n}\n\nnext();\n');
 	});
 
 	it('keeps the old owner and the new parent balanced when a child with a kept depth member moves out', () => {
@@ -56,6 +56,6 @@ describe('a layout run carries its excess indentation as depth members', () => {
 			fn.$with.body(body.$with.statements(...body.statements(), ts.build.expressionStatement(b))),
 			next
 		);
-		expect(edited.$render()).toBe('foo(a);\nfunction f() {\n  g();\n  // c\n    b;\n}\nnext();\n');
+		expect(edited.$render()).toBe('foo(a);\nfunction f() {\n  g();\n  // c\n    b;\n}\n\nnext();\n');
 	});
 });

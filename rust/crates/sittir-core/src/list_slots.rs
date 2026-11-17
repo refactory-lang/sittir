@@ -8,24 +8,8 @@
 //! holding an extra, an `ERROR`, another slot's child or more than one
 //! separator, is no gap the slot spells.
 
-use crate::heap::HeapBytes;
 use crate::read::{Route, Routed};
 use std::collections::BTreeMap;
-
-/// The side of its separator a gap's run lies on.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum SlotSide {
-    Before,
-    After,
-}
-
-impl HeapBytes for SlotSide {
-    fn heap_bytes(&self) -> usize {
-        match self {
-            Self::Before | Self::After => 0,
-        }
-    }
-}
 
 /// A gap's separator: its grammar id and bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -36,14 +20,10 @@ pub struct Separator {
 }
 
 /// One separator gap between two items of a list slot: the items'
-/// descendant indexes, its runs before and after its separator by their
-/// ids among the runs the tree's trivia placement placed
-/// (`Placement::run_at`), where it placed one there, and its separator.
+/// descendant indexes and its separator.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SlotGap {
     pub items: (crate::types::NodeIndex, crate::types::NodeIndex),
-    pub before: Option<crate::types::RunId>,
-    pub after: Option<crate::types::RunId>,
     pub separator: Separator,
 }
 
@@ -54,9 +34,9 @@ pub struct SlotGaps {
     pub gaps: Vec<SlotGap>,
 }
 
-/// The list slots of a routed node, each with the separator gaps it spells;
-/// `run_at` finds the run from one byte to another.
-pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<crate::types::RunId>) -> Vec<SlotGaps> {
+/// The list slots of a routed node, each with the separator gaps it spells.
+#[must_use]
+pub fn slot_gaps(routed: &Routed) -> Vec<SlotGaps> {
     let mut items: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
     for (at, route) in routed.routes.iter().enumerate() {
         if let Route::Slot { slot, .. } = *route {
@@ -83,8 +63,6 @@ pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<crate::typ
                     let [separator] = separators.as_slice() else { return None };
                     Some(SlotGap {
                         items: (first.index, last.index),
-                        before: run_at(first.end, separator.start),
-                        after: run_at(separator.end, last.start),
                         separator: Separator { kind: separator.grammar, start: separator.start, end: separator.end },
                     })
                 })
@@ -114,7 +92,7 @@ pub fn majority<T: Copy + PartialEq>(values: &[T], preferred: Option<T>) -> Opti
 mod tests {
     use super::*;
     use crate::read::Kid;
-    use crate::types::{KindId, RunId};
+    use crate::types::{KindId, NodeIndex};
 
     fn child(index: u32, start: u32, end: u32) -> Kid {
         let kind = KindId(u16::try_from(index).unwrap());
@@ -135,11 +113,9 @@ mod tests {
             keys: &["_item"],
             elided: &[false],
         };
-        let runs = [(1, 2), (3, 4), (5, 5), (6, 6)];
-        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(crate::types::narrow(at)));
-        let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert_eq!(slot.key, "_item");
-        assert_eq!(slot.gaps.iter().map(|gap| (gap.before, gap.after)).collect::<Vec<_>>(), vec![(Some(RunId(0)), Some(RunId(1))), (Some(RunId(2)), Some(RunId(3)))]);
+        assert_eq!(slot.gaps.iter().map(|gap| gap.items).collect::<Vec<_>>(), vec![(NodeIndex(1), NodeIndex(3)), (NodeIndex(3), NodeIndex(5))]);
         assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 2, end: 3 });
     }
 
@@ -151,7 +127,7 @@ mod tests {
             keys: &["_statements"],
             elided: &[false],
         };
-        let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
     }
 
@@ -171,12 +147,9 @@ mod tests {
             keys: &["_item"],
             elided: &[false],
         };
-        let runs = [(1, 1), (2, 9), (10, 11), (12, 12), (12, 13)];
-        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(crate::types::narrow(at)));
-        let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert_eq!(slot.gaps.len(), 2, "{:?}", slot.gaps);
         assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 1, end: 2 });
-        assert_eq!((slot.gaps[0].before, slot.gaps[0].after), (Some(RunId(0)), Some(RunId(1))));
         assert_eq!(slot.gaps[1].separator, Separator { kind: KindId(6), start: 12, end: 12 });
     }
 
@@ -194,7 +167,7 @@ mod tests {
             keys: &["_item", "_other"],
             elided: &[false, false],
         };
-        let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
     }
 

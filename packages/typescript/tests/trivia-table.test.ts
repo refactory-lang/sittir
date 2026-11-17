@@ -51,7 +51,7 @@ describe.each([
 	it('is accepted and renders in the whole tree', () => {
 		const root = engine.parse('function a() {}\nfunction b() { let x = 1; }\n');
 		reach(root, 1, 0).$trivia.leading('// before');
-		rendersAs(root, 'function a() {}\nfunction b() {\n  // before\n  let x = 1; }\n');
+		rendersAs(root, 'function a() {}\n\nfunction b() {\n  // before\n  let x = 1;\n}\n');
 	});
 
 	it('keeps a deeper-indented comment between its siblings', () => {
@@ -183,7 +183,7 @@ describe('the owner a side belongs to', () => {
 		const body = functionAt(root, 0).body();
 		if (!engine.isEmptyNode(body)) throw new Error('expected an empty block');
 		body.$trivia.inner('// i');
-		rendersAs(root, 'function f() {\n  // i\n}\nfunction g() {\n  // l\n  a(); // t\n}\n');
+		rendersAs(root, 'function f() {\n  // i\n}\n\nfunction g() {\n  // l\n  a(); // t\n}\n');
 	});
 
 	it("gives a file of comments only to the root's inner, and renders it as its source", () => {
