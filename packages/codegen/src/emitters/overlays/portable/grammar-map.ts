@@ -220,6 +220,19 @@ export function mapNodesOf({ nodeMap, kindEntries }: PortableTypedInput, reads: 
 	return [...ids].sort(([a], [b]) => byCodepoint(a, b));
 }
 
+export type MapDecided = readonly (readonly [path: string, members: readonly (readonly [member: string, decided: string])[]])[];
+
+export function mapDecidedOf({ input }: PortableTypedInput, slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, viewed: ReadonlySet<string>): MapDecided {
+	const structured = (path: string): boolean => input.vocabulary.kinds.has(path) && !input.vocabulary.members(path).has('$value');
+	return [...slots].flatMap(([path, members]) => {
+		const decided = [...members].flatMap(([member, set]) => {
+			const built = set.kinds.filter(structured);
+			return built.length === 1 && viewed.has(built[0]!) ? [[member, built[0]!] as const] : [];
+		});
+		return decided.length === 0 ? [] : [[path, decided] as const];
+	});
+}
+
 const unionOf = (arms: readonly string[]): string => (arms.length === 0 ? 'never' : arms.join(' | '));
 
 export interface GrammarMapOutput {
@@ -228,6 +241,7 @@ export interface GrammarMapOutput {
 	readonly slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
 	readonly textInputs: readonly string[];
 	readonly textValues: readonly string[];
+	readonly decided: MapDecided;
 }
 
 export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots): GrammarMapOutput {
@@ -264,6 +278,7 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 	const unmapped = [...slots.values()].flatMap((members) =>
 		[...members.values()].flatMap((set) => set.unmapped.map((name) => name.slice(name.indexOf(':') + 1)))
 	);
+	const decided = mapDecidedOf(typedInput, slots, new Set(reads.viewed));
 	lines.push(
 		'\t};',
 		'\treadonly inputs: {',
@@ -275,6 +290,9 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		'\treadonly flags: {',
 		...mapFlagsOf(typedInput).map(([path, flags]) => `\t\treadonly ${q(path)}: ${unionOf(flags.map(q))};`),
 		'\t};',
+		'\treadonly decided: {',
+		...decided.map(([path, members]) => `\t\treadonly ${q(path)}: { ${members.map(([member, at]) => `readonly ${member}: ${q(at)};`).join(' ')} };`),
+		'\t};',
 		'}',
 		'',
 		...unmappedKindsBlock(VOCABULARY_MODULE, input.grammar, nodeMap, unmapped),
@@ -283,5 +301,5 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		''
 	);
 	const textInputs = textBuiltPaths(typedInput);
-	return { source: lines.join('\n'), unformed, slots, textInputs, textValues: textInputs.filter((path) => textValued(typedInput.input.vocabulary, path)) };
+	return { source: lines.join('\n'), unformed, slots, textInputs, textValues: textInputs.filter((path) => textValued(typedInput.input.vocabulary, path)), decided };
 }

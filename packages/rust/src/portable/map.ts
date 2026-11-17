@@ -33691,6 +33691,325 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'type.tuple': never;
 		readonly 'type.unit': never;
 	};
+	readonly decided: {
+		readonly argument: { readonly attributes: 'attribute' };
+		readonly attribute: { readonly path: 'identifier.qualified' };
+		readonly 'clause.bounds.use': { readonly bounds: 'identifier.lifetime' };
+		readonly 'clause.case.match': { readonly attributes: 'attribute' };
+		readonly 'clause.import.alias': { readonly name: 'identifier.qualified' };
+		readonly 'clause.import.list.scoped': {
+			readonly list: 'clause.import.list';
+			readonly path: 'identifier.qualified';
+		};
+		readonly 'clause.where': { readonly wherePredicates: 'clause.where.predicate' };
+		readonly 'declaration.constant.public.restricted': { readonly scope: 'identifier.qualified' };
+		readonly 'declaration.enum': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.enum.private': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.enum.public': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.enum.public.internal': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.enum.public.parent': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.enum.public.restricted': {
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.enum_member': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.private': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.public': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.public.internal': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.public.parent': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.public.restricted': {
+			readonly attributes: 'attribute';
+			readonly scope: 'identifier.qualified';
+		};
+		readonly 'declaration.enum_member.struct': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.struct.private': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.struct.public': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.struct.public.internal': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.struct.public.parent': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.struct.public.restricted': {
+			readonly attributes: 'attribute';
+			readonly scope: 'identifier.qualified';
+		};
+		readonly 'declaration.enum_member.tuple': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.tuple.private': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.tuple.public': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.tuple.public.internal': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.tuple.public.parent': { readonly attributes: 'attribute' };
+		readonly 'declaration.enum_member.tuple.public.restricted': {
+			readonly attributes: 'attribute';
+			readonly scope: 'identifier.qualified';
+		};
+		readonly 'declaration.extension': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.extension.conformance': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.field': { readonly attributes: 'attribute' };
+		readonly 'declaration.field.private': { readonly attributes: 'attribute' };
+		readonly 'declaration.field.public': { readonly attributes: 'attribute' };
+		readonly 'declaration.field.public.internal': { readonly attributes: 'attribute' };
+		readonly 'declaration.field.public.parent': { readonly attributes: 'attribute' };
+		readonly 'declaration.field.public.restricted': {
+			readonly attributes: 'attribute';
+			readonly scope: 'identifier.qualified';
+		};
+		readonly 'declaration.function': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.private': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.public': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.public.internal': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.public.parent': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.public.restricted': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.signature': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.signature.private': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.signature.public': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.signature.public.internal': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.signature.public.parent': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.function.signature.public.restricted': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.interface.trait': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.interface.trait.private': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.interface.trait.public': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.interface.trait.public.internal': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.interface.trait.public.parent': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.interface.trait.public.restricted': {
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.macro': { readonly rules: 'clause.macro.rule' };
+		readonly 'declaration.macro.brace': { readonly rules: 'clause.macro.rule' };
+		readonly 'declaration.macro.bracket': { readonly rules: 'clause.macro.rule' };
+		readonly 'declaration.macro.paren': { readonly rules: 'clause.macro.rule' };
+		readonly 'declaration.method': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.private': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.public': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.public.internal': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.public.parent': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.public.restricted': {
+			readonly body: 'statement.block';
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.signature': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.signature.private': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.signature.public': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.signature.public.internal': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.signature.public.parent': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.method.signature.public.restricted': {
+			readonly extern: 'modifier.extern';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.module.foreign': { readonly extern: 'modifier.extern' };
+		readonly 'declaration.module.public.restricted': { readonly scope: 'identifier.qualified' };
+		readonly 'declaration.parameter': { readonly attributes: 'attribute' };
+		readonly 'declaration.parameter.receiver': {
+			readonly attributes: 'attribute';
+			readonly lifetime: 'identifier.lifetime';
+		};
+		readonly 'declaration.parameter.variadic': { readonly attributes: 'attribute' };
+		readonly 'declaration.struct': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.private': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.public': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.public.internal': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.public.parent': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.public.restricted': {
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.struct.tuple': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.tuple.private': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.tuple.public': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.tuple.public.internal': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.tuple.public.parent': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.struct.tuple.public.restricted': {
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.struct.unit.public.restricted': { readonly scope: 'identifier.qualified' };
+		readonly 'declaration.type_alias': {
+			readonly trailingWhereClause: 'clause.where';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.type_alias.associated': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.type_alias.private': {
+			readonly trailingWhereClause: 'clause.where';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.type_alias.public': {
+			readonly trailingWhereClause: 'clause.where';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.type_alias.public.internal': {
+			readonly trailingWhereClause: 'clause.where';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.type_alias.public.parent': {
+			readonly trailingWhereClause: 'clause.where';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.type_alias.public.restricted': {
+			readonly scope: 'identifier.qualified';
+			readonly trailingWhereClause: 'clause.where';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.type_parameter': { readonly attributes: 'attribute' };
+		readonly 'declaration.type_parameter.lifetime': {
+			readonly attributes: 'attribute';
+			readonly name: 'identifier.lifetime';
+		};
+		readonly 'declaration.type_parameter.value': { readonly attributes: 'attribute' };
+		readonly 'declaration.union': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.union.private': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.union.public': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.union.public.internal': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.union.public.parent': { readonly whereClause: 'clause.where' };
+		readonly 'declaration.union.public.restricted': {
+			readonly scope: 'identifier.qualified';
+			readonly whereClause: 'clause.where';
+		};
+		readonly 'declaration.variable': { readonly alternative: 'statement.block' };
+		readonly 'declaration.variable.public.restricted': { readonly scope: 'identifier.qualified' };
+		readonly 'element.attributed': { readonly attributes: 'attribute' };
+		readonly 'element.struct.field': { readonly attributes: 'attribute' };
+		readonly 'element.type_binding': { readonly typeArguments: 'element.type_argument' };
+		readonly 'expression.block.async': { readonly body: 'statement.block' };
+		readonly 'expression.block.const': { readonly body: 'statement.block' };
+		readonly 'expression.block.generator': { readonly body: 'statement.block' };
+		readonly 'expression.block.try': { readonly body: 'statement.block' };
+		readonly 'expression.block.unsafe': { readonly body: 'statement.block' };
+		readonly 'expression.call': { readonly typeArguments: 'element.type_argument' };
+		readonly 'expression.call.macro': { readonly function: 'identifier.qualified' };
+		readonly 'expression.call.member': { readonly typeArguments: 'element.type_argument' };
+		readonly 'expression.call.qualified': { readonly typeArguments: 'element.type_argument' };
+		readonly 'expression.instantiation': { readonly typeArguments: 'element.type_argument' };
+		readonly 'identifier.metavariable': { readonly attributes: 'attribute' };
+		readonly 'modifier.visibility.public.restricted': { readonly scope: 'identifier.qualified' };
+		readonly 'pattern.generic': {
+			readonly name: 'identifier.qualified';
+			readonly typeArguments: 'element.type_argument';
+		};
+		readonly 'statement.block': { readonly label: 'identifier.label' };
+		readonly 'statement.break': { readonly label: 'identifier.label' };
+		readonly 'statement.continue': { readonly label: 'identifier.label' };
+		readonly 'statement.if': { readonly alternative: 'clause.else'; readonly consequence: 'statement.block' };
+		readonly 'statement.import.package.public.restricted': { readonly scope: 'identifier.qualified' };
+		readonly 'statement.import.public.restricted': { readonly scope: 'identifier.qualified' };
+		readonly 'statement.loop': { readonly body: 'statement.block'; readonly label: 'identifier.label' };
+		readonly 'statement.loop.for_each': { readonly body: 'statement.block'; readonly label: 'identifier.label' };
+		readonly 'statement.loop.while': { readonly body: 'statement.block'; readonly label: 'identifier.label' };
+		readonly 'statement.match': { readonly body: 'clause.case.match' };
+		readonly 'type.function': {
+			readonly extern: 'modifier.extern';
+			readonly forLifetimes: 'identifier.lifetime';
+			readonly trait: 'identifier.qualified';
+		};
+		readonly 'type.generic': { readonly type: 'identifier.qualified'; readonly typeArguments: 'element.type_argument' };
+		readonly 'type.generic.turbofish': {
+			readonly type: 'identifier.qualified';
+			readonly typeArguments: 'element.type_argument';
+		};
+		readonly 'type.reference': { readonly lifetime: 'identifier.lifetime' };
+	};
 }
 
 declare module '@sittir/types/vocabulary' {

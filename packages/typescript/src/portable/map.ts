@@ -33188,6 +33188,170 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'type.tuple': never;
 		readonly 'type.union': never;
 	};
+	readonly decided: {
+		readonly 'attribute.call': { readonly function: 'attribute.member' };
+		readonly 'attribute.member': { readonly object: 'attribute.member' };
+		readonly 'clause.catch': { readonly body: 'statement.block' };
+		readonly 'clause.export.namespace': { readonly moduleExportName: 'literal.string' };
+		readonly 'clause.export.specifier': { readonly alias: 'literal.string'; readonly name: 'literal.string' };
+		readonly 'clause.export.specifier.typeof': { readonly alias: 'literal.string'; readonly name: 'literal.string' };
+		readonly 'clause.finally': { readonly body: 'statement.block' };
+		readonly 'clause.import.attribute': { readonly object: 'expression.collection.object' };
+		readonly 'clause.import.require': { readonly source: 'literal.string' };
+		readonly 'clause.import.specifier': { readonly name: 'literal.string' };
+		readonly 'clause.import.specifier.typeof': { readonly name: 'literal.string' };
+		readonly 'declaration.class': {
+			readonly extends: 'clause.extends';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.constructor': { readonly body: 'statement.block' };
+		readonly 'declaration.constructor.private': { readonly body: 'statement.block' };
+		readonly 'declaration.constructor.protected': { readonly body: 'statement.block' };
+		readonly 'declaration.constructor.public': { readonly body: 'statement.block' };
+		readonly 'declaration.enum': { readonly body: 'declaration.enum_member' };
+		readonly 'declaration.function': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.function.signature': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.interface': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.method': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.private': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.protected': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.public': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract.private': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract.protected': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract.public': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.private': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.protected': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.public': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.module': { readonly body: 'statement.block' };
+		readonly 'declaration.module.external': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter.private': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter.protected': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter.public': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter.private': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter.protected': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter.public': { readonly body: 'statement.block' };
+		readonly 'declaration.signature.call': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.signature.construct': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.signature.index.mapped': { readonly mappedTypeClause: 'clause.mapped_type' };
+		readonly 'declaration.type_alias': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type_parameter': { readonly default: 'clause.default' };
+		readonly 'element.tuple.member': { readonly name: 'pattern.rest' };
+		readonly 'expression.call.member': { readonly function: 'expression.member' };
+		readonly 'expression.call.template': { readonly arguments: 'literal.string.interpolated' };
+		readonly 'expression.class': {
+			readonly extends: 'clause.extends';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'expression.function': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'expression.lambda': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'literal.string.interpolated': { readonly elements: 'expression.interpolation' };
+		readonly 'statement.block': { readonly label: 'identifier.label' };
+		readonly 'statement.block.static': { readonly body: 'statement.block' };
+		readonly 'statement.break': { readonly label: 'identifier.label' };
+		readonly 'statement.continue': { readonly label: 'identifier.label' };
+		readonly 'statement.export': { readonly source: 'literal.string' };
+		readonly 'statement.export.all': { readonly source: 'literal.string' };
+		readonly 'statement.if': { readonly alternative: 'clause.else'; readonly condition: 'expression.parenthesized' };
+		readonly 'statement.import': {
+			readonly importAttribute: 'clause.import.attribute';
+			readonly importClause: 'clause.import.names';
+			readonly source: 'literal.string';
+		};
+		readonly 'statement.import.alias': { readonly value: 'identifier.qualified' };
+		readonly 'statement.import.typeof': {
+			readonly importAttribute: 'clause.import.attribute';
+			readonly importClause: 'clause.import.names';
+			readonly source: 'literal.string';
+		};
+		readonly 'statement.labeled': { readonly label: 'identifier.label' };
+		readonly 'statement.loop.counted': { readonly label: 'identifier.label' };
+		readonly 'statement.loop.do_while': {
+			readonly condition: 'expression.parenthesized';
+			readonly label: 'identifier.label';
+		};
+		readonly 'statement.loop.for_each': { readonly label: 'identifier.label' };
+		readonly 'statement.loop.while': {
+			readonly condition: 'expression.parenthesized';
+			readonly label: 'identifier.label';
+		};
+		readonly 'statement.scope': { readonly object: 'expression.parenthesized' };
+		readonly 'statement.switch': { readonly value: 'expression.parenthesized' };
+		readonly 'statement.try': {
+			readonly body: 'statement.block';
+			readonly finalizer: 'clause.finally';
+			readonly handlers: 'clause.catch';
+		};
+		readonly 'type.function': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'type.function.constructor': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'type.generic': { readonly name: 'identifier.qualified' };
+		readonly 'type.import': { readonly source: 'literal.string' };
+		readonly 'type.predicate.asserts': { readonly value: 'type.predicate' };
+		readonly 'type.template': { readonly elements: 'element.template.substitution' };
+	};
 }
 
 declare module '@sittir/types/vocabulary' {

@@ -19297,6 +19297,48 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'type.rest': never;
 		readonly 'type.union': never;
 	};
+	readonly decided: {
+		readonly 'clause.case.match': { readonly body: 'statement.block' };
+		readonly 'clause.catch': { readonly body: 'statement.block' };
+		readonly 'clause.else': { readonly body: 'statement.block' };
+		readonly 'clause.else_if': { readonly consequence: 'statement.block' };
+		readonly 'clause.finally': { readonly body: 'statement.block' };
+		readonly 'clause.import.alias': { readonly name: 'identifier.qualified' };
+		readonly 'clause.import.relative': { readonly name: 'identifier.qualified' };
+		readonly 'clause.resource': { readonly items: 'clause.resource.item' };
+		readonly 'declaration.class': { readonly body: 'statement.block' };
+		readonly 'declaration.constructor': { readonly body: 'statement.block' };
+		readonly 'declaration.function': { readonly body: 'statement.block' };
+		readonly 'declaration.method': { readonly body: 'statement.block' };
+		readonly 'declaration.method.special': { readonly body: 'statement.block' };
+		readonly 'declaration.parameter.defaulted': { readonly name: 'pattern.tuple' };
+		readonly 'declaration.property.getter': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter': { readonly body: 'statement.block' };
+		readonly 'expression.call.member': { readonly function: 'expression.member' };
+		readonly 'expression.comprehension.map': { readonly body: 'element.pair' };
+		readonly 'expression.interpolation': { readonly formatSpecifier: 'expression.interpolation.format' };
+		readonly 'expression.interpolation.format': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated.deferred': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated.deferred.multiline': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated.deferred.raw': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated.deferred.raw.multiline': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated.multiline': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated.raw': { readonly elements: 'expression.interpolation' };
+		readonly 'literal.string.interpolated.raw.multiline': { readonly elements: 'expression.interpolation' };
+		readonly 'pattern.struct': { readonly type: 'identifier.qualified' };
+		readonly 'statement.if': { readonly consequence: 'statement.block' };
+		readonly 'statement.loop.for_each': { readonly alternative: 'clause.else'; readonly body: 'statement.block' };
+		readonly 'statement.loop.while': { readonly alternative: 'clause.else'; readonly body: 'statement.block' };
+		readonly 'statement.match': { readonly body: 'clause.case.match' };
+		readonly 'statement.resource': { readonly body: 'statement.block'; readonly withClause: 'clause.resource' };
+		readonly 'statement.try': {
+			readonly alternative: 'clause.else';
+			readonly body: 'statement.block';
+			readonly finalizer: 'clause.finally';
+			readonly handlers: 'clause.catch';
+		};
+	};
 }
 
 declare module '@sittir/types/vocabulary' {

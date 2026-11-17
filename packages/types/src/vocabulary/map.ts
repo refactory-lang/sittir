@@ -6,6 +6,7 @@ export interface GrammarMap {
 	readonly inputs: object;
 	readonly nodes: object;
 	readonly flags: object;
+	readonly decided: object;
 }
 
 export interface Contract<F extends object> extends GrammarMap {
@@ -14,6 +15,7 @@ export interface Contract<F extends object> extends GrammarMap {
 	readonly inputs: { readonly [P in keyof TextPaths['texts'] | TextValued<Contract<F>>]: string };
 	readonly nodes: {};
 	readonly flags: {};
+	readonly decided: {};
 }
 
 export interface Paths<G extends GrammarMap> {}

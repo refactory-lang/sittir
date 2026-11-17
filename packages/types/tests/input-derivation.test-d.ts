@@ -86,3 +86,28 @@ interface Misnarrowed extends V.GrammarMap {
 
 // @ts-expect-error a form narrowing a member beyond the member's override does not fit
 export type MisnarrowedFits = V.Assert<V.Fits<Misnarrowed>>;
+
+interface Decides extends V.GrammarMap {
+	readonly features: V.PythonFeatures;
+	readonly overrides: {
+		readonly 'declaration.function': {
+			readonly body: V.Read<Decides, 'statement.block'>;
+			readonly name: V.Read<Decides, 'identifier'>;
+		};
+		readonly 'statement.block': { readonly statements: V.Read<Decides, 'statement.return'> | V.Read<Decides, 'statement.block'> };
+	};
+	readonly inputs: { readonly identifier: string };
+	readonly decided: { readonly 'declaration.function': { readonly body: 'statement.block' } };
+}
+
+type DecidedFunction = V.InputOf<V.Declaration.Function<Decides>, Decides>;
+
+export const decidedBody: DecidedFunction = { $path: 'declaration.function', name: 'f', parameters: [], body: { statements: [{ $path: 'statement.return' }] } };
+export const statedBody: DecidedFunction = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };
+// @ts-expect-error a member with several structure-built paths needs each item's $path
+export const undecidedItem: DecidedFunction = { $path: 'declaration.function', name: 'f', parameters: [], body: { statements: [{}] } };
+
+export const pathless: V.PathInput<Decides, 'declaration.function'> = { name: 'f', parameters: [], body: { statements: [] } };
+export const pathed: V.PathInput<Decides, 'declaration.function'> = { $path: 'declaration.function', name: 'f', parameters: [], body: { statements: [] } };
+// @ts-expect-error a path function's input names only its own path
+export const otherPath: V.PathInput<Decides, 'declaration.function'> = { $path: 'statement.return' };
