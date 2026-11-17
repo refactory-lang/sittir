@@ -567,7 +567,9 @@ fn join(gap: LayoutKinds, w: &mut dyn RenderSink) {
 
 /// A whitespace entry's text, which replaces the seam at its gap. Right
 /// after an entry (`after_entry`) it is kept to at least the line break that
-/// entry left pending; anywhere else it replaces the gap's seam outright.
+/// entry left pending; anywhere else it replaces the gap's seam, save that a
+/// blank-line entry leaves a wider seam standing, so the gap takes the larger
+/// of the two (`SpacingWriter::trivia_seam`).
 fn whitespace(gap: LayoutKinds, after_entry: bool, w: &mut dyn RenderSink) {
     if keeps_break(gap, after_entry, w) {
         w.trivia_seam(LayoutKinds::NEWLINE);
