@@ -3,6 +3,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
 import { boundNameAt, boundNameOf } from '../dsl/bind.ts';
 import { groupLiftNames } from '../dsl/rule-metadata.ts';
+import { isParserHiddenName } from '../dsl/rule-patterns.ts';
+import type { Rule } from '../types/rule.ts';
+import { CHOICE, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../types/rule-types.ts';
 import { boundFieldNameOf, leadEffectsOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
@@ -85,7 +88,58 @@ const seatShapesOf = (slot: NodeModelSlot): { readonly flattens?: readonly strin
 	return { ...(flattens.length === 0 ? {} : { flattens }), ...(tuples.length === 0 ? {} : { tuples }) };
 };
 
-export function slotModelOf(record: NodeModelRecord): SlotModel {
+function unprecedented(rule: Rule<'evaluate'>): Rule<'evaluate'> {
+	switch (rule.type) {
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+			return unprecedented(rule.content);
+		default:
+			return rule;
+	}
+}
+
+function spelledTokens(rules: Readonly<Record<string, Rule<'evaluate'>>>, supertypes: ReadonlySet<string>): (kind: string) => readonly string[] {
+	const entered = new Set<string>();
+	const of = (given: Rule<'evaluate'>): readonly string[] => {
+		const rule = unprecedented(given);
+		switch (rule.type) {
+			case STRING:
+				return [rule.value];
+			case SEQ:
+				return rule.members.flatMap(of);
+			case CHOICE: {
+				const [first = [], ...rest] = rule.members.map(of);
+				return first.filter((token) => rest.every((arm) => arm.includes(token)));
+			}
+			case TOKEN:
+			case 'IMMEDIATE_TOKEN': {
+				const lexed = unprecedented(rule.content);
+				return lexed.type === STRING ? [lexed.value] : [];
+			}
+			case REPEAT1:
+			case 'RESERVED':
+				return of(rule.content);
+			case SYMBOL:
+				return isParserHiddenName(rule.name) && !supertypes.has(rule.name) ? within(rule.name) : [];
+			default:
+				return [];
+		}
+	};
+	const within = (name: string): readonly string[] => {
+		const rule = rules[name];
+		if (rule === undefined || entered.has(name)) return [];
+		entered.add(name);
+		const tokens = of(rule);
+		entered.delete(name);
+		return tokens;
+	};
+	return (kind) => [...new Set(within(kind))];
+}
+
+export function slotModelOf(record: NodeModelRecord, grammar: Pick<EvaluatedGrammarFacts, 'rules' | 'supertypes'>): SlotModel {
+	const spells = spelledTokens(grammar.rules ?? {}, new Set(grammar.supertypes ?? []));
 	const out = new Map<string, ModelNode>();
 	for (const n of nodesOf(record)) {
 		out.set(n.kind, {
@@ -117,6 +171,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			interiorPart: n.interiorPart ?? null,
 			textLeavesThrough: n.textLeavesThrough ?? [],
 			shownAs: n.shownAs ?? [],
+			spells: spells(n.kind),
 			...(n.modelType === 'list' && n.trailingDelimiter !== undefined
 				? { list: { trailing: n.trailingDelimiter, ...(n.separator === undefined ? {} : { separator: n.separator }), ...(n.singleElementNeedsTrailing === true ? { singleElementNeedsTrailing: true as const } : {}) } }
 				: {})
@@ -139,7 +194,7 @@ export function layoutSlots(options: OptionsConfig, kinds: ReadonlySet<string>):
 }
 
 export interface EvaluatedGrammarFacts {
-	readonly rules?: Readonly<Record<string, unknown>>;
+	readonly rules?: Readonly<Record<string, Rule<'evaluate'>>>;
 	readonly supertypes?: readonly string[];
 	readonly bindingEffects?: readonly BindingEffect[];
 	readonly textTokens?: readonly string[];
@@ -154,7 +209,7 @@ export async function grammarInput(
 	vocabulary?: Vocabulary
 ): Promise<GrammarInput | undefined> {
 	if (!existsSync(scmPath)) return undefined;
-	const model = slotModelOf(record);
+	const model = slotModelOf(record, raw);
 	const effects = raw.bindingEffects ?? [];
 	const aliases = effects.filter((effect) => effect.kind === 'alias');
 	const nameOf = boundNameOf(renamedFromOf(record), aliases);

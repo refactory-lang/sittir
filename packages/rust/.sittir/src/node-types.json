@@ -1196,7 +1196,7 @@
     "type": "attribute_item",
     "named": true,
     "fields": {
-      "content": {
+      "attribute": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3072,7 +3072,7 @@
           }
         ]
       },
-      "field": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3269,17 +3269,16 @@
   {
     "type": "for_lifetimes",
     "named": true,
-    "fields": {
-      "lifetimes": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "lifetimes",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "lifetimes",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -4068,7 +4067,7 @@
     "type": "inner_attribute_item",
     "named": true,
     "fields": {
-      "content": {
+      "attribute": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6066,7 +6065,7 @@
           }
         ]
       },
-      "field": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -7615,16 +7614,6 @@
     "type": "use_as_clause",
     "named": true,
     "fields": {
-      "alias": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
       "name": {
         "multiple": false,
         "required": true,
@@ -7651,6 +7640,16 @@
           },
           {
             "type": "super",
+            "named": true
+          }
+        ]
+      },
+      "rename": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]

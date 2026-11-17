@@ -18,7 +18,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 			},
 			{ kind: 'wrapper', modelType: 'envelope', slots: [{ name: 'inner', accessor: 'inner', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'alpha' }] }] }
 		]
-	}),
+	}, {}),
 	textTokens: new Set(),
 	layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 });

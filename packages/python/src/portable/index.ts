@@ -8,12 +8,9 @@ import { querySlots } from '../utils.js';
 export interface PortableIds {
 	argument: TSKindId.KeywordArgument;
 	'argument.named': TSKindId.KeywordArgument;
-	attribute: TSKindId.Decorator;
-	'attribute.decorator': TSKindId.Decorator;
 	clause:
 		| TSKindId.AliasedImport
 		| TSKindId.CaseClause
-		| TSKindId.ComprehensionClauses
 		| TSKindId.ElifClause
 		| TSKindId.ElseClause
 		| TSKindId.ExceptClause
@@ -29,7 +26,7 @@ export interface PortableIds {
 	'clause.case': TSKindId.CaseClause;
 	'clause.case.match': TSKindId.CaseClause;
 	'clause.catch': TSKindId.ExceptClause;
-	'clause.comprehension': TSKindId.ComprehensionClauses | TSKindId.ForInClause | TSKindId.IfClause;
+	'clause.comprehension': TSKindId.ForInClause | TSKindId.IfClause;
 	'clause.comprehension.for': TSKindId.ForInClause;
 	'clause.comprehension.if': TSKindId.IfClause;
 	'clause.else': TSKindId.ElseClause;
@@ -66,7 +63,7 @@ export interface PortableIds {
 	'declaration.method': TSKindId.MethodDeclaration;
 	'declaration.method.special': TSKindId.MethodDeclaration;
 	'declaration.parameter': TSKindId.DefaultParameter | TSKindId.TypedDefaultParameter | TSKindId.TypedParameter;
-	'declaration.parameter.default': TSKindId.DefaultParameter;
+	'declaration.parameter.defaulted': TSKindId.DefaultParameter;
 	'declaration.parameter.typed': TSKindId.TypedParameter;
 	'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
 	'declaration.property': TSKindId.MethodDeclaration;
@@ -415,7 +412,6 @@ export interface PortableIds {
 		| TSKindId.ContinueStatement
 		| TSKindId.DeleteStatement
 		| TSKindId.ExecStatement
-		| TSKindId.ExpressionStatement
 		| TSKindId.ForStatement
 		| TSKindId.FutureImportStatement
 		| TSKindId.GlobalStatement
@@ -441,7 +437,6 @@ export interface PortableIds {
 	'statement.delete': TSKindId.DeleteStatement;
 	'statement.empty': TSKindId.PassStatement;
 	'statement.exec': TSKindId.ExecStatement;
-	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.global': TSKindId.GlobalStatement;
 	'statement.if': TSKindId.IfStatement;
 	'statement.import': TSKindId.FutureImportStatement | TSKindId.ImportFromStatement | TSKindId.ImportStatement;
@@ -457,7 +452,7 @@ export interface PortableIds {
 	'statement.return': TSKindId.ReturnStatement;
 	'statement.throw': TSKindId.RaiseStatement;
 	'statement.try': TSKindId.TryStatement;
-	type: TSKindId.ConstrainedType | TSKindId.GenericType | TSKindId.SplatType | TSKindId.Type | TSKindId.UnionType;
+	type: TSKindId.ConstrainedType | TSKindId.GenericType | TSKindId.SplatType | TSKindId.UnionType;
 	'type.constrained': TSKindId.ConstrainedType;
 	'type.generic': TSKindId.GenericType;
 	'type.nullable': TSKindId.GenericType;
@@ -468,8 +463,6 @@ export interface PortableIds {
 export interface PortableTexts {
 	argument: never;
 	'argument.named': never;
-	attribute: never;
-	'attribute.decorator': never;
 	clause: '*';
 	'clause.case': never;
 	'clause.case.match': never;
@@ -497,7 +490,7 @@ export interface PortableTexts {
 	'declaration.method': never;
 	'declaration.method.special': never;
 	'declaration.parameter': never;
-	'declaration.parameter.default': never;
+	'declaration.parameter.defaulted': never;
 	'declaration.parameter.typed': never;
 	'declaration.parameter.typed_default': never;
 	'declaration.property': never;
@@ -675,7 +668,6 @@ export interface PortableTexts {
 	'statement.delete': never;
 	'statement.empty': 'pass';
 	'statement.exec': never;
-	'statement.expression': never;
 	'statement.global': never;
 	'statement.if': never;
 	'statement.import': never;
@@ -702,8 +694,6 @@ export interface PortableTexts {
 export interface PortableKindsAt {
 	argument: { readonly $path: 'argument'; readonly named: PortableKindsAt['argument.named'] };
 	'argument.named': { readonly $path: 'argument.named' };
-	attribute: { readonly $path: 'attribute'; readonly decorator: PortableKindsAt['attribute.decorator'] };
-	'attribute.decorator': { readonly $path: 'attribute.decorator' };
 	clause: {
 		readonly $path: 'clause';
 		readonly case: PortableKindsAt['clause.case'];
@@ -769,11 +759,11 @@ export interface PortableKindsAt {
 	'declaration.method.special': { readonly $path: 'declaration.method.special' };
 	'declaration.parameter': {
 		readonly $path: 'declaration.parameter';
-		readonly default: PortableKindsAt['declaration.parameter.default'];
+		readonly defaulted: PortableKindsAt['declaration.parameter.defaulted'];
 		readonly typed: PortableKindsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableKindsAt['declaration.parameter.typed_default'];
 	};
-	'declaration.parameter.default': { readonly $path: 'declaration.parameter.default' };
+	'declaration.parameter.defaulted': { readonly $path: 'declaration.parameter.defaulted' };
 	'declaration.parameter.typed': { readonly $path: 'declaration.parameter.typed' };
 	'declaration.parameter.typed_default': { readonly $path: 'declaration.parameter.typed_default' };
 	'declaration.property': {
@@ -1198,7 +1188,6 @@ export interface PortableKindsAt {
 		readonly delete: PortableKindsAt['statement.delete'];
 		readonly empty: PortableKindsAt['statement.empty'];
 		readonly exec: PortableKindsAt['statement.exec'];
-		readonly expression: PortableKindsAt['statement.expression'];
 		readonly global: PortableKindsAt['statement.global'];
 		readonly if: PortableKindsAt['statement.if'];
 		readonly import: PortableKindsAt['statement.import'];
@@ -1218,7 +1207,6 @@ export interface PortableKindsAt {
 	'statement.delete': { readonly $path: 'statement.delete' };
 	'statement.empty': { readonly $path: 'statement.empty' };
 	'statement.exec': { readonly $path: 'statement.exec' };
-	'statement.expression': { readonly $path: 'statement.expression' };
 	'statement.global': { readonly $path: 'statement.global' };
 	'statement.if': { readonly $path: 'statement.if' };
 	'statement.import': {
@@ -1266,15 +1254,6 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['argument.named']
-	> & {};
-	attribute: PortableGuard<PortableIds['attribute'], PythonNode, TSKindId, PortableTexts['attribute']> & {
-		readonly decorator: PortableIsAt['attribute.decorator'];
-	};
-	'attribute.decorator': PortableGuard<
-		PortableIds['attribute.decorator'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['attribute.decorator']
 	> & {};
 	clause: PortableGuard<PortableIds['clause'], PythonNode, TSKindId, PortableTexts['clause']> & {
 		readonly case: PortableIsAt['clause.case'];
@@ -1426,15 +1405,15 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.parameter']
 	> & {
-		readonly default: PortableIsAt['declaration.parameter.default'];
+		readonly defaulted: PortableIsAt['declaration.parameter.defaulted'];
 		readonly typed: PortableIsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
 	};
-	'declaration.parameter.default': PortableGuard<
-		PortableIds['declaration.parameter.default'],
+	'declaration.parameter.defaulted': PortableGuard<
+		PortableIds['declaration.parameter.defaulted'],
 		PythonNode,
 		TSKindId,
-		PortableTexts['declaration.parameter.default']
+		PortableTexts['declaration.parameter.defaulted']
 	> & {};
 	'declaration.parameter.typed': PortableGuard<
 		PortableIds['declaration.parameter.typed'],
@@ -2568,7 +2547,6 @@ export interface PortableIsAt {
 		readonly delete: PortableIsAt['statement.delete'];
 		readonly empty: PortableIsAt['statement.empty'];
 		readonly exec: PortableIsAt['statement.exec'];
-		readonly expression: PortableIsAt['statement.expression'];
 		readonly global: PortableIsAt['statement.global'];
 		readonly if: PortableIsAt['statement.if'];
 		readonly import: PortableIsAt['statement.import'];
@@ -2622,12 +2600,6 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['statement.exec']
-	> & {};
-	'statement.expression': PortableGuard<
-		PortableIds['statement.expression'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['statement.expression']
 	> & {};
 	'statement.global': PortableGuard<
 		PortableIds['statement.global'],
@@ -2746,7 +2718,6 @@ export interface PortableIsAt {
 
 export interface PortableKinds {
 	readonly argument: PortableKindsAt['argument'];
-	readonly attribute: PortableKindsAt['attribute'];
 	readonly clause: PortableKindsAt['clause'];
 	readonly comment: PortableKindsAt['comment'];
 	readonly declaration: PortableKindsAt['declaration'];
@@ -2762,7 +2733,6 @@ export interface PortableKinds {
 
 export interface PortableIs {
 	readonly argument: PortableIsAt['argument'];
-	readonly attribute: PortableIsAt['attribute'];
 	readonly clause: PortableIsAt['clause'];
 	readonly comment: PortableIsAt['comment'];
 	readonly declaration: PortableIsAt['declaration'];
@@ -2780,13 +2750,10 @@ const table: PortableTable = {
 	paths: {
 		argument: { ids: [TSKindId.KeywordArgument], exact: true },
 		'argument.named': { ids: [TSKindId.KeywordArgument], exact: true },
-		attribute: { ids: [TSKindId.Decorator], exact: true },
-		'attribute.decorator': { ids: [TSKindId.Decorator], exact: true },
 		clause: {
 			ids: [
 				TSKindId.AliasedImport,
 				TSKindId.CaseClause,
-				TSKindId.ComprehensionClauses,
 				TSKindId.ElifClause,
 				TSKindId.ElseClause,
 				TSKindId.ExceptClause,
@@ -2805,10 +2772,7 @@ const table: PortableTable = {
 		'clause.case': { ids: [TSKindId.CaseClause], exact: true },
 		'clause.case.match': { ids: [TSKindId.CaseClause], exact: true },
 		'clause.catch': { ids: [TSKindId.ExceptClause], exact: true },
-		'clause.comprehension': {
-			ids: [TSKindId.ComprehensionClauses, TSKindId.ForInClause, TSKindId.IfClause],
-			exact: true
-		},
+		'clause.comprehension': { ids: [TSKindId.ForInClause, TSKindId.IfClause], exact: true },
 		'clause.comprehension.for': { ids: [TSKindId.ForInClause], exact: true },
 		'clause.comprehension.if': { ids: [TSKindId.IfClause], exact: true },
 		'clause.else': { ids: [TSKindId.ElseClause], exact: true },
@@ -2858,7 +2822,7 @@ const table: PortableTable = {
 			ids: [TSKindId.DefaultParameter, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
 			exact: true
 		},
-		'declaration.parameter.default': { ids: [TSKindId.DefaultParameter], exact: true },
+		'declaration.parameter.defaulted': { ids: [TSKindId.DefaultParameter], exact: true },
 		'declaration.parameter.typed': { ids: [TSKindId.TypedParameter], exact: true },
 		'declaration.parameter.typed_default': { ids: [TSKindId.TypedDefaultParameter], exact: true },
 		'declaration.property': { ids: [TSKindId.MethodDeclaration], exact: false },
@@ -3280,7 +3244,6 @@ const table: PortableTable = {
 				TSKindId.ContinueStatement,
 				TSKindId.DeleteStatement,
 				TSKindId.ExecStatement,
-				TSKindId.ExpressionStatement,
 				TSKindId.ForStatement,
 				TSKindId.FutureImportStatement,
 				TSKindId.GlobalStatement,
@@ -3312,7 +3275,6 @@ const table: PortableTable = {
 		'statement.delete': { ids: [TSKindId.DeleteStatement], exact: true },
 		'statement.empty': { ids: [TSKindId.PassStatement], exact: true },
 		'statement.exec': { ids: [TSKindId.ExecStatement], exact: true },
-		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.global': { ids: [TSKindId.GlobalStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
 		'statement.import': {
@@ -3332,7 +3294,7 @@ const table: PortableTable = {
 		'statement.throw': { ids: [TSKindId.RaiseStatement], exact: true },
 		'statement.try': { ids: [TSKindId.TryStatement], exact: true },
 		type: {
-			ids: [TSKindId.ConstrainedType, TSKindId.GenericType, TSKindId.SplatType, TSKindId.Type, TSKindId.UnionType],
+			ids: [TSKindId.ConstrainedType, TSKindId.GenericType, TSKindId.SplatType, TSKindId.UnionType],
 			exact: true
 		},
 		'type.constrained': { ids: [TSKindId.ConstrainedType], exact: true },
@@ -3456,6 +3418,16 @@ const table: PortableTable = {
 		[TSKindId.Await]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BinaryOperator]: [
 			{
+				path: 'expression.binary.shift.left',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '214': 1 } } }]
+			},
+			{
+				path: 'expression.binary.shift.right',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '214': 1 } } }]
+			},
+			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '214': 1 } } }]
@@ -3509,16 +3481,6 @@ const table: PortableTable = {
 				path: 'expression.binary.bitwise.xor',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '214': 1 } } }]
-			},
-			{
-				path: 'expression.binary.shift.left',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '214': 1 } } }]
-			},
-			{
-				path: 'expression.binary.shift.right',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '214': 1 } } }]
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
@@ -3724,14 +3686,12 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '197': 2 } } }]
 			}
 		],
-		[TSKindId.ComprehensionClauses]: [{ path: 'clause.comprehension', within: [], test: [] }],
 		[TSKindId.ConcatenatedString]: [{ path: 'literal.string.concatenated', within: [], test: [] }],
 		[TSKindId.ConditionalExpression]: [{ path: 'expression.conditional', within: [], test: [] }],
 		[TSKindId.ConstrainedType]: [{ path: 'type.constrained', within: [], test: [] }],
 		[TSKindId.ConstructorDeclaration]: [{ path: 'declaration.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],
-		[TSKindId.Decorator]: [{ path: 'attribute.decorator', within: [], test: [] }],
-		[TSKindId.DefaultParameter]: [{ path: 'declaration.parameter.default', within: [], test: [] }],
+		[TSKindId.DefaultParameter]: [{ path: 'declaration.parameter.defaulted', within: [], test: [] }],
 		[TSKindId.DeleteStatement]: [{ path: 'statement.delete', within: [], test: [] }],
 		[TSKindId.DictPattern]: [{ path: 'pattern.map', within: [], test: [] }],
 		[TSKindId.Dictionary]: [{ path: 'expression.collection.map', within: [], test: [] }],
@@ -3753,7 +3713,6 @@ const table: PortableTable = {
 		[TSKindId.ExceptClause]: [{ path: 'clause.catch', within: [], test: [] }],
 		[TSKindId.ExecStatement]: [{ path: 'statement.exec', within: [], test: [] }],
 		[TSKindId.ExpressionList]: [{ path: 'expression.collection.tuple.bare', within: [], test: [] }],
-		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
 		[TSKindId.ExpressionStatementTuple]: [
 			{
 				path: 'expression.collection.tuple.bare',
@@ -4032,7 +3991,6 @@ const table: PortableTable = {
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
 		[TSKindId.Tuple]: [{ path: 'expression.collection.tuple', within: [], test: [] }],
 		[TSKindId.TuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
-		[TSKindId.Type]: [{ path: 'type', within: [], test: [] }],
 		[TSKindId.TypeAliasStatement]: [{ path: 'declaration.type_alias', within: [], test: [] }],
 		[TSKindId.TypeConversion]: [{ path: 'expression.interpolation.conversion', within: [], test: [] }],
 		[TSKindId.TypeParamParamSpec]: [{ path: 'declaration.type_parameter.parameters', within: [], test: [] }],

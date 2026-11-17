@@ -433,10 +433,10 @@
       ]
     },
     "attribute": {
-      "vocab": "attribute.content",
+      "vocab": "attribute",
       "read": [
         {
-          "vocab": "attribute.content",
+          "vocab": "attribute",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -508,31 +508,8 @@
       ]
     },
     "attribute_item": {
-      "vocab": "attribute",
-      "read": [
-        {
-          "vocab": "attribute",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "attribute_item",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
-        "slot": "content",
+        "slot": "attribute",
         "kinds": [
           "attribute"
         ],
@@ -1339,6 +1316,56 @@
           "test": []
         },
         {
+          "vocab": "expression.binary.shift.left",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "<<"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<<",
+                "slots": {
+                  "270": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.shift.right",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": ">>"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">>",
+                "slots": {
+                  "270": 1
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.binary.arithmetic.add",
           "toplevel": true,
           "within": [],
@@ -1689,56 +1716,6 @@
           ]
         },
         {
-          "vocab": "expression.binary.shift.left",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": "<<"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "<<",
-                "slots": {
-                  "270": 1
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "expression.binary.shift.right",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": ">>"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": ">>",
-                "slots": {
-                  "270": 1
-                }
-              }
-            }
-          ]
-        },
-        {
           "vocab": "expression.binary.logical.and",
           "toplevel": true,
           "within": [],
@@ -1790,6 +1767,28 @@
         }
       ],
       "members": [
+        {
+          "name": "operand",
+          "route": "slot",
+          "slot": "left",
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "count",
+          "route": "slot",
+          "slot": "right",
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "right"
+            }
+          ]
+        },
         {
           "name": "left",
           "route": "slot",
@@ -1914,19 +1913,7 @@
           ]
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "block_comment",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -6222,19 +6209,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_hex",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "escape_sequence_simple": {
       "vocab": "literal.string.escape",
@@ -6247,19 +6222,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_simple",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "escape_sequence_unicode_braced": {
       "vocab": "literal.string.escape",
@@ -6272,19 +6235,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_unicode_braced",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "escape_sequence_unicode_fixed": {
       "vocab": "literal.string.escape",
@@ -6297,19 +6248,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_unicode_fixed",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "expr_2021_keyword": {
       "vocab": "element.macro.fragment",
@@ -6338,29 +6277,6 @@
       "members": []
     },
     "expression_statement": {
-      "vocab": "statement.expression",
-      "read": [
-        {
-          "vocab": "statement.expression",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "expression_statement",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "content",
         "kinds": [
@@ -6388,7 +6304,13 @@
           "_expression"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "flags": [
+          "terminated"
+        ],
+        "flagged": [
+          "macro_invocation"
+        ]
       }
     },
     "extension_declaration_body": {
@@ -7681,13 +7603,13 @@
           ]
         },
         {
-          "name": "field",
+          "name": "name",
           "route": "slot",
-          "slot": "field",
+          "slot": "name",
           "path": [
             {
               "owner": "field_initializer",
-              "slot": "field"
+              "slot": "name"
             }
           ]
         },
@@ -7909,29 +7831,6 @@
       ]
     },
     "for_lifetimes": {
-      "vocab": "clause.lifetimes",
-      "read": [
-        {
-          "vocab": "clause.lifetimes",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "lifetimes",
-          "route": "slot",
-          "slot": "lifetimes",
-          "path": [
-            {
-              "owner": "for_lifetimes",
-              "slot": "lifetimes"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "lifetimes",
         "kinds": [
@@ -10557,36 +10456,16 @@
       ]
     },
     "inner_attribute_item": {
-      "vocab": "attribute.inner",
-      "read": [
-        {
-          "vocab": "attribute.inner",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "inner_attribute_item",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
-        "slot": "content",
+        "slot": "attribute",
         "kinds": [
           "attribute"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "flags": [
+          "inner"
+        ]
       }
     },
     "integer_literal_binary": {
@@ -11150,19 +11029,7 @@
           ]
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "line_comment",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -14711,19 +14578,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "string_content",
-          "path": [
-            {
-              "owner": "raw_string_literal",
-              "slot": "string_content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "raw_string_literal_content": {
       "vocab": "literal.string.text",
@@ -15438,13 +15293,13 @@
           ]
         },
         {
-          "name": "field",
+          "name": "name",
           "route": "slot",
-          "slot": "field",
+          "slot": "name",
           "path": [
             {
               "owner": "shorthand_field_initializer",
-              "slot": "field"
+              "slot": "name"
             }
           ]
         }
@@ -19255,29 +19110,6 @@
       }
     },
     "trait_bounds": {
-      "vocab": "clause.bounds",
-      "read": [
-        {
-          "vocab": "clause.bounds",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "bounds",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "trait_bounds",
-              "slot": "bounds"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "bounds",
         "kinds": [
@@ -20183,7 +20015,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "argument",
           "route": "slot",
           "slot": "content",
           "path": [
@@ -21859,13 +21691,13 @@
           ]
         },
         {
-          "name": "alias",
+          "name": "rename",
           "route": "slot",
-          "slot": "alias",
+          "slot": "rename",
           "path": [
             {
               "owner": "use_as_clause",
-              "slot": "alias"
+              "slot": "rename"
             }
           ]
         }
@@ -23055,15 +22887,15 @@
       },
       {
         "depth": 2,
-        "paths": 96,
-        "kinds": 134,
-        "refinements": 7
+        "paths": 92,
+        "kinds": 129,
+        "refinements": 5
       },
       {
         "depth": 3,
         "paths": 109,
         "kinds": 115,
-        "refinements": 83
+        "refinements": 80
       },
       {
         "depth": 4,

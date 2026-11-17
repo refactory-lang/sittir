@@ -7012,7 +7012,7 @@ pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, Some(SeatPath::Content), None, None, Some(SeatPath::Content), None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    Some(SeatPath::Field(FieldId(88))), None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content), Some(SeatPath::Content),
+    Some(SeatPath::Field(FieldId(87))), None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content), Some(SeatPath::Content),
 ];
 
 /// Per kind id of a list, the site its items' separator reads.

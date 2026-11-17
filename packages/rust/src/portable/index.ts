@@ -7,13 +7,10 @@ import { querySlots } from '../utils.js';
 
 export interface PortableIds {
 	argument: TSKindId.Argument;
-	attribute: TSKindId.Attribute | TSKindId.AttributeItem | TSKindId.InnerAttributeItem;
-	'attribute.content': TSKindId.Attribute;
-	'attribute.inner': TSKindId.InnerAttributeItem;
+	attribute: TSKindId.Attribute;
 	clause:
 		| TSKindId.LetChain
 		| TSKindId.ElseClause
-		| TSKindId.ForLifetimes
 		| TSKindId.HigherRankedTraitBound
 		| TSKindId.LastMatchArm
 		| TSKindId.LetCondition
@@ -22,18 +19,13 @@ export interface PortableIds {
 		| TSKindId.MatchArmWithComma
 		| TSKindId.RemovedTraitBound
 		| TSKindId.ScopedUseList
-		| TSKindId.TraitBounds
 		| TSKindId.UseAsClause
 		| TSKindId.UseBounds
 		| TSKindId.UseList
 		| TSKindId.UseWildcard
 		| TSKindId.WhereClause
 		| TSKindId.WherePredicate;
-	'clause.bounds':
-		| TSKindId.HigherRankedTraitBound
-		| TSKindId.RemovedTraitBound
-		| TSKindId.TraitBounds
-		| TSKindId.UseBounds;
+	'clause.bounds': TSKindId.HigherRankedTraitBound | TSKindId.RemovedTraitBound | TSKindId.UseBounds;
 	'clause.bounds.higher_ranked': TSKindId.HigherRankedTraitBound;
 	'clause.bounds.removed': TSKindId.RemovedTraitBound;
 	'clause.bounds.use': TSKindId.UseBounds;
@@ -47,7 +39,6 @@ export interface PortableIds {
 	'clause.import.wildcard': TSKindId.UseWildcard;
 	'clause.let': TSKindId.LetChain | TSKindId.LetCondition;
 	'clause.let.chain': TSKindId.LetChain;
-	'clause.lifetimes': TSKindId.ForLifetimes;
 	'clause.macro': TSKindId.MacroRule;
 	'clause.macro.rule': TSKindId.MacroRule;
 	'clause.where': TSKindId.WhereClause | TSKindId.WherePredicate;
@@ -636,7 +627,6 @@ export interface PortableIds {
 		| TSKindId.BreakExpression
 		| TSKindId.ContinueExpression
 		| TSKindId.EmptyStatement
-		| TSKindId.ExpressionStatement
 		| TSKindId.ExternCrateDeclaration
 		| TSKindId.ForExpression
 		| TSKindId.IfExpression
@@ -649,7 +639,6 @@ export interface PortableIds {
 	'statement.break': TSKindId.BreakExpression;
 	'statement.continue': TSKindId.ContinueExpression;
 	'statement.empty': TSKindId.EmptyStatement;
-	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.if': TSKindId.IfExpression;
 	'statement.import': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.package': TSKindId.ExternCrateDeclaration;
@@ -764,8 +753,6 @@ export interface PortableIds {
 export interface PortableTexts {
 	argument: never;
 	attribute: never;
-	'attribute.content': never;
-	'attribute.inner': never;
 	clause: never;
 	'clause.bounds': never;
 	'clause.bounds.higher_ranked': never;
@@ -781,7 +768,6 @@ export interface PortableTexts {
 	'clause.import.wildcard': never;
 	'clause.let': never;
 	'clause.let.chain': never;
-	'clause.lifetimes': never;
 	'clause.macro': never;
 	'clause.macro.rule': never;
 	'clause.where': never;
@@ -1116,7 +1102,6 @@ export interface PortableTexts {
 	'statement.break': never;
 	'statement.continue': never;
 	'statement.empty': ';';
-	'statement.expression': never;
 	'statement.if': never;
 	'statement.import': never;
 	'statement.import.package': never;
@@ -1217,13 +1202,7 @@ export interface PortableTexts {
 
 export interface PortableKindsAt {
 	argument: { readonly $path: 'argument' };
-	attribute: {
-		readonly $path: 'attribute';
-		readonly content: PortableKindsAt['attribute.content'];
-		readonly inner: PortableKindsAt['attribute.inner'];
-	};
-	'attribute.content': { readonly $path: 'attribute.content' };
-	'attribute.inner': { readonly $path: 'attribute.inner' };
+	attribute: { readonly $path: 'attribute' };
 	clause: {
 		readonly $path: 'clause';
 		readonly bounds: PortableKindsAt['clause.bounds'];
@@ -1231,7 +1210,6 @@ export interface PortableKindsAt {
 		readonly else: PortableKindsAt['clause.else'];
 		readonly import: PortableKindsAt['clause.import'];
 		readonly let: PortableKindsAt['clause.let'];
-		readonly lifetimes: PortableKindsAt['clause.lifetimes'];
 		readonly macro: PortableKindsAt['clause.macro'];
 		readonly where: PortableKindsAt['clause.where'];
 	};
@@ -1262,7 +1240,6 @@ export interface PortableKindsAt {
 	'clause.import.wildcard': { readonly $path: 'clause.import.wildcard' };
 	'clause.let': { readonly $path: 'clause.let'; readonly chain: PortableKindsAt['clause.let.chain'] };
 	'clause.let.chain': { readonly $path: 'clause.let.chain' };
-	'clause.lifetimes': { readonly $path: 'clause.lifetimes' };
 	'clause.macro': { readonly $path: 'clause.macro'; readonly rule: PortableKindsAt['clause.macro.rule'] };
 	'clause.macro.rule': { readonly $path: 'clause.macro.rule' };
 	'clause.where': { readonly $path: 'clause.where'; readonly predicate: PortableKindsAt['clause.where.predicate'] };
@@ -1998,7 +1975,6 @@ export interface PortableKindsAt {
 		readonly break: PortableKindsAt['statement.break'];
 		readonly continue: PortableKindsAt['statement.continue'];
 		readonly empty: PortableKindsAt['statement.empty'];
-		readonly expression: PortableKindsAt['statement.expression'];
 		readonly if: PortableKindsAt['statement.if'];
 		readonly import: PortableKindsAt['statement.import'];
 		readonly loop: PortableKindsAt['statement.loop'];
@@ -2009,7 +1985,6 @@ export interface PortableKindsAt {
 	'statement.break': { readonly $path: 'statement.break' };
 	'statement.continue': { readonly $path: 'statement.continue' };
 	'statement.empty': { readonly $path: 'statement.empty' };
-	'statement.expression': { readonly $path: 'statement.expression' };
 	'statement.if': { readonly $path: 'statement.if' };
 	'statement.import': {
 		readonly $path: 'statement.import';
@@ -2119,29 +2094,13 @@ export interface PortableKindsAt {
 
 export interface PortableIsAt {
 	argument: PortableGuard<PortableIds['argument'], RustNode, TSKindId, PortableTexts['argument']> & {};
-	attribute: PortableGuard<PortableIds['attribute'], RustNode, TSKindId, PortableTexts['attribute']> & {
-		readonly content: PortableIsAt['attribute.content'];
-		readonly inner: PortableIsAt['attribute.inner'];
-	};
-	'attribute.content': PortableGuard<
-		PortableIds['attribute.content'],
-		RustNode,
-		TSKindId,
-		PortableTexts['attribute.content']
-	> & {};
-	'attribute.inner': PortableGuard<
-		PortableIds['attribute.inner'],
-		RustNode,
-		TSKindId,
-		PortableTexts['attribute.inner']
-	> & {};
+	attribute: PortableGuard<PortableIds['attribute'], RustNode, TSKindId, PortableTexts['attribute']> & {};
 	clause: PortableGuard<PortableIds['clause'], RustNode, TSKindId, PortableTexts['clause']> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
 		readonly case: PortableIsAt['clause.case'];
 		readonly else: PortableIsAt['clause.else'];
 		readonly import: PortableIsAt['clause.import'];
 		readonly let: PortableIsAt['clause.let'];
-		readonly lifetimes: PortableIsAt['clause.lifetimes'];
 		readonly macro: PortableIsAt['clause.macro'];
 		readonly where: PortableIsAt['clause.where'];
 	};
@@ -2215,12 +2174,6 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['clause.let.chain']
-	> & {};
-	'clause.lifetimes': PortableGuard<
-		PortableIds['clause.lifetimes'],
-		RustNode,
-		TSKindId,
-		PortableTexts['clause.lifetimes']
 	> & {};
 	'clause.macro': PortableGuard<PortableIds['clause.macro'], RustNode, TSKindId, PortableTexts['clause.macro']> & {
 		readonly rule: PortableIsAt['clause.macro.rule'];
@@ -4158,7 +4111,6 @@ export interface PortableIsAt {
 		readonly break: PortableIsAt['statement.break'];
 		readonly continue: PortableIsAt['statement.continue'];
 		readonly empty: PortableIsAt['statement.empty'];
-		readonly expression: PortableIsAt['statement.expression'];
 		readonly if: PortableIsAt['statement.if'];
 		readonly import: PortableIsAt['statement.import'];
 		readonly loop: PortableIsAt['statement.loop'];
@@ -4188,12 +4140,6 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['statement.empty']
-	> & {};
-	'statement.expression': PortableGuard<
-		PortableIds['statement.expression'],
-		RustNode,
-		TSKindId,
-		PortableTexts['statement.expression']
 	> & {};
 	'statement.if': PortableGuard<PortableIds['statement.if'], RustNode, TSKindId, PortableTexts['statement.if']> & {};
 	'statement.import': PortableGuard<
@@ -4512,14 +4458,11 @@ export interface PortableIs {
 const table: PortableTable = {
 	paths: {
 		argument: { ids: [TSKindId.Argument], exact: false },
-		attribute: { ids: [TSKindId.Attribute, TSKindId.AttributeItem, TSKindId.InnerAttributeItem], exact: true },
-		'attribute.content': { ids: [TSKindId.Attribute], exact: true },
-		'attribute.inner': { ids: [TSKindId.InnerAttributeItem], exact: true },
+		attribute: { ids: [TSKindId.Attribute], exact: true },
 		clause: {
 			ids: [
 				TSKindId.LetChain,
 				TSKindId.ElseClause,
-				TSKindId.ForLifetimes,
 				TSKindId.HigherRankedTraitBound,
 				TSKindId.LastMatchArm,
 				TSKindId.LetCondition,
@@ -4528,7 +4471,6 @@ const table: PortableTable = {
 				TSKindId.MatchArmWithComma,
 				TSKindId.RemovedTraitBound,
 				TSKindId.ScopedUseList,
-				TSKindId.TraitBounds,
 				TSKindId.UseAsClause,
 				TSKindId.UseBounds,
 				TSKindId.UseList,
@@ -4539,7 +4481,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'clause.bounds': {
-			ids: [TSKindId.HigherRankedTraitBound, TSKindId.RemovedTraitBound, TSKindId.TraitBounds, TSKindId.UseBounds],
+			ids: [TSKindId.HigherRankedTraitBound, TSKindId.RemovedTraitBound, TSKindId.UseBounds],
 			exact: true
 		},
 		'clause.bounds.higher_ranked': { ids: [TSKindId.HigherRankedTraitBound], exact: true },
@@ -4564,7 +4506,6 @@ const table: PortableTable = {
 		'clause.import.wildcard': { ids: [TSKindId.UseWildcard], exact: true },
 		'clause.let': { ids: [TSKindId.LetChain, TSKindId.LetCondition], exact: true },
 		'clause.let.chain': { ids: [TSKindId.LetChain], exact: true },
-		'clause.lifetimes': { ids: [TSKindId.ForLifetimes], exact: true },
 		'clause.macro': { ids: [TSKindId.MacroRule], exact: true },
 		'clause.macro.rule': { ids: [TSKindId.MacroRule], exact: true },
 		'clause.where': { ids: [TSKindId.WhereClause, TSKindId.WherePredicate], exact: true },
@@ -5315,7 +5256,6 @@ const table: PortableTable = {
 				TSKindId.BreakExpression,
 				TSKindId.ContinueExpression,
 				TSKindId.EmptyStatement,
-				TSKindId.ExpressionStatement,
 				TSKindId.ExternCrateDeclaration,
 				TSKindId.ForExpression,
 				TSKindId.IfExpression,
@@ -5331,7 +5271,6 @@ const table: PortableTable = {
 		'statement.break': { ids: [TSKindId.BreakExpression], exact: true },
 		'statement.continue': { ids: [TSKindId.ContinueExpression], exact: true },
 		'statement.empty': { ids: [TSKindId.EmptyStatement], exact: true },
-		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfExpression], exact: true },
 		'statement.import': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: true },
 		'statement.import.package': { ids: [TSKindId.ExternCrateDeclaration], exact: true },
@@ -5480,8 +5419,7 @@ const table: PortableTable = {
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
 		[TSKindId.AssociatedType]: [{ path: 'declaration.type_alias.associated', within: [], test: [] }],
 		[TSKindId.AsyncBlock]: [{ path: 'expression.block.async', within: [], test: [] }],
-		[TSKindId.Attribute]: [{ path: 'attribute.content', within: [], test: [] }],
-		[TSKindId.AttributeItem]: [{ path: 'attribute', within: [], test: [] }],
+		[TSKindId.Attribute]: [{ path: 'attribute', within: [], test: [] }],
 		[TSKindId.AttributedElement]: [{ path: 'element.attributed', within: [], test: [] }],
 		[TSKindId.AttributedOrderedField]: [
 			{
@@ -5579,6 +5517,16 @@ const table: PortableTable = {
 		[TSKindId.BinaryExpression]: [
 			{ path: 'expression.binary', within: [], test: [] },
 			{
+				path: 'expression.binary.shift.left',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '270': 1 } } }]
+			},
+			{
+				path: 'expression.binary.shift.right',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '270': 1 } } }]
+			},
+			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '270': 1 } } }]
@@ -5647,16 +5595,6 @@ const table: PortableTable = {
 				path: 'expression.binary.bitwise.xor',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '270': 1 } } }]
-			},
-			{
-				path: 'expression.binary.shift.left',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '270': 1 } } }]
-			},
-			{
-				path: 'expression.binary.shift.right',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.and',
@@ -6286,7 +6224,6 @@ const table: PortableTable = {
 		[TSKindId.EscapeSequenceUnicodeFixed]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.Expr2021Keyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.ExprKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
-		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
 		[TSKindId.ExternCrateDeclaration]: [
 			{
 				path: 'statement.import.package.private',
@@ -6489,7 +6426,6 @@ const table: PortableTable = {
 		[TSKindId.FieldPatternShorthand]: [{ path: 'pattern.struct.field', within: [], test: [] }],
 		[TSKindId.FloatLiteral]: [{ path: 'literal.number.float', within: [], test: [] }],
 		[TSKindId.ForExpression]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
-		[TSKindId.ForLifetimes]: [{ path: 'clause.lifetimes', within: [], test: [] }],
 		[TSKindId.ForeignModItemBody]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
 		[TSKindId.ForeignModItemSemi]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
 		[TSKindId.FunctionItem]: [
@@ -6714,7 +6650,6 @@ const table: PortableTable = {
 		],
 		[TSKindId.ImplItemSemi]: [{ path: 'declaration.extension', within: [], test: [] }],
 		[TSKindId.IndexExpression]: [{ path: 'expression.subscript', within: [], test: [] }],
-		[TSKindId.InnerAttributeItem]: [{ path: 'attribute.inner', within: [], test: [] }],
 		[TSKindId.IntegerLiteralBinary]: [{ path: 'literal.number.integer.binary', within: [], test: [] }],
 		[TSKindId.IntegerLiteralDecimal]: [{ path: 'literal.number.integer', within: [], test: [] }],
 		[TSKindId.IntegerLiteralHex]: [{ path: 'literal.number.integer.hex', within: [], test: [] }],
@@ -7719,7 +7654,6 @@ const table: PortableTable = {
 			{ path: 'element.macro.token_tree.pattern.paren', within: [], test: [] },
 			{ path: 'element.macro.token_tree.pattern', within: [], test: [] }
 		],
-		[TSKindId.TraitBounds]: [{ path: 'clause.bounds', within: [], test: [] }],
 		[TSKindId.TraitItem]: [
 			{
 				path: 'declaration.interface.trait.private',

@@ -86,8 +86,7 @@ export namespace Literal {
 		export interface Escape<G extends GrammarMap, K extends Under<'literal.string.escape'> = 'literal.string.escape'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by prt
 			readonly $path: K;
-			readonly content?: Slot<G, K, 'content', unknown>;
-			// t only
+			readonly $value: string;
 		}
 		export interface Text<G extends GrammarMap, K extends Under<'literal.string.text'> = 'literal.string.text'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by prt

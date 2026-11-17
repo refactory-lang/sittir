@@ -718,20 +718,20 @@ function withImportList(node: object, setter: string, args: readonly unknown[]):
 
 export function buildAliasedImport<
 	NameSlot extends T.AliasedImport.Config['name'],
-	AliasSlot extends T.AliasedImport.Config['alias']
->(config: RefusingConfig<T.AliasedImport.Config, { name: NameSlot; alias: AliasSlot }>): T.AliasedImport.Bound;
+	RenameSlot extends T.AliasedImport.Config['rename']
+>(config: RefusingConfig<T.AliasedImport.Config, { name: NameSlot; rename: RenameSlot }>): T.AliasedImport.Bound;
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Bound {
 	currentHandle()?.admit(TSKindId.AliasedImport, [config]);
 	const _name = config.name;
-	const _alias = config.alias;
+	const _rename = config.rename;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'aliased_import', { name: _name, alias: _alias });
+	if (handle !== undefined) admitChildren(handle, 'aliased_import', { name: _name, rename: _rename });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AliasedImport as const, { _name, _alias });
+	handle?.verifyStored?.(TSKindId.AliasedImport as const, { _name, _rename });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AliasedImport as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 5, _alias);
+		storeCell(arena, record, 3, 5, _rename);
 		const node = arena.view(record);
 		return node as unknown as T.AliasedImport.Bound;
 	});
@@ -740,28 +740,28 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 function buildAliasedImport$patch(source: object, config: T.AliasedImport.Config): T.AliasedImport.Bound {
 	currentHandle()?.admit(TSKindId.AliasedImport, [config]);
 	const _name = config.name;
-	const _alias = config.alias;
+	const _rename = config.rename;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'aliased_import', { name: _name, alias: _alias });
+	if (handle !== undefined) admitChildren(handle, 'aliased_import', { name: _name, rename: _rename });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AliasedImport as const, { _name, _alias });
+	handle?.verifyStored?.(TSKindId.AliasedImport as const, { _name, _rename });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AliasedImport as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 5, carriedSlot(source, 'alias', _alias));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'rename', _rename));
 		const node = arena.view(record);
 		return node as unknown as T.AliasedImport.Bound;
 	});
 }
 function buildAliasedImport$set(
 	source: object,
-	...[slot, input]: ['name', Partial<T.AliasedImport.Config>] | ['alias', Partial<T.AliasedImport.Config>]
+	...[slot, input]: ['name', Partial<T.AliasedImport.Config>] | ['rename', Partial<T.AliasedImport.Config>]
 ): T.AliasedImport.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'name':
-			case 'alias':
+			case 'rename':
 				return buildAliasedImport$patch(source, { ...(inputs.config as T.AliasedImport.Config), ...input });
 		}
 	}
@@ -778,16 +778,16 @@ function buildAliasedImport$set(
 				_name
 			) as unknown as T.AliasedImport.Bound;
 		}
-		case 'alias': {
+		case 'rename': {
 			const config = input;
-			const _alias = config.alias;
+			const _rename = config.rename;
 			return setSlot(
 				source,
 				TSKindId.AliasedImport as const,
 				'aliased_import',
 				1,
-				'alias',
-				_alias
+				'rename',
+				_rename
 			) as unknown as T.AliasedImport.Bound;
 		}
 	}
@@ -799,9 +799,9 @@ function withAliasedImport(node: object, setter: string, args: readonly unknown[
 			return applySetter(args, (value: Admit<T.DottedName>) =>
 				rebuilt(node, handle, () => buildAliasedImport$set(node, 'name', { name: value }))
 			);
-		case 'alias':
+		case 'rename':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildAliasedImport$set(node, 'alias', { alias: value }))
+				rebuilt(node, handle, () => buildAliasedImport$set(node, 'rename', { rename: value }))
 			);
 	}
 	throw new Error(`aliased_import has no $with.${setter}`);
@@ -3680,14 +3680,14 @@ export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListS
 export function buildParenthesizedListSplat(
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
-	const _content = value;
+	const _expression = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { expression: _expression });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _content });
+	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _expression });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ParenthesizedListSplat as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.ParenthesizedListSplat.Bound;
 	});
@@ -3697,14 +3697,14 @@ function buildParenthesizedListSplat$patch(
 	source: object,
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
-	const _content = value;
+	const _expression = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { expression: _expression });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _content });
+	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _expression });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ParenthesizedListSplat as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.ParenthesizedListSplat.Bound;
 	});
@@ -3712,7 +3712,7 @@ function buildParenthesizedListSplat$patch(
 function withParenthesizedListSplat(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'content':
+		case 'expression':
 			return applySetter(args, (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
 				rebuilt(node, handle, () => buildParenthesizedListSplat$patch(node, value))
 			);

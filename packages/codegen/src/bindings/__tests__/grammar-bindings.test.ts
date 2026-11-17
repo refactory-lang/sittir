@@ -76,6 +76,7 @@ const node = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 	interiorPart: null,
 	textLeavesThrough: [],
 	shownAs: [],
+	spells: [],
 	...extra
 });
 const MODEL: SlotModel = new Map([
@@ -234,6 +235,7 @@ describe('deriveGrammarBindings', () => {
 			interiorPart: null,
 			textLeavesThrough: [],
 			shownAs: [],
+			spells: [],
 			...extra
 		});
 		const model: SlotModel = new Map([
@@ -273,6 +275,7 @@ describe('deriveGrammarBindings', () => {
 			interiorPart: null,
 			textLeavesThrough: [],
 			shownAs: [],
+			spells: [],
 			...extra
 		});
 		const model: SlotModel = new Map([
@@ -884,7 +887,8 @@ describe('a child that shares a union slot', () => {
 					aliasStorage: null,
 					interiorPart: null,
 					textLeavesThrough: [],
-					shownAs: []
+					shownAs: [],
+					spells: []
 				} as ModelNode
 			]
 		]);
@@ -965,6 +969,7 @@ describe('a claim on a supertype owner', () => {
 		interiorPart: null,
 		textLeavesThrough: [],
 		shownAs: [],
+		spells: [],
 		...extra
 	});
 	const modelOf = ({ bareMultiple = true, armBlockSlots = [slot('pattern', ['identifier'])] } = {}): SlotModel =>

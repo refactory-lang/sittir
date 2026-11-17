@@ -142,8 +142,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['operator', 2, undefined, '_operator']
 	],
 	189: [['content', 0, undefined, '_content']],
-	190: [['content', 0, undefined, '_content']],
-	191: [['content', 0, undefined, '_content']],
+	190: [['attribute', 0, undefined, '_attribute']],
+	191: [['attribute', 0, undefined, '_attribute']],
 	192: [
 		['path', 0, undefined, '_path'],
 		['input', 1, undefined, '_input']
@@ -283,7 +283,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	227: [['useClauses', 0, undefined, '_use_clauses']],
 	228: [
 		['name', 0, undefined, '_name'],
-		['alias', 1, undefined, '_alias']
+		['rename', 1, undefined, '_rename']
 	],
 	229: [['useWildcardGroup', 0, undefined, '_use_wildcard_group']],
 	230: [['elements', 0, undefined, '_elements']],
@@ -409,11 +409,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	283: [['initializers', 0, undefined, '_initializers']],
 	284: [
 		['attributes', 0, undefined, '_attributes'],
-		['field', 1, undefined, '_field']
+		['name', 1, undefined, '_name']
 	],
 	285: [
 		['attributes', 0, undefined, '_attributes'],
-		['field', 1, undefined, '_field'],
+		['name', 1, undefined, '_name'],
 		['value', 2, undefined, '_value']
 	],
 	286: [['value', 0, undefined, '_value']],
@@ -994,15 +994,15 @@ export const structure: StructureTable = Object.freeze({
 	},
 	190: {
 		kind: 'attribute_item',
-		required: [['_content', 'content']],
-		single: [['_content', 'AttributeItem.content']],
-		nodeOnly: [['_content', 'AttributeItem.content', 'a built Attribute', [192]]]
+		required: [['_attribute', 'attribute']],
+		single: [['_attribute', 'AttributeItem.attribute']],
+		nodeOnly: [['_attribute', 'AttributeItem.attribute', 'a built Attribute', [192]]]
 	},
 	191: {
 		kind: 'inner_attribute_item',
-		required: [['_content', 'content']],
-		single: [['_content', 'InnerAttributeItem.content']],
-		nodeOnly: [['_content', 'InnerAttributeItem.content', 'a built Attribute', [192]]]
+		required: [['_attribute', 'attribute']],
+		single: [['_attribute', 'InnerAttributeItem.attribute']],
+		nodeOnly: [['_attribute', 'InnerAttributeItem.attribute', 'a built Attribute', [192]]]
 	},
 	192: {
 		kind: 'attribute',
@@ -1479,17 +1479,17 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'use_as_clause',
 		required: [
 			['_name', 'name'],
-			['_alias', 'alias']
+			['_rename', 'rename']
 		],
 		single: [
 			['_name', 'UseAsClause.name'],
-			['_alias', 'UseAsClause.alias']
+			['_rename', 'UseAsClause.rename']
 		],
 		nodeOnly: [
 			['_name', 'UseAsClause.name', 'buildIdentifier(…)'],
-			['_alias', 'UseAsClause.alias', 'buildIdentifier(…)', [1]]
+			['_rename', 'UseAsClause.rename', 'buildIdentifier(…)', [1]]
 		],
-		config: ['name', 'alias']
+		config: ['name', 'rename']
 	},
 	229: {
 		kind: 'use_wildcard',
@@ -1972,31 +1972,31 @@ export const structure: StructureTable = Object.freeze({
 	},
 	284: {
 		kind: 'shorthand_field_initializer',
-		required: [['_field', 'field']],
-		single: [['_field', 'ShorthandFieldInitializer.field']],
+		required: [['_name', 'name']],
+		single: [['_name', 'ShorthandFieldInitializer.name']],
 		nodeOnly: [
 			['_attributes', 'ShorthandFieldInitializer.attributes', 'a built AttributeItem', [190]],
-			['_field', 'ShorthandFieldInitializer.field', 'buildIdentifier(…)', [1]]
+			['_name', 'ShorthandFieldInitializer.name', 'buildIdentifier(…)', [1]]
 		],
-		config: ['attributes', 'field'],
+		config: ['attributes', 'name'],
 		lists: [['attributes', false, 'key']]
 	},
 	285: {
 		kind: 'field_initializer',
 		required: [
-			['_field', 'field'],
+			['_name', 'name'],
 			['_value', 'value']
 		],
 		single: [
-			['_field', 'FieldInitializer.field'],
+			['_name', 'FieldInitializer.name'],
 			['_value', 'FieldInitializer.value']
 		],
 		nodeOnly: [
 			['_attributes', 'FieldInitializer.attributes', 'a built AttributeItem', [190]],
-			['_field', 'FieldInitializer.field', 'a built FieldIdentifier / IntegerLiteral', [331, 478]],
+			['_name', 'FieldInitializer.name', 'a built FieldIdentifier / IntegerLiteral', [331, 478]],
 			['_value', 'FieldInitializer.value', 'a built Expression', [258]]
 		],
-		config: ['attributes', 'field', 'value'],
+		config: ['attributes', 'name', 'value'],
 		lists: [['attributes', false, 'key']]
 	},
 	286: {

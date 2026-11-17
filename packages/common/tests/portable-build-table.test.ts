@@ -50,7 +50,7 @@ describe('the portable build table', () => {
 	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: a seat takes text only where its holder spells it, never where its slot holds containers', (grammar) => {
 		for (const { arms } of Object.values(tables[grammar].table.paths))
 			for (const arm of arms)
-				for (const member of arm.members) {
+				for (const member of [...arm.members, ...(arm.content === undefined ? [] : [arm.content])]) {
 					for (const seat of member.seats) if (seat.text) expect([seat.kinds, seat.leaf], `${arm.builder} ${member.name}`).toEqual([[], undefined]);
 					if (member.seats.some((seat) => seat.within !== undefined)) expect(member.seats[0]!.text, `${arm.builder} ${member.name}`).toBeUndefined();
 				}
@@ -58,7 +58,7 @@ describe('the portable build table', () => {
 		expect(seatOf('pattern.as', 'pattern')).toMatchObject({ kinds: [] });
 		expect(seatOf('pattern.as', 'pattern').text).toBeUndefined();
 		expect(seatOf('literal.number.float', 'marker').text).toBe(true);
-		expect(seatOf('literal.string.escape', 'content').text).toBe(true);
+		expect(armsOf('python', 'literal.string.escape').find((arm) => arm.content !== undefined)!.content!.seats[0]!.text).toBe(true);
 	});
 
 	it('tells a struct form apart by the kinds its body holds, through the list that holds them, or by the body missing', () => {
@@ -223,7 +223,7 @@ describe('the portable build table', () => {
 	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every seat states the kinds a value there has, so a member with several routes takes one that seats it', (grammar) => {
 		for (const { arms } of Object.values(tables[grammar].table.paths))
 			for (const arm of arms) for (const member of arm.members) for (const seat of member.seats) expect(Array.isArray(seat.kinds), `${member.name} at ${seat.at.join('.')}`).toBe(true);
-		const input = armsOf('rust', 'attribute.content')[0]!.members.filter((member) => member.name === 'input');
+		const input = armsOf('rust', 'attribute')[0]!.members.filter((member) => member.name === 'input');
 		expect(input.find((route) => route.steps.at(-1)!.key === 'arguments')!.seats[0]!.kinds).toEqual([
 			rust.kinds.DelimTokenTree,
 			rust.kinds.DelimTokenTreeParen,
@@ -612,5 +612,66 @@ describe('the portable build of a list whose last element takes a form of its ow
 		expect(() => build([clause('clause.case', 'a'), clause('clause.rest', 'b')])).toThrow(
 			"portable build: statement.held's body ends with clause.rest, which builds in none of the forms its last element takes"
 		);
+	});
+});
+
+describe('the portable build of an element whose container sets a flag by its own token', () => {
+	const name = { name: 'name', steps: [{ key: 'name' }], multiple: false, seats: [{ at: [4, 'name'] as const, kinds: [], text: true as const }] };
+	const table: PortableBuildTable = {
+		builders: { holder: 'config', plainBox: 'config', markedBox: 'config', thing: 'config' },
+		paths: {
+			'statement.held': {
+				root: true,
+				arms: [
+					{
+						kind: 1,
+						builder: 'holder',
+						members: [
+							{
+								name: 'items',
+								steps: [{ key: 'items' }],
+								multiple: true,
+								list: true,
+								seats: [
+									{ at: [1, 'items'], kinds: [], many: true },
+									{ at: [2, 'element'], kinds: [4], within: [{ builder: 'plainBox', key: 'element' }] },
+									{ at: [3, 'element'], kinds: [4], within: [{ builder: 'markedBox', key: 'element', sets: { kind: 3, flags: ['marked'] } }] }
+								]
+							}
+						],
+						presets: [],
+						flags: {},
+						when: []
+					}
+				]
+			},
+			'element.thing': { root: true, arms: [{ kind: 4, builder: 'thing', members: [name], presets: [], flags: {}, when: [] }] }
+		}
+	};
+	const build = (items: readonly unknown[]): readonly string[] => {
+		const calls: string[] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table,
+			builders: {
+				holder: () => (calls.push('holder'), { $type: 1 }),
+				plainBox: (input: { readonly element: { readonly name: string } }) => (calls.push(`plainBox ${input.element.name}`), { $type: 2 }),
+				markedBox: (input: { readonly element: { readonly name: string } }) => (calls.push(`markedBox ${input.element.name}`), { $type: 3 }),
+				thing: (input: { readonly name: string }) => ({ $type: 4, name: input.name })
+			},
+			kindName: () => undefined,
+			readsAs: () => true,
+			spellingOf: () => undefined
+		});
+		builder({ $path: 'statement.held', items } as never);
+		return calls;
+	};
+
+	it('puts an element with the flag in the container that sets it, and one without it in the container that sets none', () => {
+		expect(build([{ $path: 'element.thing', name: 'a' }, { $path: 'element.thing', $flags: ['marked'], name: 'b' }])).toEqual(['plainBox a', 'markedBox b', 'holder']);
+	});
+
+	it('refuses the flag on an element built where no container sets it', () => {
+		expect(() => portableBuilder({ language: 'test', table, builders: { thing: () => ({ $type: 4 }) }, kindName: () => undefined, readsAs: () => true, spellingOf: () => undefined })({ $path: 'element.thing', $flags: ['marked'], name: 'c' } as never)).toThrow('marked is not a flag of');
 	});
 });

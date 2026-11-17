@@ -12,7 +12,7 @@ const py = await sharedEngine(() => createEngine(python));
 const native = (await python.load()).createNative({ nodeStorage: 'object' });
 const runtime = await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict' })));
 const read = (source: string): Read => runtime.read(runtime.engine.parse(source)) as Read;
-const value = (source: string): unknown => (((read(source).statements as readonly Read[])[0] as Read).content as Read).value;
+const value = (source: string): unknown => ((read(source).statements as readonly Read[])[0] as Read).value;
 const rendered = (structure: unknown): string => String(runtime.engine.render(runtime.build(structure as never) as never));
 
 function kindsOf(source: string, kind: number, node: unknown, out: string[] = []): string[] {

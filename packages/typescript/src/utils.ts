@@ -339,7 +339,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['flags', 1, undefined, '_flags']
 	],
 	284: [['elements', 0, undefined, '_elements']],
-	285: [['content', 0, undefined, '_content']],
+	285: [['expression', 0, undefined, '_expression']],
 	286: [
 		['object', 0, undefined, '_object'],
 		['property', 1, undefined, '_property']
@@ -577,7 +577,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	374: [['type', 0, undefined, '_type']],
 	375: [
 		['operator', 0, undefined, '_operator'],
-		['bounds', 1, undefined, '_bounds']
+		['type', 1, undefined, '_type']
 	],
 	376: [
 		['abstract', 0, 'abstract', '_abstract', 149],
@@ -1879,9 +1879,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	285: {
 		kind: 'decorator',
-		required: [['_content', 'content']],
-		single: [['_content', 'Decorator.content']],
-		nodeOnly: [['_content', 'Decorator.content', 'buildIdentifier(…)', [1, 286, 287, 304]]]
+		required: [['_expression', 'expression']],
+		single: [['_expression', 'Decorator.expression']],
+		nodeOnly: [['_expression', 'Decorator.expression', 'buildIdentifier(…)', [1, 286, 287, 304]]]
 	},
 	286: {
 		kind: 'decorator_member_expression',
@@ -2825,9 +2825,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	375: {
 		kind: 'constraint',
-		required: [['_bounds', 'bounds']],
-		single: [['_bounds', 'Constraint.bounds']],
-		nodeOnly: [['_bounds', 'Constraint.bounds', 'a built Type', [339]]],
+		required: [['_type', 'type']],
+		single: [['_type', 'Constraint.type']],
+		nodeOnly: [['_type', 'Constraint.type', 'a built Type', [339]]],
 		kindIds: [['_operator', 'Constraint.operator', [55, 70]]],
 		options: ['operator']
 	},

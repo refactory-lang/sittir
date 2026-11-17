@@ -28,7 +28,7 @@ export const records = {
 		words: 8,
 		builtWords: 4,
 		name: { word: 2, width: 3, forms: 1, built: 2 },
-		alias: { word: 5, width: 3, forms: 1, built: 3 }
+		rename: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	PrintStatementNode: { words: 13, builtWords: 3, content: { word: 2, width: 11, inline: 11, forms: 8, built: 2 } },
 	ChevronNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
@@ -159,7 +159,7 @@ export const records = {
 		body: { word: 15, width: 5, inline: 5, forms: 8, built: 5 }
 	},
 	TypeParameterNode: { words: 5, builtWords: 3, types: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
-	ParenthesizedListSplatNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
+	ParenthesizedListSplatNode: { words: 5, builtWords: 3, expression: { word: 2, width: 3, forms: 1, built: 2 } },
 	ArgumentListNode: { words: 5, builtWords: 3, arguments: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	DecoratedDefinitionNode: {
 		words: 27,

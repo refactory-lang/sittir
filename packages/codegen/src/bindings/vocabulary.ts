@@ -276,6 +276,9 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
 			}
 		}
+	for (const d of declared)
+		for (const name of d.restated)
+			if (own.get(d.qname)?.has(name) !== true) throw new Error(`vocabulary: ${d.qname} restates ${name}, which it does not declare`);
 	const kinds = new Map<string, VocabularyKind>();
 	const pathOf = (qname: string | undefined): string | undefined => (qname === undefined ? undefined : pathByName.get(qname));
 	for (const d of declared) {

@@ -9,15 +9,19 @@ export namespace Literal {
 		readonly pattern?: Slot<G, K, 'pattern', V.Literal.Regex.Pattern<G>>;
 	}
 	export namespace Regex {
-		export interface Flags<G extends GrammarMap, K extends Under<'literal.regex.flags'> = 'literal.regex.flags'> extends SubKindOf<V.Literal.Regex<G, K>> {
+		export interface Flags<G extends GrammarMap, K extends Under<'literal.regex.flags'> = 'literal.regex.flags'> extends SubKindOf<V.Literal.Regex<G, K>, 'flags' | 'pattern'> {
 			// claimed by t
 			readonly $path: K;
 			readonly $value: string;
+			readonly flags?: never;
+			readonly pattern?: never;
 		}
-		export interface Pattern<G extends GrammarMap, K extends Under<'literal.regex.pattern'> = 'literal.regex.pattern'> extends SubKindOf<V.Literal.Regex<G, K>> {
+		export interface Pattern<G extends GrammarMap, K extends Under<'literal.regex.pattern'> = 'literal.regex.pattern'> extends SubKindOf<V.Literal.Regex<G, K>, 'flags' | 'pattern'> {
 			// claimed by t
 			readonly $path: K;
 			readonly $value: string;
+			readonly flags?: never;
+			readonly pattern?: never;
 		}
 	}
 }

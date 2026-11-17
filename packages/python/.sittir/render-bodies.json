@@ -46,7 +46,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "alias"
+			"name": "rename"
 		},
 		{
 			"kind": "seam",
@@ -3825,7 +3825,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "expression"
 		},
 		{
 			"kind": "seam",

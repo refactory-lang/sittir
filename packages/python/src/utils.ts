@@ -184,7 +184,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	141: [['names', 0, undefined, '_name']],
 	142: [
 		['name', 0, undefined, '_name'],
-		['alias', 1, undefined, '_alias']
+		['rename', 1, undefined, '_rename']
 	],
 	144: [['content', 0, undefined, '_content']],
 	145: [['expression', 0, undefined, '_expression']],
@@ -281,7 +281,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', 3, undefined, '_body']
 	],
 	180: [['types', 0, undefined, '_types']],
-	181: [['content', 0, undefined, '_content']],
+	181: [['expression', 0, undefined, '_expression']],
 	182: [['arguments', 0, undefined, '_arguments']],
 	183: [
 		['decorators', 0, undefined, '_decorator'],
@@ -846,17 +846,17 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'aliased_import',
 		required: [
 			['_name', 'name'],
-			['_alias', 'alias']
+			['_rename', 'rename']
 		],
 		single: [
 			['_name', 'AliasedImport.name'],
-			['_alias', 'AliasedImport.alias']
+			['_rename', 'AliasedImport.rename']
 		],
 		nodeOnly: [
 			['_name', 'AliasedImport.name', 'a built DottedName', [187]],
-			['_alias', 'AliasedImport.alias', 'buildIdentifier(…)', [1]]
+			['_rename', 'AliasedImport.rename', 'buildIdentifier(…)', [1]]
 		],
-		config: ['name', 'alias']
+		config: ['name', 'rename']
 	},
 	144: {
 		kind: 'print_statement',
@@ -1232,9 +1232,11 @@ export const structure: StructureTable = Object.freeze({
 	},
 	181: {
 		kind: 'parenthesized_list_splat',
-		required: [['_content', 'content']],
-		single: [['_content', 'ParenthesizedListSplat.content']],
-		nodeOnly: [['_content', 'ParenthesizedListSplat.content', 'a built ParenthesizedListSplat / ListSplat', [173, 181]]]
+		required: [['_expression', 'expression']],
+		single: [['_expression', 'ParenthesizedListSplat.expression']],
+		nodeOnly: [
+			['_expression', 'ParenthesizedListSplat.expression', 'a built ParenthesizedListSplat / ListSplat', [173, 181]]
+		]
 	},
 	182: {
 		kind: 'argument_list',

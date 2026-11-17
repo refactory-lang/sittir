@@ -204,6 +204,7 @@ export interface ModelNode {
 	readonly interiorPart: string | null;
 	readonly textLeavesThrough: readonly string[];
 	readonly shownAs: readonly string[];
+	readonly spells: readonly string[];
 	readonly list?: ModelList;
 }
 

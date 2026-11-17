@@ -211,7 +211,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.aliasedImport({
 				name: { $type: TSKindId.DottedName, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-				alias: { $type: TSKindId.Identifier, text: 'test' } as never
+				rename: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.AliasedImport);
 			expectBuiltNode(node);
@@ -219,7 +219,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.aliasedImport({
 				name: { $type: TSKindId.DottedName, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-				alias: { $type: TSKindId.Identifier, text: 'test' } as never
+				rename: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);

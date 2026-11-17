@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "b22a3322dfebb84d5fddba9f8f640ceefb4e9b3e1ff608918a0543882dbebc24";
+export const hash = "5068c47adaf76cdd046baa65b66b8af8fd6f7443247161d145f2936dbdb01704";
 
 export const renames = {
 	source_file: "file",
@@ -52,11 +52,9 @@ export const renames = {
 	scoped_use_list: "scoped_list_import_clause",
 	use_wildcard: "wildcard_import_clause",
 	macro_rule: "rule_macro_clause",
-	trait_bounds: "bounds_clause",
 	higher_ranked_trait_bound: "higher_ranked_bounds_clause",
 	removed_trait_bound: "removed_bounds_clause",
 	use_bounds: "use_bounds_clause",
-	for_lifetimes: "lifetimes_clause",
 	field_initializer: "field_struct_element",
 	base_field_initializer: "base_struct_element",
 	type_binding: "type_binding_element",
@@ -117,9 +115,6 @@ export const renames = {
 	label: "label_identifier",
 	self: "receiver_identifier",
 	visibility_modifier_pub: "public_visibility_modifier",
-	attribute_item: "attribute",
-	inner_attribute_item: "inner_attribute",
-	attribute: "content_attribute",
 	line_comment_regular: "text_comment"
 };
 
@@ -133,16 +128,14 @@ export default grammar(
 			_pattern: { "-20": alias("qualified_identifier") },
 			_type: { "-12": alias("qualified_identifier") },
 			abstract_type: { "2/0/1": alias("qualified_identifier") },
-			attribute_item: { "2": field("content") },
 			attributed_element: { "0": field("attributes") },
 			const_parameter: { "4/0/1": field("default") },
 			dynamic_type: { "1/0/2": alias("qualified_identifier") },
 			field_expression: { "0": field("object"), "2": field("property") },
-			field_initializer: { "0": field("attributes") },
+			field_initializer: { "0": field("attributes"), "1": field("name") },
 			field_pattern_named: { "0/0": field("by_reference") },
 			field_pattern_shorthand: { "0/0": field("by_reference") },
 			for_expression: { "2": field("left"), "4": field("right") },
-			for_lifetimes: { "2": field("lifetimes") },
 			function_type_trait_form: { "0/1": alias("qualified_identifier") },
 			generic_function: { "0/0/1": alias("qualified_identifier") },
 			generic_pattern: { "0/0/1": alias("qualified_identifier") },
@@ -150,7 +143,6 @@ export default grammar(
 			generic_type_with_turbofish: { "0/0/1": alias("qualified_identifier") },
 			impl_item_negative_clause: { "1/0/1": alias("qualified_identifier") },
 			impl_item_positive_clause: { "0/0/1": alias("qualified_identifier") },
-			inner_attribute_item: { "3": field("content") },
 			last_match_arm: { "3": field("body") },
 			let_declaration: { "2": field("name") },
 			macro_invocation: [{ "0": field("function") }, { "0/0/0": alias("qualified_identifier") }],
@@ -167,7 +159,6 @@ export default grammar(
 			scoped_identifier: { "0": field("qualifier") },
 			scoped_type_identifier: { "0": field("qualifier") },
 			scoped_type_identifier_in_expression_position: { "0": field("qualifier") },
-			shorthand_field_initializer: { "1": field("field") },
 			slice_pattern: { "1/0": field("elements") },
 			static_item: { "1": field("static"), "2/0": field("by_reference") },
 			struct_expression: { "0/0/1": alias("qualified_identifier") },
@@ -181,7 +172,7 @@ export default grammar(
 			type_item: { "6": field("value") },
 			type_parameter: { "2/0/1": field("default") },
 			unary_expression: { "1": field("argument") },
-			use_as_clause: { "0": field("name") },
+			use_as_clause: { "0": field("name"), "2": field("rename") },
 			use_list: { "1/0": field("use_clauses") },
 			use_wildcard: { "0/0": field("use_wildcard_group") },
 			where_clause: { "1/0": field("where_predicates") },

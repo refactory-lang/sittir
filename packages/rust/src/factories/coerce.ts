@@ -3415,9 +3415,9 @@ export const coerceToNonSpecialToken: ConfigSeat<T.NonSpecialToken.Loose, Return
 	);
 };
 
-export function resolveAttributeItem_content(
-	value: T.AttributeItem.LooseConfig['content']
-): Admit<T.AttributeItem['_content']> {
+export function resolveAttributeItem_attribute(
+	value: T.AttributeItem.LooseConfig['attribute']
+): Admit<T.AttributeItem['_attribute']> {
 	return _resolveOneBranch<T.Attribute>(value, 'attribute');
 }
 
@@ -3427,15 +3427,15 @@ export const coerceToAttributeItem: ConfigSeat<T.AttributeItem.Loose, ReturnType
 	if (isNodeOfKind(input, TSKindId.AttributeItem)) return input as unknown as ReturnType<typeof F.buildAttributeItem>;
 	return F.buildAttributeItem(
 		_resolveOneBranch<T.Attribute>(
-			configFieldOr(input, 'content', () => input, TSKindId.AttributeItem),
+			configFieldOr(input, 'attribute', () => input, TSKindId.AttributeItem),
 			'attribute'
 		)
 	);
 };
 
-export function resolveInnerAttributeItem_content(
-	value: T.InnerAttributeItem.LooseConfig['content']
-): Admit<T.InnerAttributeItem['_content']> {
+export function resolveInnerAttributeItem_attribute(
+	value: T.InnerAttributeItem.LooseConfig['attribute']
+): Admit<T.InnerAttributeItem['_attribute']> {
 	return _resolveOneBranch<T.Attribute>(value, 'attribute');
 }
 
@@ -3447,7 +3447,7 @@ export const coerceToInnerAttributeItem: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildInnerAttributeItem>;
 	return F.buildInnerAttributeItem(
 		_resolveOneBranch<T.Attribute>(
-			configFieldOr(input, 'content', () => input, TSKindId.InnerAttributeItem),
+			configFieldOr(input, 'attribute', () => input, TSKindId.InnerAttributeItem),
 			'attribute'
 		)
 	);
@@ -4713,7 +4713,7 @@ export function resolveUseAsClause_name(value: T.UseAsClause.LooseConfig['name']
 	);
 }
 
-export function resolveUseAsClause_alias(value: T.UseAsClause.LooseConfig['alias']): Admit<T.UseAsClause['_alias']> {
+export function resolveUseAsClause_rename(value: T.UseAsClause.LooseConfig['rename']): Admit<T.UseAsClause['_rename']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -4725,7 +4725,7 @@ export const coerceToUseAsClause: ConfigSeat<T.UseAsClause.Loose, ReturnType<typ
 	currentHandle()?.admit(TSKindId.UseAsClause, [input]);
 	return F.buildUseAsClause({
 		name: resolveUseAsClause_name(input.name),
-		alias: resolveUseAsClause_alias(input.alias)
+		rename: resolveUseAsClause_rename(input.rename)
 	});
 };
 
@@ -6076,9 +6076,9 @@ export function resolveShorthandFieldInitializer_attributes(
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
 
-export function resolveShorthandFieldInitializer_field(
-	value: T.ShorthandFieldInitializer.LooseConfig['field']
-): Admit<T.ShorthandFieldInitializer['_field']> {
+export function resolveShorthandFieldInitializer_name(
+	value: T.ShorthandFieldInitializer.LooseConfig['name']
+): Admit<T.ShorthandFieldInitializer['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -6091,7 +6091,7 @@ export const coerceToShorthandFieldInitializer: ConfigSeat<
 	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [input]);
 	return F.buildShorthandFieldInitializer({
 		attributes: resolveShorthandFieldInitializer_attributes(input.attributes),
-		field: resolveShorthandFieldInitializer_field(input.field)
+		name: resolveShorthandFieldInitializer_name(input.name)
 	});
 };
 
@@ -6101,9 +6101,9 @@ export function resolveFieldInitializer_attributes(
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
 
-export function resolveFieldInitializer_field(
-	value: T.FieldInitializer.LooseConfig['field']
-): Admit<T.FieldInitializer['_field']> {
+export function resolveFieldInitializer_name(
+	value: T.FieldInitializer.LooseConfig['name']
+): Admit<T.FieldInitializer['_name']> {
 	return _resolveOne<T.FieldIdentifier | T.IntegerLiteral>(value, _K2, _K44);
 }
 
@@ -6125,7 +6125,7 @@ export const coerceToFieldInitializer: ConfigSeat<
 	currentHandle()?.admit(TSKindId.FieldInitializer, [input]);
 	return F.buildFieldInitializer({
 		attributes: resolveFieldInitializer_attributes(input.attributes),
-		field: resolveFieldInitializer_field(input.field),
+		name: resolveFieldInitializer_name(input.name),
 		value: resolveFieldInitializer_value(input.value)
 	});
 };

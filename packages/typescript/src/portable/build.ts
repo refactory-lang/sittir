@@ -272,7 +272,7 @@ export const build: PortableBuildTable = {
 		variableDeclaration: ['terminator']
 	},
 	paths: {
-		'attribute.content.call': {
+		'attribute.call': {
 			root: true,
 			arms: [
 				{
@@ -417,7 +417,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'attribute.content.member': {
+		'attribute.member': {
 			root: true,
 			arms: [
 				{
@@ -485,7 +485,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'attribute.content.parenthesized': {
+		'attribute.parenthesized': {
 			root: true,
 			arms: [
 				{
@@ -527,108 +527,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'attribute.decorator': {
-			root: true,
-			arms: [
-				{
-					kind: 285,
-					builder: 'decorator',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [285, 'content'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['content']
-						}
-					]
-				}
-			]
-		},
-		'clause.bounds': {
-			root: true,
-			arms: [
-				{
-					kind: 375,
-					builder: 'constraint',
-					members: [
-						{
-							name: 'bounds',
-							steps: [
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [375, 'bounds'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
-									],
-									leaf: 'identifier',
-									texts: [1, 505],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 504,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					empty: ['bounds'],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['bounds']
-						}
-					]
-				}
-			]
-		},
 		'clause.case.default': {
 			root: true,
 			arms: [
@@ -650,15 +548,42 @@ export const build: PortableBuildTable = {
 								{
 									at: [231, 'bodies'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									},
 									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -759,15 +684,42 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'bodies'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									},
 									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -1016,14 +968,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [212, 'body'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -1586,7 +1565,7 @@ export const build: PortableBuildTable = {
 					builder: 'importClause',
 					members: [
 						{
-							name: 'content',
+							name: 'specifiers',
 							steps: [
 								{
 									key: 'content'
@@ -1650,7 +1629,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'content',
+							name: 'specifiers',
 							steps: [
 								{
 									key: 'content',
@@ -2223,35 +2202,33 @@ export const build: PortableBuildTable = {
 				{
 					kind: 154,
 					builder: 'commentBlock',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [154, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:([^*]|\\*+[^*/])*\\**))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [154, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source: '^(?:(?:([^*]|\\*+[^*/])*\\**))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}
@@ -2263,35 +2240,33 @@ export const build: PortableBuildTable = {
 				{
 					kind: 154,
 					builder: 'commentBlock',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [154, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:([^*]|\\*+[^*/])*\\**))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [154, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source: '^(?:(?:([^*]|\\*+[^*/])*\\**))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}
@@ -2306,7 +2281,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			]
 		},
@@ -2316,35 +2296,33 @@ export const build: PortableBuildTable = {
 				{
 					kind: 153,
 					builder: 'commentLine',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [153, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[^\\r\\n\\u2028\\u2029]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [153, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source: '^(?:(?:[^\\r\\n\\u2028\\u2029]*))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}
@@ -2358,7 +2336,7 @@ export const build: PortableBuildTable = {
 					builder: 'ambientDeclaration',
 					members: [
 						{
-							name: 'content',
+							name: 'body',
 							steps: [
 								{
 									key: 'content'
@@ -2389,7 +2367,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['body']
 						}
 					]
 				}
@@ -2415,8 +2393,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [314, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -2528,8 +2523,25 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [406, 'decorators'],
-															kinds: [285],
+															kinds: [],
 															many: true
+														},
+														{
+															at: [285, 'expression'],
+															kinds: [1, 286, 287, 304],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
 														}
 													]
 												}
@@ -2743,8 +2755,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [246, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -2856,8 +2885,25 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [406, 'decorators'],
-															kinds: [285],
+															kinds: [],
 															many: true
+														},
+														{
+															at: [285, 'expression'],
+															kinds: [1, 286, 287, 304],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
 														}
 													]
 												}
@@ -3612,8 +3658,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [462, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -3928,8 +3991,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [462, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -4254,8 +4334,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [462, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -4580,8 +4677,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [462, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -11393,8 +11507,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [329, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -11579,8 +11710,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [468, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -11729,8 +11877,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [328, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -11912,8 +12077,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [450, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -12068,8 +12250,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [329, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -12264,8 +12463,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [468, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -12424,8 +12640,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [328, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -12617,8 +12850,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [450, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -12783,8 +13033,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [329, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -12979,8 +13246,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [468, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -13139,8 +13423,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [328, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -13332,8 +13633,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [450, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -13498,8 +13816,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [329, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -13694,8 +14029,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [468, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -13854,8 +14206,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [328, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -14047,8 +14416,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [450, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -14213,8 +14599,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [328, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -14363,8 +14766,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [468, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -14509,8 +14929,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [463, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -15621,8 +16058,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [463, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -15861,8 +16315,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [463, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -16101,8 +16572,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [463, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -17055,8 +17543,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [463, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -21114,14 +21619,14 @@ export const build: PortableBuildTable = {
 									optional: true
 								},
 								{
-									key: 'bounds'
+									key: 'type'
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [375, 'bounds'],
+									at: [375, 'type'],
 									kinds: [
 										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
 										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
@@ -25752,7 +26257,7 @@ export const build: PortableBuildTable = {
 					builder: 'binaryExpression',
 					members: [
 						{
-							name: 'left',
+							name: 'operand',
 							steps: [
 								{
 									key: 'left',
@@ -25787,7 +26292,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'right',
+							name: 'count',
 							steps: [
 								{
 									key: 'right',
@@ -25846,7 +26351,7 @@ export const build: PortableBuildTable = {
 					builder: 'binaryExpression',
 					members: [
 						{
-							name: 'left',
+							name: 'operand',
 							steps: [
 								{
 									key: 'left',
@@ -25881,7 +26386,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'right',
+							name: 'count',
 							steps: [
 								{
 									key: 'right',
@@ -25940,7 +26445,7 @@ export const build: PortableBuildTable = {
 					builder: 'binaryExpression',
 					members: [
 						{
-							name: 'left',
+							name: 'operand',
 							steps: [
 								{
 									key: 'left',
@@ -25975,7 +26480,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'right',
+							name: 'count',
 							steps: [
 								{
 									key: 'right',
@@ -27193,8 +27698,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [245, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -27309,8 +27831,25 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [406, 'decorators'],
-															kinds: [285],
+															kinds: [],
 															many: true
+														},
+														{
+															at: [285, 'expression'],
+															kinds: [1, 286, 287, 304],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
 														}
 													]
 												}
@@ -30128,15 +30667,42 @@ export const build: PortableBuildTable = {
 								{
 									at: [190, 'statements'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									},
 									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -30203,12 +30769,149 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
+					kind: 505,
+					seated: 'direct',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['$value'],
+							required: []
+						}
+					],
+					holders: [
+						[245, 'name'],
+						[246, 'name'],
+						[306, 'type'],
+						[307, 'type'],
+						[312, 'types'],
+						[314, 'name'],
+						[319, 'name'],
+						[320, 'name'],
+						[321, 'types'],
+						[325, 'name'],
+						[325, 'value'],
+						[331, 'type'],
+						[332, 'type'],
+						[333, 'type'],
+						[334, 'type'],
+						[342, 'type'],
+						[343, 'type'],
+						[345, 'type'],
+						[347, 'type'],
+						[349, 'name'],
+						[349, 'type'],
+						[350, 'left'],
+						[350, 'right'],
+						[350, 'consequence'],
+						[350, 'alternative'],
+						[351, 'name'],
+						[352, 'type'],
+						[359, 'type'],
+						[360, 'type'],
+						[360, 'indexType'],
+						[361, 'name'],
+						[361, 'type'],
+						[361, 'alias'],
+						[365, 'type'],
+						[366, 'type'],
+						[373, 'name'],
+						[374, 'type'],
+						[375, 'type'],
+						[378, 'type'],
+						[380, 'type'],
+						[381, 'left'],
+						[381, 'right'],
+						[382, 'left'],
+						[382, 'right'],
+						[383, 'returnType'],
+						[391, 'items'],
+						[393, 'items'],
+						[400, 'type'],
+						[409, 'indexType']
+					]
+				},
+				{
+					kind: 500,
+					seated: 'placed',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['$value'],
+							required: []
+						}
+					],
+					holders: [
+						[244, 'name'],
+						[259, 'property'],
+						[286, 'property'],
+						[294, 'key'],
+						[295, 'key'],
+						[324, 'name'],
+						[335, 'property'],
+						[354, 'property'],
+						[371, 'name'],
+						[388, 'name'],
+						[400, 'name'],
+						[453, 'name'],
+						[454, 'name'],
+						[455, 'name'],
+						[456, 'name'],
+						[457, 'name'],
+						[458, 'name'],
+						[459, 'name'],
+						[460, 'name'],
+						[461, 'name'],
+						[462, 'name'],
+						[463, 'name']
+					]
+				},
+				{
+					kind: 501,
+					seated: 'direct',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['$value'],
+							required: []
+						}
+					],
+					holders: [[238, 'properties']]
+				},
+				{
+					kind: 502,
+					seated: 'direct',
+					members: [],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['$value'],
+							required: []
+						}
+					],
+					holders: [
+						[239, 'properties'],
+						[241, 'left']
+					]
+				},
+				{
 					kind: 1,
 					builder: 'identifier',
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [
 						[192, 'moduleExportName'],
 						[194, 'name'],
@@ -30250,7 +30953,7 @@ export const build: PortableBuildTable = {
 						[272, 'expressions'],
 						[275, 'expression'],
 						[284, 'elements'],
-						[285, 'content'],
+						[285, 'expression'],
 						[286, 'object'],
 						[287, 'function'],
 						[292, 'lhsExpression'],
@@ -30320,118 +31023,6 @@ export const build: PortableBuildTable = {
 						[502, 'content'],
 						[500, 'content'],
 						[505, 'content']
-					]
-				},
-				{
-					kind: 505,
-					seated: 'direct',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [
-						[245, 'name'],
-						[246, 'name'],
-						[306, 'type'],
-						[307, 'type'],
-						[312, 'types'],
-						[314, 'name'],
-						[319, 'name'],
-						[320, 'name'],
-						[321, 'types'],
-						[325, 'name'],
-						[325, 'value'],
-						[331, 'type'],
-						[332, 'type'],
-						[333, 'type'],
-						[334, 'type'],
-						[342, 'type'],
-						[343, 'type'],
-						[345, 'type'],
-						[347, 'type'],
-						[349, 'name'],
-						[349, 'type'],
-						[350, 'left'],
-						[350, 'right'],
-						[350, 'consequence'],
-						[350, 'alternative'],
-						[351, 'name'],
-						[352, 'type'],
-						[359, 'type'],
-						[360, 'type'],
-						[360, 'indexType'],
-						[361, 'name'],
-						[361, 'type'],
-						[361, 'alias'],
-						[365, 'type'],
-						[366, 'type'],
-						[373, 'name'],
-						[374, 'type'],
-						[375, 'bounds'],
-						[378, 'type'],
-						[380, 'type'],
-						[381, 'left'],
-						[381, 'right'],
-						[382, 'left'],
-						[382, 'right'],
-						[383, 'returnType'],
-						[391, 'items'],
-						[393, 'items'],
-						[400, 'type'],
-						[409, 'indexType']
-					]
-				},
-				{
-					kind: 500,
-					seated: 'placed',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [
-						[244, 'name'],
-						[259, 'property'],
-						[286, 'property'],
-						[294, 'key'],
-						[295, 'key'],
-						[324, 'name'],
-						[335, 'property'],
-						[354, 'property'],
-						[371, 'name'],
-						[388, 'name'],
-						[400, 'name'],
-						[453, 'name'],
-						[454, 'name'],
-						[455, 'name'],
-						[456, 'name'],
-						[457, 'name'],
-						[458, 'name'],
-						[459, 'name'],
-						[460, 'name'],
-						[461, 'name'],
-						[462, 'name'],
-						[463, 'name']
-					]
-				},
-				{
-					kind: 501,
-					seated: 'direct',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [[238, 'properties']]
-				},
-				{
-					kind: 502,
-					seated: 'direct',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [
-						[239, 'properties'],
-						[241, 'left']
 					]
 				}
 			]
@@ -30742,7 +31333,7 @@ export const build: PortableBuildTable = {
 						[361, 'alias'],
 						[366, 'type'],
 						[374, 'type'],
-						[375, 'bounds'],
+						[375, 'type'],
 						[380, 'type'],
 						[381, 'left'],
 						[381, 'right'],
@@ -31042,7 +31633,7 @@ export const build: PortableBuildTable = {
 						[365, 'type'],
 						[366, 'type'],
 						[374, 'type'],
-						[375, 'bounds'],
+						[375, 'type'],
 						[378, 'type'],
 						[380, 'type'],
 						[381, 'left'],
@@ -31219,25 +31810,6 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 160,
-					builder: 'number.decimal',
-					digits: {
-						base: 10,
-						affix: ''
-					},
-					members: [],
-					presets: [],
-					flags: {},
-					scalar: 'integer',
-					when: [
-						{
-							variant: 'number',
-							value: 160,
-							default: true
-						}
-					]
-				},
-				{
 					kind: 161,
 					builder: 'numberBinary',
 					numeric: ['radixPrefix', 'content'],
@@ -31361,6 +31933,29 @@ export const build: PortableBuildTable = {
 					flags: {},
 					scalar: 'float',
 					when: []
+				},
+				{
+					kind: 160,
+					builder: 'number.decimal',
+					digits: {
+						base: 10,
+						affix: ''
+					},
+					members: [],
+					presets: [],
+					flags: {},
+					scalar: 'integer',
+					when: [
+						{
+							variant: 'number',
+							value: 160,
+							default: true
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			],
 			builds: {
@@ -31755,7 +32350,12 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					scalar: 'integer',
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			],
 			builds: {
@@ -32323,7 +32923,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			]
 		},
@@ -32336,7 +32941,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			]
 		},
@@ -32428,36 +33038,34 @@ export const build: PortableBuildTable = {
 				{
 					kind: 121,
 					builder: 'escapeSequence',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [121, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source:
-											'^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [121, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source:
+										'^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['$value']
 						}
 					]
 				}
@@ -32510,7 +33118,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [
 						[274, 'elements'],
 						[348, 'elements']
@@ -32522,7 +33135,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [[424, 'elements']]
 				},
 				{
@@ -32531,7 +33149,12 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							absent: [],
+							required: ['$value']
+						}
+					],
 					holders: [[425, 'elements']]
 				}
 			]
@@ -33041,15 +33664,42 @@ export const build: PortableBuildTable = {
 								{
 									at: [211, 'statements'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									},
 									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -33336,8 +33986,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [432, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -33594,8 +34261,25 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [432, 'decorators'],
-									kinds: [285],
+									kinds: [],
 									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -33706,59 +34390,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'statement.expression': {
-			root: true,
-			arms: [
-				{
-					kind: 206,
-					builder: 'expressionStatement',
-					members: [
-						{
-							name: 'expression',
-							steps: [
-								{
-									key: 'expression'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
-										427, 440, 441
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 441,
-										'new.target': 440,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['expression']
-						}
-					]
-				}
-			]
-		},
 		'statement.if': {
 			root: true,
 			arms: [
@@ -33795,14 +34426,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [213, 'consequence'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -34220,14 +34878,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [228, 'body'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -34403,14 +35088,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [215, 'body'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -34481,14 +35193,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [219, 'body'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -34591,14 +35330,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [216, 'body'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -34699,14 +35465,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [218, 'body'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -34842,14 +35635,41 @@ export const build: PortableBuildTable = {
 								{
 									at: [221, 'body'],
 									kinds: [
-										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431,
-										432
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
 									],
 									refined: [228],
 									tokens: {
 										';': 227
 									}
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426,
+										427, 440, 441
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 441,
+										'new.target': 440,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [228, 'body'],
@@ -35962,7 +36782,7 @@ export const build: PortableBuildTable = {
 						[361, 'alias'],
 						[366, 'type'],
 						[374, 'type'],
-						[375, 'bounds'],
+						[375, 'type'],
 						[380, 'type'],
 						[381, 'left'],
 						[381, 'right'],
@@ -36227,7 +37047,7 @@ export const build: PortableBuildTable = {
 					builder: 'literalType',
 					members: [
 						{
-							name: 'content',
+							name: 'value',
 							steps: [
 								{
 									key: 'content'
@@ -36251,7 +37071,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['content']
+							required: ['value']
 						}
 					]
 				}
@@ -37482,9 +38302,7 @@ export const build: PortableBuildTable = {
 		'Asynchronous',
 		'BigIntegerRadixes',
 		'BlockComments',
-		'BoundClauses',
 		'BoundedQuantification',
-		'CFamilyExpressionStatements',
 		'CFamilyUnaryOperators',
 		'CLike',
 		'ClassVisibility',

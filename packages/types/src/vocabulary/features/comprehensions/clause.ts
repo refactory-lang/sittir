@@ -5,7 +5,6 @@ export namespace Clause {
 	export interface Comprehension<G extends GrammarMap, K extends Under<'clause.comprehension'> = 'clause.comprehension'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by p
 		readonly $path: K;
-		readonly contents?: Slot<G, K, 'contents', V.Clause.Comprehension.For<G> | V.Clause.Comprehension.If<G>>[];
 	}
 	export namespace Comprehension {
 		export interface For<G extends GrammarMap, K extends Under<'clause.comprehension.for'> = 'clause.comprehension.for'> extends SubKindOf<V.Clause.Comprehension<G, K>> {
