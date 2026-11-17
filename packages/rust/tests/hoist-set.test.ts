@@ -17,6 +17,15 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		e[Symbol.dispose]();
 	});
 
+	it('sets every parameter when several are passed, keeping the parentheses', async () => {
+		const { e, root } = await open('fn f(a: u8) {}\nfn g(c: u8, d: u16) {}\n');
+		const [f, g] = root.statements();
+		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
+		const [c, d] = g.parameters();
+		expect(String(e.render(f.$with.parameters(c!, d!)))).toBe('fn f(c: u8, d: u16) {}');
+		e[Symbol.dispose]();
+	});
+
 	it('empties the parentheses and fills them again', async () => {
 		const { e, root } = await open('fn f(a: u8) {}\nfn g(c: u8) {}\n');
 		const [f, g] = root.statements();
