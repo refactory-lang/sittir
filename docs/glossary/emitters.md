@@ -15476,3 +15476,27 @@ Parses type-checker output into one diagnostic per `error TS` line. Each indente
 ### `packages/codegen/src/typecheck.ts::typeCheckOutput`
 
 Runs a type-checker command in a directory and returns its output. A non-zero exit that still prints `error TS` lines counts as a result; any other failure is rethrown. The output is requested without colour.
+
+### `packages/codegen/src/typecheck.ts::tsrsDiagnostics`
+
+Type-checks the program a tsconfig names with tsrs, run from `cwd`, and returns its diagnostics, parsed. tsrs is the one checker the repo type-checks with.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe`
+
+A program of probe files to type-check: the tsconfig its own tsconfig extends, the files' text by file name, and compiler options laid over the probe defaults.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe::extends`
+
+The path of the tsconfig the probe's tsconfig extends.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe::sources`
+
+The probe files' text by file name. They are the program's only includes; what they import comes in through their imports.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe::compilerOptions`
+
+Compiler options laid over the probe defaults, after them, so an option set here wins.
+
+### `packages/codegen/src/typecheck.ts::probeDiagnostics`
+
+Type-checks a probe with tsrs and returns its diagnostics, through `tsrsDiagnostics`. The probe's files and tsconfig go in a fresh temporary directory, which is removed afterwards. The directory is marked as an ES module package. The tsconfig sets `noEmit`, the node types from `cwd`'s `node_modules/@types`, and `.ts` imports with no rewrite, so a probe file may import any module of the repo by its absolute path. Without those type roots, tsrs stops at the missing node types and checks no file.

@@ -329,6 +329,10 @@ The name of the tsconfig that type-checks the typed module on its own, beside it
 
 Emits one grammar's typed portable module as source text, with the reads the emitter could not type. Each read entry becomes a factory function bound to its kind. The module's views, its per-kind view map, its backward view and its enum view map are derived from the routes and the model. Reads that cannot be typed go to `unemitted` and are not emitted as code.
 
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::portableTsconfigText`
+
+The text of the tsconfig that type-checks the typed module together with the grammar's portable type tests. It is written beside the module in the `.sittir` directory.
+
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFlagsOf`
 
 Per path in the portable map, the sorted unique flags of its build arms, in codepoint order. Paths are listed in codepoint order, so the output is stable across runs.

@@ -2,8 +2,8 @@ import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative } from 'node:path';
-import { PORTABLE_TS6_TSCONFIG, PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, PORTABLE_TYPE_TEST_LANES, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
-import { PORTABLE_BUILD_FILE, REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
+import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, parseTypeCheckDiagnostics, tsrsDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
+import { PORTABLE_BUILD_FILE, PORTABLE_TYPE_TESTS, REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 import { vocabularyPaths } from '@sittir/common/portable';
 
@@ -105,15 +105,13 @@ const typedDir = (grammar: string): string => sittirDirOf({ dir: grammarPackageD
 
 export const portableTypedPath = (grammar: string): string => join(typedDir(grammar), PORTABLE_TYPED_FILE);
 
-export function portableTypeTests(grammar: string, tsconfig: string = PORTABLE_TYPED_TSCONFIG): readonly string[] {
-	return PORTABLE_TYPE_TEST_LANES[tsconfig]!.flatMap((glob) => {
-		const dir = join(grammarPackageDir(grammar as GrammarName), dirname(glob));
-		const suffix = basename(glob).replace('*', '');
-		return readdirSync(dir)
-			.filter((name) => name.endsWith(suffix))
-			.sort()
-			.map((name) => join(dir, name));
-	});
+export function portableTypeTests(grammar: string): readonly string[] {
+	const dir = join(grammarPackageDir(grammar as GrammarName), dirname(PORTABLE_TYPE_TESTS));
+	const suffix = basename(PORTABLE_TYPE_TESTS).replace('*', '');
+	return readdirSync(dir)
+		.filter((name) => name.endsWith(suffix))
+		.sort()
+		.map((name) => join(dir, name));
 }
 
 export function typeTestErrors(checker: string, diagnostics: readonly TypeCheckDiagnostic[], files: readonly string[]): readonly ConformanceTypeTest[] {
@@ -131,15 +129,8 @@ const CHECKERS = {
 
 export type Checker = keyof typeof CHECKERS;
 
-const TYPE_TEST_CHECKERS: readonly { readonly checker: Checker; readonly tsconfig: string }[] = [
-	{ checker: 'tsrs', tsconfig: PORTABLE_TYPED_TSCONFIG },
-	{ checker: 'TypeScript 6', tsconfig: PORTABLE_TS6_TSCONFIG }
-];
-
 const typeCheck = (tsconfig: string, [command, ...args]: readonly [string, ...string[]]): readonly TypeCheckDiagnostic[] =>
 	parseTypeCheckDiagnostics(typeCheckOutput(command, [...args, '-p', tsconfig, '--noEmit'], REPO_ROOT));
-
-const diagnosticsOf = (grammar: string, tsconfig: string, checker: Checker): readonly TypeCheckDiagnostic[] => typeCheck(join(typedDir(grammar), tsconfig), CHECKERS[checker]);
 
 export function portableBuildTypeErrors(grammar: string, checker: Checker): readonly TypeCheckDiagnostic[] {
 	const dir = grammarPackageDir(grammar as GrammarName);
@@ -196,13 +187,13 @@ export async function writeTypedModule(grammar: string): Promise<PortableTypedOu
 export async function portableConformance(grammar: string): Promise<ConformanceReport | undefined> {
 	const typed = await writeTypedModule(grammar);
 	if (typed === undefined) return undefined;
-	const lanes = TYPE_TEST_CHECKERS.map(({ checker, tsconfig }) => ({ checker, diagnostics: diagnosticsOf(grammar, tsconfig, checker), tests: portableTypeTests(grammar, tsconfig) }));
-	const [module] = lanes;
+	const diagnostics = tsrsDiagnostics(join(typedDir(grammar), PORTABLE_TYPED_TSCONFIG), REPO_ROOT);
+	const tests = portableTypeTests(grammar);
 	return {
 		grammar,
-		...classify(module!.diagnostics, portableTypedPath(grammar), typed.unemitted, module!.tests),
+		...classify(diagnostics, portableTypedPath(grammar), typed.unemitted, tests),
 		unemitted: typed.unemitted,
-		typeTests: lanes.flatMap(({ checker, diagnostics, tests }) => typeTestErrors(checker, diagnostics, tests))
+		typeTests: typeTestErrors('tsrs', diagnostics, tests)
 	};
 }
 

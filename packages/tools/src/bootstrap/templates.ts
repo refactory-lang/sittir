@@ -10,7 +10,6 @@ import {
 	NODE_ENGINES,
 	PORTABLE_BUILD_FILE,
 	PORTABLE_MAP_FILE,
-	PORTABLE_TS6_TYPE_TESTS,
 	PORTABLE_TYPE_TESTS,
 	nativePlatformPackage
 } from '@sittir/codegen/grammars';
@@ -80,7 +79,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				extends: '../../tsconfig.json',
 				compilerOptions: { types: ['node'] },
 				include: ['src', 'tests'],
-				exclude: ['node_modules', 'dist', PORTABLE_TYPE_TESTS, PORTABLE_TS6_TYPE_TESTS]
+				exclude: ['node_modules', 'dist', PORTABLE_TYPE_TESTS]
 			})
 		},
 		{

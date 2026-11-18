@@ -2,7 +2,9 @@
 # Where one corpus phase's time goes in arena storage, by function, per tree.
 # Each tree is profiled once per grammar, under the first name given for it and
 # in arena storage whatever its storage suffix: phase-profile.mjs (WARMUP
-# untimed batches, then BATCHES timed, a fresh engine every PER_ENGINE), with a
+# untimed batches, then BATCHES timed, a fresh engine every PER_ENGINE: 50
+# unless the environment's PER_ENGINE says otherwise, 0 for one engine for the
+# whole run, as a paired corpus worker keeps), with a
 # profiler sampling only while a timed batch runs the phase.
 # PHASE=render (the default) and PHASE=parse sample native frames: perf record ($PERF,
 # default perf), cpu-clock every PERIOD_NS, frame-pointer call chains. The addon
@@ -95,7 +97,10 @@ PERF_RECORD = NATIVE and not INTERPOSER
 for llvm in (os.environ.get('LLVM_BIN'), '/opt/homebrew/opt/llvm/bin', '/usr/local/opt/llvm/bin'):
     if shutil.which('llvm-symbolizer') is None and llvm and Path(llvm, 'llvm-symbolizer').exists():
         os.environ['PATH'] = f'{llvm}{os.pathsep}{os.environ["PATH"]}'
-WARMUP, BATCHES, PER_ENGINE = (10, 20, 50) if ALLOCS else (100, 2000, 50)
+WARMUP, BATCHES = (10, 20) if ALLOCS else (100, 2000)
+PER_ENGINE = int(os.environ.get('PER_ENGINE') or 50) or WARMUP + BATCHES
+assert PER_ENGINE > 0, f'PER_ENGINE {PER_ENGINE} is not a count of batches'
+ENGINES = 'one engine for the whole run' if PER_ENGINE >= WARMUP + BATCHES else f'a fresh engine every {PER_ENGINE}'
 PERIOD_NS = 100_000
 JS_INTERVAL_US = 50
 FRESHNESS = 'packages/codegen/src/scripts/native-binary-freshness.ts'
@@ -629,7 +634,7 @@ if INTERPOSER:
     lines += [(f'{STORAGE.capitalize()} {PHASE} allocations ({platform.system()} {platform.machine()}, node {run(["node", "--version"]).strip()}): '
                f'alloc-count.c stands in for libc\'s {", ".join(ALLOC_FUNCTIONS)} and free in the benchmark\'s node process alone, '
                f'counting only on the JavaScript thread between a timed batch\'s start and stop, each allocation placed by its frame-pointer call chain in a fixed table; '
-               f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}.'), '',
+               f'{BATCHES} timed batches after {WARMUP} untimed, {ENGINES}.'), '',
               ('It sees every libc allocation on that thread, with or without an addon frame, including the native memory JavaScript objects hold: '
                'array buffer backing stores and the addon\'s external chunks are allocated by malloc, so they are in this table, not in the JavaScript engine\'s heap. '
                'It misses the JavaScript engine\'s own heap (objects V8 allocates in its pages) and any private malloc zone. '
@@ -638,11 +643,11 @@ if INTERPOSER:
 elif ALLOCS:
     installProbes()
     lines += [(f'{STORAGE.capitalize()} {PHASE} allocations: uprobes on libc\'s {", ".join(ALLOC_FUNCTIONS)} ({run([PERF, "--version"]).strip()}), enabled only while a timed batch runs the phase, with frame-pointer call chains '
-               f'(the frame that called libc is not in a call chain taken at a function\'s entry); {BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. '
+               f'(the frame that called libc is not in a call chain taken at a function\'s entry); {BATCHES} timed batches after {WARMUP} untimed, {ENGINES}. '
                f'Inlined functions are expanded from the line tables; generic arguments are dropped. Bytes are the size asked for, not malloc\'s usable size.'), '']
 elif NATIVE:
     lines += [(f'{STORAGE.capitalize()} {PHASE} profile ({run([PERF, "--version"]).strip()}): cpu-clock every {PERIOD_NS / 1000:g} µs with frame-pointer call chains, enabled only while a timed batch runs the phase; '
-               f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. Inlined functions are expanded from the line tables; generic arguments are dropped.'), '']
+               f'{BATCHES} timed batches after {WARMUP} untimed, {ENGINES}. Inlined functions are expanded from the line tables; generic arguments are dropped.'), '']
 for grammar in grammars:
     results = {}
     for name in names:
@@ -716,7 +721,7 @@ for grammar in grammars:
     if not NATIVE:
         dropped = ', '.join(f'{n} {results[n][0]["sampling"]["controlSamples"]}' for n in names)
         lines += [(f'{STORAGE.capitalize()} {PHASE} profile (node {firstFacts["node"]}, the inspector\'s Profiler): a sample every {JS_INTERVAL_US} µs, the profiler running only while a timed batch runs the phase; '
-                   f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}; samples inside the profiler\'s own start and stop are dropped '
+                   f'{BATCHES} timed batches after {WARMUP} untimed, {ENGINES}; samples inside the profiler\'s own start and stop are dropped '
                    f'({dropped}). A frame names its function and script; the comparison between trees drops the line.'), '']
     native = ' addon frames expanded from line tables | mapped from the tree |' if NATIVE else ''
     lines += [f'### {grammar} ({firstFacts["cpu"]}, {firstFacts["entries"]} roots per batch)', '',

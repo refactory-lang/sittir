@@ -6,11 +6,11 @@
 
 Object storage and arena storage read the same parse and must give the same tree. The maintainer's rule for the read (2026-11-17): "they should share the logic - it should simply be a matter of which storage is being used", with object storage as the reference ("object storage for the most part is the 'mature' reader").
 
-An audit of every fact the read derives, on the validation corpus of all five grammars (440 sources, 15,024 nodes), found the two storages equal everywhere it measured: 0 root snapshots differ, 0 untouched node renders differ, 0 of 13,880 layout runs are apart. Most facts are equal because one function decides them. Four are equal because two functions restate the same rule. Those four are this spec.
+An audit of every fact the read derives, on the validation corpus of all five grammars (440 sources, 15,024 nodes), found the two storages equal everywhere it measured: 0 root snapshots differ, 0 untouched node renders differ, 0 of 13,880 layout runs are apart. Most facts are equal because one function decides them. Five are equal because two functions restate the same rule. Those five are this spec.
 
 Two copies that agree today are held equal by nothing. This spec makes each one a single implementation.
 
-## The four facts
+## The five facts
 
 | # | Fact | Object storage | Arena storage | What differs |
 |---|---|---|---|---|
@@ -18,6 +18,7 @@ Two copies that agree today are held equal by nothing. This spec makes each one 
 | 2 | A text leaf's text | `text_body`: the span's text if the leaf's children tile the span, else the kind's fixed text | `Hydrated::Leaf { span }`: always the span | the rules differ when a leaf's children do not tile its span |
 | 3 | The first child of an envelope over a hidden rule that is not an entry | `survey(..).find(!entry)` | its own loop over `Kid::at` | the same predicate, generated twice |
 | 4 | Whether a list item follows a blank line | the list-item lookup at render (`list_slots::sets_apart`) | `Hydration::set_apart` at parse | the predicate is shared; each storage gathers the extras between two items its own way |
+| 5 | Whether a node holds an error | `TreeNodes::holds_error`: `has_error() \|\| shown_as_error(display_id)` | `facts_of`: `has_error() \|\| is_missing() \|\| kid.error()` | the same test written twice; arena's extra `is_missing()` is expected to be redundant, not proven on the corpus |
 
 ## What each becomes
 
@@ -25,10 +26,11 @@ Two copies that agree today are held equal by nothing. This spec makes each one 
 2. **A text leaf's text.** First a probe: does any grammar have a text leaf whose children do not tile its span (an extra inside the leaf)? If none does, the generator refuses such a leaf and both storages take the span. If some does, arena applies the tiling test at parse, by the function object storage uses.
 3. **The first non-entry child.** One generated helper, called by the object read and by the arena hydration.
 4. **Blank line before a list item.** One gatherer of the extras between two items, used by both storages, under the predicate they already share.
+5. **Holds an error.** One `holds_error(node)` that both storages call, after a probe shows the two expressions agree on every corpus node.
 
 ## Goals
 
-- Each of the four facts has one implementation that both storages call.
+- Each of the five facts has one implementation that both storages call.
 - No read result changes in either storage.
 
 ## Non-goals
@@ -47,8 +49,14 @@ Two copies that agree today are held equal by nothing. This spec makes each one 
 
 ## Order
 
-Facts 3 and 4 first: they are small and independent. Then fact 2's probe, which decides whether it is an assert or a rule. Fact 1 last and on its own: it is the largest, and it touches every generated slot.
+Facts 3, 4 and 5 first: they are small and independent. Then fact 2's probe, which decides whether it is an assert or a rule. Fact 1 last and on its own: it is the largest, and it touches every generated slot.
 
-## Left unread by the audit
+## Read after the first audit
 
-The audit did not finish reading both sides of these facts. Each is read before this work starts, and any that turns out to be derived twice joins the table: a text slot's value, an enum member's resolution on the object side, units and their rows, a list slot's separator kind, MISSING, and an ERROR as a side entry against its own record.
+The audit's second pass read the six facts its first left unread. One is fact 5 above. The others are already one rule:
+
+- **A text slot's value** (a token interior's `verbatim`): both storages branch on the one generated `__INTERIOR`; each writes its own form of the same text. Not checked: whether `read.rs`'s `text_slot!` implementations are reached at all.
+- **An enum member's resolution** and **units and their rows:** shared generated functions.
+- **A list slot's separator kind:** one function over two navigations, which the backer parity check holds equal; the read layout's first stage moves it to a stamp.
+- **MISSING:** one source, `Nodes::missing`; object storage asks live, arena stamps the same call at parse.
+- **An ERROR as a side entry:** two representations of one entry (arena names the ERROR's record, object storage its coordinate) that read back as the same node.

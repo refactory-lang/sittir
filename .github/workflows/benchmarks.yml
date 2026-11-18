@@ -44,6 +44,10 @@ on:
         type: choice
         default: arena
         options: [arena, object]
+      batches-per-engine:
+        description: phase-profile and alloc-count. The batches one engine runs before a fresh one is made; 0 keeps one engine for the whole run, as a paired corpus worker does.
+        type: string
+        default: '50'
       candidates:
         description: paired-refs and probe. More trees beside feature, space-separated name=ref, each also read in arena storage when arena is on.
         type: string
@@ -161,6 +165,7 @@ jobs:
       phase: ${{ inputs.phase }}
       measure: ${{ inputs.benchmark == 'alloc-count' && 'allocs' || 'samples' }}
       storage: ${{ inputs.storage }}
+      batches-per-engine: ${{ inputs.batches-per-engine }}
       feature-ref: ${{ inputs.feature-ref }}
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}

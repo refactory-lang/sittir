@@ -2027,6 +2027,10 @@ The name of a type checker the portable checks run: `tsrs`, the TypeScript 7 lan
 
 Type-checks a grammar's generated build module, and everything it imports, under the named checker, and returns the diagnostics; an empty list means it type-checks. The program is the build module alone, under the package's own compiler options, through a tsconfig written to a temporary directory and removed afterwards. Under TypeScript 6 the program runs out of the default heap.
 
+### `packages/tools/src/portable/conformance.ts::portableTypeTests`
+
+A grammar's portable type tests: the files in its tests directory that match the portable type-test glob, sorted.
+
 ### `packages/tools/src/portable/admission.ts::portableAdmission`
 
 Runs the admission check over the given grammars, all binding grammars by default. It types each grammar's portable module, reads every view's yields, and compares the kinds each read site admits with the kinds its reads give. It returns the resulting `AdmissionReport`.
