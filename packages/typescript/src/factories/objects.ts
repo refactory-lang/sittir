@@ -12356,8 +12356,27 @@ function buildObjectTypeCurly$with(node: Held, setter: string, args: readonly un
 	const config = node[INPUT] as T.ObjectType.Curly.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<NonNullable<T.ObjectType.Curly.Config>['members']>) =>
-				rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ObjectType.Curly.Config>['members']>) =>
+						rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
@@ -12414,8 +12433,27 @@ function buildObjectTypeFlow$with(node: Held, setter: string, args: readonly unk
 	const config = node[INPUT] as T.ObjectType.Flow.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<NonNullable<T.ObjectType.Flow.Config>['members']>) =>
-				rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ObjectType.Flow.Config>['members']>) =>
+						rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
@@ -23345,8 +23383,27 @@ function buildInterfaceBodyCurly$with(node: Held, setter: string, args: readonly
 	const config = node[INPUT] as T.InterfaceBody.Curly.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<NonNullable<T.InterfaceBody.Curly.Config>['members']>) =>
-				rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InterfaceBody.Curly.Config>['members']>) =>
+						rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);
@@ -23403,8 +23460,27 @@ function buildInterfaceBodyFlow$with(node: Held, setter: string, args: readonly 
 	const config = node[INPUT] as T.InterfaceBody.Flow.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<NonNullable<T.InterfaceBody.Flow.Config>['members']>) =>
-				rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InterfaceBody.Flow.Config>['members']>) =>
+						rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);

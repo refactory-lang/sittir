@@ -2460,8 +2460,9 @@ function emitRefineFormFactory(
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const trivia = triviaPositionsOf(node.kind, nodeMap);
 	const hoisted: string[] = [];
+	const hoistedFormSetters = withHoists(formSetters, node, nodeMap, kindEntries);
 	if (backend === 'records') {
-		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', result: formBuiltName }, nodeMap, viewTable(views)).tail);
+		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: hoistedFormSetters, inputs: 'kind', result: formBuiltName }, nodeMap, viewTable(views)).tail);
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
@@ -2473,7 +2474,7 @@ function emitRefineFormFactory(
 			...(registered.length === 0 ? [] : [{ local: 'options', type: `T.${info.typeName}.${formShortName}.Options`, key: 'OPTIONS' as const }])
 		];
 		const members = nodeMemberParts({
-			setters: { kind: node.kind, prefix: formFn, entries: formSetters, held },
+			setters: { kind: node.kind, prefix: formFn, entries: hoistedFormSetters, held },
 			accessors: allSlots.map((f) => storedAccessor(node, f.propertyName, f.storageKey, f, nodeMap)),
 			trivia,
 			root: node.grammarRoot

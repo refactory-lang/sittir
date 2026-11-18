@@ -16,8 +16,8 @@ describe('a flat alias display rebuilt around its read slots, rendered alone', (
 		const body = declaration.body();
 		const members = body.members();
 		if (members === undefined) throw new Error('expected members');
-		expect(ts.render(body.$with.members(members)).toString()).toBe('{ x(): number }');
-		expect(ts.render(declaration.$with.body(body.$with.members(members))).toString()).toBe('interface I\n{ x(): number }');
+		expect(ts.render(body.$with.members(...members)).toString()).toBe('{ x(): number }');
+		expect(ts.render(declaration.$with.body(body.$with.members(...members))).toString()).toBe('interface I\n{ x(): number }');
 	});
 });
 
