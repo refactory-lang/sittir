@@ -6,6 +6,7 @@ import { PORTABLE_MAP_FILE, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
 import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactSlots, type ValueRead } from './exact.ts';
 import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
@@ -81,7 +82,7 @@ const PRELUDE = [
 	'',
 	'type Present<N, G> = [keyof G] extends [never] ? N : [keyof G & keyof N] extends [never] ? (N extends { readonly $type: unknown } ? N : N extends readonly [infer H, ...infer T] ? readonly [Present<H, G>, ...{ [I in keyof T]: Present<T[I], G> }] : N extends readonly (infer E)[] ? readonly Present<E, G>[] : N) : Omit<N, keyof G> & { readonly [P in keyof G & keyof N]: () => G[P] extends readonly [infer Id, infer Sub] ? Present<Narrow<Ret<N[P]>, Id>, Sub> : never };',
 	'',
-	'type Of<N, K> =N extends { readonly $type: infer T } ? (K extends T ? N : undefined) : N extends readonly (infer E)[] ? readonly Of<E, K>[] : undefined;',
+	'type Of<N, K> =N extends { readonly $type: infer T } ? (K extends T ? N : undefined) : N extends readonly (infer E)[] ? ([E] extends [never] ? undefined : readonly Of<E, K>[]) : undefined;',
 	'',
 	'type Without<N, K> = N extends { readonly $type: K } ? never : N extends { readonly $type: unknown } ? N : N extends readonly (infer E)[] ? readonly Without<E, K>[] : N;',
 	'',
@@ -290,9 +291,21 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		let held: readonly string[] = [kind];
 		let pinned: readonly string[] | undefined = [kind];
 		const present: PresentStep[] = [];
-		for (const [i, step] of path.entries()) {
-			const slot = slotOf(step);
-			if (slot === undefined) return `${step.owner} has no slot ${step.slot}`;
+		const merged: { readonly step: SlotStep; readonly end: number }[] = [];
+		for (let at = 0; at < path.length; ) {
+			const step = path[at]!;
+			const hoist = wrapperChainFor(nodeMap, step.owner, step.slot);
+			const wrappers = new Set(hoist?.storage);
+			let end = at;
+			while (hoist !== undefined && end + 1 < path.length && wrappers.has(path[end + 1]!.owner)) end++;
+			merged.push({ step, end });
+			at = end + 1;
+		}
+		for (const { step, end } of merged) {
+			const head = slotOf(step);
+			const slot = slotOf(path[end]!);
+			if (head === undefined || slot === undefined) return `${step.owner} has no slot ${step.slot}`;
+			const i = end;
 			if (!concreteKinds(model, held).includes(step.owner) && !held.includes(step.owner)) return `steps through ${step.owner}, which ${i === 0 ? 'the read kind is not' : 'its slot does not hold'}`;
 			if (held.length !== 1 || held[0] !== step.owner) {
 				const owner = idOf(step.owner);
@@ -302,19 +315,21 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 				optional ||= pinned === undefined || pinned.some((k) => k !== step.owner);
 			}
 			held = concreteKinds(model, slot.kinds);
-			expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
+			expr = `${expr}${optional ? '?.' : '.'}${head.propertyName}()`;
 			const tested: readonly string[] | undefined = optional ? undefined : sure.present(path.slice(0, i + 1));
 			if (!optional) {
 				const narrowed = tested !== undefined && tested.length > 0 && held.some((k) => !tested.includes(k)) ? tested.flatMap((k) => idOf(k) ?? []) : [];
-				present.push({ accessor: slot.propertyName, ids: narrowed.length > 0 ? [...new Set(narrowed)].join(' | ') : 'never', tested: tested !== undefined });
+				present.push({ accessor: head.propertyName, ids: narrowed.length > 0 ? [...new Set(narrowed)].join(' | ') : 'never', tested: tested !== undefined });
 			}
-			optional ||= !slot.required && !slot.multiple && tested === undefined;
-			pinned = tested !== undefined && tested.length > 0 ? tested : slot.required || tested !== undefined ? held : undefined;
+			const required = head.required && slot.required;
+			optional ||= !required && !slot.multiple && tested === undefined;
+			pinned = tested !== undefined && tested.length > 0 ? tested : required || tested !== undefined ? held : undefined;
 			const final = i === path.length - 1;
-			const one = step.anchor !== undefined || (final && single);
+			const anchor = path[end]!.anchor;
+			const one = anchor !== undefined || (final && single);
 			if (slot.multiple && (!final || one)) {
 				if (!one) return `steps into one of ${step.owner}'s ${step.slot} with no anchor`;
-				expr = step.anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
+				expr = anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
 				optional = !final || tested === undefined;
 				pinned = final ? pinned : undefined;
 			}

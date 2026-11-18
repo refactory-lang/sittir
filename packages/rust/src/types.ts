@@ -4401,7 +4401,7 @@ export interface FunctionItem {
 	readonly __inputHints__?: {
 		readonly visibility_modifier?: TSKindId.CrateVisibilityModifier | VisibilityModifierPub | undefined;
 		readonly type_parameters?: readonly AttributedTypeParameter[] | undefined;
-		readonly parameters: ParametersElements | ParametersElementsReceiver | undefined;
+		readonly parameters: ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 		readonly return_type?:
 			| KindEnum<
 					| '!'
@@ -4452,17 +4452,7 @@ export interface FunctionItem {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[] | TypeParametersElements;
-		readonly parameters:
-			| readonly (
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-			  )[]
-			| ParametersElements
-			| ParametersElementsReceiver;
+		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	readonly __slotHints__?: {
@@ -4497,7 +4487,7 @@ export interface FunctionItem {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[] | undefined;
-	readonly parameters: () => readonly AttributedParameter[];
+	readonly parameters: () => ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 	readonly body: () => Block;
@@ -4524,7 +4514,7 @@ export interface FunctionSignatureItem {
 	readonly __inputHints__?: {
 		readonly visibility_modifier?: TSKindId.CrateVisibilityModifier | VisibilityModifierPub | undefined;
 		readonly type_parameters?: readonly AttributedTypeParameter[] | undefined;
-		readonly parameters: ParametersElements | ParametersElementsReceiver | undefined;
+		readonly parameters: ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 		readonly return_type?:
 			| KindEnum<
 					| '!'
@@ -4575,17 +4565,7 @@ export interface FunctionSignatureItem {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[] | TypeParametersElements;
-		readonly parameters:
-			| readonly (
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-			  )[]
-			| ParametersElements
-			| ParametersElementsReceiver;
+		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	readonly __slotHints__?: {
@@ -4619,7 +4599,7 @@ export interface FunctionSignatureItem {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[] | undefined;
-	readonly parameters: () => readonly AttributedParameter[];
+	readonly parameters: () => ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 }
@@ -6099,7 +6079,7 @@ export interface FunctionType {
 	};
 	readonly __inputHints__?: {
 		readonly for_lifetimes?: readonly Lifetime[] | undefined;
-		readonly parameters: ParametersElements | ParametersElementsReceiver | undefined;
+		readonly parameters: ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 		readonly return_type?:
 			| KindEnum<
 					| '!'
@@ -6147,17 +6127,7 @@ export interface FunctionType {
 	};
 	readonly __looseHints__?: {
 		readonly for_lifetimes?: readonly Lifetime[] | Lifetimes;
-		readonly parameters:
-			| readonly (
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-			  )[]
-			| ParametersElements
-			| ParametersElementsReceiver;
+		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
 	};
 	readonly __slotHints__?: {
 		readonly forLifetimes: SlotHint<NonNullable<T.FunctionType.Config>['forLifetimes'], true>;
@@ -6180,7 +6150,7 @@ export interface FunctionType {
 	};
 	readonly forLifetimes: () => readonly Lifetime[] | undefined;
 	readonly content: () => FunctionTypeTraitForm | FunctionTypeFnForm;
-	readonly parameters: () => readonly AttributedParameter[];
+	readonly parameters: () => ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 	readonly returnType: () => Type | undefined;
 }
 
@@ -11597,7 +11567,7 @@ export interface MethodDeclaration {
 	readonly __inputHints__?: {
 		readonly visibility_modifier?: TSKindId.CrateVisibilityModifier | VisibilityModifierPub | undefined;
 		readonly type_parameters?: readonly AttributedTypeParameter[] | undefined;
-		readonly parameters: ParametersElements | ParametersElementsReceiver | undefined;
+		readonly parameters: ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 		readonly return_type?:
 			| KindEnum<
 					| '!'
@@ -11648,17 +11618,7 @@ export interface MethodDeclaration {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[] | TypeParametersElements;
-		readonly parameters:
-			| readonly (
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-			  )[]
-			| ParametersElements
-			| ParametersElementsReceiver;
+		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	readonly __slotHints__?: {
@@ -11693,7 +11653,7 @@ export interface MethodDeclaration {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[] | undefined;
-	readonly parameters: () => readonly AttributedParameter[];
+	readonly parameters: () => ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 	readonly body: () => Block;
@@ -11720,7 +11680,7 @@ export interface SignatureMethodDeclaration {
 	readonly __inputHints__?: {
 		readonly visibility_modifier?: TSKindId.CrateVisibilityModifier | VisibilityModifierPub | undefined;
 		readonly type_parameters?: readonly AttributedTypeParameter[] | undefined;
-		readonly parameters: ParametersElements | ParametersElementsReceiver | undefined;
+		readonly parameters: ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 		readonly return_type?:
 			| KindEnum<
 					| '!'
@@ -11771,17 +11731,7 @@ export interface SignatureMethodDeclaration {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[] | TypeParametersElements;
-		readonly parameters:
-			| readonly (
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-			  )[]
-			| ParametersElements
-			| ParametersElementsReceiver;
+		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	readonly __slotHints__?: {
@@ -11815,7 +11765,7 @@ export interface SignatureMethodDeclaration {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[] | undefined;
-	readonly parameters: () => readonly AttributedParameter[];
+	readonly parameters: () => ParametersElements | ParametersElementsReceiver | readonly never[] | undefined;
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 }

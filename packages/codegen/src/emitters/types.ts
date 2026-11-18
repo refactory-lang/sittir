@@ -1021,7 +1021,9 @@ function hoistedReadType(
 	const element = spelledReadType(last) ?? storageElementOf(last);
 	if (listed(slot)) return slotListTypeOf(slot, () => element, 'readonly');
 	if (chain.slots.some(listed)) return `readonly ${parenthesizeUnion(element)}[]`;
-	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${element} | undefined` : element;
+	const emptyList = chain.storage.some((kind) => nodeMap.nodes.get(kind) instanceof AssembledList) || slotKindNames(last).some((kind) => nodeMap.nodes.get(kind) instanceof AssembledList);
+	const present = emptyList ? `${element} | readonly never[]` : element;
+	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${present} | undefined` : present;
 }
 
 function emitInterface(
@@ -1332,6 +1334,7 @@ function hoistedItemsType(
 ): string | undefined {
 	const last = chain.slots[chain.slots.length - 1];
 	if (last === undefined || isMultiple(last)) return undefined;
+	if (slotKindNames(last).length !== 1) return undefined;
 	const list = nodeMap.nodes.get(slotKindNames(last)[0] ?? '');
 	const itemSlot = list instanceof AssembledList ? list.slots.find((slot) => isMultiple(slot)) : undefined;
 	if (itemSlot === undefined) return undefined;
