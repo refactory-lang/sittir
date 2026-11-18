@@ -50,16 +50,15 @@ const untexted = (owner: string, value: string): never => {
 const unspelled = (owner: string, value: number | bigint): never => {
 	throw new Error(owner + ' cannot spell ' + value);
 };
-const attribute_member$286_object = (
-	value:
-		| 'super'
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'identifier.super'>
-		| PathInput<TypeScriptMap, 'attribute.member'>
-		| TypeScriptMap['nodes']['attribute.member']
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type attribute_member$286_object$Item =
+	| 'super'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| PathInput<TypeScriptMap, 'attribute.member'>
+	| TypeScriptMap['nodes']['attribute.member']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const attribute_member$286_object = (value: attribute_member$286_object$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'super':
@@ -92,12 +91,11 @@ const attribute_member$286_object = (
 			return unbuilt('attribute.member.object', value);
 	}
 };
-const attribute_member$286_property = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type attribute_member$286_property$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const attribute_member$286_property = (value: attribute_member$286_property$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -122,16 +120,15 @@ const attribute_member$286_property = (
 			return unbuilt('attribute.member.property', value);
 	}
 };
-const attribute_parenthesized$304_expression = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'attribute.call'>
-		| TypeScriptMap['nodes']['attribute.call']
-		| BuildInput<TypeScriptMap, 'attribute.member'>
-		| TypeScriptMap['nodes']['attribute.member']
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type attribute_parenthesized$304_expression$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'attribute.call'>
+	| TypeScriptMap['nodes']['attribute.call']
+	| BuildInput<TypeScriptMap, 'attribute.member'>
+	| TypeScriptMap['nodes']['attribute.member']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const attribute_parenthesized$304_expression = (value: attribute_parenthesized$304_expression$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -160,13 +157,12 @@ const attribute_parenthesized$304_expression = (
 			return unbuilt('attribute.parenthesized.expression', value);
 	}
 };
-const clause_export$193_exportSpecifiers$item = (
-	value:
-		| BuildInput<TypeScriptMap, 'clause.export.specifier'>
-		| TypeScriptMap['nodes']['clause.export.specifier']
-		| BuildInput<TypeScriptMap, 'clause.export.specifier.typeof'>
-		| TypeScriptMap['nodes']['clause.export.specifier.typeof']
-) => {
+type clause_export$193_exportSpecifiers$item$Item =
+	| BuildInput<TypeScriptMap, 'clause.export.specifier'>
+	| TypeScriptMap['nodes']['clause.export.specifier']
+	| BuildInput<TypeScriptMap, 'clause.export.specifier.typeof'>
+	| TypeScriptMap['nodes']['clause.export.specifier.typeof'];
+const clause_export$193_exportSpecifiers$item = (value: clause_export$193_exportSpecifiers$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [194])) return value;
 		return unseated('clause.export.exportSpecifiers', value);
@@ -184,9 +180,10 @@ const clause_export$193_exportSpecifiers$item = (
 			return unbuilt('clause.export.exportSpecifiers', value);
 	}
 };
-const clause_finally$233_body = (
-	value: PathInput<TypeScriptMap, 'statement.block'> | TypeScriptMap['nodes']['statement.block']
-) => {
+type clause_finally$233_body$Item =
+	| PathInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block'];
+const clause_finally$233_body = (value: clause_finally$233_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [211])) return value;
 		return unseated('clause.finally.body', value);
@@ -197,7 +194,8 @@ const clause_finally$233_body = (
 	}
 	return unbuilt('clause.finally.body', value);
 };
-const clause_import_attribute$204_attributeKind = (value: 'assert' | 'with') => {
+type clause_import_attribute$204_attributeKind$Item = 'assert' | 'with';
+const clause_import_attribute$204_attributeKind = (value: clause_import_attribute$204_attributeKind$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'assert':
@@ -217,11 +215,10 @@ const clause_import_attribute$204_attributeKind = (value: 'assert' | 'with') => 
 	}
 	throw new Error('clause.import.attribute.attributeKind takes no structure');
 };
-const clause_import_attribute$204_object = (
-	value:
-		| PathInput<TypeScriptMap, 'expression.collection.object'>
-		| TypeScriptMap['nodes']['expression.collection.object']
-) => {
+type clause_import_attribute$204_object$Item =
+	| PathInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object'];
+const clause_import_attribute$204_object = (value: clause_import_attribute$204_object$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [238])) return value;
 		return unseated('clause.import.attribute.object', value);
@@ -232,12 +229,11 @@ const clause_import_attribute$204_object = (
 	}
 	return expression_collection_object$238(value);
 };
-const clause_import_namespace$201_name = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type clause_import_namespace$201_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const clause_import_namespace$201_name = (value: clause_import_namespace$201_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -262,42 +258,41 @@ const clause_import_namespace$201_name = (
 			return unbuilt('clause.import.namespace.name', value);
 	}
 };
-const declaration_ambient$313_body = (
-	value:
-		| BuildInput<TypeScriptMap, 'declaration.ambient'>
-		| TypeScriptMap['nodes']['declaration.ambient']
-		| BuildInput<TypeScriptMap, 'declaration.class'>
-		| TypeScriptMap['nodes']['declaration.class']
-		| BuildInput<TypeScriptMap, 'declaration.enum'>
-		| TypeScriptMap['nodes']['declaration.enum']
-		| BuildInput<TypeScriptMap, 'declaration.function'>
-		| TypeScriptMap['nodes']['declaration.function']
-		| BuildInput<TypeScriptMap, 'declaration.function.signature'>
-		| TypeScriptMap['nodes']['declaration.function.signature']
-		| BuildInput<TypeScriptMap, 'declaration.interface'>
-		| TypeScriptMap['nodes']['declaration.interface']
-		| BuildInput<TypeScriptMap, 'declaration.module'>
-		| TypeScriptMap['nodes']['declaration.module']
-		| BuildInput<TypeScriptMap, 'declaration.module.external'>
-		| TypeScriptMap['nodes']['declaration.module.external']
-		| BuildInput<TypeScriptMap, 'declaration.module_property'>
-		| TypeScriptMap['nodes']['declaration.module_property']
-		| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-		| TypeScriptMap['nodes']['declaration.type_alias']
-		| BuildInput<TypeScriptMap, 'declaration.variable'>
-		| TypeScriptMap['nodes']['declaration.variable']
-		| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
-		| TypeScriptMap['nodes']['declaration.variable.constant']
-		| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
-		| TypeScriptMap['nodes']['declaration.variable.reassignable']
-		| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
-		| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
-		| BuildInput<TypeScriptMap, 'statement.block'>
-		| TypeScriptMap['nodes']['statement.block']
-		| BuildInput<TypeScriptMap, 'statement.import.alias'>
-		| TypeScriptMap['nodes']['statement.import.alias']
-		| Unmapped<'typescript:using_declaration'>
-) => {
+type declaration_ambient$313_body$Item =
+	| BuildInput<TypeScriptMap, 'declaration.ambient'>
+	| TypeScriptMap['nodes']['declaration.ambient']
+	| BuildInput<TypeScriptMap, 'declaration.class'>
+	| TypeScriptMap['nodes']['declaration.class']
+	| BuildInput<TypeScriptMap, 'declaration.enum'>
+	| TypeScriptMap['nodes']['declaration.enum']
+	| BuildInput<TypeScriptMap, 'declaration.function'>
+	| TypeScriptMap['nodes']['declaration.function']
+	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
+	| TypeScriptMap['nodes']['declaration.function.signature']
+	| BuildInput<TypeScriptMap, 'declaration.interface'>
+	| TypeScriptMap['nodes']['declaration.interface']
+	| BuildInput<TypeScriptMap, 'declaration.module'>
+	| TypeScriptMap['nodes']['declaration.module']
+	| BuildInput<TypeScriptMap, 'declaration.module.external'>
+	| TypeScriptMap['nodes']['declaration.module.external']
+	| BuildInput<TypeScriptMap, 'declaration.module_property'>
+	| TypeScriptMap['nodes']['declaration.module_property']
+	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.variable'>
+	| TypeScriptMap['nodes']['declaration.variable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
+	| TypeScriptMap['nodes']['declaration.variable.constant']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
+	| BuildInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block']
+	| BuildInput<TypeScriptMap, 'statement.import.alias'>
+	| TypeScriptMap['nodes']['statement.import.alias']
+	| Unmapped<'typescript:using_declaration'>;
+const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 400]))
 			return value;
@@ -347,9 +342,10 @@ const declaration_ambient$313_body = (
 			return unbuilt('declaration.ambient.body', value);
 	}
 };
-const declaration_enum$322_body$item = (
-	value: PathInput<TypeScriptMap, 'declaration.enum_member'> | TypeScriptMap['nodes']['declaration.enum_member']
-) => {
+type declaration_enum$322_body$item$Item =
+	| PathInput<TypeScriptMap, 'declaration.enum_member'>
+	| TypeScriptMap['nodes']['declaration.enum_member'];
+const declaration_enum$322_body$item = (value: declaration_enum$322_body$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [324, 388, 389])) return value;
 		return unseated('declaration.enum.body', value);
@@ -360,12 +356,11 @@ const declaration_enum$322_body$item = (
 	}
 	return unbuilt('declaration.enum.body', value);
 };
-const declaration_enum$322_name = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type declaration_enum$322_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const declaration_enum$322_name = (value: declaration_enum$322_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -390,67 +385,66 @@ const declaration_enum$322_name = (
 			return unbuilt('declaration.enum.name', value);
 	}
 };
-const element_template_substitution$347_type = (
-	value:
-		| '*'
-		| 'any'
-		| 'boolean'
-		| 'never'
-		| 'number'
-		| 'object'
-		| 'string'
-		| 'symbol'
-		| 'this'
-		| 'unique symbol'
-		| 'unknown'
-		| 'void'
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'type.existential'>
-		| Text<TypeScriptMap, 'type.primitive.boolean'>
-		| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-		| Text<TypeScriptMap, 'type.primitive.never'>
-		| Text<TypeScriptMap, 'type.primitive.object'>
-		| Text<TypeScriptMap, 'type.primitive.string'>
-		| Text<TypeScriptMap, 'type.primitive.symbol'>
-		| Text<TypeScriptMap, 'type.primitive.unchecked'>
-		| Text<TypeScriptMap, 'type.primitive.unknown'>
-		| Text<TypeScriptMap, 'type.primitive.void'>
-		| Text<TypeScriptMap, 'type.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.array'>
-		| TypeScriptMap['nodes']['type.array']
-		| BuildInput<TypeScriptMap, 'type.conditional'>
-		| TypeScriptMap['nodes']['type.conditional']
-		| BuildInput<TypeScriptMap, 'type.generic'>
-		| TypeScriptMap['nodes']['type.generic']
-		| BuildInput<TypeScriptMap, 'type.index_query'>
-		| TypeScriptMap['nodes']['type.index_query']
-		| BuildInput<TypeScriptMap, 'type.infer'>
-		| TypeScriptMap['nodes']['type.infer']
-		| BuildInput<TypeScriptMap, 'type.intersection'>
-		| TypeScriptMap['nodes']['type.intersection']
-		| BuildInput<TypeScriptMap, 'type.literal'>
-		| TypeScriptMap['nodes']['type.literal']
-		| BuildInput<TypeScriptMap, 'type.lookup'>
-		| TypeScriptMap['nodes']['type.lookup']
-		| BuildInput<TypeScriptMap, 'type.nullable'>
-		| TypeScriptMap['nodes']['type.nullable']
-		| BuildInput<TypeScriptMap, 'type.object'>
-		| TypeScriptMap['nodes']['type.object']
-		| BuildInput<TypeScriptMap, 'type.parenthesized'>
-		| TypeScriptMap['nodes']['type.parenthesized']
-		| BuildInput<TypeScriptMap, 'type.query'>
-		| TypeScriptMap['nodes']['type.query']
-		| BuildInput<TypeScriptMap, 'type.template'>
-		| TypeScriptMap['nodes']['type.template']
-		| BuildInput<TypeScriptMap, 'type.tuple'>
-		| TypeScriptMap['nodes']['type.tuple']
-		| BuildInput<TypeScriptMap, 'type.union'>
-		| TypeScriptMap['nodes']['type.union']
-) => {
+type element_template_substitution$347_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const element_template_substitution$347_type = (value: element_template_substitution$347_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -544,40 +538,39 @@ const element_template_substitution$347_type = (
 			return unbuilt('element.template.substitution.type', value);
 	}
 };
-const expression_collection_object$238_properties = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'declaration.method'>
-		| TypeScriptMap['nodes']['declaration.method']
-		| BuildInput<TypeScriptMap, 'declaration.method.private'>
-		| TypeScriptMap['nodes']['declaration.method.private']
-		| BuildInput<TypeScriptMap, 'declaration.method.protected'>
-		| TypeScriptMap['nodes']['declaration.method.protected']
-		| BuildInput<TypeScriptMap, 'declaration.method.public'>
-		| TypeScriptMap['nodes']['declaration.method.public']
-		| BuildInput<TypeScriptMap, 'declaration.property.getter'>
-		| TypeScriptMap['nodes']['declaration.property.getter']
-		| BuildInput<TypeScriptMap, 'declaration.property.getter.private'>
-		| TypeScriptMap['nodes']['declaration.property.getter.private']
-		| BuildInput<TypeScriptMap, 'declaration.property.getter.protected'>
-		| TypeScriptMap['nodes']['declaration.property.getter.protected']
-		| BuildInput<TypeScriptMap, 'declaration.property.getter.public'>
-		| TypeScriptMap['nodes']['declaration.property.getter.public']
-		| BuildInput<TypeScriptMap, 'declaration.property.setter'>
-		| TypeScriptMap['nodes']['declaration.property.setter']
-		| BuildInput<TypeScriptMap, 'declaration.property.setter.private'>
-		| TypeScriptMap['nodes']['declaration.property.setter.private']
-		| BuildInput<TypeScriptMap, 'declaration.property.setter.protected'>
-		| TypeScriptMap['nodes']['declaration.property.setter.protected']
-		| BuildInput<TypeScriptMap, 'declaration.property.setter.public'>
-		| TypeScriptMap['nodes']['declaration.property.setter.public']
-		| BuildInput<TypeScriptMap, 'element.pair'>
-		| TypeScriptMap['nodes']['element.pair']
-		| BuildInput<TypeScriptMap, 'element.spread'>
-		| TypeScriptMap['nodes']['element.spread']
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type expression_collection_object$238_properties$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'declaration.method'>
+	| TypeScriptMap['nodes']['declaration.method']
+	| BuildInput<TypeScriptMap, 'declaration.method.private'>
+	| TypeScriptMap['nodes']['declaration.method.private']
+	| BuildInput<TypeScriptMap, 'declaration.method.protected'>
+	| TypeScriptMap['nodes']['declaration.method.protected']
+	| BuildInput<TypeScriptMap, 'declaration.method.public'>
+	| TypeScriptMap['nodes']['declaration.method.public']
+	| BuildInput<TypeScriptMap, 'declaration.property.getter'>
+	| TypeScriptMap['nodes']['declaration.property.getter']
+	| BuildInput<TypeScriptMap, 'declaration.property.getter.private'>
+	| TypeScriptMap['nodes']['declaration.property.getter.private']
+	| BuildInput<TypeScriptMap, 'declaration.property.getter.protected'>
+	| TypeScriptMap['nodes']['declaration.property.getter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.property.getter.public'>
+	| TypeScriptMap['nodes']['declaration.property.getter.public']
+	| BuildInput<TypeScriptMap, 'declaration.property.setter'>
+	| TypeScriptMap['nodes']['declaration.property.setter']
+	| BuildInput<TypeScriptMap, 'declaration.property.setter.private'>
+	| TypeScriptMap['nodes']['declaration.property.setter.private']
+	| BuildInput<TypeScriptMap, 'declaration.property.setter.protected'>
+	| TypeScriptMap['nodes']['declaration.property.setter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.property.setter.public'>
+	| TypeScriptMap['nodes']['declaration.property.setter.public']
+	| BuildInput<TypeScriptMap, 'element.pair'>
+	| TypeScriptMap['nodes']['element.pair']
+	| BuildInput<TypeScriptMap, 'element.spread'>
+	| TypeScriptMap['nodes']['element.spread']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const expression_collection_object$238_properties = (value: expression_collection_object$238_properties$Item) => {
 	if (value === null) return null;
 	if (typeof value === 'string') {
 		if (
@@ -631,12 +624,11 @@ const expression_collection_object$238_properties = (
 			return unbuilt('expression.collection.object.properties', value);
 	}
 };
-const identifier_qualified$244_name = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type identifier_qualified$244_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const identifier_qualified$244_name = (value: identifier_qualified$244_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -661,21 +653,20 @@ const identifier_qualified$244_name = (
 			return unbuilt('identifier.qualified.name', value);
 	}
 };
-const identifier_qualified$244_qualifier = (
-	value:
-		| 'import'
-		| 'this'
-		| Text<TypeScriptMap, 'expression.call.import'>
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'identifier.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.import'>
-		| TypeScriptMap['nodes']['type.import']
-		| Unmapped<'typescript:type_query_subscript_expression'>
-) => {
+type identifier_qualified$244_qualifier$Item =
+	| 'import'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.call.import'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| Unmapped<'typescript:type_query_subscript_expression'>;
+const identifier_qualified$244_qualifier = (value: identifier_qualified$244_qualifier$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -704,12 +695,11 @@ const identifier_qualified$244_qualifier = (
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
-const identifier_qualified$319_name = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type identifier_qualified$319_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const identifier_qualified$319_name = (value: identifier_qualified$319_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -734,21 +724,20 @@ const identifier_qualified$319_name = (
 			return unbuilt('identifier.qualified.name', value);
 	}
 };
-const identifier_qualified$319_qualifier = (
-	value:
-		| 'import'
-		| 'this'
-		| Text<TypeScriptMap, 'expression.call.import'>
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'identifier.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.import'>
-		| TypeScriptMap['nodes']['type.import']
-		| Unmapped<'typescript:type_query_subscript_expression'>
-) => {
+type identifier_qualified$319_qualifier$Item =
+	| 'import'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.call.import'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| Unmapped<'typescript:type_query_subscript_expression'>;
+const identifier_qualified$319_qualifier = (value: identifier_qualified$319_qualifier$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -777,12 +766,11 @@ const identifier_qualified$319_qualifier = (
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
-const identifier_qualified$354_name = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-) => {
+type identifier_qualified$354_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const identifier_qualified$354_name = (value: identifier_qualified$354_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -807,21 +795,20 @@ const identifier_qualified$354_name = (
 			return unbuilt('identifier.qualified.name', value);
 	}
 };
-const identifier_qualified$354_qualifier = (
-	value:
-		| 'import'
-		| 'this'
-		| Text<TypeScriptMap, 'expression.call.import'>
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'identifier.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.import'>
-		| TypeScriptMap['nodes']['type.import']
-		| Unmapped<'typescript:type_query_subscript_expression'>
-) => {
+type identifier_qualified$354_qualifier$Item =
+	| 'import'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.call.import'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| Unmapped<'typescript:type_query_subscript_expression'>;
+const identifier_qualified$354_qualifier = (value: identifier_qualified$354_qualifier$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
@@ -855,12 +842,11 @@ const identifier_qualified$354_qualifier = (
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
-const literal_regex$276_flags = (
-	value:
-		| Text<TypeScriptMap, 'literal.regex.flags'>
-		| BuildInput<TypeScriptMap, 'literal.regex.flags'>
-		| TypeScriptMap['nodes']['literal.regex.flags']
-) => {
+type literal_regex$276_flags$Item =
+	| Text<TypeScriptMap, 'literal.regex.flags'>
+	| BuildInput<TypeScriptMap, 'literal.regex.flags'>
+	| TypeScriptMap['nodes']['literal.regex.flags'];
+const literal_regex$276_flags = (value: literal_regex$276_flags$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[a-z]+))$/u.test(value)) return b.regexFlags(value);
 		return b.regexFlags(value);
@@ -880,12 +866,11 @@ const literal_regex$276_flags = (
 			return unbuilt('literal.regex.flags', value);
 	}
 };
-const literal_regex$276_pattern = (
-	value:
-		| Text<TypeScriptMap, 'literal.regex.pattern'>
-		| BuildInput<TypeScriptMap, 'literal.regex.pattern'>
-		| TypeScriptMap['nodes']['literal.regex.pattern']
-) => {
+type literal_regex$276_pattern$Item =
+	| Text<TypeScriptMap, 'literal.regex.pattern'>
+	| BuildInput<TypeScriptMap, 'literal.regex.pattern'>
+	| TypeScriptMap['nodes']['literal.regex.pattern'];
+const literal_regex$276_pattern = (value: literal_regex$276_pattern$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(?:\[(?:(?:\\(?:[^\x0A])|(?:[^\]\n\\])))*\]|\\(?:[^\x0A])|(?:[^/\\[\n])))+)$/u.test(value))
 			return b.regexPattern(value);
@@ -906,16 +891,15 @@ const literal_regex$276_pattern = (
 			return unbuilt('literal.regex.pattern', value);
 	}
 };
-const literal_string_interpolated$274_elements = (
-	value:
-		| Text<TypeScriptMap, 'literal.string.text'>
-		| PathInput<TypeScriptMap, 'expression.interpolation'>
-		| TypeScriptMap['nodes']['expression.interpolation']
-		| BuildInput<TypeScriptMap, 'literal.string.escape'>
-		| TypeScriptMap['nodes']['literal.string.escape']
-		| BuildInput<TypeScriptMap, 'literal.string.text'>
-		| TypeScriptMap['nodes']['literal.string.text']
-) => {
+type literal_string_interpolated$274_elements$Item =
+	| Text<TypeScriptMap, 'literal.string.text'>
+	| PathInput<TypeScriptMap, 'expression.interpolation'>
+	| TypeScriptMap['nodes']['expression.interpolation']
+	| BuildInput<TypeScriptMap, 'literal.string.escape'>
+	| TypeScriptMap['nodes']['literal.string.escape']
+	| BuildInput<TypeScriptMap, 'literal.string.text'>
+	| TypeScriptMap['nodes']['literal.string.text'];
+const literal_string_interpolated$274_elements = (value: literal_string_interpolated$274_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[^`\\$]+))$/u.test(value)) return b.templateChars(value);
 		return b.templateChars(value);
@@ -940,28 +924,27 @@ const literal_string_interpolated$274_elements = (
 			return unbuilt('literal.string.interpolated.elements', value);
 	}
 };
-const pattern_list$243_elements = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
-		| TypeScriptMap['nodes']['expression.cast.non_null']
-		| BuildInput<TypeScriptMap, 'expression.member'>
-		| TypeScriptMap['nodes']['expression.member']
-		| BuildInput<TypeScriptMap, 'expression.subscript'>
-		| TypeScriptMap['nodes']['expression.subscript']
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'literal.null.undefined'>
-		| TypeScriptMap['nodes']['literal.null.undefined']
-		| BuildInput<TypeScriptMap, 'pattern.assignment'>
-		| TypeScriptMap['nodes']['pattern.assignment']
-		| BuildInput<TypeScriptMap, 'pattern.list'>
-		| TypeScriptMap['nodes']['pattern.list']
-		| BuildInput<TypeScriptMap, 'pattern.object'>
-		| TypeScriptMap['nodes']['pattern.object']
-		| BuildInput<TypeScriptMap, 'pattern.rest'>
-		| TypeScriptMap['nodes']['pattern.rest']
-) => {
+type pattern_list$243_elements$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'pattern.assignment'>
+	| TypeScriptMap['nodes']['pattern.assignment']
+	| BuildInput<TypeScriptMap, 'pattern.list'>
+	| TypeScriptMap['nodes']['pattern.list']
+	| BuildInput<TypeScriptMap, 'pattern.object'>
+	| TypeScriptMap['nodes']['pattern.object']
+	| BuildInput<TypeScriptMap, 'pattern.rest'>
+	| TypeScriptMap['nodes']['pattern.rest'];
+const pattern_list$243_elements = (value: pattern_list$243_elements$Item) => {
 	if (value === null) return null;
 	if (typeof value === 'string') {
 		if (
@@ -1005,18 +988,17 @@ const pattern_list$243_elements = (
 			return unbuilt('pattern.list.elements', value);
 	}
 };
-const pattern_object$239_properties = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'pattern.object.assignment'>
-		| TypeScriptMap['nodes']['pattern.object.assignment']
-		| BuildInput<TypeScriptMap, 'pattern.object.pair'>
-		| TypeScriptMap['nodes']['pattern.object.pair']
-		| BuildInput<TypeScriptMap, 'pattern.rest'>
-		| TypeScriptMap['nodes']['pattern.rest']
-) => {
+type pattern_object$239_properties$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'pattern.object.assignment'>
+	| TypeScriptMap['nodes']['pattern.object.assignment']
+	| BuildInput<TypeScriptMap, 'pattern.object.pair'>
+	| TypeScriptMap['nodes']['pattern.object.pair']
+	| BuildInput<TypeScriptMap, 'pattern.rest'>
+	| TypeScriptMap['nodes']['pattern.rest'];
+const pattern_object$239_properties = (value: pattern_object$239_properties$Item) => {
 	if (value === null) return null;
 	if (typeof value === 'string') {
 		if (
@@ -1048,24 +1030,23 @@ const pattern_object$239_properties = (
 			return unbuilt('pattern.object.properties', value);
 	}
 };
-const pattern_rest$292_pattern = (
-	value:
-		| Text<TypeScriptMap, 'identifier'>
-		| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
-		| TypeScriptMap['nodes']['expression.cast.non_null']
-		| BuildInput<TypeScriptMap, 'expression.member'>
-		| TypeScriptMap['nodes']['expression.member']
-		| BuildInput<TypeScriptMap, 'expression.subscript'>
-		| TypeScriptMap['nodes']['expression.subscript']
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'literal.null.undefined'>
-		| TypeScriptMap['nodes']['literal.null.undefined']
-		| BuildInput<TypeScriptMap, 'pattern.list'>
-		| TypeScriptMap['nodes']['pattern.list']
-		| BuildInput<TypeScriptMap, 'pattern.object'>
-		| TypeScriptMap['nodes']['pattern.object']
-) => {
+type pattern_rest$292_pattern$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'pattern.list'>
+	| TypeScriptMap['nodes']['pattern.list']
+	| BuildInput<TypeScriptMap, 'pattern.object'>
+	| TypeScriptMap['nodes']['pattern.object'];
+const pattern_rest$292_pattern = (value: pattern_rest$292_pattern$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -1102,65 +1083,64 @@ const pattern_rest$292_pattern = (
 			return unbuilt('pattern.rest.pattern', value);
 	}
 };
-const type_array$378_type = (
-	value:
-		| '*'
-		| 'any'
-		| 'boolean'
-		| 'never'
-		| 'number'
-		| 'object'
-		| 'string'
-		| 'symbol'
-		| 'this'
-		| 'unique symbol'
-		| 'unknown'
-		| 'void'
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'type.existential'>
-		| Text<TypeScriptMap, 'type.primitive.boolean'>
-		| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-		| Text<TypeScriptMap, 'type.primitive.never'>
-		| Text<TypeScriptMap, 'type.primitive.object'>
-		| Text<TypeScriptMap, 'type.primitive.string'>
-		| Text<TypeScriptMap, 'type.primitive.symbol'>
-		| Text<TypeScriptMap, 'type.primitive.unchecked'>
-		| Text<TypeScriptMap, 'type.primitive.unknown'>
-		| Text<TypeScriptMap, 'type.primitive.void'>
-		| Text<TypeScriptMap, 'type.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.array'>
-		| TypeScriptMap['nodes']['type.array']
-		| BuildInput<TypeScriptMap, 'type.conditional'>
-		| TypeScriptMap['nodes']['type.conditional']
-		| BuildInput<TypeScriptMap, 'type.generic'>
-		| TypeScriptMap['nodes']['type.generic']
-		| BuildInput<TypeScriptMap, 'type.index_query'>
-		| TypeScriptMap['nodes']['type.index_query']
-		| BuildInput<TypeScriptMap, 'type.intersection'>
-		| TypeScriptMap['nodes']['type.intersection']
-		| BuildInput<TypeScriptMap, 'type.literal'>
-		| TypeScriptMap['nodes']['type.literal']
-		| BuildInput<TypeScriptMap, 'type.lookup'>
-		| TypeScriptMap['nodes']['type.lookup']
-		| BuildInput<TypeScriptMap, 'type.nullable'>
-		| TypeScriptMap['nodes']['type.nullable']
-		| BuildInput<TypeScriptMap, 'type.object'>
-		| TypeScriptMap['nodes']['type.object']
-		| BuildInput<TypeScriptMap, 'type.parenthesized'>
-		| TypeScriptMap['nodes']['type.parenthesized']
-		| BuildInput<TypeScriptMap, 'type.query'>
-		| TypeScriptMap['nodes']['type.query']
-		| BuildInput<TypeScriptMap, 'type.template'>
-		| TypeScriptMap['nodes']['type.template']
-		| BuildInput<TypeScriptMap, 'type.tuple'>
-		| TypeScriptMap['nodes']['type.tuple']
-		| BuildInput<TypeScriptMap, 'type.union'>
-		| TypeScriptMap['nodes']['type.union']
-) => {
+type type_array$378_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const type_array$378_type = (value: type_array$378_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -1252,65 +1232,64 @@ const type_array$378_type = (
 			return unbuilt('type.array.type', value);
 	}
 };
-const type_index_query$359_type = (
-	value:
-		| '*'
-		| 'any'
-		| 'boolean'
-		| 'never'
-		| 'number'
-		| 'object'
-		| 'string'
-		| 'symbol'
-		| 'this'
-		| 'unique symbol'
-		| 'unknown'
-		| 'void'
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'type.existential'>
-		| Text<TypeScriptMap, 'type.primitive.boolean'>
-		| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-		| Text<TypeScriptMap, 'type.primitive.never'>
-		| Text<TypeScriptMap, 'type.primitive.object'>
-		| Text<TypeScriptMap, 'type.primitive.string'>
-		| Text<TypeScriptMap, 'type.primitive.symbol'>
-		| Text<TypeScriptMap, 'type.primitive.unchecked'>
-		| Text<TypeScriptMap, 'type.primitive.unknown'>
-		| Text<TypeScriptMap, 'type.primitive.void'>
-		| Text<TypeScriptMap, 'type.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.array'>
-		| TypeScriptMap['nodes']['type.array']
-		| BuildInput<TypeScriptMap, 'type.conditional'>
-		| TypeScriptMap['nodes']['type.conditional']
-		| BuildInput<TypeScriptMap, 'type.generic'>
-		| TypeScriptMap['nodes']['type.generic']
-		| BuildInput<TypeScriptMap, 'type.index_query'>
-		| TypeScriptMap['nodes']['type.index_query']
-		| BuildInput<TypeScriptMap, 'type.intersection'>
-		| TypeScriptMap['nodes']['type.intersection']
-		| BuildInput<TypeScriptMap, 'type.literal'>
-		| TypeScriptMap['nodes']['type.literal']
-		| BuildInput<TypeScriptMap, 'type.lookup'>
-		| TypeScriptMap['nodes']['type.lookup']
-		| BuildInput<TypeScriptMap, 'type.nullable'>
-		| TypeScriptMap['nodes']['type.nullable']
-		| BuildInput<TypeScriptMap, 'type.object'>
-		| TypeScriptMap['nodes']['type.object']
-		| BuildInput<TypeScriptMap, 'type.parenthesized'>
-		| TypeScriptMap['nodes']['type.parenthesized']
-		| BuildInput<TypeScriptMap, 'type.query'>
-		| TypeScriptMap['nodes']['type.query']
-		| BuildInput<TypeScriptMap, 'type.template'>
-		| TypeScriptMap['nodes']['type.template']
-		| BuildInput<TypeScriptMap, 'type.tuple'>
-		| TypeScriptMap['nodes']['type.tuple']
-		| BuildInput<TypeScriptMap, 'type.union'>
-		| TypeScriptMap['nodes']['type.union']
-) => {
+type type_index_query$359_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -1402,65 +1381,64 @@ const type_index_query$359_type = (
 			return unbuilt('type.index_query.type', value);
 	}
 };
-const type_nullable$365_type = (
-	value:
-		| '*'
-		| 'any'
-		| 'boolean'
-		| 'never'
-		| 'number'
-		| 'object'
-		| 'string'
-		| 'symbol'
-		| 'this'
-		| 'unique symbol'
-		| 'unknown'
-		| 'void'
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'type.existential'>
-		| Text<TypeScriptMap, 'type.primitive.boolean'>
-		| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-		| Text<TypeScriptMap, 'type.primitive.never'>
-		| Text<TypeScriptMap, 'type.primitive.object'>
-		| Text<TypeScriptMap, 'type.primitive.string'>
-		| Text<TypeScriptMap, 'type.primitive.symbol'>
-		| Text<TypeScriptMap, 'type.primitive.unchecked'>
-		| Text<TypeScriptMap, 'type.primitive.unknown'>
-		| Text<TypeScriptMap, 'type.primitive.void'>
-		| Text<TypeScriptMap, 'type.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.array'>
-		| TypeScriptMap['nodes']['type.array']
-		| BuildInput<TypeScriptMap, 'type.conditional'>
-		| TypeScriptMap['nodes']['type.conditional']
-		| BuildInput<TypeScriptMap, 'type.generic'>
-		| TypeScriptMap['nodes']['type.generic']
-		| BuildInput<TypeScriptMap, 'type.index_query'>
-		| TypeScriptMap['nodes']['type.index_query']
-		| BuildInput<TypeScriptMap, 'type.intersection'>
-		| TypeScriptMap['nodes']['type.intersection']
-		| BuildInput<TypeScriptMap, 'type.literal'>
-		| TypeScriptMap['nodes']['type.literal']
-		| BuildInput<TypeScriptMap, 'type.lookup'>
-		| TypeScriptMap['nodes']['type.lookup']
-		| BuildInput<TypeScriptMap, 'type.nullable'>
-		| TypeScriptMap['nodes']['type.nullable']
-		| BuildInput<TypeScriptMap, 'type.object'>
-		| TypeScriptMap['nodes']['type.object']
-		| BuildInput<TypeScriptMap, 'type.parenthesized'>
-		| TypeScriptMap['nodes']['type.parenthesized']
-		| BuildInput<TypeScriptMap, 'type.query'>
-		| TypeScriptMap['nodes']['type.query']
-		| BuildInput<TypeScriptMap, 'type.template'>
-		| TypeScriptMap['nodes']['type.template']
-		| BuildInput<TypeScriptMap, 'type.tuple'>
-		| TypeScriptMap['nodes']['type.tuple']
-		| BuildInput<TypeScriptMap, 'type.union'>
-		| TypeScriptMap['nodes']['type.union']
-) => {
+type type_nullable$365_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -1552,7 +1530,8 @@ const type_nullable$365_type = (
 			return unbuilt('type.nullable.type', value);
 	}
 };
-const type_object$369_closing = (value: '|}' | '}') => {
+type type_object$369_closing$Item = '|}' | '}';
+const type_object$369_closing = (value: type_object$369_closing$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '|}':
@@ -1572,55 +1551,54 @@ const type_object$369_closing = (value: '|}' | '}') => {
 	}
 	throw new Error('type.object.closing takes no structure');
 };
-const type_object$369_members$item = (
-	value:
-		| BuildInput<TypeScriptMap, 'declaration.field.signature'>
-		| TypeScriptMap['nodes']['declaration.field.signature']
-		| BuildInput<TypeScriptMap, 'declaration.field.signature.private'>
-		| TypeScriptMap['nodes']['declaration.field.signature.private']
-		| BuildInput<TypeScriptMap, 'declaration.field.signature.protected'>
-		| TypeScriptMap['nodes']['declaration.field.signature.protected']
-		| BuildInput<TypeScriptMap, 'declaration.field.signature.public'>
-		| TypeScriptMap['nodes']['declaration.field.signature.public']
-		| BuildInput<TypeScriptMap, 'declaration.method.signature'>
-		| TypeScriptMap['nodes']['declaration.method.signature']
-		| BuildInput<TypeScriptMap, 'declaration.method.signature.private'>
-		| TypeScriptMap['nodes']['declaration.method.signature.private']
-		| BuildInput<TypeScriptMap, 'declaration.method.signature.protected'>
-		| TypeScriptMap['nodes']['declaration.method.signature.protected']
-		| BuildInput<TypeScriptMap, 'declaration.method.signature.public'>
-		| TypeScriptMap['nodes']['declaration.method.signature.public']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.getter'>
-		| TypeScriptMap['nodes']['declaration.property.signature.getter']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.private'>
-		| TypeScriptMap['nodes']['declaration.property.signature.getter.private']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.protected'>
-		| TypeScriptMap['nodes']['declaration.property.signature.getter.protected']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.public'>
-		| TypeScriptMap['nodes']['declaration.property.signature.getter.public']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.setter'>
-		| TypeScriptMap['nodes']['declaration.property.signature.setter']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.private'>
-		| TypeScriptMap['nodes']['declaration.property.signature.setter.private']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.protected'>
-		| TypeScriptMap['nodes']['declaration.property.signature.setter.protected']
-		| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.public'>
-		| TypeScriptMap['nodes']['declaration.property.signature.setter.public']
-		| BuildInput<TypeScriptMap, 'declaration.signature.call'>
-		| TypeScriptMap['nodes']['declaration.signature.call']
-		| BuildInput<TypeScriptMap, 'declaration.signature.construct'>
-		| TypeScriptMap['nodes']['declaration.signature.construct']
-		| BuildInput<TypeScriptMap, 'declaration.signature.index'>
-		| TypeScriptMap['nodes']['declaration.signature.index']
-		| BuildInput<TypeScriptMap, 'declaration.signature.index.mapped'>
-		| TypeScriptMap['nodes']['declaration.signature.index.mapped']
-		| BuildInput<TypeScriptMap, 'statement.export'>
-		| TypeScriptMap['nodes']['statement.export']
-		| BuildInput<TypeScriptMap, 'statement.export.all'>
-		| TypeScriptMap['nodes']['statement.export.all']
-		| BuildInput<TypeScriptMap, 'statement.export.default'>
-		| TypeScriptMap['nodes']['statement.export.default']
-) => {
+type type_object$369_members$item$Item =
+	| BuildInput<TypeScriptMap, 'declaration.field.signature'>
+	| TypeScriptMap['nodes']['declaration.field.signature']
+	| BuildInput<TypeScriptMap, 'declaration.field.signature.private'>
+	| TypeScriptMap['nodes']['declaration.field.signature.private']
+	| BuildInput<TypeScriptMap, 'declaration.field.signature.protected'>
+	| TypeScriptMap['nodes']['declaration.field.signature.protected']
+	| BuildInput<TypeScriptMap, 'declaration.field.signature.public'>
+	| TypeScriptMap['nodes']['declaration.field.signature.public']
+	| BuildInput<TypeScriptMap, 'declaration.method.signature'>
+	| TypeScriptMap['nodes']['declaration.method.signature']
+	| BuildInput<TypeScriptMap, 'declaration.method.signature.private'>
+	| TypeScriptMap['nodes']['declaration.method.signature.private']
+	| BuildInput<TypeScriptMap, 'declaration.method.signature.protected'>
+	| TypeScriptMap['nodes']['declaration.method.signature.protected']
+	| BuildInput<TypeScriptMap, 'declaration.method.signature.public'>
+	| TypeScriptMap['nodes']['declaration.method.signature.public']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter'>
+	| TypeScriptMap['nodes']['declaration.property.signature.getter']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.private'>
+	| TypeScriptMap['nodes']['declaration.property.signature.getter.private']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.protected'>
+	| TypeScriptMap['nodes']['declaration.property.signature.getter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.public'>
+	| TypeScriptMap['nodes']['declaration.property.signature.getter.public']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter'>
+	| TypeScriptMap['nodes']['declaration.property.signature.setter']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.private'>
+	| TypeScriptMap['nodes']['declaration.property.signature.setter.private']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.protected'>
+	| TypeScriptMap['nodes']['declaration.property.signature.setter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.public'>
+	| TypeScriptMap['nodes']['declaration.property.signature.setter.public']
+	| BuildInput<TypeScriptMap, 'declaration.signature.call'>
+	| TypeScriptMap['nodes']['declaration.signature.call']
+	| BuildInput<TypeScriptMap, 'declaration.signature.construct'>
+	| TypeScriptMap['nodes']['declaration.signature.construct']
+	| BuildInput<TypeScriptMap, 'declaration.signature.index'>
+	| TypeScriptMap['nodes']['declaration.signature.index']
+	| BuildInput<TypeScriptMap, 'declaration.signature.index.mapped'>
+	| TypeScriptMap['nodes']['declaration.signature.index.mapped']
+	| BuildInput<TypeScriptMap, 'statement.export'>
+	| TypeScriptMap['nodes']['statement.export']
+	| BuildInput<TypeScriptMap, 'statement.export.all'>
+	| TypeScriptMap['nodes']['statement.export.all']
+	| BuildInput<TypeScriptMap, 'statement.export.default'>
+	| TypeScriptMap['nodes']['statement.export.default'];
+const type_object$369_members$item = (value: type_object$369_members$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [191, 301, 370, 371, 376, 377, 409, 410, 418, 419, 420, 431, 432, 456, 457, 458])) return value;
 		return unseated('type.object.members', value);
@@ -1680,7 +1658,8 @@ const type_object$369_members$item = (
 			return unbuilt('type.object.members', value);
 	}
 };
-const type_object$369_opening = (value: '{' | '{|') => {
+type type_object$369_opening$Item = '{' | '{|';
+const type_object$369_opening = (value: type_object$369_opening$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '{':
@@ -1700,16 +1679,15 @@ const type_object$369_opening = (value: '{' | '{|') => {
 	}
 	throw new Error('type.object.opening takes no structure');
 };
-const type_predicate_asserts$337_value = (
-	value:
-		| 'this'
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'identifier.receiver'>
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| PathInput<TypeScriptMap, 'type.predicate'>
-		| TypeScriptMap['nodes']['type.predicate']
-) => {
+type type_predicate_asserts$337_value$Item =
+	| 'this'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| PathInput<TypeScriptMap, 'type.predicate'>
+	| TypeScriptMap['nodes']['type.predicate'];
+const type_predicate_asserts$337_value = (value: type_predicate_asserts$337_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
@@ -1742,21 +1720,20 @@ const type_predicate_asserts$337_value = (
 			return unbuilt('type.predicate.asserts.value', value);
 	}
 };
-const type_query$358_expression = (
-	value:
-		| 'this'
-		| Text<TypeScriptMap, 'identifier'>
-		| Text<TypeScriptMap, 'identifier.receiver'>
-		| BuildInput<TypeScriptMap, 'expression.instantiation'>
-		| TypeScriptMap['nodes']['expression.instantiation']
-		| BuildInput<TypeScriptMap, 'identifier'>
-		| TypeScriptMap['nodes']['identifier']
-		| BuildInput<TypeScriptMap, 'identifier.qualified'>
-		| TypeScriptMap['nodes']['identifier.qualified']
-		| BuildInput<TypeScriptMap, 'type.import'>
-		| TypeScriptMap['nodes']['type.import']
-		| Unmapped<'typescript:type_query_subscript_expression'>
-) => {
+type type_query$358_expression$Item =
+	| 'this'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| Unmapped<'typescript:type_query_subscript_expression'>;
+const type_query$358_expression = (value: type_query$358_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
@@ -1792,14 +1769,13 @@ const type_query$358_expression = (
 			return unbuilt('type.query.expression', value);
 	}
 };
-const type_template$348_elements = (
-	value:
-		| Text<TypeScriptMap, 'literal.string.text'>
-		| PathInput<TypeScriptMap, 'element.template.substitution'>
-		| TypeScriptMap['nodes']['element.template.substitution']
-		| BuildInput<TypeScriptMap, 'literal.string.text'>
-		| TypeScriptMap['nodes']['literal.string.text']
-) => {
+type type_template$348_elements$Item =
+	| Text<TypeScriptMap, 'literal.string.text'>
+	| PathInput<TypeScriptMap, 'element.template.substitution'>
+	| TypeScriptMap['nodes']['element.template.substitution']
+	| BuildInput<TypeScriptMap, 'literal.string.text'>
+	| TypeScriptMap['nodes']['literal.string.text'];
+const type_template$348_elements = (value: type_template$348_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[^`\\$]+))$/u.test(value)) return b.templateChars(value);
 		return b.templateChars(value);

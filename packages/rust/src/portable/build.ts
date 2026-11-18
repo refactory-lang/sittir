@@ -46,70 +46,69 @@ const unseated = (
 const untexted = (owner: string, value: string): never => {
 	throw new Error(owner + ' has no route that seats the text "' + value + '"');
 };
-const clause_bounds_removed$218_type = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type clause_bounds_removed$218_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -207,14 +206,13 @@ const clause_bounds_removed$218_type = (
 			return unbuilt('clause.bounds.removed.type', value);
 	}
 };
-const clause_bounds_use$249_bounds$item = (
-	value:
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| PathInput<RustMap, 'identifier.lifetime'>
-		| RustMap['nodes']['identifier.lifetime']
-) => {
+type clause_bounds_use$249_bounds$item$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| PathInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime'];
+const clause_bounds_use$249_bounds$item = (value: clause_bounds_use$249_bounds$item$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -237,13 +235,12 @@ const clause_bounds_use$249_bounds$item = (
 			return unbuilt('clause.bounds.use.bounds', value);
 	}
 };
-const clause_else$291_body = (
-	value:
-		| BuildInput<RustMap, 'statement.block'>
-		| RustMap['nodes']['statement.block']
-		| BuildInput<RustMap, 'statement.if'>
-		| RustMap['nodes']['statement.if']
-) => {
+type clause_else$291_body$Item =
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if'];
+const clause_else$291_body = (value: clause_else$291_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [287, 313])) return value;
 		return unseated('clause.else.body', value);
@@ -261,19 +258,18 @@ const clause_else$291_body = (
 			return unbuilt('clause.else.body', value);
 	}
 };
-const clause_import_alias$228_name = (
-	value:
-		| 'crate'
-		| 'self'
-		| 'super'
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| PathInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-) => {
+type clause_import_alias$228_name$Item =
+	| 'crate'
+	| 'self'
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| PathInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -307,9 +303,11 @@ const clause_import_alias$228_name = (
 			return unbuilt('clause.import.alias.name', value);
 	}
 };
-const clause_import_alias$228_rename = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type clause_import_alias$228_rename$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const clause_import_alias$228_rename = (value: clause_import_alias$228_rename$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -329,27 +327,26 @@ const clause_import_alias$228_rename = (
 			return unbuilt('clause.import.alias.rename', value);
 	}
 };
-const clause_import_list$227_useClauses$item = (
-	value:
-		| 'crate'
-		| 'self'
-		| 'super'
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'clause.import.alias'>
-		| RustMap['nodes']['clause.import.alias']
-		| BuildInput<RustMap, 'clause.import.list'>
-		| RustMap['nodes']['clause.import.list']
-		| BuildInput<RustMap, 'clause.import.list.scoped'>
-		| RustMap['nodes']['clause.import.list.scoped']
-		| BuildInput<RustMap, 'clause.import.wildcard'>
-		| RustMap['nodes']['clause.import.wildcard']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-) => {
+type clause_import_list$227_useClauses$item$Item =
+	| 'crate'
+	| 'self'
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'clause.import.alias'>
+	| RustMap['nodes']['clause.import.alias']
+	| BuildInput<RustMap, 'clause.import.list'>
+	| RustMap['nodes']['clause.import.list']
+	| BuildInput<RustMap, 'clause.import.list.scoped'>
+	| RustMap['nodes']['clause.import.list.scoped']
+	| BuildInput<RustMap, 'clause.import.wildcard'>
+	| RustMap['nodes']['clause.import.wildcard']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const clause_import_list$227_useClauses$item = (value: clause_import_list$227_useClauses$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -390,9 +387,10 @@ const clause_import_list$227_useClauses$item = (
 			return unbuilt('clause.import.list.useClauses', value);
 	}
 };
-const clause_import_list_scoped$226_list = (
-	value: PathInput<RustMap, 'clause.import.list'> | RustMap['nodes']['clause.import.list']
-) => {
+type clause_import_list_scoped$226_list$Item =
+	| PathInput<RustMap, 'clause.import.list'>
+	| RustMap['nodes']['clause.import.list'];
+const clause_import_list_scoped$226_list = (value: clause_import_list_scoped$226_list$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [227])) return value;
 		return unseated('clause.import.list.scoped.list', value);
@@ -403,19 +401,18 @@ const clause_import_list_scoped$226_list = (
 	}
 	return clause_import_list$227(value);
 };
-const clause_import_list_scoped$226_path = (
-	value:
-		| 'crate'
-		| 'self'
-		| 'super'
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| PathInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-) => {
+type clause_import_list_scoped$226_path$Item =
+	| 'crate'
+	| 'self'
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| PathInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226_path$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -449,7 +446,8 @@ const clause_import_list_scoped$226_path = (
 			return unbuilt('clause.import.list.scoped.path', value);
 	}
 };
-const clause_import_wildcard$229_useWildcardGroup = (value: Unmapped<'rust:use_wildcard_group'>) => {
+type clause_import_wildcard$229_useWildcardGroup$Item = Unmapped<'rust:use_wildcard_group'>;
+const clause_import_wildcard$229_useWildcardGroup = (value: clause_import_wildcard$229_useWildcardGroup$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [359])) return value;
 		return unseated('clause.import.wildcard.useWildcardGroup', value);
@@ -460,15 +458,14 @@ const clause_import_wildcard$229_useWildcardGroup = (value: Unmapped<'rust:use_w
 	}
 	throw new Error('clause.import.wildcard.useWildcardGroup takes no structure');
 };
-const clause_macro_rule$181_left = (
-	value:
-		| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
-		| RustMap['nodes']['element.macro.token_tree.pattern.brace']
-		| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
-		| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
-		| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
-		| RustMap['nodes']['element.macro.token_tree.pattern.paren']
-) => {
+type clause_macro_rule$181_left$Item =
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren'];
+const clause_macro_rule$181_left = (value: clause_macro_rule$181_left$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [183, 405, 406, 407])) return value;
 		return unseated('clause.macro.rule.left', value);
@@ -488,15 +485,14 @@ const clause_macro_rule$181_left = (
 			return unbuilt('clause.macro.rule.left', value);
 	}
 };
-const clause_macro_rule$181_right = (
-	value:
-		| BuildInput<RustMap, 'element.macro.token_tree.brace'>
-		| RustMap['nodes']['element.macro.token_tree.brace']
-		| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
-		| RustMap['nodes']['element.macro.token_tree.bracket']
-		| BuildInput<RustMap, 'element.macro.token_tree.paren'>
-		| RustMap['nodes']['element.macro.token_tree.paren']
-) => {
+type clause_macro_rule$181_right$Item =
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren'];
+const clause_macro_rule$181_right = (value: clause_macro_rule$181_right$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [187, 408, 409, 410])) return value;
 		return unseated('clause.macro.rule.right', value);
@@ -516,9 +512,10 @@ const clause_macro_rule$181_right = (
 			return unbuilt('clause.macro.rule.right', value);
 	}
 };
-const clause_where$211_wherePredicates$item = (
-	value: PathInput<RustMap, 'clause.where.predicate'> | RustMap['nodes']['clause.where.predicate']
-) => {
+type clause_where$211_wherePredicates$item$Item =
+	| PathInput<RustMap, 'clause.where.predicate'>
+	| RustMap['nodes']['clause.where.predicate'];
+const clause_where$211_wherePredicates$item = (value: clause_where$211_wherePredicates$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [212])) return value;
 		return unseated('clause.where.wherePredicates', value);
@@ -529,9 +526,11 @@ const clause_where$211_wherePredicates$item = (
 	}
 	return unbuilt('clause.where.wherePredicates', value);
 };
-const declaration_macro_brace$418_name = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type declaration_macro_brace$418_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_macro_brace$418_name = (value: declaration_macro_brace$418_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -551,9 +550,10 @@ const declaration_macro_brace$418_name = (
 			return unbuilt('declaration.macro.brace.name', value);
 	}
 };
-const declaration_macro_brace$418_rules$item = (
-	value: PathInput<RustMap, 'clause.macro.rule'> | RustMap['nodes']['clause.macro.rule']
-) => {
+type declaration_macro_brace$418_rules$item$Item =
+	| PathInput<RustMap, 'clause.macro.rule'>
+	| RustMap['nodes']['clause.macro.rule'];
+const declaration_macro_brace$418_rules$item = (value: declaration_macro_brace$418_rules$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [181])) return value;
 		return unseated('declaration.macro.brace.rules', value);
@@ -564,9 +564,11 @@ const declaration_macro_brace$418_rules$item = (
 	}
 	return clause_macro_rule$181(value);
 };
-const declaration_macro_bracket$417_name = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type declaration_macro_bracket$417_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_macro_bracket$417_name = (value: declaration_macro_bracket$417_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -586,9 +588,10 @@ const declaration_macro_bracket$417_name = (
 			return unbuilt('declaration.macro.bracket.name', value);
 	}
 };
-const declaration_macro_bracket$417_rules$item = (
-	value: PathInput<RustMap, 'clause.macro.rule'> | RustMap['nodes']['clause.macro.rule']
-) => {
+type declaration_macro_bracket$417_rules$item$Item =
+	| PathInput<RustMap, 'clause.macro.rule'>
+	| RustMap['nodes']['clause.macro.rule'];
+const declaration_macro_bracket$417_rules$item = (value: declaration_macro_bracket$417_rules$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [181])) return value;
 		return unseated('declaration.macro.bracket.rules', value);
@@ -599,9 +602,11 @@ const declaration_macro_bracket$417_rules$item = (
 	}
 	return clause_macro_rule$181(value);
 };
-const declaration_macro_paren$416_name = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type declaration_macro_paren$416_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_macro_paren$416_name = (value: declaration_macro_paren$416_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -621,9 +626,10 @@ const declaration_macro_paren$416_name = (
 			return unbuilt('declaration.macro.paren.name', value);
 	}
 };
-const declaration_macro_paren$416_rules$item = (
-	value: PathInput<RustMap, 'clause.macro.rule'> | RustMap['nodes']['clause.macro.rule']
-) => {
+type declaration_macro_paren$416_rules$item$Item =
+	| PathInput<RustMap, 'clause.macro.rule'>
+	| RustMap['nodes']['clause.macro.rule'];
+const declaration_macro_paren$416_rules$item = (value: declaration_macro_paren$416_rules$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [181])) return value;
 		return unseated('declaration.macro.paren.rules', value);
@@ -634,25 +640,24 @@ const declaration_macro_paren$416_rules$item = (
 	}
 	return clause_macro_rule$181(value);
 };
-const element_macro_token_binding$184_fragment = (
-	value:
-		| 'block'
-		| 'expr'
-		| 'expr_2021'
-		| 'ident'
-		| 'item'
-		| 'lifetime'
-		| 'literal'
-		| 'meta'
-		| 'pat'
-		| 'pat_param'
-		| 'path'
-		| 'stmt'
-		| 'tt'
-		| 'ty'
-		| 'vis'
-		| Text<RustMap, 'element.macro.fragment'>
-) => {
+type element_macro_token_binding$184_fragment$Item =
+	| 'block'
+	| 'expr'
+	| 'expr_2021'
+	| 'ident'
+	| 'item'
+	| 'lifetime'
+	| 'literal'
+	| 'meta'
+	| 'pat'
+	| 'pat_param'
+	| 'path'
+	| 'stmt'
+	| 'tt'
+	| 'ty'
+	| 'vis'
+	| Text<RustMap, 'element.macro.fragment'>;
+const element_macro_token_binding$184_fragment = (value: element_macro_token_binding$184_fragment$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'block':
@@ -699,9 +704,10 @@ const element_macro_token_binding$184_fragment = (
 	}
 	throw new Error('element.macro.token_binding.fragment takes no structure');
 };
-const element_macro_token_binding$184_name = (
-	value: BuildInput<RustMap, 'identifier.metavariable'> | RustMap['nodes']['identifier.metavariable']
-) => {
+type element_macro_token_binding$184_name$Item =
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable'];
+const element_macro_token_binding$184_name = (value: element_macro_token_binding$184_name$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [127])) return value;
 		return unseated('element.macro.token_binding.name', value);
@@ -717,9 +723,8 @@ const element_macro_token_binding$184_name = (
 			return unbuilt('element.macro.token_binding.name', value);
 	}
 };
-const element_struct_field$284_attributes = (
-	value: PathInput<RustMap, 'attribute'> | RustMap['nodes']['attribute']
-) => {
+type element_struct_field$284_attributes$Item = PathInput<RustMap, 'attribute'> | RustMap['nodes']['attribute'];
+const element_struct_field$284_attributes = (value: element_struct_field$284_attributes$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [192])) return b.attributeItem(value);
 		return unseated('element.struct.field.attributes', value);
@@ -730,21 +735,20 @@ const element_struct_field$284_attributes = (
 	}
 	return unbuilt('element.struct.field.attributes', value);
 };
-const element_struct_field$284_name = (
-	value:
-		| Text<RustMap, 'identifier'>
-		| number
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'literal.number.integer'>
-		| RustMap['nodes']['literal.number.integer']
-		| BuildInput<RustMap, 'literal.number.integer.binary'>
-		| RustMap['nodes']['literal.number.integer.binary']
-		| BuildInput<RustMap, 'literal.number.integer.hex'>
-		| RustMap['nodes']['literal.number.integer.hex']
-		| BuildInput<RustMap, 'literal.number.integer.octal'>
-		| RustMap['nodes']['literal.number.integer.octal']
-) => {
+type element_struct_field$284_name$Item =
+	| Text<RustMap, 'identifier'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal'];
+const element_struct_field$284_name = (value: element_struct_field$284_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -772,9 +776,11 @@ const element_struct_field$284_name = (
 			return unbuilt('element.struct.field.name', value);
 	}
 };
-const element_type_binding$251_name = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type element_type_binding$251_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const element_type_binding$251_name = (value: element_type_binding$251_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -794,70 +800,69 @@ const element_type_binding$251_name = (
 			return unbuilt('element.type_binding.name', value);
 	}
 };
-const element_type_binding$251_type = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type element_type_binding$251_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const element_type_binding$251_type = (value: element_type_binding$251_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -955,9 +960,10 @@ const element_type_binding$251_type = (
 			return unbuilt('element.type_binding.type', value);
 	}
 };
-const element_type_binding$251_typeArguments$item = (
-	value: PathInput<RustMap, 'element.type_argument'> | RustMap['nodes']['element.type_argument']
-) => {
+type element_type_binding$251_typeArguments$item$Item =
+	| PathInput<RustMap, 'element.type_argument'>
+	| RustMap['nodes']['element.type_argument'];
+const element_type_binding$251_typeArguments$item = (value: element_type_binding$251_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [433])) return value;
 		return unseated('element.type_binding.typeArguments', value);
@@ -968,9 +974,8 @@ const element_type_binding$251_typeArguments$item = (
 	}
 	return unbuilt('element.type_binding.typeArguments', value);
 };
-const expression_block_async$310_body = (
-	value: PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block']
-) => {
+type expression_block_async$310_body$Item = PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block'];
+const expression_block_async$310_body = (value: expression_block_async$310_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [313])) return value;
 		return unseated('expression.block.async.body', value);
@@ -981,9 +986,8 @@ const expression_block_async$310_body = (
 	}
 	return unbuilt('expression.block.async.body', value);
 };
-const expression_block_const$300_body = (
-	value: PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block']
-) => {
+type expression_block_const$300_body$Item = PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block'];
+const expression_block_const$300_body = (value: expression_block_const$300_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [313])) return value;
 		return unseated('expression.block.const.body', value);
@@ -994,9 +998,10 @@ const expression_block_const$300_body = (
 	}
 	return unbuilt('expression.block.const.body', value);
 };
-const expression_block_generator$311_body = (
-	value: PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block']
-) => {
+type expression_block_generator$311_body$Item =
+	| PathInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block'];
+const expression_block_generator$311_body = (value: expression_block_generator$311_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [313])) return value;
 		return unseated('expression.block.generator.body', value);
@@ -1007,9 +1012,8 @@ const expression_block_generator$311_body = (
 	}
 	return unbuilt('expression.block.generator.body', value);
 };
-const expression_block_try$312_body = (
-	value: PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block']
-) => {
+type expression_block_try$312_body$Item = PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block'];
+const expression_block_try$312_body = (value: expression_block_try$312_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [313])) return value;
 		return unseated('expression.block.try.body', value);
@@ -1020,9 +1024,10 @@ const expression_block_try$312_body = (
 	}
 	return unbuilt('expression.block.try.body', value);
 };
-const expression_block_unsafe$309_body = (
-	value: PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block']
-) => {
+type expression_block_unsafe$309_body$Item =
+	| PathInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block'];
+const expression_block_unsafe$309_body = (value: expression_block_unsafe$309_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [313])) return value;
 		return unseated('expression.block.unsafe.body', value);
@@ -1033,15 +1038,14 @@ const expression_block_unsafe$309_body = (
 	}
 	return unbuilt('expression.block.unsafe.body', value);
 };
-const expression_call_macro$259_arguments = (
-	value:
-		| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
-		| RustMap['nodes']['element.macro.token_tree.delimited.brace']
-		| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
-		| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
-		| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
-		| RustMap['nodes']['element.macro.token_tree.delimited.paren']
-) => {
+type expression_call_macro$259_arguments$Item =
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.paren'];
+const expression_call_macro$259_arguments = (value: expression_call_macro$259_arguments$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [260, 411, 412, 413])) return value;
 		return unseated('expression.call.macro.arguments', value);
@@ -1061,14 +1065,13 @@ const expression_call_macro$259_arguments = (
 			return unbuilt('expression.call.macro.arguments', value);
 	}
 };
-const expression_call_macro$259_function = (
-	value:
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| PathInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-) => {
+type expression_call_macro$259_function$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| PathInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const expression_call_macro$259_function = (value: expression_call_macro$259_function$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1091,13 +1094,12 @@ const expression_call_macro$259_function = (
 			return unbuilt('expression.call.macro.function', value);
 	}
 };
-const expression_collection_struct$282_body$item = (
-	value:
-		| BuildInput<RustMap, 'element.struct.base'>
-		| RustMap['nodes']['element.struct.base']
-		| BuildInput<RustMap, 'element.struct.field'>
-		| RustMap['nodes']['element.struct.field']
-) => {
+type expression_collection_struct$282_body$item$Item =
+	| BuildInput<RustMap, 'element.struct.base'>
+	| RustMap['nodes']['element.struct.base']
+	| BuildInput<RustMap, 'element.struct.field'>
+	| RustMap['nodes']['element.struct.field'];
+const expression_collection_struct$282_body$item = (value: expression_collection_struct$282_body$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [284, 285, 286])) return value;
 		return unseated('expression.collection.struct.body', value);
@@ -1116,16 +1118,15 @@ const expression_collection_struct$282_body$item = (
 			return unbuilt('expression.collection.struct.body', value);
 	}
 };
-const expression_collection_struct$282_name = (
-	value:
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.generic.turbofish'>
-		| RustMap['nodes']['type.generic.turbofish']
-) => {
+type expression_collection_struct$282_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.generic.turbofish'>
+	| RustMap['nodes']['type.generic.turbofish'];
+const expression_collection_struct$282_name = (value: expression_collection_struct$282_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1149,9 +1150,11 @@ const expression_collection_struct$282_name = (
 			return unbuilt('expression.collection.struct.name', value);
 	}
 };
-const identifier_label$303_name = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type identifier_label$303_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const identifier_label$303_name = (value: identifier_label$303_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1171,9 +1174,11 @@ const identifier_label$303_name = (
 			return unbuilt('identifier.label.name', value);
 	}
 };
-const identifier_lifetime$239_name = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type identifier_lifetime$239_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const identifier_lifetime$239_name = (value: identifier_lifetime$239_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1193,9 +1198,12 @@ const identifier_lifetime$239_name = (
 			return unbuilt('identifier.lifetime.name', value);
 	}
 };
-const identifier_qualified$263_name = (
-	value: 'super' | Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type identifier_qualified$263_name$Item =
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const identifier_qualified$263_name = (value: identifier_qualified$263_name$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'super':
@@ -1220,25 +1228,24 @@ const identifier_qualified$263_name = (
 			return unbuilt('identifier.qualified.name', value);
 	}
 };
-const identifier_qualified$263_qualifier = (
-	value:
-		| 'crate'
-		| 'self'
-		| 'super'
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.bracketed'>
-		| RustMap['nodes']['type.bracketed']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.generic.turbofish'>
-		| RustMap['nodes']['type.generic.turbofish']
-) => {
+type identifier_qualified$263_qualifier$Item =
+	| 'crate'
+	| 'self'
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.bracketed'>
+	| RustMap['nodes']['type.bracketed']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.generic.turbofish'>
+	| RustMap['nodes']['type.generic.turbofish'];
+const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qualifier$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -1277,9 +1284,12 @@ const identifier_qualified$263_qualifier = (
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
-const identifier_qualified$264_name = (
-	value: 'super' | Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type identifier_qualified$264_name$Item =
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const identifier_qualified$264_name = (value: identifier_qualified$264_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1299,25 +1309,24 @@ const identifier_qualified$264_name = (
 			return unbuilt('identifier.qualified.name', value);
 	}
 };
-const identifier_qualified$264_qualifier = (
-	value:
-		| 'crate'
-		| 'self'
-		| 'super'
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.bracketed'>
-		| RustMap['nodes']['type.bracketed']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.generic.turbofish'>
-		| RustMap['nodes']['type.generic.turbofish']
-) => {
+type identifier_qualified$264_qualifier$Item =
+	| 'crate'
+	| 'self'
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.bracketed'>
+	| RustMap['nodes']['type.bracketed']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.generic.turbofish'>
+	| RustMap['nodes']['type.generic.turbofish'];
+const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qualifier$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -1356,9 +1365,12 @@ const identifier_qualified$264_qualifier = (
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
-const identifier_qualified$265_name = (
-	value: 'super' | Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type identifier_qualified$265_name$Item =
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const identifier_qualified$265_name = (value: identifier_qualified$265_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1378,25 +1390,24 @@ const identifier_qualified$265_name = (
 			return unbuilt('identifier.qualified.name', value);
 	}
 };
-const identifier_qualified$265_qualifier = (
-	value:
-		| 'crate'
-		| 'self'
-		| 'super'
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.bracketed'>
-		| RustMap['nodes']['type.bracketed']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.generic.turbofish'>
-		| RustMap['nodes']['type.generic.turbofish']
-) => {
+type identifier_qualified$265_qualifier$Item =
+	| 'crate'
+	| 'self'
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.bracketed'>
+	| RustMap['nodes']['type.bracketed']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.generic.turbofish'>
+	| RustMap['nodes']['type.generic.turbofish'];
+const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qualifier$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -1435,23 +1446,22 @@ const identifier_qualified$265_qualifier = (
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
-const literal_number_integer$141_suffix = (
-	value:
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-) => {
+type literal_number_integer$141_suffix$Item =
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize';
+const literal_number_integer$141_suffix = (value: literal_number_integer$141_suffix$Item) => {
 	if (typeof value === 'string') {
 		return value;
 	}
@@ -1463,23 +1473,22 @@ const literal_number_integer$141_suffix = (
 	}
 	throw new Error('literal.number.integer.suffix takes no structure');
 };
-const literal_number_integer_binary$143_suffix = (
-	value:
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-) => {
+type literal_number_integer_binary$143_suffix$Item =
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize';
+const literal_number_integer_binary$143_suffix = (value: literal_number_integer_binary$143_suffix$Item) => {
 	if (typeof value === 'string') {
 		return value;
 	}
@@ -1491,23 +1500,22 @@ const literal_number_integer_binary$143_suffix = (
 	}
 	throw new Error('literal.number.integer.binary.suffix takes no structure');
 };
-const literal_number_integer_hex$142_suffix = (
-	value:
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-) => {
+type literal_number_integer_hex$142_suffix$Item =
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize';
+const literal_number_integer_hex$142_suffix = (value: literal_number_integer_hex$142_suffix$Item) => {
 	if (typeof value === 'string') {
 		return value;
 	}
@@ -1519,23 +1527,22 @@ const literal_number_integer_hex$142_suffix = (
 	}
 	throw new Error('literal.number.integer.hex.suffix takes no structure');
 };
-const literal_number_integer_octal$144_suffix = (
-	value:
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-) => {
+type literal_number_integer_octal$144_suffix$Item =
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize';
+const literal_number_integer_octal$144_suffix = (value: literal_number_integer_octal$144_suffix$Item) => {
 	if (typeof value === 'string') {
 		return value;
 	}
@@ -1547,21 +1554,20 @@ const literal_number_integer_octal$144_suffix = (
 	}
 	throw new Error('literal.number.integer.octal.suffix takes no structure');
 };
-const literal_number_negative$330_value = (
-	value:
-		| Text<RustMap, 'literal.number.float'>
-		| number
-		| BuildInput<RustMap, 'literal.number.float'>
-		| RustMap['nodes']['literal.number.float']
-		| BuildInput<RustMap, 'literal.number.integer'>
-		| RustMap['nodes']['literal.number.integer']
-		| BuildInput<RustMap, 'literal.number.integer.binary'>
-		| RustMap['nodes']['literal.number.integer.binary']
-		| BuildInput<RustMap, 'literal.number.integer.hex'>
-		| RustMap['nodes']['literal.number.integer.hex']
-		| BuildInput<RustMap, 'literal.number.integer.octal'>
-		| RustMap['nodes']['literal.number.integer.octal']
-) => {
+type literal_number_negative$330_value$Item =
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal'];
+const literal_number_negative$330_value = (value: literal_number_negative$330_value$Item) => {
 	if (typeof value === 'string') {
 		return untexted('literal.number.negative.value', value);
 	}
@@ -1590,15 +1596,14 @@ const literal_number_negative$330_value = (
 			return unbuilt('literal.number.negative.value', value);
 	}
 };
-const modifier_extern$234_abi = (
-	value:
-		| BuildInput<RustMap, 'literal.string'>
-		| RustMap['nodes']['literal.string']
-		| BuildInput<RustMap, 'literal.string.bytes'>
-		| RustMap['nodes']['literal.string.bytes']
-		| BuildInput<RustMap, 'literal.string.c'>
-		| RustMap['nodes']['literal.string.c']
-) => {
+type modifier_extern$234_abi$Item =
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c'];
+const modifier_extern$234_abi = (value: modifier_extern$234_abi$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [332])) return value;
 		return unseated('modifier.extern.abi', value);
@@ -1618,9 +1623,8 @@ const modifier_extern$234_abi = (
 			return unbuilt('modifier.extern.abi', value);
 	}
 };
-const statement_continue$305_label = (
-	value: PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label']
-) => {
+type statement_continue$305_label$Item = PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label'];
+const statement_continue$305_label = (value: statement_continue$305_label$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [303])) return value;
 		return unseated('statement.continue.label', value);
@@ -1631,27 +1635,26 @@ const statement_continue$305_label = (
 	}
 	return identifier_label$303(value);
 };
-const statement_import$224_argument = (
-	value:
-		| 'crate'
-		| 'self'
-		| 'super'
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'clause.import.alias'>
-		| RustMap['nodes']['clause.import.alias']
-		| BuildInput<RustMap, 'clause.import.list'>
-		| RustMap['nodes']['clause.import.list']
-		| BuildInput<RustMap, 'clause.import.list.scoped'>
-		| RustMap['nodes']['clause.import.list.scoped']
-		| BuildInput<RustMap, 'clause.import.wildcard'>
-		| RustMap['nodes']['clause.import.wildcard']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-) => {
+type statement_import$224_argument$Item =
+	| 'crate'
+	| 'self'
+	| 'super'
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'clause.import.alias'>
+	| RustMap['nodes']['clause.import.alias']
+	| BuildInput<RustMap, 'clause.import.list'>
+	| RustMap['nodes']['clause.import.list']
+	| BuildInput<RustMap, 'clause.import.list.scoped'>
+	| RustMap['nodes']['clause.import.list.scoped']
+	| BuildInput<RustMap, 'clause.import.wildcard'>
+	| RustMap['nodes']['clause.import.wildcard']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const statement_import$224_argument = (value: statement_import$224_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -1692,9 +1695,11 @@ const statement_import$224_argument = (
 			return unbuilt('statement.import.argument', value);
 	}
 };
-const statement_import_package$204_alias = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type statement_import_package$204_alias$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const statement_import_package$204_alias = (value: statement_import_package$204_alias$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1714,9 +1719,11 @@ const statement_import_package$204_alias = (
 			return unbuilt('statement.import.package.alias', value);
 	}
 };
-const statement_import_package$204_name = (
-	value: Text<RustMap, 'identifier'> | BuildInput<RustMap, 'identifier'> | RustMap['nodes']['identifier']
-) => {
+type statement_import_package$204_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const statement_import_package$204_name = (value: statement_import_package$204_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -1736,9 +1743,8 @@ const statement_import_package$204_name = (
 			return unbuilt('statement.import.package.name', value);
 	}
 };
-const statement_loop$298_body = (
-	value: PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block']
-) => {
+type statement_loop$298_body$Item = PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block'];
+const statement_loop$298_body = (value: statement_loop$298_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [313])) return value;
 		return unseated('statement.loop.body', value);
@@ -1749,9 +1755,8 @@ const statement_loop$298_body = (
 	}
 	return unbuilt('statement.loop.body', value);
 };
-const statement_loop$298_label = (
-	value: PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label']
-) => {
+type statement_loop$298_label$Item = PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label'];
+const statement_loop$298_label = (value: statement_loop$298_label$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [303])) return value;
 		return unseated('statement.loop.label', value);
@@ -1762,74 +1767,73 @@ const statement_loop$298_label = (
 	}
 	return identifier_label$303(value);
 };
-const type_bounded$248_left = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'clause.bounds.use'>
-		| RustMap['nodes']['clause.bounds.use']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.lifetime'>
-		| RustMap['nodes']['identifier.lifetime']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_bounded$248_left$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'clause.bounds.use'>
+	| RustMap['nodes']['clause.bounds.use']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -1936,74 +1940,73 @@ const type_bounded$248_left = (
 			return unbuilt('type.bounded.left', value);
 	}
 };
-const type_bounded$248_right = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'clause.bounds.use'>
-		| RustMap['nodes']['clause.bounds.use']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.lifetime'>
-		| RustMap['nodes']['identifier.lifetime']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_bounded$248_right$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'clause.bounds.use'>
+	| RustMap['nodes']['clause.bounds.use']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -2110,72 +2113,71 @@ const type_bounded$248_right = (
 			return unbuilt('type.bounded.right', value);
 	}
 };
-const type_bracketed$237_type = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.qualified'>
-		| RustMap['nodes']['type.qualified']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_bracketed$237_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.qualified'>
+	| RustMap['nodes']['type.qualified']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -2275,22 +2277,21 @@ const type_bracketed$237_type = (
 			return unbuilt('type.bracketed.type', value);
 	}
 };
-const type_dynamic$256_trait = (
-	value:
-		| Text<RustMap, 'identifier'>
-		| BuildInput<RustMap, 'clause.bounds.higher_ranked'>
-		| RustMap['nodes']['clause.bounds.higher_ranked']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_dynamic$256_trait$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'clause.bounds.higher_ranked'>
+	| RustMap['nodes']['clause.bounds.higher_ranked']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_dynamic$256_trait = (value: type_dynamic$256_trait$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -2320,70 +2321,69 @@ const type_dynamic$256_trait = (
 			return unbuilt('type.dynamic.trait', value);
 	}
 };
-const type_pointer$388_type = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_pointer$388_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -2481,70 +2481,69 @@ const type_pointer$388_type = (
 			return unbuilt('type.pointer.type', value);
 	}
 };
-const type_pointer$389_type = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_pointer$389_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -2642,70 +2641,69 @@ const type_pointer$389_type = (
 			return unbuilt('type.pointer.type', value);
 	}
 };
-const type_qualified$238_alias = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_qualified$238_alias$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -2803,70 +2801,69 @@ const type_qualified$238_alias = (
 			return unbuilt('type.qualified.alias', value);
 	}
 };
-const type_qualified$238_type = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_qualified$238_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -2964,9 +2961,10 @@ const type_qualified$238_type = (
 			return unbuilt('type.qualified.type', value);
 	}
 };
-const type_reference$252_lifetime = (
-	value: PathInput<RustMap, 'identifier.lifetime'> | RustMap['nodes']['identifier.lifetime']
-) => {
+type type_reference$252_lifetime$Item =
+	| PathInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime'];
+const type_reference$252_lifetime = (value: type_reference$252_lifetime$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [239])) return value;
 		return unseated('type.reference.lifetime', value);
@@ -2977,70 +2975,69 @@ const type_reference$252_lifetime = (
 	}
 	return identifier_lifetime$239(value);
 };
-const type_reference$252_type = (
-	value:
-		| '!'
-		| '()'
-		| 'bool'
-		| 'char'
-		| 'f32'
-		| 'f64'
-		| 'i128'
-		| 'i16'
-		| 'i32'
-		| 'i64'
-		| 'i8'
-		| 'isize'
-		| 'str'
-		| 'u128'
-		| 'u16'
-		| 'u32'
-		| 'u64'
-		| 'u8'
-		| 'usize'
-		| Text<RustMap, 'identifier'>
-		| Text<RustMap, 'type.primitive.boolean'>
-		| Text<RustMap, 'type.primitive.character'>
-		| Text<RustMap, 'type.primitive.floating.float32'>
-		| Text<RustMap, 'type.primitive.floating.float64'>
-		| Text<RustMap, 'type.primitive.integral.int128'>
-		| Text<RustMap, 'type.primitive.integral.int16'>
-		| Text<RustMap, 'type.primitive.integral.int32'>
-		| Text<RustMap, 'type.primitive.integral.int64'>
-		| Text<RustMap, 'type.primitive.integral.int8'>
-		| Text<RustMap, 'type.primitive.integral.size'>
-		| Text<RustMap, 'type.primitive.never'>
-		| Text<RustMap, 'type.primitive.string'>
-		| Text<RustMap, 'type.unit'>
-		| BuildInput<RustMap, 'clause.bounds.removed'>
-		| RustMap['nodes']['clause.bounds.removed']
-		| BuildInput<RustMap, 'expression.call.macro'>
-		| RustMap['nodes']['expression.call.macro']
-		| BuildInput<RustMap, 'identifier'>
-		| RustMap['nodes']['identifier']
-		| BuildInput<RustMap, 'identifier.metavariable'>
-		| RustMap['nodes']['identifier.metavariable']
-		| BuildInput<RustMap, 'identifier.qualified'>
-		| RustMap['nodes']['identifier.qualified']
-		| BuildInput<RustMap, 'type.abstract'>
-		| RustMap['nodes']['type.abstract']
-		| BuildInput<RustMap, 'type.array'>
-		| RustMap['nodes']['type.array']
-		| BuildInput<RustMap, 'type.bounded'>
-		| RustMap['nodes']['type.bounded']
-		| BuildInput<RustMap, 'type.dynamic'>
-		| RustMap['nodes']['type.dynamic']
-		| BuildInput<RustMap, 'type.function'>
-		| RustMap['nodes']['type.function']
-		| BuildInput<RustMap, 'type.generic'>
-		| RustMap['nodes']['type.generic']
-		| BuildInput<RustMap, 'type.pointer'>
-		| RustMap['nodes']['type.pointer']
-		| BuildInput<RustMap, 'type.reference'>
-		| RustMap['nodes']['type.reference']
-		| BuildInput<RustMap, 'type.tuple'>
-		| RustMap['nodes']['type.tuple']
-) => {
+type type_reference$252_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_reference$252_type = (value: type_reference$252_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':

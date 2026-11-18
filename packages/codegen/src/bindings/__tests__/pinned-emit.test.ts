@@ -214,7 +214,8 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain('const statements$rest = (input.statements ?? []).slice(1);');
 		expect(text).toContain('statements$first === undefined ? undefined : b.blockBody(statement_block$1_statements$item(statements$first), ...statements$rest.map(statement_block$1_statements$item))');
 		expect(text).toContain("input.label === undefined ? missing('statement.block.label') : statement_block$1_label(input.label)");
-		expect(text).toContain("const statement_block$1_label = (value: 'a' | 'b') =>");
+		expect(text).toContain("type statement_block$1_label$Item = 'a' | 'b';");
+		expect(text).toContain('const statement_block$1_label = (value: statement_block$1_label$Item) =>');
 		expect(text).toContain("return untexted('statement.block.label', value);");
 		expect(text).not.toContain('const listed');
 	}, 60_000);
@@ -272,7 +273,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).not.toMatch(/if \(typeof value === 'string'\) return value;/);
 	}, 60_000);
 
-	it('types a slot\'s text by its tokens and its text paths\' own text types, never a bare string', async () => {
+	it('types a slot\'s text by its tokens and its text paths\' own text types, never a bare string, in the slot function\'s named item type', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'rust',
 			map: 'RustMap',
@@ -305,7 +306,8 @@ describe('the pinned child emits a portable build module', () => {
 			decided: {}
 		});
 		expect(diagnostics).toEqual([]);
-		expect(text).toContain("const element_macro_token_binding$3_fragment = (value: 'block' | 'expr' | Text<RustMap, 'element.macro.fragment'>) =>");
+		expect(text).toContain("type element_macro_token_binding$3_fragment$Item = 'block' | 'expr' | Text<RustMap, 'element.macro.fragment'>;");
+		expect(text).toContain('const element_macro_token_binding$3_fragment = (value: element_macro_token_binding$3_fragment$Item) =>');
 		expect(text).toContain("import type { PathInput, Text } from '@sittir/types/vocabulary';");
 	}, 60_000);
 

@@ -26,7 +26,8 @@ type Statement =
 	| Built<B['ifStatement']>
 	| Built<B['switchStatement']>
 	| Built<B['throwStatement']>
-	| Built<B['statementBlock']>;
+	| Built<B['statementBlock']>
+	| Built<B['typeAliasDeclaration']>;
 type TypeNode = string | Built<B['genericType']> | Built<B['literalType']> | Built<B['unionType']> | Built<B['lookupType']> | Built<B['typeQuery']> | Built<B['objectType']> | Built<B['readonlyType']>;
 
 class Unfit extends Error {}
@@ -245,7 +246,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const textInputs = new Set(input.textInputs);
 	const textValues = new Set(input.textValues);
 	const failed = new Map<string, string>();
-	let slotFunctions = new Map<string, Statement>();
+	let slotFunctions = new Map<string, readonly Statement[]>();
 	let armFunctions = new Map<string, Statement>();
 	let grew = false;
 
@@ -408,7 +409,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			...structures.flatMap((path) => [path === decided ? pathInputType(path) : pathType(path), nodesType(path)]),
 			...exact!.unmapped.map((name) => typeRef(uses('Unmapped'), t.literalType(str(name))))
 		];
-		slotFunctions.set(name, constant(name, arrow('value', union(items.length === 0 ? ['never'] : items), block(...statements))));
+		const item = `${name}$Item`;
+		slotFunctions.set(name, [t.typeAliasDeclaration({ name: item, value: union(items.length === 0 ? ['never'] : items) }), constant(name, arrow('value', item, block(...statements)))]);
 		return name;
 	};
 
@@ -621,7 +623,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		for (const next of deps.get(name) ?? []) reach(next);
 	};
 	for (const name of roots) reach(name);
-	const kept = (functions: ReadonlyMap<string, Statement>): Statement[] => sorted([...functions].filter(([name]) => live.has(name)), ([name]) => name).map(([, statement]) => statement);
+	const kept = (functions: ReadonlyMap<string, Statement | readonly Statement[]>): Statement[] => sorted([...functions].filter(([name]) => live.has(name)), ([name]) => name).flatMap(([, statements]) => statements);
 	const helpers: readonly (readonly [string, Statement])[] = [
 		['isNode', isNodeHelper],
 		['unbuilt', unbuiltHelper],

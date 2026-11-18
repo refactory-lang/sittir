@@ -1,8 +1,9 @@
-import { readdirSync } from 'node:fs';
+import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative } from 'node:path';
 import { PORTABLE_TS6_TSCONFIG, PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, PORTABLE_TYPE_TEST_LANES, generate, parseTypeCheckDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
-import { REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
+import { PORTABLE_BUILD_FILE, REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 import { vocabularyPaths } from '@sittir/common/portable';
 
@@ -123,15 +124,41 @@ export function typeTestErrors(checker: string, diagnostics: readonly TypeCheckD
 	});
 }
 
-const TSC6 = join(dirname(createRequire(import.meta.url).resolve('typescript6/package.json')), 'bin', 'tsc6');
+const CHECKERS = {
+	tsrs: ['pnpm', 'exec', 'tsrs'],
+	'TypeScript 6': [process.execPath, join(dirname(createRequire(import.meta.url).resolve('typescript6/package.json')), 'bin', 'tsc6')]
+} as const satisfies Readonly<Record<string, readonly [string, ...string[]]>>;
 
-const TYPE_TEST_CHECKERS: readonly { readonly checker: string; readonly tsconfig: string; readonly command: readonly [string, ...string[]] }[] = [
-	{ checker: 'tsrs', tsconfig: PORTABLE_TYPED_TSCONFIG, command: ['pnpm', 'exec', 'tsrs'] },
-	{ checker: 'TypeScript 6', tsconfig: PORTABLE_TS6_TSCONFIG, command: [process.execPath, TSC6] }
+export type Checker = keyof typeof CHECKERS;
+
+const TYPE_TEST_CHECKERS: readonly { readonly checker: Checker; readonly tsconfig: string }[] = [
+	{ checker: 'tsrs', tsconfig: PORTABLE_TYPED_TSCONFIG },
+	{ checker: 'TypeScript 6', tsconfig: PORTABLE_TS6_TSCONFIG }
 ];
 
-const diagnosticsOf = (grammar: string, tsconfig: string, [command, ...args]: readonly [string, ...string[]]): readonly TypeCheckDiagnostic[] =>
-	parseTypeCheckDiagnostics(typeCheckOutput(command, [...args, '-p', join(typedDir(grammar), tsconfig), '--noEmit'], REPO_ROOT));
+const typeCheck = (tsconfig: string, [command, ...args]: readonly [string, ...string[]]): readonly TypeCheckDiagnostic[] =>
+	parseTypeCheckDiagnostics(typeCheckOutput(command, [...args, '-p', tsconfig, '--noEmit'], REPO_ROOT));
+
+const diagnosticsOf = (grammar: string, tsconfig: string, checker: Checker): readonly TypeCheckDiagnostic[] => typeCheck(join(typedDir(grammar), tsconfig), CHECKERS[checker]);
+
+export function portableBuildTypeErrors(grammar: string, checker: Checker): readonly TypeCheckDiagnostic[] {
+	const dir = grammarPackageDir(grammar as GrammarName);
+	const scratch = mkdtempSync(join(tmpdir(), 'sittir-portable-build-'));
+	try {
+		const tsconfig = join(scratch, 'tsconfig.json');
+		writeFileSync(
+			tsconfig,
+			JSON.stringify({
+				extends: join(dir, 'tsconfig.json'),
+				compilerOptions: { typeRoots: [join(dir, 'node_modules', '@types'), join(REPO_ROOT, 'node_modules', '@types')] },
+				include: [join(dir, 'src', PORTABLE_BUILD_FILE)]
+			})
+		);
+		return typeCheck(tsconfig, CHECKERS[checker]);
+	} finally {
+		rmSync(scratch, { recursive: true, force: true });
+	}
+}
 
 export function classify(
 	diagnostics: readonly TypeCheckDiagnostic[],
@@ -169,7 +196,7 @@ export async function writeTypedModule(grammar: string): Promise<PortableTypedOu
 export async function portableConformance(grammar: string): Promise<ConformanceReport | undefined> {
 	const typed = await writeTypedModule(grammar);
 	if (typed === undefined) return undefined;
-	const lanes = TYPE_TEST_CHECKERS.map(({ checker, tsconfig, command }) => ({ checker, diagnostics: diagnosticsOf(grammar, tsconfig, command), tests: portableTypeTests(grammar, tsconfig) }));
+	const lanes = TYPE_TEST_CHECKERS.map(({ checker, tsconfig }) => ({ checker, diagnostics: diagnosticsOf(grammar, tsconfig, checker), tests: portableTypeTests(grammar, tsconfig) }));
 	const [module] = lanes;
 	return {
 		grammar,
