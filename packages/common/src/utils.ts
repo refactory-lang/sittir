@@ -614,6 +614,7 @@ export function storedElements(stored: unknown): readonly unknown[] {
 /** The elements a list reads through its own reader, none for an absent list. */
 export function ownerElements(list: unknown, reader: string): readonly unknown[] {
 	if (list == null) return [];
+	if (Array.isArray(list)) return list;
 	const read = (list as Record<string, unknown>)[reader] as ((this: object) => readonly unknown[] | undefined) | undefined;
 	return read?.call(list) ?? [];
 }

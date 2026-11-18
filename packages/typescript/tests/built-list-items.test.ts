@@ -11,21 +11,8 @@ const CASES = [
 
 const SKIP = new Set(['toString', 'toJSON', 'separator', 'delimiter']);
 
-function find(node: unknown, kind: number, seen = new Set<object>()): Node | undefined {
-	if (node === null || typeof node !== 'object' || seen.has(node)) return undefined;
-	seen.add(node);
-	const record = node as Node;
-	if (record.$type === kind) return record;
-	for (const key of Object.keys(record)) {
-		const value = record[key];
-		if (key.startsWith('$') || key.startsWith('_') || SKIP.has(key) || typeof value !== 'function' || value.length !== 0) continue;
-		const out = (value as () => unknown).call(record);
-		for (const child of Array.isArray(out) ? out : [out]) {
-			const found = find(child, kind, seen);
-			if (found !== undefined) return found;
-		}
-	}
-	return undefined;
+function find(node: unknown, kind: number): Node | undefined {
+	return (node as { $query(): { $descendants: { ofType(kind: number): { at(index: number): Node | undefined } } } }).$query().$descendants.ofType(kind).at(0);
 }
 
 const fingerprint = (item: unknown): unknown => (typeof item === 'object' && item !== null ? [(item as Node).$type, (item as Node).$render()] : item);
