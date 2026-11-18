@@ -171,14 +171,14 @@ fn a_parse_places_a_comment_beside_a_separator_as_the_tree_s_placement_does() {
 #[test]
 fn nothing_under_an_error_is_placed() {
     let placed = [
-        ("an ERROR holding an ERROR", placed_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "\n    case *x,:\n        y = 0")),
-        ("a comment inside a python ERROR", placed_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "def f(x # c\n  :\n")),
-        ("a comment inside a rust ERROR", placed_entries::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "@@ /* c */ @@ x\n")),
-        ("a regex source wholly an ERROR", placed_entries::<_, sittir_regex::render::AnyNode>(sittir_regex::RegexGrammar, sittir_regex::render::options::defaults, "*")),
-        ("a rust source wholly an ERROR", placed_entries::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "const default")),
+        ("an ERROR holding an ERROR", 1, placed_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "\n    case *x,:\n        y = 0")),
+        ("a comment inside a python ERROR", 1, placed_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "def f(x # c\n  :\n")),
+        ("a comment inside a rust ERROR", 1, placed_entries::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "@@ /* c */ @@ x\n")),
+        ("a regex source wholly an ERROR", 0, placed_entries::<_, sittir_regex::render::AnyNode>(sittir_regex::RegexGrammar, sittir_regex::render::options::defaults, "*")),
+        ("a rust source wholly an ERROR", 0, placed_entries::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "const default")),
     ];
-    for (case, placed) in placed {
-        assert_eq!(placed, 1, "{case}: the outermost ERROR alone is placed");
+    for (case, outermost, placed) in placed {
+        assert_eq!(placed, outermost, "{case}: the outermost ERROR alone is placed, unless it is the root, which renders its own span");
     }
 }
 
@@ -199,4 +199,50 @@ fn a_placed_error_is_the_entry_a_built_side_holds_for_it() {
     assert_eq!(stored.len(), 1, "the root's inner holds the ERROR alone");
     let TriviaEntry::Record(entry) = &stored[0] else { panic!("the ERROR is named by its record, as a built side names it: {:?}", stored[0]) };
     assert_eq!((entry.record.kind, entry.record.at), (sittir_core::types::KindId::ERROR, at), "the entry names the ERROR's own record");
+}
+
+/// A source whose root is an `ERROR`, with what a parse placed on the root's
+/// own sides: the entries the tree's placement assigns them, and the records
+/// an arena parse placed there.
+type ErrorRoot = (String, usize, usize);
+
+/// The fixtures of a grammar whose root is an `ERROR` (`ErrorRoot`).
+fn error_roots<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(grammar: &str, of: G, options: fn() -> ResolvedOptions) -> Vec<ErrorRoot> {
+    let sides = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner];
+    fixture_sources(grammar)
+        .into_iter()
+        .filter_map(|source| {
+            let tree = parsed(of, options(), &source);
+            if tree.nodes().kid(NodeIndex::ROOT).grammar != sittir_core::types::KindId::ERROR {
+                return None;
+            }
+            let placement = tree.placed_trivia();
+            let assigned = sides.iter().map(|&side| placement.tables().map(|table| table.side(NodeIndex::ROOT, side).len()).sum::<usize>()).sum();
+            let mut engine = Engine::new(of, options()).expect("an engine");
+            let parse = engine.parse_records::<N>(&source).expect("a parse");
+            let root = parse.root.expect("the ERROR's record");
+            let built = engine.written().built();
+            let place = Place::Placed { tree: sittir_core::types::TreeId(parse.source.0), site: sittir_core::arena::NodeSite::Record(root) };
+            let stored = sides.iter().filter_map(|&side| engine.written().side(place, side, &*built).expect("a placed side")).map(|entries| entries.len()).sum();
+            Some((source, assigned, stored))
+        })
+        .collect()
+}
+
+#[test]
+fn a_root_that_is_an_error_is_placed_on_no_side_of_its_own() {
+    let roots: Vec<(&str, Vec<ErrorRoot>)> = vec![
+        ("python", error_roots::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults)),
+        ("regex", error_roots::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults)),
+        ("rust", error_roots::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults)),
+        ("scm", error_roots::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults)),
+        ("typescript", error_roots::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults)),
+    ];
+    let counts: Vec<(&str, usize)> = roots.iter().map(|(grammar, found)| (*grammar, found.len())).collect();
+    assert!(counts.iter().any(|&(grammar, count)| grammar == "regex" && count > 0) && counts.iter().any(|&(grammar, count)| grammar == "rust" && count > 0), "the fixtures hold roots that are an ERROR: {counts:?}");
+    let placed: Vec<String> = roots
+        .iter()
+        .flat_map(|(grammar, found)| found.iter().filter(|(_, assigned, stored)| *assigned + *stored > 0).map(move |(source, assigned, stored)| format!("{grammar} {:?}: {assigned} assigned, {stored} stored", source.chars().take(40).collect::<String>())))
+        .collect();
+    assert!(placed.is_empty(), "roots that are an ERROR placed on a side of their own ({counts:?}):\n{}", placed.join("\n"));
 }

@@ -2858,12 +2858,7 @@ impl<G: EngineGrammar> Engine<G> {
         let mut built = self.written.built_mut();
         let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r') }).map_err(|refusal| refusal.to_string())?;
         let root = if root.is_error() {
-            let span = crate::types::Span::of(&root);
-            let at = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
-            drop(built);
-            let whole = at.map(|at| crate::arena::Placed { site: crate::arena::NodeSite::Record(at), side: TriviaSide::Inner, extra: at, kind: KindId::ERROR, span });
-            self.place_extras(crate::types::TreeId(entry.0), whole.into_iter().collect(), Vec::new());
-            at
+            crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
             let (mut placed, mut apart) = (Vec::new(), Vec::new());

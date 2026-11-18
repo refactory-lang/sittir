@@ -938,9 +938,6 @@ impl<'t> Placer<'t, '_, '_> {
         let kids = if node.entry() { Arc::from([]) } else { self.kids(index) };
         let source = self.text();
         let (mut segments, mut entries, mut at) = (Vec::new(), Vec::new(), node.start);
-        if node.entry() {
-            entries.push(node);
-        }
         for (position, kid) in kids.iter().enumerate() {
             self.state.parent.insert(kid.index, index);
             if let Some(token) = hidden(source, at, kid.start, Key::before) {
