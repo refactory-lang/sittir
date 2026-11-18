@@ -22,6 +22,7 @@ export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { refuseJSON } from './json-refusal.ts';
 export { spelledMember } from './spelled.ts';
+import type { HoistHop } from './hoist-read.ts';
 export { hoistRead, type HoistHop } from './hoist-read.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
@@ -925,11 +926,23 @@ export function hoistedWith(
 	place: (value: unknown) => unknown = (value) => apply([value])
 ): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
-	const native = clears ? undefined : nativeSlotReader(node, accessor);
-	const existing = clears ? undefined : native === undefined ? hydrateStoredSlot(node, storage) : native.call(node);
+	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
 	const value = list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
 	return set?.[slot] === undefined ? apply(value) : place(set[slot](...value));
+}
+
+/** The slot `accessor` of a node whose own slot is `storage`: its native read when its tree registered one, else what a built node stores. */
+export function storedSlotRead(node: object, accessor: string, storage: string, many: boolean): unknown {
+	const native = nativeSlotReader(node, accessor);
+	return native !== undefined ? native.call(node) : many ? hydrateStoredSlots(node, storage) : hydrateStoredSlot(node, storage);
+}
+
+/** A hop of a hoisted read over a built holder: the wrapper's one slot, read as `storedSlotRead` reads it. */
+export function storedHop(accessor: string, storage: string, many: boolean): HoistHop {
+	return function (this: never) {
+		return storedSlotRead(this, accessor, storage, many);
+	};
 }
 
 /** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot. */

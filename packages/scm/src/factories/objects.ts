@@ -8,6 +8,8 @@ import {
 	currentHandle,
 	admitChildren,
 	hoistedWith,
+	hoistRead,
+	storedHop,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -243,7 +245,8 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 		_string_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		stringContent: () => hydrateStoredSlot(node, '_string_content'),
+		stringContent: () =>
+			hoistRead(hydrateStoredSlot(node, '_string_content'), [storedHop('contents', '_content', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -302,7 +305,8 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 		_string_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		stringContent: () => hydrateStoredSlot(node, '_string_content'),
+		stringContent: () =>
+			hoistRead(hydrateStoredSlot(node, '_string_content'), [storedHop('contents', '_content', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -822,7 +826,8 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 		prefix: () => _prefix,
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => _type,
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,

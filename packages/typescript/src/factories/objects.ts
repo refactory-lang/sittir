@@ -22,6 +22,8 @@ import {
 	admitChildren,
 	checkDelimited,
 	hoistedWith,
+	hoistRead,
+	storedHop,
 	listSlotWith,
 	LIST_METHODS,
 	listIterator,
@@ -358,7 +360,8 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		_export_specifiers,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		exportSpecifiers: () => hydrateStoredSlot(node, '_export_specifiers'),
+		exportSpecifiers: () =>
+			hoistRead(hydrateStoredSlot(node, '_export_specifiers'), [storedHop('items', '_item', true)], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -752,7 +755,8 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 		_import_specifiers,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		importSpecifiers: () => hydrateStoredSlot(node, '_import_specifiers'),
+		importSpecifiers: () =>
+			hoistRead(hydrateStoredSlot(node, '_import_specifiers'), [storedHop('items', '_item', true)], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -848,7 +852,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		attributeKind: () => _attribute_kind,
-		object: () => hydrateStoredSlot(node, '_object'),
+		object: () => hoistRead(hydrateStoredSlot(node, '_object'), [storedHop('properties', '_properties', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1527,7 +1531,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		$with: undefined as unknown as object,
 		condition: () => hydrateStoredSlot(node, '_condition'),
 		consequence: () => hydrateStoredSlot(node, '_consequence'),
-		alternative: () => hydrateStoredSlot(node, '_alternative'),
+		alternative: () => hoistRead(hydrateStoredSlot(node, '_alternative'), [storedHop('body', '_body', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1596,7 +1600,7 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		value: () => hydrateStoredSlot(node, '_value'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('cases', '_cases', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1978,7 +1982,7 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 		$with: undefined as unknown as object,
 		body: () => hydrateStoredSlot(node, '_body'),
 		handlers: () => hydrateStoredSlot(node, '_handlers'),
-		finalizer: () => hydrateStoredSlot(node, '_finalizer'),
+		finalizer: () => hoistRead(hydrateStoredSlot(node, '_finalizer'), [storedHop('body', '_body', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -3375,11 +3379,17 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		_body,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		heritage: () => hydrateStoredSlot(node, '_heritage'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('members', '_members', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -3522,11 +3532,17 @@ export function buildClassDeclaration(
 		_terminator,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		heritage: () => hydrateStoredSlot(node, '_heritage'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('members', '_members', true)], true),
 		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3723,8 +3739,14 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -3912,8 +3934,14 @@ export function buildFunctionDeclaration(
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		terminator: () => blankArmRead(_terminator),
@@ -4104,8 +4132,14 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -4293,8 +4327,14 @@ export function buildGeneratorFunctionDeclaration(
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		terminator: () => blankArmRead(_terminator),
@@ -4546,7 +4586,12 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6205,8 +6250,13 @@ export function buildDecoratorCallExpression(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -6821,8 +6871,14 @@ export function buildFunctionSignature(
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
@@ -7025,7 +7081,12 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 		_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7245,7 +7306,12 @@ export function buildInstantiationExpression(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7428,7 +7494,12 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		value: () => hydrateStoredSlot(node, '_value'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7623,11 +7694,17 @@ export function buildAbstractClassDeclaration(
 		_body,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		heritage: () => hydrateStoredSlot(node, '_heritage'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('members', '_members', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8025,8 +8102,14 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		extendsTypeClause: () => hydrateStoredSlot(node, '_extends_type_clause'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		extendsTypeClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_extends_type_clause'), [storedHop('types', '_type', true)], true),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8192,7 +8275,12 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		$with: undefined as unknown as object,
 		const: () => _const,
 		name: () => hydrateStoredSlot(node, '_name'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		body: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_body'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8287,7 +8375,7 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8481,7 +8569,12 @@ export function buildTypeAliasDeclaration(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
 		value: () => hydrateStoredSlot(node, '_value'),
 		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
@@ -8612,12 +8705,13 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8751,12 +8845,13 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9153,7 +9248,7 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9284,7 +9379,7 @@ function _buildAssertsAnnotation(value: Admit<T.Asserts>): T.AssertsAnnotation.B
 		_asserts,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		asserts: () => hydrateStoredSlot(node, '_asserts'),
+		asserts: () => hoistRead(hydrateStoredSlot(node, '_asserts'), [storedHop('value', '_value', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9335,7 +9430,7 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9399,7 +9494,7 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9582,8 +9677,14 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		abstract: () => _abstract,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10000,7 +10101,12 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10408,7 +10514,7 @@ function _buildTypeQueryCallExpression(value: Admit<T.Arguments>): T.TypeQueryCa
 		_arguments,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10477,7 +10583,12 @@ export function buildTypeQueryInstantiationExpression(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11027,7 +11138,7 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 		_types,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		types: () => hydrateStoredSlot(node, '_types'),
+		types: () => hoistRead(hydrateStoredSlot(node, '_types'), [storedHop('items', '_item', true)], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -11136,7 +11247,7 @@ export function buildObjectType(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [storedHop('items', '_item', true)], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11195,7 +11306,7 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [storedHop('items', '_item', true)], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11246,7 +11357,7 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [storedHop('items', '_item', true)], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11307,8 +11418,14 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		_return_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11454,7 +11571,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		readonly: () => _readonly,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11588,7 +11705,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -11688,7 +11805,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		const: () => _const,
 		name: () => hydrateStoredSlot(node, '_name'),
 		constraint: () => hydrateStoredSlot(node, '_constraint'),
-		default: () => hydrateStoredSlot(node, '_default'),
+		default: () => hoistRead(hydrateStoredSlot(node, '_default'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11900,9 +12017,15 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		abstract: () => _abstract,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12103,7 +12226,8 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 		_tuple_type_members,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		tupleTypeMembers: () => hydrateStoredSlot(node, '_tuple_type_members'),
+		tupleTypeMembers: () =>
+			hoistRead(hydrateStoredSlot(node, '_tuple_type_members'), [storedHop('items', '_item', true)], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -12410,8 +12534,14 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		_return_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -13509,7 +13639,7 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		parameter: () => hydrateStoredSlot(node, '_parameter'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15133,7 +15263,8 @@ export function buildClassBodyMemberMethod(
 		_terminator,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		methodDefinition: () => hydrateStoredSlot(node, '_method_definition'),
 		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
@@ -15563,7 +15694,8 @@ export function buildImportStatementClauseFrom(
 		_source,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		importClause: () => hydrateStoredSlot(node, '_import_clause'),
+		importClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_import_clause'), [storedHop('content', '_content', false)], false),
 		source: () => hydrateStoredSlot(node, '_source'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -15859,7 +15991,7 @@ export function buildParenthesizedExpressionTyped(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		expression: () => hydrateStoredSlot(node, '_expression'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15940,7 +16072,8 @@ function _buildParenthesizedExpressionSequence(
 		_sequence_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		sequenceExpression: () => hydrateStoredSlot(node, '_sequence_expression'),
+		sequenceExpression: () =>
+			hoistRead(hydrateStoredSlot(node, '_sequence_expression'), [storedHop('expressions', '_expression', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16166,8 +16299,13 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16254,7 +16392,7 @@ export function buildCallExpressionTemplateCall(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16333,8 +16471,13 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		typeArguments: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_arguments'),
+				[storedHop('types', '_types', false), storedHop('items', '_item', true)],
+				true
+			),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16685,8 +16828,10 @@ export function buildClassHeritageExtendsClause(
 		_implements_clause,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		extendsClause: () => hydrateStoredSlot(node, '_extends_clause'),
-		implementsClause: () => hydrateStoredSlot(node, '_implements_clause'),
+		extendsClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_extends_clause'), [storedHop('types', '_types', true)], true),
+		implementsClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_implements_clause'), [storedHop('types', '_type', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16774,7 +16919,8 @@ export function buildImportClauseDefaultImport(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		identifier: () => hydrateStoredSlot(node, '_identifier'),
-		importClauseGroup: () => hydrateStoredSlot(node, '_import_clause_group'),
+		importClauseGroup: () =>
+			hoistRead(hydrateStoredSlot(node, '_import_clause_group'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16961,7 +17107,8 @@ export function buildExportStatementDefaultDeclaration(
 		_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -17146,7 +17293,12 @@ export function buildExportStatementDefaultFromClauseFrom(
 		_source,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		exportClause: () => hydrateStoredSlot(node, '_export_clause'),
+		exportClause: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_export_clause'),
+				[storedHop('exportSpecifiers', '_export_specifiers', false), storedHop('items', '_item', true)],
+				true
+			),
 		source: () => hydrateStoredSlot(node, '_source'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -17386,7 +17538,7 @@ export function buildVariableDeclaratorPlain(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -17465,7 +17617,7 @@ export function buildVariableDeclaratorDefinite(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18349,12 +18501,13 @@ export function buildSetterParameter(config: T.SetterParameter.Config): T.Setter
 		_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18507,8 +18660,14 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		generator: () => _generator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -18876,7 +19035,12 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		static: () => _static,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
+				false
+			),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19034,8 +19198,14 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		generator: () => _generator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19370,7 +19540,12 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 		static: () => _static,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
+				false
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -19514,8 +19689,14 @@ export function buildAbstractMethodSignaturePlain(
 		generator: () => _generator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_type_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				true
+			),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19839,7 +20020,12 @@ export function buildAbstractMethodSignatureSetter(
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
+				false
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -19989,7 +20175,8 @@ export function buildPublicFieldDefinitionPlain(
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		declare: () => _declare,
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
@@ -19998,7 +20185,7 @@ export function buildPublicFieldDefinitionPlain(
 		abstract: () => _abstract,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optionality: () => _optionality,
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20195,13 +20382,14 @@ export function buildPublicFieldDefinitionAccessor(
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
 		abstract: () => _abstract,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20432,7 +20620,8 @@ export function buildConstructorDeclaration(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		accessibilityModifier: () => _accessibility_modifier,
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20567,11 +20756,12 @@ export function buildReceiverParameterDeclaration(
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20795,7 +20985,7 @@ function _buildFormalParametersElementsReceiverGroup(
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -21192,7 +21382,7 @@ export function buildInterfaceBody(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [storedHop('items', '_item', true)], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -21251,7 +21441,7 @@ export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): 
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [storedHop('items', '_item', true)], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -21302,7 +21492,7 @@ export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [storedHop('items', '_item', true)], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

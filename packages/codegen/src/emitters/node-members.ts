@@ -31,11 +31,17 @@ export interface TriviaPositions {
 	readonly inner: boolean;
 }
 
+export interface StoredHoist {
+	readonly hops: readonly string[];
+	readonly list: boolean;
+}
+
 export interface StoredAccessor {
 	readonly name: string;
 	readonly read: string;
 	readonly hydrates?: 'one' | 'many';
 	readonly slot?: AssembledNonterminal;
+	readonly hoist?: StoredHoist;
 }
 
 export type HeldKey = 'INPUT' | 'OPTIONS' | 'READ_TREE';
@@ -88,7 +94,8 @@ export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 function accessorRead(accessor: StoredAccessor): string {
 	if (accessor.hydrates === undefined) return accessor.read;
 	const read = `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
-	return accessor.slot === undefined ? read : spelledReadExpr(accessor.slot, read);
+	const spelled = accessor.slot === undefined ? read : spelledReadExpr(accessor.slot, read);
+	return accessor.hoist === undefined ? spelled : `hoistRead(${spelled}, [${accessor.hoist.hops.join(', ')}], ${accessor.hoist.list})`;
 }
 
 export type TriviaSide = 'leading' | 'trailing' | 'inner';

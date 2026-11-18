@@ -61,7 +61,7 @@
 
 ### Task 4: Wrap getters
 
-**Status:** in progress. The emitter, the `hoistRead` helper in `@sittir/common` and the per-grammar `hoist-read.test.ts` are built; the getters read through the stamp in both storages. The pinned readers' typing moved into the pinned-types program first (e6f0af68c).
+**Status:** done for parsed nodes in both storages and, with Task 6, for built object nodes. The emitter, the `hoistRead` helper in `@sittir/common` and the per-grammar `hoist-read.test.ts` are built; the getters read through the stamp. The pinned readers' typing moved into the pinned-types program first (e6f0af68c).
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/wrap.ts`
@@ -76,6 +76,8 @@
 
 ### Task 5: `$with` setters
 
+**Status:** the `$with` setters set through the existing wrapper in both storages, and a slot that ends in a list takes its items. Remaining: the setters on a holder that has no wrapper yet read the build route Task 6 finishes.
+
 **Status:** done. The setter reads the holder's existing wrapper and sets through its own setter, else builds; one hook in the shared setter emitter covers arena, object and factory-built nodes.
 
 **Files:**
@@ -89,6 +91,8 @@
 - [x] **Step 5: The setters** read the stamp.
 
 ### Task 6: Factories and the loose `from`
+
+**Status:** in progress. Built object nodes read hoisted slots through the stamp (`storedAccessor`, `storedHop`). The strict and loose factory types, and the arena build of a hoisted value, follow.
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/factories.ts`, `packages/codegen/src/emitters/from.ts`

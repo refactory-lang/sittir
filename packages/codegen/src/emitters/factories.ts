@@ -4,7 +4,8 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { withHoists, groupSeatMembers, groupSeatReaders, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type HeldLocal, type HeldRead, type SetterEntry, type StoredAccessor } from './node-members.ts';
+import { withHoists, groupSeatMembers, groupSeatReaders, triviaPositionsOf, listSelfViewParts, nodeMemberParts, ownerViewParts, seatedSetters, triviaInnerImports, type HeldLocal, type HeldRead, type SetterEntry, type StoredAccessor,
+	type StoredHoist } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -2171,7 +2172,7 @@ function fieldCarryingFactoryText(
 		}
 		const members = nodeMemberParts({
 			setters: { kind: node.kind, prefix: fn, entries: seated, held, readers: groupSeatReaders(plan, storedRead) },
-			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
+			accessors: slotsToEmit.map((f) => storedAccessor(node, f.propertyName, f.storageKey, f, nodeMap)),
 			extra: [...(view?.members ?? []), ...groupSeatMembers(plan, (hint) => hint.stored)],
 			tail: view?.tail,
 			trivia,
@@ -2464,7 +2465,7 @@ function emitRefineFormFactory(
 		];
 		const members = nodeMemberParts({
 			setters: { kind: node.kind, prefix: formFn, entries: formSetters, held },
-			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
+			accessors: allSlots.map((f) => storedAccessor(node, f.propertyName, f.storageKey, f, nodeMap)),
 			trivia,
 			root: node.grammarRoot
 		});
@@ -2885,14 +2886,32 @@ export function seatPlanOf(
 	};
 }
 
+function storedHopOf(node: AssembledNode, slot: AssembledNonterminal): string {
+	if (node instanceof AssembledList) {
+		const canonical = canonicalSeparatedListField(node);
+		return `storedHop(${JSON.stringify(canonical.propertyName)}, ${JSON.stringify(listContentStorageKey(node))}, true)`;
+	}
+	return `storedHop(${JSON.stringify(slot.propertyName)}, ${JSON.stringify(slot.storageKey)}, ${isMultiple(slot)})`;
+}
+
+function storedHoistOf(holder: AssembledNode, lookup: AssembledNonterminal, slot: AssembledNonterminal, nodeMap: NodeMap): StoredHoist | undefined {
+	const chain = wrapperChainFor(nodeMap, holder.kind, lookup.name);
+	if (chain === undefined) return undefined;
+	const hops = chain.storage.map((kind, hop) => storedHopOf(nodeMap.nodes.get(kind)!, chain.slots[hop]!));
+	return { hops, list: isMultiple(slot) || chain.slots.some((inner, hop) => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(inner)) };
+}
+
 function storedAccessor(
+	holder: AssembledNode,
 	name: string,
 	read: string,
 	slot: AssembledNonterminal,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	lookup: AssembledNonterminal = slot
 ): StoredAccessor {
 	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read: blankForRead(hasBlankArm(slot), read) };
-	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one', ...(spelledReadOf(slot) === undefined ? {} : { slot }) };
+	const hoist = storedHoistOf(holder, lookup, slot, nodeMap);
+	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one', ...(spelledReadOf(slot) === undefined ? {} : { slot }), ...(hoist === undefined ? {} : { hoist }) };
 }
 
 export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): readonly string[] {
@@ -2900,7 +2919,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 	for (const node of nodeMap.nodes.values()) {
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
 		if (plan.slots.length > 0) names.add('listSlotWith');
-		names.add('hoistedWith');
+		for (const name of ['hoistedWith', 'hoistRead', 'storedHop']) names.add(name);
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {
@@ -3191,7 +3210,7 @@ function emitSeparatedListFactory(
 			if (hasDelimiterOption) lines.push('    _delimiter,');
 			const members = nodeMemberParts({
 				setters: { kind: node.kind, prefix: fn, entries: seated, held },
-				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
+				accessors: [storedAccessor(node, contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap, canonicalSeparatedListField(node))],
 				extra: view.members,
 				tail: view.tail,
 				trivia,
