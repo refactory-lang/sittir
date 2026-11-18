@@ -179,10 +179,8 @@ pub struct DepthRegion {
 /// kinds, whose items the surface exposes in the list's place, the unit
 /// kinds, which it exposes as a kind id rather than a node, the extra kinds
 /// that are layout members, which it assigns as layout, the depth members
-/// (`indent`, `dedent`, 0 where the grammar has none), the kinds'
-/// structural indentation (`depth`) and the inner-site kinds, each with the
-/// word of the slot whose leading side an empty node of it keeps its inner
-/// side as (`inner`, by kind id).
+/// (`indent`, `dedent`, 0 where the grammar has none) and the kinds'
+/// structural indentation (`depth`).
 #[derive(Debug, Clone, Copy, Default)]
 pub struct SurfaceKinds {
     pub lists: &'static [KindId],
@@ -191,17 +189,9 @@ pub struct SurfaceKinds {
     pub indent: KindId,
     pub dedent: KindId,
     pub depth: &'static [DepthRegion],
-    pub inner: &'static [(KindId, u32)],
 }
 
 impl SurfaceKinds {
-    /// The word of `kind`'s inner-site slot; none for a kind with no inner
-    /// site.
-    #[must_use]
-    pub fn inner_site(&self, kind: KindId) -> Option<u32> {
-        self.inner.binary_search_by_key(&kind, |&(site, _)| site).ok().map(|at| self.inner[at].1)
-    }
-
     /// Whether the grammar has a depth member at all.
     #[must_use]
     pub fn has_depth_members(&self) -> bool {
@@ -532,13 +522,6 @@ impl HeapBytes for Adjacency {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn an_inner_site_kind_names_its_slot_s_word_and_another_kind_none() {
-        let kinds = SurfaceKinds { inner: &[(KindId(3), 2), (KindId(9), 5), (KindId(12), 6)], ..SurfaceKinds::default() };
-        assert_eq!([3, 9, 12, 4, 0, 13].map(|kind| kinds.inner_site(KindId(kind))), [Some(2), Some(5), Some(6), None, None, None]);
-        assert_eq!(SurfaceKinds::default().inner_site(KindId(3)), None);
-    }
 
     fn sibling(start: u32, end: u32, holder: bool) -> Sibling {
         Sibling { span: Span { start, end }, holder, entry: false }

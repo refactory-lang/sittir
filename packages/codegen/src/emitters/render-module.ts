@@ -158,7 +158,7 @@ import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import type { GrammarName } from '../grammars.ts';
 import type { HelperSlotRead } from '../compiler/diagnostics/grammar-diagnostics.ts';
-import { continuationTriviaKinds, innerKinds, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -1137,8 +1137,6 @@ export function emitRenderModule(
 			'use super::options;',
 			'use super::{field_ids as field, kind_ids as kind};',
 			'use ::sittir_core::VerbatimNode;',
-			'',
-			...innerSitesRs(nodeMap),
 			'',
 			support.text,
 			...exactSizeAssertions(support.text)
@@ -3723,48 +3721,6 @@ export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordL
 	return layout;
 }
 
-export function innerSiteWord(node: AssembledNode, nodeMap: NodeMap): number | undefined {
-	const site = node instanceof AbstractAssembledCompound ? node.innerSite : undefined;
-	if (site === undefined) return undefined;
-	const slot = node.slots.find(({ name }) => name === site.key);
-	const place = slot === undefined ? undefined : nodeRecordLayout(node, nodeMap)?.places.find(({ field }) => field === rustFieldIdent(slot.storageName));
-	if (place === undefined) {
-		throw emitShapeFailure({
-			code: 'inner-site-without-slot',
-			message: `${node.kind}: its inner site '${site.key}' is no slot of its record, so no slot word names where its inner side is kept`
-		});
-	}
-	return place.word;
-}
-
-const innerSiteWordsByNodeMap = new WeakMap<NodeMap, ReadonlyMap<string, number>>();
-
-export function innerSiteWords(nodeMap: NodeMap): ReadonlyMap<string, number> {
-	const cached = innerSiteWordsByNodeMap.get(nodeMap);
-	if (cached !== undefined) return cached;
-	const words = new Map(
-		[...innerKinds(nodeMap)].sort(compareOrdinal).flatMap((kind) => {
-			const node = nodeMap.nodes.get(kind);
-			const word = node === undefined ? undefined : innerSiteWord(node, nodeMap);
-			return word === undefined ? [] : [[kind, word] as const];
-		})
-	);
-	innerSiteWordsByNodeMap.set(nodeMap, words);
-	return words;
-}
-
-export function innerSitesRs(nodeMap: NodeMap): string[] {
-	const stamps = [...innerSiteWords(nodeMap)].flatMap(([kind, word]) => {
-		const id = nodeMap.nodes.get(kind)?.kindId;
-		if (id === undefined) throw emitShapeFailure({ code: 'inner-site-without-kind-id', message: `${kind}: an inner-site kind with no kind id, so no node of it finds its inner-site slot` });
-		return [{ id, word }];
-	});
-	stamps.sort((a, b) => a.id - b.id);
-	return [
-		'/// The inner-site kinds by kind id, each with the word of its inner-site slot: an empty node of the kind keeps its inner side as that slot\'s leading side.',
-		`pub const INNER_SITES: &[(::sittir_core::types::KindId, u32)] = &[${stamps.map(({ id, word }) => `(::sittir_core::types::KindId(${id}), ${word})`).join(', ')}];`
-	];
-}
 
 function renderNodeDataStruct(
 	structName: string,
