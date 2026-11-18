@@ -304,7 +304,9 @@ function wrapString$with(node: Held, setter: string, args: readonly unknown[]): 
 							? undefined
 							: (RAW.buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.StringContent
+				TSKindId.StringContent,
+				undefined,
+				true
 			);
 	}
 	throw new Error(`string has no $with.${setter}`);
@@ -384,7 +386,9 @@ function wrapImmediateString$with(node: Held, setter: string, args: readonly unk
 							? undefined
 							: (RAW.buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.StringContent
+				TSKindId.StringContent,
+				undefined,
+				true
 			);
 	}
 	throw new Error(`immediate_string has no $with.${setter}`);
@@ -1000,7 +1004,9 @@ function wrapPredicate$with(node: Held, setter: string, args: readonly unknown[]
 							? undefined
 							: (RAW.buildParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.Parameters
+				TSKindId.Parameters,
+				undefined,
+				true
 			);
 	}
 	throw new Error(`predicate has no $with.${setter}`);

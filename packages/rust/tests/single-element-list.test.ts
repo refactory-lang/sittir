@@ -37,9 +37,19 @@ describe('a tuple expression with one element', () => {
 	it('renders it when a parsed tuple of two is cut down to one', () => {
 		const parsed = parsedTuple('(a, b)');
 		const [first] = parsed.elements();
-		const text = parsed.$with.elements(build.tupleExpressionElements(first!)).$render();
+		const text = parsed.$with.elements(first!).$render();
 		expect(text).toBe('(a,)');
 		expect(is.tupleExpression(parsedValue(text))).toBe(true);
+	});
+});
+
+describe('a list-form setter', () => {
+	it('refuses a list node, naming the setter and saying it takes the items', () => {
+		const parsed = parsedTuple('(a, b)');
+		const [first] = parsed.elements();
+		expect(() => parsed.$with.elements(build.tupleExpressionElements(first!) as never)).toThrow(
+			'$with.elements takes the items'
+		);
 	});
 });
 
@@ -74,14 +84,8 @@ describe('a tuple type or pattern with one element', () => {
 		expect(text).toBe('(a,)');
 	});
 
-	it('keeps the separator when a parsed tuple type of two is cut to one with the delimiter', () => {
-		const parsed = parsedType('(u8, u16)');
-		const text = parsed.$with.types(build.types({ delimiter: Delimiter.Trailing }, parsed.types()[0]!)).$render();
-		expect(text).toBe('(u8,)');
-	});
-
 	it('renders the parenthesised spelling without the delimiter', () => {
 		const parsed = parsedType('(u8, u16)');
-		expect(parsed.$with.types(build.types(parsed.types()[0]!)).$render()).toBe('(u8)');
+		expect(parsed.$with.types(parsed.types()[0]!).$render()).toBe('(u8)');
 	});
 });

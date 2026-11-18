@@ -927,8 +927,12 @@ export function hoistedWith(
 	place: ((value: unknown) => unknown) | undefined = undefined,
 	wrap: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined,
 	kind: number | undefined = undefined,
-	inner: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined
+	inner: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined,
+	items = false
 ): unknown {
+	if (args.length === 1 && ((list !== undefined && isKindNode(args[0], list.kind)) || (items && kind !== undefined && isKindNode(args[0], kind)))) {
+		throw new TypeError(`$with.${accessor} takes the items, $with.${accessor}(a, b), not a list node; pass its items: $with.${accessor}(...list)`);
+	}
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
 	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
