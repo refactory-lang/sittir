@@ -20,6 +20,9 @@ use super::options;
 use super::{field_ids as field, kind_ids as kind};
 use ::sittir_core::VerbatimNode;
 
+/// The inner-site kinds by kind id, each with the word of its inner-site slot: an empty node of the kind keeps its inner side as that slot's leading side.
+pub const INNER_SITES: &[(::sittir_core::types::KindId, u32)] = &[(::sittir_core::types::KindId(176), 5), (::sittir_core::types::KindId(195), 2), (::sittir_core::types::KindId(199), 2), (::sittir_core::types::KindId(201), 2), (::sittir_core::types::KindId(203), 2), (::sittir_core::types::KindId(227), 2), (::sittir_core::types::KindId(230), 2), (::sittir_core::types::KindId(249), 2), (::sittir_core::types::KindId(277), 2), (::sittir_core::types::KindId(283), 2), (::sittir_core::types::KindId(293), 2), (::sittir_core::types::KindId(302), 2), (::sittir_core::types::KindId(313), 5), (::sittir_core::types::KindId(316), 2), (::sittir_core::types::KindId(317), 2), (::sittir_core::types::KindId(405), 2), (::sittir_core::types::KindId(406), 2), (::sittir_core::types::KindId(407), 2), (::sittir_core::types::KindId(408), 2), (::sittir_core::types::KindId(409), 2), (::sittir_core::types::KindId(410), 2), (::sittir_core::types::KindId(411), 2), (::sittir_core::types::KindId(412), 2), (::sittir_core::types::KindId(413), 2), (::sittir_core::types::KindId(436), 2), (::sittir_core::types::KindId(437), 2), (::sittir_core::types::KindId(438), 2)];
+
 pub fn stamp(grammar: KindId, display: KindId) -> KindId {
     ::sittir_core::read::stamp(grammar, display, <AnyNode as ::sittir_core::read::ReadNode>::shows, kind::relaxes)
 }

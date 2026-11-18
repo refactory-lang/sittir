@@ -84,7 +84,7 @@ pub const ERROR: KindId = KindId(65535);
 pub const KIND_BITS: u32 = 7;
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
-/// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
+/// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, and the inner-site kinds with their inner-site slot's word.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[],
     units: &[KindId(2), KindId(3), KindId(4), KindId(7), KindId(8), KindId(9), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(60)],
@@ -92,6 +92,7 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
     indent: KindId(31),
     dedent: KindId(32),
     depth: super::options::DEPTH_REGIONS,
+    inner: super::node::INNER_SITES,
 };
 
 /// The grammar's root kinds: a render whose root is one of them is a document.

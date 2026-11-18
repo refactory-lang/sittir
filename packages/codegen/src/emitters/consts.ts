@@ -2,7 +2,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat, compareOrdinal } from './shared.ts';
 import { collectInteriors } from './interior.ts';
-import { innerKinds } from '../compiler/model/trivia.ts';
+import { innerSiteWords } from './render-module.ts';
 import { kindTypeName, pascalCase } from '../compiler/model/casing.ts';
 
 export interface EmitConstsConfig {
@@ -22,7 +22,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 }
 
 function emitInnerKinds(lines: string[], nodeMap: NodeMap): void {
-	const kinds = [...innerKinds(nodeMap)].sort(compareOrdinal);
+	const kinds = [...innerSiteWords(nodeMap).keys()];
 	lines.push('/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */');
 	lines.push(`export const INNER_SITES: ReadonlySet<string> = new Set<string>(${JSON.stringify(kinds)});`);
 	lines.push('');
