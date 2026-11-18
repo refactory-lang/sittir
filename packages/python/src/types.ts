@@ -2970,9 +2970,6 @@ export interface TypeParameter {
 	readonly __slotHints__?: {
 		readonly types: SlotHint<T.Types>;
 		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly types: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
 	readonly types: () => readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 }
@@ -3545,9 +3542,6 @@ export interface ClassPattern {
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.DottedName>;
 		readonly fields: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listSlots: {
-			readonly fields: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
 	readonly type: () => DottedName;
 	readonly fields: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
@@ -4262,9 +4256,6 @@ export interface GenericType {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameter: SlotHint<T.TypeParameter>;
-		readonly $listSlots: {
-			readonly typeParameter: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
 	readonly name: () => Identifier;
 	readonly typeParameter: () => readonly (
@@ -5162,9 +5153,6 @@ export interface CaseTuplePattern {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
 	readonly elements: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
@@ -5184,9 +5172,6 @@ export interface CaseListPattern {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
 	readonly elements: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
@@ -5837,9 +5822,6 @@ export interface WithClauseParen {
 	readonly __slotHints__?: {
 		readonly items: SlotHint<T.WithClauseWithItems>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly items: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
 	readonly items: () => readonly Expression[];
 }

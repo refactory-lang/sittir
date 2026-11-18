@@ -8,12 +8,15 @@ import {
 	AssembledLexedPattern,
 	AssembledList,
 	AssembledPolymorph,
+	deriveSlotCardinality,
 	isMultiple,
 	isNodeRef,
+	isNonEmpty,
 	isRequired,
 	kindsOf,
 	valueParseKindsOf,
 	type AssembledNode,
+	type SlotCardinality,
 	type AssembledNonterminal
 } from './node-map.ts';
 
@@ -198,10 +201,10 @@ export function wrapperChainOfSlot(nodeMap: NodeMap, slot: AssembledNonterminal)
 	return chainTablesOf(nodeMap).bySlot.get(slot);
 }
 
-export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScope = '', holderOptional = false): string {
+export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScope = '', holderOptional = false, from = 0): string {
 	const builder = (kind: string): string => `${factoryScope}${nodeMap.nodes.get(kind)!.rawFactoryName}`;
 	const consumesList = (hop: number): boolean => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(chain.slots[hop]!);
-	const rest = chain.storage.some((_, hop) => consumesList(hop));
+	const rest = chain.storage.some((_, hop) => hop >= from && consumesList(hop));
 	const wrapped = (from: number, seed: string, listed: boolean): string => {
 		let expr = seed;
 		let list = listed;
@@ -216,12 +219,19 @@ export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScop
 		}
 		return expr;
 	};
-	const filled = wrapped(0, 'v', rest);
+	const filled = wrapped(from, 'v', rest);
 	const arrow = (body: string): string => `(v: ${rest ? 'readonly never[]' : 'never'}) => ${body}`;
-	if (!rest) return arrow(filled);
+	if (!rest || from > 0) return arrow(filled);
 	if (holderOptional) return arrow(`v.length === 0 ? undefined : ${filled}`);
 	const optional = chain.slots.findIndex((slot) => !isRequired(slot));
 	if (optional < 0) return arrow(filled);
 	const emptied = chain.storage.slice(0, optional).reduceRight((expr, kind) => `${builder(kind)}(${expr})`, `${builder(chain.storage[optional]!)}()`);
 	return arrow(`v.length === 0 ? ${emptied} : ${filled}`);
+}
+
+export function hoistedCardinality(chain: WrapperChain, slot: AssembledNonterminal, nodeMap: NodeMap): SlotCardinality {
+	const listed = (hop: number): boolean => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(chain.slots[hop]!);
+	const multiple = isMultiple(slot) || chain.storage.some((_, hop) => listed(hop));
+	const last = chain.slots[chain.slots.length - 1]!;
+	return { required: isRequired(slot) && chain.slots.every(isRequired), multiple, nonEmpty: isMultiple(slot) ? isNonEmpty(slot) : isNonEmpty(last) };
 }

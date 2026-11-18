@@ -495,6 +495,7 @@ interface ListSlotSpec {
 	readonly optional: boolean;
 	readonly make: (...args: never[]) => unknown;
 	readonly element?: ElementConfig;
+	readonly forms?: readonly number[];
 }
 
 type Members = Record<string, (...args: unknown[]) => unknown>;
@@ -667,7 +668,7 @@ export function listSlotWith(
 function listSlotValue(args: readonly unknown[], spec: Omit<ListSlotSpec, 'slot'>): unknown {
 	const make = spec.make as (...args: unknown[]) => unknown;
 	if (args.length === 0) return make();
-	const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
+	const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind || spec.forms?.includes((args[0] as { $type?: number } | null)?.$type as number) === true);
 	return whole ? args[0] : make(...convertElements(args, spec.element));
 }
 
@@ -925,12 +926,14 @@ export function hoistedWith(
 	apply: (args: readonly unknown[]) => unknown,
 	place: ((value: unknown) => unknown) | undefined = undefined,
 	wrap: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined,
-	kind: number | undefined = undefined
+	kind: number | undefined = undefined,
+	inner: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined
 ): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
 	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
-	const value = list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
+	const through = inner !== undefined && list === undefined && !clears && args.length > 0 && !(kind !== undefined && args.length === 1 && isKindNode(args[0], kind));
+	const value = through ? (handle === undefined ? inner(args as readonly never[]) : inEngine(handle, () => inner(args as readonly never[]))) : list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
 	if (set?.[slot] !== undefined) return (place ?? ((placed: unknown) => apply([placed])))(set[slot](...value));
 	if (wrap === undefined || clears || (kind !== undefined && value.length === 1 && isKindNode(value[0], kind))) return apply(value);
 	return apply(handle === undefined ? wrap(value as readonly never[]) : inEngine(handle, () => wrap(value as readonly never[])));

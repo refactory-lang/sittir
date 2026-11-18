@@ -21,6 +21,7 @@ export interface HoistSet {
 	readonly optional: boolean;
 	readonly list?: string;
 	readonly wrap: string;
+	readonly inner?: string;
 	readonly kind: string;
 	readonly placed?: { readonly params: string; readonly body: string };
 }
@@ -74,8 +75,8 @@ export interface NodeMemberSpec {
 	readonly text?: string;
 }
 
-function hoistedArgsWrap(chain: WrapperChain, nodeMap: NodeMap, factoryScope: string, slot: AssembledNonterminal): string {
-	const arrow = chainWrapExpr(chain, nodeMap, factoryScope, !isRequired(slot));
+function hoistedArgsWrap(chain: WrapperChain, nodeMap: NodeMap, factoryScope: string, slot: AssembledNonterminal, from = 0): string {
+	const arrow = chainWrapExpr(chain, nodeMap, factoryScope, !isRequired(slot), from);
 	const rest = arrow.startsWith('(v: readonly never[])');
 	return rest ? `(args: readonly never[]) => [(${arrow})(args)]` : `(args: readonly never[]) => args.map((v) => (${arrow})(v as never))`;
 }
@@ -83,8 +84,8 @@ function hoistedArgsWrap(chain: WrapperChain, nodeMap: NodeMap, factoryScope: st
 export function withHoists(setters: readonly SetterEntry[], node: { readonly kind: string; readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], factoryScope = ''): SetterEntry[] {
 	return setters.map((entry) => {
 		const slot = node.slots.find((candidate) => candidate.propertyName === entry.name);
-		const chain = slot === undefined || slot.arity === 'many' ? undefined : wrapperChainFor(nodeMap, node.kind, slot.name);
-		return slot === undefined || chain === undefined ? entry : { ...entry, hoist: { storage: slot.storageKey, slot: chain.slots[0]!.propertyName, optional: !isRequired(slot), wrap: hoistedArgsWrap(chain, nodeMap, factoryScope, slot), kind: kindDiscriminantExpr(chain.storage[0]!, nodeMap, kindEntries) } };
+		const chain = slot === undefined ? undefined : wrapperChainFor(nodeMap, node.kind, slot.name);
+		return slot === undefined || chain === undefined ? entry : { ...entry, hoist: { storage: slot.storageKey, slot: chain.slots[0]!.propertyName, optional: !isRequired(slot), wrap: hoistedArgsWrap(chain, nodeMap, factoryScope, slot), ...(chain.storage.length > 1 && wrapperChainFor(nodeMap, chain.storage[0]!, chain.slots[0]!.name) === undefined ? { inner: hoistedArgsWrap(chain, nodeMap, factoryScope, slot, 1) } : {}), kind: kindDiscriminantExpr(chain.storage[0]!, nodeMap, kindEntries) } };
 	});
 }
 
@@ -127,7 +128,7 @@ function appliedSetter(entry: SetterEntry): string {
 	const { placed } = entry.hoist;
 	const placedApplied = (list: string) => `applySetter(${list}, (${placed!.params}) => rebuilt(node, handle, () => ${placed!.body}))`;
 	const place = placed === undefined ? '' : `, (value) => ${placedApplied('[value]')}`;
-	return `hoistedWith(node, ${JSON.stringify(entry.name)}, ${JSON.stringify(entry.hoist.storage)}, ${JSON.stringify(entry.hoist.slot)}, ${entry.hoist.optional}, ${entry.hoist.list === undefined ? 'undefined' : `{ ${entry.hoist.list} }`}, handle, args, (args) => ${placed === undefined ? applied('args') : `args.length === 0 ? ${placedApplied('args')} : ${applied('args')}`}${entry.hoist.list === undefined ? `${place === '' ? ', undefined' : place}, ${entry.hoist.wrap}, ${entry.hoist.kind}` : place})`;
+	return `hoistedWith(node, ${JSON.stringify(entry.name)}, ${JSON.stringify(entry.hoist.storage)}, ${JSON.stringify(entry.hoist.slot)}, ${entry.hoist.optional}, ${entry.hoist.list === undefined ? 'undefined' : `{ ${entry.hoist.list} }`}, handle, args, (args) => ${placed === undefined ? applied('args') : `args.length === 0 ? ${placedApplied('args')} : ${applied('args')}`}${entry.hoist.list === undefined ? `${place === '' ? ', undefined' : place}, ${entry.hoist.wrap}, ${entry.hoist.kind}${entry.hoist.inner === undefined ? '' : `, ${entry.hoist.inner}`}` : place})`;
 }
 
 function withLines(name: string, kind: string, nodeType: string, prelude: readonly string[], setters: readonly SetterEntry[], caseLines: (entry: SetterEntry) => readonly string[] = () => []): string[] {
@@ -220,7 +221,7 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		const base = `(${entry.params}) => ${entry.body}`;
 		const element = plan.elements.find((candidate) => candidate.slot === entry.name);
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
-		const wrapped = slot?.wrap === undefined ? base : `(list: never) => ((${entry.params}) => ${entry.body})(${slot.wrap} as never)`;
+		const wrapped = slot?.wrap === undefined ? base : `(list: never) => ((${entry.params}) => ${entry.body})((list === undefined ? undefined : ${slot.wrap}) as never)`;
 		const elementSet = element === undefined ? wrapped : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${wrapped})`;
 		if (slot !== undefined) {
 			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads, hoist: entry.hoist === undefined || slot.wrap === undefined ? entry.hoist : { ...entry.hoist, list: slot.spec, placed: { params: entry.params, body: entry.body } } };

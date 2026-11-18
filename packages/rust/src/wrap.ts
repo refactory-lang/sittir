@@ -2787,7 +2787,8 @@ function wrapFunctionItem$with(node: Held, setter: string, args: readonly unknow
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: RAW.buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -2809,14 +2810,15 @@ function wrapFunctionItem$with(node: Held, setter: string, args: readonly unknow
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.FunctionItem['_parameters']>) =>
 												wrapFunctionItem(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'function_item', 'parameters', v) },
 													tree
-												))(RAW.buildParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 									)
 								)
 							),
@@ -3096,7 +3098,8 @@ function wrapFunctionSignatureItem$with(node: Held, setter: string, args: readon
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: RAW.buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -3118,7 +3121,8 @@ function wrapFunctionSignatureItem$with(node: Held, setter: string, args: readon
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.FunctionSignatureItem['_parameters']>) =>
@@ -3128,7 +3132,7 @@ function wrapFunctionSignatureItem$with(node: Held, setter: string, args: readon
 														_parameters: admitSlot(handle, 'function_signature_item', 'parameters', v)
 													},
 													tree
-												))(RAW.buildParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 									)
 								)
 							),
@@ -5985,7 +5989,8 @@ function wrapFunctionType$with(node: Held, setter: string, args: readonly unknow
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: RAW.buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -6007,14 +6012,15 @@ function wrapFunctionType$with(node: Held, setter: string, args: readonly unknow
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.FunctionType['_parameters']>) =>
 												wrapFunctionType(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'function_type', 'parameters', v) },
 													tree
-												))(RAW.buildParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 									)
 								)
 							),
@@ -8783,16 +8789,35 @@ function wrapShorthandFieldInitializer$with(node: Held, setter: string, args: re
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributes':
-			return applySetter(args, (...v: NonNullable<T.ShorthandFieldInitializer['_attributes']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapShorthandFieldInitializer(
-						{
-							...$edited(data),
-							_attributes: admitSlot(handle, 'shorthand_field_initializer', 'attributes', restItems('attributes', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'attributes',
+				'_attributes',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.ShorthandFieldInitializer['_attributes']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapShorthandFieldInitializer(
+								{
+									...$edited(data),
+									_attributes: admitSlot(
+										handle,
+										'shorthand_field_initializer',
+										'attributes',
+										restItems('attributes', v)
+									)
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'name':
 			return applySetter(args, (v: NonNullable<T.ShorthandFieldInitializer['_name']>) =>
@@ -8870,16 +8895,30 @@ function wrapFieldInitializer$with(node: Held, setter: string, args: readonly un
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributes':
-			return applySetter(args, (...v: NonNullable<T.FieldInitializer['_attributes']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapFieldInitializer(
-						{
-							...$edited(data),
-							_attributes: admitSlot(handle, 'field_initializer', 'attributes', restItems('attributes', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'attributes',
+				'_attributes',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.FieldInitializer['_attributes']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapFieldInitializer(
+								{
+									...$edited(data),
+									_attributes: admitSlot(handle, 'field_initializer', 'attributes', restItems('attributes', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'name':
 			return applySetter(args, (v: NonNullable<T.FieldInitializer['_name']>) =>
@@ -9308,7 +9347,11 @@ function wrapMatchExpression$with(node: Held, setter: string, args: readonly unk
 									(RAW.buildMatchBlockArms as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.MatchBlock
+				TSKindId.MatchBlock,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(RAW.buildMatchBlockArms as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				]
 			);
 	}
 	throw new Error(`match_expression has no $with.${setter}`);
@@ -13568,16 +13611,30 @@ function wrapAttributedElement$with(node: Held, setter: string, args: readonly u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributes':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.AttributedElement['_attributes']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapAttributedElement(
-						{
-							...$edited(data),
-							_attributes: admitSlot(handle, 'attributed_element', 'attributes', restItems('attributes', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'attributes',
+				'_attributes',
+				'attribute',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonEmptyArray<NonNullable<T.AttributedElement['_attributes']>[number]>) =>
+						rebuilt(node, handle, () =>
+							wrapAttributedElement(
+								{
+									...$edited(data),
+									_attributes: admitSlot(handle, 'attributed_element', 'attributes', restItems('attributes', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'expression':
 			return applySetter(args, (v: NonNullable<T.AttributedElement['_expression']>) =>
@@ -19375,21 +19432,35 @@ function wrapAttributedFieldDeclaration$with(node: Held, setter: string, args: r
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...v: NonNullable<T.AttributedFieldDeclaration['_attribute_item']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapAttributedFieldDeclaration(
-						{
-							...$edited(data),
-							_attribute_item: admitSlot(
-								handle,
-								'attributed_field_declaration',
-								'attributeItems',
-								restItems('attributeItems', v)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.AttributedFieldDeclaration['_attribute_item']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapAttributedFieldDeclaration(
+								{
+									...$edited(data),
+									_attribute_item: admitSlot(
+										handle,
+										'attributed_field_declaration',
+										'attributeItems',
+										restItems('attributeItems', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
-					)
-				)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'fieldDeclaration':
 			return applySetter(args, (v: NonNullable<T.AttributedFieldDeclaration['_field_declaration']>) =>
@@ -19469,21 +19540,35 @@ function wrapAttributedEnumVariant$with(node: Held, setter: string, args: readon
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...v: NonNullable<T.AttributedEnumVariant['_attribute_item']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapAttributedEnumVariant(
-						{
-							...$edited(data),
-							_attribute_item: admitSlot(
-								handle,
-								'attributed_enum_variant',
-								'attributeItems',
-								restItems('attributeItems', v)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.AttributedEnumVariant['_attribute_item']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapAttributedEnumVariant(
+								{
+									...$edited(data),
+									_attribute_item: admitSlot(
+										handle,
+										'attributed_enum_variant',
+										'attributeItems',
+										restItems('attributeItems', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
-					)
-				)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'enumVariant':
 			return applySetter(args, (v: NonNullable<T.AttributedEnumVariant['_enum_variant']>) =>
@@ -19658,21 +19743,35 @@ function wrapAttributedTypeParameter$with(node: Held, setter: string, args: read
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...v: NonNullable<T.AttributedTypeParameter['_attribute_item']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapAttributedTypeParameter(
-						{
-							...$edited(data),
-							_attribute_item: admitSlot(
-								handle,
-								'attributed_type_parameter',
-								'attributeItems',
-								restItems('attributeItems', v)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.AttributedTypeParameter['_attribute_item']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapAttributedTypeParameter(
+								{
+									...$edited(data),
+									_attribute_item: admitSlot(
+										handle,
+										'attributed_type_parameter',
+										'attributeItems',
+										restItems('attributeItems', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
-					)
-				)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'content':
 			return applySetter(args, (v: NonNullable<T.AttributedTypeParameter['_content']>) =>
@@ -19746,16 +19845,30 @@ function wrapArgument$with(node: Held, setter: string, args: readonly unknown[])
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...v: NonNullable<T.Argument['_attribute_item']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapArgument(
-						{
-							...$edited(data),
-							_attribute_item: admitSlot(handle, 'argument', 'attributeItems', restItems('attributeItems', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.Argument['_attribute_item']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapArgument(
+								{
+									...$edited(data),
+									_attribute_item: admitSlot(handle, 'argument', 'attributeItems', restItems('attributeItems', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'expression':
 			return applySetter(args, (v: NonNullable<T.Argument['_expression']>) =>
@@ -19841,21 +19954,35 @@ function wrapAttributedOrderedField$with(node: Held, setter: string, args: reado
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...v: NonNullable<T.AttributedOrderedField['_attribute_item']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapAttributedOrderedField(
-						{
-							...$edited(data),
-							_attribute_item: admitSlot(
-								handle,
-								'attributed_ordered_field',
-								'attributeItems',
-								restItems('attributeItems', v)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.AttributedOrderedField['_attribute_item']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapAttributedOrderedField(
+								{
+									...$edited(data),
+									_attribute_item: admitSlot(
+										handle,
+										'attributed_ordered_field',
+										'attributeItems',
+										restItems('attributeItems', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
-					)
-				)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'visibilityModifier':
 			return hoistedWith(
@@ -21379,7 +21506,8 @@ function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly u
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: RAW.buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -21401,14 +21529,15 @@ function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly u
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.MethodDeclaration['_parameters']>) =>
 												wrapMethodDeclaration(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'method_declaration', 'parameters', v) },
 													tree
-												))(RAW.buildParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 									)
 								)
 							),
@@ -21688,7 +21817,8 @@ function wrapSignatureMethodDeclaration$with(node: Held, setter: string, args: r
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: RAW.buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -21713,7 +21843,8 @@ function wrapSignatureMethodDeclaration$with(node: Held, setter: string, args: r
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.SignatureMethodDeclaration['_parameters']>) =>
@@ -21723,7 +21854,7 @@ function wrapSignatureMethodDeclaration$with(node: Held, setter: string, args: r
 														_parameters: admitSlot(handle, 'signature_method_declaration', 'parameters', v)
 													},
 													tree
-												))(RAW.buildParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 									)
 								)
 							),

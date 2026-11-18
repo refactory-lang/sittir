@@ -3531,8 +3531,22 @@ function buildClass$with(node: Held, setter: string, args: readonly unknown[]): 
 	const config = node[INPUT] as T.Class.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) as never }))
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) as never }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (value?: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
@@ -3748,10 +3762,24 @@ function buildClassDeclaration$with(node: Held, setter: string, args: readonly u
 	const options = node[OPTIONS] as T.ClassDeclaration.Options;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildClassDeclaration({ ...config, decorators: restItems('decorators', values) as never }, options)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildClassDeclaration({ ...config, decorators: restItems('decorators', values) as never }, options)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
@@ -4048,7 +4076,12 @@ function buildFunctionExpression$with(node: Held, setter: string, args: readonly
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -4063,12 +4096,13 @@ function buildFunctionExpression$with(node: Held, setter: string, args: readonly
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildFunctionExpression({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -4271,7 +4305,12 @@ function buildFunctionDeclaration$with(node: Held, setter: string, args: readonl
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -4288,12 +4327,13 @@ function buildFunctionDeclaration$with(node: Held, setter: string, args: readonl
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildFunctionDeclaration({ ...config, parameters: value as never }, options))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -4489,7 +4529,12 @@ function buildGeneratorFunction$with(node: Held, setter: string, args: readonly 
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -4504,12 +4549,13 @@ function buildGeneratorFunction$with(node: Held, setter: string, args: readonly 
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildGeneratorFunction({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -4712,7 +4758,12 @@ function buildGeneratorFunctionDeclaration$with(node: Held, setter: string, args
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -4729,12 +4780,13 @@ function buildGeneratorFunctionDeclaration$with(node: Held, setter: string, args
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildGeneratorFunctionDeclaration({ ...config, parameters: value as never }, options))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -7354,7 +7406,12 @@ function buildFunctionSignature$with(node: Held, setter: string, args: readonly 
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -7369,12 +7426,13 @@ function buildFunctionSignature$with(node: Held, setter: string, args: readonly 
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildFunctionSignature({ ...config, parameters: value as never }, options))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -8226,10 +8284,24 @@ function buildAbstractClassDeclaration$with(node: Held, setter: string, args: re
 	const config = node[INPUT] as T.AbstractClassDeclaration.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
@@ -9378,10 +9450,24 @@ function buildRequiredParameter$with(node: Held, setter: string, args: readonly 
 	const config = node[INPUT] as T.RequiredParameter.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildRequiredParameter({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildRequiredParameter({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['accessibilityModifier']>) =>
@@ -9534,10 +9620,24 @@ function buildOptionalParameter$with(node: Held, setter: string, args: readonly 
 	const config = node[INPUT] as T.OptionalParameter.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildOptionalParameter({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildOptionalParameter({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['accessibilityModifier']>) =>
@@ -10496,7 +10596,12 @@ function buildConstructorType$with(node: Held, setter: string, args: readonly un
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -10511,12 +10616,13 @@ function buildConstructorType$with(node: Held, setter: string, args: readonly un
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildConstructorType({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -12364,7 +12470,12 @@ function buildCallSignature$with(node: Held, setter: string, args: readonly unkn
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -12379,12 +12490,13 @@ function buildCallSignature$with(node: Held, setter: string, args: readonly unkn
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildCallSignature({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -13031,7 +13143,12 @@ function buildConstructSignature$with(node: Held, setter: string, args: readonly
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -13046,12 +13163,13 @@ function buildConstructSignature$with(node: Held, setter: string, args: readonly
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildConstructSignature({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -13586,7 +13704,12 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -13601,12 +13724,13 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildFunctionType({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -16300,10 +16424,24 @@ function buildClassBodyMemberMethod$with(node: Held, setter: string, args: reado
 	const options = node[OPTIONS] as T.ClassBodyMemberMethod.Options;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) as never }, options)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) as never }, options)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'methodDefinition':
 			return applySetter(args, (value: Admit<T.MethodDefinitionClassBodyMemberMethod>) =>
@@ -16733,7 +16871,12 @@ function buildImportStatementClauseFrom$with(node: Held, setter: string, args: r
 				'_import_clause',
 				'content',
 				false,
-				{ kind: TSKindId.NamedImports as const, optional: false, make: buildNamedImports },
+				{
+					kind: TSKindId.NamedImports as const,
+					optional: false,
+					make: buildNamedImports,
+					forms: [TSKindId.NamespaceImport, TSKindId.ImportClauseDefaultImport]
+				},
 				handle,
 				args,
 				(args) =>
@@ -16745,11 +16888,16 @@ function buildImportStatementClauseFrom$with(node: Held, setter: string, args: r
 								rebuilt(node, handle, () =>
 									listSlotWith(
 										args,
-										{ kind: TSKindId.NamedImports as const, optional: false, make: buildNamedImports },
+										{
+											kind: TSKindId.NamedImports as const,
+											optional: false,
+											make: buildNamedImports,
+											forms: [TSKindId.NamespaceImport, TSKindId.ImportClauseDefaultImport]
+										},
 										(list: never) =>
 											((value: Admit<T.ImportClause>) =>
 												buildImportStatementClauseFrom({ ...config, importClause: value as never }))(
-												buildImportClause(list) as never
+												(list === undefined ? undefined : buildImportClause(list)) as never
 											)
 									)
 								)
@@ -18151,7 +18299,12 @@ function buildImportClauseDefaultImport$with(node: Held, setter: string, args: r
 				'_import_clause_group',
 				'content',
 				true,
-				{ kind: TSKindId.NamedImports as const, optional: true, make: buildNamedImports },
+				{
+					kind: TSKindId.NamedImports as const,
+					optional: true,
+					make: buildNamedImports,
+					forms: [TSKindId.NamespaceImport]
+				},
 				handle,
 				args,
 				(args) =>
@@ -18165,11 +18318,16 @@ function buildImportClauseDefaultImport$with(node: Held, setter: string, args: r
 								rebuilt(node, handle, () =>
 									listSlotWith(
 										args,
-										{ kind: TSKindId.NamedImports as const, optional: true, make: buildNamedImports },
+										{
+											kind: TSKindId.NamedImports as const,
+											optional: true,
+											make: buildNamedImports,
+											forms: [TSKindId.NamespaceImport]
+										},
 										(list: never) =>
 											((value?: Admit<T.ImportClauseGroup>) =>
 												buildImportClauseDefaultImport({ ...config, importClauseGroup: value as never }))(
-												buildImportClauseGroup(list) as never
+												(list === undefined ? undefined : buildImportClauseGroup(list)) as never
 											)
 									)
 								)
@@ -18334,10 +18492,27 @@ function buildExportStatementDefaultDeclaration$with(node: Held, setter: string,
 	const config = node[INPUT] as T.ExportStatementDefaultDeclaration.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildExportStatementDefaultDeclaration({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildExportStatementDefaultDeclaration({
+								...config,
+								decorators: restItems('decorators', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
@@ -19782,10 +19957,24 @@ function buildSetterParameter$with(node: Held, setter: string, args: readonly un
 	const config = node[INPUT] as T.SetterParameter.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildSetterParameter({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildSetterParameter({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.SetterParameter.Config>['accessibilityModifier']>) =>
@@ -20056,7 +20245,12 @@ function buildMethodDefinitionPlain$with(node: Held, setter: string, args: reado
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -20071,12 +20265,13 @@ function buildMethodDefinitionPlain$with(node: Held, setter: string, args: reado
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildMethodDefinitionPlain({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -20404,7 +20599,9 @@ function buildMethodDefinitionSetter$with(node: Held, setter: string, args: read
 							v as never
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -20637,7 +20834,12 @@ function buildMethodSignaturePlain$with(node: Held, setter: string, args: readon
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -20652,12 +20854,13 @@ function buildMethodSignaturePlain$with(node: Held, setter: string, args: readon
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildMethodSignaturePlain({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -20952,7 +21155,9 @@ function buildMethodSignatureSetter$with(node: Held, setter: string, args: reado
 							v as never
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -21160,7 +21365,12 @@ function buildAbstractMethodSignaturePlain$with(node: Held, setter: string, args
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -21177,12 +21387,13 @@ function buildAbstractMethodSignaturePlain$with(node: Held, setter: string, args
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildAbstractMethodSignaturePlain({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -21475,7 +21686,9 @@ function buildAbstractMethodSignatureSetter$with(node: Held, setter: string, arg
 							v as never
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -21618,10 +21831,24 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 	const config = node[INPUT] as T.PublicFieldDefinitionPlain.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildPublicFieldDefinitionPlain({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildPublicFieldDefinitionPlain({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'declare':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['declare']>) =>
@@ -21833,10 +22060,24 @@ function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, arg
 	const config = node[INPUT] as T.PublicFieldDefinitionAccessor.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildPublicFieldDefinitionAccessor({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildPublicFieldDefinitionAccessor({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(
@@ -22085,7 +22326,12 @@ function buildConstructorDeclaration$with(node: Held, setter: string, args: read
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -22100,12 +22346,13 @@ function buildConstructorDeclaration$with(node: Held, setter: string, args: read
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: buildFormalParametersElements
+											make: buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.FormalParameters>) =>
 												buildConstructorDeclaration({ ...config, parameters: value as never }))(
-												buildFormalParameters(list) as never
+												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
@@ -22220,10 +22467,24 @@ function buildReceiverParameterDeclaration$with(node: Held, setter: string, args
 	const config = node[INPUT] as T.ReceiverParameterDeclaration.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildReceiverParameterDeclaration({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+						rebuilt(node, handle, () =>
+							buildReceiverParameterDeclaration({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(

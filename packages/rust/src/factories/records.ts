@@ -4317,7 +4317,8 @@ function withFunctionItem(node: object, setter: string, args: readonly unknown[]
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -4334,12 +4335,13 @@ function withFunctionItem(node: object, setter: string, args: readonly unknown[]
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.Parameters>) =>
 												buildFunctionItem$set(node, 'parameters', { parameters: value as never }))(
-												buildParameters(list) as never
+												(list === undefined ? undefined : buildParameters(list)) as never
 											)
 									)
 								)
@@ -4735,7 +4737,8 @@ function withFunctionSignatureItem(node: object, setter: string, args: readonly 
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -4754,12 +4757,13 @@ function withFunctionSignatureItem(node: object, setter: string, args: readonly 
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.Parameters>) =>
 												buildFunctionSignatureItem$set(node, 'parameters', { parameters: value as never }))(
-												buildParameters(list) as never
+												(list === undefined ? undefined : buildParameters(list)) as never
 											)
 									)
 								)
@@ -8483,7 +8487,8 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -8500,12 +8505,13 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.Parameters>) =>
 												buildFunctionType$set(node, 'parameters', { parameters: value as never }))(
-												buildParameters(list) as never
+												(list === undefined ? undefined : buildParameters(list)) as never
 											)
 									)
 								)
@@ -11872,12 +11878,26 @@ function withShorthandFieldInitializer(node: object, setter: string, args: reado
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributes':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildShorthandFieldInitializer$set(node, 'attributes', {
-						attributes: restItems('attributes', values) as never
-					})
-				)
+			return hoistedWith(
+				node,
+				'attributes',
+				'_attributes',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+						rebuilt(node, handle, () =>
+							buildShorthandFieldInitializer$set(node, 'attributes', {
+								attributes: restItems('attributes', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
@@ -12008,10 +12028,24 @@ function withFieldInitializer(node: object, setter: string, args: readonly unkno
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributes':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'attributes',
+				'_attributes',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+						rebuilt(node, handle, () =>
+							buildFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
@@ -12563,7 +12597,11 @@ function withMatchExpression(node: object, setter: string, args: readonly unknow
 						args
 					)
 				],
-				TSKindId.MatchBlock
+				TSKindId.MatchBlock,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(buildMatchBlockArms as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				]
 			);
 	}
 	throw new Error(`match_expression has no $with.${setter}`);
@@ -18536,10 +18574,24 @@ function withAttributedElement(node: object, setter: string, args: readonly unkn
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributes':
-			return applySetter(args, (...values: Admit<NonEmptyArray<T.AttributeItem>>) =>
-				rebuilt(node, handle, () =>
-					buildAttributedElement$set(node, 'attributes', { attributes: restItems('attributes', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'attributes',
+				'_attributes',
+				'attribute',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<NonEmptyArray<T.AttributeItem>>) =>
+						rebuilt(node, handle, () =>
+							buildAttributedElement$set(node, 'attributes', { attributes: restItems('attributes', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'expression':
 			return applySetter(args, (value: Admit<NonNullable<T.AttributedElement.Config>['expression']>) =>
@@ -26412,12 +26464,26 @@ function withAttributedFieldDeclaration(node: object, setter: string, args: read
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildAttributedFieldDeclaration$set(node, 'attributeItems', {
-						attributeItems: restItems('attributeItems', values) as never
-					})
-				)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+						rebuilt(node, handle, () =>
+							buildAttributedFieldDeclaration$set(node, 'attributeItems', {
+								attributeItems: restItems('attributeItems', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'fieldDeclaration':
 			return applySetter(args, (value: Admit<T.FieldDeclaration>) =>
@@ -26536,12 +26602,26 @@ function withAttributedEnumVariant(node: object, setter: string, args: readonly 
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildAttributedEnumVariant$set(node, 'attributeItems', {
-						attributeItems: restItems('attributeItems', values) as never
-					})
-				)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+						rebuilt(node, handle, () =>
+							buildAttributedEnumVariant$set(node, 'attributeItems', {
+								attributeItems: restItems('attributeItems', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'enumVariant':
 			return applySetter(args, (value: Admit<T.EnumVariant>) =>
@@ -26794,12 +26874,26 @@ function withAttributedTypeParameter(node: object, setter: string, args: readonl
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildAttributedTypeParameter$set(node, 'attributeItems', {
-						attributeItems: restItems('attributeItems', values) as never
-					})
-				)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+						rebuilt(node, handle, () =>
+							buildAttributedTypeParameter$set(node, 'attributeItems', {
+								attributeItems: restItems('attributeItems', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'content':
 			return applySetter(
@@ -26907,10 +27001,26 @@ function withArgument(node: object, setter: string, args: readonly unknown[]): u
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildArgument$set(node, 'attributeItems', { attributeItems: restItems('attributeItems', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+						rebuilt(node, handle, () =>
+							buildArgument$set(node, 'attributeItems', {
+								attributeItems: restItems('attributeItems', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'expression':
 			return applySetter(args, (value: Admit<NonNullable<T.Argument.Config>['expression']>) =>
@@ -27075,12 +27185,26 @@ function withAttributedOrderedField(node: object, setter: string, args: readonly
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributeItems':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildAttributedOrderedField$set(node, 'attributeItems', {
-						attributeItems: restItems('attributeItems', values) as never
-					})
-				)
+			return hoistedWith(
+				node,
+				'attributeItems',
+				'_attribute_item',
+				'attribute',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
+						rebuilt(node, handle, () =>
+							buildAttributedOrderedField$set(node, 'attributeItems', {
+								attributeItems: restItems('attributeItems', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				TSKindId.AttributeItem
 			);
 		case 'visibilityModifier':
 			return hoistedWith(
@@ -29088,7 +29212,8 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -29107,12 +29232,13 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.Parameters>) =>
 												buildMethodDeclaration$set(node, 'parameters', { parameters: value as never }))(
-												buildParameters(list) as never
+												(list === undefined ? undefined : buildParameters(list)) as never
 											)
 									)
 								)
@@ -29510,7 +29636,8 @@ function withSignatureMethodDeclaration(node: object, setter: string, args: read
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
 				args,
@@ -29529,12 +29656,13 @@ function withSignatureMethodDeclaration(node: object, setter: string, args: read
 											kind: TSKindId.ParametersElements as const,
 											optional: false,
 											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+											forms: [TSKindId.ParametersElementsReceiver]
 										},
 										(list: never) =>
 											((value: Admit<T.Parameters>) =>
 												buildSignatureMethodDeclaration$set(node, 'parameters', { parameters: value as never }))(
-												buildParameters(list) as never
+												(list === undefined ? undefined : buildParameters(list)) as never
 											)
 									)
 								)

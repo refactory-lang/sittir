@@ -3440,14 +3440,9 @@ function wrapTypeParameter$with(node: Held, setter: string, args: readonly unkno
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
+					applySetter(args, (v: NonNullable<T.TypeParameter['_types']>) =>
 						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
-								(v: NonNullable<T.TypeParameter['_types']>) =>
-									wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
-							)
+							wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
 						)
 					),
 				undefined,
@@ -3699,16 +3694,30 @@ function wrapDecoratedDefinition$with(node: Held, setter: string, args: readonly
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.DecoratedDefinition['_decorator']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapDecoratedDefinition(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'decorated_definition', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonEmptyArray<NonNullable<T.DecoratedDefinition['_decorator']>[number]>) =>
+						rebuilt(node, handle, () =>
+							wrapDecoratedDefinition(
+								{
+									...$edited(data),
+									_decorator: admitSlot(handle, 'decorated_definition', 'decorators', restItems('decorators', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'definition':
 			return applySetter(args, (v: NonNullable<T.DecoratedDefinition['_definition']>) =>
@@ -4690,18 +4699,9 @@ function wrapClassPattern$with(node: Held, setter: string, args: readonly unknow
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
+					applySetter(args, (v: NonNullable<T.ClassPattern['_fields']>) =>
 						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{
-									kind: TSKindId.ListPatternCasePatterns as const,
-									optional: true,
-									make: RAW.buildListPatternCasePatterns
-								},
-								(v: NonNullable<T.ClassPattern['_fields']>) =>
-									wrapClassPattern({ ...$edited(data), _fields: admitSlot(handle, 'class_pattern', 'fields', v) }, tree)
-							)
+							wrapClassPattern({ ...$edited(data), _fields: admitSlot(handle, 'class_pattern', 'fields', v) }, tree)
 						)
 					),
 				undefined,
@@ -6906,16 +6906,11 @@ function wrapGenericType$with(node: Held, setter: string, args: readonly unknown
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
+					applySetter(args, (v: NonNullable<T.GenericType['_type_parameter']>) =>
 						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.TypeParameter as const, optional: false, make: RAW.buildTypeParameter },
-								(v: NonNullable<T.GenericType['_type_parameter']>) =>
-									wrapGenericType(
-										{ ...$edited(data), _type_parameter: admitSlot(handle, 'generic_type', 'typeParameter', v) },
-										tree
-									)
+							wrapGenericType(
+								{ ...$edited(data), _type_parameter: admitSlot(handle, 'generic_type', 'typeParameter', v) },
+								tree
 							)
 						)
 					),
@@ -9345,13 +9340,30 @@ function wrapWithClauseWithItems$with(node: Held, setter: string, args: readonly
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseWithItems['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapWithClauseWithItems(
-						{ ...$edited(data), _item: admitSlot(handle, 'with_clause_with_items', 'items', restItems('items', v)) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'items',
+				'_item',
+				'value',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseWithItems['_item']>[number]>) =>
+						rebuilt(node, handle, () =>
+							wrapWithClauseWithItems(
+								{
+									...$edited(data),
+									_item: admitSlot(handle, 'with_clause_with_items', 'items', restItems('items', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildWithItem(v))(v as never)),
+				TSKindId.WithItem
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
@@ -9453,10 +9465,24 @@ function wrapTypes$with(node: Held, setter: string, args: readonly unknown[]): u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
-				)
+			return hoistedWith(
+				node,
+				'items',
+				'_item',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
+						rebuilt(node, handle, () =>
+							wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
@@ -9665,16 +9691,30 @@ function wrapListPatternCasePatterns$with(node: Held, setter: string, args: read
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ListPatternCasePatterns['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapListPatternCasePatterns(
-						{
-							...$edited(data),
-							_item: admitSlot(handle, 'list_pattern_case_patterns', 'items', restItems('items', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'items',
+				'_item',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonEmptyArray<NonNullable<T.ListPatternCasePatterns['_item']>[number]>) =>
+						rebuilt(node, handle, () =>
+							wrapListPatternCasePatterns(
+								{
+									...$edited(data),
+									_item: admitSlot(handle, 'list_pattern_case_patterns', 'items', restItems('items', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				TSKindId.CasePattern
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
@@ -10429,16 +10469,30 @@ function wrapCasePatternList$with(node: Held, setter: string, args: readonly unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.CasePatternList['_elements']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapCasePatternList(
-						{
-							...$edited(data),
-							_elements: admitSlot(handle, 'case_pattern_list', 'elements', restItems('elements', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonEmptyArray<NonNullable<T.CasePatternList['_elements']>[number]>) =>
+						rebuilt(node, handle, () =>
+							wrapCasePatternList(
+								{
+									...$edited(data),
+									_elements: admitSlot(handle, 'case_pattern_list', 'elements', restItems('elements', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				TSKindId.CasePattern
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
@@ -10718,20 +10772,11 @@ function wrapCaseTuplePattern$with(node: Held, setter: string, args: readonly un
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
+					applySetter(args, (v: NonNullable<T.CaseTuplePattern['_elements']>) =>
 						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{
-									kind: TSKindId.ListPatternCasePatterns as const,
-									optional: true,
-									make: RAW.buildListPatternCasePatterns
-								},
-								(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
-									wrapCaseTuplePattern(
-										{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
-										tree
-									)
+							wrapCaseTuplePattern(
+								{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
+								tree
 							)
 						)
 					),
@@ -10854,20 +10899,11 @@ function wrapCaseListPattern$with(node: Held, setter: string, args: readonly unk
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
+					applySetter(args, (v: NonNullable<T.CaseListPattern['_elements']>) =>
 						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{
-									kind: TSKindId.ListPatternCasePatterns as const,
-									optional: true,
-									make: RAW.buildListPatternCasePatterns
-								},
-								(v: NonNullable<T.CaseListPattern['_elements']>) =>
-									wrapCaseListPattern(
-										{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
-										tree
-									)
+							wrapCaseListPattern(
+								{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
+								tree
 							)
 						)
 					),
@@ -13551,13 +13587,27 @@ function wrapWithClauseBare$with(node: Held, setter: string, args: readonly unkn
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_items']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapWithClauseBare(
-						{ ...$edited(data), _items: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'items',
+				'_items',
+				'value',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_items']>[number]>) =>
+						rebuilt(node, handle, () =>
+							wrapWithClauseBare(
+								{ ...$edited(data), _items: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildWithItem(v))(v as never)),
+				TSKindId.WithItem
 			);
 		case 'delimiter':
 			return applySetter(args, (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
@@ -13674,16 +13724,11 @@ function wrapWithClauseParen$with(node: Held, setter: string, args: readonly unk
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
+					applySetter(args, (v: NonNullable<T.WithClauseParen['_items']>) =>
 						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-								(v: NonNullable<T.WithClauseParen['_items']>) =>
-									wrapWithClauseParen(
-										{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
-										tree
-									)
+							wrapWithClauseParen(
+								{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
+								tree
 							)
 						)
 					),
@@ -14901,23 +14946,37 @@ function wrapDecoratedDefinitionClassDeclaration$with(node: Held, setter: string
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				false,
+				undefined,
+				handle,
 				args,
-				(...v: NonEmptyArray<NonNullable<T.DecoratedDefinitionClassDeclaration['_decorator']>[number]>) =>
-					rebuilt(node, handle, () =>
-						wrapDecoratedDefinitionClassDeclaration(
-							{
-								...$edited(data),
-								_decorator: admitSlot(
-									handle,
-									'decorated_definition_class_declaration',
-									'decorators',
-									restItems('decorators', v)
+				(args) =>
+					applySetter(
+						args,
+						(...v: NonEmptyArray<NonNullable<T.DecoratedDefinitionClassDeclaration['_decorator']>[number]>) =>
+							rebuilt(node, handle, () =>
+								wrapDecoratedDefinitionClassDeclaration(
+									{
+										...$edited(data),
+										_decorator: admitSlot(
+											handle,
+											'decorated_definition_class_declaration',
+											'decorators',
+											restItems('decorators', v)
+										)
+									},
+									tree
 								)
-							},
-							tree
-						)
-					)
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'definition':
 			return applySetter(args, (v: NonNullable<T.DecoratedDefinitionClassDeclaration['_definition']>) =>

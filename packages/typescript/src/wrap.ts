@@ -3205,13 +3205,27 @@ function wrapClass$with(node: Held, setter: string, args: readonly unknown[]): u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.Class['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapClass(
-						{ ...$edited(data), _decorator: admitSlot(handle, 'class', 'decorators', restItems('decorators', v)) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.Class['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapClass(
+								{ ...$edited(data), _decorator: admitSlot(handle, 'class', 'decorators', restItems('decorators', v)) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (v: NonNullable<T.Class['_name']>) =>
@@ -3432,16 +3446,30 @@ function wrapClassDeclaration$with(node: Held, setter: string, args: readonly un
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapClassDeclaration(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'class_declaration', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapClassDeclaration(
+								{
+									...$edited(data),
+									_decorator: admitSlot(handle, 'class_declaration', 'decorators', restItems('decorators', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (v: NonNullable<T.ClassDeclaration['_name']>) =>
@@ -3770,7 +3798,12 @@ function wrapFunctionExpression$with(node: Held, setter: string, args: readonly 
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -3790,14 +3823,15 @@ function wrapFunctionExpression$with(node: Held, setter: string, args: readonly 
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.FunctionExpression['_parameters']>) =>
 												wrapFunctionExpression(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'function_expression', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -4007,7 +4041,12 @@ function wrapFunctionDeclaration$with(node: Held, setter: string, args: readonly
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -4027,14 +4066,15 @@ function wrapFunctionDeclaration$with(node: Held, setter: string, args: readonly
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.FunctionDeclaration['_parameters']>) =>
 												wrapFunctionDeclaration(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'function_declaration', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -4252,7 +4292,12 @@ function wrapGeneratorFunction$with(node: Held, setter: string, args: readonly u
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -4272,14 +4317,15 @@ function wrapGeneratorFunction$with(node: Held, setter: string, args: readonly u
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.GeneratorFunction['_parameters']>) =>
 												wrapGeneratorFunction(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'generator_function', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -4492,7 +4538,12 @@ function wrapGeneratorFunctionDeclaration$with(node: Held, setter: string, args:
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -4515,7 +4566,8 @@ function wrapGeneratorFunctionDeclaration$with(node: Held, setter: string, args:
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.GeneratorFunctionDeclaration['_parameters']>) =>
@@ -4525,7 +4577,7 @@ function wrapGeneratorFunctionDeclaration$with(node: Held, setter: string, args:
 														_parameters: admitSlot(handle, 'generator_function_declaration', 'parameters', v)
 													},
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -6731,7 +6783,12 @@ function wrapFunctionSignature$with(node: Held, setter: string, args: readonly u
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -6751,14 +6808,15 @@ function wrapFunctionSignature$with(node: Held, setter: string, args: readonly u
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.FunctionSignature['_parameters']>) =>
 												wrapFunctionSignature(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'function_signature', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -7643,16 +7701,30 @@ function wrapAbstractClassDeclaration$with(node: Held, setter: string, args: rea
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.AbstractClassDeclaration['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapAbstractClassDeclaration(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'abstract_class_declaration', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.AbstractClassDeclaration['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapAbstractClassDeclaration(
+								{
+									...$edited(data),
+									_decorator: admitSlot(handle, 'abstract_class_declaration', 'decorators', restItems('decorators', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (v: NonNullable<T.AbstractClassDeclaration['_name']>) =>
@@ -8809,16 +8881,30 @@ function wrapRequiredParameter$with(node: Held, setter: string, args: readonly u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.RequiredParameter['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapRequiredParameter(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'required_parameter', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.RequiredParameter['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapRequiredParameter(
+								{
+									...$edited(data),
+									_decorator: admitSlot(handle, 'required_parameter', 'decorators', restItems('decorators', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (v: NonNullable<T.RequiredParameter['_accessibility_modifier']>) =>
@@ -9001,16 +9087,30 @@ function wrapOptionalParameter$with(node: Held, setter: string, args: readonly u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.OptionalParameter['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapOptionalParameter(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'optional_parameter', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.OptionalParameter['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapOptionalParameter(
+								{
+									...$edited(data),
+									_decorator: admitSlot(handle, 'optional_parameter', 'decorators', restItems('decorators', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (v: NonNullable<T.OptionalParameter['_accessibility_modifier']>) =>
@@ -10019,7 +10119,12 @@ function wrapConstructorType$with(node: Held, setter: string, args: readonly unk
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -10039,14 +10144,15 @@ function wrapConstructorType$with(node: Held, setter: string, args: readonly unk
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.ConstructorType['_parameters']>) =>
 												wrapConstructorType(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'constructor_type', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -11660,7 +11766,12 @@ function wrapCallSignature$with(node: Held, setter: string, args: readonly unkno
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -11680,14 +11791,15 @@ function wrapCallSignature$with(node: Held, setter: string, args: readonly unkno
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.CallSignature['_parameters']>) =>
 												wrapCallSignature(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'call_signature', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -12394,7 +12506,12 @@ function wrapConstructSignature$with(node: Held, setter: string, args: readonly 
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -12414,14 +12531,15 @@ function wrapConstructSignature$with(node: Held, setter: string, args: readonly 
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.ConstructSignature['_parameters']>) =>
 												wrapConstructSignature(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'construct_signature', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -12932,7 +13050,12 @@ function wrapFunctionType$with(node: Held, setter: string, args: readonly unknow
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -12952,14 +13075,15 @@ function wrapFunctionType$with(node: Held, setter: string, args: readonly unknow
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.FunctionType['_parameters']>) =>
 												wrapFunctionType(
 													{ ...$edited(data), _parameters: admitSlot(handle, 'function_type', 'parameters', v) },
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -15225,16 +15349,30 @@ function wrapClassBodyMemberMethod$with(node: Held, setter: string, args: readon
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.ClassBodyMemberMethod['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapClassBodyMemberMethod(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'class_body_member_method', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.ClassBodyMemberMethod['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapClassBodyMemberMethod(
+								{
+									...$edited(data),
+									_decorator: admitSlot(handle, 'class_body_member_method', 'decorators', restItems('decorators', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'methodDefinition':
 			return applySetter(args, (v: NonNullable<T.ClassBodyMemberMethod['_method_definition']>) =>
@@ -15714,7 +15852,12 @@ function wrapImportStatementClauseFrom$with(node: Held, setter: string, args: re
 				'_import_clause',
 				'content',
 				false,
-				{ kind: TSKindId.NamedImports as const, optional: false, make: RAW.buildNamedImports },
+				{
+					kind: TSKindId.NamedImports as const,
+					optional: false,
+					make: RAW.buildNamedImports,
+					forms: [TSKindId.NamespaceImport, TSKindId.ImportClauseDefaultImport]
+				},
 				handle,
 				args,
 				(args) =>
@@ -15734,7 +15877,12 @@ function wrapImportStatementClauseFrom$with(node: Held, setter: string, args: re
 								rebuilt(node, handle, () =>
 									listSlotWith(
 										args,
-										{ kind: TSKindId.NamedImports as const, optional: false, make: RAW.buildNamedImports },
+										{
+											kind: TSKindId.NamedImports as const,
+											optional: false,
+											make: RAW.buildNamedImports,
+											forms: [TSKindId.NamespaceImport, TSKindId.ImportClauseDefaultImport]
+										},
 										(list: never) =>
 											((v: NonNullable<T.ImportStatementClauseFrom['_import_clause']>) =>
 												wrapImportStatementClauseFrom(
@@ -15743,7 +15891,7 @@ function wrapImportStatementClauseFrom$with(node: Held, setter: string, args: re
 														_import_clause: admitSlot(handle, 'import_statement_clause_from', 'importClause', v)
 													},
 													tree
-												))(RAW.buildImportClause(list) as never)
+												))((list === undefined ? undefined : RAW.buildImportClause(list)) as never)
 									)
 								)
 							),
@@ -17226,7 +17374,12 @@ function wrapImportClauseDefaultImport$with(node: Held, setter: string, args: re
 				'_import_clause_group',
 				'content',
 				true,
-				{ kind: TSKindId.NamedImports as const, optional: true, make: RAW.buildNamedImports },
+				{
+					kind: TSKindId.NamedImports as const,
+					optional: true,
+					make: RAW.buildNamedImports,
+					forms: [TSKindId.NamespaceImport]
+				},
 				handle,
 				args,
 				(args) =>
@@ -17246,7 +17399,12 @@ function wrapImportClauseDefaultImport$with(node: Held, setter: string, args: re
 								rebuilt(node, handle, () =>
 									listSlotWith(
 										args,
-										{ kind: TSKindId.NamedImports as const, optional: true, make: RAW.buildNamedImports },
+										{
+											kind: TSKindId.NamedImports as const,
+											optional: true,
+											make: RAW.buildNamedImports,
+											forms: [TSKindId.NamespaceImport]
+										},
 										(list: never) =>
 											((v: NonNullable<T.ImportClauseDefaultImport['_import_clause_group']>) =>
 												wrapImportClauseDefaultImport(
@@ -17260,7 +17418,7 @@ function wrapImportClauseDefaultImport$with(node: Held, setter: string, args: re
 														)
 													},
 													tree
-												))(RAW.buildImportClauseGroup(list) as never)
+												))((list === undefined ? undefined : RAW.buildImportClauseGroup(list)) as never)
 									)
 								)
 							),
@@ -17438,21 +17596,35 @@ function wrapExportStatementDefaultDeclaration$with(node: Held, setter: string, 
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapExportStatementDefaultDeclaration(
-						{
-							...$edited(data),
-							_decorator: admitSlot(
-								handle,
-								'export_statement_default_declaration',
-								'decorators',
-								restItems('decorators', v)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapExportStatementDefaultDeclaration(
+								{
+									...$edited(data),
+									_decorator: admitSlot(
+										handle,
+										'export_statement_default_declaration',
+										'decorators',
+										restItems('decorators', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
-					)
-				)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'content':
 			return applySetter(args, (v: NonNullable<T.ExportStatementDefaultDeclaration['_content']>) =>
@@ -18664,16 +18836,30 @@ function wrapSetterParameter$with(node: Held, setter: string, args: readonly unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.SetterParameter['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapSetterParameter(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'setter_parameter', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.SetterParameter['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapSetterParameter(
+								{
+									...$edited(data),
+									_decorator: admitSlot(handle, 'setter_parameter', 'decorators', restItems('decorators', v))
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (v: NonNullable<T.SetterParameter['_accessibility_modifier']>) =>
@@ -18994,7 +19180,12 @@ function wrapMethodDefinitionPlain$with(node: Held, setter: string, args: readon
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -19014,7 +19205,8 @@ function wrapMethodDefinitionPlain$with(node: Held, setter: string, args: readon
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.MethodDefinitionPlain['_parameters']>) =>
@@ -19024,7 +19216,7 @@ function wrapMethodDefinitionPlain$with(node: Held, setter: string, args: readon
 														_parameters: admitSlot(handle, 'method_definition_plain', 'parameters', v)
 													},
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -19390,7 +19582,9 @@ function wrapMethodDefinitionSetter$with(node: Held, setter: string, args: reado
 							v as never
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.MethodDefinitionSetter['_body']>) =>
@@ -19659,7 +19853,12 @@ function wrapMethodSignaturePlain$with(node: Held, setter: string, args: readonl
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -19679,7 +19878,8 @@ function wrapMethodSignaturePlain$with(node: Held, setter: string, args: readonl
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.MethodSignaturePlain['_parameters']>) =>
@@ -19689,7 +19889,7 @@ function wrapMethodSignaturePlain$with(node: Held, setter: string, args: readonl
 														_parameters: admitSlot(handle, 'method_signature_plain', 'parameters', v)
 													},
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -20019,7 +20219,9 @@ function wrapMethodSignatureSetter$with(node: Held, setter: string, args: readon
 							v as never
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -20233,7 +20435,12 @@ function wrapAbstractMethodSignaturePlain$with(node: Held, setter: string, args:
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -20256,7 +20463,8 @@ function wrapAbstractMethodSignaturePlain$with(node: Held, setter: string, args:
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.AbstractMethodSignaturePlain['_parameters']>) =>
@@ -20266,7 +20474,7 @@ function wrapAbstractMethodSignaturePlain$with(node: Held, setter: string, args:
 														_parameters: admitSlot(handle, 'abstract_method_signature_plain', 'parameters', v)
 													},
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -20578,7 +20786,9 @@ function wrapAbstractMethodSignatureSetter$with(node: Held, setter: string, args
 							v as never
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -20710,16 +20920,35 @@ function wrapPublicFieldDefinitionPlain$with(node: Held, setter: string, args: r
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.PublicFieldDefinitionPlain['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapPublicFieldDefinitionPlain(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'public_field_definition_plain', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.PublicFieldDefinitionPlain['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapPublicFieldDefinitionPlain(
+								{
+									...$edited(data),
+									_decorator: admitSlot(
+										handle,
+										'public_field_definition_plain',
+										'decorators',
+										restItems('decorators', v)
+									)
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'declare':
 			return applySetter(args, (v: NonNullable<T.PublicFieldDefinitionPlain['_declare']>) =>
@@ -20969,21 +21198,35 @@ function wrapPublicFieldDefinitionAccessor$with(node: Held, setter: string, args
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapPublicFieldDefinitionAccessor(
-						{
-							...$edited(data),
-							_decorator: admitSlot(
-								handle,
-								'public_field_definition_accessor',
-								'decorators',
-								restItems('decorators', v)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapPublicFieldDefinitionAccessor(
+								{
+									...$edited(data),
+									_decorator: admitSlot(
+										handle,
+										'public_field_definition_accessor',
+										'decorators',
+										restItems('decorators', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
-					)
-				)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (v: NonNullable<T.PublicFieldDefinitionAccessor['_accessibility_modifier']>) =>
@@ -21187,7 +21430,12 @@ function wrapConstructorDeclaration$with(node: Held, setter: string, args: reado
 				'_parameters',
 				'elements',
 				false,
-				{ kind: TSKindId.FormalParametersElements as const, optional: false, make: RAW.buildFormalParametersElements },
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: RAW.buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
 				handle,
 				args,
 				(args) =>
@@ -21207,7 +21455,8 @@ function wrapConstructorDeclaration$with(node: Held, setter: string, args: reado
 										{
 											kind: TSKindId.FormalParametersElements as const,
 											optional: false,
-											make: RAW.buildFormalParametersElements
+											make: RAW.buildFormalParametersElements,
+											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
 											((v: NonNullable<T.ConstructorDeclaration['_parameters']>) =>
@@ -21217,7 +21466,7 @@ function wrapConstructorDeclaration$with(node: Held, setter: string, args: reado
 														_parameters: admitSlot(handle, 'constructor_declaration', 'parameters', v)
 													},
 													tree
-												))(RAW.buildFormalParameters(list) as never)
+												))((list === undefined ? undefined : RAW.buildFormalParameters(list)) as never)
 									)
 								)
 							),
@@ -21342,16 +21591,35 @@ function wrapReceiverParameterDeclaration$with(node: Held, setter: string, args:
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...v: NonNullable<T.ReceiverParameterDeclaration['_decorator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapReceiverParameterDeclaration(
-						{
-							...$edited(data),
-							_decorator: admitSlot(handle, 'receiver_parameter_declaration', 'decorators', restItems('decorators', v))
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...v: NonNullable<T.ReceiverParameterDeclaration['_decorator']>[number][]) =>
+						rebuilt(node, handle, () =>
+							wrapReceiverParameterDeclaration(
+								{
+									...$edited(data),
+									_decorator: admitSlot(
+										handle,
+										'receiver_parameter_declaration',
+										'decorators',
+										restItems('decorators', v)
+									)
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (v: NonNullable<T.ReceiverParameterDeclaration['_accessibility_modifier']>) =>

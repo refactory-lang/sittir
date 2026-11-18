@@ -3259,16 +3259,7 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 				undefined,
 				handle,
 				args,
-				(args) =>
-					applySetter(args, (...args: unknown[]) =>
-						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
-								(value: Admit<T.Types>) => _buildTypeParameter(value)
-							)
-						)
-					),
+				(args) => applySetter(args, (value: Admit<T.Types>) => rebuilt(node, handle, () => _buildTypeParameter(value))),
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
@@ -3506,10 +3497,24 @@ function buildDecoratedDefinition$with(node: Held, setter: string, args: readonl
 	const config = node[INPUT] as T.DecoratedDefinition.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<NonEmptyArray<T.Decorator>>) =>
-				rebuilt(node, handle, () =>
-					buildDecoratedDefinition({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<NonEmptyArray<T.Decorator>>) =>
+						rebuilt(node, handle, () =>
+							buildDecoratedDefinition({ ...config, decorators: restItems('decorators', values) as never })
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'definition':
 			return applySetter(args, (value: Admit<T.ClassDefinition | T.FunctionDefinition>) =>
@@ -4410,14 +4415,8 @@ function buildClassPattern$with(node: Held, setter: string, args: readonly unkno
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
-						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-								(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, fields: value as never })
-							)
-						)
+					applySetter(args, (value?: Admit<T.ListPatternCasePatterns>) =>
+						rebuilt(node, handle, () => buildClassPattern({ ...config, fields: value as never }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -6550,14 +6549,8 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
-						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.TypeParameter as const, optional: false, make: buildTypeParameter },
-								(value: Admit<T.TypeParameter>) => buildGenericType({ ...config, typeParameter: value as never })
-							)
-						)
+					applySetter(args, (value: Admit<T.TypeParameter>) =>
+						rebuilt(node, handle, () => buildGenericType({ ...config, typeParameter: value as never }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -8937,8 +8930,22 @@ function buildWithClauseWithItems$with(node: Held, setter: string, args: readonl
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
-				rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs))
+			return hoistedWith(
+				node,
+				'items',
+				'_item',
+				'value',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
+						rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildWithItem(v))(v as never)),
+				TSKindId.WithItem
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -9045,8 +9052,22 @@ function buildTypes$with(node: Held, setter: string, args: readonly unknown[]): 
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Type>>) =>
-				rebuilt(node, handle, () => buildTypes(options, ...vs))
+			return hoistedWith(
+				node,
+				'items',
+				'_item',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...vs: NonEmptyArray<Admit<T.Type>>) =>
+						rebuilt(node, handle, () => buildTypes(options, ...vs))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -9293,8 +9314,22 @@ function buildListPatternCasePatterns$with(node: Held, setter: string, args: rea
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-				rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs))
+			return hoistedWith(
+				node,
+				'items',
+				'_item',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+						rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildCasePattern(v))(v as never)),
+				TSKindId.CasePattern
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -10173,13 +10208,29 @@ function buildCasePatternList$with(node: Held, setter: string, args: readonly un
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-				rebuilt(node, handle, () =>
-					buildCasePatternList(
-						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options,
-						...vs
-					)
-				)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+						rebuilt(node, handle, () =>
+							buildCasePatternList(
+								vs.length === 1 && options.delimiter === Delimiter.None
+									? { ...options, delimiter: undefined }
+									: options,
+								...vs
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildCasePattern(v))(v as never)),
+				TSKindId.CasePattern
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -10490,14 +10541,8 @@ function buildCaseTuplePattern$with(node: Held, setter: string, args: readonly u
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
-						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-								(value?: Admit<T.ListPatternCasePatterns>) => _buildCaseTuplePattern(value)
-							)
-						)
+					applySetter(args, (value?: Admit<T.ListPatternCasePatterns>) =>
+						rebuilt(node, handle, () => _buildCaseTuplePattern(value))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -10623,14 +10668,8 @@ function buildCaseListPattern$with(node: Held, setter: string, args: readonly un
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
-						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-								(value?: Admit<T.ListPatternCasePatterns>) => _buildCaseListPattern(value)
-							)
-						)
+					applySetter(args, (value?: Admit<T.ListPatternCasePatterns>) =>
+						rebuilt(node, handle, () => _buildCaseListPattern(value))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -13516,8 +13555,22 @@ function buildWithClauseBare$with(node: Held, setter: string, args: readonly unk
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
-				rebuilt(node, handle, () => buildWithClauseBare(options, ...vs))
+			return hoistedWith(
+				node,
+				'items',
+				'_items',
+				'value',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
+						rebuilt(node, handle, () => buildWithClauseBare(options, ...vs))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildWithItem(v))(v as never)),
+				TSKindId.WithItem
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -13638,14 +13691,8 @@ function buildWithClauseParen$with(node: Held, setter: string, args: readonly un
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...args: unknown[]) =>
-						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: buildWithClauseWithItems },
-								(value: Admit<T.WithClauseWithItems>) => _buildWithClauseParen(value)
-							)
-						)
+					applySetter(args, (value: Admit<T.WithClauseWithItems>) =>
+						rebuilt(node, handle, () => _buildWithClauseParen(value))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -14813,10 +14860,27 @@ function buildDecoratedDefinitionClassDeclaration$with(node: Held, setter: strin
 	const config = node[INPUT] as T.DecoratedDefinitionClassDeclaration.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<NonEmptyArray<T.Decorator>>) =>
-				rebuilt(node, handle, () =>
-					buildDecoratedDefinitionClassDeclaration({ ...config, decorators: restItems('decorators', values) as never })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...values: Admit<NonEmptyArray<T.Decorator>>) =>
+						rebuilt(node, handle, () =>
+							buildDecoratedDefinitionClassDeclaration({
+								...config,
+								decorators: restItems('decorators', values) as never
+							})
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'definition':
 			return applySetter(args, (value: Admit<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>) =>
