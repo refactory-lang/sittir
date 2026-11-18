@@ -30,4 +30,10 @@ describe.each(['arena', 'object'] as const)('the rust hoist builds through its w
 		const built = e.build.functionItem({ name: 'f', typeParameters: fn.typeParameters(), parameters: [], body: { statements: [] } });
 		expect(String(e.render(built))).toBe('fn f<A, B>() {}');
 	});
+	it('refuses a list node as the items of a list-form setter', async () => {
+		using engine = await source();
+		const { e, fn } = engine;
+		const list = e.build.parametersElements(fn.parameters()[0]!);
+		expect(() => fn.$with.parameters(list as never)).toThrow('$with.parameters takes the items');
+	});
 });
