@@ -1,8 +1,6 @@
-import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { tmpdir } from 'node:os';
+import { readdirSync } from 'node:fs';
 import { basename, dirname, join, relative } from 'node:path';
-import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, parseTypeCheckDiagnostics, tsrsDiagnostics, typeCheckOutput, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
+import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, generate, probeDiagnostics, tsrsDiagnostics, writePortableTyped, type PortableTypedOutput, type PortableTypedUnemitted, type TypeCheckDiagnostic } from '@sittir/codegen';
 import { PORTABLE_BUILD_FILE, PORTABLE_TYPE_TESTS, REPO_ROOT, grammarPackageDir, sittirDirOf, type GrammarName } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 import { vocabularyPaths } from '@sittir/common/portable';
@@ -122,34 +120,10 @@ export function typeTestErrors(checker: string, diagnostics: readonly TypeCheckD
 	});
 }
 
-const CHECKERS = {
-	tsrs: ['pnpm', 'exec', 'tsrs'],
-	'TypeScript 6': [process.execPath, join(dirname(createRequire(import.meta.url).resolve('typescript6/package.json')), 'bin', 'tsc6')]
-} as const satisfies Readonly<Record<string, readonly [string, ...string[]]>>;
-
-export type Checker = keyof typeof CHECKERS;
-
-const typeCheck = (tsconfig: string, [command, ...args]: readonly [string, ...string[]]): readonly TypeCheckDiagnostic[] =>
-	parseTypeCheckDiagnostics(typeCheckOutput(command, [...args, '-p', tsconfig, '--noEmit'], REPO_ROOT));
-
-export function portableBuildTypeErrors(grammar: string, checker: Checker): readonly TypeCheckDiagnostic[] {
+export const portableBuildTypeErrors = (grammar: string): readonly TypeCheckDiagnostic[] => {
 	const dir = grammarPackageDir(grammar as GrammarName);
-	const scratch = mkdtempSync(join(tmpdir(), 'sittir-portable-build-'));
-	try {
-		const tsconfig = join(scratch, 'tsconfig.json');
-		writeFileSync(
-			tsconfig,
-			JSON.stringify({
-				extends: join(dir, 'tsconfig.json'),
-				compilerOptions: { typeRoots: [join(dir, 'node_modules', '@types'), join(REPO_ROOT, 'node_modules', '@types')] },
-				include: [join(dir, 'src', PORTABLE_BUILD_FILE)]
-			})
-		);
-		return typeCheck(tsconfig, CHECKERS[checker]);
-	} finally {
-		rmSync(scratch, { recursive: true, force: true });
-	}
-}
+	return probeDiagnostics({ extends: join(dir, 'tsconfig.json'), sources: { 'build.ts': `export * from '${join(dir, 'src', PORTABLE_BUILD_FILE)}';\n` } }, REPO_ROOT);
+};
 
 export function classify(
 	diagnostics: readonly TypeCheckDiagnostic[],

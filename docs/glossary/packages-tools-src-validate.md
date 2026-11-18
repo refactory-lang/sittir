@@ -2019,13 +2019,9 @@ The grammars to check. When absent, every grammar that has bindings is checked.
 
 Runs the conformance check for each grammar and prints each report. A grammar with no typed module prints a line saying so. Returns 0.
 
-### `packages/tools/src/portable/conformance.ts::Checker`
-
-The name of a type checker the portable checks run: `tsrs`, the TypeScript 7 lane, or `TypeScript 6`. Each name maps to one command line, which the conformance lanes and `portableBuildTypeErrors` both use.
-
 ### `packages/tools/src/portable/conformance.ts::portableBuildTypeErrors`
 
-Type-checks a grammar's generated build module, and everything it imports, under the named checker, and returns the diagnostics; an empty list means it type-checks. The program is the build module alone, under the package's own compiler options, through a tsconfig written to a temporary directory and removed afterwards. Under TypeScript 6 the program runs out of the default heap.
+Type-checks a grammar's generated build module, and everything it imports, with tsrs, and returns the diagnostics; an empty list means it type-checks. The program is a probe that re-exports the module, under the package's own tsconfig (`probeDiagnostics`).
 
 ### `packages/tools/src/portable/conformance.ts::portableTypeTests`
 
