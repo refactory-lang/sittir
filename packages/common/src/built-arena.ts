@@ -8,7 +8,7 @@ import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
 import type { TreeQuery } from './query.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
-import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
+import { addressOf, chunkOf, headerKind, headerOf, kindField, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
 import { builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
 import { isParsedPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
@@ -1456,9 +1456,7 @@ export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
 	if (arena.holdsRecords(chunk)) {
 		const words = arena.words(at, 1);
 		const start = wordOf(at, arena.format);
-		const head = words[start]!;
-		const kind = kindField(head, kindBits);
-		const flags = head >>> kindBits;
+		const { kind, flags } = headerOf(words[start]!, kindBits);
 		if (flags === 0) return { form: 'child', kind, at, link: undefined, changed };
 		if (flags !== linkFlag) throw new Error(`a built record header holds flags ${flags}, which no builder writes`);
 		const link = arena.words(at, linkWords);
