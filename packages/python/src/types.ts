@@ -2149,7 +2149,7 @@ export interface ImportStatement {
 		readonly names: Names;
 	};
 	readonly __looseHints__?: {
-		readonly names: readonly (DottedName | AliasedImport)[];
+		readonly names: readonly (DottedName | AliasedImport)[] | Names;
 	};
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonNullable<T.Names>>;
@@ -2484,7 +2484,7 @@ export interface MatchStatement {
 		readonly body: MatchBlock;
 	};
 	readonly __looseHints__?: {
-		readonly subject: readonly Expression[];
+		readonly subject: readonly Expression[] | Subjects;
 		readonly body: readonly CaseClause[];
 	};
 	readonly __slotHints__?: {
@@ -2759,8 +2759,8 @@ export interface FunctionDefinition {
 		readonly return_type: Type;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
-		readonly parameters: readonly Parameter[];
+		readonly type_parameters?: readonly TypeParam[] | TypeParamsItems;
+		readonly parameters: readonly Parameter[] | ParametersElements;
 		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
@@ -2803,7 +2803,7 @@ export interface Parameters {
 		readonly elements: ParametersElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly Parameter[];
+		readonly elements?: readonly Parameter[] | ParametersElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.ParametersElements>, true>;
@@ -2828,7 +2828,7 @@ export interface LambdaParameters {
 		readonly parameters_elements: ParametersElements;
 	};
 	readonly __looseHints__?: {
-		readonly parameters_elements: readonly Parameter[];
+		readonly parameters_elements: readonly Parameter[] | ParametersElements;
 	};
 	readonly __slotHints__?: {
 		readonly parametersElements: SlotHint<NonNullable<T.ParametersElements>>;
@@ -2943,7 +2943,7 @@ export interface TypeAliasStatement {
 		readonly value: Type;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: readonly TypeParam[] | TypeParamsItems;
 		readonly value: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
@@ -2978,7 +2978,7 @@ export interface ClassDefinition {
 		readonly type_parameters: TypeParams;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: readonly TypeParam[] | TypeParamsItems;
 		readonly bases?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
 	};
 	readonly __slotHints__?: {
@@ -3013,7 +3013,7 @@ export interface TypeParameter {
 		readonly types: Types;
 	};
 	readonly __looseHints__?: {
-		readonly types: readonly Type[];
+		readonly types: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<NonNullable<T.Types>>;
@@ -3049,13 +3049,9 @@ export interface ArgumentList {
 		readonly arguments: ArgumentListElements;
 	};
 	readonly __looseHints__?: {
-		readonly arguments?: readonly (
-			| Expression
-			| ListSplat
-			| DictionarySplat
-			| ParenthesizedListSplat
-			| KeywordArgument
-		)[];
+		readonly arguments?:
+			| readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[]
+			| ArgumentListElements;
 	};
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<NonNullable<T.ArgumentListElements>, true>;
@@ -3421,7 +3417,7 @@ export interface DictPattern {
 		readonly elements: DictPatternElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (KeyValuePattern | SplatPattern)[];
+		readonly elements?: readonly (KeyValuePattern | SplatPattern)[] | DictPatternElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.DictPatternElements>, true>;
@@ -3601,7 +3597,7 @@ export interface ClassPattern {
 		readonly fields: ListPatternCasePatterns;
 	};
 	readonly __looseHints__?: {
-		readonly fields?: readonly CasePattern[];
+		readonly fields?: readonly CasePattern[] | ListPatternCasePatterns;
 	};
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.DottedName>;
@@ -3682,7 +3678,7 @@ export interface TuplePattern {
 		readonly elements: TuplePatternElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly Pattern[];
+		readonly elements?: readonly Pattern[] | TuplePatternElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.TuplePatternElements>, true>;
@@ -3707,7 +3703,7 @@ export interface ListPattern {
 		readonly elements: Patterns;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly Pattern[];
+		readonly elements?: readonly Pattern[] | Patterns;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.Patterns>, true>;
@@ -4002,7 +3998,7 @@ export interface Lambda {
 		readonly parameters: LambdaParameters;
 	};
 	readonly __looseHints__?: {
-		readonly parameters?: readonly Parameter[];
+		readonly parameters?: readonly Parameter[] | ParametersElements;
 	};
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<NonNullable<T.Lambda.Config>['parameters'], true>;
@@ -4034,7 +4030,7 @@ export interface LambdaWithinForInClause {
 		readonly parameters: LambdaParameters;
 	};
 	readonly __looseHints__?: {
-		readonly parameters?: readonly Parameter[];
+		readonly parameters?: readonly Parameter[] | ParametersElements;
 	};
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<NonNullable<T.LambdaWithinForInClause.Config>['parameters'], true>;
@@ -4190,7 +4186,7 @@ export interface Subscript {
 		readonly index: Subscripts;
 	};
 	readonly __looseHints__?: {
-		readonly index: readonly (Expression | Slice)[];
+		readonly index: readonly (Expression | Slice)[] | Subscripts;
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.Subscript.Config>['object']>;
@@ -4339,7 +4335,7 @@ export interface GenericType {
 		readonly type_parameter: TypeParameter;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameter: readonly Type[];
+		readonly type_parameter: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
@@ -4471,7 +4467,7 @@ export interface List {
 		readonly elements: CollectionElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | CollectionElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.CollectionElements>, true>;
@@ -4502,7 +4498,7 @@ export interface Set {
 		readonly elements: CollectionElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | CollectionElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.CollectionElements>>;
@@ -4533,7 +4529,7 @@ export interface Tuple {
 		readonly elements: TupleElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | TupleElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.TupleElements>, true>;
@@ -4564,7 +4560,7 @@ export interface Dictionary {
 		readonly elements: DictionaryElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (Pair | DictionarySplat)[];
+		readonly elements?: readonly (Pair | DictionarySplat)[] | DictionaryElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.DictionaryElements>, true>;
@@ -5167,7 +5163,7 @@ export interface TypeParams {
 		readonly items: TypeParamsItems;
 	};
 	readonly __looseHints__?: {
-		readonly items: readonly TypeParam[];
+		readonly items: readonly TypeParam[] | TypeParamsItems;
 	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonNullable<T.TypeParamsItems>>;
@@ -5289,7 +5285,7 @@ export interface CaseTuplePattern {
 		readonly elements: ListPatternCasePatterns;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly CasePattern[];
+		readonly elements?: readonly CasePattern[] | ListPatternCasePatterns;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.ListPatternCasePatterns>, true>;
@@ -5311,7 +5307,7 @@ export interface CaseListPattern {
 		readonly elements: ListPatternCasePatterns;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly CasePattern[];
+		readonly elements?: readonly CasePattern[] | ListPatternCasePatterns;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.ListPatternCasePatterns>, true>;
@@ -5368,7 +5364,7 @@ export interface PrintStatementChevron {
 	};
 	readonly __looseHints__?: {
 		readonly chevron: readonly Expression[];
-		readonly arguments?: readonly Expression[];
+		readonly arguments?: readonly Expression[] | PrintChevronArguments;
 	};
 	readonly __slotHints__?: {
 		readonly chevron: SlotHint<NonNullable<T.PrintStatementChevron.Config>['chevron']>;
@@ -5394,7 +5390,7 @@ export interface PrintStatementPlain {
 		readonly arguments: PrintArguments;
 	};
 	readonly __looseHints__?: {
-		readonly arguments: readonly Expression[];
+		readonly arguments: readonly Expression[] | PrintArguments;
 	};
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<NonNullable<T.PrintArguments>>;
@@ -5801,7 +5797,7 @@ export interface ParenthesizedImportList {
 		readonly import_list: ImportList;
 	};
 	readonly __looseHints__?: {
-		readonly import_list: readonly (DottedName | AliasedImport)[];
+		readonly import_list: readonly (DottedName | AliasedImport)[] | ImportList;
 	};
 	readonly __slotHints__?: {
 		readonly importList: SlotHint<NonNullable<T.ImportList>>;
@@ -5983,7 +5979,7 @@ export interface WithClauseParen {
 		readonly items: WithClauseWithItems;
 	};
 	readonly __looseHints__?: {
-		readonly items: readonly WithItem[];
+		readonly items: readonly WithItem[] | WithClauseWithItems;
 	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonNullable<T.WithClauseWithItems>>;
@@ -6005,7 +6001,7 @@ export interface SuiteInline {
 		readonly statements: SimpleStatementsElements;
 	};
 	readonly __looseHints__?: {
-		readonly statements: readonly SimpleStatement[];
+		readonly statements: readonly SimpleStatement[] | SimpleStatementsElements;
 	};
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<NonNullable<T.SimpleStatementsElements | Admit<T.SimpleStatements>>>;
@@ -6272,8 +6268,8 @@ export interface ConstructorDeclaration {
 		readonly return_type: Type;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
-		readonly parameters: readonly Parameter[];
+		readonly type_parameters?: readonly TypeParam[] | TypeParamsItems;
+		readonly parameters: readonly Parameter[] | ParametersElements;
 		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
@@ -6465,8 +6461,8 @@ export interface MethodDeclaration {
 		readonly return_type: Type;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
-		readonly parameters: readonly Parameter[];
+		readonly type_parameters?: readonly TypeParam[] | TypeParamsItems;
+		readonly parameters: readonly Parameter[] | ParametersElements;
 		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {

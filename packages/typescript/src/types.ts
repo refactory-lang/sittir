@@ -2946,7 +2946,7 @@ export interface ExportClause {
 		readonly export_specifiers: ExportSpecifiers;
 	};
 	readonly __looseHints__?: {
-		readonly export_specifiers?: readonly ExportSpecifier[];
+		readonly export_specifiers?: readonly ExportSpecifier[] | ExportSpecifiers;
 	};
 	readonly __slotHints__?: {
 		readonly exportSpecifiers: SlotHint<NonNullable<T.ExportSpecifiers>, true>;
@@ -3054,7 +3054,7 @@ export interface NamedImports {
 		readonly import_specifiers: ImportSpecifiers;
 	};
 	readonly __looseHints__?: {
-		readonly import_specifiers?: readonly ImportSpecifier[];
+		readonly import_specifiers?: readonly ImportSpecifier[] | ImportSpecifiers;
 	};
 	readonly __slotHints__?: {
 		readonly importSpecifiers: SlotHint<NonNullable<T.ImportSpecifiers>, true>;
@@ -3956,7 +3956,7 @@ export interface Class {
 	};
 	readonly __looseHints__?: {
 		readonly name?: readonly Identifier[];
-		readonly type_parameters?: readonly TypeParameter[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly ClassBodyMember[];
 	};
@@ -4025,7 +4025,7 @@ export interface ClassDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
-		readonly type_parameters?: readonly TypeParameter[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly ClassBodyMember[];
 	};
@@ -4098,8 +4098,11 @@ export interface FunctionExpression {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 		readonly body: readonly Statement[];
 	};
 	readonly __slotHints__?: {
@@ -4157,8 +4160,11 @@ export interface FunctionDeclaration {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 		readonly body: readonly Statement[];
 	};
 	readonly __slotHints__?: {
@@ -4215,8 +4221,11 @@ export interface GeneratorFunction {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 		readonly body: readonly Statement[];
 	};
 	readonly __slotHints__?: {
@@ -4274,8 +4283,11 @@ export interface GeneratorFunctionDeclaration {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 		readonly body: readonly Statement[];
 	};
 	readonly __slotHints__?: {
@@ -4369,7 +4381,7 @@ export interface NewExpression {
 		readonly type_arguments: TypeArguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments?: readonly Type[];
+		readonly type_arguments?: readonly Type[] | Types;
 		readonly arguments?: readonly (Expression | SpreadElement)[];
 	};
 	readonly __slotHints__?: {
@@ -5138,7 +5150,7 @@ export interface DecoratorCallExpression {
 		readonly arguments: Arguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments?: readonly Type[];
+		readonly type_arguments?: readonly Type[] | Types;
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
 	readonly __slotHints__?: {
@@ -5394,8 +5406,11 @@ export interface FunctionSignature {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 	};
 	readonly __slotHints__?: {
 		readonly async: SlotHint<NonNullable<T.FunctionSignature.Config>['async'], true>;
@@ -5461,7 +5476,7 @@ export interface TypeAssertion {
 		readonly type_arguments: TypeArguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments: readonly Type[];
+		readonly type_arguments: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly typeArguments: SlotHint<NonNullable<T.TypeAssertion.Config>['typeArguments']>;
@@ -5619,7 +5634,7 @@ export interface InstantiationExpression {
 		readonly type_arguments: TypeArguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments: readonly Type[];
+		readonly type_arguments: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly function: SlotHint<NonNullable<T.InstantiationExpression.Config>['function']>;
@@ -5689,7 +5704,7 @@ export interface ExtendsClauseSingle {
 		readonly type_arguments: TypeArguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments?: readonly Type[];
+		readonly type_arguments?: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly value: SlotHint<NonNullable<T.ExtendsClauseSingle.Config>['value']>;
@@ -5793,7 +5808,7 @@ export interface AbstractClassDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
-		readonly type_parameters?: readonly TypeParameter[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly ClassBodyMember[];
 	};
@@ -5928,7 +5943,7 @@ export interface InterfaceDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
-		readonly type_parameters?: readonly TypeParameter[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
 		readonly extends_type_clause?: readonly (TypeIdentifier | NestedTypeIdentifier | GenericType)[];
 	};
 	readonly __slotHints__?: {
@@ -5983,7 +5998,7 @@ export interface EnumDeclaration {
 		readonly body: EnumBody;
 	};
 	readonly __looseHints__?: {
-		readonly body: readonly EnumBodyElement[];
+		readonly body: readonly EnumBodyElement[] | EnumBodyElements;
 	};
 	readonly __slotHints__?: {
 		readonly const: SlotHint<NonNullable<T.EnumDeclaration.Config>['const'], true>;
@@ -6011,7 +6026,7 @@ export interface EnumBody {
 		readonly elements: EnumBodyElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly EnumBodyElement[];
+		readonly elements?: readonly EnumBodyElement[] | EnumBodyElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.EnumBodyElements>, true>;
@@ -6108,7 +6123,7 @@ export interface TypeAliasDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
-		readonly type_parameters?: readonly TypeParameter[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
@@ -6739,8 +6754,11 @@ export interface ConstructorType {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 	};
 	readonly __slotHints__?: {
 		readonly abstract: SlotHint<NonNullable<T.ConstructorType.Config>['abstract'], true>;
@@ -7021,7 +7039,7 @@ export interface GenericType {
 		readonly type_arguments: TypeArguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments: readonly Type[];
+		readonly type_arguments: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types>;
@@ -7314,7 +7332,7 @@ export interface TypeQueryInstantiationExpression {
 		readonly type_arguments: TypeArguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments: readonly Type[];
+		readonly type_arguments: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly function: SlotHint<NonNullable<T.TypeQueryInstantiationExpression.Config>['function']>;
@@ -7718,7 +7736,7 @@ export interface TypeArguments {
 		readonly types: Types;
 	};
 	readonly __looseHints__?: {
-		readonly types: readonly Type[];
+		readonly types: readonly Type[] | Types;
 	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<NonNullable<T.Types>>;
@@ -7764,14 +7782,16 @@ export interface ObjectType {
 		readonly members: ObjectTypeContent;
 	};
 	readonly __looseHints__?: {
-		readonly members?: readonly (
-			| ExportStatement
-			| PropertySignature
-			| CallSignature
-			| ConstructSignature
-			| IndexSignature
-			| MethodSignature
-		)[];
+		readonly members?:
+			| readonly (
+					| ExportStatement
+					| PropertySignature
+					| CallSignature
+					| ConstructSignature
+					| IndexSignature
+					| MethodSignature
+			  )[]
+			| ObjectTypeContent;
 	};
 	readonly __slotHints__?: {
 		readonly members: SlotHint<NonNullable<ConfigOf<T.ObjectType>>['members'], true>;
@@ -7823,8 +7843,11 @@ export interface CallSignature {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 	};
 	readonly __slotHints__?: {
 		readonly typeParameters: SlotHint<NonNullable<T.CallSignature.Config>['typeParameters'], true>;
@@ -7924,7 +7947,7 @@ export interface TypeParameters {
 		readonly elements: TypeParametersElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements: readonly TypeParameter[];
+		readonly elements: readonly TypeParameter[] | TypeParametersElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.TypeParametersElements>>;
@@ -8091,8 +8114,11 @@ export interface ConstructSignature {
 		readonly type: TypeAnnotation;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
@@ -8174,7 +8200,9 @@ export interface TupleType {
 		readonly tuple_type_members: TupleTypeMembers;
 	};
 	readonly __looseHints__?: {
-		readonly tuple_type_members?: readonly (TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type)[];
+		readonly tuple_type_members?:
+			| readonly (TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type)[]
+			| TupleTypeMembers;
 	};
 	readonly __slotHints__?: {
 		readonly tupleTypeMembers: SlotHint<NonNullable<T.TupleTypeMembers>, true>;
@@ -8433,8 +8461,11 @@ export interface FunctionType {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 	};
 	readonly __slotHints__?: {
 		readonly typeParameters: SlotHint<NonNullable<T.FunctionType.Config>['typeParameters'], true>;
@@ -9436,7 +9467,7 @@ export interface CallExpressionCall {
 		readonly arguments: Arguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments?: readonly Type[];
+		readonly type_arguments?: readonly Type[] | Types;
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
 	readonly __slotHints__?: {
@@ -9522,7 +9553,7 @@ export interface CallExpressionMember {
 		readonly arguments: Arguments;
 	};
 	readonly __looseHints__?: {
-		readonly type_arguments?: readonly Type[];
+		readonly type_arguments?: readonly Type[] | Types;
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
 	readonly __slotHints__?: {
@@ -9810,7 +9841,7 @@ export interface ExportStatementDefaultFromClauseFrom {
 		readonly export_clause: ExportClause;
 	};
 	readonly __looseHints__?: {
-		readonly export_clause: readonly ExportSpecifier[];
+		readonly export_clause: readonly ExportSpecifier[] | ExportSpecifiers;
 	};
 	readonly __slotHints__?: {
 		readonly exportClause: SlotHint<NonNullable<T.ExportStatementDefaultFromClauseFrom.Config>['exportClause']>;
@@ -10253,8 +10284,11 @@ export interface MethodDefinitionPlain {
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 		readonly body: readonly Statement[];
 	};
 	readonly __slotHints__?: {
@@ -10476,8 +10510,11 @@ export interface MethodSignaturePlain {
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodSignaturePlain.Config>['accessibilityModifier'], true>;
@@ -10674,8 +10711,11 @@ export interface AbstractMethodSignaturePlain {
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
-		readonly type_parameters?: readonly TypeParameter[];
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly type_parameters?: readonly TypeParameter[] | TypeParametersElements;
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<
@@ -11060,7 +11100,10 @@ export interface ConstructorDeclaration {
 		readonly parameters: FormalParameters;
 	};
 	readonly __looseHints__?: {
-		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+		readonly parameters:
+			| readonly (RequiredParameter | OptionalParameter)[]
+			| FormalParametersElements
+			| FormalParametersElementsReceiver;
 		readonly body: readonly Statement[];
 	};
 	readonly __slotHints__?: {
@@ -11209,7 +11252,7 @@ export interface FormalParametersElementsReceiverGroup {
 		readonly elements: FormalParametersElements;
 	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (RequiredParameter | OptionalParameter)[];
+		readonly elements?: readonly (RequiredParameter | OptionalParameter)[] | FormalParametersElements;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonNullable<T.FormalParametersElements>, true>;
@@ -11320,14 +11363,16 @@ export interface InterfaceBody {
 		readonly members: ObjectTypeContent;
 	};
 	readonly __looseHints__?: {
-		readonly members?: readonly (
-			| ExportStatement
-			| PropertySignature
-			| CallSignature
-			| ConstructSignature
-			| IndexSignature
-			| MethodSignature
-		)[];
+		readonly members?:
+			| readonly (
+					| ExportStatement
+					| PropertySignature
+					| CallSignature
+					| ConstructSignature
+					| IndexSignature
+					| MethodSignature
+			  )[]
+			| ObjectTypeContent;
 	};
 	readonly __slotHints__?: {
 		readonly members: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['members'], true>;

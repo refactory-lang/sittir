@@ -1302,10 +1302,15 @@ function hoistedItemsHint(
 	field: AssembledNonterminal,
 	kind: string,
 	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
 	lookupUnion?: LookupUnion
 ): string | undefined {
 	const chain = wrapperChainFor(nodeMap, kind, field.name);
-	return chain === undefined ? undefined : hoistedItemsType(chain, field, nodeMap, lookupUnion);
+	if (chain === undefined) return undefined;
+	const items = hoistedItemsType(chain, field, nodeMap, lookupUnion, kindEntries);
+	if (items !== undefined) return `${items} | ${fieldTypeExpr(chain.slots[chain.slots.length - 1]!, nodeMap, lookupUnion)}`;
+	const listKind = chain.storage.map((name) => nodeMap.nodes.get(name)).find((node) => node instanceof AssembledList);
+	return listKind === undefined ? undefined : `${fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion) ?? ''}${fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion) === undefined ? '' : ' | '}${listKind.typeName}`;
 }
 
 function hoistedReadItemsType(
@@ -1322,14 +1327,16 @@ function hoistedItemsType(
 	chain: WrapperChain,
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
-	lookupUnion?: LookupUnion
+	lookupUnion?: LookupUnion,
+	inputKinds?: readonly KindEnumEntry[]
 ): string | undefined {
 	const last = chain.slots[chain.slots.length - 1];
 	if (last === undefined || isMultiple(last)) return undefined;
 	const list = nodeMap.nodes.get(slotKindNames(last)[0] ?? '');
 	const itemSlot = list instanceof AssembledList ? list.slots.find((slot) => isMultiple(slot)) : undefined;
 	if (itemSlot === undefined) return undefined;
-	const element = (slot: AssembledNonterminal): string => fieldTypeExpr(slot, nodeMap, lookupUnion);
+	const element = (slot: AssembledNonterminal): string =>
+		(inputKinds === undefined ? undefined : fieldInputHintTypeExpr(slot, list!.kind, nodeMap, inputKinds)) ?? fieldTypeExpr(slot, nodeMap, lookupUnion);
 	return !isRequired(field) || chain.slots.some((slot) => !isRequired(slot)) ? `readonly (${element(itemSlot)})[]` : slotListTypeOf(itemSlot, element, 'readonly');
 }
 
@@ -1389,7 +1396,7 @@ function emitFieldInputHints(
 	}
 	const fromHintLines = slots
 		.map((field) => {
-			const hintType = hoistedItemsHint(field, kind, nodeMap, lookupUnion) ?? fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
+			const hintType = hoistedItemsHint(field, kind, nodeMap, kindEntries, lookupUnion) ?? fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;
