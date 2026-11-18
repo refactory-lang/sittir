@@ -37,4 +37,18 @@ describe.each(['arena', 'object'] as const)('an empty hoisted list reads as the 
 		expect(omitted.parameters()).toEqual([]);
 		expect(given.typeParameters()).toBeUndefined();
 	});
+	it('iterates and measures both arms of the read the same way', async () => {
+		using opened = await open();
+		const present = functionOf(opened.e, 'fn f(a: u8, b: u8) {}\n').parameters();
+		const empty = functionOf(opened.e, 'fn f() {}\n').parameters();
+		for (const list of [present, empty]) {
+			expect(list.length).toBe([...list].length);
+			let count = 0;
+			for (const _ of list) count++;
+			expect(count).toBe(list.length);
+			expect(list.map((item) => item.$type)).toHaveLength(list.length);
+		}
+		expect(present.length).toBe(2);
+		expect(empty.length).toBe(0);
+	});
 });

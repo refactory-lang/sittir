@@ -1021,9 +1021,7 @@ function hoistedReadType(
 	const element = spelledReadType(last) ?? storageElementOf(last);
 	if (listed(slot)) return slotListTypeOf(slot, () => element, 'readonly');
 	if (chain.slots.some(listed)) return `readonly ${parenthesizeUnion(element)}[]`;
-	const endsInList = slotKindNames(last).some((name) => isListKind(nodeMap.nodes.get(name)!, nodeMap));
-	const read = endsInList ? `${element} | readonly []` : element;
-	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${read} | undefined` : read;
+	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${element} | undefined` : element;
 }
 
 function emitInterface(
@@ -1070,7 +1068,7 @@ function emitInterface(
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
 			const chain = wrapperChainFor(nodeMap, node.kind, f.name);
 			if (chain !== undefined) {
-				lines.push(`  readonly ${propName}: () => ${hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
+				lines.push(`  readonly ${propName}: () => ${hoistedReadItemsType(chain, f, nodeMap, lookupUnion) ?? hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
 			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				lines.push(`  readonly ${propName}: () => ${slotListTypeOf(f, storageElementOf, 'readonly')};`);
 			} else if (hasBlankArm(f)) {
@@ -1308,6 +1306,16 @@ function hoistedItemsHint(
 ): string | undefined {
 	const chain = wrapperChainFor(nodeMap, kind, field.name);
 	return chain === undefined ? undefined : hoistedItemsType(chain, field, nodeMap, lookupUnion);
+}
+
+function hoistedReadItemsType(
+	chain: WrapperChain,
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	const items = hoistedItemsType(chain, field, nodeMap, lookupUnion);
+	return items === undefined || isRequired(field) ? items : `${items} | undefined`;
 }
 
 function hoistedItemsType(
