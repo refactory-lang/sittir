@@ -13,12 +13,12 @@ describe('class_body stray semicolon', () => {
 	it('reads as EmptyMember, not the shared Semi token', () => {
 		const engine = ts;
 		const file = engine.parse(SOURCE) as unknown as {
-			statements(): readonly { body(): { members(): readonly unknown[]; $render(): string } }[];
+			statements(): readonly { body(): readonly unknown[]; $query(): { $descendants: { ofType(kind: number): { at(index: number): { $render(): string } | undefined } } } }[];
 		};
-		const body = file.statements()[0]!.body();
-		const [stray] = body.members();
+		const declaration = file.statements()[0]!;
+		const [stray] = declaration.body();
 		expect(stray).toBe(ts.kinds.EmptyMember);
 		expect(stray).not.toBe(ts.kinds.Semi);
-		expect(body.$render()).toBe('{ ; foo() {} }');
+		expect(declaration.$query().$descendants.ofType(ts.kinds.ClassBody).at(0)?.$render()).toBe('{ ; foo() {} }');
 	});
 });

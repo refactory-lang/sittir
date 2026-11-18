@@ -13,9 +13,7 @@ for (const nodeStorage of ['object', 'arena'] as const) {
 		if (!py.is.expressionStatement(element)) throw new Error('not an expression statement');
 		const call = element.content();
 		if (!py.is.call(call)) throw new Error('not a call');
-		const list = call.arguments();
-		if (!py.is.argumentList(list)) throw new Error('not an argument list');
-		const elements = list.arguments();
+		const elements = call.$query().$descendants.ofType(py.kinds.ArgumentListElements).at(0);
 		if (elements === undefined) throw new Error('no arguments');
 		return elements;
 	};
