@@ -1811,6 +1811,10 @@ Whether two texts carry the same spelled meaning under a delimiter spelling: the
 
 A grammar's engine of the named node storage, built with `createEngine`'s default options, for a check that reads one source through both storages side by side (`storage-parity`). It refuses a stale binary and a debug build as `loadNativeEngine` does, but it is not cached and takes neither validation's storage nor its `verifyStructure: 'runtime'`: a comparison of the storages is made on the engine a caller gets by default. The caller disposes it.
 
+### `packages/tools/src/validate/common.ts::loadAdoptingEngine`
+
+The cached native engine the read-render-parse check uses. Its parses adopt each source's style as the engine's options (`adoptStyle`), so it is cached apart from `loadNativeEngine`'s engine, whose options the other validators rely on.
+
 ### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
 
 The stage a round-trip failure reached: read, build, render, reparse or ast.
@@ -2057,7 +2061,7 @@ The admission command: prints the formatted report and returns 0.
 
 ### `packages/tools/src/validate/backer-parity.ts::backerParityOf`
 
-Reads one source of a grammar through arena storage's two backers: how many nodes the record backer answers apart from the tree backer (`backerParity`), and the layout runs read after that check against the layout runs of a second parse of the same source (`runParity`). The one per-source read of the backer comparison: `computeBackerParity` sums it over a corpus's files, and `storage-parity` calls it on every validation corpus source of every grammar.
+Reads one source of a grammar through arena storage's two backers. A fresh engine's record check (`backerParity`) answers how many nodes the record backer answers apart from the tree backer, together with the layout runs the records give; those runs are compared against the layout runs of a second parse of the same source (`runParity`). The one per-source read of the backer comparison: `computeBackerParity` sums it over a corpus's files, and `storage-parity` calls it on every validation corpus source of every grammar.
 
 ### `packages/tools/src/validate/storage-parity.ts::StorageCheck`
 
