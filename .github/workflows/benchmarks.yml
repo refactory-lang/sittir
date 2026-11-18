@@ -35,10 +35,10 @@ on:
         type: string
         default: python regex typescript
       phase:
-        description: phase-profile and alloc-count. The corpus phase run in arena storage. phase-profile samples render natively under perf, or edit as JavaScript frames under the inspector's Profiler; alloc-count counts either phase's allocations natively.
+        description: phase-profile and alloc-count. The corpus phase run. phase-profile samples parse or render natively under perf, or edit as JavaScript frames under the inspector's Profiler; alloc-count counts any phase's allocations natively.
         type: choice
         default: render
-        options: [render, edit]
+        options: [parse, render, edit]
       storage:
         description: phase-profile and alloc-count. The node storage the phase runs in.
         type: choice
@@ -157,7 +157,7 @@ jobs:
     with:
       runner: ${{ inputs.runner }}
       script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || inputs.benchmark == 'waiting' && 'run-waiting.py' || inputs.benchmark == 'parse-profile' && 'run-parse-profile.py' || (inputs.benchmark == 'phase-profile' || inputs.benchmark == 'alloc-count') && 'run-phase-profile.py' || 'run-probe.py' }}
-      native-profiler: ${{ inputs.benchmark == 'alloc-count' || inputs.benchmark == 'phase-profile' && inputs.phase == 'render' }}
+      native-profiler: ${{ inputs.benchmark == 'alloc-count' || inputs.benchmark == 'phase-profile' && inputs.phase != 'edit' }}
       phase: ${{ inputs.phase }}
       measure: ${{ inputs.benchmark == 'alloc-count' && 'allocs' || 'samples' }}
       storage: ${{ inputs.storage }}
