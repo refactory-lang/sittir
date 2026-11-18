@@ -336,9 +336,7 @@ function withImportStatement(node: object, setter: string, args: readonly unknow
 				(args: readonly never[]) => [
 					((v: readonly never[]) => (buildNames as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.Names,
-				undefined,
-				true
+				TSKindId.Names
 			);
 	}
 	throw new Error(`import_statement has no $with.${setter}`);
@@ -1776,9 +1774,7 @@ function withMatchStatement(node: object, setter: string, args: readonly unknown
 				(args: readonly never[]) => [
 					((v: readonly never[]) => (buildSubjects as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.Subjects,
-				undefined,
-				true
+				TSKindId.Subjects
 			);
 		case 'body':
 			return hoistedWith(
@@ -1801,9 +1797,7 @@ function withMatchStatement(node: object, setter: string, args: readonly unknown
 							? buildMatchBlock()
 							: (buildMatchBlock as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.MatchBlock,
-				undefined,
-				true
+				TSKindId.MatchBlock
 			);
 	}
 	throw new Error(`match_statement has no $with.${setter}`);
@@ -3133,9 +3127,7 @@ function withFunctionDefinition(node: object, setter: string, args: readonly unk
 						args
 					)
 				],
-				TSKindId.TypeParams,
-				undefined,
-				true
+				TSKindId.TypeParams
 			);
 		case 'parameters':
 			return hoistedWith(
@@ -3167,9 +3159,7 @@ function withFunctionDefinition(node: object, setter: string, args: readonly unk
 									(buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.Parameters,
-				undefined,
-				true
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return hoistedWith(
@@ -3284,9 +3274,7 @@ function withParameters(node: object, setter: string, args: readonly unknown[]):
 							? undefined
 							: (buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ParametersElements,
-				undefined,
-				true
+				TSKindId.ParametersElements
 			);
 	}
 	throw new Error(`parameters has no $with.${setter}`);
@@ -3378,9 +3366,7 @@ function withLambdaParameters(node: object, setter: string, args: readonly unkno
 					((v: readonly never[]) =>
 						(buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ParametersElements,
-				undefined,
-				true
+				TSKindId.ParametersElements
 			);
 	}
 	throw new Error(`lambda_parameters has no $with.${setter}`);
@@ -3822,9 +3808,7 @@ function withTypeAliasStatement(node: object, setter: string, args: readonly unk
 						args
 					)
 				],
-				TSKindId.TypeParams,
-				undefined,
-				true
+				TSKindId.TypeParams
 			);
 		case 'value':
 			return hoistedWith(
@@ -4039,9 +4023,7 @@ function withClassDefinition(node: object, setter: string, args: readonly unknow
 						args
 					)
 				],
-				TSKindId.TypeParams,
-				undefined,
-				true
+				TSKindId.TypeParams
 			);
 		case 'bases':
 			return applySetter(args, (...args: unknown[]) =>
@@ -4141,9 +4123,7 @@ function withTypeParameter(node: object, setter: string, args: readonly unknown[
 							...(v.map((item) => buildType(item as never)) as never[])
 						))(args)
 				],
-				TSKindId.Types,
-				undefined,
-				true
+				TSKindId.Types
 			);
 	}
 	throw new Error(`type_parameter has no $with.${setter}`);
@@ -4288,9 +4268,7 @@ function withArgumentList(node: object, setter: string, args: readonly unknown[]
 							? undefined
 							: (buildArgumentListElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ArgumentListElements,
-				undefined,
-				true
+				TSKindId.ArgumentListElements
 			);
 	}
 	throw new Error(`argument_list has no $with.${setter}`);
@@ -5186,9 +5164,7 @@ function withDictPattern(node: object, setter: string, args: readonly unknown[])
 							? undefined
 							: (buildDictPatternElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.DictPatternElements,
-				undefined,
-				true
+				TSKindId.DictPatternElements
 			);
 	}
 	throw new Error(`dict_pattern has no $with.${setter}`);
@@ -5567,9 +5543,7 @@ function withClassPattern(node: object, setter: string, args: readonly unknown[]
 									...(v.map((item) => buildCasePattern(item as never)) as never[])
 								))(args)
 				],
-				TSKindId.ListPatternCasePatterns,
-				undefined,
-				true
+				TSKindId.ListPatternCasePatterns
 			);
 	}
 	throw new Error(`class_pattern has no $with.${setter}`);
@@ -6044,9 +6018,7 @@ function withTuplePattern(node: object, setter: string, args: readonly unknown[]
 							? undefined
 							: (buildTuplePatternElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TuplePatternElements,
-				undefined,
-				true
+				TSKindId.TuplePatternElements
 			);
 	}
 	throw new Error(`tuple_pattern has no $with.${setter}`);
@@ -6139,9 +6111,7 @@ function withListPattern(node: object, setter: string, args: readonly unknown[])
 						args
 					)
 				],
-				TSKindId.Patterns,
-				undefined,
-				true
+				TSKindId.Patterns
 			);
 	}
 	throw new Error(`list_pattern has no $with.${setter}`);
@@ -7184,9 +7154,7 @@ function withLambda(node: object, setter: string, args: readonly unknown[]): unk
 									(buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.LambdaParameters,
-				undefined,
-				true
+				TSKindId.LambdaParameters
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<NonNullable<T.Lambda.Config>['body']>) =>
@@ -7346,9 +7314,7 @@ function withLambdaWithinForInClause(node: object, setter: string, args: readonl
 									(buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.LambdaParameters,
-				undefined,
-				true
+				TSKindId.LambdaParameters
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<NonNullable<T.LambdaWithinForInClause.Config>['body']>) =>
@@ -7827,9 +7793,7 @@ function withSubscript(node: object, setter: string, args: readonly unknown[]): 
 						args
 					)
 				],
-				TSKindId.Subscripts,
-				undefined,
-				true
+				TSKindId.Subscripts
 			);
 	}
 	throw new Error(`subscript has no $with.${setter}`);
@@ -8356,9 +8320,7 @@ function withGenericType(node: object, setter: string, args: readonly unknown[])
 							)
 						))(args)
 				],
-				TSKindId.TypeParameter,
-				undefined,
-				true
+				TSKindId.TypeParameter
 			);
 	}
 	throw new Error(`generic_type has no $with.${setter}`);
@@ -8891,9 +8853,7 @@ function withList(node: object, setter: string, args: readonly unknown[]): unkno
 							? undefined
 							: (buildCollectionElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.CollectionElements,
-				undefined,
-				true
+				TSKindId.CollectionElements
 			);
 	}
 	throw new Error(`list has no $with.${setter}`);
@@ -8983,9 +8943,7 @@ function withSet(node: object, setter: string, args: readonly unknown[]): unknow
 					((v: readonly never[]) =>
 						(buildCollectionElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.CollectionElements,
-				undefined,
-				true
+				TSKindId.CollectionElements
 			);
 	}
 	throw new Error(`set has no $with.${setter}`);
@@ -9078,9 +9036,7 @@ function withTuple(node: object, setter: string, args: readonly unknown[]): unkn
 							? undefined
 							: (buildTupleElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TupleElements,
-				undefined,
-				true
+				TSKindId.TupleElements
 			);
 	}
 	throw new Error(`tuple has no $with.${setter}`);
@@ -9173,9 +9129,7 @@ function withDictionary(node: object, setter: string, args: readonly unknown[]):
 							? undefined
 							: (buildDictionaryElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.DictionaryElements,
-				undefined,
-				true
+				TSKindId.DictionaryElements
 			);
 	}
 	throw new Error(`dictionary has no $with.${setter}`);
@@ -9374,9 +9328,7 @@ function withListComprehension(node: object, setter: string, args: readonly unkn
 					((v: readonly never[]) =>
 						(buildComprehensionClauses as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ComprehensionClauses,
-				undefined,
-				true
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`list_comprehension has no $with.${setter}`);
@@ -9509,9 +9461,7 @@ function withDictionaryComprehension(node: object, setter: string, args: readonl
 					((v: readonly never[]) =>
 						(buildComprehensionClauses as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ComprehensionClauses,
-				undefined,
-				true
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`dictionary_comprehension has no $with.${setter}`);
@@ -9634,9 +9584,7 @@ function withSetComprehension(node: object, setter: string, args: readonly unkno
 					((v: readonly never[]) =>
 						(buildComprehensionClauses as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ComprehensionClauses,
-				undefined,
-				true
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`set_comprehension has no $with.${setter}`);
@@ -9762,9 +9710,7 @@ function withGeneratorExpression(node: object, setter: string, args: readonly un
 					((v: readonly never[]) =>
 						(buildComprehensionClauses as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ComprehensionClauses,
-				undefined,
-				true
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`generator_expression has no $with.${setter}`);
@@ -12259,9 +12205,7 @@ function withTypeParams(node: object, setter: string, args: readonly unknown[]):
 					((v: readonly never[]) =>
 						(buildTypeParamsItems as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TypeParamsItems,
-				undefined,
-				true
+				TSKindId.TypeParamsItems
 			);
 	}
 	throw new Error(`type_params has no $with.${setter}`);
@@ -12892,9 +12836,7 @@ function withCaseTuplePattern(node: object, setter: string, args: readonly unkno
 									...(v.map((item) => buildCasePattern(item as never)) as never[])
 								))(args)
 				],
-				TSKindId.ListPatternCasePatterns,
-				undefined,
-				true
+				TSKindId.ListPatternCasePatterns
 			);
 	}
 	throw new Error(`case_tuple_pattern has no $with.${setter}`);
@@ -12988,9 +12930,7 @@ function withCaseListPattern(node: object, setter: string, args: readonly unknow
 									...(v.map((item) => buildCasePattern(item as never)) as never[])
 								))(args)
 				],
-				TSKindId.ListPatternCasePatterns,
-				undefined,
-				true
+				TSKindId.ListPatternCasePatterns
 			);
 	}
 	throw new Error(`case_list_pattern has no $with.${setter}`);
@@ -13404,9 +13344,7 @@ function withPrintStatementChevron(node: object, setter: string, args: readonly 
 							? undefined
 							: (buildPrintChevronArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.PrintChevronArguments,
-				undefined,
-				true
+				TSKindId.PrintChevronArguments
 			);
 	}
 	throw new Error(`print_statement_chevron has no $with.${setter}`);
@@ -13498,9 +13436,7 @@ function withPrintStatementPlain(node: object, setter: string, args: readonly un
 					((v: readonly never[]) =>
 						(buildPrintArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.PrintArguments,
-				undefined,
-				true
+				TSKindId.PrintArguments
 			);
 	}
 	throw new Error(`print_statement_plain has no $with.${setter}`);
@@ -16379,9 +16315,7 @@ function withParenthesizedImportList(node: object, setter: string, args: readonl
 						args
 					)
 				],
-				TSKindId.ImportList,
-				undefined,
-				true
+				TSKindId.ImportList
 			);
 	}
 	throw new Error(`parenthesized_import_list has no $with.${setter}`);
@@ -17171,9 +17105,7 @@ function withWithClauseParen(node: object, setter: string, args: readonly unknow
 							...(v.map((item) => buildWithItem(item as never)) as never[])
 						))(args)
 				],
-				TSKindId.WithClauseWithItems,
-				undefined,
-				true
+				TSKindId.WithClauseWithItems
 			);
 	}
 	throw new Error(`with_clause_paren has no $with.${setter}`);
@@ -17286,9 +17218,7 @@ function withSuiteInline(node: object, setter: string, args: readonly unknown[])
 					((v: readonly never[]) =>
 						(buildSimpleStatementsElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.SimpleStatementsElements,
-				undefined,
-				true
+				TSKindId.SimpleStatementsElements
 			);
 	}
 	throw new Error(`suite_inline has no $with.${setter}`);
@@ -17367,9 +17297,7 @@ function withSuiteBlock(node: object, setter: string, args: readonly unknown[]):
 						args
 					)
 				],
-				TSKindId.Block,
-				undefined,
-				true
+				TSKindId.Block
 			);
 	}
 	throw new Error(`suite_block has no $with.${setter}`);
@@ -18364,9 +18292,7 @@ function withConstructorDeclaration(node: object, setter: string, args: readonly
 						args
 					)
 				],
-				TSKindId.TypeParams,
-				undefined,
-				true
+				TSKindId.TypeParams
 			);
 		case 'parameters':
 			return hoistedWith(
@@ -18398,9 +18324,7 @@ function withConstructorDeclaration(node: object, setter: string, args: readonly
 									(buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.Parameters,
-				undefined,
-				true
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return hoistedWith(
@@ -18560,9 +18484,7 @@ function withSuiteBlockClassDeclaration(node: object, setter: string, args: read
 							? buildBlockClassDeclaration()
 							: (buildBlockClassDeclaration as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.BlockClassDeclaration,
-				undefined,
-				true
+				TSKindId.BlockClassDeclaration
 			);
 	}
 	throw new Error(`suite_block_class_declaration has no $with.${setter}`);
@@ -19329,9 +19251,7 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 						args
 					)
 				],
-				TSKindId.TypeParams,
-				undefined,
-				true
+				TSKindId.TypeParams
 			);
 		case 'parameters':
 			return hoistedWith(
@@ -19363,9 +19283,7 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 									(buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.Parameters,
-				undefined,
-				true
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return hoistedWith(

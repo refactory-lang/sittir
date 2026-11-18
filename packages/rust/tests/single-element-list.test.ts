@@ -34,22 +34,20 @@ describe('a tuple expression with one element', () => {
 		);
 	});
 
-	it('renders it when a parsed tuple of two is cut down to one', () => {
+	it('renders it when a parsed tuple of two is cut down to one, passing the item', () => {
 		const parsed = parsedTuple('(a, b)');
 		const [first] = parsed.elements();
 		const text = parsed.$with.elements(first!).$render();
 		expect(text).toBe('(a,)');
 		expect(is.tupleExpression(parsedValue(text))).toBe(true);
 	});
-});
 
-describe('a list-form setter', () => {
-	it('refuses a list node, naming the setter and saying it takes the items', () => {
+	it('renders it when a parsed tuple of two is cut down to one, passing the list node', () => {
 		const parsed = parsedTuple('(a, b)');
 		const [first] = parsed.elements();
-		expect(() => parsed.$with.elements(build.tupleExpressionElements(first!) as never)).toThrow(
-			'$with.elements takes the items'
-		);
+		const text = parsed.$with.elements(build.tupleExpressionElements(first!)).$render();
+		expect(text).toBe('(a,)');
+		expect(is.tupleExpression(parsedValue(text))).toBe(true);
 	});
 });
 

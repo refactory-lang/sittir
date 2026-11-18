@@ -319,9 +319,7 @@ function withString(node: object, setter: string, args: readonly unknown[]): unk
 							? undefined
 							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.StringContent,
-				undefined,
-				true
+				TSKindId.StringContent
 			);
 	}
 	throw new Error(`string has no $with.${setter}`);
@@ -399,9 +397,7 @@ function withImmediateString(node: object, setter: string, args: readonly unknow
 							? undefined
 							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.StringContent,
-				undefined,
-				true
+				TSKindId.StringContent
 			);
 	}
 	throw new Error(`immediate_string has no $with.${setter}`);
@@ -1224,9 +1220,7 @@ function withPredicate(node: object, setter: string, args: readonly unknown[]): 
 							? undefined
 							: (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.Parameters,
-				undefined,
-				true
+				TSKindId.Parameters
 			);
 	}
 	throw new Error(`predicate has no $with.${setter}`);

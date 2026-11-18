@@ -1342,9 +1342,7 @@ function buildUnionItem$with(node: Held, setter: string, args: readonly unknown[
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1390,9 +1388,7 @@ function buildUnionItem$with(node: Held, setter: string, args: readonly unknown[
 									(buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.FieldDeclarationList,
-				undefined,
-				true
+				TSKindId.FieldDeclarationList
 			);
 	}
 	throw new Error(`union_item has no $with.${setter}`);
@@ -1582,9 +1578,7 @@ function buildEnumItem$with(node: Held, setter: string, args: readonly unknown[]
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1630,9 +1624,7 @@ function buildEnumItem$with(node: Held, setter: string, args: readonly unknown[]
 									(buildEnumVariantListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.EnumVariantList,
-				undefined,
-				true
+				TSKindId.EnumVariantList
 			);
 	}
 	throw new Error(`enum_item has no $with.${setter}`);
@@ -1775,9 +1767,7 @@ function buildEnumVariantList$with(node: Held, setter: string, args: readonly un
 							? undefined
 							: (buildEnumVariantListElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.EnumVariantListElements,
-				undefined,
-				true
+				TSKindId.EnumVariantListElements
 			);
 	}
 	throw new Error(`enum_variant_list has no $with.${setter}`);
@@ -2023,9 +2013,7 @@ function buildFieldDeclarationList$with(node: Held, setter: string, args: readon
 							? undefined
 							: (buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.FieldDeclarationListElements,
-				undefined,
-				true
+				TSKindId.FieldDeclarationListElements
 			);
 	}
 	throw new Error(`field_declaration_list has no $with.${setter}`);
@@ -2264,9 +2252,7 @@ function buildOrderedFieldDeclarationList$with(node: Held, setter: string, args:
 									...(v as never[])
 								))(args)
 				],
-				TSKindId.OrderedFieldDeclarationListElements,
-				undefined,
-				true
+				TSKindId.OrderedFieldDeclarationListElements
 			);
 	}
 	throw new Error(`ordered_field_declaration_list has no $with.${setter}`);
@@ -2793,9 +2779,7 @@ function buildTypeItem$with(node: Held, setter: string, args: readonly unknown[]
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3025,9 +3009,7 @@ function buildFunctionItem$with(node: Held, setter: string, args: readonly unkno
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
 			return hoistedWith(
@@ -3072,7 +3054,9 @@ function buildFunctionItem$with(node: Held, setter: string, args: readonly unkno
 				(value) =>
 					applySetter([value], (value: Admit<NonNullable<T.FunctionItem.Config>['parameters']>) =>
 						rebuilt(node, handle, () => buildFunctionItem({ ...config, parameters: value }))
-					)
+					),
+				undefined,
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionItem.Config>['returnType']>) =>
@@ -3295,9 +3279,7 @@ function buildFunctionSignatureItem$with(node: Held, setter: string, args: reado
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
 			return hoistedWith(
@@ -3342,7 +3324,9 @@ function buildFunctionSignatureItem$with(node: Held, setter: string, args: reado
 				(value) =>
 					applySetter([value], (value: Admit<NonNullable<T.FunctionSignatureItem.Config>['parameters']>) =>
 						rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, parameters: value }))
-					)
+					),
+				undefined,
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionSignatureItem.Config>['returnType']>) =>
@@ -3569,9 +3553,7 @@ function buildWhereClause$with(node: Held, setter: string, args: readonly unknow
 							? undefined
 							: (buildWherePredicates as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.WherePredicates,
-				undefined,
-				true
+				TSKindId.WherePredicates
 			);
 	}
 	throw new Error(`where_clause has no $with.${setter}`);
@@ -3648,9 +3630,7 @@ function buildWherePredicate$with(node: Held, setter: string, args: readonly unk
 						args
 					)
 				],
-				TSKindId.TraitBounds,
-				undefined,
-				true
+				TSKindId.TraitBounds
 			);
 	}
 	throw new Error(`where_predicate has no $with.${setter}`);
@@ -3845,9 +3825,7 @@ function buildTraitItem$with(node: Held, setter: string, args: readonly unknown[
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'bounds':
 			return hoistedWith(
@@ -3870,9 +3848,7 @@ function buildTraitItem$with(node: Held, setter: string, args: readonly unknown[
 							? undefined
 							: (buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TraitBounds,
-				undefined,
-				true
+				TSKindId.TraitBounds
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3907,9 +3883,7 @@ function buildTraitItem$with(node: Held, setter: string, args: readonly unknown[
 						args
 					)
 				],
-				TSKindId.TraitInterfaceDeclarationBody,
-				undefined,
-				true
+				TSKindId.TraitInterfaceDeclarationBody
 			);
 	}
 	throw new Error(`trait_item has no $with.${setter}`);
@@ -4058,9 +4032,7 @@ function buildAssociatedType$with(node: Held, setter: string, args: readonly unk
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'bounds':
 			return hoistedWith(
@@ -4083,9 +4055,7 @@ function buildAssociatedType$with(node: Held, setter: string, args: readonly unk
 							? undefined
 							: (buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TraitBounds,
-				undefined,
-				true
+				TSKindId.TraitBounds
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -4251,9 +4221,7 @@ function buildHigherRankedTraitBound$with(node: Held, setter: string, args: read
 							(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 						))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.HigherRankedTraitBound.Config>['type']>) =>
@@ -4438,9 +4406,7 @@ function buildTypeParameters$with(node: Held, setter: string, args: readonly unk
 					((v: readonly never[]) =>
 						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TypeParametersElements,
-				undefined,
-				true
+				TSKindId.TypeParametersElements
 			);
 	}
 	throw new Error(`type_parameters has no $with.${setter}`);
@@ -4609,9 +4575,7 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 							? undefined
 							: (buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TraitBounds,
-				undefined,
-				true
+				TSKindId.TraitBounds
 			);
 		case 'default':
 			return applySetter(args, (value?: Admit<NonNullable<T.TypeParameter.Config>['default']>) =>
@@ -4699,9 +4663,7 @@ function buildLifetimeParameter$with(node: Held, setter: string, args: readonly 
 							? undefined
 							: (buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TraitBounds,
-				undefined,
-				true
+				TSKindId.TraitBounds
 			);
 	}
 	throw new Error(`lifetime_parameter has no $with.${setter}`);
@@ -5000,9 +4962,7 @@ function buildScopedUseList$with(node: Held, setter: string, args: readonly unkn
 							? buildUseList()
 							: buildUseList((buildUseClauses as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
-				TSKindId.UseList,
-				undefined,
-				true
+				TSKindId.UseList
 			);
 	}
 	throw new Error(`scoped_use_list has no $with.${setter}`);
@@ -5155,9 +5115,7 @@ function buildUseList$with(node: Held, setter: string, args: readonly unknown[])
 							? undefined
 							: (buildUseClauses as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.UseClauses,
-				undefined,
-				true
+				TSKindId.UseClauses
 			);
 	}
 	throw new Error(`use_list has no $with.${setter}`);
@@ -5981,9 +5939,7 @@ function buildForLifetimes$with(node: Held, setter: string, args: readonly unkno
 						args
 					)
 				],
-				TSKindId.Lifetimes,
-				undefined,
-				true
+				TSKindId.Lifetimes
 			);
 	}
 	throw new Error(`for_lifetimes has no $with.${setter}`);
@@ -6101,9 +6057,7 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 							? undefined
 							: buildForLifetimes((buildLifetimes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
-				TSKindId.ForLifetimes,
-				undefined,
-				true
+				TSKindId.ForLifetimes
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>) =>
@@ -6152,7 +6106,9 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 				(value) =>
 					applySetter([value], (value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
 						rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
-					)
+					),
+				undefined,
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
@@ -6283,9 +6239,7 @@ function buildTupleType$with(node: Held, setter: string, args: readonly unknown[
 				(args: readonly never[]) => [
 					((v: readonly never[]) => (buildTypes as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.Types,
-				undefined,
-				true
+				TSKindId.Types
 			);
 	}
 	throw new Error(`tuple_type has no $with.${setter}`);
@@ -6387,9 +6341,7 @@ function buildGenericFunction$with(node: Held, setter: string, args: readonly un
 							(buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
 						))(args)
 				],
-				TSKindId.TypeArguments,
-				undefined,
-				true
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`generic_function has no $with.${setter}`);
@@ -6493,9 +6445,7 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 							(buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
 						))(args)
 				],
-				TSKindId.TypeArguments,
-				undefined,
-				true
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`generic_type has no $with.${setter}`);
@@ -6602,9 +6552,7 @@ function buildGenericTypeWithTurbofish$with(node: Held, setter: string, args: re
 							(buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
 						))(args)
 				],
-				TSKindId.TypeArguments,
-				undefined,
-				true
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`generic_type_with_turbofish has no $with.${setter}`);
@@ -6792,9 +6740,7 @@ function buildUseBounds$with(node: Held, setter: string, args: readonly unknown[
 							? undefined
 							: (buildUseBoundsElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.UseBoundsElements,
-				undefined,
-				true
+				TSKindId.UseBoundsElements
 			);
 	}
 	throw new Error(`use_bounds has no $with.${setter}`);
@@ -6928,9 +6874,7 @@ function buildTypeArguments$with(node: Held, setter: string, args: readonly unkn
 					((v: readonly never[]) =>
 						(buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TypeArgumentsElements,
-				undefined,
-				true
+				TSKindId.TypeArgumentsElements
 			);
 	}
 	throw new Error(`type_arguments has no $with.${setter}`);
@@ -7046,9 +6990,7 @@ function buildTypeBinding$with(node: Held, setter: string, args: readonly unknow
 									(buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeArguments,
-				undefined,
-				true
+				TSKindId.TypeArguments
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeBinding.Config>['type']>) =>
@@ -7237,9 +7179,7 @@ function buildAbstractType$with(node: Held, setter: string, args: readonly unkno
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'trait':
 			return applySetter(
@@ -8182,9 +8122,7 @@ function buildCallExpression$with(node: Held, setter: string, args: readonly unk
 						args
 					)
 				],
-				TSKindId.Arguments,
-				undefined,
-				true
+				TSKindId.Arguments
 			);
 	}
 	throw new Error(`call_expression has no $with.${setter}`);
@@ -8316,9 +8254,7 @@ function buildArguments$with(node: Held, setter: string, args: readonly unknown[
 							? undefined
 							: (buildArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ArgumentsElements,
-				undefined,
-				true
+				TSKindId.ArgumentsElements
 			);
 	}
 	throw new Error(`arguments has no $with.${setter}`);
@@ -8486,9 +8422,7 @@ function buildTupleExpression$with(node: Held, setter: string, args: readonly un
 					((v: readonly never[]) =>
 						(buildTupleExpressionElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TupleExpressionElements,
-				undefined,
-				true
+				TSKindId.TupleExpressionElements
 			);
 	}
 	throw new Error(`tuple_expression has no $with.${setter}`);
@@ -8597,9 +8531,7 @@ function buildStructExpression$with(node: Held, setter: string, args: readonly u
 									(buildFieldInitializerListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.FieldInitializerList,
-				undefined,
-				true
+				TSKindId.FieldInitializerList
 			);
 	}
 	throw new Error(`struct_expression has no $with.${setter}`);
@@ -8734,9 +8666,7 @@ function buildFieldInitializerList$with(node: Held, setter: string, args: readon
 							? undefined
 							: (buildFieldInitializerListElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.FieldInitializerListElements,
-				undefined,
-				true
+				TSKindId.FieldInitializerListElements
 			);
 	}
 	throw new Error(`field_initializer_list has no $with.${setter}`);
@@ -9311,8 +9241,7 @@ function buildMatchExpression$with(node: Held, setter: string, args: readonly un
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
 						(buildMatchBlockArms as unknown as (...items: never[]) => never)(...(v as never[])))(args)
-				],
-				true
+				]
 			);
 	}
 	throw new Error(`match_expression has no $with.${setter}`);
@@ -10645,9 +10574,7 @@ function buildGenericPattern$with(node: Held, setter: string, args: readonly unk
 							(buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
 						))(args)
 				],
-				TSKindId.TypeArguments,
-				undefined,
-				true
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`generic_pattern has no $with.${setter}`);
@@ -10774,9 +10701,7 @@ function buildTuplePattern$with(node: Held, setter: string, args: readonly unkno
 							? undefined
 							: (buildTuplePatternElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TuplePatternElements,
-				undefined,
-				true
+				TSKindId.TuplePatternElements
 			);
 	}
 	throw new Error(`tuple_pattern has no $with.${setter}`);
@@ -10900,9 +10825,7 @@ function buildSlicePattern$with(node: Held, setter: string, args: readonly unkno
 						args
 					)
 				],
-				TSKindId.Patterns,
-				undefined,
-				true
+				TSKindId.Patterns
 			);
 	}
 	throw new Error(`slice_pattern has no $with.${setter}`);
@@ -10991,9 +10914,7 @@ function buildTupleStructPattern$with(node: Held, setter: string, args: readonly
 						args
 					)
 				],
-				TSKindId.Patterns,
-				undefined,
-				true
+				TSKindId.Patterns
 			);
 	}
 	throw new Error(`tuple_struct_pattern has no $with.${setter}`);
@@ -11083,9 +11004,7 @@ function buildStructPattern$with(node: Held, setter: string, args: readonly unkn
 							? undefined
 							: (buildStructPatternElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.StructPatternElements,
-				undefined,
-				true
+				TSKindId.StructPatternElements
 			);
 	}
 	throw new Error(`struct_pattern has no $with.${setter}`);
@@ -15549,9 +15468,7 @@ function buildClosureExpressionBlock$with(node: Held, setter: string, args: read
 							? buildClosureParameters()
 							: (buildClosureParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ClosureParameters,
-				undefined,
-				true
+				TSKindId.ClosureParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.ClosureExpressionBlock.Config>['returnType']>) =>
@@ -15689,9 +15606,7 @@ function buildClosureExpressionExpr$with(node: Held, setter: string, args: reado
 							? buildClosureParameters()
 							: (buildClosureParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ClosureParameters,
-				undefined,
-				true
+				TSKindId.ClosureParameters
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<NonNullable<T.ClosureExpressionExpr.Config>['body']>) =>
@@ -16119,9 +16034,7 @@ function buildImplItemBody$with(node: Held, setter: string, args: readonly unkno
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'traitClause':
 			return applySetter(args, (value?: Admit<T.ImplItemPositiveClause | T.ImplItemNegativeClause>) =>
@@ -16162,9 +16075,7 @@ function buildImplItemBody$with(node: Held, setter: string, args: readonly unkno
 							? buildExtensionDeclarationBody()
 							: (buildExtensionDeclarationBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ExtensionDeclarationBody,
-				undefined,
-				true
+				TSKindId.ExtensionDeclarationBody
 			);
 	}
 	throw new Error(`impl_item_body has no $with.${setter}`);
@@ -16311,9 +16222,7 @@ function buildImplItemSemi$with(node: Held, setter: string, args: readonly unkno
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'traitClause':
 			return applySetter(args, (value?: Admit<T.ImplItemPositiveClause | T.ImplItemNegativeClause>) =>
@@ -16852,9 +16761,7 @@ function buildModItemInline$with(node: Held, setter: string, args: readonly unkn
 							? buildDeclarationList()
 							: (buildDeclarationList as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.DeclarationList,
-				undefined,
-				true
+				TSKindId.DeclarationList
 			);
 	}
 	throw new Error(`mod_item_inline has no $with.${setter}`);
@@ -17451,9 +17358,7 @@ function buildForeignModItemBody$with(node: Held, setter: string, args: readonly
 							? buildDeclarationList()
 							: (buildDeclarationList as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.DeclarationList,
-				undefined,
-				true
+				TSKindId.DeclarationList
 			);
 	}
 	throw new Error(`foreign_mod_item_body has no $with.${setter}`);
@@ -18625,9 +18530,7 @@ function buildMacroDefinitionParen$with(node: Held, setter: string, args: readon
 							? undefined
 							: (buildMacroRules as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.MacroRules,
-				undefined,
-				true
+				TSKindId.MacroRules
 			);
 	}
 	throw new Error(`macro_definition_paren has no $with.${setter}`);
@@ -18720,9 +18623,7 @@ function buildMacroDefinitionBracket$with(node: Held, setter: string, args: read
 							? undefined
 							: (buildMacroRules as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.MacroRules,
-				undefined,
-				true
+				TSKindId.MacroRules
 			);
 	}
 	throw new Error(`macro_definition_bracket has no $with.${setter}`);
@@ -18814,9 +18715,7 @@ function buildMacroDefinitionBrace$with(node: Held, setter: string, args: readon
 							? undefined
 							: (buildMacroRules as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.MacroRules,
-				undefined,
-				true
+				TSKindId.MacroRules
 			);
 	}
 	throw new Error(`macro_definition_brace has no $with.${setter}`);
@@ -19194,9 +19093,7 @@ function buildStructItemBrace$with(node: Held, setter: string, args: readonly un
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -19243,9 +19140,7 @@ function buildStructItemBrace$with(node: Held, setter: string, args: readonly un
 									(buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.FieldDeclarationList,
-				undefined,
-				true
+				TSKindId.FieldDeclarationList
 			);
 	}
 	throw new Error(`struct_item_brace has no $with.${setter}`);
@@ -19435,9 +19330,7 @@ function buildStructItemTuple$with(node: Held, setter: string, args: readonly un
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'body':
 			return hoistedWith(
@@ -19476,9 +19369,7 @@ function buildStructItemTuple$with(node: Held, setter: string, args: readonly un
 									)
 								))(args)
 				],
-				TSKindId.OrderedFieldDeclarationList,
-				undefined,
-				true
+				TSKindId.OrderedFieldDeclarationList
 			);
 		case 'whereClause':
 			return applySetter(args, (...args: unknown[]) =>
@@ -19643,9 +19534,7 @@ function buildStructItemUnit$with(node: Held, setter: string, args: readonly unk
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 	}
 	throw new Error(`struct_item_unit has no $with.${setter}`);
@@ -20326,9 +20215,7 @@ function buildTypeArgument$with(node: Held, setter: string, args: readonly unkno
 							? undefined
 							: (buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.TraitBounds,
-				undefined,
-				true
+				TSKindId.TraitBounds
 			);
 	}
 	throw new Error(`type_argument has no $with.${setter}`);
@@ -20564,9 +20451,7 @@ function buildArrayExpressionList$with(node: Held, setter: string, args: readonl
 							? undefined
 							: (buildArrayExpressionListElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ArrayExpressionListElements,
-				undefined,
-				true
+				TSKindId.ArrayExpressionListElements
 			);
 	}
 	throw new Error(`array_expression_list has no $with.${setter}`);
@@ -21344,9 +21229,7 @@ function buildParametersElementsReceiverGroup$with(node: Held, setter: string, a
 							? undefined
 							: (buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
-				TSKindId.ParametersElements,
-				undefined,
-				true
+				TSKindId.ParametersElements
 			);
 	}
 	throw new Error(`parameters_elements_receiver_group has no $with.${setter}`);
@@ -21724,9 +21607,7 @@ function buildMethodDeclaration$with(node: Held, setter: string, args: readonly 
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
 			return hoistedWith(
@@ -21771,7 +21652,9 @@ function buildMethodDeclaration$with(node: Held, setter: string, args: readonly 
 				(value) =>
 					applySetter([value], (value: Admit<NonNullable<T.MethodDeclaration.Config>['parameters']>) =>
 						rebuilt(node, handle, () => buildMethodDeclaration({ ...config, parameters: value }))
-					)
+					),
+				undefined,
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.MethodDeclaration.Config>['returnType']>) =>
@@ -21996,9 +21879,7 @@ function buildSignatureMethodDeclaration$with(node: Held, setter: string, args: 
 									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
-				TSKindId.TypeParameters,
-				undefined,
-				true
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
 			return hoistedWith(
@@ -22043,7 +21924,9 @@ function buildSignatureMethodDeclaration$with(node: Held, setter: string, args: 
 				(value) =>
 					applySetter([value], (value: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['parameters']>) =>
 						rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, parameters: value }))
-					)
+					),
+				undefined,
+				TSKindId.Parameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['returnType']>) =>

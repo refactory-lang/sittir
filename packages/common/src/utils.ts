@@ -927,13 +927,32 @@ export function hoistedWith(
 	place: ((value: unknown) => unknown) | undefined = undefined,
 	wrap: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined,
 	kind: number | undefined = undefined,
-	inner: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined,
-	items = false
+	inner: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined
 ): unknown {
-	if (args.length === 1 && ((list !== undefined && isKindNode(args[0], list.kind)) || (items && kind !== undefined && isKindNode(args[0], kind)))) {
-		throw new TypeError(`$with.${accessor} takes the items, $with.${accessor}(a, b), not a list node; pass its items: $with.${accessor}(...list)`);
+	try {
+		return hoistedWithUnchecked(node, accessor, storage, slot, optional, list, handle, args, apply, place, wrap, kind, inner);
+	} catch (error) {
+		throw new TypeError(`$with.${accessor} takes the items of the slot, its list node or a wrapper on its chain; this value was refused: ${(error as Error).message}`, { cause: error });
 	}
+}
+
+function hoistedWithUnchecked(
+	node: object,
+	accessor: string,
+	storage: string,
+	slot: string,
+	optional: boolean,
+	list: Omit<ListSlotSpec, 'slot'> | undefined,
+	handle: EngineHandle | undefined,
+	args: readonly unknown[],
+	apply: (args: readonly unknown[]) => unknown,
+	place: ((value: unknown) => unknown) | undefined,
+	wrap: ((args: readonly never[]) => readonly unknown[]) | undefined,
+	kind: number | undefined,
+	inner: ((args: readonly never[]) => readonly unknown[]) | undefined
+): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
+	if (!clears && args.length === 1 && kind !== undefined && isKindNode(args[0], kind)) return (place ?? ((placed: unknown) => apply([placed])))(args[0]);
 	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
 	const through = inner !== undefined && list === undefined && !clears && args.length > 0 && !(kind !== undefined && args.length === 1 && isKindNode(args[0], kind));

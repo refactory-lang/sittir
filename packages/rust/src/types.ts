@@ -4487,7 +4487,7 @@ export interface FunctionItem {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[];
-	readonly parameters: () => ParametersElements | ParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly AttributedParameter[];
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 	readonly body: () => Block;
@@ -4599,7 +4599,7 @@ export interface FunctionSignatureItem {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[];
-	readonly parameters: () => ParametersElements | ParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly AttributedParameter[];
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 }
@@ -6142,7 +6142,7 @@ export interface FunctionType {
 	};
 	readonly forLifetimes: () => readonly Lifetime[];
 	readonly content: () => FunctionTypeTraitForm | FunctionTypeFnForm;
-	readonly parameters: () => ParametersElements | ParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly AttributedParameter[];
 	readonly returnType: () => Type | undefined;
 }
 
@@ -11637,7 +11637,7 @@ export interface MethodDeclaration {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[];
-	readonly parameters: () => ParametersElements | ParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly AttributedParameter[];
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 	readonly body: () => Block;
@@ -11749,7 +11749,7 @@ export interface SignatureMethodDeclaration {
 	readonly functionModifiers: () => FunctionModifiers | undefined;
 	readonly name: () => Identifier | Metavariable;
 	readonly typeParameters: () => readonly AttributedTypeParameter[];
-	readonly parameters: () => ParametersElements | ParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly AttributedParameter[];
 	readonly returnType: () => Type | undefined;
 	readonly whereClause: () => WhereClause | undefined;
 }

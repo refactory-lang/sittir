@@ -4123,7 +4123,7 @@ export interface FunctionExpression {
 	readonly async: () => boolean;
 	readonly name: () => Identifier | undefined;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly body: () => StatementBlock;
 }
@@ -4183,7 +4183,7 @@ export interface FunctionDeclaration {
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly body: () => StatementBlock;
 	readonly terminator: () => NonNullable<T.FunctionDeclaration.Options>['terminator'] | undefined;
@@ -4240,7 +4240,7 @@ export interface GeneratorFunction {
 	readonly async: () => boolean;
 	readonly name: () => Identifier | undefined;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly body: () => StatementBlock;
 }
@@ -4300,7 +4300,7 @@ export interface GeneratorFunctionDeclaration {
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly body: () => StatementBlock;
 	readonly terminator: () => NonNullable<T.GeneratorFunctionDeclaration.Options>['terminator'] | undefined;
@@ -5418,7 +5418,7 @@ export interface FunctionSignature {
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly terminator: () => TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
 }
@@ -6760,7 +6760,7 @@ export interface ConstructorType {
 	};
 	readonly abstract: () => boolean;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly type: () => Type;
 }
 
@@ -7838,7 +7838,7 @@ export interface CallSignature {
 		};
 	};
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 }
 
@@ -8109,7 +8109,7 @@ export interface ConstructSignature {
 	};
 	readonly abstract: () => boolean;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly type: () => Type | undefined;
 }
 
@@ -8450,7 +8450,7 @@ export interface FunctionType {
 		};
 	};
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => Type | Asserts | TypePredicate;
 }
 
@@ -10302,7 +10302,7 @@ export interface MethodDefinitionPlain {
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly optional: () => boolean;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	readonly body: () => StatementBlock;
 }
@@ -10520,7 +10520,7 @@ export interface MethodSignaturePlain {
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly optional: () => boolean;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 }
 
@@ -10715,7 +10715,7 @@ export interface AbstractMethodSignaturePlain {
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly optional: () => boolean;
 	readonly typeParameters: () => readonly TypeParameter[];
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly returnType: () => TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 }
 
@@ -11080,7 +11080,7 @@ export interface ConstructorDeclaration {
 		| TSKindId.PrivateKeyword
 		| TSKindId.ProtectedKeyword
 		| undefined;
-	readonly parameters: () => FormalParametersElements | FormalParametersElementsReceiver | undefined;
+	readonly parameters: () => readonly (RequiredParameter | OptionalParameter)[];
 	readonly body: () => StatementBlock;
 }
 

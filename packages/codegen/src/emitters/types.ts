@@ -1065,7 +1065,7 @@ function emitInterface(
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
 			const chain = wrapperChainFor(nodeMap, node.kind, f.name);
 			if (chain !== undefined) {
-				lines.push(`  readonly ${propName}: () => ${hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
+				lines.push(`  readonly ${propName}: () => ${hoistedItemsType(chain, f, nodeMap, lookupUnion) ?? hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
 			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				lines.push(`  readonly ${propName}: () => ${slotListTypeOf(f, storageElementOf, 'readonly')};`);
 			} else if (hasBlankArm(f)) {
@@ -1302,13 +1302,22 @@ function hoistedItemsHint(
 	lookupUnion?: LookupUnion
 ): string | undefined {
 	const chain = wrapperChainFor(nodeMap, kind, field.name);
-	const last = chain?.slots[chain.slots.length - 1];
+	return chain === undefined ? undefined : hoistedItemsType(chain, field, nodeMap, lookupUnion);
+}
+
+function hoistedItemsType(
+	chain: WrapperChain,
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	const last = chain.slots[chain.slots.length - 1];
 	if (last === undefined || isMultiple(last)) return undefined;
 	const list = nodeMap.nodes.get(slotKindNames(last)[0] ?? '');
 	const itemSlot = list instanceof AssembledList ? list.slots.find((slot) => isMultiple(slot)) : undefined;
 	if (itemSlot === undefined) return undefined;
 	const element = (slot: AssembledNonterminal): string => fieldTypeExpr(slot, nodeMap, lookupUnion);
-	return !isRequired(field) || chain!.slots.some((slot) => !isRequired(slot)) ? `readonly (${element(itemSlot)})[]` : slotListTypeOf(itemSlot, element, 'readonly');
+	return !isRequired(field) || chain.slots.some((slot) => !isRequired(slot)) ? `readonly (${element(itemSlot)})[]` : slotListTypeOf(itemSlot, element, 'readonly');
 }
 
 function fieldLooseHintTypeExpr(
