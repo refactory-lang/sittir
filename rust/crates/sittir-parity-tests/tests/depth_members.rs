@@ -118,7 +118,7 @@ fn a_comment_written_after_the_root_finds_its_depth_members_and_renders_as_befor
     let comment = (0..count)
         .flat_map(|index| [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].map(|side| tree.trivia_side(NodeIndex::new(index), side)))
         .flatten()
-        .find(|entry| matches!(entry.value(), Some(sittir_core::SlotValue::Coord(_))))
+        .find(|entry| matches!(entry, sittir_core::trivia::TriviaEntry::Value(sittir_core::SlotValue::Coord(_))))
         .expect("the comment's entry");
     tree.write_trivia_side(NodeIndex::ROOT, TriviaSide::Trailing, vec![comment]).expect("the root's trailing side");
     assert_eq!(rendered_root(&tree), format!("{source}# c"));

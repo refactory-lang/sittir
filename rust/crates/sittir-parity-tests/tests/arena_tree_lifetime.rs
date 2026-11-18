@@ -305,7 +305,7 @@ fn held_coordinate<G: EngineGrammar, B: sittir_core::engine::Backing>(tree: &sit
     });
     let held = met.iter().find_map(|kid| {
         [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().flat_map(|side| tree.side_entries(kid.index, side, false)).find_map(|entry| match entry.into_entry() {
-            TriviaEntry::Value { value: SlotValue::Coord(coord), .. } => Some(coord),
+            TriviaEntry::Value(SlotValue::Coord(coord)) => Some(coord),
             _ => None,
         })
     });

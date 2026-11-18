@@ -35,9 +35,3 @@ export function mapTriviaEntries<In, Out>(
 		...(inner && { inner: map(inner) })
 	};
 }
-
-export function carryTokensBetween<Entry>(from: unknown, to: Entry): Entry {
-	if (to === null || typeof to !== 'object' || from === null || typeof from !== 'object') return to;
-	if ((from as { $tokensBetween?: unknown }).$tokensBetween === true) (to as { $tokensBetween?: true }).$tokensBetween = true;
-	return to;
-}

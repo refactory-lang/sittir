@@ -475,13 +475,13 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// A seated entry in a snapshot: an extra as its text, an `ERROR` with
-    /// its span, both measured from the holder, with the tokens before it
-    /// that it had; a layout run or a written entry as it is.
+    /// its span, both measured from the holder; a layout run or a written
+    /// entry as it is.
     fn snapshot_entry<T: crate::trivia::FromTriviaText>(&self, snapshot: &SnapshotCtx<'_>, side: SideEntry<T>) -> TriviaEntry<T> {
         match side {
-            SideEntry::Source { entry, kind, span, adjacent } => {
+            SideEntry::Source { kind, span, adjacent, .. } => {
                 let text = crate::trivia::TriviaText::of_source(kind, self.source, span, adjacent, Some(snapshot.span_of(span)));
-                TriviaEntry::new(SlotValue::Node(T::from_text(text))).with_tokens_between(entry.tokens_between())
+                TriviaEntry::new(SlotValue::Node(T::from_text(text)))
             }
             SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
         }

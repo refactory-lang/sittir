@@ -172,7 +172,7 @@ impl SideLookup for Table<'_> {
             .side(index, side)
             .iter()
             .filter_map(|assigned| match *assigned {
-                Assigned::Extra { at, .. } | Assigned::Error(at) => source(at),
+                Assigned::Extra(at) | Assigned::Error(at) => source(at),
                 Assigned::Layout { start, end, .. } if !self.source[start as usize..end as usize].contains('\n') => None,
                 Assigned::Layout { .. } | Assigned::Member(_) | Assigned::Depth(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Node(NoTrivia)))),
             })

@@ -50,8 +50,7 @@ impl Case {
         index_of(&self.tree, self.source, kind, text)
     }
 
-    /// The extras and `ERROR`s of `side` of the node at `index`, without its
-    /// layout runs.
+    /// The extras and `ERROR`s of `side` of the node at `index`, without its layout runs.
     fn entries(&self, index: NodeIndex, side: TriviaSide) -> Vec<Assigned> {
         self.table.side(index, side).iter().copied().filter(|entry| !matches!(entry, Assigned::Layout { .. } | Assigned::Depth(_))).collect()
     }
@@ -59,7 +58,7 @@ impl Case {
     /// Asserts the entry `comment` (of `comment_kind`) is the only extra of `side` of the node `owner` (of `kind`).
     fn holds(&self, kind: &str, owner: &str, side: TriviaSide, comment_kind: &str, comment: &str) {
         let entry = self.at(comment_kind, comment);
-        assert_eq!(self.entries(self.at(kind, owner), side), [Assigned::Extra { at: entry, tokens_between: false }], "{side:?} of {kind} {owner:?}");
+        assert_eq!(self.entries(self.at(kind, owner), side), [Assigned::Extra(entry)], "{side:?} of {kind} {owner:?}");
     }
 
     /// The layout runs holding a line break of every side, as source text.
@@ -106,9 +105,9 @@ fn a_comment_before_the_first_item_leads_it_and_one_after_the_last_trails_it() {
 #[test]
 fn a_source_of_comments_only_is_the_roots_inner() {
     let case = Case::new(rust(), "\n\n// only\n\n");
-    assert_eq!(case.entries(NodeIndex::ROOT, Inner), [Assigned::Extra { at: case.at("line_comment", "// only"), tokens_between: false }]);
+    assert_eq!(case.entries(NodeIndex::ROOT, Inner), [Assigned::Extra(case.at("line_comment", "// only"))]);
     let case = Case::new(python(), "\n# only\n");
-    assert_eq!(case.entries(NodeIndex::ROOT, Inner), [Assigned::Extra { at: case.at("comment", "# only"), tokens_between: false }]);
+    assert_eq!(case.entries(NodeIndex::ROOT, Inner), [Assigned::Extra(case.at("comment", "# only"))]);
 }
 
 #[test]
@@ -230,7 +229,7 @@ fn every_extra_of_the_probe_inputs_lands_in_one_side() {
         for index in (0..sittir_core::read::descendant_count(&case.tree.root_node())).map(NodeIndex::new) {
             for side in [Leading, Trailing, Inner] {
                 placed.extend(case.entries(index, side).into_iter().map(|entry| match entry {
-                    Assigned::Extra { at, .. } | Assigned::Error(at) | Assigned::Member(at) => at,
+                    Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => at,
                     Assigned::Layout { .. } | Assigned::Depth(_) => unreachable!(),
                 }));
             }
@@ -273,7 +272,7 @@ fn the_run_between_a_leading_entry_and_its_owner_is_on_the_entrys_side() {
     let member = case.at("property_signature", "x: number");
     let side = case.table.side(member, Leading);
     let after = sittir_core::types::narrow(source.find("*/").unwrap()) + 2;
-    assert!(matches!(side.first(), Some(Assigned::Extra { .. })), "{side:?}");
+    assert!(matches!(side.first(), Some(Assigned::Extra(_))), "{side:?}");
     assert!(side.iter().any(|entry| matches!(*entry, Assigned::Layout { start, .. } if start == after)), "{side:?}");
 }
 

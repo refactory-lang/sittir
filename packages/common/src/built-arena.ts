@@ -13,7 +13,7 @@ import { builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, pac
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
 import { isParsedPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
 import { keepExemplar } from './exemplars.ts';
-import { carryTokensBetween, forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { Source } from './source.ts';
 import { sourceOf } from './source-stamp.ts';
 
@@ -1300,7 +1300,7 @@ export function builtEntries(entries: readonly WireNode[], table: object): WireN
 	const node = (entry: WireNode): object | undefined =>
 		isBuiltEntry(entry) ? builtEntryNode(entry, table) : built === undefined ? undefined : isTextData(entry) ? built.textNode(entry) : isReadName(entry) ? (built.named(entry) as object) : undefined;
 	if (!entries.some((entry) => isBuiltEntry(entry) || (built !== undefined && (isTextData(entry) || isReadName(entry))))) return entries as WireNode[];
-	return entries.map((entry) => carryTokensBetween(entry, node(entry) ?? entry));
+	return entries.map((entry) => node(entry) ?? entry);
 }
 
 type TextData = { readonly $type: number; readonly $text: string };
