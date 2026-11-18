@@ -4096,21 +4096,11 @@ function buildFunctionExpression$with(node: Held, setter: string, args: readonly
 						? applySetter(args, (value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
-												buildFunctionExpression({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
+										buildFunctionExpression({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -4322,21 +4312,11 @@ function buildFunctionDeclaration$with(node: Held, setter: string, args: readonl
 						? applySetter(args, (value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
-												buildFunctionDeclaration({ ...config, parameters: value }, options))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
+										buildFunctionDeclaration({ ...config, parameters: value }, options))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -4541,21 +4521,11 @@ function buildGeneratorFunction$with(node: Held, setter: string, args: readonly 
 						? applySetter(args, (value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
-												buildGeneratorFunction({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
+										buildGeneratorFunction({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -4769,21 +4739,11 @@ function buildGeneratorFunctionDeclaration$with(node: Held, setter: string, args
 									buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options)
 								)
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
-												buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
+										buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -7401,21 +7361,11 @@ function buildFunctionSignature$with(node: Held, setter: string, args: readonly 
 						? applySetter(args, (value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
-												buildFunctionSignature({ ...config, parameters: value }, options))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
+										buildFunctionSignature({ ...config, parameters: value }, options))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -10585,21 +10535,11 @@ function buildConstructorType$with(node: Held, setter: string, args: readonly un
 						? applySetter(args, (value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
-												buildConstructorType({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
+										buildConstructorType({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -12487,21 +12427,11 @@ function buildCallSignature$with(node: Held, setter: string, args: readonly unkn
 						? applySetter(args, (value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
-												buildCallSignature({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
+										buildCallSignature({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -13157,21 +13087,11 @@ function buildConstructSignature$with(node: Held, setter: string, args: readonly
 						? applySetter(args, (value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
-												buildConstructSignature({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
+										buildConstructSignature({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -13715,21 +13635,11 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 						? applySetter(args, (value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
-												buildFunctionType({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+										buildFunctionType({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -16900,21 +16810,11 @@ function buildImportStatementClauseFrom$with(node: Held, setter: string, args: r
 						? applySetter(args, (value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
 								rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.NamedImports as const,
-											optional: false,
-											make: buildNamedImports,
-											forms: [TSKindId.NamespaceImport, TSKindId.ImportClauseDefaultImport]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
-												buildImportStatementClauseFrom({ ...config, importClause: value }))(
-												(list === undefined ? undefined : buildImportClause(list)) as never
-											)
+									((value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
+										buildImportStatementClauseFrom({ ...config, importClause: value }))(
+										(list === undefined ? undefined : buildImportClause(list)) as never
 									)
 								)
 							),
@@ -18318,21 +18218,11 @@ function buildImportClauseDefaultImport$with(node: Held, setter: string, args: r
 						? applySetter(args, (value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
 								rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.NamedImports as const,
-											optional: true,
-											make: buildNamedImports,
-											forms: [TSKindId.NamespaceImport]
-										},
-										(list: never) =>
-											((value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
-												buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))(
-												(list === undefined ? undefined : buildImportClauseGroup(list)) as never
-											)
+									((value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
+										buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))(
+										(list === undefined ? undefined : buildImportClauseGroup(list)) as never
 									)
 								)
 							),
@@ -20264,21 +20154,11 @@ function buildMethodDefinitionPlain$with(node: Held, setter: string, args: reado
 						? applySetter(args, (value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
-												buildMethodDefinitionPlain({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
+										buildMethodDefinitionPlain({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -20850,21 +20730,11 @@ function buildMethodSignaturePlain$with(node: Held, setter: string, args: readon
 						? applySetter(args, (value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
-												buildMethodSignaturePlain({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
+										buildMethodSignaturePlain({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -21378,21 +21248,11 @@ function buildAbstractMethodSignaturePlain$with(node: Held, setter: string, args
 						? applySetter(args, (value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
-												buildAbstractMethodSignaturePlain({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
+										buildAbstractMethodSignaturePlain({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),
@@ -22357,21 +22217,11 @@ function buildConstructorDeclaration$with(node: Held, setter: string, args: read
 						? applySetter(args, (value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.FormalParametersElements as const,
-											optional: false,
-											make: buildFormalParametersElements,
-											forms: [TSKindId.FormalParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
-												buildConstructorDeclaration({ ...config, parameters: value }))(
-												(list === undefined ? undefined : buildFormalParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
+										buildConstructorDeclaration({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
 									)
 								)
 							),

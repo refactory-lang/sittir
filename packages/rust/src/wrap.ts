@@ -2724,24 +2724,13 @@ function wrapFunctionItem$with(node: Held, setter: string, args: readonly unknow
 									)
 								)
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((v: NonNullable<T.FunctionItem['_parameters']>) =>
-												wrapFunctionItem(
-													{ ...$edited(data), _parameters: admitSlot(handle, 'function_item', 'parameters', v) },
-													tree
-												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
-									)
+									((v: NonNullable<T.FunctionItem['_parameters']>) =>
+										wrapFunctionItem(
+											{ ...$edited(data), _parameters: admitSlot(handle, 'function_item', 'parameters', v) },
+											tree
+										))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 								)
 							),
 				(value) =>
@@ -3026,27 +3015,13 @@ function wrapFunctionSignatureItem$with(node: Held, setter: string, args: readon
 									)
 								)
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((v: NonNullable<T.FunctionSignatureItem['_parameters']>) =>
-												wrapFunctionSignatureItem(
-													{
-														...$edited(data),
-														_parameters: admitSlot(handle, 'function_signature_item', 'parameters', v)
-													},
-													tree
-												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
-									)
+									((v: NonNullable<T.FunctionSignatureItem['_parameters']>) =>
+										wrapFunctionSignatureItem(
+											{ ...$edited(data), _parameters: admitSlot(handle, 'function_signature_item', 'parameters', v) },
+											tree
+										))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 								)
 							),
 				(value) =>
@@ -5810,24 +5785,13 @@ function wrapFunctionType$with(node: Held, setter: string, args: readonly unknow
 									)
 								)
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((v: NonNullable<T.FunctionType['_parameters']>) =>
-												wrapFunctionType(
-													{ ...$edited(data), _parameters: admitSlot(handle, 'function_type', 'parameters', v) },
-													tree
-												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
-									)
+									((v: NonNullable<T.FunctionType['_parameters']>) =>
+										wrapFunctionType(
+											{ ...$edited(data), _parameters: admitSlot(handle, 'function_type', 'parameters', v) },
+											tree
+										))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 								)
 							),
 				(value) =>
@@ -21044,24 +21008,13 @@ function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly u
 									)
 								)
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((v: NonNullable<T.MethodDeclaration['_parameters']>) =>
-												wrapMethodDeclaration(
-													{ ...$edited(data), _parameters: admitSlot(handle, 'method_declaration', 'parameters', v) },
-													tree
-												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
-									)
+									((v: NonNullable<T.MethodDeclaration['_parameters']>) =>
+										wrapMethodDeclaration(
+											{ ...$edited(data), _parameters: admitSlot(handle, 'method_declaration', 'parameters', v) },
+											tree
+										))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 								)
 							),
 				(value) =>
@@ -21349,27 +21302,16 @@ function wrapSignatureMethodDeclaration$with(node: Held, setter: string, args: r
 									)
 								)
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: RAW.buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((v: NonNullable<T.SignatureMethodDeclaration['_parameters']>) =>
-												wrapSignatureMethodDeclaration(
-													{
-														...$edited(data),
-														_parameters: admitSlot(handle, 'signature_method_declaration', 'parameters', v)
-													},
-													tree
-												))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
-									)
+									((v: NonNullable<T.SignatureMethodDeclaration['_parameters']>) =>
+										wrapSignatureMethodDeclaration(
+											{
+												...$edited(data),
+												_parameters: admitSlot(handle, 'signature_method_declaration', 'parameters', v)
+											},
+											tree
+										))((list === undefined ? undefined : RAW.buildParameters(list)) as never)
 								)
 							),
 				(value) =>

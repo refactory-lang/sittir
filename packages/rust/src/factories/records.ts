@@ -4323,22 +4323,11 @@ function withFunctionItem(node: object, setter: string, args: readonly unknown[]
 						? applySetter(args, (value: Admit<NonNullable<T.FunctionItem.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildFunctionItem$set(node, 'parameters', { parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.FunctionItem.Config>['parameters']>) =>
-												buildFunctionItem$set(node, 'parameters', { parameters: value }))(
-												(list === undefined ? undefined : buildParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.FunctionItem.Config>['parameters']>) =>
+										buildFunctionItem$set(node, 'parameters', { parameters: value }))(
+										(list === undefined ? undefined : buildParameters(list)) as never
 									)
 								)
 							),
@@ -4745,22 +4734,11 @@ function withFunctionSignatureItem(node: object, setter: string, args: readonly 
 						? applySetter(args, (value: Admit<NonNullable<T.FunctionSignatureItem.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildFunctionSignatureItem$set(node, 'parameters', { parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.FunctionSignatureItem.Config>['parameters']>) =>
-												buildFunctionSignatureItem$set(node, 'parameters', { parameters: value }))(
-												(list === undefined ? undefined : buildParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.FunctionSignatureItem.Config>['parameters']>) =>
+										buildFunctionSignatureItem$set(node, 'parameters', { parameters: value }))(
+										(list === undefined ? undefined : buildParameters(list)) as never
 									)
 								)
 							),
@@ -8492,22 +8470,11 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 						? applySetter(args, (value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildFunctionType$set(node, 'parameters', { parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
-												buildFunctionType$set(node, 'parameters', { parameters: value }))(
-												(list === undefined ? undefined : buildParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+										buildFunctionType$set(node, 'parameters', { parameters: value }))(
+										(list === undefined ? undefined : buildParameters(list)) as never
 									)
 								)
 							),
@@ -29251,22 +29218,11 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 						? applySetter(args, (value: Admit<NonNullable<T.MethodDeclaration.Config>['parameters']>) =>
 								rebuilt(node, handle, () => buildMethodDeclaration$set(node, 'parameters', { parameters: value }))
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.MethodDeclaration.Config>['parameters']>) =>
-												buildMethodDeclaration$set(node, 'parameters', { parameters: value }))(
-												(list === undefined ? undefined : buildParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.MethodDeclaration.Config>['parameters']>) =>
+										buildMethodDeclaration$set(node, 'parameters', { parameters: value }))(
+										(list === undefined ? undefined : buildParameters(list)) as never
 									)
 								)
 							),
@@ -29677,22 +29633,11 @@ function withSignatureMethodDeclaration(node: object, setter: string, args: read
 									buildSignatureMethodDeclaration$set(node, 'parameters', { parameters: value })
 								)
 							)
-						: applySetter(args, (...args: unknown[]) =>
+						: applySetter(args, (list: never) =>
 								rebuilt(node, handle, () =>
-									listSlotWith(
-										args,
-										{
-											kind: TSKindId.ParametersElements as const,
-											optional: false,
-											make: buildParametersElements,
-											element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
-											forms: [TSKindId.ParametersElementsReceiver]
-										},
-										(list: never) =>
-											((value: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['parameters']>) =>
-												buildSignatureMethodDeclaration$set(node, 'parameters', { parameters: value }))(
-												(list === undefined ? undefined : buildParameters(list)) as never
-											)
+									((value: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['parameters']>) =>
+										buildSignatureMethodDeclaration$set(node, 'parameters', { parameters: value }))(
+										(list === undefined ? undefined : buildParameters(list)) as never
 									)
 								)
 							),
