@@ -276,7 +276,9 @@ function buildString$with(node: Held, setter: string, args: readonly unknown[]):
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value))),
+					applySetter(args, (value?: Admit<NonNullable<T.StringContent>>) =>
+						rebuilt(node, handle, () => _buildString(value))
+					),
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
@@ -353,7 +355,7 @@ function buildImmediateString$with(node: Held, setter: string, args: readonly un
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.StringContent>) =>
+					applySetter(args, (value?: Admit<NonNullable<T.StringContent>>) =>
 						rebuilt(node, handle, () => _buildImmediateString(value))
 					),
 				undefined,
@@ -918,8 +920,8 @@ function buildPredicate$with(node: Held, setter: string, args: readonly unknown[
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.Parameters>) =>
-						rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.Predicate.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [

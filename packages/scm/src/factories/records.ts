@@ -309,7 +309,7 @@ function withString(node: object, setter: string, args: readonly unknown[]): unk
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.StringContent>) =>
+					applySetter(args, (value?: Admit<NonNullable<T.StringContent>>) =>
 						rebuilt(node, handle, () => _buildString$patch(node, value))
 					),
 				undefined,
@@ -387,7 +387,7 @@ function withImmediateString(node: object, setter: string, args: readonly unknow
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.StringContent>) =>
+					applySetter(args, (value?: Admit<NonNullable<T.StringContent>>) =>
 						rebuilt(node, handle, () => _buildImmediateString$patch(node, value))
 					),
 				undefined,
@@ -1210,8 +1210,8 @@ function withPredicate(node: object, setter: string, args: readonly unknown[]): 
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.Parameters>) =>
-						rebuilt(node, handle, () => buildPredicate$set(node, 'parameters', { parameters: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.Predicate.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildPredicate$set(node, 'parameters', { parameters: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [

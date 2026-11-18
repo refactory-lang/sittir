@@ -293,8 +293,8 @@ function buildLookaheadAssertion$with(node: Held, setter: string, args: readonly
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Pattern>) =>
-						rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.LookaheadAssertion.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
@@ -365,8 +365,8 @@ function buildLookbehindAssertion$with(node: Held, setter: string, args: readonl
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Pattern>) =>
-						rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.LookbehindAssertion.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
@@ -707,7 +707,7 @@ function buildAnonymousCapturingGroup$with(node: Held, setter: string, args: rea
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Pattern>) =>
+					applySetter(args, (value: Admit<NonNullable<T.Pattern>>) =>
 						rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
 					),
 				undefined,
@@ -788,8 +788,8 @@ function buildNamedCapturingGroup$with(node: Held, setter: string, args: readonl
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Pattern>) =>
-						rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
@@ -867,7 +867,9 @@ function buildNonCapturingGroup$with(node: Held, setter: string, args: readonly 
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildNonCapturingGroup(value))),
+					applySetter(args, (value: Admit<NonNullable<T.Pattern>>) =>
+						rebuilt(node, handle, () => _buildNonCapturingGroup(value))
+					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
 				TSKindId.Pattern
@@ -1926,8 +1928,8 @@ function buildInlineFlagsGroupEnable$with(node: Held, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.Pattern>) =>
-						rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.InlineFlagsGroupEnable.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
@@ -2014,8 +2016,8 @@ function buildInlineFlagsGroupToggle$with(node: Held, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.Pattern>) =>
-						rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.InlineFlagsGroupToggle.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
@@ -2095,8 +2097,8 @@ function buildInlineFlagsGroupDisable$with(node: Held, setter: string, args: rea
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.Pattern>) =>
-						rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.InlineFlagsGroupDisable.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),

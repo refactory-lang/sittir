@@ -523,7 +523,7 @@ export interface String {
 		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
 	};
 	readonly __slotHints__?: {
-		readonly stringContent: SlotHint<T.StringContent, true>;
+		readonly stringContent: SlotHint<NonNullable<T.StringContent>, true>;
 	};
 	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[];
 }
@@ -541,7 +541,7 @@ export interface ImmediateString {
 		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
 	};
 	readonly __slotHints__?: {
-		readonly stringContent: SlotHint<T.StringContent, true>;
+		readonly stringContent: SlotHint<NonNullable<T.StringContent>, true>;
 	};
 	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[];
 }
@@ -704,7 +704,7 @@ export interface Predicate {
 		readonly prefix: SlotHint<NonNullable<T.Predicate.Config>['prefix']>;
 		readonly name: SlotHint<T.ImmediateIdentifier>;
 		readonly type: SlotHint<NonNullable<T.Predicate.Config>['type']>;
-		readonly parameters: SlotHint<T.Parameters, true>;
+		readonly parameters: SlotHint<NonNullable<T.Predicate.Config>['parameters'], true>;
 	};
 	readonly prefix: () => TSKindId.Pound | TSKindId.Dot;
 	readonly name: () => ImmediateIdentifier;

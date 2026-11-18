@@ -416,7 +416,7 @@ function withExportClause(node: object, setter: string, args: readonly unknown[]
 							listSlotWith(
 								args,
 								{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
-								(value?: Admit<T.ExportSpecifiers>) => _buildExportClause$patch(node, value)
+								(value?: Admit<NonNullable<T.ExportSpecifiers>>) => _buildExportClause$patch(node, value)
 							)
 						)
 					),
@@ -964,7 +964,7 @@ function withNamedImports(node: object, setter: string, args: readonly unknown[]
 							listSlotWith(
 								args,
 								{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
-								(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports$patch(node, value)
+								(value?: Admit<NonNullable<T.ImportSpecifiers>>) => _buildNamedImports$patch(node, value)
 							)
 						)
 					),
@@ -1102,8 +1102,8 @@ function withImportAttribute(node: object, setter: string, args: readonly unknow
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Object>) =>
-						rebuilt(node, handle, () => buildImportAttribute$set(node, 'object', { object: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.ImportAttribute.Config>['object']>) =>
+						rebuilt(node, handle, () => buildImportAttribute$set(node, 'object', { object: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -2056,8 +2056,8 @@ function withIfStatement(node: object, setter: string, args: readonly unknown[])
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.ElseClause>) =>
-						rebuilt(node, handle, () => buildIfStatement$set(node, 'alternative', { alternative: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.IfStatement.Config>['alternative']>) =>
+						rebuilt(node, handle, () => buildIfStatement$set(node, 'alternative', { alternative: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildElseClause(v))(v as never)),
@@ -2191,8 +2191,8 @@ function withSwitchStatement(node: object, setter: string, args: readonly unknow
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.SwitchBody>) =>
-						rebuilt(node, handle, () => buildSwitchStatement$set(node, 'body', { body: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.SwitchStatement.Config>['body']>) =>
+						rebuilt(node, handle, () => buildSwitchStatement$set(node, 'body', { body: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -2883,8 +2883,8 @@ function withTryStatement(node: object, setter: string, args: readonly unknown[]
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.FinallyClause>) =>
-						rebuilt(node, handle, () => buildTryStatement$set(node, 'finalizer', { finalizer: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.TryStatement.Config>['finalizer']>) =>
+						rebuilt(node, handle, () => buildTryStatement$set(node, 'finalizer', { finalizer: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildFinallyClause(v))(v as never)),
@@ -5030,9 +5030,9 @@ function withClass(node: object, setter: string, args: readonly unknown[]): unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
+					applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Class.Config>['decorators']>[number][]>) =>
 						rebuilt(node, handle, () =>
-							buildClass$set(node, 'decorators', { decorators: restItems('decorators', values) as never })
+							buildClass$set(node, 'decorators', { decorators: restItems('decorators', values) })
 						)
 					),
 				undefined,
@@ -5059,8 +5059,8 @@ function withClass(node: object, setter: string, args: readonly unknown[]): unkn
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildClass$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.Class.Config>['typeParameters']>) =>
+									buildClass$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -5086,8 +5086,8 @@ function withClass(node: object, setter: string, args: readonly unknown[]): unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-						rebuilt(node, handle, () => buildClass$set(node, 'heritage', { heritage: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.Class.Config>['heritage']>) =>
+						rebuilt(node, handle, () => buildClass$set(node, 'heritage', { heritage: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
@@ -5104,8 +5104,8 @@ function withClass(node: object, setter: string, args: readonly unknown[]): unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.ClassBody>) =>
-						rebuilt(node, handle, () => buildClass$set(node, 'body', { body: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.Class.Config>['body']>) =>
+						rebuilt(node, handle, () => buildClass$set(node, 'body', { body: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -5425,10 +5425,12 @@ function withClassDeclaration(node: object, setter: string, args: readonly unkno
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildClassDeclaration$set(node, 'decorators', { decorators: restItems('decorators', values) as never })
-						)
+					applySetter(
+						args,
+						(...values: Admit<NonNullable<NonNullable<T.ClassDeclaration.Config>['decorators']>[number][]>) =>
+							rebuilt(node, handle, () =>
+								buildClassDeclaration$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -5454,8 +5456,8 @@ function withClassDeclaration(node: object, setter: string, args: readonly unkno
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildClassDeclaration$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.ClassDeclaration.Config>['typeParameters']>) =>
+									buildClassDeclaration$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -5481,8 +5483,8 @@ function withClassDeclaration(node: object, setter: string, args: readonly unkno
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-						rebuilt(node, handle, () => buildClassDeclaration$set(node, 'heritage', { heritage: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.ClassDeclaration.Config>['heritage']>) =>
+						rebuilt(node, handle, () => buildClassDeclaration$set(node, 'heritage', { heritage: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
@@ -5499,8 +5501,8 @@ function withClassDeclaration(node: object, setter: string, args: readonly unkno
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.ClassBody>) =>
-						rebuilt(node, handle, () => buildClassDeclaration$set(node, 'body', { body: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.ClassDeclaration.Config>['body']>) =>
+						rebuilt(node, handle, () => buildClassDeclaration$set(node, 'body', { body: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -5840,8 +5842,8 @@ function withFunctionExpression(node: object, setter: string, args: readonly unk
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildFunctionExpression$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.FunctionExpression.Config>['typeParameters']>) =>
+									buildFunctionExpression$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -5873,10 +5875,8 @@ function withFunctionExpression(node: object, setter: string, args: readonly unk
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildFunctionExpression$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionExpression$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -5889,16 +5889,16 @@ function withFunctionExpression(node: object, setter: string, args: readonly unk
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildFunctionExpression$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
+												buildFunctionExpression$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () => buildFunctionExpression$set(node, 'parameters', { parameters: value as never }))
+					applySetter([value], (value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionExpression$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -6232,8 +6232,8 @@ function withFunctionDeclaration(node: object, setter: string, args: readonly un
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildFunctionDeclaration$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.FunctionDeclaration.Config>['typeParameters']>) =>
+									buildFunctionDeclaration$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -6265,10 +6265,8 @@ function withFunctionDeclaration(node: object, setter: string, args: readonly un
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildFunctionDeclaration$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionDeclaration$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -6281,18 +6279,16 @@ function withFunctionDeclaration(node: object, setter: string, args: readonly un
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildFunctionDeclaration$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
+												buildFunctionDeclaration$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () =>
-							buildFunctionDeclaration$set(node, 'parameters', { parameters: value as never })
-						)
+					applySetter([value], (value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionDeclaration$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -6586,8 +6582,8 @@ function withGeneratorFunction(node: object, setter: string, args: readonly unkn
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildGeneratorFunction$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.GeneratorFunction.Config>['typeParameters']>) =>
+									buildGeneratorFunction$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -6619,10 +6615,8 @@ function withGeneratorFunction(node: object, setter: string, args: readonly unkn
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildGeneratorFunction$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildGeneratorFunction$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -6635,16 +6629,16 @@ function withGeneratorFunction(node: object, setter: string, args: readonly unkn
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildGeneratorFunction$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
+												buildGeneratorFunction$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () => buildGeneratorFunction$set(node, 'parameters', { parameters: value as never }))
+					applySetter([value], (value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildGeneratorFunction$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -6978,8 +6972,8 @@ function withGeneratorFunctionDeclaration(node: object, setter: string, args: re
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildGeneratorFunctionDeclaration$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['typeParameters']>) =>
+									buildGeneratorFunctionDeclaration$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -7011,9 +7005,9 @@ function withGeneratorFunctionDeclaration(node: object, setter: string, args: re
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
+						? applySetter(args, (value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
 								rebuilt(node, handle, () =>
-									buildGeneratorFunctionDeclaration$set(node, 'parameters', { parameters: value as never })
+									buildGeneratorFunctionDeclaration$set(node, 'parameters', { parameters: value })
 								)
 							)
 						: applySetter(args, (...args: unknown[]) =>
@@ -7027,17 +7021,17 @@ function withGeneratorFunctionDeclaration(node: object, setter: string, args: re
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildGeneratorFunctionDeclaration$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
+												buildGeneratorFunctionDeclaration$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
+					applySetter([value], (value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
 						rebuilt(node, handle, () =>
-							buildGeneratorFunctionDeclaration$set(node, 'parameters', { parameters: value as never })
+							buildGeneratorFunctionDeclaration$set(node, 'parameters', { parameters: value })
 						)
 					)
 			);
@@ -7360,8 +7354,8 @@ function withNewExpression(node: object, setter: string, args: readonly unknown[
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-								(value?: Admit<T.TypeArguments>) =>
-									buildNewExpression$set(node, 'typeArguments', { typeArguments: value as never })
+								(value?: Admit<NonNullable<T.NewExpression.Config>['typeArguments']>) =>
+									buildNewExpression$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -9770,8 +9764,8 @@ function withDecoratorCallExpression(node: object, setter: string, args: readonl
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-								(value?: Admit<T.TypeArguments>) =>
-									buildDecoratorCallExpression$set(node, 'typeArguments', { typeArguments: value as never })
+								(value?: Admit<NonNullable<T.DecoratorCallExpression.Config>['typeArguments']>) =>
+									buildDecoratorCallExpression$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -9795,10 +9789,8 @@ function withDecoratorCallExpression(node: object, setter: string, args: readonl
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Arguments>) =>
-						rebuilt(node, handle, () =>
-							buildDecoratorCallExpression$set(node, 'arguments', { arguments: value as never })
-						)
+					applySetter(args, (value: Admit<NonNullable<T.DecoratorCallExpression.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildDecoratorCallExpression$set(node, 'arguments', { arguments: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -10772,8 +10764,8 @@ function withFunctionSignature(node: object, setter: string, args: readonly unkn
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildFunctionSignature$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.FunctionSignature.Config>['typeParameters']>) =>
+									buildFunctionSignature$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -10805,10 +10797,8 @@ function withFunctionSignature(node: object, setter: string, args: readonly unkn
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildFunctionSignature$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionSignature$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -10821,16 +10811,16 @@ function withFunctionSignature(node: object, setter: string, args: readonly unkn
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildFunctionSignature$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
+												buildFunctionSignature$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () => buildFunctionSignature$set(node, 'parameters', { parameters: value as never }))
+					applySetter([value], (value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionSignature$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -11032,8 +11022,8 @@ function withTypeAssertion(node: object, setter: string, args: readonly unknown[
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-								(value: Admit<T.TypeArguments>) =>
-									buildTypeAssertion$set(node, 'typeArguments', { typeArguments: value as never })
+								(value: Admit<NonNullable<T.TypeAssertion.Config>['typeArguments']>) =>
+									buildTypeAssertion$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -11462,8 +11452,8 @@ function withInstantiationExpression(node: object, setter: string, args: readonl
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-								(value: Admit<T.TypeArguments>) =>
-									buildInstantiationExpression$set(node, 'typeArguments', { typeArguments: value as never })
+								(value: Admit<NonNullable<T.InstantiationExpression.Config>['typeArguments']>) =>
+									buildInstantiationExpression$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -11779,8 +11769,8 @@ function withExtendsClauseSingle(node: object, setter: string, args: readonly un
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-								(value?: Admit<T.TypeArguments>) =>
-									buildExtendsClauseSingle$set(node, 'typeArguments', { typeArguments: value as never })
+								(value?: Admit<NonNullable<T.ExtendsClauseSingle.Config>['typeArguments']>) =>
+									buildExtendsClauseSingle$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -12180,12 +12170,12 @@ function withAbstractClassDeclaration(node: object, setter: string, args: readon
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildAbstractClassDeclaration$set(node, 'decorators', {
-								decorators: restItems('decorators', values) as never
-							})
-						)
+					applySetter(
+						args,
+						(...values: Admit<NonNullable<NonNullable<T.AbstractClassDeclaration.Config>['decorators']>[number][]>) =>
+							rebuilt(node, handle, () =>
+								buildAbstractClassDeclaration$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -12211,8 +12201,8 @@ function withAbstractClassDeclaration(node: object, setter: string, args: readon
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildAbstractClassDeclaration$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.AbstractClassDeclaration.Config>['typeParameters']>) =>
+									buildAbstractClassDeclaration$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -12238,10 +12228,8 @@ function withAbstractClassDeclaration(node: object, setter: string, args: readon
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-						rebuilt(node, handle, () =>
-							buildAbstractClassDeclaration$set(node, 'heritage', { heritage: value as never })
-						)
+					applySetter(args, (value?: Admit<NonNullable<T.AbstractClassDeclaration.Config>['heritage']>) =>
+						rebuilt(node, handle, () => buildAbstractClassDeclaration$set(node, 'heritage', { heritage: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
@@ -12258,8 +12246,8 @@ function withAbstractClassDeclaration(node: object, setter: string, args: readon
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.ClassBody>) =>
-						rebuilt(node, handle, () => buildAbstractClassDeclaration$set(node, 'body', { body: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.AbstractClassDeclaration.Config>['body']>) =>
+						rebuilt(node, handle, () => buildAbstractClassDeclaration$set(node, 'body', { body: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -12991,8 +12979,8 @@ function withInterfaceDeclaration(node: object, setter: string, args: readonly u
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildInterfaceDeclaration$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.InterfaceDeclaration.Config>['typeParameters']>) =>
+									buildInterfaceDeclaration$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -13018,9 +13006,9 @@ function withInterfaceDeclaration(node: object, setter: string, args: readonly u
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.ExtendsTypeClause>) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InterfaceDeclaration.Config>['extendsTypeClause']>) =>
 						rebuilt(node, handle, () =>
-							buildInterfaceDeclaration$set(node, 'extendsTypeClause', { extendsTypeClause: value as never })
+							buildInterfaceDeclaration$set(node, 'extendsTypeClause', { extendsTypeClause: value })
 						)
 					),
 				undefined,
@@ -13271,7 +13259,8 @@ function withEnumDeclaration(node: object, setter: string, args: readonly unknow
 							listSlotWith(
 								args,
 								{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
-								(value: Admit<T.EnumBody>) => buildEnumDeclaration$set(node, 'body', { body: value as never })
+								(value: Admit<NonNullable<T.EnumDeclaration.Config>['body']>) =>
+									buildEnumDeclaration$set(node, 'body', { body: value })
 							)
 						)
 					),
@@ -13366,7 +13355,7 @@ function withEnumBody(node: object, setter: string, args: readonly unknown[]): u
 							listSlotWith(
 								args,
 								{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
-								(value?: Admit<T.EnumBodyElements>) => _buildEnumBody$patch(node, value)
+								(value?: Admit<NonNullable<T.EnumBodyElements>>) => _buildEnumBody$patch(node, value)
 							)
 						)
 					),
@@ -13753,8 +13742,8 @@ function withTypeAliasDeclaration(node: object, setter: string, args: readonly u
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildTypeAliasDeclaration$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.TypeAliasDeclaration.Config>['typeParameters']>) =>
+									buildTypeAliasDeclaration$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -14033,10 +14022,12 @@ function withRequiredParameter(node: object, setter: string, args: readonly unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildRequiredParameter$set(node, 'decorators', { decorators: restItems('decorators', values) as never })
-						)
+					applySetter(
+						args,
+						(...values: Admit<NonNullable<NonNullable<T.RequiredParameter.Config>['decorators']>[number][]>) =>
+							rebuilt(node, handle, () =>
+								buildRequiredParameter$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -14071,8 +14062,8 @@ function withRequiredParameter(node: object, setter: string, args: readonly unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildRequiredParameter$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildRequiredParameter$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -14336,10 +14327,12 @@ function withOptionalParameter(node: object, setter: string, args: readonly unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildOptionalParameter$set(node, 'decorators', { decorators: restItems('decorators', values) as never })
-						)
+					applySetter(
+						args,
+						(...values: Admit<NonNullable<NonNullable<T.OptionalParameter.Config>['decorators']>[number][]>) =>
+							rebuilt(node, handle, () =>
+								buildOptionalParameter$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -14374,8 +14367,8 @@ function withOptionalParameter(node: object, setter: string, args: readonly unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildOptionalParameter$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildOptionalParameter$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -14928,10 +14921,12 @@ function withTypeQueryCallExpressionInTypeAnnotation(node: object, setter: strin
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Arguments>) =>
-						rebuilt(node, handle, () =>
-							buildTypeQueryCallExpressionInTypeAnnotation$set(node, 'arguments', { arguments: value as never })
-						)
+					applySetter(
+						args,
+						(value: Admit<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['arguments']>) =>
+							rebuilt(node, handle, () =>
+								buildTypeQueryCallExpressionInTypeAnnotation$set(node, 'arguments', { arguments: value })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -15066,7 +15061,7 @@ function withAssertsAnnotation(node: object, setter: string, args: readonly unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Asserts>) =>
+					applySetter(args, (value: Admit<NonNullable<T.Asserts>>) =>
 						rebuilt(node, handle, () => _buildAssertsAnnotation$patch(node, value))
 					),
 				undefined,
@@ -15186,8 +15181,8 @@ function withTupleParameter(node: object, setter: string, args: readonly unknown
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildTupleParameter$set(node, 'type', { type: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.TupleParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildTupleParameter$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -15316,8 +15311,8 @@ function withOptionalTupleParameter(node: object, setter: string, args: readonly
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildOptionalTupleParameter$set(node, 'type', { type: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.OptionalTupleParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildOptionalTupleParameter$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -15656,8 +15651,8 @@ function withConstructorType(node: object, setter: string, args: readonly unknow
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildConstructorType$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.ConstructorType.Config>['typeParameters']>) =>
+									buildConstructorType$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -15689,10 +15684,8 @@ function withConstructorType(node: object, setter: string, args: readonly unknow
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildConstructorType$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildConstructorType$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -15705,16 +15698,16 @@ function withConstructorType(node: object, setter: string, args: readonly unknow
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildConstructorType$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
+												buildConstructorType$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () => buildConstructorType$set(node, 'parameters', { parameters: value as never }))
+					applySetter([value], (value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildConstructorType$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'type':
@@ -16336,8 +16329,8 @@ function withGenericType(node: object, setter: string, args: readonly unknown[])
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-								(value: Admit<T.TypeArguments>) =>
-									buildGenericType$set(node, 'typeArguments', { typeArguments: value as never })
+								(value: Admit<NonNullable<T.GenericType.Config>['typeArguments']>) =>
+									buildGenericType$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -16990,7 +16983,7 @@ function withTypeQueryCallExpression(node: object, setter: string, args: readonl
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Arguments>) =>
+					applySetter(args, (value: Admit<NonNullable<T.Arguments>>) =>
 						rebuilt(node, handle, () => _buildTypeQueryCallExpression$patch(node, value))
 					),
 				undefined,
@@ -17173,8 +17166,8 @@ function withTypeQueryInstantiationExpression(node: object, setter: string, args
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-								(value: Admit<T.TypeArguments>) =>
-									buildTypeQueryInstantiationExpression$set(node, 'typeArguments', { typeArguments: value as never })
+								(value: Admit<NonNullable<T.TypeQueryInstantiationExpression.Config>['typeArguments']>) =>
+									buildTypeQueryInstantiationExpression$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -17942,7 +17935,7 @@ function withTypeArguments(node: object, setter: string, args: readonly unknown[
 							listSlotWith(
 								args,
 								{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
-								(value: Admit<T.Types>) => _buildTypeArguments$patch(node, value)
+								(value: Admit<NonNullable<T.Types>>) => _buildTypeArguments$patch(node, value)
 							)
 						)
 					),
@@ -18101,8 +18094,8 @@ function withObjectType(node: object, setter: string, args: readonly unknown[]):
 							listSlotWith(
 								args,
 								{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-								(value?: Admit<T.ObjectTypeContent>) =>
-									buildObjectType$set(node, 'members', { members: value as never })
+								(value?: Admit<NonNullable<ConfigOf<T.ObjectType>>['members']>) =>
+									buildObjectType$set(node, 'members', { members: value })
 							)
 						)
 					),
@@ -18346,8 +18339,8 @@ function withCallSignature(node: object, setter: string, args: readonly unknown[
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildCallSignature$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.CallSignature.Config>['typeParameters']>) =>
+									buildCallSignature$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -18379,8 +18372,8 @@ function withCallSignature(node: object, setter: string, args: readonly unknown[
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () => buildCallSignature$set(node, 'parameters', { parameters: value as never }))
+						? applySetter(args, (value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildCallSignature$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -18393,16 +18386,16 @@ function withCallSignature(node: object, setter: string, args: readonly unknown[
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildCallSignature$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
+												buildCallSignature$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () => buildCallSignature$set(node, 'parameters', { parameters: value as never }))
+					applySetter([value], (value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildCallSignature$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -18680,8 +18673,8 @@ function withPropertySignature(node: object, setter: string, args: readonly unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildPropertySignature$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.PropertySignature.Config>['type']>) =>
+						rebuilt(node, handle, () => buildPropertySignature$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -18770,7 +18763,7 @@ function withTypeParameters(node: object, setter: string, args: readonly unknown
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
-								(value: Admit<T.TypeParametersElements>) => _buildTypeParameters$patch(node, value)
+								(value: Admit<NonNullable<T.TypeParametersElements>>) => _buildTypeParameters$patch(node, value)
 							)
 						)
 					),
@@ -18939,8 +18932,8 @@ function withTypeParameter(node: object, setter: string, args: readonly unknown[
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.DefaultType>) =>
-						rebuilt(node, handle, () => buildTypeParameter$set(node, 'default', { default: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.TypeParameter.Config>['default']>) =>
+						rebuilt(node, handle, () => buildTypeParameter$set(node, 'default', { default: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDefaultType(v))(v as never)),
@@ -19335,8 +19328,8 @@ function withConstructSignature(node: object, setter: string, args: readonly unk
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildConstructSignature$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.ConstructSignature.Config>['typeParameters']>) =>
+									buildConstructSignature$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -19368,10 +19361,8 @@ function withConstructSignature(node: object, setter: string, args: readonly unk
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildConstructSignature$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildConstructSignature$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -19384,16 +19375,16 @@ function withConstructSignature(node: object, setter: string, args: readonly unk
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildConstructSignature$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
+												buildConstructSignature$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () => buildConstructSignature$set(node, 'parameters', { parameters: value as never }))
+					applySetter([value], (value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildConstructSignature$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'type':
@@ -19407,8 +19398,8 @@ function withConstructSignature(node: object, setter: string, args: readonly unk
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildConstructSignature$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.ConstructSignature.Config>['type']>) =>
+						rebuilt(node, handle, () => buildConstructSignature$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -19557,7 +19548,7 @@ function withTupleType(node: object, setter: string, args: readonly unknown[]): 
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
-								(value?: Admit<T.TupleTypeMembers>) => _buildTupleType$patch(node, value)
+								(value?: Admit<NonNullable<T.TupleTypeMembers>>) => _buildTupleType$patch(node, value)
 							)
 						)
 					),
@@ -20100,8 +20091,8 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildFunctionType$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.FunctionType.Config>['typeParameters']>) =>
+									buildFunctionType$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -20133,8 +20124,8 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () => buildFunctionType$set(node, 'parameters', { parameters: value as never }))
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionType$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -20147,16 +20138,16 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildFunctionType$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+												buildFunctionType$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () => buildFunctionType$set(node, 'parameters', { parameters: value as never }))
+					applySetter([value], (value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionType$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -21376,8 +21367,8 @@ function withCatchClauseGroup(node: object, setter: string, args: readonly unkno
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildCatchClauseGroup$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.CatchClauseGroup.Config>['type']>) =>
+						rebuilt(node, handle, () => buildCatchClauseGroup$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -23873,12 +23864,12 @@ function withClassBodyMemberMethod(node: object, setter: string, args: readonly 
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildClassBodyMemberMethod$set(node, 'decorators', {
-								decorators: restItems('decorators', values) as never
-							})
-						)
+					applySetter(
+						args,
+						(...values: Admit<NonNullable<NonNullable<T.ClassBodyMemberMethod.Config>['decorators']>[number][]>) =>
+							rebuilt(node, handle, () =>
+								buildClassBodyMemberMethod$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -24647,9 +24638,9 @@ function withImportStatementClauseFrom(node: object, setter: string, args: reado
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.ImportClause>) =>
+						? applySetter(args, (value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
 								rebuilt(node, handle, () =>
-									buildImportStatementClauseFrom$set(node, 'importClause', { importClause: value as never })
+									buildImportStatementClauseFrom$set(node, 'importClause', { importClause: value })
 								)
 							)
 						: applySetter(args, (...args: unknown[]) =>
@@ -24663,17 +24654,17 @@ function withImportStatementClauseFrom(node: object, setter: string, args: reado
 											forms: [TSKindId.NamespaceImport, TSKindId.ImportClauseDefaultImport]
 										},
 										(list: never) =>
-											((value: Admit<T.ImportClause>) =>
-												buildImportStatementClauseFrom$set(node, 'importClause', { importClause: value as never }))(
+											((value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
+												buildImportStatementClauseFrom$set(node, 'importClause', { importClause: value }))(
 												(list === undefined ? undefined : buildImportClause(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.ImportClause>) =>
+					applySetter([value], (value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
 						rebuilt(node, handle, () =>
-							buildImportStatementClauseFrom$set(node, 'importClause', { importClause: value as never })
+							buildImportStatementClauseFrom$set(node, 'importClause', { importClause: value })
 						)
 					)
 			);
@@ -25136,8 +25127,8 @@ function withParenthesizedExpressionTyped(node: object, setter: string, args: re
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildParenthesizedExpressionTyped$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.ParenthesizedExpressionTyped.Config>['type']>) =>
+						rebuilt(node, handle, () => buildParenthesizedExpressionTyped$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -25220,7 +25211,7 @@ function withParenthesizedExpressionSequence(node: object, setter: string, args:
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.SequenceExpression>) =>
+					applySetter(args, (value: Admit<NonNullable<T.SequenceExpression>>) =>
 						rebuilt(node, handle, () => _buildParenthesizedExpressionSequence$patch(node, value))
 					),
 				undefined,
@@ -25701,8 +25692,8 @@ function withCallExpressionCall(node: object, setter: string, args: readonly unk
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-								(value?: Admit<T.TypeArguments>) =>
-									buildCallExpressionCall$set(node, 'typeArguments', { typeArguments: value as never })
+								(value?: Admit<NonNullable<T.CallExpressionCall.Config>['typeArguments']>) =>
+									buildCallExpressionCall$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -25726,8 +25717,8 @@ function withCallExpressionCall(node: object, setter: string, args: readonly unk
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Arguments>) =>
-						rebuilt(node, handle, () => buildCallExpressionCall$set(node, 'arguments', { arguments: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.CallExpressionCall.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildCallExpressionCall$set(node, 'arguments', { arguments: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -25895,10 +25886,8 @@ function withCallExpressionTemplateCall(node: object, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.TemplateString>) =>
-						rebuilt(node, handle, () =>
-							buildCallExpressionTemplateCall$set(node, 'arguments', { arguments: value as never })
-						)
+					applySetter(args, (value: Admit<NonNullable<T.CallExpressionTemplateCall.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildCallExpressionTemplateCall$set(node, 'arguments', { arguments: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -26120,8 +26109,8 @@ function withCallExpressionMember(node: object, setter: string, args: readonly u
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-								(value?: Admit<T.TypeArguments>) =>
-									buildCallExpressionMember$set(node, 'typeArguments', { typeArguments: value as never })
+								(value?: Admit<NonNullable<T.CallExpressionMember.Config>['typeArguments']>) =>
+									buildCallExpressionMember$set(node, 'typeArguments', { typeArguments: value })
 							)
 						)
 					),
@@ -26145,8 +26134,8 @@ function withCallExpressionMember(node: object, setter: string, args: readonly u
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.Arguments>) =>
-						rebuilt(node, handle, () => buildCallExpressionMember$set(node, 'arguments', { arguments: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.CallExpressionMember.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildCallExpressionMember$set(node, 'arguments', { arguments: value }))
 					),
 				undefined,
 				(args: readonly never[]) => [
@@ -26686,9 +26675,9 @@ function withClassHeritageExtendsClause(node: object, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.ExtendsClause>) =>
+					applySetter(args, (value: Admit<NonNullable<T.ClassHeritageExtendsClause.Config>['extendsClause']>) =>
 						rebuilt(node, handle, () =>
-							buildClassHeritageExtendsClause$set(node, 'extendsClause', { extendsClause: value as never })
+							buildClassHeritageExtendsClause$set(node, 'extendsClause', { extendsClause: value })
 						)
 					),
 				undefined,
@@ -26710,9 +26699,9 @@ function withClassHeritageExtendsClause(node: object, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.ImplementsClause>) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ClassHeritageExtendsClause.Config>['implementsClause']>) =>
 						rebuilt(node, handle, () =>
-							buildClassHeritageExtendsClause$set(node, 'implementsClause', { implementsClause: value as never })
+							buildClassHeritageExtendsClause$set(node, 'implementsClause', { implementsClause: value })
 						)
 					),
 				undefined,
@@ -26878,9 +26867,9 @@ function withImportClauseDefaultImport(node: object, setter: string, args: reado
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value?: Admit<T.ImportClauseGroup>) =>
+						? applySetter(args, (value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
 								rebuilt(node, handle, () =>
-									buildImportClauseDefaultImport$set(node, 'importClauseGroup', { importClauseGroup: value as never })
+									buildImportClauseDefaultImport$set(node, 'importClauseGroup', { importClauseGroup: value })
 								)
 							)
 						: applySetter(args, (...args: unknown[]) =>
@@ -26894,17 +26883,17 @@ function withImportClauseDefaultImport(node: object, setter: string, args: reado
 											forms: [TSKindId.NamespaceImport]
 										},
 										(list: never) =>
-											((value?: Admit<T.ImportClauseGroup>) =>
-												buildImportClauseDefaultImport$set(node, 'importClauseGroup', {
-													importClauseGroup: value as never
-												}))((list === undefined ? undefined : buildImportClauseGroup(list)) as never)
+											((value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
+												buildImportClauseDefaultImport$set(node, 'importClauseGroup', { importClauseGroup: value }))(
+												(list === undefined ? undefined : buildImportClauseGroup(list)) as never
+											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value?: Admit<T.ImportClauseGroup>) =>
+					applySetter([value], (value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
 						rebuilt(node, handle, () =>
-							buildImportClauseDefaultImport$set(node, 'importClauseGroup', { importClauseGroup: value as never })
+							buildImportClauseDefaultImport$set(node, 'importClauseGroup', { importClauseGroup: value })
 						)
 					)
 			);
@@ -27181,12 +27170,18 @@ function withExportStatementDefaultDeclaration(node: object, setter: string, arg
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildExportStatementDefaultDeclaration$set(node, 'decorators', {
-								decorators: restItems('decorators', values) as never
-							})
-						)
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								NonNullable<NonNullable<T.ExportStatementDefaultDeclaration.Config>['decorators']>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildExportStatementDefaultDeclaration$set(node, 'decorators', {
+									decorators: restItems('decorators', values)
+								})
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -27512,8 +27507,8 @@ function withExportStatementDefaultFromClauseFrom(node: object, setter: string, 
 							listSlotWith(
 								args,
 								{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
-								(value: Admit<T.ExportClause>) =>
-									buildExportStatementDefaultFromClauseFrom$set(node, 'exportClause', { exportClause: value as never })
+								(value: Admit<NonNullable<T.ExportStatementDefaultFromClauseFrom.Config>['exportClause']>) =>
+									buildExportStatementDefaultFromClauseFrom$set(node, 'exportClause', { exportClause: value })
 							)
 						)
 					),
@@ -27895,8 +27890,8 @@ function withVariableDeclaratorPlain(node: object, setter: string, args: readonl
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildVariableDeclaratorPlain$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['type']>) =>
+						rebuilt(node, handle, () => buildVariableDeclaratorPlain$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -28031,8 +28026,8 @@ function withVariableDeclaratorDefinite(node: object, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildVariableDeclaratorDefinite$set(node, 'type', { type: value as never }))
+					applySetter(args, (value: Admit<NonNullable<T.VariableDeclaratorDefinite.Config>['type']>) =>
+						rebuilt(node, handle, () => buildVariableDeclaratorDefinite$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -29300,10 +29295,12 @@ function withSetterParameter(node: object, setter: string, args: readonly unknow
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildSetterParameter$set(node, 'decorators', { decorators: restItems('decorators', values) as never })
-						)
+					applySetter(
+						args,
+						(...values: Admit<NonNullable<NonNullable<T.SetterParameter.Config>['decorators']>[number][]>) =>
+							rebuilt(node, handle, () =>
+								buildSetterParameter$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -29338,8 +29335,8 @@ function withSetterParameter(node: object, setter: string, args: readonly unknow
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildSetterParameter$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.SetterParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildSetterParameter$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -29795,8 +29792,8 @@ function withMethodDefinitionPlain(node: object, setter: string, args: readonly 
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildMethodDefinitionPlain$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['typeParameters']>) =>
+									buildMethodDefinitionPlain$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -29828,10 +29825,8 @@ function withMethodDefinitionPlain(node: object, setter: string, args: readonly 
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildMethodDefinitionPlain$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildMethodDefinitionPlain$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -29844,18 +29839,16 @@ function withMethodDefinitionPlain(node: object, setter: string, args: readonly 
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildMethodDefinitionPlain$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
+												buildMethodDefinitionPlain$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () =>
-							buildMethodDefinitionPlain$set(node, 'parameters', { parameters: value as never })
-						)
+					applySetter([value], (value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodDefinitionPlain$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -30388,10 +30381,8 @@ function withMethodDefinitionSetter(node: object, setter: string, args: readonly
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-						rebuilt(node, handle, () =>
-							buildMethodDefinitionSetter$set(node, 'parameters', { parameters: value as never })
-						)
+					applySetter(args, (value: Admit<NonNullable<T.MethodDefinitionSetter.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodDefinitionSetter$set(node, 'parameters', { parameters: value }))
 					),
 				undefined,
 				(args: readonly never[]) =>
@@ -30830,8 +30821,8 @@ function withMethodSignaturePlain(node: object, setter: string, args: readonly u
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildMethodSignaturePlain$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['typeParameters']>) =>
+									buildMethodSignaturePlain$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -30863,10 +30854,8 @@ function withMethodSignaturePlain(node: object, setter: string, args: readonly u
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildMethodSignaturePlain$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildMethodSignaturePlain$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -30879,18 +30868,16 @@ function withMethodSignaturePlain(node: object, setter: string, args: readonly u
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildMethodSignaturePlain$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
+												buildMethodSignaturePlain$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () =>
-							buildMethodSignaturePlain$set(node, 'parameters', { parameters: value as never })
-						)
+					applySetter([value], (value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodSignaturePlain$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'returnType':
@@ -31356,10 +31343,8 @@ function withMethodSignatureSetter(node: object, setter: string, args: readonly 
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-						rebuilt(node, handle, () =>
-							buildMethodSignatureSetter$set(node, 'parameters', { parameters: value as never })
-						)
+					applySetter(args, (value: Admit<NonNullable<T.MethodSignatureSetter.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodSignatureSetter$set(node, 'parameters', { parameters: value }))
 					),
 				undefined,
 				(args: readonly never[]) =>
@@ -31735,8 +31720,8 @@ function withAbstractMethodSignaturePlain(node: object, setter: string, args: re
 							listSlotWith(
 								args,
 								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-								(value?: Admit<T.TypeParameters>) =>
-									buildAbstractMethodSignaturePlain$set(node, 'typeParameters', { typeParameters: value as never })
+								(value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['typeParameters']>) =>
+									buildAbstractMethodSignaturePlain$set(node, 'typeParameters', { typeParameters: value })
 							)
 						)
 					),
@@ -31768,9 +31753,9 @@ function withAbstractMethodSignaturePlain(node: object, setter: string, args: re
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
+						? applySetter(args, (value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
 								rebuilt(node, handle, () =>
-									buildAbstractMethodSignaturePlain$set(node, 'parameters', { parameters: value as never })
+									buildAbstractMethodSignaturePlain$set(node, 'parameters', { parameters: value })
 								)
 							)
 						: applySetter(args, (...args: unknown[]) =>
@@ -31784,17 +31769,17 @@ function withAbstractMethodSignaturePlain(node: object, setter: string, args: re
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildAbstractMethodSignaturePlain$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
+												buildAbstractMethodSignaturePlain$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
+					applySetter([value], (value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
 						rebuilt(node, handle, () =>
-							buildAbstractMethodSignaturePlain$set(node, 'parameters', { parameters: value as never })
+							buildAbstractMethodSignaturePlain$set(node, 'parameters', { parameters: value })
 						)
 					)
 			);
@@ -32247,9 +32232,9 @@ function withAbstractMethodSignatureSetter(node: object, setter: string, args: r
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
+					applySetter(args, (value: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['parameters']>) =>
 						rebuilt(node, handle, () =>
-							buildAbstractMethodSignatureSetter$set(node, 'parameters', { parameters: value as never })
+							buildAbstractMethodSignatureSetter$set(node, 'parameters', { parameters: value })
 						)
 					),
 				undefined,
@@ -32638,12 +32623,12 @@ function withPublicFieldDefinitionPlain(node: object, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildPublicFieldDefinitionPlain$set(node, 'decorators', {
-								decorators: restItems('decorators', values) as never
-							})
-						)
+					applySetter(
+						args,
+						(...values: Admit<NonNullable<NonNullable<T.PublicFieldDefinitionPlain.Config>['decorators']>[number][]>) =>
+							rebuilt(node, handle, () =>
+								buildPublicFieldDefinitionPlain$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -32706,8 +32691,8 @@ function withPublicFieldDefinitionPlain(node: object, setter: string, args: read
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildPublicFieldDefinitionPlain$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['type']>) =>
+						rebuilt(node, handle, () => buildPublicFieldDefinitionPlain$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -33025,12 +33010,16 @@ function withPublicFieldDefinitionAccessor(node: object, setter: string, args: r
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildPublicFieldDefinitionAccessor$set(node, 'decorators', {
-								decorators: restItems('decorators', values) as never
-							})
-						)
+					applySetter(
+						args,
+						(
+							...values: Admit<NonNullable<NonNullable<T.PublicFieldDefinitionAccessor.Config>['decorators']>[number][]>
+						) =>
+							rebuilt(node, handle, () =>
+								buildPublicFieldDefinitionAccessor$set(node, 'decorators', {
+									decorators: restItems('decorators', values)
+								})
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -33081,8 +33070,8 @@ function withPublicFieldDefinitionAccessor(node: object, setter: string, args: r
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['type']>) =>
+						rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -33359,10 +33348,8 @@ function withConstructorDeclaration(node: object, setter: string, args: readonly
 				args,
 				(args) =>
 					args.length === 0
-						? applySetter(args, (value: Admit<T.FormalParameters>) =>
-								rebuilt(node, handle, () =>
-									buildConstructorDeclaration$set(node, 'parameters', { parameters: value as never })
-								)
+						? applySetter(args, (value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildConstructorDeclaration$set(node, 'parameters', { parameters: value }))
 							)
 						: applySetter(args, (...args: unknown[]) =>
 								rebuilt(node, handle, () =>
@@ -33375,18 +33362,16 @@ function withConstructorDeclaration(node: object, setter: string, args: readonly
 											forms: [TSKindId.FormalParametersElementsReceiver]
 										},
 										(list: never) =>
-											((value: Admit<T.FormalParameters>) =>
-												buildConstructorDeclaration$set(node, 'parameters', { parameters: value as never }))(
+											((value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
+												buildConstructorDeclaration$set(node, 'parameters', { parameters: value }))(
 												(list === undefined ? undefined : buildFormalParameters(list)) as never
 											)
 									)
 								)
 							),
 				(value) =>
-					applySetter([value], (value: Admit<T.FormalParameters>) =>
-						rebuilt(node, handle, () =>
-							buildConstructorDeclaration$set(node, 'parameters', { parameters: value as never })
-						)
+					applySetter([value], (value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildConstructorDeclaration$set(node, 'parameters', { parameters: value }))
 					)
 			);
 		case 'body':
@@ -33632,12 +33617,16 @@ function withReceiverParameterDeclaration(node: object, setter: string, args: re
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<T.Decorator[]>) =>
-						rebuilt(node, handle, () =>
-							buildReceiverParameterDeclaration$set(node, 'decorators', {
-								decorators: restItems('decorators', values) as never
-							})
-						)
+					applySetter(
+						args,
+						(
+							...values: Admit<NonNullable<NonNullable<T.ReceiverParameterDeclaration.Config>['decorators']>[number][]>
+						) =>
+							rebuilt(node, handle, () =>
+								buildReceiverParameterDeclaration$set(node, 'decorators', {
+									decorators: restItems('decorators', values)
+								})
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -33670,8 +33659,8 @@ function withReceiverParameterDeclaration(node: object, setter: string, args: re
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-						rebuilt(node, handle, () => buildReceiverParameterDeclaration$set(node, 'type', { type: value as never }))
+					applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['type']>) =>
+						rebuilt(node, handle, () => buildReceiverParameterDeclaration$set(node, 'type', { type: value }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
@@ -33917,7 +33906,7 @@ function withFormalParametersElementsReceiverGroup(node: object, setter: string,
 									optional: true,
 									make: buildFormalParametersElements
 								},
-								(value?: Admit<T.FormalParametersElements>) =>
+								(value?: Admit<NonNullable<T.FormalParametersElements>>) =>
 									_buildFormalParametersElementsReceiverGroup$patch(node, value)
 							)
 						)
@@ -34407,8 +34396,8 @@ function withInterfaceBody(node: object, setter: string, args: readonly unknown[
 							listSlotWith(
 								args,
 								{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-								(value?: Admit<T.ObjectTypeContent>) =>
-									buildInterfaceBody$set(node, 'members', { members: value as never })
+								(value?: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['members']>) =>
+									buildInterfaceBody$set(node, 'members', { members: value })
 							)
 						)
 					),

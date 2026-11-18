@@ -1050,7 +1050,7 @@ function setterElemType(
 	nodeMap: NodeMap,
 	fnTakesFieldDirectly = false
 ): string {
-	if (resolveFieldStorageInfo(f, nodeMap).kind !== 'verbatim') {
+	if (resolveFieldStorageInfo(f, nodeMap).kind !== 'verbatim' || wrapperChainOfSlot(nodeMap, f) !== undefined) {
 		return fnTakesFieldDirectly ? `NonNullable<${paramType}>` : `NonNullable<${paramType}>['${f.propertyName}']`;
 	}
 	return elemType;
@@ -1103,7 +1103,7 @@ export function restSetterType(
 		(s) =>
 			withHoles(
 				s,
-				resolveFieldStorageInfo(s, nodeMap).kind === 'verbatim'
+				resolveFieldStorageInfo(s, nodeMap).kind === 'verbatim' && wrapperChainOfSlot(nodeMap, s) === undefined
 					? constructionFieldElementType(s, nodeMap, kindEntries)
 					: `NonNullable<NonNullable<${configType}>['${s.propertyName}']>[number]`
 			),
@@ -2080,11 +2080,11 @@ function fieldCarryingFactoryText(
 			const method = f.propertyName;
 			const restType = restSetterType(f, configType, nodeMap, kindEntries);
 			if (restType !== undefined) {
-				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, wrapperChainOfSlot(nodeMap, f) === undefined ? `restItems(${JSON.stringify(method)}, values)` : `restItems(${JSON.stringify(method)}, values) as never`) });
+				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, `restItems(${JSON.stringify(method)}, values)`) });
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				setters.push({ name: method, params: setterSig, ...slotSet(f, wrapperChainOfSlot(nodeMap, f) === undefined ? 'value' : 'value as never') });
+				setters.push({ name: method, params: setterSig, ...slotSet(f, 'value') });
 			}
 		}
 		setters.push(...spellingWith((patch) => call(fn, `${configAccess}, ${patch}`), [configAccess, 'options']));
@@ -2445,7 +2445,7 @@ function emitRefineFormFactory(
 		} else {
 			const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), formConfigType, nodeMap);
 			const setterSig = setterValueSignature(f, elemType);
-			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.propertyName}: value${wrapperChainOfSlot(nodeMap, f) === undefined ? '' : ' as never'} }${optionsArg})` });
+			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.propertyName}: value }${optionsArg})` });
 		}
 	}
 	for (const f of registered) {

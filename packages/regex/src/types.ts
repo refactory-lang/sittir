@@ -598,7 +598,7 @@ export interface LookaheadAssertion {
 	};
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.LookaheadAssertion.Config>['operator']>;
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.LookaheadAssertion.Config>['pattern']>;
 	};
 	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
 	readonly pattern: () => Alternation | Term;
@@ -621,7 +621,7 @@ export interface LookbehindAssertion {
 	};
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.LookbehindAssertion.Config>['operator']>;
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.LookbehindAssertion.Config>['pattern']>;
 	};
 	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
 	readonly pattern: () => Alternation | Term;
@@ -729,7 +729,7 @@ export interface AnonymousCapturingGroup {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.Pattern>>;
 	};
 	readonly pattern: () => Alternation | Term;
 }
@@ -754,7 +754,7 @@ export interface NamedCapturingGroup {
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['operator']>;
 		readonly groupName: SlotHint<T.GroupName>;
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['pattern']>;
 	};
 	readonly operator: () => TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt;
 	readonly groupName: () => GroupName;
@@ -774,7 +774,7 @@ export interface NonCapturingGroup {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.Pattern>>;
 	};
 	readonly pattern: () => Alternation | Term;
 }
@@ -1062,7 +1062,7 @@ export interface InlineFlagsGroupEnable {
 	};
 	readonly __slotHints__?: {
 		readonly enabled: SlotHint<T.Flags>;
-		readonly pattern: SlotHint<T.Pattern, true>;
+		readonly pattern: SlotHint<NonNullable<T.InlineFlagsGroupEnable.Config>['pattern'], true>;
 	};
 	readonly enabled: () => Flags;
 	readonly pattern: () => Alternation | Term | undefined;
@@ -1087,7 +1087,7 @@ export interface InlineFlagsGroupToggle {
 	readonly __slotHints__?: {
 		readonly enabled: SlotHint<T.Flags>;
 		readonly disabled: SlotHint<T.Flags>;
-		readonly pattern: SlotHint<T.Pattern, true>;
+		readonly pattern: SlotHint<NonNullable<T.InlineFlagsGroupToggle.Config>['pattern'], true>;
 	};
 	readonly enabled: () => Flags;
 	readonly disabled: () => Flags;
@@ -1110,7 +1110,7 @@ export interface InlineFlagsGroupDisable {
 	};
 	readonly __slotHints__?: {
 		readonly disabled: SlotHint<T.Flags>;
-		readonly pattern: SlotHint<T.Pattern, true>;
+		readonly pattern: SlotHint<NonNullable<T.InlineFlagsGroupDisable.Config>['pattern'], true>;
 	};
 	readonly disabled: () => Flags;
 	readonly pattern: () => Alternation | Term | undefined;
