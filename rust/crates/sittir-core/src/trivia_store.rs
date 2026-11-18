@@ -27,6 +27,12 @@ use crate::arena::{Address, ArenaError, ArenaRead};
 #[cfg(feature = "arena")]
 use crate::types::KindId;
 
+/// What a write of entries to an inner side `TriviaStore::keyed` names no
+/// site for is refused with: a unit's, which has no inside, a record's
+/// whose kind has no inner site, and an address's that holds no words.
+#[cfg(feature = "arena")]
+const NO_INNER_SITE: &str = "an inner side on a node whose kind has no inner site";
+
 /// Where a node's sides are kept.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Place {
@@ -626,7 +632,7 @@ impl<T: Clone> TriviaStore<T> {
         let mut kept = Vec::new();
         for (word, item, trivia) in units {
             if trivia.inner.as_ref().is_some_and(|inner| !inner.is_empty()) {
-                return Err(ArenaError::Unwritable("an entry inside a unit, which has no inside"));
+                return Err(ArenaError::Unwritable(NO_INNER_SITE));
             }
             let place = Place::Unit(Site { holder, word: *word, item: *item });
             for (side, entries) in [(TriviaSide::Leading, &trivia.leading), (TriviaSide::Trailing, &trivia.trailing)] {
@@ -744,7 +750,7 @@ impl<T: Clone> TriviaStore<T> {
     pub fn write_kept_in(&self, chunks: &mut crate::arena::BuiltChunks, place: Place, side: TriviaSide, kept: Vec<CompactEntry>) -> Result<Option<Vec<CompactEntry>>, ArenaError> {
         debug_assert!(!matches!(place, Place::Row { .. }), "a parsed row's sides are its tree's");
         let Some((place, side)) = self.keyed(place, side, &*chunks)? else {
-            return if kept.is_empty() { Ok(None) } else { Err(ArenaError::Unwritable("an inner side on a record whose kind has no inner site")) };
+            return if kept.is_empty() { Ok(None) } else { Err(ArenaError::Unwritable(NO_INNER_SITE)) };
         };
         let mut sides = self.write();
         Ok(match self.header_split(chunks, place, side, kept)? {
@@ -1271,11 +1277,12 @@ mod tests {
         use crate::types::ItemIndex;
         let store = TriviaStore::<TriviaText>::new();
         let unit = Place::Unit(Site { holder: Address(5), word: 2, item: ItemIndex(0) });
-        assert!(store.write_side(unit, TriviaSide::Inner, &[entry("// in")]).is_err(), "an entry inside a unit is refused");
+        let refused = |result: Result<(), ArenaError>| matches!(result, Err(ArenaError::Unwritable("an inner side on a node whose kind has no inner site")));
+        assert!(refused(store.write_side(unit, TriviaSide::Inner, &[entry("// in")])), "an entry inside a unit is refused");
         store.write_side(unit, TriviaSide::Inner, &[]).expect("a write of nothing");
         assert_eq!(read_side(&store, unit, TriviaSide::Inner), None, "and keeps nothing");
         let inside = NodeTrivia { leading: Some(vec![entry("// a")]), trailing: None, inner: Some(vec![entry("// in")]) };
-        assert!(store.write_units(Address(5), &[(2, ItemIndex(0), inside)]).is_err(), "a unit written with an entry inside is refused");
+        assert!(refused(store.write_units(Address(5), &[(2, ItemIndex(0), inside)])), "a unit written with an entry inside is refused, as the same side written alone is");
         assert_eq!(store.units(Address(5), &*store.built()).expect("read"), [], "before any side of it is written");
     }
 
