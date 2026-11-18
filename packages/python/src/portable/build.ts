@@ -17,6 +17,9 @@ const unbuilt = (
 const missing = (owner: string): never => {
 	throw new Error(owner + ' is required');
 };
+const unrouted = (owner: string, slot: string): never => {
+	throw new Error(owner + ' has no slot ' + slot);
+};
 const seated = <
 	V extends
 		| number
@@ -36015,6 +36018,7 @@ const declaration_type_parameter_variadic$314 = (
 const declaration_variable$302 = (
 	input: PathInput<PythonMap, 'declaration.variable'>
 ): ReturnType<typeof b.assignmentEq> => {
+	if (input.type !== undefined) return unrouted('declaration.variable', 'type');
 	return b.assignmentEq({
 		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$302_name(input.name),
 		value:
@@ -36024,6 +36028,7 @@ const declaration_variable$302 = (
 const declaration_variable$303 = (
 	input: PathInput<PythonMap, 'declaration.variable'>
 ): ReturnType<typeof b.assignmentType> => {
+	if (input.value !== undefined) return unrouted('declaration.variable', 'value');
 	return b.assignmentType({
 		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$303_name(input.name),
 		type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$303_type(input.type)
@@ -36513,6 +36518,9 @@ const expression_interpolation_conversion$65 = (
 const expression_interpolation_format$259 = (
 	input: PathInput<PythonMap, 'expression.interpolation.format'>
 ): ReturnType<typeof b.formatSpecifier> => {
+	if (input.expression !== undefined) return unrouted('expression.interpolation.format', 'expression');
+	if (input.formatSpecifier !== undefined) return unrouted('expression.interpolation.format', 'formatSpecifier');
+	if (input.typeConversion !== undefined) return unrouted('expression.interpolation.format', 'typeConversion');
 	return b.formatSpecifier(...(input.elements ?? []).map(expression_interpolation_format$259_elements));
 };
 const expression_lambda$219 = (input: PathInput<PythonMap, 'expression.lambda'>): ReturnType<typeof b.lambda> => {
@@ -36794,6 +36802,8 @@ const pattern_struct$196 = (input: PathInput<PythonMap, 'pattern.struct'>): Retu
 const pattern_struct_field$194 = (
 	input: PathInput<PythonMap, 'pattern.struct.field'>
 ): ReturnType<typeof b.keywordPattern> => {
+	if (input.fields !== undefined) return unrouted('pattern.struct.field', 'fields');
+	if (input.type !== undefined) return unrouted('pattern.struct.field', 'type');
 	return b.keywordPattern({
 		name: pattern_struct_field$194_name(input.name),
 		pattern:

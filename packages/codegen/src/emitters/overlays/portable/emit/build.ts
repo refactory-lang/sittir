@@ -150,6 +150,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	);
 	const unspelledHelper = constant('unspelled', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' cannot spell ')), '+', id('value')))), 'never', [['value', union(['number', 'bigint'])]]));
 	const missingHelper = constant('missing', arrow('owner', 'string', block(raise(binary(id('owner'), '+', str(' is required')))), 'never'));
+	const unroutedHelper = constant('unrouted', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' has no slot ')), '+', id('slot')))), 'never', [['slot', 'string']]));
 	const isNodeHelper = constant(
 		'isNode',
 		t.arrowFunction.callSignature({
@@ -519,13 +520,22 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		return fail(`${arm.builder} takes a ${shape} input`);
 	};
 
+	const unroutedGuards = (path: string, arm: PortableBuildArm): Statement[] => {
+		if (textValues.has(path)) return [];
+		const routed = new Set([...arm.slots.map((slot) => slot.name), ...arm.when.flatMap((test) => ('empty' in test ? test.empty : []))]);
+		return Object.keys(input.slots[path] ?? {})
+			.filter((name) => !routed.has(name))
+			.sort()
+			.map((name) => when(binary(dot(id(uses('input')), name), '!==', id('undefined')), ret(call(id(uses('unrouted')), str(path), str(name)))));
+	};
+
 	function armName(path: string, arm: PortableBuildArm): string | undefined {
 		const name = `${identifierOf(path)}$${arm.kind}`;
 		if (armFunctions.has(name)) return uses(name);
 		if (failed.has(name)) return undefined;
 		armFunctions.set(name, constant(name, id('undefined')));
 		try {
-			const [statements, type] = tracked(name, () => [preluded(() => armBody(path, arm, () => id(uses('input')))), pathInputType(path)] as const);
+			const [statements, type] = tracked(name, () => [[...unroutedGuards(path, arm), ...preluded(() => armBody(path, arm, () => id(uses('input'))))], pathInputType(path)] as const);
 			const parameter = deps.get(name)!.has('input') ? 'input' : '_input';
 			armFunctions.set(name, constant(name, arrow(parameter, type, block(...statements), arm.builder === undefined ? undefined : builtType(arm.builder))));
 			return uses(name);
@@ -628,6 +638,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		['isNode', isNodeHelper],
 		['unbuilt', unbuiltHelper],
 		['missing', missingHelper],
+		['unrouted', unroutedHelper],
 		['seated', seatedHelper],
 		['listed', listedHelper],
 		['unseated', unseatedHelper],

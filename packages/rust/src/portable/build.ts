@@ -16,6 +16,9 @@ const unbuilt = (
 const missing = (owner: string): never => {
 	throw new Error(owner + ' is required');
 };
+const unrouted = (owner: string, slot: string): never => {
+	throw new Error(owner + ' has no slot ' + slot);
+};
 const seated = <
 	V extends
 		| number
@@ -3178,6 +3181,7 @@ const clause_import_list$227 = (input: PathInput<RustMap, 'clause.import.list'>)
 const clause_import_list_scoped$226 = (
 	input: PathInput<RustMap, 'clause.import.list.scoped'>
 ): ReturnType<typeof b.scopedUseList> => {
+	if (input.useClauses !== undefined) return unrouted('clause.import.list.scoped', 'useClauses');
 	return b.scopedUseList({
 		path: input.path === undefined ? undefined : clause_import_list_scoped$226_path(input.path),
 		list: clause_import_list_scoped$226_list(input.list)
@@ -3266,6 +3270,7 @@ const element_macro_token_binding$184 = (
 const element_struct_field$284 = (
 	input: PathInput<RustMap, 'element.struct.field'>
 ): ReturnType<typeof b.shorthandFieldInitializer> => {
+	if (input.value !== undefined) return unrouted('element.struct.field', 'value');
 	return b.shorthandFieldInitializer({
 		attributes: (input.attributes ?? []).map(element_struct_field$284_attributes),
 		name: element_struct_field$284_name(input.name)
@@ -3322,6 +3327,7 @@ const expression_block_unsafe$309 = (
 const expression_call_macro$259 = (
 	input: PathInput<RustMap, 'expression.call.macro'>
 ): ReturnType<typeof b.macroInvocation> => {
+	if (input.typeArguments !== undefined) return unrouted('expression.call.macro', 'typeArguments');
 	return b.macroInvocation({
 		function: expression_call_macro$259_function(input.function),
 		arguments: expression_call_macro$259_arguments(input.arguments)
@@ -3439,6 +3445,7 @@ const statement_import$224 = (input: PathInput<RustMap, 'statement.import'>): Re
 const statement_import_package$204 = (
 	input: PathInput<RustMap, 'statement.import.package'>
 ): ReturnType<typeof b.externCrateDeclaration> => {
+	if (input.argument !== undefined) return unrouted('statement.import.package', 'argument');
 	return b.externCrateDeclaration({
 		name: statement_import_package$204_name(input.name),
 		alias: input.alias === undefined ? undefined : statement_import_package$204_alias(input.alias)

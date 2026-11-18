@@ -585,4 +585,37 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text.includes('switch (value.$path)')).toBe(switched);
 		expect(text.includes('case undefined:')).toBe(switched);
 	}, 60_000);
+
+	it('refuses a slot the path admits that the arm has no route for, as the interpreter does', async () => {
+		const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional });
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			node: 'PythonNode',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table: {
+				builders: { functionDefinition: 'config', block: 'nullary' },
+				paths: {
+					'declaration.function': {
+						root: true,
+						arms: [{ kind: 1, builder: 'functionDefinition', when: [{ empty: ['decorators'] }], slots: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7] }] }], presets: [], flags: {} }]
+					},
+					'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], slots: [], presets: [], flags: {} }] }
+				}
+			},
+			slots: { 'declaration.function': { body: exact(false), doc: exact(true), decorators: exact(true), returnType: exact(true) } },
+			viewed: ['statement.block'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			holes: [],
+			decided: { 'declaration.function': { body: 'statement.block' } }
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("if (input.doc !== undefined) return unrouted('declaration.function', 'doc');");
+		expect(text).toContain("if (input.returnType !== undefined) return unrouted('declaration.function', 'returnType');");
+		expect(text).not.toContain("unrouted('declaration.function', 'body')");
+		expect(text).not.toContain("unrouted('declaration.function', 'decorators')");
+		expect(text).toContain('const unrouted = (owner: string, slot: string): never => {');
+	}, 60_000);
 });

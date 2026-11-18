@@ -85,6 +85,19 @@ describe('the generated portable build, by the engine that scopes it', () => {
 		expect(recordOf(portableBuild.statement.return({ $path: 'statement.return', expression: 'x' }))).toBeUndefined();
 	});
 
+	it('refuses a slot the path admits that its arm has no route for, as the interpreter does', async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const { portableBuild } = (await import('../../../python/src/portable/build.ts')) as unknown as { readonly portableBuild: { readonly pattern: { readonly struct: { readonly field: PathFunction } } } };
+		const field = scopeBuilders(engine, portableBuild).pattern.struct.field;
+		const read = [...structuresIn(runtime.read(engine.parse('match p:\n    case Point(x=1):\n        pass\n')))].find((structure) => structure.$path === 'pattern.struct.field')!;
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		expect(render(field(read))).toBe(render(runtime.build(read)));
+		const stated = { ...read, type: 'Point' };
+		expect(() => runtime.build(stated)).toThrow(/has no slot type/);
+		expect(() => field(stated)).toThrow('pattern.struct.field has no slot type');
+	});
+
 	it('refuses a node another grammar built, naming both languages', async () => {
 		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
 		using other = await createEngine(await languageByName('typescript'));

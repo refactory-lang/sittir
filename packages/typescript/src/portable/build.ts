@@ -17,6 +17,9 @@ const unbuilt = (
 const missing = (owner: string): never => {
 	throw new Error(owner + ' is required');
 };
+const unrouted = (owner: string, slot: string): never => {
+	throw new Error(owner + ' has no slot ' + slot);
+};
 const seated = <
 	V extends
 		| number
@@ -2092,6 +2095,8 @@ const type_object$369 = (input: PathInput<TypeScriptMap, 'type.object'>): Return
 const type_predicate_asserts$337 = (
 	input: PathInput<TypeScriptMap, 'type.predicate.asserts'>
 ): ReturnType<typeof b.asserts> => {
+	if (input.name !== undefined) return unrouted('type.predicate.asserts', 'name');
+	if (input.type !== undefined) return unrouted('type.predicate.asserts', 'type');
 	return b.asserts(type_predicate_asserts$337_value(input.value));
 };
 const type_query$358 = (input: PathInput<TypeScriptMap, 'type.query'>): ReturnType<typeof b.typeQuery> => {
