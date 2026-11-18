@@ -38,7 +38,7 @@ export const valuedIdentifier: V.BuildInput<PythonMap, 'identifier'> = { $path: 
 export const pathOnlyIdentifier: V.BuildInput<PythonMap, 'identifier'> = { $path: 'identifier' };
 
 export const qualified: V.BuildInput<PythonMap, 'identifier.qualified'> = { $path: 'identifier.qualified', name: 'y' };
-// @ts-expect-error a qualified identifier builds from its members, never from a text
+// @ts-expect-error a qualified identifier builds from its slots, never from a text
 export const valuedQualified: V.BuildInput<PythonMap, 'identifier.qualified'> = { $path: 'identifier.qualified', name: 'y', $value: 'x.y' };
 
 type StringRead = V.Read<PythonMap, 'literal.string'>;
@@ -70,7 +70,7 @@ export const annotation: V.BuildInput<PythonMap, 'declaration.variable'>['type']
 export const annotationMember: V.BuildInput<PythonMap, 'declaration.function'>['returnType'] = memberRead;
 
 export const comment: V.BuildInput<PythonMap, 'comment.line'> = { $path: 'comment.line', $value: ' x' };
-// @ts-expect-error a comment builds from its text, never from a content member
+// @ts-expect-error a comment builds from its text, never from a content slot
 export const commentContent: V.BuildInput<PythonMap, 'comment.line'> = { $path: 'comment.line', content: ' x' };
 export const escape: V.BuildInput<PythonMap, 'literal.string.escape'> = { $path: 'literal.string.escape', $value: 'n' };
 // @ts-expect-error a yield holds its operand as its expression, never as content

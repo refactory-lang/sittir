@@ -83,7 +83,7 @@ describe('deriveVocabulary', () => {
 	}, 120_000);
 	it('reads a minted text kind as the token text it replaced', () => {
 		const format = d.slots.get('expression.interpolation.format');
-		const kinds = [...(format?.values() ?? [])].flatMap((member) => [...member.kinds]);
+		const kinds = [...(format?.values() ?? [])].flatMap((slot) => [...slot.kinds]);
 		expect(kinds).toContain('text:[^{}\\n]+');
 		expect(d.unmapped.has('<python:format_specifier_text>')).toBe(false);
 	});
@@ -119,7 +119,7 @@ describe('deriveVocabulary', () => {
 		const total = [...d.unmapped.values()].reduce((a, b) => a + b, 0);
 		expect(total).toBeLessThanOrEqual(CEILING.unmapped);
 	});
-	it('makes a member required only when every claiming grammar carries it and every claimed child does', () => {
+	it('makes a slot required only when every claiming grammar carries it and every claimed child does', () => {
 		const fn = levelSlots(d, 'declaration.function');
 		expect(fn.get('name')?.optional).toBe(false);
 		expect(fn.get('parameters')?.optional).toBe(false);
@@ -128,11 +128,11 @@ describe('deriveVocabulary', () => {
 		expect(method.get('parameters')?.optional).toBe(false);
 		expect(method.get('decorators')?.optional).toBe(true);
 	});
-	it('names a refinement literal by the member that holds it', () => {
+	it('names a refinement literal by the slot that holds it', () => {
 		const equal = d.refinements.get('expression.binary.comparison.equal');
 		expect([...(equal?.literals.keys() ?? [])]).toEqual(['operator']);
 	});
-	it('refines by an axis value through its text alone, which no member holds', () => {
+	it('refines by an axis value through its text alone, which no slot holds', () => {
 		const constant = d.refinements.get('declaration.variable.constant');
 		expect(constant?.parent).toBe('declaration.variable');
 		expect([...(constant?.literals.values() ?? [])].flatMap((texts) => [...texts])).toEqual(['const']);
@@ -157,14 +157,14 @@ describe('deriveVocabulary', () => {
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
 	});
-	it('keeps rest-type markers out of the portable members without losing the held type', () => {
+	it('keeps rest-type markers out of the portable slots without losing the held type', () => {
 		const rest = levelSlots(d, 'type.rest');
 		expect(rest.has('type')).toBe(true);
 		for (const grammar of ['python', 'typescript']) expect(rest.get('type')?.grammars.has(grammar), grammar).toBe(true);
 		expect(rest.has('operator')).toBe(false);
 		expect(levelSlots(d, 'type.rest.map').has('operator')).toBe(false);
 	});
-	it('keeps bounds introducers out of the portable members without losing the bounds', () => {
+	it('keeps bounds introducers out of the portable slots without losing the bounds', () => {
 		expect([...levelSlots(d, 'clause.bounds').keys()]).toEqual([]);
 		const parameter = levelSlots(d, 'declaration.type_parameter');
 		for (const grammar of ['rust', 'typescript']) expect(parameter.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
@@ -232,10 +232,10 @@ describe('deriveVocabulary', () => {
 		expect(type?.multiple).toBe(true);
 		expect(type?.scalar).toBe(true);
 	});
-	it('never makes a layout slot a member: an options-block address or a slot of unclaimed kinds', () => {
-		for (const [v, members] of d.slots) {
+	it('never makes a layout grammar slot a slot: an options-block address or a grammar slot of unclaimed kinds', () => {
+		for (const [v, slots] of d.slots) {
 			for (const name of ['terminator', 'automaticSemicolon', 'stringStart', 'stringEnd', 'stringOpen'])
-				expect(members.has(name), `${v}.${name}`).toBe(false);
+				expect(slots.has(name), `${v}.${name}`).toBe(false);
 		}
 	});
 });
@@ -250,7 +250,7 @@ describe('the authored vocabulary', () => {
 	it('has its scope routed wherever it declares one, but where the ceiling records', async () => {
 		const d = await deriveVocabulary();
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
-		const unrouted = [...d.slots].filter(([path, members]) => vocabulary.slots(path).has('scope') && !members.has('scope')).map(([path]) => path);
+		const unrouted = [...d.slots].filter(([path, slots]) => vocabulary.slots(path).has('scope') && !slots.has('scope')).map(([path]) => path);
 		expect(unrouted.sort()).toEqual(CEILING.unroutedScope);
 	}, 120_000);
 	it('reports a template hole its interface does not declare', async () => {
@@ -319,14 +319,14 @@ describe('readVocabulary', () => {
 		expect(vocabulary.kinds.get('declaration.function')).toMatchObject({ name: 'Declaration.Function', parent: 'declaration' });
 	});
 
-	it('gives a kind its inherited members, each marked optional or required', () => {
+	it('gives a kind its inherited slots, each marked optional or required', () => {
 		expect(Object.fromEntries(vocabulary.slots('declaration.function'))).toEqual({
 			body: { optional: true, flag: false },
 			name: { optional: false, flag: false }
 		});
 	});
 
-	it('gives the grammar-bindings derivation every member a kind declares or inherits', () => {
+	it('gives the grammar-bindings derivation every slot a kind declares or inherits', () => {
 		expect(vocabularySlots(vocabulary.composedAs('FixtureFeatures')).get('declaration.function')).toEqual(new Set(['body', 'name']));
 	});
 });
@@ -374,7 +374,7 @@ describe('readVocabulary over feature folders', () => {
 		expect(vocabulary.kinds.get('declaration.function.lambda')).toMatchObject({ name: 'Declaration.Function.Lambda', parent: 'declaration.function' });
 	});
 
-	it('gives a kind the members a feature adds to it, optional when any declaration of one is', () => {
+	it('gives a kind the slots a feature adds to it, optional when any declaration of one is', () => {
 		expect(Object.fromEntries(vocabulary.slots('declaration.function.lambda'))).toEqual({
 			arrow: { optional: true, flag: true, features: ['Lambdas'] },
 			body: { optional: true, flag: false },
@@ -382,7 +382,7 @@ describe('readVocabulary over feature folders', () => {
 		});
 	});
 
-	it("lists a feature's members only for a composition that has the feature, directly or through another composition", () => {
+	it("lists a feature's slots only for a composition that has the feature, directly or through another composition", () => {
 		expect(vocabularySlots(vocabulary.composedAs('WithLambdas')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
 		expect(vocabularySlots(vocabulary.composedAs('Composed')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
 		expect(vocabularySlots(vocabulary.composedAs('WithoutLambdas')).get('declaration.function')).toEqual(new Set(['body', 'name']));
@@ -451,7 +451,7 @@ describe('readVocabulary over an owner refined by a value', () => {
 		expect(vocabulary.kinds.get('declaration.public.restricted')).toMatchObject({ parent: 'declaration.public', refines: 'modifier.public.restricted' });
 	});
 
-	it("gives an owner's refinement the members its value adds, beside the owner's", () => {
+	it("gives an owner's refinement the slots its value adds, beside the owner's", () => {
 		expect(Object.fromEntries(vocabulary.slots('declaration.public.restricted'))).toEqual({
 			name: { optional: false, flag: false },
 			scope: { optional: false, flag: false, features: ['Scoped'] }

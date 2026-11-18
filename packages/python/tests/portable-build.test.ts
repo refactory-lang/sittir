@@ -19,7 +19,7 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F:\n    pass\n');
 	});
 
-	it('builds an except clause with and without a name through the form that takes its members, in any order, and refuses a name beside a list of exceptions', () => {
+	it('builds an except clause with and without a name through the form that takes its slots, in any order, and refuses a name beside a list of exceptions', () => {
 		const body = { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] };
 		expect(render(runtime.build({ $path: 'clause.catch', body, type: 'E' }))).toBe('except E:\n    pass\n');
 		for (const structure of [{ type: 'E', body, name: 'e' }, { name: 'e', body, type: 'E' }, { body, name: 'e', type: 'E' }])
@@ -57,7 +57,7 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'literal.number.float', $value: 1.5, imaginary: 'j' }))).toBe('1.5j');
 	});
 
-	it('takes a route only beside the members that complete the kind it enters', () => {
+	it('takes a route only beside the slots that complete the kind it enters', () => {
 		expect(() => runtime.build({ $path: 'clause.catch', name: 'e', body: [{ $path: 'statement.empty' }] })).toThrow(/clause\.catch: name builds only beside type/);
 		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a', name: 'b' }))).toBe('a as b');
 		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a' }))).toBe('a');

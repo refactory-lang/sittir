@@ -20,7 +20,7 @@ const unbuildable = (grammar: string): string[] => {
 		.sort();
 };
 
-describe('members a portable build cannot reach', () => {
+describe('slots a portable build cannot reach', () => {
 	for (const grammar of bindingGrammars()) {
 		it(`are exactly ${grammar}'s recorded ones: a new one is a regression, a fixed one leaves the list`, () => {
 			expect(unbuildable(grammar)).toEqual(CEILING[grammar] ?? []);

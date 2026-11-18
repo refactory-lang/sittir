@@ -35,7 +35,7 @@ export const textName: In<'declaration.constant'> = { $path: 'declaration.consta
 
 declare const body: At<'clause.case.match'>['body'];
 export const wildcard: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: '_', body };
-// @ts-expect-error a token member takes its text, never a kind id
+// @ts-expect-error a token slot takes its text, never a kind id
 export const wildcardId: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: 1, body };
 
 declare const functionName: At<'declaration.function'>['name'];

@@ -100,7 +100,7 @@ describe('bindFacts', () => {
 		});
 	});
 
-	it('binds each step of a member’s via against the kind that holds it, walking from the owner outward though via is nearest first', () => {
+	it('binds each step of a slot’s via against the kind that holds it, walking from the owner outward though via is nearest first', () => {
 		const step = (field: string, kind: string) => ({ field, kind, after: null, anchor: null });
 		const fields: Record<string, Record<string, string>> = {
 			required_parameter: { pattern: 'name' },
@@ -173,7 +173,7 @@ describe('bindFacts', () => {
 		]);
 	});
 
-	it("names each member route's owner, path and selected kinds by their bound kinds", () => {
+	it("names each slot route's owner, path and selected kinds by their bound kinds", () => {
 		expect(bound.slots).toEqual([
 			{ route: 'rename', owner: 'bound_function_item', name: 'name', field: 'name', kind: 'bound_identifier', after: { field: null, kind: 'bound_fn', after: null, anchor: null }, anchor: null },
 			{ route: 'presence', owner: 'bound_function_item', name: 'isAsync', token: 'async', via: [{ field: null, kind: 'bound_function_modifiers', after: null, anchor: null }] },
@@ -333,7 +333,7 @@ describe('bindFacts names a placed claim through the aliases at its sites', () =
 		expect(() => bindAll(['declaration.method.private'])).toThrow('bindings: function_item shows as method_declaration and constructor_declaration in impl_body; a claim placed there must name one of them by its own path');
 	});
 
-	it('gives a member shared by claims at different sites one fact per bound owner', () => {
+	it('gives a slot shared by claims at different sites one fact per bound owner', () => {
 		expect(bound.slots.map((m) => [m.owner, m.claims])).toEqual([
 			['method_declaration', [0]],
 			['function_item', [3]]

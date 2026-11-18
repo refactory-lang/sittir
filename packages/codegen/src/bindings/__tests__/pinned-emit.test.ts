@@ -64,7 +64,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).not.toContain('statement_jump');
 	}, 60_000);
 
-	it('reports a member path no arm fits only from a function the module keeps', async () => {
+	it('reports a slot no arm fits only from a function the module keeps', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
 			node: 'PythonNode',
@@ -169,7 +169,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text.includes('if (value === null) return null;')).toBe(holed);
 	}, 60_000);
 
-	it('spells a guarded list as its first item and the rest, guards an optional member, and types a token member by its texts', async () => {
+	it('spells a guarded list as its first item and the rest, guards an optional slot, and types a token slot by its texts', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
 			node: 'PythonNode',
@@ -219,7 +219,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).not.toContain('const listed');
 	}, 60_000);
 
-	it('places a token in its seat\'s containers, builds a text through the one path whose arm takes it as its only required member, and refuses a text no route seats', async () => {
+	it('places a token in its seat\'s containers, builds a text through the one path whose arm takes it as its only required slot, and refuses a text no route seats', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
 			node: 'PythonNode',
@@ -272,7 +272,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).not.toMatch(/if \(typeof value === 'string'\) return value;/);
 	}, 60_000);
 
-	it('types a member\'s text by its tokens and its text paths\' own text types, never a bare string', async () => {
+	it('types a slot\'s text by its tokens and its text paths\' own text types, never a bare string', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'rust',
 			map: 'RustMap',
@@ -397,7 +397,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain('const unspelled = (owner: string, value: number | bigint): never => {');
 	}, 60_000);
 
-	it('builds a member that takes one value or a list by whether it holds a list, and wraps a single value in an elements container', async () => {
+	it('builds a slot that takes one value or a list by whether it holds a list, and wraps a single value in an elements container', async () => {
 		const run = (seats: readonly PortableSeat[], paths: readonly string[] = []) =>
 			runPinned('portableBuild', {
 				grammar: 'python',
@@ -459,7 +459,7 @@ describe('the pinned child emits a portable build module', () => {
 	it.each([
 		[['statement.block'], false],
 		[['identifier.qualified', 'statement.block'], true]
-	] as const)('reads a structure without $path as the member\'s decided path, switching only among others: %j', async (viewed, switched) => {
+	] as const)('reads a structure without $path as the slot\'s decided path, switching only among others: %j', async (viewed, switched) => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
 			node: 'PythonNode',

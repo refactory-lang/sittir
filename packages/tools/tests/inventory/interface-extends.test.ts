@@ -37,13 +37,13 @@ for (const form of forms) {
 	describe(`${form.grammar}: interface extends`, () => {
 		it('derives an optional array of parent types or bounds directly on the node', async () => {
 			const d = await deriveVocabulary([form.grammar]);
-			const member = d.slots.get(form.path)?.get('extends');
-			expect(member).toBeDefined();
-			expect(member?.multiple).toBe(true);
-			expect(member?.scalar).toBe(false);
-			expect(member?.optional).toBe(true);
-			expect(member?.kinds.has('identifier')).toBe(true);
-			expect(member?.kinds.has(form.clause)).toBe(false);
+			const slot = d.slots.get(form.path)?.get('extends');
+			expect(slot).toBeDefined();
+			expect(slot?.multiple).toBe(true);
+			expect(slot?.scalar).toBe(false);
+			expect(slot?.optional).toBe(true);
+			expect(slot?.kinds.has('identifier')).toBe(true);
+			expect(slot?.kinds.has(form.clause)).toBe(false);
 		}, FULL_PIPELINE_TIMEOUT);
 
 		for (const [source, expected] of form.cases) {

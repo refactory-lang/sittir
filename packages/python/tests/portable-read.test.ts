@@ -85,7 +85,7 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
-	it('reads a member through its deepest route that seats a value, as the build places it', () => {
+	it('reads a slot through its deepest route that seats a value, as the build places it', () => {
 		const items = { $path: 'clause.resource.item', value: 'a', name: 'b' };
 		expect(firstOf('with a as b: pass')).toMatchObject({ withClause: { items: [items] } });
 		expect(roundTrip('with a as b:\n    pass\n')).toBe('with a as b:\n    pass\n');

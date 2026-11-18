@@ -76,24 +76,24 @@ const effect: LeadEffect = {
 	admits: [{ kind: 'parameter', within: { field: 'name', admits: [{ kind: 'self' }] }, as: 'receiver_parameter' }]
 };
 
-describe('held member expansion', () => {
+describe('held slot expansion', () => {
 	it('expands a wildcard step into each kind its slot holds that has the next slot, naming that kind', async () => {
 		const facts = await readBindings('(impl clause: (_ trait: (_) @implements))');
-		const [member] = facts.slots;
+		const [slot] = facts.slots;
 		expect(expandHeldSlots(facts, MODEL).slots).toEqual(
-			['negative', 'positive'].map((kind) => ({ ...member, parent: kind, via: [{ ...(member as { via: readonly object[] }).via[0], kind }] }))
+			['negative', 'positive'].map((kind) => ({ ...slot, parent: kind, via: [{ ...(slot as { via: readonly object[] }).via[0], kind }] }))
 		);
 	});
 
 	it.each(['copy_first', 'named_first'])("expands a wildcard step into the original %s holds beside a copy shown as it, when only the original takes the rest of the path", async (holder) => {
 		const facts = await readBindings(`(${holder} mid: (_ value: (_) @value))`);
-		const [member] = facts.slots;
+		const [slot] = facts.slots;
 		expect(expandHeldSlots(facts, MODEL).slots).toEqual([
-			{ ...member, parent: 'named', via: [{ ...(member as { via: readonly object[] }).via[0], kind: 'named' }] }
+			{ ...slot, parent: 'named', via: [{ ...(slot as { via: readonly object[] }).via[0], kind: 'named' }] }
 		]);
 	});
 
-	it('leaves a member with no wildcard step as it is', async () => {
+	it('leaves a slot with no wildcard step as it is', async () => {
 		const facts = await readBindings('(impl clause: (positive trait: (_) @implements))');
 		expect(expandHeldSlots(facts, MODEL)).toEqual(facts);
 	});
@@ -117,7 +117,7 @@ describe('lead fact projection', () => {
 		const facts = await readBindings('(function name: (identifier) @name (entries . (parameter name: (self)) @receiver parameter: (_)* @parameters)) @declaration.method');
 		const projected = projectLeadFacts(facts, [effect]);
 		expect(projected.claims).toHaveLength(1);
-		for (const member of projected.slots) expect(member.claims).toEqual([0]);
+		for (const slot of projected.slots) expect(slot.claims).toEqual([0]);
 		expect(projected.slots).toContainEqual(expect.objectContaining({ route: 'rename', name: 'name', owner: 'function', field: 'name' }));
 		expect(projected.slots).toContainEqual(expect.objectContaining({ route: 'nested', name: 'receiver', parent: 'entries_receiver' }));
 	});
@@ -132,10 +132,10 @@ describe('lead fact projection', () => {
 		]);
 	});
 
-	it("copies a cloned claim's member onto the receiver form only where the form holds its slot", async () => {
+	it("copies a cloned claim's slot onto the receiver form only where the form holds its grammar slot", async () => {
 		const facts = await readBindings('(parameter default: (_) @default type: (_) @type) @declaration.parameter');
 		const projected = projectLeadFacts(facts, [effect]);
-		expect(projected.slots.map((member) => [member.owner, 'name' in member ? member.name : null])).toEqual([
+		expect(projected.slots.map((slot) => [slot.owner, 'name' in slot ? slot.name : null])).toEqual([
 			['parameter', 'default'],
 			['parameter', 'type'],
 			['receiver_parameter', 'type']

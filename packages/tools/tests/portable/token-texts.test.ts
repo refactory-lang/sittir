@@ -15,7 +15,7 @@ function* structuresIn(value: unknown): Generator<PortableStructure> {
 	}
 }
 
-describe('a member typed by its token texts reads its token and builds it back, value for value', () => {
+describe('a slot typed by its token texts reads its token and builds it back, value for value', () => {
 	it.each([
 		['rust', 'const X: u8 = 1u8;\n', { $path: 'literal.number.integer', suffix: 'u8' }],
 		['rust', 'const X: u8 = 0x1Fu8;\n', { $path: 'literal.number.integer.hex', suffix: 'u8' }],

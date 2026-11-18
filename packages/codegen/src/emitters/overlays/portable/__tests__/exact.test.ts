@@ -9,17 +9,17 @@ beforeAll(async () => {
 	exact = await exactOf('rust');
 }, 120_000);
 
-const setIn = (slots: ExactSlots, path: string, member: string) => {
-	const set = slots.get(path)?.get(member);
-	if (set === undefined) throw new Error(`no exact set at ${path}.${member}`);
+const setIn = (slots: ExactSlots, path: string, slot: string) => {
+	const set = slots.get(path)?.get(slot);
+	if (set === undefined) throw new Error(`no exact set at ${path}.${slot}`);
 	return set;
 };
 
-const setAt = (path: string, member: string) => setIn(exact, path, member);
+const setAt = (path: string, slot: string) => setIn(exact, path, slot);
 
-const reasonsAt = (slots: ExactSlots, path: string, member: string, kind: string): readonly string[] => {
-	const arm = setIn(slots, path, member).raw.find((candidate) => candidate.kind === kind);
-	if (arm === undefined) throw new Error(`no raw ${kind} at ${path}.${member}`);
+const reasonsAt = (slots: ExactSlots, path: string, slot: string, kind: string): readonly string[] => {
+	const arm = setIn(slots, path, slot).raw.find((candidate) => candidate.kind === kind);
+	if (arm === undefined) throw new Error(`no raw ${kind} at ${path}.${slot}`);
 	return arm.reasons;
 };
 
@@ -67,7 +67,7 @@ describe('exactSlotsOf', () => {
 		expect(reasonsAt(exact, 'clause.where.predicate', 'bounds', 'function_type')).toContain('preset');
 	});
 
-	it("narrows a member to the kinds its claim's tests guarantee: a conformance's trait clause is the positive one, which implements reads, so the member holds nothing", () => {
+	it("narrows a slot to the kinds its claim's tests guarantee: a conformance's trait clause is the positive one, which implements reads, so the slot holds nothing", () => {
 		const set = setAt('declaration.extension.conformance', 'traitClause');
 		expect([...set.kinds, ...set.unmapped, ...set.raw.map((arm) => arm.kind)]).toEqual([]);
 	});
@@ -93,13 +93,13 @@ describe('exactSlotsOf, python', () => {
 		expect(reasonsAt(python, 'argument.named', 'value', 'string')).not.toContain('preset');
 	});
 
-	it("takes a member's set from its read routes where no claim's level declares the member: a constant's value", () => {
+	it("takes a slot's set from its read routes where no claim's level declares the slot: a constant's value", () => {
 		const set = setIn(python, 'declaration.constant', 'value');
 		expect(set.unmapped).toEqual(['python:as_pattern']);
 		expect(set.kinds).toContain('declaration.variable');
 	});
 
-	it("narrows a member to the kind its claim's pattern pins: a constant's name is an identifier", () => {
+	it("narrows a slot to the kind its claim's pattern pins: a constant's name is an identifier", () => {
 		expect(setIn(python, 'declaration.constant', 'name').kinds).toEqual(['identifier']);
 	});
 });

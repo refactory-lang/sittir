@@ -13,7 +13,7 @@ declare const literal: VocabViews['literal.boolean'];
 export const returned: ReturnType<VocabViews['declaration.function']['returnType']> = literal;
 
 declare const read: ViewOf<unknown>;
-// @ts-expect-error a reader typed unknown reads as unknown, which no member type admits
+// @ts-expect-error a reader typed unknown reads as unknown, which no slot type admits
 export const counted: number = read;
 `;
 

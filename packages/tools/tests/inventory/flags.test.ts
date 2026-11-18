@@ -29,7 +29,7 @@ function vocabularyIn(dir: string): void {
 }
 
 describe('the vocabulary flags', () => {
-	it('are the members declared with the marker type Flag, and a boolean member is data', async () => {
+	it('are the slots declared with the marker type Flag, and a boolean slot is data', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 		vocabularyIn(dir);
 		const vocabulary = await readVocabulary(dir);

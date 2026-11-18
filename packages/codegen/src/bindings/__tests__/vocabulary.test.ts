@@ -37,7 +37,7 @@ describe('readVocabulary', () => {
 		}
 	});
 
-	it('refuses a kind that restates a member it does not declare', async () => {
+	it('refuses a kind that restates a slot it does not declare', async () => {
 		await expect(
 			vocabularyIn(
 				'export interface Declaration<G, K = "declaration"> {',
@@ -51,7 +51,7 @@ describe('readVocabulary', () => {
 		).rejects.toThrow(/Bare restates name, which it does not declare/);
 	});
 
-	it('drops a member a refinement narrows to never from its members, and keeps it on the parent', async () => {
+	it('drops a slot a refinement narrows to never from its slots, and keeps it on the parent', async () => {
 		const vocabulary = await vocabularyIn(
 			'export interface Declaration<G, K = "declaration"> {',
 			"\treadonly $path: K;",
@@ -67,7 +67,7 @@ describe('readVocabulary', () => {
 		expect([...vocabulary.slots('declaration.bare').keys()]).toEqual(['name']);
 	});
 
-	it('drops a member the feature that owns it narrows to never at a refinement, in every composition', async () => {
+	it('drops a slot the feature that owns it narrows to never at a refinement, in every composition', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 		const write = (file: string, lines: readonly string[]): void => {
 			mkdirSync(dirname(join(dir, file)), { recursive: true });
@@ -115,7 +115,7 @@ describe('readVocabulary', () => {
 		}
 	});
 
-	it("keeps a parent's member off a refinement that restates it only in a feature the composition lacks", async () => {
+	it("keeps a parent's slot off a refinement that restates it only in a feature the composition lacks", async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 		const write = (file: string, lines: readonly string[]): void => {
 			mkdirSync(dirname(join(dir, file)), { recursive: true });
@@ -212,7 +212,7 @@ describe('readVocabulary', () => {
 		await expect(vocabularyIn("interface Declaration<G> { $path: 'declaration'; abstract?: Flag; accessor?: Flag; }")).rejects.toThrow(/declaration\.ts: .*parse/is);
 	});
 
-	it('stamps the arity of a member from its type: a list where it is an array, either where a union holds an array arm, and one value otherwise', async () => {
+	it('stamps the arity of a slot from its type: a list where it is an array, either where a union holds an array arm, and one value otherwise', async () => {
 		const vocabulary = await vocabularyIn(
 			'export interface Declaration<G, K = "declaration"> {',
 			"\treadonly $path: K;",
@@ -223,11 +223,11 @@ describe('readVocabulary', () => {
 			'\treadonly arguments: V.Expression<G> | V.Expression<G>[];',
 			'}'
 		);
-		const members = vocabulary.slots('declaration');
-		expect(Object.fromEntries([...members].map(([name, member]) => [name, member.arity ?? 'one']))).toEqual({ extern: 'one', name: 'one', bounds: 'list', extends: 'list', arguments: 'either' });
+		const slots = vocabulary.slots('declaration');
+		expect(Object.fromEntries([...slots].map(([name, slot]) => [name, slot.arity ?? 'one']))).toEqual({ extern: 'one', name: 'one', bounds: 'list', extends: 'list', arguments: 'either' });
 	});
 
-	it('reads a member named by a keyword like any other', async () => {
+	it('reads a slot named by a keyword like any other', async () => {
 		const vocabulary = await vocabularyIn('export interface Declaration<G, K = "declaration"> {', "\treadonly $path: K;", '\treadonly static?: Flag;', '\treadonly type: string;', '}');
 		expect([...vocabulary.slots('declaration')]).toEqual([
 			['static', { optional: true, flag: true }],
@@ -235,8 +235,8 @@ describe('readVocabulary', () => {
 		]);
 	});
 
-	it('refuses a member not named by a plain identifier', async () => {
-		const declaration = (member: string) => ['export interface Declaration<G, K = "declaration"> {', "\treadonly $path: K;", `\t${member}`, '}'];
+	it('refuses a slot not named by a plain identifier', async () => {
+		const declaration = (slot: string) => ['export interface Declaration<G, K = "declaration"> {', "\treadonly $path: K;", `\t${slot}`, '}'];
 		await expect(vocabularyIn(...declaration("readonly 'async'?: Flag;"))).rejects.toThrow(/'async'.*identifier/);
 		await expect(vocabularyIn(...declaration('readonly [key]?: Flag;'))).rejects.toThrow(/\[key\].*identifier/);
 	});
@@ -319,7 +319,7 @@ describe('flagSegment', () => {
 		expect(flagSegment(vocabulary, 'declaration.method.private_name')).toEqual({ parent: 'declaration.method', flag: 'privateName' });
 	});
 
-	it('reads no flag where the last segment is a kind, a member that is data, or names nothing', async () => {
+	it('reads no flag where the last segment is a kind, a slot that is data, or names nothing', async () => {
 		const vocabulary = await vocabularyOf();
 		expect(flagSegment(vocabulary, 'declaration.method')).toBeUndefined();
 		expect(flagSegment(vocabulary, 'declaration.method.body')).toBeUndefined();
@@ -480,7 +480,7 @@ describe('canonicalPaths', () => {
 	});
 });
 
-const member = (name: string): SlotFact => ({ route: 'rename', owner: 'parameter', name, field: null, kind: null, after: null, anchor: null });
+const slotFact = (name: string): SlotFact => ({ route: 'rename', owner: 'parameter', name, field: null, kind: null, after: null, anchor: null });
 
 describe('canonicalFacts', () => {
 	it("drops a capture its pattern's predicates name where no path its claim reads declares it, and keeps one a path declares", async () => {
@@ -500,7 +500,7 @@ describe('canonicalFacts', () => {
 			unclaimed: []
 		};
 		const canonical = canonicalFacts(facts, vocabulary, new Map([['assignment', assignment]]));
-		expect(canonical.slots.map((member) => [member.route === 'dropped' ? null : member.name, member.claims])).toEqual([
+		expect(canonical.slots.map((slot) => [slot.route === 'dropped' ? null : slot.name, slot.claims])).toEqual([
 			['name', [0]],
 			['body', [1]]
 		]);
@@ -510,7 +510,7 @@ describe('canonicalFacts', () => {
 		const vocabulary = await synonymVocabulary();
 		const facts: BindingFacts = {
 			claims: [{ ...claim('declaration.parameter.self'), kind: 'parameter' }, { ...claim('declaration.parameter.mut'), kind: 'parameter' }],
-			slots: [member('mut'), member('name'), member('other')],
+			slots: [slotFact('mut'), slotFact('name'), slotFact('other')],
 			containers: [],
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [], match: '^$' }],
 			unclaimed: []

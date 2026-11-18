@@ -102,7 +102,7 @@ describe('the portable read', () => {
 		expect(roundTrip('f();')).toBe('f();\n');
 	});
 
-	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
+	it('reads a list slot no route finds as an empty list, parsed and built alike', () => {
 		expect(readFirst('fn f() {}')).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } });
 		const built = runtime.build(readFirst('fn f() {}')) as { readonly $type: number };
 		expect((runtime.read(built) as Read).parameters).toEqual([]);
@@ -229,9 +229,9 @@ describe('the portable read', () => {
 		['fn f() where T: A + B {}', 'whereClause', ['A', 'B']],
 		['trait T: A + B {}', 'extends', ['A', 'B']],
 		['trait T: A {}', 'extends', ['A']]
-	])('reads the bounds of %j as a list, one bound or many, and builds them back', (source, member, bounds) => {
+	])('reads the bounds of %j as a list, one bound or many, and builds them back', (source, slot, bounds) => {
 		const read = readFirst(source);
-		const listed = member === 'extends' ? read.extends : member === 'whereClause' ? ((read.whereClause as Read).wherePredicates as readonly Read[])[0]!.bounds : (read.typeParameters as readonly Read[])[0]!.bounds;
+		const listed = slot === 'extends' ? read.extends : slot === 'whereClause' ? ((read.whereClause as Read).wherePredicates as readonly Read[])[0]!.bounds : (read.typeParameters as readonly Read[])[0]!.bounds;
 		expect(listed).toEqual(bounds);
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});

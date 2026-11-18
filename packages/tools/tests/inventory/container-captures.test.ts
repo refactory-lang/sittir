@@ -89,7 +89,7 @@ describe('container captures', () => {
 		};
 		return built;
 	};
-	const envelopeMembers = async (vocabulary: Vocabulary, claims: readonly string[], name: string) => {
+	const envelopeSlots = async (vocabulary: Vocabulary, claims: readonly string[], name: string) => {
 		const input = await grammar([...CLAIMS, ...claims, `(marked (mark)* @marks "async" @${name} body: (_) @element)`].join('\n'));
 		const bindings = resolveFlags(canonicalFacts(input.bindings, vocabulary, input.model), vocabulary, input.model);
 		return derive([{ ...input, bindings }]).slots.get('declaration.b');
@@ -97,23 +97,23 @@ describe('container captures', () => {
 
 	it('derive a flag captured on the envelope by its synonym as they derive the canonical flag', async () => {
 		const vocabulary = vocabularyOf();
-		const canonical = await envelopeMembers(vocabulary, [], 'async');
+		const canonical = await envelopeSlots(vocabulary, [], 'async');
 		expect([...(canonical?.keys() ?? [])]).toContain('async');
-		expect(await envelopeMembers(vocabulary, [], 'concurrent')).toEqual(canonical);
+		expect(await envelopeSlots(vocabulary, [], 'concurrent')).toEqual(canonical);
 	});
 
-	it("resolve an envelope's synonym against the path its element derives to, not another claim's data member", async () => {
+	it("resolve an envelope's synonym against the path its element derives to, not another claim's data slot", async () => {
 		const vocabulary = vocabularyOf([['declaration.alternate', new Map([['concurrent', { optional: true, flag: false }]])]]);
 		const placed = ['(marked body: (leaf_b) @declaration.alternate)'];
-		const canonical = await envelopeMembers(vocabulary, placed, 'async');
+		const canonical = await envelopeSlots(vocabulary, placed, 'async');
 		expect([...(canonical?.keys() ?? [])]).toContain('async');
-		expect(await envelopeMembers(vocabulary, placed, 'concurrent')).toEqual(canonical);
+		expect(await envelopeSlots(vocabulary, placed, 'concurrent')).toEqual(canonical);
 	});
 
 	it('are reported, not spread, when the element slot names no kind directly', async () => {
 		const d = derive([await grammar([...CLAIMS, '(declared "declare" @declare (_) @element)'].join('\n'))]);
 		expect(d.untargeted).toEqual(['g: declared (declare)']);
-		for (const [v, members] of d.slots) expect(members.has('declare'), v).toBe(false);
+		for (const [v, slots] of d.slots) expect(slots.has('declare'), v).toBe(false);
 	});
 
 	it('leave no slot of the container behind unless the pattern drops it on purpose', async () => {
@@ -149,7 +149,7 @@ describe('container captures', () => {
 		expect(() => derive([strayInput])).toThrow(/marked's container selects a leaf_a child, which no form of marked holds/);
 	});
 
-	it('leave a claimed wrapper to its own members', async () => {
+	it('leave a claimed wrapper to its own slots', async () => {
 		const d = derive([await grammar([...CLAIMS, '(declared) @declaration.declared'].join('\n'))]);
 		expect(d.untargeted).toEqual([]);
 		expect([...(d.slots.get('declaration.declared')?.keys() ?? [])]).toEqual(['content']);
@@ -185,7 +185,7 @@ describe('derive: wildcard claims', () => {
 	});
 });
 
-describe('derive: wildcard claims and members', () => {
+describe('derive: wildcard claims and slots', () => {
 	const placedModel = async (bindings: string): Promise<GrammarInput> => {
 		const input = await grammar(bindings);
 		const model = new Map(input.model);
@@ -194,12 +194,12 @@ describe('derive: wildcard claims and members', () => {
 		return { ...input, model };
 	};
 
-	it('folds no members from a kind a wildcard claim reaches; the path keeps its explicit claims\' members', async () => {
+	it('folds no slots from a kind a wildcard claim reaches; the path keeps its explicit claims\' slots', async () => {
 		const d = derive([await placedModel(['(declared) @declaration.d', '(holder (_) @declaration.d)'].join('\n'))]);
 		expect([...(d.slots.get('declaration.d')?.keys() ?? [])]).toEqual(['content']);
 	});
 
-	it('records each required member of the path a wildcard-reached kind has no route for', async () => {
+	it('records each required slot of the path a wildcard-reached kind has no route for', async () => {
 		const d = derive([await placedModel(['(declared) @declaration.d', '(holder (_) @declaration.d)'].join('\n'))]);
 		expect(d.wildcardUnrouted).toEqual(['g: shaped as declaration.d has no route for content']);
 	});

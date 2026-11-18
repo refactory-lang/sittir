@@ -11,14 +11,14 @@ describe('readBindings', () => {
 	});
 	it('stamps a capture its pattern\'s predicates name as tested, and no other', async () => {
 		const facts = await readBindings('((method_declaration name: (identifier) @name body: (_) @body) @declaration.constructor (#eq? @name "__init__"))');
-		expect(facts.slots.map((member) => ['name' in member ? member.name : null, member.tested])).toEqual([
+		expect(facts.slots.map((slot) => ['name' in slot ? slot.name : null, slot.tested])).toEqual([
 			['name', true],
 			['body', undefined]
 		]);
 		const [container] = (await readBindings('((wrapper (decorator (identifier) @static) (_) @element) (#eq? @static "staticmethod"))')).containers;
 		expect(container?.captures.map((capture) => [capture.name, capture.tested])).toEqual([['static', true]]);
 	});
-	it('reads a single-segment capture beside the top node\'s claim as a further claim: no member sits on the claimed node itself', async () => {
+	it('reads a single-segment capture beside the top node\'s claim as a further claim: no slot sits on the claimed node itself', async () => {
 		const facts = await readBindings('(shorthand_property_identifier) @element.pair @key');
 		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([
 			['element.pair', 'shorthand_property_identifier'],
@@ -26,7 +26,7 @@ describe('readBindings', () => {
 		]);
 		expect(facts.slots).toEqual([]);
 	});
-	it('reads a single-segment capture beside a claim on a nested node as a member of the top claim', async () => {
+	it('reads a single-segment capture beside a claim on a nested node as a slot of the top claim', async () => {
 		const facts = await readBindings('(function_definition body: (block (expression_statement (string) @doc @literal.string.docstring))) @declaration.function');
 		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([
 			['declaration.function', 'function_definition'],
@@ -89,7 +89,7 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('reads claims, member captures, field literals, quantifiers, containers and predicates', async () => {
+	it('reads claims, slot captures, field literals, quantifiers, containers and predicates', async () => {
 		const facts = await readBindings(
 			[
 				'(function_definition (parameters (identifier)* @names)) @declaration.function',
@@ -159,7 +159,7 @@ describe('readBindings', () => {
 		]);
 	});
 
-	it('reads a slot a claim drops on purpose as a dropped member of the claimed kind, never a member named dropped', async () => {
+	it('reads a grammar slot a claim drops on purpose as a dropped slot of the claimed kind, never a slot named dropped', async () => {
 		const facts = await readBindings('(binary left: (_) @dropped) @expression.binary');
 		expect(facts.slots).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]);
 	});
@@ -183,7 +183,7 @@ describe('readBindings', () => {
 		expect(facts.claims.find((c) => c.vocab === 'declaration.interface.trait')?.children).toEqual([]);
 	});
 
-	it('reads no presence test from a member capture on a wildcard: a member may be absent', async () => {
+	it('reads no presence test from a slot capture on a wildcard: a slot may be absent', async () => {
 		const facts = await readBindings('(let_declaration value: (_) @value) @declaration.variable');
 		expect(facts.claims[0]?.children).toEqual([]);
 	});
@@ -215,7 +215,7 @@ describe('readBindings', () => {
 		expect(facts.claims[0]?.children).toEqual([]);
 	});
 
-	it('reads no test from the path to a presence capture: the flag is a member, not a condition of the claim', async () => {
+	it('reads no test from the path to a presence capture: the flag is a slot, not a condition of the claim', async () => {
 		const facts = await readBindings('(function_definition (modifiers "async" @isAsync)) @declaration.function');
 		expect(facts.claims[0]?.children).toEqual([]);
 	});
@@ -232,7 +232,7 @@ describe('readBindings', () => {
 	});
 
 	it('selects an unfielded wildcard by its position after the node pattern before it, never after a token', async () => {
-		const { slots: members, containers } = await readBindings(
+		const { slots, containers } = await readBindings(
 			[
 				'(index_expression (_) @object (_) @index) @expression.subscript',
 				'(unary_expression "-" (_) @argument) @expression.unary.negation',
@@ -240,7 +240,7 @@ describe('readBindings', () => {
 			].join('\n')
 		);
 		const first = { field: null, kind: null, after: null, anchor: null };
-		expect(members).toEqual([
+		expect(slots).toEqual([
 			{ route: 'rename', owner: 'index_expression', name: 'object', ...first, claims: [0] },
 			{ route: 'rename', owner: 'index_expression', name: 'index', field: null, kind: null, after: first, anchor: null, claims: [0] },
 			{ route: 'rename', owner: 'unary_expression', name: 'argument', ...first, claims: [1] }
@@ -279,20 +279,20 @@ describe('readBindings', () => {
 	});
 
 	it('reads a token capture as the presence of the token', async () => {
-		const { slots: members } = await readBindings('(expression_statement ";" @semi) @statement.expression');
-		expect(members).toEqual([{ route: 'presence', owner: 'expression_statement', name: 'semi', token: ';', via: [], claims: [0] }]);
+		const { slots } = await readBindings('(expression_statement ";" @semi) @statement.expression');
+		expect(slots).toEqual([{ route: 'presence', owner: 'expression_statement', name: 'semi', token: ';', via: [], claims: [0] }]);
 	});
 
 	it('gives each option of an alternation the field and the captures of the alternation', async () => {
-		const { slots: members } = await readBindings('(foo name: [(a) (b)] @x) @y.z');
-		expect(members).toEqual([
+		const { slots } = await readBindings('(foo name: [(a) (b)] @x) @y.z');
+		expect(slots).toEqual([
 			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'a', after: null, anchor: null, claims: [0] },
 			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'b', after: null, anchor: null, claims: [0] }
 		]);
 	});
 
 	it('reads a keyword or punctuation capture in claim position as a token class, never a claim', async () => {
-		const { claims, slots: members } = await readBindings(
+		const { claims, slots } = await readBindings(
 			[
 				'["def" "class"] @keyword.declaration',
 				'(crate) @keyword.import',
@@ -301,7 +301,7 @@ describe('readBindings', () => {
 			].join('\n')
 		);
 		expect(claims.map((c) => c.vocab)).toEqual(['identifier', 'declaration.variable']);
-		expect(members).toEqual([
+		expect(slots).toEqual([
 			{ route: 'rename', owner: 'lexical_declaration', name: 'keyword', field: 'kind', kind: null, after: null, anchor: null, claims: [1] }
 		]);
 	});
@@ -334,11 +334,11 @@ describe('readBindings', () => {
 		await expect(bindingPatterns(text)).rejects.toThrow(where);
 	});
 
-	it('marks each step a member descends through with the anchor that pins it to its parent\'s first child', async () => {
-		const { slots: members } = await readBindings(
+	it('marks each step a slot descends through with the anchor that pins it to its parent\'s first child', async () => {
+		const { slots } = await readBindings(
 			'(function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))'
 		);
-		expect(members).toEqual([
+		expect(slots).toEqual([
 			{
 				route: 'nested',
 				owner: 'function_definition',
@@ -361,19 +361,19 @@ describe('readBindings', () => {
 	});
 
 	it('pins a child to its parent\'s last child when the anchor follows it', async () => {
-		const { slots: members } = await readBindings('(block (expression_statement) @last .) @statement.block');
-		expect(members).toEqual([
+		const { slots } = await readBindings('(block (expression_statement) @last .) @statement.block');
+		expect(slots).toEqual([
 			{ route: 'rename', owner: 'block', name: 'last', field: null, kind: 'expression_statement', after: null, anchor: 'last', claims: [0] }
 		]);
 	});
 
-	it('keeps an anchor below the claimed node on the member that descends through it', async () => {
-		const { claims, slots: members } = await readBindings(
+	it('keeps an anchor below the claimed node on the slot that descends through it', async () => {
+		const { claims, slots } = await readBindings(
 			'(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @receiver)))) @declaration.method))'
 		);
 		expect(claims.map((c) => [c.vocab, c.within])).toEqual([['declaration.method', ['declaration_list', 'impl_item_body']]]);
-		expect(members.map((m) => [m.route, m.owner])).toEqual([['nested', 'function_item']]);
-		expect(members.flatMap((m) => (m.route === 'nested' ? m.via.map((step) => [step.kind, step.anchor]) : []))).toEqual([
+		expect(slots.map((m) => [m.route, m.owner])).toEqual([['nested', 'function_item']]);
+		expect(slots.flatMap((m) => (m.route === 'nested' ? m.via.map((step) => [step.kind, step.anchor]) : []))).toEqual([
 			['attributed_parameter', 'first'],
 			['parameters_elements', null],
 			['parameters', null]
@@ -381,10 +381,10 @@ describe('readBindings', () => {
 	});
 
 	it('owns a capture below a placed claim by the claimed node, not by the pattern\'s top', async () => {
-		const { slots: members } = await readBindings(
+		const { slots } = await readBindings(
 			'(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted))'
 		);
-		expect(members).toEqual([
+		expect(slots).toEqual([
 			{
 				route: 'nested',
 				owner: 'function_item',
@@ -412,17 +412,17 @@ describe('readBindings', () => {
 	});
 
 	it('pins a child anchored on both sides to its parent\'s only named child', async () => {
-		const { slots: members } = await readBindings('(block . (expression_statement) @only .) @statement.block');
-		expect(members).toEqual([
+		const { slots } = await readBindings('(block . (expression_statement) @only .) @statement.block');
+		expect(slots).toEqual([
 			{ route: 'rename', owner: 'block', name: 'only', field: null, kind: 'expression_statement', after: null, anchor: 'only', claims: [0] }
 		]);
 	});
 
 	it('ties two children an anchor joins as adjacent, each naming the other', async () => {
-		const { slots: members } = await readBindings('(block (comment) @a . (expression_statement) @b) @statement.block');
+		const { slots } = await readBindings('(block (comment) @a . (expression_statement) @b) @statement.block');
 		const comment = { field: null, kind: 'comment', after: null, anchor: null };
 		const statement = { field: null, kind: 'expression_statement', after: null, anchor: null };
-		expect(members).toEqual([
+		expect(slots).toEqual([
 			{ route: 'rename', owner: 'block', name: 'a', ...comment, adjacent: { next: statement }, claims: [0] },
 			{ route: 'rename', owner: 'block', name: 'b', ...statement, adjacent: { previous: comment }, claims: [0] }
 		]);
@@ -452,17 +452,17 @@ describe('readBindings', () => {
 
 describe('readBindings: the match tree of an anchored capture', () => {
 	const RUST = '(function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))) @declaration.method';
-	const memberNamed = async (text: string, name: string) => (await readBindings(text)).slots.find((m) => m.route !== 'dropped' && m.name === name);
+	const slotNamed = async (text: string, name: string) => (await readBindings(text)).slots.find((m) => m.route !== 'dropped' && m.name === name);
 
 	it('reads an unfielded restriction of the captured item, with the claim line', async () => {
-		expect((await memberNamed(`\n${RUST}`, 'receiver'))?.leadMatch).toEqual({
+		expect((await slotNamed(`\n${RUST}`, 'receiver'))?.leadMatch).toEqual({
 			line: 2,
 			match: { kind: 'attributed_parameter', within: { field: null, admits: [{ kind: 'self_parameter' }] } }
 		});
 	});
 	it('reads a fielded restriction of the captured item', async () => {
 		const text = '(method_definition parameters: (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver))) @declaration.method';
-		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({
+		expect((await slotNamed(text, 'receiver'))?.leadMatch).toEqual({
 			line: 1,
 			match: { kind: 'required_parameter', within: { field: 'pattern', admits: [{ kind: 'this' }] } }
 		});
@@ -472,7 +472,7 @@ describe('readBindings: the match tree of an anchored capture', () => {
 		await expect(readBindings(text)).rejects.toThrow(/alternation below the claimed node tests only named nodes/);
 	});
 	it('reads no match for a capture that is not anchored first', async () => {
-		expect((await memberNamed('(function_item (parameters (parameters_elements (attributed_parameter) @receiver))) @declaration.method', 'receiver'))?.leadMatch).toBeUndefined();
+		expect((await slotNamed('(function_item (parameters (parameters_elements (attributed_parameter) @receiver))) @declaration.method', 'receiver'))?.leadMatch).toBeUndefined();
 	});
 	it.each([
 		['a quantifier', '(attributed_parameter (attribute_item)? (self_parameter))'],
@@ -481,7 +481,7 @@ describe('readBindings: the match tree of an anchored capture', () => {
 		['a second restriction on one kind', '(required_parameter pattern: (this) type: (type_annotation))']
 	])('refuses %s in the match tree, with the claim line', async (reason, item) => {
 		const text = `(function_item (parameters (parameters_elements . ${item} @receiver))) @declaration.method`;
-		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: reason });
+		expect((await slotNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: reason });
 	});
 	it('refuses a negated field in the match tree, so a claim with one joins no variant', async () => {
 		const text = '(function_item (parameters (parameters_elements . (required_parameter pattern: (this) !type) @receiver))) @declaration.method\n(required_parameter pattern: (this) !type) @parameter.untyped';
@@ -495,11 +495,11 @@ describe('readBindings: the match tree of an anchored capture', () => {
 	});
 	it('refuses an alternation whose options sit under different fields', async () => {
 		const text = '(function_item (parameters (parameters_elements . (required_parameter [pattern: (this) type: (identifier)]) @receiver))) @declaration.method';
-		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: 'an alternation over two fields' });
+		expect((await slotNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: 'an alternation over two fields' });
 	});
 	it('refuses a negated kind predicate on a node of the match tree', async () => {
 		const text = '((function_item (parameters (parameters_elements . (attributed_parameter (_) @_p) @receiver))) @declaration.method (#not-kind-eq? @_p "self_parameter"))';
-		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: 'a negated kind' });
+		expect((await slotNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: 'a negated kind' });
 	});
 	it('reads a claim\'s own restriction as its match, for the variant-name join', async () => {
 		const facts = await readBindings('(required_parameter pattern: (this)) @parameter.this\n(required_parameter) @parameter');

@@ -122,8 +122,8 @@ describe('plan', () => {
 		});
 	});
 
-	it('gates a member a stub adds to a kind it does not declare, and leaves a kind’s own members to the kind', async () => {
-		expect(Object.fromEntries([...p.owned].map(([path, members]) => [path, Object.fromEntries([...members].map(([name, o]) => [name, o.feature.name]))]))).toEqual({
+	it('gates a slot a stub adds to a kind it does not declare, and leaves a kind’s own slots to the kind', async () => {
+		expect(Object.fromEntries([...p.owned].map(([path, slots]) => [path, Object.fromEntries([...slots].map(([name, o]) => [name, o.feature.name]))]))).toEqual({
 			'declaration.function': { async: 'AsyncAwait' },
 			'declaration.method': { accessor: 'Accessors' },
 			'declaration.method.getter': { accessor: 'Accessors' }
@@ -137,7 +137,7 @@ describe('plan', () => {
 		});
 	});
 
-	it('reports a member two features own', async () => {
+	it('reports a slot two features own', async () => {
 		const properties = feature('properties', 'export interface Properties {\n\treadonly properties: true;\n}', {
 			'declaration.ts': `export namespace Declaration {
 	export interface Method<G extends GrammarMap> {
@@ -161,7 +161,7 @@ describe('plan', () => {
 		expect(await issues({ ...CLEAN, ...lambda })).toEqual(['AsyncAwait: Declaration.Lambda adds slots to a kind the vocabulary does not declare']);
 	});
 
-	it('lets a feature require a member only when it extends the feature that owns it', async () => {
+	it('lets a feature require a slot only when it extends the feature that owns it', async () => {
 		const generators = (marker: string): Record<string, string> =>
 			feature('generators', marker, {
 				'declaration.ts': `export namespace Declaration {
@@ -177,7 +177,7 @@ describe('plan', () => {
 		expect(await issues({ ...CLEAN, ...generators('export interface Generators extends AsyncAwait {\n\treadonly generators: true;\n}') })).toEqual([]);
 	});
 
-	describe('a sub-kind that redeclares an inherited member under its own feature', () => {
+	describe('a sub-kind that redeclares an inherited slot under its own feature', () => {
 		const call = (restated: string): Record<string, string> => ({
 			'expression.ts': `export interface Expression<G extends GrammarMap, K extends Under<'expression'> = 'expression'> {
 	readonly $path: K;
@@ -213,14 +213,14 @@ export namespace Expression {
 `
 		});
 
-		it('is refused unless its declaration names the member among the keys it restates', async () => {
+		it('is refused unless its declaration names the slot among the keys it restates', async () => {
 			expect(await issues({ ...call(''), ...signatures, ...expressions })).toEqual([
 				'GenericExpressions redeclares typeArguments at expression.call.construct, which inherits it from expression.call, where GenericSignatures owns it, and expression.call.construct does not name typeArguments among the keys it restates'
 			]);
 			expect(await issues({ ...call(", 'typeArguments'"), ...signatures, ...expressions })).toEqual([]);
 		});
 
-		it('is refused when the member keeps its type and only its gate differs', async () => {
+		it('is refused when the slot keeps its type and only its gate differs', async () => {
 			const arrow = DECLARATION.replace(
 				'\t}\n}\n',
 				`\t}
@@ -248,7 +248,7 @@ export namespace Expression {
 		});
 	});
 
-	it('reports a base declaration of a member a feature gates on the same line', async () => {
+	it('reports a base declaration of a slot a feature gates on the same line', async () => {
 		const arrow = DECLARATION.replace(
 			'\t}\n}\n',
 			`\t}
@@ -268,7 +268,7 @@ export namespace Expression {
 		expect(p.notes).toEqual(['async is gated at some kinds and stays in the base at 1: declaration.function.arrow']);
 	});
 
-	it('lets a descendant restate a member under its own feature only when that feature extends the owner', async () => {
+	it('lets a descendant restate a slot under its own feature only when that feature extends the owner', async () => {
 		const arrow = DECLARATION.replace(
 			'\t}\n}\n',
 			`\t}

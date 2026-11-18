@@ -29,7 +29,7 @@ describe('the portable read', () => {
 		expect(() => runtime.build({ $path: 'expression.yield.delegate' } as never)).toThrow('it needs expression');
 	});
 
-	it('reads the members a binding captures from its slot, and builds an import back', () => {
+	it('reads the slots a binding captures from its grammar slot, and builds an import back', () => {
 		const clause = { $path: 'clause.import.names', specifiers: [{ $path: 'clause.import.specifier', name: 'a' }, { $path: 'clause.import.specifier', name: 'b', alias: 'c' }] };
 		expect(firstOf('import {a, b as c} from "x";')).toMatchObject({ importClause: clause });
 		expect(roundTrip('import {a, b as c} from "x";')).toBe('import { a, b as c } from "x";\n');
@@ -78,7 +78,7 @@ describe('the portable read', () => {
 		expect(String(runtime.engine.render(runtime.engine.build.constraint(bound, { operator: typescript.kinds.Colon })))).toBe(': string');
 	});
 
-	it('leaves out a member whose route needs a member the node does not have', () => {
+	it('leaves out a slot whose route needs a grammar slot the node does not have', () => {
 		expect(firstOf('import x = require("y");')).not.toHaveProperty('source');
 		expect(roundTrip('import x = require("y");')).toBe('import x = require("y");\n');
 	});
@@ -117,7 +117,7 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
-	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
+	it('reads a list slot no route finds as an empty list, parsed and built alike', () => {
 		expect(firstOf('function f() {}')).toMatchObject({ $path: 'declaration.function', parameters: [] });
 		expect(firstOf('class C { m() {} }')).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', parameters: [] }] });
 		const built = runtime.build(firstOf('function f() {}') as Read) as { readonly $type: number };
@@ -273,7 +273,7 @@ describe('the portable read', () => {
 		expect(roundTrip('type X = typeof f<T>;')).toBe('type X = typeof f<T>;\n');
 	});
 
-	it.each(['private', 'protected', 'public'])('keeps a receiver whole that states %s, which no receiver member holds, and builds it back as written', (modifier) => {
+	it.each(['private', 'protected', 'public'])('keeps a receiver whole that states %s, which no receiver slot holds, and builds it back as written', (modifier) => {
 		const source = `class K { m(${modifier} this: K) {} }`;
 		const carries: unknown[] = [];
 		runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry));
@@ -292,8 +292,8 @@ describe('the portable read', () => {
 		['class C implements A {}', 'implements', ['A']],
 		['interface I extends A, B {}', 'extends', ['A', 'B']],
 		['interface I extends A {}', 'extends', ['A']]
-	])('reads the heritage of %j as a list, one type or many, and builds it back', (source, member, types) => {
-		expect((firstOf(source) as Read)[member]).toEqual(types);
+	])('reads the heritage of %j as a list, one type or many, and builds it back', (source, slot, types) => {
+		expect((firstOf(source) as Read)[slot]).toEqual(types);
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 

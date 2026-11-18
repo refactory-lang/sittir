@@ -18,7 +18,7 @@ declare const lifetimeRead: V.Read<RustMap, 'identifier.lifetime'>;
 export const lifetimeFunctionName: V.BuildInput<RustMap, 'declaration.function'>['name'] = lifetimeRead;
 
 export const lineComment: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comment.line', $value: ' x' };
-// @ts-expect-error a line comment builds from its text, never from a content member
+// @ts-expect-error a line comment builds from its text, never from a content slot
 export const lineCommentContent: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comment.line', content: ' x' };
 export const docComment: V.BuildInput<RustMap, 'comment.line.doc'> = { $path: 'comment.line.doc', $value: ' x' };
 export const typeArgument: V.BuildInput<RustMap, 'element.type_argument'>['argument'] = 'u8';

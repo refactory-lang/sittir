@@ -14,15 +14,15 @@ for (const [grammar, owner] of [
 	it(`${grammar}: both plain and receiver rest captures reach the repeated item slot`, () => {
 		const input = inputs.find((input) => input.grammar === grammar)!;
 		const entries = resolveRoutes(input).readEntries.get(owner) ?? [];
-		const members = entries
+		const slots = entries
 			.flatMap((entry) => entry.slots)
-			.filter((member) => member.name === 'parameters' && member.route === 'nested');
-		expect(members.length).toBeGreaterThanOrEqual(2);
-		for (const member of members) {
-			if (member.route !== 'nested') throw new Error('expected a nested member');
-			expect(member.multiple).toBe(true);
-			expect(member.slot).toMatchObject({ name: 'item', multiple: true });
-			expect(member.path).toBeDefined();
+			.filter((slot) => slot.name === 'parameters' && slot.route === 'nested');
+		expect(slots.length).toBeGreaterThanOrEqual(2);
+		for (const slot of slots) {
+			if (slot.route !== 'nested') throw new Error('expected a nested slot');
+			expect(slot.multiple).toBe(true);
+			expect(slot.slot).toMatchObject({ name: 'item', multiple: true });
+			expect(slot.path).toBeDefined();
 		}
 	}, 120000);
 }

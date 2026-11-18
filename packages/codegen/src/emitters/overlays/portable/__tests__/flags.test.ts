@@ -16,10 +16,10 @@ const BY_KEY: Readonly<Record<string, SlotSubject>> = SLOTS;
 const KEYWORDS: Readonly<Record<string, string>> = { 'method.static': 'static', 'item.marker': 'marker' };
 const TYPES: Readonly<Record<string, readonly number[]>> = { computed_name: [41], extern_modifier: [52], _name: [41, 42] };
 
-const plans = (members: readonly SlotRoute[], tests: readonly (readonly [string, readonly PortableCondition[], boolean])[] = []) =>
+const plans = (slots: readonly SlotRoute[], tests: readonly (readonly [string, readonly PortableCondition[], boolean])[] = []) =>
 	flagPlansOf({
 		kind: 'k',
-		slots: members,
+		slots,
 		claimFlags: tests.map(([flag, test, placed]) => ({ flag, test, placed })),
 		subjectOf: (owner, slot) => BY_KEY[`${owner}.${slot}`],
 		presenceOf: (owner, slot) => KEYWORDS[`${owner}.${slot}`],
@@ -87,7 +87,7 @@ describe('flagPlansOf', () => {
 		expect(plans([a, c]).get('static')).toEqual({ op: 'or', of: [{ op: 'present', ...SLOTS['method.static'] }, { op: 'is', types: [41], ...SLOTS['method.name'] }] });
 	});
 
-	it('leaves data members out', () => {
+	it('leaves data slots out', () => {
 		const name: SlotRoute = { route: 'slot', name: 'name', slot: { name: 'name' } as never, path: [{ owner: 'method', slot: 'name' }] };
 		expect(plans([name]).size).toBe(0);
 	});

@@ -6,13 +6,13 @@ const camel = (segment: string): string => segment.replace(/_([a-z])/g, (_, lett
 const misnamed = [...vocabulary.kinds]
 	.flatMap(([path, kind]) => {
 		const last = camel(path.split('.').at(-1) ?? path);
-		return [...kind.own].filter(([name, member]) => member.excluded !== true && (name === last || name === 'content' || name === 'contents')).map(([name]) => `${path}.${name}`);
+		return [...kind.own].filter(([name, slot]) => slot.excluded !== true && (name === last || name === 'content' || name === 'contents')).map(([name]) => `${path}.${name}`);
 	})
 	.sort();
 
 const contentTextValues = ['literal.character.content'];
 
-describe('a vocabulary member name', () => {
+describe('a vocabulary slot name', () => {
 	it('never repeats its kind, and is content only where a character literal names its text', () => {
 		expect(misnamed).toEqual(contentTextValues);
 	});
