@@ -46,8 +46,8 @@ describe('a layout run carries its excess indentation as depth members', () => {
 		if (statement === undefined || fn === undefined || !ts.is.expressionStatement(statement) || !ts.is.functionDeclaration(fn) || next === undefined) throw new Error('expected a call, a function and a statement');
 		const call = statement.expression();
 		if (!ts.is.callExpressionCall(call)) throw new Error('expected a plain call');
-		const args = call.arguments();
-		if (!ts.is.arguments(args)) throw new Error('expected arguments');
+		const args = call.$query().$descendants.ofType(ts.kinds.Arguments).at(0);
+		if (args === undefined || !ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b] = args.elements();
 		if (a == null || b == null) throw new Error('expected two arguments');
 		const body = fn.body();

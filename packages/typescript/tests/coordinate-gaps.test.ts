@@ -32,8 +32,8 @@ describe('gaps between coordinates', () => {
 		if (!ts.is.expressionStatement(statement)) throw new Error('expected an expression statement');
 		const call = statement.expression();
 		if (!ts.is.callExpression(call)) throw new Error('expected a call expression');
-		const args = call.arguments();
-		if (!ts.is.arguments(args)) throw new Error('expected arguments');
+		const args = call.$query().$descendants.ofType(ts.kinds.Arguments).at(0);
+		if (args === undefined || !ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b, c] = args.elements();
 		const rebuilt = args.$with.elements(a!, ts.build.identifier('x'), c!);
 		expect(rebuilt.$render()).toBe('(a,x,c)');
@@ -46,8 +46,8 @@ describe('gaps between coordinates', () => {
 		if (!ts.is.expressionStatement(statement)) throw new Error('expected an expression statement');
 		const call = statement.expression();
 		if (!ts.is.callExpression(call)) throw new Error('expected a call expression');
-		const args = call.arguments();
-		if (!ts.is.arguments(args)) throw new Error('expected arguments');
+		const args = call.$query().$descendants.ofType(ts.kinds.Arguments).at(0);
+		if (args === undefined || !ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b, c] = args.elements();
 		if (b == null || typeof b === 'number' || !ts.is.memberExpression(b)) throw new Error('expected a member expression');
 		const edited = b.$with.object(ts.build.identifier('y'));
