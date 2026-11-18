@@ -22,8 +22,8 @@ export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { refuseJSON } from './json-refusal.ts';
 export { spelledMember } from './spelled.ts';
-import type { HoistHop } from './hoist-read.ts';
-export { hoistRead, itemsHop, type HoistHop } from './hoist-read.ts';
+import { EMPTY as NO_HOISTED_ITEMS, type HoistHop } from './hoist-read.ts';
+export { hoistRead, type HoistHop } from './hoist-read.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };
@@ -623,6 +623,14 @@ export function ownerElements(list: unknown, reader: string): readonly unknown[]
 	if (Array.isArray(list)) return list;
 	const read = (list as Record<string, unknown>)[reader] as ((this: object) => readonly unknown[] | undefined) | undefined;
 	return read?.call(list) ?? [];
+}
+
+/** The last hop of a hoisted read that reaches a list view: the elements its own fill reads, as stored, with no wrapper read as its content. */
+export function listElementsHop(owner: string | undefined, reader: string): HoistHop {
+	return function (this: never) {
+		const elements = ownerElements(owner === undefined ? this : (this as Record<string, () => unknown>)[owner]!.call(this), reader);
+		return elements.length === 0 ? NO_HOISTED_ITEMS : Object.freeze([...elements]);
+	};
 }
 
 /** A list option the owner reads from its list, or the option's default. */

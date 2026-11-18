@@ -2912,6 +2912,11 @@ function storedHopOf(node: AssembledNode, slot: AssembledNonterminal): string {
 	return `storedHop(${JSON.stringify(slot.propertyName)}, ${JSON.stringify(slot.storageKey)}, ${isMultiple(slot)})`;
 }
 
+export function chainItemsHop(nodeMap: NodeMap, chain: WrapperChain, hop: number): string {
+	const target = listViewTarget(nodeMap.nodes.get(chain.storage[hop]!)!, nodeMap)!;
+	return `listElementsHop(${target.owner === undefined ? 'undefined' : JSON.stringify(target.owner.propertyName)}, ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)})`;
+}
+
 export function chainItemsAt(nodeMap: NodeMap, chain: WrapperChain): number | undefined {
 	const last = chain.storage.length - 1;
 	for (let hop = 0; hop <= last; hop++) {
@@ -2927,7 +2932,7 @@ export function storedHoistOf(holder: AssembledNode, lookup: AssembledNontermina
 	if (chain === undefined) return undefined;
 	const itemsAt = chainItemsAt(nodeMap, chain);
 	const hops = chain.storage.slice(0, itemsAt === undefined ? undefined : itemsAt).map((kind, hop) => storedHopOf(nodeMap.nodes.get(kind)!, chain.slots[hop]!));
-	if (itemsAt !== undefined) hops.push('itemsHop');
+	if (itemsAt !== undefined) hops.push(chainItemsHop(nodeMap, chain, itemsAt));
 	return { hops, list: chainReadsAsList(nodeMap, chain, slot) };
 }
 
@@ -2949,7 +2954,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 	for (const node of nodeMap.nodes.values()) {
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
 		if (plan.slots.length > 0) names.add('listSlotWith');
-		for (const name of ['hoistedWith', 'hoistRead', 'itemsHop', 'storedHop', 'wrapHoisted', 'wrapHoistedEach']) names.add(name);
+		for (const name of ['hoistedWith', 'hoistRead', 'listElementsHop', 'storedHop', 'wrapHoisted', 'wrapHoistedEach']) names.add(name);
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {

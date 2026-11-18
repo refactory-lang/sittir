@@ -9,7 +9,7 @@ import {
 	admitChildren,
 	hoistedWith,
 	hoistRead,
-	itemsHop,
+	listElementsHop,
 	storedHop,
 	wrapHoisted,
 	wrapHoistedEach,

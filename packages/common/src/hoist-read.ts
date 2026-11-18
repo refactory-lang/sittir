@@ -1,10 +1,6 @@
 export type HoistHop = (this: never) => unknown;
 
-const EMPTY: readonly never[] = Object.freeze([]);
-
-export function itemsHop(this: ArrayLike<unknown>): readonly unknown[] {
-	return this.length === 0 ? EMPTY : Object.freeze(Array.from(this));
-}
+export const EMPTY: readonly never[] = Object.freeze([]);
 
 function through(value: unknown, hops: readonly HoistHop[], from: number): unknown {
 	let at = value;
@@ -16,7 +12,13 @@ function through(value: unknown, hops: readonly HoistHop[], from: number): unkno
 	return at;
 }
 
+const reads = new WeakMap<object, unknown>();
+
 export function hoistRead(first: unknown, hops: readonly HoistHop[], list: boolean): unknown {
+	const held = typeof first === 'object' && first !== null;
+	if (held && reads.has(first)) return reads.get(first);
 	const read = through(first, hops, 0);
-	return list && first !== undefined && first !== null && (read === undefined || read === null) ? EMPTY : read;
+	const result = list && first !== undefined && first !== null && (read === undefined || read === null) ? EMPTY : read;
+	if (held) reads.set(first, result);
+	return result;
 }
