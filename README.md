@@ -52,7 +52,7 @@ using strict = await rust.createEngine({ api: 'strict' });
 const fn = strict.build.statement.function({
   visibilityModifier: strict.build.visibilityModifier.pub(),
   name: strict.build.identifier('main'),
-  parameters: strict.build.parameters(),
+  parameters: undefined,
   body: strict.build.block()
 });
 fn.$render(); // "pub fn main() {}"
@@ -60,7 +60,7 @@ fn.$render(); // "pub fn main() {}"
 const loose = rs.build.statement.function({
   visibilityModifier: 'pub',
   name: 'greet',
-  parameters: rs.build.parameters(rs.build.parameter({ name: 'name', type: 'String' })),
+  parameters: [rs.build.parametersElements(rs.build.parameter({ name: 'name', type: 'String' }))],
   body: rs.build.block()
 });
 loose.$render(); // "pub fn greet(name: String) {}"
