@@ -53,8 +53,9 @@ The hoist is a view the TypeScript wrap layer gives. Nothing below it changes.
 | the wrap getters (`emitters/wrap.ts`) | the parse tree: every wrapper is still a node in it |
 | the `$with` setters (`emitters/node-members.ts`) | the rust crates: node structs, per-slot accessors, render |
 | the factories and the loose `from` input | the native build, which receives the wrapper node |
-| the validators' reconstruction of a node's config | cursors and queries, which walk the tree |
-| the slot-descending `is` guards (`is.ts`) | |
+| the slot-descending `is` guards (`is.ts`) | cursors and queries, which walk the tree |
+| | the validators' reconstruction of a node's config, which rebuilds stored shapes through the low-level factories |
+| | the example printer, which prints a chain slot's wrappers: a wrapper is input the hoisted slot admits ("Input also admits the wrapper") |
 
 ## 3. One stamped fact, and its readers
 
