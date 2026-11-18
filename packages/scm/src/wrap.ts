@@ -300,9 +300,9 @@ function wrapString$with(node: Held, setter: string, args: readonly unknown[]): 
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildStringContent as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (RAW.buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.StringContent
 			);
@@ -380,9 +380,9 @@ function wrapImmediateString$with(node: Held, setter: string, args: readonly unk
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildStringContent as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (RAW.buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.StringContent
 			);
@@ -996,7 +996,9 @@ function wrapPredicate$with(node: Held, setter: string, args: readonly unknown[]
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildParameters as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Parameters
 			);

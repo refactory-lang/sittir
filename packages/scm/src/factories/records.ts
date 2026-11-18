@@ -315,7 +315,9 @@ function withString(node: object, setter: string, args: readonly unknown[]): unk
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildStringContent as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.StringContent
 			);
@@ -391,7 +393,9 @@ function withImmediateString(node: object, setter: string, args: readonly unknow
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildStringContent as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.StringContent
 			);
@@ -1061,7 +1065,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	const _parameters = wrapHoisted(
 		config.parameters,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...v),
+			v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.Parameters
 	);
 	const handle = currentHandle();
@@ -1088,7 +1092,7 @@ function buildPredicate$patch(source: object, config: T.Predicate.Config): T.Pre
 	const _parameters = wrapHoisted(
 		config.parameters,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...v),
+			v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.Parameters
 	);
 	const handle = currentHandle();
@@ -1166,7 +1170,7 @@ function buildPredicate$set(
 			const _parameters = wrapHoisted(
 				config.parameters,
 				(v: readonly never[]) =>
-					v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...v),
+					v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])),
 				TSKindId.Parameters
 			);
 			return setSlot(
@@ -1212,7 +1216,9 @@ function withPredicate(node: object, setter: string, args: readonly unknown[]): 
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Parameters
 			);

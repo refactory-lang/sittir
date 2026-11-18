@@ -92,7 +92,7 @@
 
 ### Task 6: Factories and the loose `from`
 
-**Status:** in progress. Built object nodes read hoisted slots through the stamp (`storedAccessor`, `storedHop`). The strict and loose factory types, and the arena build of a hoisted value, follow.
+**Status:** in progress. Built object nodes read hoisted slots through the stamp (`storedAccessor`, `storedHop`); a chain slot's config input is its hoisted type (a hint on the holder's interface), the strict builders wrap it with each wrapper's own builder, the loose resolvers read the hoisted value back, and the generated tests sample and check a hoisted slot by its own type. Remaining: refine-form setter parameter types, the hop holders' own factory surfaces, and the tests and examples that read old shapes.
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/factories.ts`, `packages/codegen/src/emitters/from.ts`

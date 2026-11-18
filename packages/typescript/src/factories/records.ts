@@ -423,7 +423,9 @@ function withExportClause(node: object, setter: string, args: readonly unknown[]
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildExportSpecifiers as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ExportSpecifiers
 			);
@@ -969,7 +971,9 @@ function withNamedImports(node: object, setter: string, args: readonly unknown[]
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildImportSpecifiers as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildImportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ImportSpecifiers
 			);
@@ -987,7 +991,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		wrapHoisted(
 			config.object,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildObject() : (buildObject as unknown as (...items: never[]) => never)(...v),
+				v.length === 0 ? buildObject() : (buildObject as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Object
 		),
 		() => buildObject()
@@ -1013,7 +1017,7 @@ function buildImportAttribute$patch(source: object, config: T.ImportAttribute.Co
 		wrapHoisted(
 			config.object,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildObject() : (buildObject as unknown as (...items: never[]) => never)(...v),
+				v.length === 0 ? buildObject() : (buildObject as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Object
 		),
 		() => buildObject()
@@ -1062,7 +1066,9 @@ function buildImportAttribute$set(
 				wrapHoisted(
 					config.object,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildObject() : (buildObject as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildObject()
+							: (buildObject as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.Object
 				),
 				() => buildObject()
@@ -1102,7 +1108,9 @@ function withImportAttribute(node: object, setter: string, args: readonly unknow
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildObject() : (buildObject as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildObject()
+							: (buildObject as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Object
 			);
@@ -2070,7 +2078,9 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildSwitchBody() : (buildSwitchBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildSwitchBody()
+					: (buildSwitchBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.SwitchBody
 		),
 		() => buildSwitchBody()
@@ -2095,7 +2105,9 @@ function buildSwitchStatement$patch(source: object, config: T.SwitchStatement.Co
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildSwitchBody() : (buildSwitchBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildSwitchBody()
+					: (buildSwitchBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.SwitchBody
 		),
 		() => buildSwitchBody()
@@ -2143,7 +2155,9 @@ function buildSwitchStatement$set(
 				wrapHoisted(
 					config.body,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildSwitchBody() : (buildSwitchBody as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildSwitchBody()
+							: (buildSwitchBody as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.SwitchBody
 				),
 				() => buildSwitchBody()
@@ -2183,9 +2197,9 @@ function withSwitchStatement(node: object, setter: string, args: readonly unknow
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildSwitchBody() : (buildSwitchBody as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? buildSwitchBody()
+							: (buildSwitchBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.SwitchBody
 			);
@@ -4830,7 +4844,9 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
@@ -4838,7 +4854,9 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.ClassBody
 		),
 		() => buildClassBody()
@@ -4880,7 +4898,9 @@ function buildClass$patch(source: object, config: Partial<T.Class.Config> = {}):
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
@@ -4888,7 +4908,9 @@ function buildClass$patch(source: object, config: Partial<T.Class.Config> = {}):
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.ClassBody
 		),
 		() => buildClassBody()
@@ -4958,7 +4980,9 @@ function buildClass$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -4981,7 +5005,9 @@ function buildClass$set(
 				wrapHoisted(
 					config.body,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.ClassBody
 				),
 				() => buildClassBody()
@@ -5029,9 +5055,9 @@ function withClass(node: object, setter: string, args: readonly unknown[]): unkn
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -5070,7 +5096,9 @@ function withClass(node: object, setter: string, args: readonly unknown[]): unkn
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ClassBody
 			);
@@ -5114,7 +5142,9 @@ export function buildClassDeclaration(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
@@ -5122,7 +5152,9 @@ export function buildClassDeclaration(
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.ClassBody
 		),
 		() => buildClassBody()
@@ -5181,7 +5213,9 @@ function buildClassDeclaration$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
@@ -5189,7 +5223,9 @@ function buildClassDeclaration$patch(
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.ClassBody
 		),
 		() => buildClassBody()
@@ -5296,7 +5332,9 @@ function buildClassDeclaration$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -5326,7 +5364,9 @@ function buildClassDeclaration$set(
 				wrapHoisted(
 					config.body,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.ClassBody
 				),
 				() => buildClassBody()
@@ -5396,9 +5436,9 @@ function withClassDeclaration(node: object, setter: string, args: readonly unkno
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -5437,7 +5477,9 @@ function withClassDeclaration(node: object, setter: string, args: readonly unkno
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ClassBody
 			);
@@ -5527,7 +5569,9 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -5585,7 +5629,9 @@ function buildFunctionExpression$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -5684,7 +5730,9 @@ function buildFunctionExpression$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -5774,9 +5822,9 @@ function withFunctionExpression(node: object, setter: string, args: readonly unk
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -5867,7 +5915,9 @@ export function buildFunctionDeclaration(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -5933,7 +5983,9 @@ function buildFunctionDeclaration$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -6049,7 +6101,9 @@ function buildFunctionDeclaration$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -6154,9 +6208,9 @@ function withFunctionDeclaration(node: object, setter: string, args: readonly un
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -6249,7 +6303,9 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -6307,7 +6363,9 @@ function buildGeneratorFunction$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -6406,7 +6464,9 @@ function buildGeneratorFunction$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -6496,9 +6556,9 @@ function withGeneratorFunction(node: object, setter: string, args: readonly unkn
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -6589,7 +6649,9 @@ export function buildGeneratorFunctionDeclaration(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -6655,7 +6717,9 @@ function buildGeneratorFunctionDeclaration$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -6771,7 +6835,9 @@ function buildGeneratorFunctionDeclaration$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -6876,9 +6942,9 @@ function withGeneratorFunctionDeclaration(node: object, setter: string, args: re
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -7092,7 +7158,9 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = config.arguments;
@@ -7126,7 +7194,9 @@ function buildNewExpression$patch(source: object, config: T.NewExpression.Config
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = config.arguments;
@@ -7189,7 +7259,7 @@ function buildNewExpression$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -7248,7 +7318,7 @@ function withNewExpression(node: object, setter: string, args: readonly unknown[
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(args)
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -9462,14 +9532,18 @@ export function buildDecoratorCallExpression(
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = orDefault(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -9507,14 +9581,18 @@ function buildDecoratorCallExpression$patch(
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = orDefault(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -9581,7 +9659,7 @@ function buildDecoratorCallExpression$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -9599,7 +9677,9 @@ function buildDecoratorCallExpression$set(
 				wrapHoisted(
 					config.arguments,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.Arguments
 				),
 				() => buildArguments()
@@ -9648,7 +9728,7 @@ function withDecoratorCallExpression(node: object, setter: string, args: readonl
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(args)
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -9671,7 +9751,9 @@ function withDecoratorCallExpression(node: object, setter: string, args: readonl
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Arguments
 			);
@@ -10374,7 +10456,9 @@ export function buildFunctionSignature(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -10437,7 +10521,9 @@ function buildFunctionSignature$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -10548,7 +10634,9 @@ function buildFunctionSignature$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -10642,9 +10730,9 @@ function withFunctionSignature(node: object, setter: string, args: readonly unkn
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -10767,7 +10855,8 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 	currentHandle()?.admit(TSKindId.TypeAssertion, [config]);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _expression = rejectReservedText(
@@ -10794,7 +10883,8 @@ function buildTypeAssertion$patch(source: object, config: T.TypeAssertion.Config
 	currentHandle()?.admit(TSKindId.TypeAssertion, [config]);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _expression = rejectReservedText(
@@ -10833,7 +10923,8 @@ function buildTypeAssertion$set(
 			const config = input;
 			const _type_arguments = wrapHoisted(
 				config.typeArguments,
-				(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+				(v: readonly never[]) =>
+					buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -10890,9 +10981,8 @@ function withTypeAssertion(node: object, setter: string, args: readonly unknown[
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -11189,7 +11279,8 @@ export function buildInstantiationExpression(
 	);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -11219,7 +11310,8 @@ function buildInstantiationExpression$patch(
 	);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -11274,7 +11366,8 @@ function buildInstantiationExpression$set(
 			const config = input;
 			const _type_arguments = wrapHoisted(
 				config.typeArguments,
-				(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+				(v: readonly never[]) =>
+					buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -11318,9 +11411,8 @@ function withInstantiationExpression(node: object, setter: string, args: readonl
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -11502,7 +11594,9 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -11533,7 +11627,9 @@ function buildExtendsClauseSingle$patch(
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -11588,7 +11684,7 @@ function buildExtendsClauseSingle$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -11635,7 +11731,7 @@ function withExtendsClauseSingle(node: object, setter: string, args: readonly un
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(args)
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -11784,7 +11880,9 @@ export function buildAbstractClassDeclaration(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
@@ -11792,7 +11890,9 @@ export function buildAbstractClassDeclaration(
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.ClassBody
 		),
 		() => buildClassBody()
@@ -11848,7 +11948,9 @@ function buildAbstractClassDeclaration$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
@@ -11856,7 +11958,9 @@ function buildAbstractClassDeclaration$patch(
 		wrapHoisted(
 			config.body,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.ClassBody
 		),
 		() => buildClassBody()
@@ -11954,7 +12058,9 @@ function buildAbstractClassDeclaration$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -11984,7 +12090,9 @@ function buildAbstractClassDeclaration$set(
 				wrapHoisted(
 					config.body,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.ClassBody
 				),
 				() => buildClassBody()
@@ -12041,9 +12149,9 @@ function withAbstractClassDeclaration(node: object, setter: string, args: readon
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -12084,7 +12192,9 @@ function withAbstractClassDeclaration(node: object, setter: string, args: readon
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildClassBody() : (buildClassBody as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ClassBody
 			);
@@ -12597,13 +12707,17 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _extends_type_clause = wrapHoisted(
 		config.extendsTypeClause,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ExtendsTypeClause
 	);
 	const _body = config.body;
@@ -12647,13 +12761,17 @@ function buildInterfaceDeclaration$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _extends_type_clause = wrapHoisted(
 		config.extendsTypeClause,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ExtendsTypeClause
 	);
 	const _body = config.body;
@@ -12731,7 +12849,9 @@ function buildInterfaceDeclaration$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -12748,7 +12868,9 @@ function buildInterfaceDeclaration$set(
 			const _extends_type_clause = wrapHoisted(
 				config.extendsTypeClause,
 				(v: readonly never[]) =>
-					v.length === 0 ? undefined : (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...v),
+					v.length === 0
+						? undefined
+						: (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...(v as never[])),
 				TSKindId.ExtendsTypeClause
 			);
 			return setSlot(
@@ -12807,9 +12929,9 @@ function withInterfaceDeclaration(node: object, setter: string, args: readonly u
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -12832,9 +12954,9 @@ function withInterfaceDeclaration(node: object, setter: string, args: readonly u
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ExtendsTypeClause
 			);
@@ -12928,7 +13050,7 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 			(v: readonly never[]) =>
 				v.length === 0
 					? buildEnumBody()
-					: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...v)),
+					: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[]))),
 			TSKindId.EnumBody
 		),
 		() => buildEnumBody()
@@ -12962,7 +13084,7 @@ function buildEnumDeclaration$patch(source: object, config: T.EnumDeclaration.Co
 			(v: readonly never[]) =>
 				v.length === 0
 					? buildEnumBody()
-					: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...v)),
+					: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[]))),
 			TSKindId.EnumBody
 		),
 		() => buildEnumBody()
@@ -13034,7 +13156,7 @@ function buildEnumDeclaration$set(
 					(v: readonly never[]) =>
 						v.length === 0
 							? buildEnumBody()
-							: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...v)),
+							: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[]))),
 					TSKindId.EnumBody
 				),
 				() => buildEnumBody()
@@ -13086,7 +13208,9 @@ function withEnumDeclaration(node: object, setter: string, args: readonly unknow
 					((v: readonly never[]) =>
 						v.length === 0
 							? buildEnumBody()
-							: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...v)))(args)
+							: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[]))))(
+						args
+					)
 				],
 				TSKindId.EnumBody
 			);
@@ -13177,7 +13301,9 @@ function withEnumBody(node: object, setter: string, args: readonly unknown[]): u
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildEnumBodyElements as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.EnumBodyElements
 			);
@@ -13335,7 +13461,9 @@ export function buildTypeAliasDeclaration(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _value = admitAliasContent<NonNullable<T.TypeAliasDeclaration['_value']>>(
@@ -13387,7 +13515,9 @@ function buildTypeAliasDeclaration$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _value = admitAliasContent<NonNullable<T.TypeAliasDeclaration['_value']>>(
@@ -13477,7 +13607,9 @@ function buildTypeAliasDeclaration$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -13559,9 +13691,9 @@ function withTypeAliasDeclaration(node: object, setter: string, args: readonly u
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -14561,7 +14693,9 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -14593,7 +14727,9 @@ function buildTypeQueryCallExpressionInTypeAnnotation$patch(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -14652,7 +14788,9 @@ function buildTypeQueryCallExpressionInTypeAnnotation$set(
 				wrapHoisted(
 					config.arguments,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.Arguments
 				),
 				() => buildArguments()
@@ -14698,7 +14836,9 @@ function withTypeQueryCallExpressionInTypeAnnotation(node: object, setter: strin
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Arguments
 			);
@@ -15219,7 +15359,9 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -15264,7 +15406,9 @@ function buildConstructorType$patch(source: object, config: T.ConstructorType.Co
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -15338,7 +15482,9 @@ function buildConstructorType$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -15420,9 +15566,9 @@ function withConstructorType(node: object, setter: string, args: readonly unknow
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -15973,7 +16119,8 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -15997,7 +16144,8 @@ function buildGenericType$patch(source: object, config: T.GenericType.Config): T
 	);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -16044,7 +16192,8 @@ function buildGenericType$set(
 			const config = input;
 			const _type_arguments = wrapHoisted(
 				config.typeArguments,
-				(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+				(v: readonly never[]) =>
+					buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -16088,9 +16237,8 @@ function withGenericType(node: object, setter: string, args: readonly unknown[])
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -16742,7 +16890,9 @@ function withTypeQueryCallExpression(node: object, setter: string, args: readonl
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Arguments
 			);
@@ -16776,7 +16926,8 @@ export function buildTypeQueryInstantiationExpression(
 	);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -16814,7 +16965,8 @@ function buildTypeQueryInstantiationExpression$patch(
 	);
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
-		(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const handle = currentHandle();
@@ -16877,7 +17029,8 @@ function buildTypeQueryInstantiationExpression$set(
 			const config = input;
 			const _type_arguments = wrapHoisted(
 				config.typeArguments,
-				(v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+				(v: readonly never[]) =>
+					buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -16921,9 +17074,8 @@ function withTypeQueryInstantiationExpression(node: object, setter: string, args
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -17690,7 +17842,7 @@ function withTypeArguments(node: object, setter: string, args: readonly unknown[
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (buildTypes as unknown as (...items: never[]) => never)(...v))(args)
+					((v: readonly never[]) => (buildTypes as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Types
 			);
@@ -17724,7 +17876,9 @@ export function buildObjectType(
 	const _members = wrapHoisted(
 		config.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing =
@@ -17766,7 +17920,9 @@ function buildObjectType$patch(
 	const _members = wrapHoisted(
 		config.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing =
@@ -17804,7 +17960,9 @@ function buildObjectType$set(
 			const _members = wrapHoisted(
 				config.members,
 				(v: readonly never[]) =>
-					v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+					v.length === 0
+						? undefined
+						: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 				TSKindId.ObjectTypeContent
 			);
 			return setSlot(
@@ -17845,9 +18003,9 @@ function withObjectType(node: object, setter: string, args: readonly unknown[]):
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ObjectTypeContent
 			);
@@ -17864,7 +18022,9 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 	const _members = wrapHoisted(
 		config?.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing = TSKindId.Rbrace as const;
@@ -17892,7 +18052,9 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 	const _members = wrapHoisted(
 		config?.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing = TSKindId.PipeRbrace as const;
@@ -17928,7 +18090,9 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -17962,7 +18126,9 @@ function buildCallSignature$patch(source: object, config: Partial<T.CallSignatur
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -18012,7 +18178,9 @@ function buildCallSignature$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -18082,9 +18250,9 @@ function withCallSignature(node: object, setter: string, args: readonly unknown[
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -18496,9 +18664,8 @@ function withTypeParameters(node: object, setter: string, args: readonly unknown
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (buildTypeParametersElements as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+					((v: readonly never[]) =>
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TypeParametersElements
 			);
@@ -18880,7 +19047,9 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -18920,7 +19089,9 @@ function buildConstructSignature$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -18986,7 +19157,9 @@ function buildConstructSignature$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -19060,9 +19233,9 @@ function withConstructSignature(node: object, setter: string, args: readonly unk
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -19273,7 +19446,9 @@ function withTupleType(node: object, setter: string, args: readonly unknown[]): 
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildTupleTypeMembers as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildTupleTypeMembers as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TupleTypeMembers
 			);
@@ -19633,7 +19808,9 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -19675,7 +19852,9 @@ function buildFunctionType$patch(source: object, config: T.FunctionType.Config):
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -19733,7 +19912,9 @@ function buildFunctionType$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -19811,9 +19992,9 @@ function withFunctionType(node: object, setter: string, args: readonly unknown[]
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -24894,7 +25075,8 @@ function withParenthesizedExpressionSequence(node: object, setter: string, args:
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (buildSequenceExpression as unknown as (...items: never[]) => never)(...v))(args)
+					((v: readonly never[]) =>
+						(buildSequenceExpression as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.SequenceExpression
 			);
@@ -25186,14 +25368,18 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = orDefault(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -25231,14 +25417,18 @@ function buildCallExpressionCall$patch(
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = orDefault(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -25302,7 +25492,7 @@ function buildCallExpressionCall$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -25320,7 +25510,9 @@ function buildCallExpressionCall$set(
 				wrapHoisted(
 					config.arguments,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.Arguments
 				),
 				() => buildArguments()
@@ -25369,7 +25561,7 @@ function withCallExpressionCall(node: object, setter: string, args: readonly unk
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(args)
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -25390,7 +25582,9 @@ function withCallExpressionCall(node: object, setter: string, args: readonly unk
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Arguments
 			);
@@ -25418,7 +25612,9 @@ export function buildCallExpressionTemplateCall(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildTemplateString() : (buildTemplateString as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildTemplateString()
+					: (buildTemplateString as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.TemplateString
 		),
 		() => buildTemplateString()
@@ -25452,7 +25648,9 @@ function buildCallExpressionTemplateCall$patch(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildTemplateString() : (buildTemplateString as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildTemplateString()
+					: (buildTemplateString as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.TemplateString
 		),
 		() => buildTemplateString()
@@ -25513,7 +25711,7 @@ function buildCallExpressionTemplateCall$set(
 					(v: readonly never[]) =>
 						v.length === 0
 							? buildTemplateString()
-							: (buildTemplateString as unknown as (...items: never[]) => never)(...v),
+							: (buildTemplateString as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.TemplateString
 				),
 				() => buildTemplateString()
@@ -25557,7 +25755,7 @@ function withCallExpressionTemplateCall(node: object, setter: string, args: read
 					((v: readonly never[]) =>
 						v.length === 0
 							? buildTemplateString()
-							: (buildTemplateString as unknown as (...items: never[]) => never)(...v))(args)
+							: (buildTemplateString as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TemplateString
 			);
@@ -25586,14 +25784,18 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = orDefault(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -25631,14 +25833,18 @@ function buildCallExpressionMember$patch(
 	const _type_arguments = wrapHoisted(
 		config.typeArguments,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 		TSKindId.TypeArguments
 	);
 	const _arguments = orDefault(
 		wrapHoisted(
 			config.arguments,
 			(v: readonly never[]) =>
-				v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 			TSKindId.Arguments
 		),
 		() => buildArguments()
@@ -25705,7 +25911,7 @@ function buildCallExpressionMember$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
 				TSKindId.TypeArguments
 			);
 			return setSlot(
@@ -25723,7 +25929,9 @@ function buildCallExpressionMember$set(
 				wrapHoisted(
 					config.arguments,
 					(v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v),
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
 					TSKindId.Arguments
 				),
 				() => buildArguments()
@@ -25772,7 +25980,7 @@ function withCallExpressionMember(node: object, setter: string, args: readonly u
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...v)))(args)
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -25793,7 +26001,9 @@ function withCallExpressionMember(node: object, setter: string, args: readonly u
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? buildArguments() : (buildArguments as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Arguments
 			);
@@ -26195,13 +26405,15 @@ export function buildClassHeritageExtendsClause(
 	currentHandle()?.admit(TSKindId.ClassHeritageExtendsClause, [config]);
 	const _extends_clause = wrapHoisted(
 		config.extendsClause,
-		(v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...v),
+		(v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ExtendsClause
 	);
 	const _implements_clause = wrapHoisted(
 		config.implementsClause,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildImplementsClause as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildImplementsClause as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ImplementsClause
 	);
 	const handle = currentHandle();
@@ -26228,13 +26440,15 @@ function buildClassHeritageExtendsClause$patch(
 	currentHandle()?.admit(TSKindId.ClassHeritageExtendsClause, [config]);
 	const _extends_clause = wrapHoisted(
 		config.extendsClause,
-		(v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...v),
+		(v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ExtendsClause
 	);
 	const _implements_clause = wrapHoisted(
 		config.implementsClause,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildImplementsClause as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildImplementsClause as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ImplementsClause
 	);
 	const handle = currentHandle();
@@ -26275,7 +26489,7 @@ function buildClassHeritageExtendsClause$set(
 			const config = input;
 			const _extends_clause = wrapHoisted(
 				config.extendsClause,
-				(v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...v),
+				(v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...(v as never[])),
 				TSKindId.ExtendsClause
 			);
 			return setSlot(
@@ -26292,7 +26506,9 @@ function buildClassHeritageExtendsClause$set(
 			const _implements_clause = wrapHoisted(
 				config.implementsClause,
 				(v: readonly never[]) =>
-					v.length === 0 ? undefined : (buildImplementsClause as unknown as (...items: never[]) => never)(...v),
+					v.length === 0
+						? undefined
+						: (buildImplementsClause as unknown as (...items: never[]) => never)(...(v as never[])),
 				TSKindId.ImplementsClause
 			);
 			return setSlot(
@@ -26327,7 +26543,9 @@ function withClassHeritageExtendsClause(node: object, setter: string, args: read
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...v))(args)
+					((v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
 				],
 				TSKindId.ExtendsClause
 			);
@@ -26350,7 +26568,9 @@ function withClassHeritageExtendsClause(node: object, setter: string, args: read
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildImplementsClause as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildImplementsClause as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ImplementsClause
 			);
@@ -26987,7 +27207,7 @@ export function buildExportStatementDefaultFromClauseFrom(
 			(v: readonly never[]) =>
 				v.length === 0
 					? buildExportClause()
-					: buildExportClause((buildExportSpecifiers as unknown as (...items: never[]) => never)(...v)),
+					: buildExportClause((buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[]))),
 			TSKindId.ExportClause
 		),
 		() => buildExportClause()
@@ -27021,7 +27241,7 @@ function buildExportStatementDefaultFromClauseFrom$patch(
 			(v: readonly never[]) =>
 				v.length === 0
 					? buildExportClause()
-					: buildExportClause((buildExportSpecifiers as unknown as (...items: never[]) => never)(...v)),
+					: buildExportClause((buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[]))),
 			TSKindId.ExportClause
 		),
 		() => buildExportClause()
@@ -27069,7 +27289,9 @@ function buildExportStatementDefaultFromClauseFrom$set(
 					(v: readonly never[]) =>
 						v.length === 0
 							? buildExportClause()
-							: buildExportClause((buildExportSpecifiers as unknown as (...items: never[]) => never)(...v)),
+							: buildExportClause(
+									(buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[]))
+								),
 					TSKindId.ExportClause
 				),
 				() => buildExportClause()
@@ -27126,7 +27348,9 @@ function withExportStatementDefaultFromClauseFrom(node: object, setter: string, 
 					((v: readonly never[]) =>
 						v.length === 0
 							? buildExportClause()
-							: buildExportClause((buildExportSpecifiers as unknown as (...items: never[]) => never)(...v)))(args)
+							: buildExportClause(
+									(buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.ExportClause
 			);
@@ -28975,7 +29199,9 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -29057,7 +29283,9 @@ function buildMethodDefinitionPlain$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -29261,7 +29489,9 @@ function buildMethodDefinitionPlain$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -29387,9 +29617,9 @@ function withMethodDefinitionPlain(node: object, setter: string, args: readonly 
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -30018,7 +30248,9 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -30096,7 +30328,9 @@ function buildMethodSignaturePlain$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -30294,7 +30528,9 @@ function buildMethodSignaturePlain$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -30408,9 +30644,9 @@ function withMethodSignaturePlain(node: object, setter: string, args: readonly u
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -30972,7 +31208,9 @@ export function buildAbstractMethodSignaturePlain(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -31043,7 +31281,9 @@ function buildAbstractMethodSignaturePlain$patch(
 		(v: readonly never[]) =>
 			v.length === 0
 				? undefined
-				: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
 		TSKindId.TypeParameters
 	);
 	const _parameters = orDefault(
@@ -31195,7 +31435,9 @@ function buildAbstractMethodSignaturePlain$set(
 				(v: readonly never[]) =>
 					v.length === 0
 						? undefined
-						: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)),
+						: buildTypeParameters(
+								(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+							),
 				TSKindId.TypeParameters
 			);
 			return setSlot(
@@ -31299,9 +31541,9 @@ function withAbstractMethodSignaturePlain(node: object, setter: string, args: re
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: buildTypeParameters((buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.TypeParameters
 			);
@@ -33425,7 +33667,7 @@ function withFormalParametersElementsReceiverGroup(node: object, setter: string,
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (buildFormalParametersElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (buildFormalParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.FormalParametersElements
 			);
@@ -33783,7 +34025,9 @@ export function buildInterfaceBody(
 	const _members = wrapHoisted(
 		config.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing =
@@ -33828,7 +34072,9 @@ function buildInterfaceBody$patch(
 	const _members = wrapHoisted(
 		config.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing =
@@ -33866,7 +34112,9 @@ function buildInterfaceBody$set(
 			const _members = wrapHoisted(
 				config.members,
 				(v: readonly never[]) =>
-					v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+					v.length === 0
+						? undefined
+						: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 				TSKindId.ObjectTypeContent
 			);
 			return setSlot(
@@ -33907,9 +34155,9 @@ function withInterfaceBody(node: object, setter: string, args: readonly unknown[
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ObjectTypeContent
 			);
@@ -33926,7 +34174,9 @@ export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): 
 	const _members = wrapHoisted(
 		config?.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing = TSKindId.Rbrace as const;
@@ -33954,7 +34204,9 @@ export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.
 	const _members = wrapHoisted(
 		config?.members,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildObjectTypeContent as unknown as (...items: never[]) => never)(...v),
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.ObjectTypeContent
 	);
 	const _closing = TSKindId.PipeRbrace as const;

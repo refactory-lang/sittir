@@ -208,7 +208,7 @@ export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScop
 		for (let hop = chain.storage.length - 1; hop >= from; hop--) {
 			const make = builder(chain.storage[hop]!);
 			if (consumesList(hop)) {
-				expr = `(${make} as unknown as (...items: never[]) => never)(...${expr})`;
+				expr = `(${make} as unknown as (...items: never[]) => never)(...(${expr} as never[]))`;
 				list = false;
 			} else {
 				expr = list ? `${expr}.map((item) => ${make}(item as never))` : `${make}(${expr})`;

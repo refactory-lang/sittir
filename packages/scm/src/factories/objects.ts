@@ -280,7 +280,9 @@ function buildString$with(node: Held, setter: string, args: readonly unknown[]):
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildStringContent as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.StringContent
 			);
@@ -357,7 +359,9 @@ function buildImmediateString$with(node: Held, setter: string, args: readonly un
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildStringContent as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.StringContent
 			);
@@ -847,7 +851,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	const _parameters = wrapHoisted(
 		config.parameters,
 		(v: readonly never[]) =>
-			v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...v),
+			v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])),
 		TSKindId.Parameters
 	);
 	const handle = currentHandle();
@@ -920,7 +924,9 @@ function buildPredicate$with(node: Held, setter: string, args: readonly unknown[
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Parameters
 			);

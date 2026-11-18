@@ -1042,7 +1042,7 @@ function wrapUnionItem$with(node: Held, setter: string, args: readonly unknown[]
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -1093,7 +1093,7 @@ function wrapUnionItem$with(node: Held, setter: string, args: readonly unknown[]
 						v.length === 0
 							? RAW.buildFieldDeclarationList()
 							: RAW.buildFieldDeclarationList(
-									(RAW.buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.FieldDeclarationList
@@ -1277,7 +1277,7 @@ function wrapEnumItem$with(node: Held, setter: string, args: readonly unknown[])
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -1325,7 +1325,7 @@ function wrapEnumItem$with(node: Held, setter: string, args: readonly unknown[])
 						v.length === 0
 							? RAW.buildEnumVariantList()
 							: RAW.buildEnumVariantList(
-									(RAW.buildEnumVariantListElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildEnumVariantListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.EnumVariantList
@@ -1485,7 +1485,7 @@ function wrapEnumVariantList$with(node: Held, setter: string, args: readonly unk
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildEnumVariantListElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildEnumVariantListElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.EnumVariantListElements
 			);
@@ -1747,7 +1747,9 @@ function wrapFieldDeclarationList$with(node: Held, setter: string, args: readonl
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
 				],
 				TSKindId.FieldDeclarationListElements
 			);
@@ -2002,7 +2004,9 @@ function wrapOrderedFieldDeclarationList$with(node: Held, setter: string, args: 
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildOrderedFieldDeclarationListElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildOrderedFieldDeclarationListElements as unknown as (...items: never[]) => never)(
+									...(v as never[])
+								))(args)
 				],
 				TSKindId.OrderedFieldDeclarationListElements
 			);
@@ -2532,7 +2536,7 @@ function wrapTypeItem$with(node: Held, setter: string, args: readonly unknown[])
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -2767,7 +2771,7 @@ function wrapFunctionItem$with(node: Held, setter: string, args: readonly unknow
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -3076,7 +3080,7 @@ function wrapFunctionSignatureItem$with(node: Held, setter: string, args: readon
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -3367,9 +3371,9 @@ function wrapWhereClause$with(node: Held, setter: string, args: readonly unknown
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildWherePredicates as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (RAW.buildWherePredicates as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.WherePredicates
 			);
@@ -3479,7 +3483,8 @@ function wrapWherePredicate$with(node: Held, setter: string, args: readonly unkn
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...v))(args)
+					((v: readonly never[]) =>
+						(RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TraitBounds
 			);
@@ -3662,7 +3667,7 @@ function wrapTraitItem$with(node: Held, setter: string, args: readonly unknown[]
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -3686,7 +3691,9 @@ function wrapTraitItem$with(node: Held, setter: string, args: readonly unknown[]
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TraitBounds
 			);
@@ -3725,7 +3732,9 @@ function wrapTraitItem$with(node: Held, setter: string, args: readonly unknown[]
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildTraitInterfaceDeclarationBody()
-							: (RAW.buildTraitInterfaceDeclarationBody as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildTraitInterfaceDeclarationBody as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
 				],
 				TSKindId.TraitInterfaceDeclarationBody
 			);
@@ -3881,7 +3890,7 @@ function wrapAssociatedType$with(node: Held, setter: string, args: readonly unkn
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -3905,7 +3914,9 @@ function wrapAssociatedType$with(node: Held, setter: string, args: readonly unkn
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TraitBounds
 			);
@@ -4086,7 +4097,7 @@ function wrapHigherRankedTraitBound$with(node: Held, setter: string, args: reado
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
 						RAW.buildTypeParameters(
-							(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+							(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 						))(args)
 				],
 				TSKindId.TypeParameters
@@ -4278,9 +4289,8 @@ function wrapTypeParameters$with(node: Held, setter: string, args: readonly unkn
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+					((v: readonly never[]) =>
+						(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TypeParametersElements
 			);
@@ -4446,7 +4456,9 @@ function wrapTypeParameter$with(node: Held, setter: string, args: readonly unkno
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TraitBounds
 			);
@@ -4545,7 +4557,9 @@ function wrapLifetimeParameter$with(node: Held, setter: string, args: readonly u
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TraitBounds
 			);
@@ -4869,7 +4883,9 @@ function wrapScopedUseList$with(node: Held, setter: string, args: readonly unkno
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildUseList()
-							: RAW.buildUseList((RAW.buildUseClauses as unknown as (...items: never[]) => never)(...v)))(args)
+							: RAW.buildUseList((RAW.buildUseClauses as unknown as (...items: never[]) => never)(...(v as never[]))))(
+						args
+					)
 				],
 				TSKindId.UseList
 			);
@@ -5005,7 +5021,9 @@ function wrapUseList$with(node: Held, setter: string, args: readonly unknown[]):
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildUseClauses as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildUseClauses as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.UseClauses
 			);
@@ -5827,7 +5845,9 @@ function wrapForLifetimes$with(node: Held, setter: string, args: readonly unknow
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (RAW.buildLifetimes as unknown as (...items: never[]) => never)(...v))(args)
+					((v: readonly never[]) => (RAW.buildLifetimes as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
 				],
 				TSKindId.Lifetimes
 			);
@@ -5942,7 +5962,9 @@ function wrapFunctionType$with(node: Held, setter: string, args: readonly unknow
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: RAW.buildForLifetimes((RAW.buildLifetimes as unknown as (...items: never[]) => never)(...v)))(args)
+							: RAW.buildForLifetimes(
+									(RAW.buildLifetimes as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.ForLifetimes
 			);
@@ -6146,7 +6168,9 @@ function wrapTupleType$with(node: Held, setter: string, args: readonly unknown[]
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (RAW.buildTypes as unknown as (...items: never[]) => never)(...v))(args)
+					((v: readonly never[]) => (RAW.buildTypes as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
 				],
 				TSKindId.Types
 			);
@@ -6253,9 +6277,9 @@ function wrapGenericFunction$with(node: Held, setter: string, args: readonly unk
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						RAW.buildTypeArguments((RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+						RAW.buildTypeArguments(
+							(RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
+						))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -6358,9 +6382,9 @@ function wrapGenericType$with(node: Held, setter: string, args: readonly unknown
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						RAW.buildTypeArguments((RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+						RAW.buildTypeArguments(
+							(RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
+						))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -6476,9 +6500,9 @@ function wrapGenericTypeWithTurbofish$with(node: Held, setter: string, args: rea
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						RAW.buildTypeArguments((RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+						RAW.buildTypeArguments(
+							(RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
+						))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -6660,9 +6684,9 @@ function wrapUseBounds$with(node: Held, setter: string, args: readonly unknown[]
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildUseBoundsElements as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (RAW.buildUseBoundsElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.UseBoundsElements
 			);
@@ -6792,9 +6816,8 @@ function wrapTypeArguments$with(node: Held, setter: string, args: readonly unkno
 					),
 				undefined,
 				(args: readonly never[]) => [
-					((v: readonly never[]) => (RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+					((v: readonly never[]) =>
+						(RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TypeArgumentsElements
 			);
@@ -6905,7 +6928,7 @@ function wrapTypeBinding$with(node: Held, setter: string, args: readonly unknown
 						v.length === 0
 							? undefined
 							: RAW.buildTypeArguments(
-									(RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeArguments
@@ -7101,7 +7124,7 @@ function wrapAbstractType$with(node: Held, setter: string, args: readonly unknow
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -8128,7 +8151,9 @@ function wrapCallExpression$with(node: Held, setter: string, args: readonly unkn
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildArguments()
-							: RAW.buildArguments((RAW.buildArgumentsElements as unknown as (...items: never[]) => never)(...v)))(args)
+							: RAW.buildArguments(
+									(RAW.buildArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.Arguments
 			);
@@ -8259,9 +8284,9 @@ function wrapArguments$with(node: Held, setter: string, args: readonly unknown[]
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildArgumentsElements as unknown as (...items: never[]) => never)(...v))(
-						args
-					)
+						v.length === 0
+							? undefined
+							: (RAW.buildArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ArgumentsElements
 			);
@@ -8441,7 +8466,7 @@ function wrapTupleExpression$with(node: Held, setter: string, args: readonly unk
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						(RAW.buildTupleExpressionElements as unknown as (...items: never[]) => never)(...v))(args)
+						(RAW.buildTupleExpressionElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TupleExpressionElements
 			);
@@ -8547,7 +8572,7 @@ function wrapStructExpression$with(node: Held, setter: string, args: readonly un
 						v.length === 0
 							? RAW.buildFieldInitializerList()
 							: RAW.buildFieldInitializerList(
-									(RAW.buildFieldInitializerListElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildFieldInitializerListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.FieldInitializerList
@@ -8689,7 +8714,9 @@ function wrapFieldInitializerList$with(node: Held, setter: string, args: readonl
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildFieldInitializerListElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildFieldInitializerListElements as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
 				],
 				TSKindId.FieldInitializerListElements
 			);
@@ -9277,7 +9304,9 @@ function wrapMatchExpression$with(node: Held, setter: string, args: readonly unk
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildMatchBlock()
-							: RAW.buildMatchBlock((RAW.buildMatchBlockArms as unknown as (...items: never[]) => never)(...v)))(args)
+							: RAW.buildMatchBlock(
+									(RAW.buildMatchBlockArms as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
 				],
 				TSKindId.MatchBlock
 			);
@@ -10572,9 +10601,9 @@ function wrapGenericPattern$with(node: Held, setter: string, args: readonly unkn
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						RAW.buildTypeArguments((RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...v)))(
-						args
-					)
+						RAW.buildTypeArguments(
+							(RAW.buildTypeArgumentsElements as unknown as (...items: never[]) => never)(...(v as never[]))
+						))(args)
 				],
 				TSKindId.TypeArguments
 			);
@@ -10704,7 +10733,7 @@ function wrapTuplePattern$with(node: Held, setter: string, args: readonly unknow
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildTuplePatternElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildTuplePatternElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TuplePatternElements
 			);
@@ -10829,7 +10858,9 @@ function wrapSlicePattern$with(node: Held, setter: string, args: readonly unknow
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildPatterns as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildPatterns as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Patterns
 			);
@@ -10924,7 +10955,9 @@ function wrapTupleStructPattern$with(node: Held, setter: string, args: readonly 
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildPatterns as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildPatterns as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.Patterns
 			);
@@ -11021,7 +11054,7 @@ function wrapStructPattern$with(node: Held, setter: string, args: readonly unkno
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildStructPatternElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildStructPatternElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.StructPatternElements
 			);
@@ -14829,7 +14862,7 @@ function wrapClosureExpressionBlock$with(node: Held, setter: string, args: reado
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildClosureParameters()
-							: (RAW.buildClosureParameters as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildClosureParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ClosureParameters
 			);
@@ -14991,7 +15024,7 @@ function wrapClosureExpressionExpr$with(node: Held, setter: string, args: readon
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildClosureParameters()
-							: (RAW.buildClosureParameters as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildClosureParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ClosureParameters
 			);
@@ -15449,7 +15482,7 @@ function wrapImplItemBody$with(node: Held, setter: string, args: readonly unknow
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -15504,7 +15537,7 @@ function wrapImplItemBody$with(node: Held, setter: string, args: readonly unknow
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildExtensionDeclarationBody()
-							: (RAW.buildExtensionDeclarationBody as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildExtensionDeclarationBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ExtensionDeclarationBody
 			);
@@ -15643,7 +15676,7 @@ function wrapImplItemSemi$with(node: Held, setter: string, args: readonly unknow
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -16212,7 +16245,7 @@ function wrapModItemInline$with(node: Held, setter: string, args: readonly unkno
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildDeclarationList()
-							: (RAW.buildDeclarationList as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildDeclarationList as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.DeclarationList
 			);
@@ -16902,7 +16935,7 @@ function wrapForeignModItemBody$with(node: Held, setter: string, args: readonly 
 					((v: readonly never[]) =>
 						v.length === 0
 							? RAW.buildDeclarationList()
-							: (RAW.buildDeclarationList as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildDeclarationList as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.DeclarationList
 			);
@@ -18181,7 +18214,9 @@ function wrapMacroDefinitionParen$with(node: Held, setter: string, args: readonl
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildMacroRules as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildMacroRules as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.MacroRules
 			);
@@ -18286,7 +18321,9 @@ function wrapMacroDefinitionBracket$with(node: Held, setter: string, args: reado
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildMacroRules as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildMacroRules as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.MacroRules
 			);
@@ -18391,7 +18428,9 @@ function wrapMacroDefinitionBrace$with(node: Held, setter: string, args: readonl
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildMacroRules as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildMacroRules as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.MacroRules
 			);
@@ -18789,7 +18828,7 @@ function wrapStructItemBrace$with(node: Held, setter: string, args: readonly unk
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -18843,7 +18882,7 @@ function wrapStructItemBrace$with(node: Held, setter: string, args: readonly unk
 						v.length === 0
 							? RAW.buildFieldDeclarationList()
 							: RAW.buildFieldDeclarationList(
-									(RAW.buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildFieldDeclarationListElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.FieldDeclarationList
@@ -19030,7 +19069,7 @@ function wrapStructItemTuple$with(node: Held, setter: string, args: readonly unk
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -19073,7 +19112,9 @@ function wrapStructItemTuple$with(node: Held, setter: string, args: readonly unk
 						v.length === 0
 							? RAW.buildOrderedFieldDeclarationList()
 							: RAW.buildOrderedFieldDeclarationList(
-									(RAW.buildOrderedFieldDeclarationListElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildOrderedFieldDeclarationListElements as unknown as (...items: never[]) => never)(
+										...(v as never[])
+									)
 								))(args)
 				],
 				TSKindId.OrderedFieldDeclarationList
@@ -19255,7 +19296,7 @@ function wrapStructItemUnit$with(node: Held, setter: string, args: readonly unkn
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -19949,7 +19990,9 @@ function wrapTypeArgument$with(node: Held, setter: string, args: readonly unknow
 				undefined,
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
-						v.length === 0 ? undefined : (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...v))(args)
+						v.length === 0
+							? undefined
+							: (RAW.buildTraitBounds as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.TraitBounds
 			);
@@ -20198,7 +20241,9 @@ function wrapArrayExpressionList$with(node: Held, setter: string, args: readonly
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildArrayExpressionListElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildArrayExpressionListElements as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
 				],
 				TSKindId.ArrayExpressionListElements
 			);
@@ -20920,7 +20965,7 @@ function wrapParametersElementsReceiverGroup$with(node: Held, setter: string, ar
 					((v: readonly never[]) =>
 						v.length === 0
 							? undefined
-							: (RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v))(args)
+							: (RAW.buildParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
 				],
 				TSKindId.ParametersElements
 			);
@@ -21318,7 +21363,7 @@ function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly u
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
@@ -21627,7 +21672,7 @@ function wrapSignatureMethodDeclaration$with(node: Held, setter: string, args: r
 						v.length === 0
 							? undefined
 							: RAW.buildTypeParameters(
-									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...v)
+									(RAW.buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
 								))(args)
 				],
 				TSKindId.TypeParameters
