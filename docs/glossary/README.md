@@ -7,8 +7,8 @@ declaration lives in the per-directory glossary here, filed under the
 declaration it belongs to. Source keeps only
 directive comments (`@ts-*`, `eslint*`, `prettier-ignore`, `biome-ignore`,
 `/// <reference>`, `@rule-type-consts`) and public-API JSDoc. Authors put the
-why of a non-obvious decision in the commit message; the docs peer turns it
-into a glossary entry after the PR merges.
+why of a non-obvious decision in the commit message, and write the glossary
+entry of each exported declaration their PR adds in that PR.
 
 ## Layout
 
