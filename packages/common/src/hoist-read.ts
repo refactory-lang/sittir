@@ -2,6 +2,10 @@ export type HoistHop = (this: never) => unknown;
 
 const EMPTY: readonly never[] = Object.freeze([]);
 
+export function itemsHop(this: ArrayLike<unknown>): readonly unknown[] {
+	return this.length === 0 ? EMPTY : Object.freeze(Array.from(this));
+}
+
 function through(value: unknown, hops: readonly HoistHop[], from: number): unknown {
 	let at = value;
 	for (let hop = from; hop < hops.length; hop++) {

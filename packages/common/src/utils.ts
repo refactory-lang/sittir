@@ -23,7 +23,7 @@ export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { refuseJSON } from './json-refusal.ts';
 export { spelledMember } from './spelled.ts';
 import type { HoistHop } from './hoist-read.ts';
-export { hoistRead, type HoistHop } from './hoist-read.ts';
+export { hoistRead, itemsHop, type HoistHop } from './hoist-read.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };
@@ -478,10 +478,16 @@ function textEntryOf(text: string, facts: TriviaFacts): TriviaEntry {
 	return spelled === undefined ? facts.comment(text) : spelled.build(text);
 }
 
+interface StoredDecoration {
+	readonly accessor: string;
+	readonly storage: string;
+	readonly many: boolean;
+}
+
 interface ListViewWrapper {
 	readonly kind: number;
 	readonly content: string;
-	readonly decorations: readonly string[];
+	readonly decorations: readonly (string | StoredDecoration)[];
 }
 
 interface ElementConfig {
@@ -546,7 +552,7 @@ const collapseWrapper = (item: unknown, wrapper: ListViewWrapper | undefined): u
 	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
 	const node = item as Members & Record<string, unknown>;
 	if ((node as { $type?: unknown }).$type !== wrapper.kind) return item;
-	if (wrapper.decorations.some((accessor) => holdsDecoration(node[accessor]!.call(node)))) return item;
+	if (wrapper.decorations.some((decoration) => holdsDecoration(typeof decoration === 'string' ? node[decoration]!.call(node) : storedSlotRead(node, decoration.accessor, decoration.storage, decoration.many)))) return item;
 	return node[wrapper.content]!.call(node);
 };
 
@@ -984,13 +990,6 @@ export function wrapHoistedEach<R>(value: unknown, wrap: (value: never) => R, ki
 
 function isKindNode(value: unknown, kind: number): boolean {
 	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
-}
-
-/** The last hop of a hoisted read that ends in a list node: the list view's own read of one element, a wrapper that carries only its content read as that content. */
-export function collapseHop(wrapper: ListViewWrapper): HoistHop {
-	return function (this: never) {
-		return collapseWrapper(this, wrapper);
-	};
 }
 
 /** A hop of a hoisted read over a built holder: the wrapper's one slot, read as `storedSlotRead` reads it. */

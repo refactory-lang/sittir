@@ -21,7 +21,7 @@ import {
 	checkDelimited,
 	hoistedWith,
 	hoistRead,
-	collapseHop,
+	itemsHop,
 	storedHop,
 	wrapHoisted,
 	wrapHoistedEach,
@@ -1247,31 +1247,9 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 		visibilityModifier: () =>
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
-		body: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_body'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({
-						kind: TSKindId.AttributedFieldDeclaration,
-						content: 'fieldDeclaration',
-						decorations: ['attributeItems']
-					})
-				],
-				true
-			),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1495,27 +1473,9 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 		visibilityModifier: () =>
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
-		body: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_body'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1705,15 +1665,7 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_elements'),
-				[
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -1959,19 +1911,7 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_elements'),
-				[
-					storedHop('items', '_item', true),
-					collapseHop({
-						kind: TSKindId.AttributedFieldDeclaration,
-						content: 'fieldDeclaration',
-						decorations: ['attributeItems']
-					})
-				],
-				true
-			),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -2207,19 +2147,7 @@ function _buildOrderedFieldDeclarationList(
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_elements'),
-				[
-					storedHop('items', '_item', true),
-					collapseHop({
-						kind: TSKindId.AttributedOrderedField,
-						content: 'type',
-						decorations: ['attributeItems', 'visibilityModifier']
-					})
-				],
-				true
-			),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -2739,16 +2667,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		visibilityModifier: () =>
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		trailingWhereClause: () => hydrateStoredSlot(node, '_trailing_where_clause'),
@@ -2965,16 +2884,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		functionModifiers: () => hydrateStoredSlot(node, '_function_modifiers'),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		parameters: () =>
 			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
@@ -3241,16 +3151,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		functionModifiers: () => hydrateStoredSlot(node, '_function_modifiers'),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		parameters: () =>
 			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
@@ -3539,8 +3440,7 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 		_where_predicates,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		wherePredicates: () =>
-			hoistRead(hydrateStoredSlot(node, '_where_predicates'), [storedHop('items', '_item', true)], true),
+		wherePredicates: () => hoistRead(hydrateStoredSlot(node, '_where_predicates'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -3792,16 +3692,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		unsafe: () => _unsafe,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		bounds: () => hoistRead(hydrateStoredSlot(node, '_bounds'), [storedHop('bounds', '_bounds', true)], true),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('declarations', '_declarations', true)], true),
@@ -4029,16 +3920,7 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		bounds: () => hoistRead(hydrateStoredSlot(node, '_bounds'), [storedHop('bounds', '_bounds', true)], true),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		$render: () => renderText(handle, node),
@@ -4231,16 +4113,7 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 		_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4402,15 +4275,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_elements'),
-				[
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -4990,12 +4855,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		path: () => hydrateStoredSlot(node, '_path'),
-		list: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_list'),
-				[storedHop('useClauses', '_use_clauses', false), storedHop('items', '_item', true)],
-				true
-			),
+		list: () => hoistRead(hydrateStoredSlot(node, '_list'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5122,7 +4982,7 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 		_use_clauses,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		useClauses: () => hoistRead(hydrateStoredSlot(node, '_use_clauses'), [storedHop('items', '_item', true)], true),
+		useClauses: () => hoistRead(hydrateStoredSlot(node, '_use_clauses'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -5947,7 +5807,7 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 		_lifetimes,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		lifetimes: () => hoistRead(hydrateStoredSlot(node, '_lifetimes'), [storedHop('items', '_item', true)], true),
+		lifetimes: () => hoistRead(hydrateStoredSlot(node, '_lifetimes'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6079,12 +5939,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		_return_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		forLifetimes: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_for_lifetimes'),
-				[storedHop('lifetimes', '_lifetimes', false), storedHop('items', '_item', true)],
-				true
-			),
+		forLifetimes: () => hoistRead(hydrateStoredSlot(node, '_for_lifetimes'), [itemsHop], true),
 		content: () => hydrateStoredSlot(node, '_content'),
 		parameters: () =>
 			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
@@ -6249,7 +6104,7 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 		_types,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		types: () => hoistRead(hydrateStoredSlot(node, '_types'), [storedHop('items', '_item', true)], true),
+		types: () => hoistRead(hydrateStoredSlot(node, '_types'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6360,16 +6215,7 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_arguments'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
-				],
-				true
-			),
+		typeArguments: () => hoistRead(hydrateStoredSlot(node, '_type_arguments'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -6466,16 +6312,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		type: () => hydrateStoredSlot(node, '_type'),
-		typeArguments: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_arguments'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
-				],
-				true
-			),
+		typeArguments: () => hoistRead(hydrateStoredSlot(node, '_type_arguments'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -6579,16 +6416,7 @@ export function buildGenericTypeWithTurbofish(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		type: () => hydrateStoredSlot(node, '_type'),
-		typeArguments: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_arguments'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
-				],
-				true
-			),
+		typeArguments: () => hoistRead(hydrateStoredSlot(node, '_type_arguments'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -6759,7 +6587,7 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 		_bounds,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		bounds: () => hoistRead(hydrateStoredSlot(node, '_bounds'), [storedHop('items', '_item', true)], true),
+		bounds: () => hoistRead(hydrateStoredSlot(node, '_bounds'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -6890,15 +6718,7 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_elements'),
-				[
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
-				],
-				true
-			),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -7025,16 +6845,7 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeArguments: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_arguments'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
-				],
-				true
-			),
+		typeArguments: () => hoistRead(hydrateStoredSlot(node, '_type_arguments'), [itemsHop], true),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7223,16 +7034,7 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 		_trait,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		trait: () => hydrateStoredSlot(node, '_trait'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8167,16 +7969,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		arguments: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_arguments'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8288,15 +8081,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_elements'),
-				[
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8467,7 +8252,7 @@ function _buildTupleExpression(value: Admit<T.TupleExpressionElements>): T.Tuple
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8589,12 +8374,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		body: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_body'),
-				[storedHop('initializers', '_initializers', false), storedHop('items', '_item', true)],
-				true
-			),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8709,7 +8489,7 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 		_initializers,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		initializers: () => hoistRead(hydrateStoredSlot(node, '_initializers'), [storedHop('items', '_item', true)], true),
+		initializers: () => hoistRead(hydrateStoredSlot(node, '_initializers'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -10633,16 +10413,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeArguments: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_arguments'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
-				],
-				true
-			),
+		typeArguments: () => hoistRead(hydrateStoredSlot(node, '_type_arguments'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10752,7 +10523,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -10876,7 +10647,7 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -10987,7 +10758,7 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		type: () => hydrateStoredSlot(node, '_type'),
-		fields: () => hoistRead(hydrateStoredSlot(node, '_fields'), [storedHop('items', '_item', true)], true),
+		fields: () => hoistRead(hydrateStoredSlot(node, '_fields'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11081,7 +10852,7 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		type: () => hydrateStoredSlot(node, '_type'),
-		fields: () => hoistRead(hydrateStoredSlot(node, '_fields'), [storedHop('items', '_item', true)], true),
+		fields: () => hoistRead(hydrateStoredSlot(node, '_fields'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11875,7 +11646,7 @@ function buildMacroRules$with$delimiter(this: Received<Held>, ...args: unknown[]
 const buildEnumVariantListElements$wrapper = {
 	kind: TSKindId.AttributedEnumVariant,
 	content: 'enumVariant',
-	decorations: ['attributeItems']
+	decorations: [{ accessor: 'attributeItems', storage: '_attribute_item', many: true }]
 };
 export function buildEnumVariantListElements<A extends NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>>(
 	...elements: A & RefuseUndeclared<A>
@@ -12011,7 +11782,7 @@ function buildEnumVariantListElements$with$delimiter(this: Received<Held>, ...ar
 const buildFieldDeclarationListElements$wrapper = {
 	kind: TSKindId.AttributedFieldDeclaration,
 	content: 'fieldDeclaration',
-	decorations: ['attributeItems']
+	decorations: [{ accessor: 'attributeItems', storage: '_attribute_item', many: true }]
 };
 export function buildFieldDeclarationListElements<
 	A extends NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>
@@ -12152,7 +11923,10 @@ function buildFieldDeclarationListElements$with$delimiter(this: Received<Held>, 
 const buildOrderedFieldDeclarationListElements$wrapper = {
 	kind: TSKindId.AttributedOrderedField,
 	content: 'type',
-	decorations: ['attributeItems', 'visibilityModifier']
+	decorations: [
+		{ accessor: 'attributeItems', storage: '_attribute_item', many: true },
+		{ accessor: 'visibilityModifier', storage: '_visibility_modifier', many: false }
+	]
 };
 export function buildOrderedFieldDeclarationListElements<
 	A extends NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>
@@ -12411,7 +12185,7 @@ function buildWherePredicates$with$delimiter(this: Received<Held>, ...args: unkn
 const buildTypeParametersElements$wrapper = {
 	kind: TSKindId.AttributedTypeParameter,
 	content: 'content',
-	decorations: ['attributeItems']
+	decorations: [{ accessor: 'attributeItems', storage: '_attribute_item', many: true }]
 };
 export function buildTypeParametersElements<
 	A extends NonEmptyArray<
@@ -12772,7 +12546,7 @@ function buildUseClauses$with$delimiter(this: Received<Held>, ...args: unknown[]
 const buildParametersElements$wrapper = {
 	kind: TSKindId.AttributedParameter,
 	content: 'content',
-	decorations: ['attributeItem']
+	decorations: [{ accessor: 'attributeItem', storage: '_attribute_item', many: false }]
 };
 export function buildParametersElements<
 	A extends NonEmptyArray<
@@ -13293,7 +13067,7 @@ function buildUseBoundsElements$with$delimiter(this: Received<Held>, ...args: un
 const buildTypeArgumentsElements$wrapper = {
 	kind: TSKindId.TypeArgument,
 	content: 'content',
-	decorations: ['traitBounds']
+	decorations: [{ accessor: 'traitBounds', storage: '_trait_bounds', many: false }]
 };
 export function buildTypeArgumentsElements<
 	A extends NonEmptyArray<
@@ -13445,7 +13219,7 @@ function buildTypeArgumentsElements$with$delimiter(this: Received<Held>, ...args
 const buildArgumentsElements$wrapper = {
 	kind: TSKindId.Argument,
 	content: 'expression',
-	decorations: ['attributeItems']
+	decorations: [{ accessor: 'attributeItems', storage: '_attribute_item', many: true }]
 };
 export function buildArgumentsElements<A extends NonEmptyArray<Admit<T.Argument | T.Expression>>>(
 	...elements: A & RefuseUndeclared<A>
@@ -16087,16 +15861,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		unsafe: () => _unsafe,
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		traitClause: () => hydrateStoredSlot(node, '_trait_clause'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
@@ -16281,16 +16046,7 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		unsafe: () => _unsafe,
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		traitClause: () => hydrateStoredSlot(node, '_trait_clause'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
@@ -18611,7 +18367,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		macroRules: () => hoistRead(hydrateStoredSlot(node, '_macro_rules'), [storedHop('items', '_item', true)], true),
+		macroRules: () => hoistRead(hydrateStoredSlot(node, '_macro_rules'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18704,7 +18460,7 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		macroRules: () => hoistRead(hydrateStoredSlot(node, '_macro_rules'), [storedHop('items', '_item', true)], true),
+		macroRules: () => hoistRead(hydrateStoredSlot(node, '_macro_rules'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18796,7 +18552,7 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		macroRules: () => hoistRead(hydrateStoredSlot(node, '_macro_rules'), [storedHop('items', '_item', true)], true),
+		macroRules: () => hoistRead(hydrateStoredSlot(node, '_macro_rules'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -19134,31 +18890,9 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 		visibilityModifier: () =>
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
-		body: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_body'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({
-						kind: TSKindId.AttributedFieldDeclaration,
-						content: 'fieldDeclaration',
-						decorations: ['attributeItems']
-					})
-				],
-				true
-			),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -19383,30 +19117,8 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 		visibilityModifier: () =>
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
-		body: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_body'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({
-						kind: TSKindId.AttributedOrderedField,
-						content: 'type',
-						decorations: ['attributeItems', 'visibilityModifier']
-					})
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [itemsHop], true),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19608,16 +19320,7 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 		visibilityModifier: () =>
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -20534,7 +20237,7 @@ function _buildArrayExpressionList(value?: Admit<T.ArrayExpressionListElements>)
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -21311,15 +21014,7 @@ function _buildParametersElementsReceiverGroup(
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_elements'),
-				[
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedParameter, content: 'content', decorations: ['attributeItem'] })
-				],
-				true
-			),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [itemsHop], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -21679,16 +21374,7 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		functionModifiers: () => hydrateStoredSlot(node, '_function_modifiers'),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		parameters: () =>
 			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
@@ -21957,16 +21643,7 @@ export function buildSignatureMethodDeclaration(
 			hoistRead(hydrateStoredSlot(node, '_visibility_modifier'), [storedHop('content', '_content', false)], false),
 		functionModifiers: () => hydrateStoredSlot(node, '_function_modifiers'),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_type_parameters'),
-				[
-					storedHop('elements', '_elements', false),
-					storedHop('items', '_item', true),
-					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
-				],
-				true
-			),
+		typeParameters: () => hoistRead(hydrateStoredSlot(node, '_type_parameters'), [itemsHop], true),
 		parameters: () =>
 			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),

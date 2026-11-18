@@ -71,7 +71,7 @@ describe('an arena tree read deeper', () => {
 			rendered.push(rs.render(statement.name()).toString(), rs.render(statement.parameters()).toString());
 			for (const inner of body.statements()) rendered.push(rs.render(inner).toString());
 		}
-		expect(rendered).toEqual(['f', '(a: u8)', 'let b = a + 1;', 'g', '(c: &str)', 'println!("{}", c);']);
+		expect(rendered).toEqual(['f', 'a: u8', 'let b = a + 1;', 'g', 'c: &str', 'println!("{}", c);']);
 		expect(requests.length).toBeGreaterThan(0);
 		expect(new Set(requests).size).toBe(requests.length);
 		rs.dispose();

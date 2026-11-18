@@ -16,7 +16,7 @@ import {
 	currentHandle,
 	listSlotWith,
 	hoistedWith,
-	collapseHop,
+	itemsHop,
 	elementsWith,
 	seatWith,
 	groupField,
@@ -283,15 +283,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.ImportStatement as const,
 		names() {
-			return hoistRead(
-				hydrateSlot<T.Names>(this, '_names', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.DottedName | T.AliasedImport>(this, '_name', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.Names>(this, '_names', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -1372,15 +1364,7 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.MatchStatement as const,
 		subject() {
-			return hoistRead(
-				hydrateSlot<T.Subjects>(this, '_subject', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Expression>(this, '_elements', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.Subjects>(this, '_subject', tree), [itemsHop], true);
 		},
 		body() {
 			return hoistRead(
@@ -2316,32 +2300,10 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hoistRead(
-				hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.TypeParamsItems>(this, '_items', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.TypeParam>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree), [itemsHop], true);
 		},
 		parameters() {
-			return hoistRead(
-				hydrateSlot<T.Parameters>(this, '_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.Parameter>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.Parameters>(this, '_parameters', tree), [itemsHop], true);
 		},
 		returnType() {
 			return hoistRead(
@@ -2557,15 +2519,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		...data,
 		$type: TSKindId.Parameters as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Parameter>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -2681,15 +2635,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		...data,
 		$type: TSKindId.LambdaParameters as const,
 		parametersElements() {
-			return hoistRead(
-				hydrateSlot<T.ParametersElements>(this, '_parameters_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Parameter>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.ParametersElements>(this, '_parameters_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -3058,18 +3004,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hoistRead(
-				hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.TypeParamsItems>(this, '_items', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.TypeParam>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree), [itemsHop], true);
 		},
 		value() {
 			return hoistRead(
@@ -3215,18 +3150,7 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle): 
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hoistRead(
-				hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.TypeParamsItems>(this, '_items', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.TypeParam>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree), [itemsHop], true);
 		},
 		bases() {
 			return hydrateSlot<T.ArgumentList | undefined>(this, '_bases', tree);
@@ -3530,17 +3454,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		...data,
 		$type: TSKindId.ArgumentList as const,
 		arguments() {
-			return hoistRead(
-				hydrateSlot<T.ArgumentListElements | undefined>(this, '_arguments', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<
-							T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
-						>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.ArgumentListElements | undefined>(this, '_arguments', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -4320,15 +4234,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		...data,
 		$type: TSKindId.DictPattern as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.DictPatternElements | undefined>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.KeyValuePattern | T.SplatPattern>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.DictPatternElements | undefined>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -5020,15 +4926,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		...data,
 		$type: TSKindId.TuplePattern as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.TuplePatternElements | undefined>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Pattern>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TuplePatternElements | undefined>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -5147,15 +5045,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		...data,
 		$type: TSKindId.ListPattern as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.Patterns | undefined>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Pattern>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.Patterns | undefined>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -5932,18 +5822,7 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle): T.Lambda.Parsed {
 		...data,
 		$type: TSKindId.Lambda as const,
 		parameters() {
-			return hoistRead(
-				hydrateSlot<T.LambdaParameters | undefined>(this, '_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.ParametersElements>(this, '_parameters_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.Parameter>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.LambdaParameters | undefined>(this, '_parameters', tree), [itemsHop], true);
 		},
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
@@ -6034,18 +5913,7 @@ export function wrapLambdaWithinForInClause(
 		...data,
 		$type: TSKindId.LambdaWithinForInClause as const,
 		parameters() {
-			return hoistRead(
-				hydrateSlot<T.LambdaParameters | undefined>(this, '_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.ParametersElements>(this, '_parameters_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.Parameter>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.LambdaParameters | undefined>(this, '_parameters', tree), [itemsHop], true);
 		},
 		body() {
 			return hydrateSlot<T.Expression | T.LambdaWithinForInClause>(this, '_body', tree);
@@ -6427,15 +6295,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 			return hydrateSlot<T.PrimaryExpression>(this, '_object', tree);
 		},
 		index() {
-			return hoistRead(
-				hydrateSlot<T.Subscripts>(this, '_index', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Expression | T.Slice>(this, '_elements', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.Subscripts>(this, '_index', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -7336,15 +7196,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		...data,
 		$type: TSKindId.List as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.CollectionElements | undefined>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.CollectionElements | undefined>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -7460,15 +7312,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		...data,
 		$type: TSKindId.Set as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.CollectionElements>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.CollectionElements>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -7582,15 +7426,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		...data,
 		$type: TSKindId.Tuple as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.TupleElements | undefined>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TupleElements | undefined>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -7706,15 +7542,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		...data,
 		$type: TSKindId.Dictionary as const,
 		elements() {
-			return hoistRead(
-				hydrateSlot<T.DictionaryElements | undefined>(this, '_elements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Pair | T.DictionarySplat>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.DictionaryElements | undefined>(this, '_elements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -10080,15 +9908,7 @@ export function wrapTypeParams(data: T.TypeParams, tree: TreeHandle): T.TypePara
 		...data,
 		$type: TSKindId.TypeParams as const,
 		items() {
-			return hoistRead(
-				hydrateSlot<T.TypeParamsItems>(this, '_items', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.TypeParam>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TypeParamsItems>(this, '_items', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -11144,15 +10964,7 @@ export function wrapPrintStatementChevron(
 			);
 		},
 		arguments() {
-			return hoistRead(
-				hydrateSlot<T.PrintChevronArguments | undefined>(this, '_arguments', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Expression>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.PrintChevronArguments | undefined>(this, '_arguments', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -11270,15 +11082,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		...data,
 		$type: TSKindId.PrintStatementPlain as const,
 		arguments() {
-			return hoistRead(
-				hydrateSlot<T.PrintArguments>(this, '_arguments', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Expression>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.PrintArguments>(this, '_arguments', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -12944,15 +12748,7 @@ export function wrapParenthesizedImportList(
 		...data,
 		$type: TSKindId.ParenthesizedImportList as const,
 		importList() {
-			return hoistRead(
-				hydrateSlot<T.ImportList>(this, '_import_list', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.DottedName | T.AliasedImport>(this, '_name', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.ImportList>(this, '_import_list', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -13766,15 +13562,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		...data,
 		$type: TSKindId.SuiteInline as const,
 		statements() {
-			return hoistRead(
-				hydrateSlot<T.SimpleStatementsElements>(this, '_statements', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.SimpleStatement>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.SimpleStatementsElements>(this, '_statements', tree), [itemsHop], true);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -14525,32 +14313,10 @@ export function wrapConstructorDeclaration(
 			return this._async;
 		},
 		typeParameters() {
-			return hoistRead(
-				hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.TypeParamsItems>(this, '_items', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.TypeParam>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree), [itemsHop], true);
 		},
 		parameters() {
-			return hoistRead(
-				hydrateSlot<T.Parameters>(this, '_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.Parameter>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.Parameters>(this, '_parameters', tree), [itemsHop], true);
 		},
 		returnType() {
 			return hoistRead(
@@ -15257,32 +15023,10 @@ export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandl
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameters() {
-			return hoistRead(
-				hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.TypeParamsItems>(this, '_items', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.TypeParam>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.TypeParams | undefined>(this, '_type_parameters', tree), [itemsHop], true);
 		},
 		parameters() {
-			return hoistRead(
-				hydrateSlot<T.Parameters>(this, '_parameters', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlots<T.Parameter>(this, '_item', tree);
-					}
-				],
-				true
-			);
+			return hoistRead(hydrateSlot<T.Parameters>(this, '_parameters', tree), [itemsHop], true);
 		},
 		returnType() {
 			return hoistRead(
@@ -15579,15 +15323,7 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 }
 
 function viewImportStatement$names(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Names>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.Names>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewImportStatement$names$native(this: RecordHandle) {
 	return viewSlot<T.Names>(this, 2, 3, 8, 3, 2);
@@ -16197,15 +15933,7 @@ function viewElseClause(data: RecordPosition, tree: TreeHandle): T.ElseClause.Pa
 }
 
 function viewMatchStatement$subject(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Subjects>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.Subjects>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewMatchStatement$body(this: RecordHandle) {
 	return hoistRead(
@@ -16638,32 +16366,10 @@ function viewFunctionDefinition$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewFunctionDefinition$typeParameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4), [itemsHop], true);
 }
 function viewFunctionDefinition$parameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5), [itemsHop], true);
 }
 function viewFunctionDefinition$returnType(this: RecordHandle) {
 	return hoistRead(
@@ -16733,15 +16439,7 @@ function viewFunctionDefinition(data: RecordPosition, tree: TreeHandle): T.Funct
 }
 
 function viewParameters$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewParameters$elements$native(this: RecordHandle) {
 	return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2);
@@ -16810,15 +16508,7 @@ function viewParameters(data: RecordPosition, tree: TreeHandle): T.Parameters.Pa
 }
 
 function viewLambdaParameters$parametersElements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewLambdaParameters$parametersElements$native(this: RecordHandle) {
 	return viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2);
@@ -17029,18 +16719,7 @@ function viewTypeAliasStatement$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewTypeAliasStatement$typeParameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3), [itemsHop], true);
 }
 function viewTypeAliasStatement$value(this: RecordHandle) {
 	return hoistRead(
@@ -17096,18 +16775,7 @@ function viewClassDefinition$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewClassDefinition$typeParameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3), [itemsHop], true);
 }
 function viewClassDefinition$bases(this: RecordHandle) {
 	return viewSlot<T.ArgumentList | undefined>(this, 10, 5, 8, 5, 4);
@@ -17266,23 +16934,7 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 }
 
 function viewArgumentList$arguments(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
-					this,
-					2,
-					1,
-					4,
-					3,
-					0,
-					2
-				);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewArgumentList$arguments$native(this: RecordHandle) {
 	return viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 8, 3, 2);
@@ -17724,15 +17376,7 @@ function viewUnionPattern(data: RecordPosition, tree: TreeHandle): T.UnionPatter
 }
 
 function viewDictPattern$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.KeyValuePattern | T.SplatPattern>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewDictPattern$elements$native(this: RecordHandle) {
 	return viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 8, 3, 2);
@@ -18130,15 +17774,7 @@ function viewPatterns(data: RecordPosition, tree: TreeHandle): T.Patterns.Parsed
 }
 
 function viewTuplePattern$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewTuplePattern$elements$native(this: RecordHandle) {
 	return viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 8, 3, 2);
@@ -18207,15 +17843,7 @@ function viewTuplePattern(data: RecordPosition, tree: TreeHandle): T.TuplePatter
 }
 
 function viewListPattern$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Patterns | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.Patterns | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewListPattern$elements$native(this: RecordHandle) {
 	return viewSlot<T.Patterns | undefined>(this, 2, 3, 8, 3, 2);
@@ -18612,18 +18240,7 @@ function viewComparisonOperator(data: RecordPosition, tree: TreeHandle): T.Compa
 }
 
 function viewLambda$parameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2), [itemsHop], true);
 }
 function viewLambda$body(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 3);
@@ -18657,18 +18274,7 @@ function viewLambda(data: RecordPosition, tree: TreeHandle): T.Lambda.Parsed {
 }
 
 function viewLambdaWithinForInClause$parameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2), [itemsHop], true);
 }
 function viewLambdaWithinForInClause$body(this: RecordHandle) {
 	return viewSlot<T.Expression | T.LambdaWithinForInClause>(this, 7, 4, 3, 0, 3);
@@ -18863,15 +18469,7 @@ function viewSubscript$object(this: RecordHandle) {
 	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewSubscript$index(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Subscripts>(this, 6, 3, 8, 3, 3),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression | T.Slice>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.Subscripts>(this, 6, 3, 8, 3, 3), [itemsHop], true);
 }
 function viewSubscript$index$native(this: RecordHandle) {
 	return viewSlot<T.Subscripts>(this, 6, 3, 8, 3, 3);
@@ -19358,15 +18956,7 @@ function viewKeywordArgument(data: RecordPosition, tree: TreeHandle): T.KeywordA
 }
 
 function viewList$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.CollectionElements | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.CollectionElements | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewList$elements$native(this: RecordHandle) {
 	return viewSlot<T.CollectionElements | undefined>(this, 2, 3, 8, 3, 2);
@@ -19435,15 +19025,7 @@ function viewList(data: RecordPosition, tree: TreeHandle): T.List.Parsed {
 }
 
 function viewSet$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.CollectionElements>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.CollectionElements>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewSet$elements$native(this: RecordHandle) {
 	return viewSlot<T.CollectionElements>(this, 2, 3, 8, 3, 2);
@@ -19512,15 +19094,7 @@ function viewSet(data: RecordPosition, tree: TreeHandle): T.Set.Parsed {
 }
 
 function viewTuple$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TupleElements | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TupleElements | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewTuple$elements$native(this: RecordHandle) {
 	return viewSlot<T.TupleElements | undefined>(this, 2, 3, 8, 3, 2);
@@ -19589,15 +19163,7 @@ function viewTuple(data: RecordPosition, tree: TreeHandle): T.Tuple.Parsed {
 }
 
 function viewDictionary$elements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Pair | T.DictionarySplat>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewDictionary$elements$native(this: RecordHandle) {
 	return viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 8, 3, 2);
@@ -20963,15 +20529,7 @@ function viewSliceGroup(data: RecordPosition, tree: TreeHandle): T.SliceGroup.Pa
 }
 
 function viewTypeParams$items(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewTypeParams$items$native(this: RecordHandle) {
 	return viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2);
@@ -21643,15 +21201,7 @@ function viewPrintStatementChevron$chevron(this: RecordHandle) {
 	);
 }
 function viewPrintStatementChevron$arguments(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.PrintChevronArguments | undefined>(this, 8, 3, 8, 3, 3),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.PrintChevronArguments | undefined>(this, 8, 3, 8, 3, 3), [itemsHop], true);
 }
 function viewPrintStatementChevron$chevron$native(this: RecordHandle) {
 	return viewSlot<T.Chevron>(this, 2, 6, 8, 6, 2);
@@ -21685,15 +21235,7 @@ function viewPrintStatementChevron(data: RecordPosition, tree: TreeHandle): T.Pr
 }
 
 function viewPrintStatementPlain$arguments(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.PrintArguments>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.PrintArguments>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewPrintStatementPlain$arguments$native(this: RecordHandle) {
 	return viewSlot<T.PrintArguments>(this, 2, 3, 8, 3, 2);
@@ -22544,15 +22086,7 @@ function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.Ex
 }
 
 function viewParenthesizedImportList$importList(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewParenthesizedImportList$importList$native(this: RecordHandle) {
 	return viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2);
@@ -23029,15 +22563,7 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 }
 
 function viewSuiteInline$statements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.SimpleStatement>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2), [itemsHop], true);
 }
 function viewSuiteInline$statements$native(this: RecordHandle) {
 	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2);
@@ -23474,32 +23000,10 @@ function viewConstructorDeclaration$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewConstructorDeclaration$typeParameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TypeParams | undefined>(this, 3, 5, 8, 5, 3),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 3, 5, 8, 5, 3), [itemsHop], true);
 }
 function viewConstructorDeclaration$parameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Parameters>(this, 8, 5, 8, 5, 4),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.Parameters>(this, 8, 5, 8, 5, 4), [itemsHop], true);
 }
 function viewConstructorDeclaration$returnType(this: RecordHandle) {
 	return hoistRead(
@@ -23820,32 +23324,10 @@ function viewMethodDeclaration$name(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewMethodDeclaration$typeParameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4), [itemsHop], true);
 }
 function viewMethodDeclaration$parameters(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
-			}
-		],
-		true
-	);
+	return hoistRead(viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5), [itemsHop], true);
 }
 function viewMethodDeclaration$returnType(this: RecordHandle) {
 	return hoistRead(
