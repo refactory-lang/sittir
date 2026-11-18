@@ -2181,7 +2181,7 @@ function fieldCarryingFactoryText(
 		}
 		const members = nodeMemberParts({
 			setters: { kind: node.kind, prefix: fn, entries: seated, held, readers: groupSeatReaders(plan, storedRead) },
-			accessors: slotsToEmit.map((f) => storedAccessor(node, f.propertyName, f.storageKey, f, nodeMap)),
+			accessors: slotsToEmit.map((f) => storedAccessor(node, f.propertyName, f.storageKey, f, nodeMap, kindEntries)),
 			extra: [...(view?.members ?? []), ...groupSeatMembers(plan, (hint) => hint.stored)],
 			tail: view?.tail,
 			trivia,
@@ -2475,7 +2475,7 @@ function emitRefineFormFactory(
 		];
 		const members = nodeMemberParts({
 			setters: { kind: node.kind, prefix: formFn, entries: hoistedFormSetters, held },
-			accessors: allSlots.map((f) => storedAccessor(node, f.propertyName, f.storageKey, f, nodeMap)),
+			accessors: allSlots.map((f) => storedAccessor(node, f.propertyName, f.storageKey, f, nodeMap, kindEntries)),
 			trivia,
 			root: node.grammarRoot
 		});
@@ -2912,10 +2912,16 @@ function storedHopOf(node: AssembledNode, slot: AssembledNonterminal): string {
 	return `storedHop(${JSON.stringify(slot.propertyName)}, ${JSON.stringify(slot.storageKey)}, ${isMultiple(slot)})`;
 }
 
-export function storedHoistOf(holder: AssembledNode, lookup: AssembledNonterminal, slot: AssembledNonterminal, nodeMap: NodeMap): StoredHoist | undefined {
+export function chainItemWrapper(nodeMap: NodeMap, chain: WrapperChain, kindEntries: readonly KindEnumEntry[]): string | undefined {
+	const last = nodeMap.nodes.get(chain.storage[chain.storage.length - 1]!);
+	return last instanceof AssembledList ? listSelfViewPlan(last, nodeMap, kindEntries).wrapper : undefined;
+}
+
+export function storedHoistOf(holder: AssembledNode, lookup: AssembledNonterminal, slot: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): StoredHoist | undefined {
 	const chain = wrapperChainFor(nodeMap, holder.kind, lookup.name);
 	if (chain === undefined) return undefined;
-	const hops = chain.storage.map((kind, hop) => storedHopOf(nodeMap.nodes.get(kind)!, chain.slots[hop]!));
+	const items = chainItemWrapper(nodeMap, chain, kindEntries);
+	const hops = [...chain.storage.map((kind, hop) => storedHopOf(nodeMap.nodes.get(kind)!, chain.slots[hop]!)), ...(items === undefined ? [] : [`collapseHop(${items})`])];
 	return { hops, list: chainReadsAsList(nodeMap, chain, slot) };
 }
 
@@ -2925,10 +2931,11 @@ function storedAccessor(
 	read: string,
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
 	lookup: AssembledNonterminal = slot
 ): StoredAccessor {
 	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read: blankForRead(hasBlankArm(slot), read) };
-	const hoist = storedHoistOf(holder, lookup, slot, nodeMap);
+	const hoist = storedHoistOf(holder, lookup, slot, nodeMap, kindEntries);
 	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one', ...(spelledReadOf(slot) === undefined ? {} : { slot }), ...(hoist === undefined ? {} : { hoist }) };
 }
 
@@ -2937,7 +2944,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 	for (const node of nodeMap.nodes.values()) {
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
 		if (plan.slots.length > 0) names.add('listSlotWith');
-		for (const name of ['hoistedWith', 'hoistRead', 'storedHop', 'wrapHoisted', 'wrapHoistedEach']) names.add(name);
+		for (const name of ['hoistedWith', 'hoistRead', 'collapseHop', 'storedHop', 'wrapHoisted', 'wrapHoistedEach']) names.add(name);
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {
@@ -3228,7 +3235,7 @@ function emitSeparatedListFactory(
 			if (hasDelimiterOption) lines.push('    _delimiter,');
 			const members = nodeMemberParts({
 				setters: { kind: node.kind, prefix: fn, entries: seated, held },
-				accessors: [storedAccessor(node, contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap, canonicalSeparatedListField(node))],
+				accessors: [storedAccessor(node, contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap, kindEntries, canonicalSeparatedListField(node))],
 				extra: view.members,
 				tail: view.tail,
 				trivia,

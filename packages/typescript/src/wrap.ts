@@ -16,6 +16,7 @@ import {
 	currentHandle,
 	listSlotWith,
 	hoistedWith,
+	collapseHop,
 	seatWith,
 	groupField,
 	LIST_METHODS,
@@ -299,7 +300,8 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 				[
 					function (this: object) {
 						return hydrateSlots<T.ExportSpecifier>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['typeKeyword', 'alias'] })
 				],
 				true
 			);
@@ -3146,7 +3148,12 @@ export function wrapClass(data: T.Class, tree: TreeHandle): T.Class.Parsed {
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -3383,7 +3390,12 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -3676,7 +3688,12 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -3914,7 +3931,12 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -4177,7 +4199,12 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -4415,7 +4442,12 @@ export function wrapGeneratorFunctionDeclaration(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -6672,7 +6704,12 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -7652,7 +7689,12 @@ export function wrapAbstractClassDeclaration(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -8151,7 +8193,12 @@ export function wrapInterfaceDeclaration(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -8683,7 +8730,12 @@ export function wrapTypeAliasDeclaration(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -10025,7 +10077,12 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -11680,7 +11737,12 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle): T.Ca
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -12057,7 +12119,12 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 				[
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -12405,7 +12472,12 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -12972,7 +13044,12 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -17813,7 +17890,8 @@ export function wrapExportStatementDefaultFromClauseFrom(
 					},
 					function (this: object) {
 						return hydrateSlots<T.ExportSpecifier>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['typeKeyword', 'alias'] })
 				],
 				true
 			);
@@ -19014,7 +19092,12 @@ export function wrapMethodDefinitionPlain(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -19693,7 +19776,12 @@ export function wrapMethodSignaturePlain(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -20307,7 +20395,12 @@ export function wrapAbstractMethodSignaturePlain(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
 				],
 				true
 			);
@@ -22451,7 +22544,8 @@ function viewExportClause$exportSpecifiers(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.ExportSpecifier>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['typeKeyword', 'alias'] })
 		],
 		true
 	);
@@ -23910,7 +24004,8 @@ function viewClass$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -24009,7 +24104,8 @@ function viewClassDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -24130,7 +24226,8 @@ function viewFunctionExpression$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -24217,7 +24314,8 @@ function viewFunctionDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -24309,7 +24407,8 @@ function viewGeneratorFunction$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -24396,7 +24495,8 @@ function viewGeneratorFunctionDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -25502,7 +25602,8 @@ function viewFunctionSignature$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -25938,7 +26039,8 @@ function viewAbstractClassDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -26152,7 +26254,8 @@ function viewInterfaceDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -26413,7 +26516,8 @@ function viewTypeAliasDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -27032,7 +27136,8 @@ function viewConstructorType$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -27889,7 +27994,8 @@ function viewCallSignature$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -28036,7 +28142,8 @@ function viewTypeParameters$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -28238,7 +28345,8 @@ function viewConstructSignature$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -28524,7 +28632,8 @@ function viewFunctionType$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -30914,7 +31023,8 @@ function viewExportStatementDefaultFromClauseFrom$exportClause(this: RecordHandl
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.ExportSpecifier>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['typeKeyword', 'alias'] })
 		],
 		true
 	);
@@ -31457,7 +31567,8 @@ function viewMethodDefinitionPlain$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -31719,7 +31830,8 @@ function viewMethodSignaturePlain$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);
@@ -31957,7 +32069,8 @@ function viewAbstractMethodSignaturePlain$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeParameter, content: 'name', decorations: ['const', 'constraint', 'default'] })
 		],
 		true
 	);

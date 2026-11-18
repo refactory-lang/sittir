@@ -986,6 +986,13 @@ function isKindNode(value: unknown, kind: number): boolean {
 	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
 }
 
+/** The last hop of a hoisted read that ends in a list node: the list view's own read of one element, a wrapper that carries only its content read as that content. */
+export function collapseHop(wrapper: ListViewWrapper): HoistHop {
+	return function (this: never) {
+		return collapseWrapper(this, wrapper);
+	};
+}
+
 /** A hop of a hoisted read over a built holder: the wrapper's one slot, read as `storedSlotRead` reads it. */
 export function storedHop(accessor: string, storage: string, many: boolean): HoistHop {
 	return function (this: never) {

@@ -16,6 +16,7 @@ import {
 	currentHandle,
 	listSlotWith,
 	hoistedWith,
+	collapseHop,
 	elementsWith,
 	seatWith,
 	groupField,

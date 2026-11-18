@@ -71,7 +71,7 @@ const cases: readonly (readonly [string, (engine: Engine) => Node, string])[] = 
 		'{\n    a();\n    b();\n}'
 	],
 	['an empty block, which keeps its inner layout', (engine) => rebuiltThrough(body(engine, 'fn f() {\n}\n'), 'statements'), '{\n}'],
-	['a list, which keeps its own spacing', (engine) => rebuiltThrough(slot(nth(root(engine, 'fn f(a: u8,b: u8) {}\n'), 'statements', 0), 'parameters') as Node, 'elements'), '(a: u8,b: u8)'],
+	['a list, which keeps its own spacing', (engine) => rebuiltThrough((nth(root(engine, 'fn f(a: u8,b: u8) {}\n'), 'statements', 0) as unknown as { $query(): { $descendants: { ofType(kind: number): { at(index: number): Node } } } }).$query().$descendants.ofType(engine.kinds.Parameters).at(0), 'elements'), '(a: u8,b: u8)'],
 	['a padded statement, rendered without its padding as a render root', (engine) => rebuiltThrough(nth(body(engine, 'fn f() { a(); }\n'), 'statements', 0), 'content'), 'a();'],
 	['a block indented by two, which keeps its source indent', (engine) => rebuiltThrough(body(engine, 'fn f() {\n  if x {\n    a();\n  }\n}\n'), 'statements'), '{\n  if x {\n    a();\n  }\n}']
 ];

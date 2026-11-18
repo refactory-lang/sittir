@@ -15,6 +15,7 @@ import {
 	currentHandle,
 	listSlotWith,
 	hoistedWith,
+	collapseHop,
 	elementsWith,
 	seatWith,
 	groupField,
@@ -925,7 +926,8 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -942,7 +944,12 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedFieldDeclaration>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.AttributedFieldDeclaration,
+						content: 'fieldDeclaration',
+						decorations: ['attributeItems']
+					})
 				],
 				true
 			);
@@ -1160,7 +1167,8 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -1177,7 +1185,8 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedEnumVariant>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -1386,7 +1395,8 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 				[
 					function (this: object) {
 						return hydrateSlots<T.AttributedEnumVariant>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -1643,7 +1653,12 @@ export function wrapFieldDeclarationList(
 				[
 					function (this: object) {
 						return hydrateSlots<T.AttributedFieldDeclaration>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.AttributedFieldDeclaration,
+						content: 'fieldDeclaration',
+						decorations: ['attributeItems']
+					})
 				],
 				true
 			);
@@ -1897,7 +1912,12 @@ export function wrapOrderedFieldDeclarationList(
 				[
 					function (this: object) {
 						return hydrateSlots<T.AttributedOrderedField>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.AttributedOrderedField,
+						content: 'type',
+						decorations: ['attributeItems', 'visibilityModifier']
+					})
 				],
 				true
 			);
@@ -2426,7 +2446,8 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -2635,7 +2656,8 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -2940,7 +2962,8 @@ export function wrapFunctionSignatureItem(
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -3542,7 +3565,8 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -3808,7 +3832,8 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -4033,7 +4058,8 @@ export function wrapHigherRankedTraitBound(
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -4201,7 +4227,8 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 				[
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -6215,7 +6242,8 @@ export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): 
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeArgument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 				],
 				true
 			);
@@ -6327,7 +6355,8 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeArgument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 				],
 				true
 			);
@@ -6435,7 +6464,8 @@ export function wrapGenericTypeWithTurbofish(
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeArgument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 				],
 				true
 			);
@@ -6732,7 +6762,8 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 				[
 					function (this: object) {
 						return hydrateSlots<T.TypeArgument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 				],
 				true
 			);
@@ -6862,7 +6893,8 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeArgument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 				],
 				true
 			);
@@ -7057,7 +7089,8 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.Abst
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -8090,7 +8123,8 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 					},
 					function (this: object) {
 						return hydrateSlots<T.Argument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -8202,7 +8236,8 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 				[
 					function (this: object) {
 						return hydrateSlots<T.Argument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -10579,7 +10614,8 @@ export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle): T.
 					},
 					function (this: object) {
 						return hydrateSlots<T.TypeArgument>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 				],
 				true
 			);
@@ -15447,7 +15483,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -15653,7 +15690,8 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -18771,7 +18809,8 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -18788,7 +18827,12 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedFieldDeclaration>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.AttributedFieldDeclaration,
+						content: 'fieldDeclaration',
+						decorations: ['attributeItems']
+					})
 				],
 				true
 			);
@@ -19012,7 +19056,8 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -19026,7 +19071,12 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedOrderedField>(this, '_item', tree);
-					}
+					},
+					collapseHop({
+						kind: TSKindId.AttributedOrderedField,
+						content: 'type',
+						decorations: ['attributeItems', 'visibilityModifier']
+					})
 				],
 				true
 			);
@@ -19258,7 +19308,8 @@ export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -20991,7 +21042,8 @@ export function wrapParametersElementsReceiverGroup(
 				[
 					function (this: object) {
 						return hydrateSlots<T.AttributedParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedParameter, content: 'content', decorations: ['attributeItem'] })
 				],
 				true
 			);
@@ -21354,7 +21406,8 @@ export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandl
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -21665,7 +21718,8 @@ export function wrapSignatureMethodDeclaration(
 					},
 					function (this: object) {
 						return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
-					}
+					},
+					collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 				],
 				true
 			);
@@ -22417,7 +22471,8 @@ function viewUnionItem$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -22434,7 +22489,12 @@ function viewUnionItem$body(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedFieldDeclaration>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({
+				kind: TSKindId.AttributedFieldDeclaration,
+				content: 'fieldDeclaration',
+				decorations: ['attributeItems']
+			})
 		],
 		true
 	);
@@ -22506,7 +22566,8 @@ function viewEnumItem$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -22523,7 +22584,8 @@ function viewEnumItem$body(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedEnumVariant>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -22578,7 +22640,8 @@ function viewEnumVariantList$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedEnumVariant>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -22716,7 +22779,12 @@ function viewFieldDeclarationList$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedFieldDeclaration>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({
+				kind: TSKindId.AttributedFieldDeclaration,
+				content: 'fieldDeclaration',
+				decorations: ['attributeItems']
+			})
 		],
 		true
 	);
@@ -22844,7 +22912,12 @@ function viewOrderedFieldDeclarationList$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedOrderedField>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({
+				kind: TSKindId.AttributedOrderedField,
+				content: 'type',
+				decorations: ['attributeItems', 'visibilityModifier']
+			})
 		],
 		true
 	);
@@ -23111,7 +23184,8 @@ function viewTypeItem$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -23194,7 +23268,8 @@ function viewFunctionItem$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -23295,7 +23370,8 @@ function viewFunctionSignatureItem$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -23566,7 +23642,8 @@ function viewTraitItem$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -23659,7 +23736,8 @@ function viewAssociatedType$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -23753,7 +23831,8 @@ function viewHigherRankedTraitBound$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -23822,7 +23901,8 @@ function viewTypeParameters$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -24875,7 +24955,8 @@ function viewGenericFunction$typeArguments(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeArgument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 		],
 		true
 	);
@@ -24920,7 +25001,8 @@ function viewGenericType$typeArguments(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeArgument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 		],
 		true
 	);
@@ -24965,7 +25047,8 @@ function viewGenericTypeWithTurbofish$typeArguments(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeArgument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 		],
 		true
 	);
@@ -25112,7 +25195,8 @@ function viewTypeArguments$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeArgument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 		],
 		true
 	);
@@ -25196,7 +25280,8 @@ function viewTypeBinding$typeArguments(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeArgument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 		],
 		true
 	);
@@ -25277,7 +25362,8 @@ function viewAbstractType$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -25803,7 +25889,8 @@ function viewCallExpression$arguments(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.Argument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -25842,7 +25929,8 @@ function viewArguments$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.Argument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.Argument, content: 'expression', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -27079,7 +27167,8 @@ function viewGenericPattern$typeArguments(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.TypeArgument>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.TypeArgument, content: 'content', decorations: ['traitBounds'] })
 		],
 		true
 	);
@@ -29874,7 +29963,8 @@ function viewImplItemBody$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -29954,7 +30044,8 @@ function viewImplItemSemi$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -31434,7 +31525,8 @@ function viewStructItemBrace$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -31451,7 +31543,12 @@ function viewStructItemBrace$body(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedFieldDeclaration>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({
+				kind: TSKindId.AttributedFieldDeclaration,
+				content: 'fieldDeclaration',
+				decorations: ['attributeItems']
+			})
 		],
 		true
 	);
@@ -31523,7 +31620,8 @@ function viewStructItemTuple$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -31537,7 +31635,12 @@ function viewStructItemTuple$body(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedOrderedField>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({
+				kind: TSKindId.AttributedOrderedField,
+				content: 'type',
+				decorations: ['attributeItems', 'visibilityModifier']
+			})
 		],
 		true
 	);
@@ -31612,7 +31715,8 @@ function viewStructItemUnit$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -32351,7 +32455,8 @@ function viewParametersElementsReceiverGroup$elements(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedParameter, content: 'content', decorations: ['attributeItem'] })
 		],
 		true
 	);
@@ -32564,7 +32669,8 @@ function viewMethodDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);
@@ -32665,7 +32771,8 @@ function viewSignatureMethodDeclaration$typeParameters(this: RecordHandle) {
 			},
 			function (this: RecordHandle) {
 				return viewSlots<T.AttributedTypeParameter>(this, 2, 1, 3, 1, 0, 2);
-			}
+			},
+			collapseHop({ kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['attributeItems'] })
 		],
 		true
 	);

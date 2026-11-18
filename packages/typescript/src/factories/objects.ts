@@ -23,6 +23,7 @@ import {
 	checkDelimited,
 	hoistedWith,
 	hoistRead,
+	collapseHop,
 	storedHop,
 	wrapHoisted,
 	wrapHoistedEach,
@@ -368,7 +369,14 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		exportSpecifiers: () =>
-			hoistRead(hydrateStoredSlot(node, '_export_specifiers'), [storedHop('items', '_item', true)], true),
+			hoistRead(
+				hydrateStoredSlot(node, '_export_specifiers'),
+				[
+					storedHop('items', '_item', true),
+					collapseHop({ kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['typeKeyword', 'alias'] })
+				],
+				true
+			),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -3510,7 +3518,15 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
@@ -3743,7 +3759,15 @@ export function buildClassDeclaration(
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
@@ -4018,7 +4042,15 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -4245,7 +4277,15 @@ export function buildFunctionDeclaration(
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -4473,7 +4513,15 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -4700,7 +4748,15 @@ export function buildGeneratorFunctionDeclaration(
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -7351,7 +7407,15 @@ export function buildFunctionSignature(
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -8283,7 +8347,15 @@ export function buildAbstractClassDeclaration(
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
@@ -8767,7 +8839,15 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		extendsTypeClause: () =>
@@ -9309,7 +9389,15 @@ export function buildTypeAliasDeclaration(
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		value: () => hydrateStoredSlot(node, '_value'),
@@ -10584,7 +10672,15 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -12506,7 +12602,15 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -12822,7 +12926,19 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [storedHop('items', '_item', true)], true),
+		elements: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_elements'),
+				[
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
+				true
+			),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -13176,7 +13292,15 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -13745,7 +13869,15 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -18806,7 +18938,11 @@ export function buildExportStatementDefaultFromClauseFrom(
 		exportClause: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_export_clause'),
-				[storedHop('exportSpecifiers', '_export_specifiers', false), storedHop('items', '_item', true)],
+				[
+					storedHop('exportSpecifiers', '_export_specifiers', false),
+					storedHop('items', '_item', true),
+					collapseHop({ kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['typeKeyword', 'alias'] })
+				],
 				true
 			),
 		source: () => hydrateStoredSlot(node, '_source'),
@@ -20255,7 +20391,15 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -20848,7 +20992,15 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
@@ -21394,7 +21546,15 @@ export function buildAbstractMethodSignaturePlain(
 		typeParameters: () =>
 			hoistRead(
 				hydrateStoredSlot(node, '_type_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+				[
+					storedHop('elements', '_elements', false),
+					storedHop('items', '_item', true),
+					collapseHop({
+						kind: TSKindId.TypeParameter,
+						content: 'name',
+						decorations: ['const', 'constraint', 'default']
+					})
+				],
 				true
 			),
 		parameters: () =>
