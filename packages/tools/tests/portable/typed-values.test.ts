@@ -1,8 +1,6 @@
-import { mkdtempSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { parseTypeCheckDiagnostics, typeCheckOutput } from '@sittir/codegen';
+import { probeDiagnostics } from '@sittir/codegen';
 import { REPO_ROOT } from '@sittir/codegen/grammars';
 import { portableTypedPath, writeTypedModule } from '../../src/portable/conformance.ts';
 
@@ -32,10 +30,7 @@ describe("the typed module's $value", () => {
 			expect(lines.length, path).toBeGreaterThan(0);
 			expect(lines.filter((line) => !line.includes(`$value: ${reader}`)), path).toEqual([]);
 		}
-		const dir = mkdtempSync(join(tmpdir(), 'sittir-typed-values-'));
-		writeFileSync(join(dir, 'probe.ts'), PROBE(portableTypedPath('rust')));
-		writeFileSync(join(dir, 'tsconfig.json'), JSON.stringify({ extends: join(REPO_ROOT, 'tsconfig.json'), compilerOptions: { noEmit: true, types: ['node'] }, include: [join(dir, 'probe.ts')] }));
-		const diagnostics = parseTypeCheckDiagnostics(typeCheckOutput('pnpm', ['exec', 'tsrs', '-p', join(dir, 'tsconfig.json'), '--noEmit'], REPO_ROOT));
+		const diagnostics = probeDiagnostics({ extends: join(REPO_ROOT, 'tsconfig.json'), sources: { 'probe.ts': PROBE(portableTypedPath('rust')) } }, REPO_ROOT);
 		expect(diagnostics.filter((d) => d.file?.endsWith('probe.ts')).map((d) => d.head)).toEqual([]);
 	}, 300_000);
 });
