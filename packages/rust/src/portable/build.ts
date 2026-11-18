@@ -733,6 +733,7 @@ const element_struct_field$284_attributes = (
 const element_struct_field$284_name = (
 	value:
 		| Text<RustMap, 'identifier'>
+		| number
 		| BuildInput<RustMap, 'identifier'>
 		| RustMap['nodes']['identifier']
 		| BuildInput<RustMap, 'literal.number.integer'>
@@ -1549,6 +1550,7 @@ const literal_number_integer_octal$144_suffix = (
 const literal_number_negative$330_value = (
 	value:
 		| Text<RustMap, 'literal.number.float'>
+		| number
 		| BuildInput<RustMap, 'literal.number.float'>
 		| RustMap['nodes']['literal.number.float']
 		| BuildInput<RustMap, 'literal.number.integer'>
@@ -1564,8 +1566,10 @@ const literal_number_negative$330_value = (
 		return untexted('literal.number.negative.value', value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [141, 142, 143, 144, 162, 331])) return value;
-		return unseated('literal.number.negative.value', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (seated(value, [141, 142, 143, 144, 162, 331])) return value;

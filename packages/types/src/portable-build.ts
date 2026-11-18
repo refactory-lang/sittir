@@ -103,6 +103,9 @@ export interface PortableSeat {
  * names the slots any one of which fills one grammar slot, so the route is taken only when every group has a slot present. `reads` lists
  * the kinds the route reads from its grammar slot where its binding captures only some of what that slot holds; a read keeps only values of those
  * kinds. A `nonEmpty` route's grammar slot holds at least one element, so an empty list neither builds through it nor fills a slot it `requires`.
+ * `takers` names, for each scalar type, the path a bare number of that type builds through here: of the paths whose `builds` arm for that
+ * type sits in one of the slot's seats, the one inside none of the others. A safe integer is an `integer`, any other number a `float`. In a
+ * slot with takers a number is always a number, never a kind id.
  */
 export interface PortableSlotRoute {
 	readonly name: string;
@@ -113,6 +116,7 @@ export interface PortableSlotRoute {
 	readonly seats: readonly PortableSeat[];
 	readonly requires?: readonly (readonly string[])[];
 	readonly reads?: readonly number[];
+	readonly takers?: Readonly<Partial<Record<NonNullable<PortableBuildArm['scalar']>, string>>>;
 }
 
 /** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text (with `builder`, the leaf builder that builds that text where the slot holds a leaf node; with `among`, the canonical texts a read may hold there without contradicting it, of which `text` is the one built), or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the slot routed to those steps, or the slots routed beneath them, as its input, and no input when no slot reaches them. */

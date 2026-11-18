@@ -56,6 +56,9 @@ const unseated = (
 const untexted = (owner: string, value: string): never => {
 	throw new Error(owner + ' has no route that seats the text "' + value + '"');
 };
+const unnumbered = (owner: string, scalar: string): never => {
+	throw new Error(owner + ' builds no ' + scalar + ' number');
+};
 const unspelled = (owner: string, value: number | bigint): never => {
 	throw new Error(owner + ' cannot spell ' + value);
 };
@@ -86,6 +89,8 @@ const argument_named$237_value = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -266,19 +271,14 @@ const argument_named$237_value = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('argument.named.value', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -480,6 +480,8 @@ const clause_comprehension_if$250_condition = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -660,19 +662,14 @@ const clause_comprehension_if$250_condition = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('clause.comprehension.if.condition', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -947,6 +944,8 @@ const declaration_parameter_defaulted$204_default = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -1127,19 +1126,14 @@ const declaration_parameter_defaulted$204_default = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.parameter.defaulted.default', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -1404,6 +1398,8 @@ const declaration_parameter_typed$230_type = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -1596,19 +1592,14 @@ const declaration_parameter_typed$230_type = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.parameter.typed.type', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -1822,6 +1813,8 @@ const declaration_parameter_typed_default$205_default = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -2002,19 +1995,14 @@ const declaration_parameter_typed_default$205_default = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.parameter.typed_default.default', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -2238,6 +2226,8 @@ const declaration_parameter_typed_default$205_type = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -2430,19 +2420,14 @@ const declaration_parameter_typed_default$205_type = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.parameter.typed_default.type', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -2749,6 +2734,8 @@ const declaration_variable$302_value = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'declaration.constant'>
 		| PythonMap['nodes']['declaration.constant']
 		| BuildInput<PythonMap, 'declaration.variable'>
@@ -2941,19 +2928,14 @@ const declaration_variable$302_value = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 221, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251,
-					252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.variable.value', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -3220,6 +3202,8 @@ const declaration_variable$303_type = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -3412,19 +3396,14 @@ const declaration_variable$303_type = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.variable.type', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -3687,6 +3666,8 @@ const declaration_variable$304_type = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -3879,19 +3860,14 @@ const declaration_variable$304_type = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.variable.type', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -4105,6 +4081,8 @@ const declaration_variable$304_value = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'declaration.constant'>
 		| PythonMap['nodes']['declaration.constant']
 		| BuildInput<PythonMap, 'declaration.variable'>
@@ -4297,19 +4275,14 @@ const declaration_variable$304_value = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.variable.value', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -4523,6 +4496,8 @@ const element_pair$242_key = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -4703,19 +4678,14 @@ const element_pair$242_key = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('element.pair.key', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -4917,6 +4887,8 @@ const element_pair$242_value = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -5097,19 +5069,14 @@ const element_pair$242_value = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('element.pair.value', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -5311,6 +5278,8 @@ const element_spread$173_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -5491,19 +5460,14 @@ const element_spread$173_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('element.spread.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -5705,6 +5669,8 @@ const element_spread_map$174_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -5885,19 +5851,14 @@ const element_spread_map$174_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('element.spread.map.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -6145,6 +6106,8 @@ const expression_assignment$148_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -6325,19 +6288,14 @@ const expression_assignment$148_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -6588,6 +6546,8 @@ const expression_assignment_compound_add$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -6776,19 +6736,14 @@ const expression_assignment_compound_add$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.add.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -7047,6 +7002,8 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -7235,19 +7192,14 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_and.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -7506,6 +7458,8 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -7694,19 +7648,14 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -7965,6 +7914,8 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -8153,19 +8104,14 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_xor.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -8424,6 +8370,8 @@ const expression_assignment_compound_divide$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -8612,19 +8560,14 @@ const expression_assignment_compound_divide$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.divide.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -8883,6 +8826,8 @@ const expression_assignment_compound_exponent$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -9071,19 +9016,14 @@ const expression_assignment_compound_exponent$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.exponent.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -9342,6 +9282,8 @@ const expression_assignment_compound_floor_divide$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -9530,19 +9472,14 @@ const expression_assignment_compound_floor_divide$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.floor_divide.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -9801,6 +9738,8 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -9989,19 +9928,14 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.matrix_multiply.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -10260,6 +10194,8 @@ const expression_assignment_compound_modulo$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -10448,19 +10384,14 @@ const expression_assignment_compound_modulo$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.modulo.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -10719,6 +10650,8 @@ const expression_assignment_compound_multiply$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -10907,19 +10840,14 @@ const expression_assignment_compound_multiply$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.multiply.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -11178,6 +11106,8 @@ const expression_assignment_compound_shift_left$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -11366,19 +11296,14 @@ const expression_assignment_compound_shift_left$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.shift_left.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -11637,6 +11562,8 @@ const expression_assignment_compound_shift_right$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -11825,19 +11752,14 @@ const expression_assignment_compound_shift_right$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.shift_right.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -12096,6 +12018,8 @@ const expression_assignment_compound_subtract$222_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -12284,19 +12208,14 @@ const expression_assignment_compound_subtract$222_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.subtract.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -12506,6 +12425,8 @@ const expression_await$262_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -12647,18 +12568,14 @@ const expression_await$262_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.await.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -12821,6 +12738,8 @@ const expression_binary_arithmetic_add$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -12962,18 +12881,14 @@ const expression_binary_arithmetic_add$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.add.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -13136,6 +13051,8 @@ const expression_binary_arithmetic_add$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -13277,18 +13194,14 @@ const expression_binary_arithmetic_add$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.add.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -13451,6 +13364,8 @@ const expression_binary_arithmetic_divide$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -13592,18 +13507,14 @@ const expression_binary_arithmetic_divide$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.divide.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -13766,6 +13677,8 @@ const expression_binary_arithmetic_divide$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -13907,18 +13820,14 @@ const expression_binary_arithmetic_divide$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.divide.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -14081,6 +13990,8 @@ const expression_binary_arithmetic_exponent$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -14222,18 +14133,14 @@ const expression_binary_arithmetic_exponent$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.exponent.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -14396,6 +14303,8 @@ const expression_binary_arithmetic_exponent$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -14537,18 +14446,14 @@ const expression_binary_arithmetic_exponent$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.exponent.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -14711,6 +14616,8 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -14852,18 +14759,14 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.floor_divide.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15026,6 +14929,8 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -15167,18 +15072,14 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.floor_divide.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15341,6 +15242,8 @@ const expression_binary_arithmetic_modulo$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -15482,18 +15385,14 @@ const expression_binary_arithmetic_modulo$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.modulo.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15656,6 +15555,8 @@ const expression_binary_arithmetic_modulo$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -15797,18 +15698,14 @@ const expression_binary_arithmetic_modulo$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.modulo.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15971,6 +15868,8 @@ const expression_binary_arithmetic_multiply$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -16112,18 +16011,14 @@ const expression_binary_arithmetic_multiply$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.multiply.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -16286,6 +16181,8 @@ const expression_binary_arithmetic_multiply$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -16427,18 +16324,14 @@ const expression_binary_arithmetic_multiply$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.multiply.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -16601,6 +16494,8 @@ const expression_binary_arithmetic_subtract$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -16742,18 +16637,14 @@ const expression_binary_arithmetic_subtract$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.subtract.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -16916,6 +16807,8 @@ const expression_binary_arithmetic_subtract$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -17057,18 +16950,14 @@ const expression_binary_arithmetic_subtract$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.subtract.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17231,6 +17120,8 @@ const expression_binary_bitwise_and$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -17372,18 +17263,14 @@ const expression_binary_bitwise_and$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.and.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17546,6 +17433,8 @@ const expression_binary_bitwise_and$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -17687,18 +17576,14 @@ const expression_binary_bitwise_and$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.and.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17861,6 +17746,8 @@ const expression_binary_bitwise_or$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -18002,18 +17889,14 @@ const expression_binary_bitwise_or$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.or.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18176,6 +18059,8 @@ const expression_binary_bitwise_or$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -18317,18 +18202,14 @@ const expression_binary_bitwise_or$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18491,6 +18372,8 @@ const expression_binary_bitwise_xor$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -18632,18 +18515,14 @@ const expression_binary_bitwise_xor$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.xor.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18806,6 +18685,8 @@ const expression_binary_bitwise_xor$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -18947,18 +18828,14 @@ const expression_binary_bitwise_xor$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.xor.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19121,6 +18998,8 @@ const expression_binary_logical_and$213_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -19301,19 +19180,14 @@ const expression_binary_logical_and$213_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.and.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19515,6 +19389,8 @@ const expression_binary_logical_and$213_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -19695,19 +19571,14 @@ const expression_binary_logical_and$213_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.and.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19909,6 +19780,8 @@ const expression_binary_logical_or$213_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -20089,19 +19962,14 @@ const expression_binary_logical_or$213_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.or.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -20303,6 +20171,8 @@ const expression_binary_logical_or$213_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -20483,19 +20353,14 @@ const expression_binary_logical_or$213_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -20697,6 +20562,8 @@ const expression_binary_matrix_multiply$214_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -20838,18 +20705,14 @@ const expression_binary_matrix_multiply$214_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.matrix_multiply.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21012,6 +20875,8 @@ const expression_binary_matrix_multiply$214_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -21153,18 +21018,14 @@ const expression_binary_matrix_multiply$214_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.matrix_multiply.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21327,6 +21188,8 @@ const expression_binary_shift_left$214_count = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -21468,18 +21331,14 @@ const expression_binary_shift_left$214_count = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.shift.left.count', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21642,6 +21501,8 @@ const expression_binary_shift_left$214_operand = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -21783,18 +21644,14 @@ const expression_binary_shift_left$214_operand = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.shift.left.operand', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21957,6 +21814,8 @@ const expression_binary_shift_right$214_count = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -22098,18 +21957,14 @@ const expression_binary_shift_right$214_count = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.shift.right.count', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22272,6 +22127,8 @@ const expression_binary_shift_right$214_operand = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -22413,18 +22270,14 @@ const expression_binary_shift_right$214_operand = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.shift.right.operand', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22587,6 +22440,8 @@ const expression_call$229_arguments = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'argument.named'>
 		| PythonMap['nodes']['argument.named']
 		| BuildInput<PythonMap, 'element.spread'>
@@ -22776,20 +22631,20 @@ const expression_call$229_arguments = (
 			return b.argumentList(b.argumentListElements(b.identifier(value)));
 		return b.argumentList(b.argumentListElements(b.identifier(value)));
 	}
+	if (typeof value === 'bigint') {
+		return b.argumentList(
+			b.argumentListElements(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+		);
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [246])) return value;
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
-					210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251,
-					252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.argumentList(b.argumentListElements(value));
-		return unseated('expression.call.arguments', value);
+		if (Number.isSafeInteger(value)) {
+			return b.argumentList(
+				b.argumentListElements(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+			);
+		}
+		return b.argumentList(
+			b.argumentListElements(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [246])) return value;
@@ -23002,6 +22857,8 @@ const expression_call$229_arguments$item = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'argument.named'>
 		| PythonMap['nodes']['argument.named']
 		| BuildInput<PythonMap, 'element.spread'>
@@ -23190,19 +23047,14 @@ const expression_call$229_arguments$item = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
-					210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251,
-					252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.call.arguments', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -23412,6 +23264,8 @@ const expression_call$229_function = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -23553,18 +23407,14 @@ const expression_call$229_function = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 214, 215, 227, 229, 238,
-					239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.call.function', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -23727,6 +23577,8 @@ const expression_collection_list$238_elements$item = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'element.spread'>
 		| PythonMap['nodes']['element.spread']
 		| BuildInput<PythonMap, 'element.spread.parenthesized'>
@@ -23915,19 +23767,14 @@ const expression_collection_list$238_elements$item = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 181, 206, 208, 210,
-					211, 212, 213, 214, 215, 218, 219, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.collection.list.elements', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24161,6 +24008,8 @@ const expression_collection_tuple$240_elements$item = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'element.spread'>
 		| PythonMap['nodes']['element.spread']
 		| BuildInput<PythonMap, 'element.spread.parenthesized'>
@@ -24349,19 +24198,14 @@ const expression_collection_tuple$240_elements$item = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 181, 206, 208, 210,
-					211, 212, 213, 214, 215, 218, 219, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.collection.tuple.elements', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24571,6 +24415,8 @@ const expression_conditional$251_alternative = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -24751,19 +24597,14 @@ const expression_conditional$251_alternative = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.conditional.alternative', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24965,6 +24806,8 @@ const expression_conditional$251_condition = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -25145,19 +24988,14 @@ const expression_conditional$251_condition = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.conditional.condition', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -25359,6 +25197,8 @@ const expression_conditional$251_consequence = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -25539,19 +25379,14 @@ const expression_conditional$251_consequence = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.conditional.consequence', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -25753,6 +25588,8 @@ const expression_interpolation$360_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -25941,19 +25778,14 @@ const expression_interpolation$360_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 223, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.interpolation.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -26218,6 +26050,8 @@ const expression_lambda$219_body = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -26398,19 +26232,14 @@ const expression_lambda$219_body = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.lambda.body', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -26730,6 +26559,8 @@ const expression_parenthesized$247_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -26914,19 +26745,14 @@ const expression_parenthesized$247_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
-					261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.parenthesized.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -27132,6 +26958,8 @@ const expression_unary_bitwise_not$215_argument = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -27273,18 +27101,14 @@ const expression_unary_bitwise_not$215_argument = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.unary.bitwise_not.argument', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -27447,6 +27271,8 @@ const expression_unary_negation$215_argument = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -27588,18 +27414,14 @@ const expression_unary_negation$215_argument = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.unary.negation.argument', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -27762,6 +27584,8 @@ const expression_unary_not$212_argument = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -27942,19 +27766,14 @@ const expression_unary_not$212_argument = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.unary.not.argument', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28156,6 +27975,8 @@ const expression_unary_plus$215_argument = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.await'>
 		| PythonMap['nodes']['expression.await']
 		| BuildInput<PythonMap, 'expression.binary'>
@@ -28297,18 +28118,14 @@ const expression_unary_plus$215_argument = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
-					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.unary.plus.argument', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28471,6 +28288,8 @@ const expression_yield$225_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -28653,19 +28472,14 @@ const expression_yield$225_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
-					261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('expression.yield.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28891,6 +28705,8 @@ const identifier_qualified$187_qualifier = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -29081,6 +28897,9 @@ const identifier_qualified$187_qualifier = (
 ) => {
 	if (typeof value === 'string') {
 		return identifier_qualified$187({ name: value });
+	}
+	if (typeof value === 'bigint') {
+		return unnumbered('identifier.qualified.qualifier', 'bigint');
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [187])) return value;
@@ -29308,6 +29127,8 @@ const identifier_qualified$236_qualifier = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -29500,19 +29321,14 @@ const identifier_qualified$236_qualifier = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('identifier.qualified.qualifier', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -29785,6 +29601,8 @@ const pattern_as$190_pattern = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'identifier.qualified'>
 		| PythonMap['nodes']['identifier.qualified']
 		| BuildInput<PythonMap, 'literal.boolean.false'>
@@ -29888,19 +29706,18 @@ const pattern_as$190_pattern = (
 				return untexted('pattern.as.pattern', value);
 		}
 	}
+	if (typeof value === 'bigint') {
+		return b.casePattern(
+			b.simplePattern(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+		);
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [190, 194])) return b.casePattern(value);
-		if (
-			seated(
-				value,
-				[
-					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
-					253, 260, 261, 283, 284, 291, 292, 293, 294, 295, 296, 300, 301
-				]
-			)
-		)
-			return b.casePattern(b.simplePattern(value));
-		return unseated('pattern.as.pattern', value);
+		if (Number.isSafeInteger(value)) {
+			return b.casePattern(
+				b.simplePattern(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+			);
+		}
+		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -30021,6 +29838,8 @@ const pattern_complex_add$197_imaginary = (
 	value:
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'literal.number.float'>
 		| PythonMap['nodes']['literal.number.float']
 		| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -30049,10 +29868,14 @@ const pattern_complex_add$197_imaginary = (
 	if (typeof value === 'string') {
 		return untexted('pattern.complex.add.imaginary', value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
-			return value;
-		return unseated('pattern.complex.add.imaginary', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
@@ -30094,6 +29917,8 @@ const pattern_complex_add$197_real = (
 	value:
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'literal.number.float'>
 		| PythonMap['nodes']['literal.number.float']
 		| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -30122,10 +29947,14 @@ const pattern_complex_add$197_real = (
 	if (typeof value === 'string') {
 		return untexted('pattern.complex.add.real', value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
-			return value;
-		return unseated('pattern.complex.add.real', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
@@ -30167,6 +29996,8 @@ const pattern_complex_subtract$197_imaginary = (
 	value:
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'literal.number.float'>
 		| PythonMap['nodes']['literal.number.float']
 		| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -30195,10 +30026,14 @@ const pattern_complex_subtract$197_imaginary = (
 	if (typeof value === 'string') {
 		return untexted('pattern.complex.subtract.imaginary', value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
-			return value;
-		return unseated('pattern.complex.subtract.imaginary', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
@@ -30240,6 +30075,8 @@ const pattern_complex_subtract$197_real = (
 	value:
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'literal.number.float'>
 		| PythonMap['nodes']['literal.number.float']
 		| BuildInput<PythonMap, 'literal.number.float.leading_point'>
@@ -30268,10 +30105,14 @@ const pattern_complex_subtract$197_real = (
 	if (typeof value === 'string') {
 		return untexted('pattern.complex.subtract.real', value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
-			return value;
-		return unseated('pattern.complex.subtract.real', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
@@ -30316,6 +30157,8 @@ const pattern_list$203_elements$item = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.member'>
 		| PythonMap['nodes']['expression.member']
 		| BuildInput<PythonMap, 'expression.subscript'>
@@ -30420,6 +30263,9 @@ const pattern_list$203_elements$item = (
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return unnumbered('pattern.list.elements', 'bigint');
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
@@ -30541,6 +30387,8 @@ const pattern_list$284_elements$item = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.member'>
 		| PythonMap['nodes']['expression.member']
 		| BuildInput<PythonMap, 'expression.subscript'>
@@ -30650,19 +30498,18 @@ const pattern_list$284_elements$item = (
 				return untexted('pattern.list.elements', value);
 		}
 	}
+	if (typeof value === 'bigint') {
+		return b.casePattern(
+			b.simplePattern(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+		);
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [190, 194])) return b.casePattern(value);
-		if (
-			seated(
-				value,
-				[
-					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
-					253, 260, 261, 283, 284, 291, 292, 293, 294, 295, 296, 300, 301
-				]
-			)
-		)
-			return b.casePattern(b.simplePattern(value));
-		return unseated('pattern.list.elements', value);
+		if (Number.isSafeInteger(value)) {
+			return b.casePattern(
+				b.simplePattern(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+			);
+		}
+		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -30816,6 +30663,8 @@ const pattern_or$191_left = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'identifier.qualified'>
 		| PythonMap['nodes']['identifier.qualified']
 		| BuildInput<PythonMap, 'literal.boolean.false'>
@@ -30915,18 +30764,14 @@ const pattern_or$191_left = (
 				return untexted('pattern.or.left', value);
 		}
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
-					253, 260, 261, 283, 284, 291, 292, 293, 294, 295, 296, 300, 301
-				]
-			)
-		)
-			return value;
-		return unseated('pattern.or.left', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31044,6 +30889,8 @@ const pattern_or$191_right = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'identifier.qualified'>
 		| PythonMap['nodes']['identifier.qualified']
 		| BuildInput<PythonMap, 'literal.boolean.false'>
@@ -31143,18 +30990,14 @@ const pattern_or$191_right = (
 				return untexted('pattern.or.right', value);
 		}
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
-					253, 260, 261, 283, 284, 291, 292, 293, 294, 295, 296, 300, 301
-				]
-			)
-		)
-			return value;
-		return unseated('pattern.or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31418,6 +31261,8 @@ const pattern_struct$196_fields$item = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'identifier.qualified'>
 		| PythonMap['nodes']['identifier.qualified']
 		| BuildInput<PythonMap, 'literal.boolean.false'>
@@ -31521,19 +31366,18 @@ const pattern_struct$196_fields$item = (
 				return untexted('pattern.struct.fields', value);
 		}
 	}
+	if (typeof value === 'bigint') {
+		return b.casePattern(
+			b.simplePattern(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+		);
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [190, 194])) return b.casePattern(value);
-		if (
-			seated(
-				value,
-				[
-					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
-					253, 260, 261, 283, 284, 291, 292, 293, 294, 295, 296, 300, 301
-				]
-			)
-		)
-			return b.casePattern(b.simplePattern(value));
-		return unseated('pattern.struct.fields', value);
+		if (Number.isSafeInteger(value)) {
+			return b.casePattern(
+				b.simplePattern(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+			);
+		}
+		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -31691,6 +31535,8 @@ const pattern_struct_field$194_pattern = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'identifier.qualified'>
 		| PythonMap['nodes']['identifier.qualified']
 		| BuildInput<PythonMap, 'literal.boolean.false'>
@@ -31790,18 +31636,14 @@ const pattern_struct_field$194_pattern = (
 				return untexted('pattern.struct.field.pattern', value);
 		}
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
-					253, 260, 261, 283, 284, 291, 292, 293, 294, 295, 296, 300, 301
-				]
-			)
-		)
-			return value;
-		return unseated('pattern.struct.field.pattern', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31920,6 +31762,8 @@ const pattern_tuple$202_elements$item = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.member'>
 		| PythonMap['nodes']['expression.member']
 		| BuildInput<PythonMap, 'expression.subscript'>
@@ -32024,6 +31868,9 @@ const pattern_tuple$202_elements$item = (
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return unnumbered('pattern.tuple.elements', 'bigint');
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
@@ -32145,6 +31992,8 @@ const pattern_tuple$283_elements$item = (
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
 		| Text<PythonMap, 'pattern.wildcard'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.member'>
 		| PythonMap['nodes']['expression.member']
 		| BuildInput<PythonMap, 'expression.subscript'>
@@ -32254,19 +32103,18 @@ const pattern_tuple$283_elements$item = (
 				return untexted('pattern.tuple.elements', value);
 		}
 	}
+	if (typeof value === 'bigint') {
+		return b.casePattern(
+			b.simplePattern(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+		);
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [190, 194])) return b.casePattern(value);
-		if (
-			seated(
-				value,
-				[
-					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
-					253, 260, 261, 283, 284, 291, 292, 293, 294, 295, 296, 300, 301
-				]
-			)
-		)
-			return b.casePattern(b.simplePattern(value));
-		return unseated('pattern.tuple.elements', value);
+		if (Number.isSafeInteger(value)) {
+			return b.casePattern(
+				b.simplePattern(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+			);
+		}
+		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -32394,6 +32242,8 @@ const statement_delete$151_expressions = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -32576,19 +32426,14 @@ const statement_delete$151_expressions = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
-					261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('statement.delete.expressions', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -32885,6 +32730,8 @@ const statement_exec$177_inClauses = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -33065,19 +32912,14 @@ const statement_exec$177_inClauses = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('statement.exec.inClauses', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -33279,6 +33121,8 @@ const statement_return$150_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -33461,19 +33305,14 @@ const statement_return$150_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
-					261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('statement.return.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -33677,6 +33516,8 @@ const statement_throw$152_cause = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -33857,19 +33698,14 @@ const statement_throw$152_cause = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('statement.throw.cause', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -34071,6 +33907,8 @@ const statement_throw$152_expression = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -34253,19 +34091,14 @@ const statement_throw$152_expression = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 186, 206, 208, 210, 211,
-					212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
-					261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('statement.throw.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -34469,6 +34302,8 @@ const type_constrained$235_baseType = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -34661,19 +34496,14 @@ const type_constrained$235_baseType = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('type.constrained.baseType', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -34887,6 +34717,8 @@ const type_constrained$235_constraint = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -35079,19 +34911,14 @@ const type_constrained$235_constraint = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('type.constrained.constraint', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -35338,6 +35165,8 @@ const type_union$234_left = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -35530,19 +35359,14 @@ const type_union$234_left = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('type.union.left', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -35756,6 +35580,8 @@ const type_union$234_right = (
 		| Text<PythonMap, 'identifier'>
 		| Text<PythonMap, 'literal.number.integer'>
 		| Text<PythonMap, 'literal.number.integer.imaginary'>
+		| bigint
+		| number
 		| BuildInput<PythonMap, 'expression.assignment'>
 		| PythonMap['nodes']['expression.assignment']
 		| BuildInput<PythonMap, 'expression.await'>
@@ -35948,19 +35774,14 @@ const type_union$234_right = (
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
 		return b.type(b.identifier(value));
 	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('type.union.right', value);
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
 		if (

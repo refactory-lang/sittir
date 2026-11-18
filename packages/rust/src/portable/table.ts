@@ -305,7 +305,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['attributes'],
@@ -403,7 +407,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'input',
@@ -799,7 +807,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'guard',
@@ -836,7 +848,11 @@ export const build: PortableBuildTable = {
 									}
 								}
 							],
-							requires: [['pattern']]
+							requires: [['pattern']],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -927,7 +943,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'pattern',
@@ -961,7 +981,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'guard',
@@ -998,7 +1022,11 @@ export const build: PortableBuildTable = {
 									}
 								}
 							],
-							requires: [['pattern']]
+							requires: [['pattern']],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -1095,7 +1123,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'pattern',
@@ -1129,7 +1161,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'guard',
@@ -1166,7 +1202,11 @@ export const build: PortableBuildTable = {
 									}
 								}
 							],
-							requires: [['pattern']]
+							requires: [['pattern']],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -1476,7 +1516,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'value',
@@ -1507,7 +1551,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -1557,7 +1605,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'rights',
@@ -1590,7 +1642,11 @@ export const build: PortableBuildTable = {
 									},
 									many: true
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -2360,7 +2416,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -2479,7 +2539,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -2629,7 +2693,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -2766,7 +2834,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -2916,7 +2988,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -3066,7 +3142,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'scope',
@@ -4761,7 +4841,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -4931,7 +5015,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -5132,7 +5220,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -5320,7 +5412,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -5521,7 +5617,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -5722,7 +5822,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'scope',
@@ -5965,7 +6069,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -6145,7 +6253,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -6355,7 +6467,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -6552,7 +6668,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -6762,7 +6882,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -6972,7 +7096,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'scope',
@@ -7177,7 +7305,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -7357,7 +7489,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -7567,7 +7703,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -7764,7 +7904,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -7974,7 +8118,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['body'],
@@ -8184,7 +8332,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'scope',
@@ -28567,7 +28719,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -28612,7 +28768,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'type',
@@ -28954,7 +29114,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -34834,7 +34998,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -36462,7 +36630,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -36537,7 +36709,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'type',
@@ -36616,7 +36792,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'alternative',
@@ -36771,7 +36951,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -36949,7 +37133,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -37114,7 +37302,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -37292,7 +37484,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -37470,7 +37666,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'scope',
@@ -37666,7 +37866,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['attributes'],
@@ -38061,7 +38265,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'separator',
@@ -38261,7 +38469,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'separator',
@@ -38461,7 +38673,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -38613,7 +38829,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -38764,7 +38984,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -38920,7 +39144,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -39071,7 +39299,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -39225,7 +39457,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -39380,7 +39616,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -39534,7 +39774,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -39693,7 +39937,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -39847,7 +40095,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -40001,7 +40253,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -40152,7 +40408,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -40303,7 +40563,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -40455,7 +40719,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -40606,7 +40874,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -40762,7 +41034,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -40913,7 +41189,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -41064,7 +41344,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -41109,7 +41393,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -41242,7 +41530,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
 						},
 						{
 							name: 'value',
@@ -41273,7 +41564,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -41339,7 +41634,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'bounds',
@@ -41560,7 +41859,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -41591,7 +41894,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -41645,7 +41952,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -41676,7 +41987,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -41735,7 +42050,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -41766,7 +42085,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -41825,7 +42148,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -41856,7 +42183,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -41915,7 +42246,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -41946,7 +42281,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42005,7 +42344,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42036,7 +42379,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42095,7 +42442,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42126,7 +42477,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42185,7 +42540,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42216,7 +42575,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42275,7 +42638,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42306,7 +42673,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42365,7 +42736,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42396,7 +42771,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42455,7 +42834,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42486,7 +42869,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42545,7 +42932,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -42599,7 +42990,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42630,7 +43025,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42689,7 +43088,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42720,7 +43123,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42779,7 +43186,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42810,7 +43221,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42869,7 +43284,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42900,7 +43319,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -42959,7 +43382,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -42990,7 +43417,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43049,7 +43480,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43080,7 +43515,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43139,7 +43578,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43170,7 +43613,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43229,7 +43676,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43260,7 +43711,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43319,7 +43774,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43350,7 +43809,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43409,7 +43872,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43440,7 +43907,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43499,7 +43970,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43530,7 +44005,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43589,7 +44068,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43620,7 +44103,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43679,7 +44166,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43710,7 +44201,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43769,7 +44264,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43800,7 +44299,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43859,7 +44362,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43890,7 +44397,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -43949,7 +44460,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -43980,7 +44495,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -44039,7 +44558,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'count',
@@ -44070,7 +44593,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -44129,7 +44656,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'count',
@@ -44160,7 +44691,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -44429,7 +44964,11 @@ export const build: PortableBuildTable = {
 								1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 267, 268, 270,
 								271, 272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 304, 305, 306, 307, 308,
 								309, 310, 311, 312, 313, 332, 333, 369, 370, 371, 372, 373, 374, 435, 436
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'arguments',
@@ -44494,7 +45033,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'function',
@@ -44725,7 +45268,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'function',
@@ -44893,7 +45440,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'function',
@@ -45006,7 +45557,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'type',
@@ -45114,7 +45669,11 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -45159,7 +45718,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'length',
@@ -45190,7 +45753,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -45326,7 +45893,11 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					empty: ['elements'],
@@ -45639,7 +46210,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -45739,7 +46314,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'property',
@@ -45761,7 +46340,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
 						}
 					],
 					presets: [],
@@ -45811,7 +46393,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -45861,7 +46447,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -45924,7 +46514,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -45969,7 +46563,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46032,7 +46630,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46077,7 +46679,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46122,7 +46728,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'end',
@@ -46153,7 +46763,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -46212,7 +46826,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'end',
@@ -46243,7 +46861,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -46302,7 +46924,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'end',
@@ -46333,7 +46959,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -46392,7 +47022,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46441,7 +47075,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46498,7 +47136,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46555,7 +47197,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46614,7 +47260,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'index',
@@ -46645,7 +47295,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -46699,7 +47353,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -46758,7 +47416,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -46817,7 +47479,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -46889,7 +47555,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -47018,7 +47688,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -48348,7 +49022,11 @@ export const build: PortableBuildTable = {
 									at: [330, 'value'],
 									kinds: [141, 142, 143, 144, 162, 331]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -49163,7 +49841,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -49298,7 +49980,11 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -49342,7 +50028,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -49391,7 +50081,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -49435,7 +50129,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -49465,7 +50163,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -49518,7 +50220,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -49571,7 +50277,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -49609,7 +50319,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -49675,7 +50389,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -49728,7 +50446,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -49766,7 +50488,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -49832,7 +50558,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -49870,7 +50600,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [
@@ -49936,7 +50670,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -49985,7 +50723,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -50154,7 +50896,11 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -50292,7 +51038,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -50393,7 +51143,11 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -50525,7 +51279,11 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'trailingExpression',
@@ -50557,7 +51315,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -50620,7 +51382,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -50708,7 +51474,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'consequence',
@@ -51921,7 +52691,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',
@@ -51952,7 +52726,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'body',
@@ -52035,7 +52813,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'body',
@@ -52101,7 +52883,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'body',
@@ -52185,7 +52971,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -52397,7 +53187,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],

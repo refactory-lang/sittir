@@ -3382,7 +3382,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member: a pick by the kinds expression builds"
+    "message": "declaration.enum_member: arm 160 of literal.number fits 2 of name's seats, which wrap it differently"
   },
   {
     "scope": "grammar",
@@ -3918,7 +3918,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.pair: a pick by the kinds expression builds"
+    "message": "element.pair: arm 160 of literal.number fits 2 of key's seats, which wrap it differently"
   },
   {
     "scope": "grammar",
@@ -4702,7 +4702,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.object.pair: a pick by the kinds expression builds"
+    "message": "pattern.object.pair: arm 160 of literal.number fits 2 of key's seats, which wrap it differently"
   },
   {
     "scope": "grammar",

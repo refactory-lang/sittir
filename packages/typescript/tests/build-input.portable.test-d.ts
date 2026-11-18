@@ -30,3 +30,9 @@ export const scientificValue: Scientific = { $path: 'literal.number.float.scient
 export const scientificMarker: Scientific = { $path: 'literal.number.float.scientific', $value: 100000, marker: 'E' };
 // @ts-expect-error a radix prefix is an option, set on the built node, never in the structure
 export const binaryPrefix: V.BuildInput<TypeScriptMap, 'literal.number.integer.binary'> = { $path: 'literal.number.integer.binary', $value: 5, radixPrefix: '0B' };
+
+type Returned = V.BuildInput<TypeScriptMap, 'statement.return'>['expression'];
+
+export const integerReturned: Returned = 1;
+export const floatReturned: Returned = 1.5;
+export const bigintReturned: Returned = 10n;

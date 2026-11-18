@@ -1495,7 +1495,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		table: {
 			builders: Object.fromEntries([...builders].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))),
 			...(optionKeys.size === 0 ? {} : { options: Object.fromEntries([...optionKeys].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) }),
-			paths,
+			paths: withTakers(paths, (kind) => kindEntries.find((entry) => entry.id === kind)?.kind ?? String(kind), diagnostics),
 			...(Object.keys(values).length === 0 ? {} : { values }),
 			...(tokens.length === 0 ? {} : { tokens: Object.fromEntries(tokens) }),
 			...(delimiters.length === 0 ? {} : { delimiters: Object.fromEntries(delimiters) }),
@@ -1549,6 +1549,37 @@ function valueBuilds(
 			const found = Object.fromEntries(Object.entries(derive(path)).map(([key, target]) => [key, target.path]));
 			return Object.keys(found).length === 0 ? [] : [[path, found] as const];
 		})
+	);
+}
+
+function withTakers(paths: Readonly<Record<string, PortableBuildPath>>, kindName: (kind: number) => string, diagnostics: PickDiagnostic[]): Record<string, PortableBuildPath> {
+	const takers = Object.entries(paths).flatMap(([path, built]) =>
+		Object.entries(built.builds ?? {}).flatMap(([scalar, kind]) => built.arms.filter((arm) => arm.kind === kind && arm.scalar === scalar).map((arm) => ({ path, scalar, arm })))
+	);
+	const kindsOf = new WeakMap<PortableSeat, ReadonlySet<number>>();
+	const sits = (arm: PortableBuildArm, seat: PortableSeat): boolean =>
+		(kindsOf.get(seat) ?? kindsOf.set(seat, new Set(seat.kinds)).get(seat)!).has(arm.kind) &&
+		(arm.holders === undefined || arm.holders.some(([holder, key]) => holder === seat.at[0] && key === seat.at[1]));
+	const stamped = (path: string, slot: PortableSlotRoute): PortableSlotRoute => {
+		const found = ARM_SCALARS.flatMap((scalar) => {
+			const fitting = takers.filter((taker) => taker.scalar === scalar && slot.seats.some((seat) => sits(taker.arm, seat)));
+			const outer = [...new Set(fitting.map((taker) => taker.path))].filter((at, _, all) => !all.some((other) => at.startsWith(`${other}.`)));
+			if (outer.length > 1)
+				diagnostics.push({ code: 'portable-value-undecided', path, kinds: [...new Set(fitting.filter((taker) => outer.includes(taker.path)).map((taker) => kindName(taker.arm.kind)))].sort(), slot: `${slot.name} ${scalar}` });
+			return outer.length === 1 ? [[scalar, outer[0]!] as const] : [];
+		});
+		const seats = slot.seats.map((seat) =>
+			seat.within === undefined
+				? seat
+				: { ...seat, within: seat.within.map((container) => (container.slots === undefined ? container : { ...container, slots: container.slots.map((owned) => stamped(path, owned)) })) }
+		);
+		return { ...slot, seats, ...(found.length === 0 ? {} : { takers: Object.fromEntries(found) }) };
+	};
+	return Object.fromEntries(
+		Object.entries(paths).map(([path, built]) => [
+			path,
+			{ ...built, arms: built.arms.map((arm) => ({ ...arm, slots: arm.slots.map((slot) => stamped(path, slot)), ...(arm.content === undefined ? {} : { content: stamped(path, arm.content) }) })) }
+		])
 	);
 }
 

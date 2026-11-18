@@ -45,3 +45,10 @@ export const integerDigits: Integer = { $path: 'literal.number.integer', $value:
 export const notSuffix: Integer['suffix'] = 'q8';
 // @ts-expect-error a read suffix is one of the grammar's suffix tokens
 export const notReadSuffix: V.Read<RustMap, 'literal.number.integer.hex'>['suffix'] = 'q8';
+
+type Returned = V.BuildInput<RustMap, 'statement.return'>['expression'];
+
+export const integerReturned: Returned = 1;
+export const floatReturned: Returned = 1.5;
+// @ts-expect-error rust builds no bigint number
+export const bigintReturned: Returned = 10n;

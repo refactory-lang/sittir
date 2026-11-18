@@ -32397,10 +32397,18 @@ export interface TypeScriptMap extends V.GrammarMap {
 	readonly inputs: {
 		readonly 'comment.html': string;
 		readonly identifier: string;
-		readonly 'literal.number': string;
-		readonly 'literal.number.float': { readonly $path: 'literal.number'; readonly $value: number };
-		readonly 'literal.number.integer': string | { readonly $path: 'literal.number'; readonly $value: number };
-		readonly 'literal.number.integer.big': { readonly $path: 'literal.number'; readonly $value: bigint };
+		readonly 'literal.number': string | bigint | number;
+		readonly 'literal.number.float': number | { readonly $path: 'literal.number'; readonly $value: number };
+		readonly 'literal.number.float.leading_point': number;
+		readonly 'literal.number.float.scientific': number;
+		readonly 'literal.number.integer': string | number | { readonly $path: 'literal.number'; readonly $value: number };
+		readonly 'literal.number.integer.big': bigint | { readonly $path: 'literal.number'; readonly $value: bigint };
+		readonly 'literal.number.integer.big.binary': bigint;
+		readonly 'literal.number.integer.big.hex': bigint;
+		readonly 'literal.number.integer.big.octal': bigint;
+		readonly 'literal.number.integer.binary': number;
+		readonly 'literal.number.integer.hex': number;
+		readonly 'literal.number.integer.octal': number;
 		readonly 'literal.regex.flags': string;
 		readonly 'literal.regex.pattern': string;
 		readonly 'literal.string.text': string;

@@ -2,7 +2,7 @@ import { byCodepoint, compositionOf, lineageOf, textValued } from '../../../bind
 import { PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE, grammarDisplayName, moduleSpecifier, type GrammarName } from '../../../grammars.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { builtFlags, containerSetFlags, textBuilt } from '@sittir/common/engine';
-import type { PortableBuildArm, PortablePickTest } from '@sittir/types';
+import type { PortableBuildArm, PortableBuildTable, PortablePickTest } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { kindDiscriminantExpr } from '../../kind-discriminant.ts';
 import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
@@ -192,6 +192,16 @@ export const mapFlagsOf = ({ table }: PortableTypedInput): readonly (readonly [p
 
 const SCALAR_TYPES = { integer: 'number', float: 'number', bigint: 'bigint' } as const;
 
+export type ScalarInput = (typeof SCALAR_TYPES)[keyof typeof SCALAR_TYPES];
+
+export const scalarInputsOf = (table: PortableBuildTable): ReadonlyMap<string, readonly ScalarInput[]> =>
+	new Map(
+		Object.entries(table.paths)
+			.filter(([, built]) => built.builds !== undefined)
+			.sort(([a], [b]) => byCodepoint(a, b))
+			.map(([path, built]) => [path, [...new Set((Object.keys(built.builds!) as (keyof typeof SCALAR_TYPES)[]).map((scalar) => SCALAR_TYPES[scalar]))].sort(byCodepoint)])
+	);
+
 export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly [path: string, inputs: readonly string[]])[] {
 	const { table } = typedInput;
 	const inputs = new Map<string, string[]>(textBuiltPaths(typedInput).map((path) => [path, ['string']]));
@@ -199,6 +209,7 @@ export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly 
 		const at = inputs.get(path) ?? inputs.set(path, []).get(path)!;
 		if (!at.includes(input)) at.push(input);
 	};
+	for (const [path, scalars] of scalarInputsOf(table)) for (const scalar of scalars) add(path, scalar);
 	for (const [path, built] of Object.entries(table.paths).sort(([a], [b]) => byCodepoint(a, b))) {
 		if (!built.root || Object.keys(built.builds ?? {}).length < 2) continue;
 		for (const [scalar, kind] of Object.entries(built.builds!) as [keyof typeof SCALAR_TYPES, number][])

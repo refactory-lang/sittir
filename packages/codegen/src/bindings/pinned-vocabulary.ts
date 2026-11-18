@@ -22,7 +22,7 @@ interface Source extends Omit<TypescriptSource, 'spelled'> {
 
 function identifier(name: { readonly $type: number } | number, kinds: readonly number[], source: Source): string {
 	const spelled = source.text(name);
-	if (typeof name !== 'number' && !kinds.includes(name.$type)) throw new Error(`vocabulary: ${spelled} is not a plain identifier; name members and namespaces by identifiers`);
+	if (typeof name !== 'number' && !kinds.includes(name.$type)) throw new Error(`vocabulary: ${spelled} is not a plain identifier; name slots and namespaces by identifiers`);
 	return spelled;
 }
 

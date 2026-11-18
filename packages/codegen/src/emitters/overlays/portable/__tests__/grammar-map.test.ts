@@ -194,10 +194,10 @@ describe('emitGrammarMap, typescript', () => {
 		map = await mapOf('typescript');
 	}, 120_000);
 
-	it("admits a root path that builds by its value's type at each path it builds through, with that value's type", () => {
+	it("admits a number path's own scalar, and a root path that builds by its value's type at each path it builds through, with that value's type", () => {
 		const inputs = map.slice(map.indexOf('\treadonly inputs: {\n'), map.indexOf('\n\t};\n', map.indexOf('\treadonly inputs: {\n')));
-		expect(inputs).toContain('\t\treadonly "literal.number.float": { readonly $path: "literal.number"; readonly $value: number };');
-		expect(inputs).toContain('\t\treadonly "literal.number.integer.big": { readonly $path: "literal.number"; readonly $value: bigint };');
-		expect(inputs).toContain('\t\treadonly "literal.number": string;');
+		expect(inputs).toContain('\t\treadonly "literal.number.float": number | { readonly $path: "literal.number"; readonly $value: number };');
+		expect(inputs).toContain('\t\treadonly "literal.number.integer.big": bigint | { readonly $path: "literal.number"; readonly $value: bigint };');
+		expect(inputs).toContain('\t\treadonly "literal.number": string | bigint | number;');
 	});
 });

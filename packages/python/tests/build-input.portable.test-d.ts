@@ -91,3 +91,9 @@ export const floatDigits: Float = { $path: 'literal.number.float', $value: 1.5, 
 export const longValue: V.BuildInput<PythonMap, 'literal.number.integer.big'> = { $path: 'literal.number.integer.big', $value: 10n };
 // @ts-expect-error a long integer's marker is an option, set on the built node, never in the structure
 export const longMarker: V.BuildInput<PythonMap, 'literal.number.integer.big'> = { $path: 'literal.number.integer.big', $value: 10n, marker: 'L' };
+
+type Returned = V.BuildInput<PythonMap, 'statement.return'>['expression'];
+
+export const integerReturned: Returned = 1;
+export const floatReturned: Returned = 1.5;
+export const bigintReturned: Returned = 10n;

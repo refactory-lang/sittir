@@ -32979,7 +32979,11 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'comment.text': string;
 		readonly identifier: string;
 		readonly 'literal.character': string;
-		readonly 'literal.number.float': string;
+		readonly 'literal.number.float': string | number;
+		readonly 'literal.number.integer': number;
+		readonly 'literal.number.integer.binary': number;
+		readonly 'literal.number.integer.hex': number;
+		readonly 'literal.number.integer.octal': number;
 		readonly 'literal.string.text': string;
 	};
 	readonly nodes: V.NodesOf<

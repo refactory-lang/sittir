@@ -99,8 +99,8 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'statement.expression': {
-					expression: { paths: ['expression.await'], texts: [], unmapped: [], string: false, optional: false },
-					label: { paths: [], texts: [], unmapped: [], string: false, optional: true }
+					expression: { paths: ['expression.await'], texts: [], unmapped: [], string: false, numbers: [], optional: false },
+					label: { paths: [], texts: [], unmapped: [], string: false, numbers: [], optional: true }
 				}
 			},
 			viewed: ['expression.await'],
@@ -151,7 +151,7 @@ describe('the pinned child emits a portable build module', () => {
 					'expression.collection.list': { root: true, arms: [{ kind: 1, builder: 'array', when: [], slots: [{ name: 'elements', steps: [{ key: 'elements' }], multiple: true, seats: [{ at: [1, 'elements'], kinds: [7, 9] }] }], presets: [], flags: {} }] }
 				}
 			},
-			slots: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, optional: true } } },
+			slots: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, numbers: [], optional: true } } },
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -198,8 +198,8 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'statement.block': {
-					statements: { paths: [], texts: [], unmapped: [], string: false, optional: true },
-					label: { paths: [], texts: ['a', 'b'], unmapped: [], string: false, optional: true }
+					statements: { paths: [], texts: [], unmapped: [], string: false, numbers: [], optional: true },
+					label: { paths: [], texts: ['a', 'b'], unmapped: [], string: false, numbers: [], optional: true }
 				}
 			},
 			viewed: [],
@@ -250,10 +250,10 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'identifier.qualified': {
-					qualifier: { paths: ['identifier.qualified'], texts: [], unmapped: [], string: true, optional: true },
-					name: { paths: [], texts: [], unmapped: [], string: true, optional: false },
-					marker: { paths: [], texts: ['*'], unmapped: [], string: false, optional: true },
-					note: { paths: [], texts: [], unmapped: [], string: true, optional: true }
+					qualifier: { paths: ['identifier.qualified'], texts: [], unmapped: [], string: true, numbers: [], optional: true },
+					name: { paths: [], texts: [], unmapped: [], string: true, numbers: [], optional: false },
+					marker: { paths: [], texts: ['*'], unmapped: [], string: false, numbers: [], optional: true },
+					note: { paths: [], texts: [], unmapped: [], string: true, numbers: [], optional: true }
 				}
 			},
 			viewed: ['identifier.qualified'],
@@ -296,7 +296,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			slots: { 'element.macro.token_binding': { fragment: { paths: ['element.macro.fragment'], texts: ['block', 'expr'], unmapped: [], string: false, optional: false } } },
+			slots: { 'element.macro.token_binding': { fragment: { paths: ['element.macro.fragment'], texts: ['block', 'expr'], unmapped: [], string: false, numbers: [], optional: false } } },
 			viewed: [],
 			textPaths: ['element.macro.fragment'],
 			textInputs: [],
@@ -343,6 +343,101 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain("return typeof value === 'bigint' ? b.numberDecimal(value) : b.numberDecimal(value);");
 		expect(text).toContain('return b.numberBigint(input.$value);');
 		expect(text).toContain("return unbuilt('literal.number', input);");
+	}, 60_000);
+
+	it('builds a bare number through its slot\'s takers, a safe integer by the integer arm and any other number by the float arm, and refuses a number type it takes no taker for', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			node: 'PythonNode',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table: {
+				builders: { returnStatement: 'config', integer: 'text', float: 'text' },
+				paths: {
+					'statement.return': {
+						root: true,
+						arms: [
+							{
+								kind: 1,
+								builder: 'returnStatement',
+								when: [],
+								slots: [
+									{
+										name: 'expression',
+										steps: [{ key: 'expression' }],
+										multiple: false,
+										seats: [{ at: [1, 'expression'], kinds: [5, 6] }],
+										takers: { integer: 'literal.number.integer', float: 'literal.number.float' }
+									}
+								],
+								presets: [],
+								flags: {}
+							}
+						]
+					},
+					'literal.number.integer': { root: true, builds: { integer: 5 }, arms: [{ kind: 5, builder: 'integer', scalar: 'integer', when: [], slots: [], presets: [], flags: {} }] },
+					'literal.number.float': { root: true, builds: { float: 6 }, arms: [{ kind: 6, builder: 'float', scalar: 'float', when: [], slots: [], presets: [], flags: {} }] }
+				}
+			},
+			slots: {
+				'statement.return': {
+					expression: { paths: ['literal.number.float', 'literal.number.integer'], texts: [], unmapped: [], string: false, numbers: ['bigint', 'number'], optional: false }
+				}
+			},
+			viewed: ['literal.number.float', 'literal.number.integer'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		const lines = text.split('\n').map((line) => line.trim());
+		expect(lines).toContain("if (typeof value === 'bigint') {");
+		expect(lines).toContain("return unnumbered('statement.return.expression', 'bigint');");
+		expect(lines).toContain('if (Number.isSafeInteger(value)) {');
+		expect(lines).toContain("return literal_number_integer$5({ $path: 'literal.number.integer', $value: value });");
+		expect(lines).toContain("return literal_number_float$6({ $path: 'literal.number.float', $value: value });");
+		expect(text).toMatch(/\bbigint\s*\|\s*number\b/);
+		expect(text.slice(text.indexOf("if (typeof value === 'number') {"), text.indexOf('if (isNode(value))'))).not.toContain('seated(');
+	}, 60_000);
+
+	it('places a number as a kind id in a slot with no takers, and refuses a bigint its type admits there', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			node: 'PythonNode',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table: {
+				builders: { unaryOperator: 'config', expressionStatement: 'config' },
+				paths: {
+					'expression.unary': {
+						root: true,
+						arms: [
+							{
+								kind: 1,
+								builder: 'unaryOperator',
+								when: [],
+								slots: [{ name: 'operator', steps: [{ key: 'operator' }], multiple: false, seats: [{ at: [1, 'operator'], kinds: [7] }] }],
+								presets: [],
+								flags: {}
+							}
+						]
+					}
+				}
+			},
+			slots: { 'expression.unary': { operator: { paths: [], texts: [], unmapped: [], string: false, numbers: ['bigint', 'number'], optional: false } } },
+			viewed: [],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		const lines = text.split('\n').map((line) => line.trim());
+		expect(lines).toContain("return unnumbered('expression.unary.operator', 'bigint');");
+		expect(lines).toContain('if (seated(value, [7])) return value;');
 	}, 60_000);
 
 	it('spells a float in its decimal parts through decimalSpelling, passes a part its builder takes as an option in the options, and throws where it spells none', async () => {
@@ -411,7 +506,7 @@ describe('the pinned child emits a portable build module', () => {
 						'expression.generator': { root: false, arms: [{ kind: 2, builder: 'generatorExpression', when: [], slots: [], presets: [], flags: {} }] }
 					}
 				},
-				slots: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, optional: false } } },
+				slots: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
 				viewed: [...paths],
 				textPaths: [],
 				textInputs: [],
@@ -473,7 +568,7 @@ describe('the pinned child emits a portable build module', () => {
 					'identifier.qualified': { root: false, arms: [{ kind: 8, builder: 'dottedName', when: [], slots: [], presets: [], flags: {} }] }
 				}
 			},
-			slots: { 'declaration.function': { body: { paths: [...viewed], texts: [], unmapped: [], string: false, optional: false } } },
+			slots: { 'declaration.function': { body: { paths: [...viewed], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
 			viewed: [...viewed],
 			textPaths: [],
 			textInputs: [],
