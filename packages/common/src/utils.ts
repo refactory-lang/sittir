@@ -8,12 +8,13 @@ import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
 import { undoIfFillFails } from './list-fills.ts';
+import { hydrateSlotBy, hydrateSlotsBy, hydrateStoredSlot, hydrateStoredSlots, storedSlotRead, type HydrateOne } from './stored-slot.ts';
 import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
-import { cacheOf, chosenSeparatorOf, nativeSlotReader, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
+import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
@@ -871,36 +872,6 @@ export function contentRole(envelope: object, content: () => unknown): Role {
 	return value !== null && typeof value === 'object' && own === indexOf(value) ? 'aliasContent' : 'node';
 }
 
-/** How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree, or `hydrateStored` for a built node. */
-type HydrateOne = (value: unknown) => unknown;
-
-/** The list slots already hydrated: each holds the frozen items an accessor returns. */
-const hydratedLists = new WeakSet<readonly unknown[]>();
-
-/** The value of slot `key` of `node`, hydrated by `hydrateOne` and written back into the slot. */
-function hydrateSlotBy(node: object, key: string, hydrateOne: HydrateOne): unknown {
-	const slots = node as Record<string, unknown>;
-	const child = hydrateOne(slots[key]);
-	if (child !== slots[key]) {
-		undoIfFillFails(slots, key, slots[key]);
-		slots[key] = child;
-	}
-	return child;
-}
-
-/** `hydrateSlotBy` for a list slot: every item hydrated once, the slot then holding the frozen items. */
-function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): readonly unknown[] {
-	const slots = node as Record<string, unknown>;
-	const stored = slots[key];
-	if (!Array.isArray(stored)) return [hydrateSlotBy(node, key, hydrateOne)];
-	if (hydratedLists.has(stored)) return stored;
-	const children = Object.freeze(stored.map((entry) => hydrateOne(entry)));
-	hydratedLists.add(children);
-	undoIfFillFails(slots, key, stored);
-	slots[key] = children;
-	return children;
-}
-
 /** The value of slot `key` of a wrapped node, hydrated by `hydrateWith` in `role` and written back into the slot. */
 export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode, role: Role = 'node'): unknown {
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
@@ -978,14 +949,6 @@ function hoistedWithUnchecked(
 	return apply(handle === undefined ? wrap(value as readonly never[]) : inEngine(handle, () => wrap(value as readonly never[])));
 }
 
-/** The slot `accessor` of a node whose own slot is `storage`: its native read when its tree registered one, else what a built node stores. */
-export function storedSlotRead(node: object, accessor: string, storage: string, many: boolean): unknown {
-	const native = nativeSlotReader(node, accessor);
-	if (native !== undefined) return native.call(node);
-	if (isRecordPosition(node)) return (node as unknown as Record<string, () => unknown>)[accessor]!.call(node);
-	return many ? hydrateStoredSlots(node, storage) : hydrateStoredSlot(node, storage);
-}
-
 /** `wrap(value)` for a hoisted slot's value, or `undefined` when the slot was left out. */
 export function wrapHoisted<R>(value: unknown, wrap: (value: never) => R, kind: number): R | undefined {
 	return value === undefined ? undefined : isKindNode(value, kind) ? (value as R) : wrap(value as never);
@@ -1008,16 +971,7 @@ export function storedHop(accessor: string, storage: string, many: boolean): Hoi
 	};
 }
 
-/** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot. */
-export function hydrateStoredSlot(node: object, key: string): unknown {
-	return hydrateSlotBy(node, key, hydrateStored);
-}
-
-/** `hydrateStoredSlot` for a list slot. */
-export function hydrateStoredSlots(node: object, key: string): readonly unknown[] {
-	return hydrateSlotsBy(node, key, hydrateStored);
-}
-
+export { hydrateStoredSlot, hydrateStoredSlots, storedSlotRead } from './stored-slot.ts';
 export { numberRefusal, numberText, type NumberBase } from './number.ts';
 export {
 	decodeIndex,
