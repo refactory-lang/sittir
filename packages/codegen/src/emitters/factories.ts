@@ -137,7 +137,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { BuiltViewTable, leafAdoptLines, patchTwinLines, RECORD_CONSTRUCTION_IMPORTS, RECORD_VIEW_TYPES, recordParts, recordRefusalLines } from './record-construction.ts';
 import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
-import { wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
+import { chainWrapExpr, wrapperChainFor, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import { splicedEnvelopeOf } from '../compiler/model/spliced-envelopes.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -1018,15 +1018,24 @@ function slotStorageExpr(
 	return slotStorageFromValueExpr(f, defaultedValueExpr(f, `${configAccess}.${f.propertyName}`, nodeMap, kindEntries), nodeMap, kindEntries, typeName);
 }
 
+function hoistedValueExpr(f: AssembledNonterminal, valueExpr: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string {
+	const chain = wrapperChainOfSlot(nodeMap, f);
+	if (chain === undefined) return valueExpr;
+	const wrap = chainWrapExpr(chain, nodeMap, '', !isRequired(f));
+	const kind = kindDiscriminantExpr(chain.storage[0]!, nodeMap, kindEntries);
+	return isMultiple(f) ? `${valueExpr}?.map((item) => wrapHoisted(item, ${wrap}, ${kind}))` : `wrapHoisted(${valueExpr}, ${wrap}, ${kind})`;
+}
+
 function defaultedValueExpr(
 	f: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string {
-	if (isMultiple(f)) return isNonEmpty(f) ? valueExpr : `(${valueExpr} ?? [])`;
+	const hoisted = hoistedValueExpr(f, valueExpr, nodeMap, kindEntries);
+	if (isMultiple(f)) return isNonEmpty(f) ? hoisted : `(${hoisted} ?? [])`;
 	const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries);
-	return emptyDefault ? `orDefault(${valueExpr}, () => ${emptyDefault})` : valueExpr;
+	return emptyDefault ? `orDefault(${hoisted}, () => ${emptyDefault})` : hoisted;
 }
 
 function setterValueSignature(f: AssembledNonterminal, elemType: string): string {
@@ -2071,11 +2080,11 @@ function fieldCarryingFactoryText(
 			const method = f.propertyName;
 			const restType = restSetterType(f, configType, nodeMap, kindEntries);
 			if (restType !== undefined) {
-				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, `restItems(${JSON.stringify(method)}, values)`) });
+				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, wrapperChainOfSlot(nodeMap, f) === undefined ? `restItems(${JSON.stringify(method)}, values)` : `restItems(${JSON.stringify(method)}, values) as never`) });
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				setters.push({ name: method, params: setterSig, ...slotSet(f, 'value') });
+				setters.push({ name: method, params: setterSig, ...slotSet(f, wrapperChainOfSlot(nodeMap, f) === undefined ? 'value' : 'value as never') });
 			}
 		}
 		setters.push(...spellingWith((patch) => call(fn, `${configAccess}, ${patch}`), [configAccess, 'options']));
@@ -2138,7 +2147,7 @@ function fieldCarryingFactoryText(
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory', fn);
 	lines.push(...(view?.prelude ?? []));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
-	const seated = seatedSetters(withHoists(inSlotOrder(setters, node.slots), node, nodeMap), plan);
+	const seated = seatedSetters(withHoists(inSlotOrder(setters, node.slots), node, nodeMap, kindEntries), plan);
 	const trivia = triviaPositionsOf(typeKind, nodeMap);
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
 	const held: FactoryHeld[] = [
@@ -2436,7 +2445,7 @@ function emitRefineFormFactory(
 		} else {
 			const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), formConfigType, nodeMap);
 			const setterSig = setterValueSignature(f, elemType);
-			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.propertyName}: value }${optionsArg})` });
+			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.propertyName}: value${wrapperChainOfSlot(nodeMap, f) === undefined ? '' : ' as never'} }${optionsArg})` });
 		}
 	}
 	for (const f of registered) {
@@ -2894,7 +2903,7 @@ function storedHopOf(node: AssembledNode, slot: AssembledNonterminal): string {
 	return `storedHop(${JSON.stringify(slot.propertyName)}, ${JSON.stringify(slot.storageKey)}, ${isMultiple(slot)})`;
 }
 
-function storedHoistOf(holder: AssembledNode, lookup: AssembledNonterminal, slot: AssembledNonterminal, nodeMap: NodeMap): StoredHoist | undefined {
+export function storedHoistOf(holder: AssembledNode, lookup: AssembledNonterminal, slot: AssembledNonterminal, nodeMap: NodeMap): StoredHoist | undefined {
 	const chain = wrapperChainFor(nodeMap, holder.kind, lookup.name);
 	if (chain === undefined) return undefined;
 	const hops = chain.storage.map((kind, hop) => storedHopOf(nodeMap.nodes.get(kind)!, chain.slots[hop]!));
@@ -2919,7 +2928,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 	for (const node of nodeMap.nodes.values()) {
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
 		if (plan.slots.length > 0) names.add('listSlotWith');
-		for (const name of ['hoistedWith', 'hoistRead', 'storedHop']) names.add(name);
+		for (const name of ['hoistedWith', 'hoistRead', 'storedHop', 'wrapHoisted']) names.add(name);
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {

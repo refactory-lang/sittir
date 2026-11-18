@@ -26,10 +26,12 @@ import {
 	configFieldOr,
 	currentHandle,
 	describeValue,
+	hoistRead,
 	isNodeOfKind,
 	isNodeValue,
 	listStorage,
 	numberRefusal,
+	storedHop,
 	withEmptyForm,
 	withOptions
 } from '@sittir/common/utils';
@@ -3509,8 +3511,12 @@ export const coerceToDeclarationList: EmptyForm<
 
 export function resolveUnionItem_visibilityModifier(
 	value: T.UnionItem.LooseConfig['visibilityModifier']
-): Admit<T.UnionItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.UnionItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.UnionItem.Config['visibilityModifier'];
 }
 
 export function resolveUnionItem_name(value: T.UnionItem.LooseConfig['name']): Admit<T.UnionItem['_name']> {
@@ -3519,8 +3525,12 @@ export function resolveUnionItem_name(value: T.UnionItem.LooseConfig['name']): A
 
 export function resolveUnionItem_typeParameters(
 	value: T.UnionItem.LooseConfig['typeParameters']
-): Admit<T.UnionItem['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.UnionItem.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.UnionItem.Config['typeParameters'];
 }
 
 export function resolveUnionItem_whereClause(
@@ -3529,8 +3539,12 @@ export function resolveUnionItem_whereClause(
 	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
-export function resolveUnionItem_body(value: T.UnionItem.LooseConfig['body']): Admit<T.UnionItem['_body']> {
-	return _resolveOneBranch<T.FieldDeclarationList>(value, 'field_declaration_list');
+export function resolveUnionItem_body(value: T.UnionItem.LooseConfig['body']): T.UnionItem.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.FieldDeclarationList>(value, 'field_declaration_list'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.UnionItem.Config['body'];
 }
 
 export const coerceToUnionItem: ConfigSeat<T.UnionItem.Loose, ReturnType<typeof F.buildUnionItem>> = (
@@ -3543,14 +3557,18 @@ export const coerceToUnionItem: ConfigSeat<T.UnionItem.Loose, ReturnType<typeof 
 		name: resolveUnionItem_name(input.name),
 		typeParameters: resolveUnionItem_typeParameters(input.typeParameters),
 		whereClause: resolveUnionItem_whereClause(input.whereClause),
-		body: resolveUnionItem_body(input.body) ?? F.buildFieldDeclarationList()
+		body: resolveUnionItem_body(input.body)
 	});
 };
 
 export function resolveEnumItem_visibilityModifier(
 	value: T.EnumItem.LooseConfig['visibilityModifier']
-): Admit<T.EnumItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.EnumItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.EnumItem.Config['visibilityModifier'];
 }
 
 export function resolveEnumItem_name(value: T.EnumItem.LooseConfig['name']): Admit<T.EnumItem['_name']> {
@@ -3559,8 +3577,12 @@ export function resolveEnumItem_name(value: T.EnumItem.LooseConfig['name']): Adm
 
 export function resolveEnumItem_typeParameters(
 	value: T.EnumItem.LooseConfig['typeParameters']
-): Admit<T.EnumItem['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.EnumItem.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.EnumItem.Config['typeParameters'];
 }
 
 export function resolveEnumItem_whereClause(
@@ -3569,8 +3591,12 @@ export function resolveEnumItem_whereClause(
 	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
-export function resolveEnumItem_body(value: T.EnumItem.LooseConfig['body']): Admit<T.EnumItem['_body']> {
-	return _resolveOneBranch<T.EnumVariantList>(value, 'enum_variant_list');
+export function resolveEnumItem_body(value: T.EnumItem.LooseConfig['body']): T.EnumItem.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.EnumVariantList>(value, 'enum_variant_list'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.EnumItem.Config['body'];
 }
 
 export const coerceToEnumItem: ConfigSeat<T.EnumItem.Loose, ReturnType<typeof F.buildEnumItem>> = (
@@ -3583,14 +3609,18 @@ export const coerceToEnumItem: ConfigSeat<T.EnumItem.Loose, ReturnType<typeof F.
 		name: resolveEnumItem_name(input.name),
 		typeParameters: resolveEnumItem_typeParameters(input.typeParameters),
 		whereClause: resolveEnumItem_whereClause(input.whereClause),
-		body: resolveEnumItem_body(input.body) ?? F.buildEnumVariantList()
+		body: resolveEnumItem_body(input.body)
 	});
 };
 
 export function resolveEnumVariantList_elements(
 	value: T.EnumVariantList.LooseConfig['elements']
-): Admit<T.EnumVariantList['_elements']> {
-	return _resolveOneBranch<T.EnumVariantListElements>(value, 'enum_variant_list_elements', undefined, true);
+): T.EnumVariantList.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.EnumVariantListElements>(value, 'enum_variant_list_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.EnumVariantList.Config['elements'];
 }
 
 export const coerceToEnumVariantList: EmptyForm<
@@ -3617,8 +3647,12 @@ export const coerceToEnumVariantList: EmptyForm<
 
 export function resolveEnumVariant_visibilityModifier(
 	value: T.EnumVariant.LooseConfig['visibilityModifier']
-): Admit<T.EnumVariant['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.EnumVariant.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.EnumVariant.Config['visibilityModifier'];
 }
 
 export function resolveEnumVariant_name(value: T.EnumVariant.LooseConfig['name']): Admit<T.EnumVariant['_name']> {
@@ -3657,8 +3691,12 @@ export const coerceToEnumVariant: ConfigSeat<T.EnumVariant.Loose, ReturnType<typ
 
 export function resolveFieldDeclarationList_elements(
 	value: T.FieldDeclarationList.LooseConfig['elements']
-): Admit<T.FieldDeclarationList['_elements']> {
-	return _resolveOneBranch<T.FieldDeclarationListElements>(value, 'field_declaration_list_elements', undefined, true);
+): T.FieldDeclarationList.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.FieldDeclarationListElements>(value, 'field_declaration_list_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.FieldDeclarationList.Config['elements'];
 }
 
 export const coerceToFieldDeclarationList: EmptyForm<
@@ -3685,8 +3723,12 @@ export const coerceToFieldDeclarationList: EmptyForm<
 
 export function resolveFieldDeclaration_visibilityModifier(
 	value: T.FieldDeclaration.LooseConfig['visibilityModifier']
-): Admit<T.FieldDeclaration['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.FieldDeclaration.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.FieldDeclaration.Config['visibilityModifier'];
 }
 
 export function resolveFieldDeclaration_name(
@@ -3720,13 +3762,17 @@ export const coerceToFieldDeclaration: ConfigSeat<
 
 export function resolveOrderedFieldDeclarationList_elements(
 	value: T.OrderedFieldDeclarationList.LooseConfig['elements']
-): Admit<T.OrderedFieldDeclarationList['_elements']> {
-	return _resolveOneBranch<T.OrderedFieldDeclarationListElements>(
-		value,
-		'ordered_field_declaration_list_elements',
-		undefined,
+): T.OrderedFieldDeclarationList.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.OrderedFieldDeclarationListElements>(
+			value,
+			'ordered_field_declaration_list_elements',
+			undefined,
+			true
+		),
+		[storedHop('items', '_item', true)],
 		true
-	);
+	) as T.OrderedFieldDeclarationList.Config['elements'];
 }
 
 export const coerceToOrderedFieldDeclarationList: EmptyForm<
@@ -3755,8 +3801,12 @@ export const coerceToOrderedFieldDeclarationList: EmptyForm<
 
 export function resolveExternCrateDeclaration_visibilityModifier(
 	value: T.ExternCrateDeclaration.LooseConfig['visibilityModifier']
-): Admit<T.ExternCrateDeclaration['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.ExternCrateDeclaration.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ExternCrateDeclaration.Config['visibilityModifier'];
 }
 
 export function resolveExternCrateDeclaration_name(
@@ -3787,8 +3837,12 @@ export const coerceToExternCrateDeclaration: ConfigSeat<
 
 export function resolveConstItem_visibilityModifier(
 	value: T.ConstItem.LooseConfig['visibilityModifier']
-): Admit<T.ConstItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.ConstItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ConstItem.Config['visibilityModifier'];
 }
 
 export function resolveConstItem_name(value: T.ConstItem.LooseConfig['name']): Admit<T.ConstItem['_name']> {
@@ -3824,8 +3878,12 @@ export const coerceToConstItem: ConfigSeat<T.ConstItem.Loose, ReturnType<typeof 
 
 export function resolveStaticItem_visibilityModifier(
 	value: T.StaticItem.LooseConfig['visibilityModifier']
-): Admit<T.StaticItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.StaticItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.StaticItem.Config['visibilityModifier'];
 }
 
 export function resolveStaticItem_byReference(
@@ -3873,8 +3931,12 @@ export const coerceToStaticItem: ConfigSeat<T.StaticItem.Loose, ReturnType<typeo
 
 export function resolveTypeItem_visibilityModifier(
 	value: T.TypeItem.LooseConfig['visibilityModifier']
-): Admit<T.TypeItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.TypeItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.TypeItem.Config['visibilityModifier'];
 }
 
 export function resolveTypeItem_name(value: T.TypeItem.LooseConfig['name']): Admit<T.TypeItem['_name']> {
@@ -3883,8 +3945,12 @@ export function resolveTypeItem_name(value: T.TypeItem.LooseConfig['name']): Adm
 
 export function resolveTypeItem_typeParameters(
 	value: T.TypeItem.LooseConfig['typeParameters']
-): Admit<T.TypeItem['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.TypeItem.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.TypeItem.Config['typeParameters'];
 }
 
 export function resolveTypeItem_whereClause(
@@ -3923,8 +3989,12 @@ export const coerceToTypeItem: ConfigSeat<T.TypeItem.Loose, ReturnType<typeof F.
 
 export function resolveFunctionItem_visibilityModifier(
 	value: T.FunctionItem.LooseConfig['visibilityModifier']
-): Admit<T.FunctionItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.FunctionItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.FunctionItem.Config['visibilityModifier'];
 }
 
 export function resolveFunctionItem_functionModifiers(
@@ -3939,14 +4009,22 @@ export function resolveFunctionItem_name(value: T.FunctionItem.LooseConfig['name
 
 export function resolveFunctionItem_typeParameters(
 	value: T.FunctionItem.LooseConfig['typeParameters']
-): Admit<T.FunctionItem['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.FunctionItem.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.FunctionItem.Config['typeParameters'];
 }
 
 export function resolveFunctionItem_parameters(
 	value: T.FunctionItem.LooseConfig['parameters']
-): Admit<T.FunctionItem['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.FunctionItem.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false)],
+		false
+	) as T.FunctionItem.Config['parameters'];
 }
 
 export function resolveFunctionItem_returnType(
@@ -3979,7 +4057,7 @@ export const coerceToFunctionItem: ConfigSeat<T.FunctionItem.Loose, ReturnType<t
 		functionModifiers: resolveFunctionItem_functionModifiers(input.functionModifiers),
 		name: resolveFunctionItem_name(input.name),
 		typeParameters: resolveFunctionItem_typeParameters(input.typeParameters),
-		parameters: resolveFunctionItem_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveFunctionItem_parameters(input.parameters),
 		returnType: resolveFunctionItem_returnType(input.returnType),
 		whereClause: resolveFunctionItem_whereClause(input.whereClause),
 		body: resolveFunctionItem_body(input.body) ?? F.buildBlock()
@@ -3988,8 +4066,12 @@ export const coerceToFunctionItem: ConfigSeat<T.FunctionItem.Loose, ReturnType<t
 
 export function resolveFunctionSignatureItem_visibilityModifier(
 	value: T.FunctionSignatureItem.LooseConfig['visibilityModifier']
-): Admit<T.FunctionSignatureItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.FunctionSignatureItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.FunctionSignatureItem.Config['visibilityModifier'];
 }
 
 export function resolveFunctionSignatureItem_functionModifiers(
@@ -4006,14 +4088,22 @@ export function resolveFunctionSignatureItem_name(
 
 export function resolveFunctionSignatureItem_typeParameters(
 	value: T.FunctionSignatureItem.LooseConfig['typeParameters']
-): Admit<T.FunctionSignatureItem['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.FunctionSignatureItem.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.FunctionSignatureItem.Config['typeParameters'];
 }
 
 export function resolveFunctionSignatureItem_parameters(
 	value: T.FunctionSignatureItem.LooseConfig['parameters']
-): Admit<T.FunctionSignatureItem['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.FunctionSignatureItem.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false)],
+		false
+	) as T.FunctionSignatureItem.Config['parameters'];
 }
 
 export function resolveFunctionSignatureItem_returnType(
@@ -4043,7 +4133,7 @@ export const coerceToFunctionSignatureItem: ConfigSeat<
 		functionModifiers: resolveFunctionSignatureItem_functionModifiers(input.functionModifiers),
 		name: resolveFunctionSignatureItem_name(input.name),
 		typeParameters: resolveFunctionSignatureItem_typeParameters(input.typeParameters),
-		parameters: resolveFunctionSignatureItem_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveFunctionSignatureItem_parameters(input.parameters),
 		returnType: resolveFunctionSignatureItem_returnType(input.returnType),
 		whereClause: resolveFunctionSignatureItem_whereClause(input.whereClause)
 	});
@@ -4106,8 +4196,12 @@ export const coerceToFunctionModifiers: Seat<
 
 export function resolveWhereClause_wherePredicates(
 	value: T.WhereClause.LooseConfig['wherePredicates']
-): Admit<T.WhereClause['_where_predicates']> {
-	return _resolveOneBranch<T.WherePredicates>(value, 'where_predicates', undefined, true);
+): T.WhereClause.Config['wherePredicates'] {
+	return hoistRead(
+		_resolveOneBranch<T.WherePredicates>(value, 'where_predicates', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.WhereClause.Config['wherePredicates'];
 }
 
 export const coerceToWhereClause: Seat<T.WherePredicates.LooseArgs, ReturnType<typeof F.buildWhereClause>> &
@@ -4231,8 +4325,12 @@ export function resolveWherePredicate_left(
 
 export function resolveWherePredicate_bounds(
 	value: T.WherePredicate.LooseConfig['bounds']
-): Admit<T.WherePredicate['_bounds']> {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds');
+): T.WherePredicate.Config['bounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.TraitBounds>(value, 'trait_bounds'),
+		[storedHop('bounds', '_bounds', true)],
+		true
+	) as T.WherePredicate.Config['bounds'];
 }
 
 export const coerceToWherePredicate: ConfigSeat<T.WherePredicate.Loose, ReturnType<typeof F.buildWherePredicate>> = (
@@ -4249,8 +4347,12 @@ export const coerceToWherePredicate: ConfigSeat<T.WherePredicate.Loose, ReturnTy
 
 export function resolveTraitItem_visibilityModifier(
 	value: T.TraitItem.LooseConfig['visibilityModifier']
-): Admit<T.TraitItem['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.TraitItem.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.TraitItem.Config['visibilityModifier'];
 }
 
 export function resolveTraitItem_unsafe(value: T.TraitItem.LooseConfig['unsafe']): Admit<T.TraitItem['_unsafe']> {
@@ -4263,12 +4365,20 @@ export function resolveTraitItem_name(value: T.TraitItem.LooseConfig['name']): A
 
 export function resolveTraitItem_typeParameters(
 	value: T.TraitItem.LooseConfig['typeParameters']
-): Admit<T.TraitItem['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.TraitItem.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.TraitItem.Config['typeParameters'];
 }
 
-export function resolveTraitItem_bounds(value: T.TraitItem.LooseConfig['bounds']): Admit<T.TraitItem['_bounds']> {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
+export function resolveTraitItem_bounds(value: T.TraitItem.LooseConfig['bounds']): T.TraitItem.Config['bounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true),
+		[storedHop('bounds', '_bounds', true)],
+		true
+	) as T.TraitItem.Config['bounds'];
 }
 
 export function resolveTraitItem_whereClause(
@@ -4277,8 +4387,12 @@ export function resolveTraitItem_whereClause(
 	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
-export function resolveTraitItem_body(value: T.TraitItem.LooseConfig['body']): Admit<T.TraitItem['_body']> {
-	return _resolveOneBranch<T.TraitInterfaceDeclarationBody>(value, 'trait_interface_declaration_body');
+export function resolveTraitItem_body(value: T.TraitItem.LooseConfig['body']): T.TraitItem.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.TraitInterfaceDeclarationBody>(value, 'trait_interface_declaration_body'),
+		[storedHop('declarations', '_declarations', true)],
+		true
+	) as T.TraitItem.Config['body'];
 }
 
 export const coerceToTraitItem: ConfigSeat<T.TraitItem.Loose, ReturnType<typeof F.buildTraitItem>> = (
@@ -4293,7 +4407,7 @@ export const coerceToTraitItem: ConfigSeat<T.TraitItem.Loose, ReturnType<typeof 
 		typeParameters: resolveTraitItem_typeParameters(input.typeParameters),
 		bounds: resolveTraitItem_bounds(input.bounds),
 		whereClause: resolveTraitItem_whereClause(input.whereClause),
-		body: resolveTraitItem_body(input.body) ?? F.buildTraitInterfaceDeclarationBody()
+		body: resolveTraitItem_body(input.body)
 	});
 };
 
@@ -4305,14 +4419,22 @@ export function resolveAssociatedType_name(
 
 export function resolveAssociatedType_typeParameters(
 	value: T.AssociatedType.LooseConfig['typeParameters']
-): Admit<T.AssociatedType['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.AssociatedType.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.AssociatedType.Config['typeParameters'];
 }
 
 export function resolveAssociatedType_bounds(
 	value: T.AssociatedType.LooseConfig['bounds']
-): Admit<T.AssociatedType['_bounds']> {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
+): T.AssociatedType.Config['bounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true),
+		[storedHop('bounds', '_bounds', true)],
+		true
+	) as T.AssociatedType.Config['bounds'];
 }
 
 export function resolveAssociatedType_whereClause(
@@ -4361,8 +4483,12 @@ export const coerceToTraitBounds: Seat<T.TraitBounds.LooseArgs, ReturnType<typeo
 
 export function resolveHigherRankedTraitBound_typeParameters(
 	value: T.HigherRankedTraitBound.LooseConfig['typeParameters']
-): Admit<T.HigherRankedTraitBound['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+): T.HigherRankedTraitBound.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.HigherRankedTraitBound.Config['typeParameters'];
 }
 
 export function resolveHigherRankedTraitBound_type(
@@ -4419,8 +4545,12 @@ export const coerceToRemovedTraitBound: ConfigSeat<
 
 export function resolveTypeParameters_elements(
 	value: T.TypeParameters.LooseConfig['elements']
-): Admit<T.TypeParameters['_elements']> {
-	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
+): T.TypeParameters.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TypeParameters.Config['elements'];
 }
 
 export const coerceToTypeParameters: Seat<
@@ -4489,8 +4619,12 @@ export function resolveTypeParameter_name(value: T.TypeParameter.LooseConfig['na
 
 export function resolveTypeParameter_bounds(
 	value: T.TypeParameter.LooseConfig['bounds']
-): Admit<T.TypeParameter['_bounds']> {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
+): T.TypeParameter.Config['bounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true),
+		[storedHop('bounds', '_bounds', true)],
+		true
+	) as T.TypeParameter.Config['bounds'];
 }
 
 export function resolveTypeParameter_default(
@@ -4523,8 +4657,12 @@ export function resolveLifetimeParameter_name(
 
 export function resolveLifetimeParameter_bounds(
 	value: T.LifetimeParameter.LooseConfig['bounds']
-): Admit<T.LifetimeParameter['_bounds']> {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
+): T.LifetimeParameter.Config['bounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true),
+		[storedHop('bounds', '_bounds', true)],
+		true
+	) as T.LifetimeParameter.Config['bounds'];
 }
 
 export const coerceToLifetimeParameter: ConfigSeat<
@@ -4596,8 +4734,12 @@ export const coerceToLetDeclaration: ConfigSeat<T.LetDeclaration.Loose, ReturnTy
 
 export function resolveUseDeclaration_visibilityModifier(
 	value: T.UseDeclaration.LooseConfig['visibilityModifier']
-): Admit<T.UseDeclaration['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.UseDeclaration.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.UseDeclaration.Config['visibilityModifier'];
 }
 
 export function resolveUseDeclaration_argument(
@@ -4657,8 +4799,12 @@ export function resolveScopedUseList_path(value: T.ScopedUseList.LooseConfig['pa
 
 export function resolveScopedUseList_list(
 	value: T.ScopedUseList.LooseConfig['list'] | undefined
-): Admit<T.ScopedUseList['_list']> {
-	return _resolveOneBranch<T.UseList>(value, 'use_list');
+): T.ScopedUseList.Config['list'] {
+	return hoistRead(
+		_resolveOneBranch<T.UseList>(value, 'use_list'),
+		[storedHop('useClauses', '_use_clauses', false), storedHop('items', '_item', true)],
+		true
+	) as T.ScopedUseList.Config['list'];
 }
 
 export const coerceToScopedUseList: OptionalConfigSeat<
@@ -4670,14 +4816,16 @@ export const coerceToScopedUseList: OptionalConfigSeat<
 	currentHandle()?.admit(TSKindId.ScopedUseList, [input]);
 	return F.buildScopedUseList({
 		path: resolveScopedUseList_path(input?.path),
-		list: resolveScopedUseList_list(input?.list) ?? F.buildUseList()
+		list: resolveScopedUseList_list(input?.list)
 	});
 };
 
-export function resolveUseList_useClauses(
-	value: T.UseList.LooseConfig['useClauses']
-): Admit<T.UseList['_use_clauses']> {
-	return _resolveOneBranch<T.UseClauses>(value, 'use_clauses', undefined, true);
+export function resolveUseList_useClauses(value: T.UseList.LooseConfig['useClauses']): T.UseList.Config['useClauses'] {
+	return hoistRead(
+		_resolveOneBranch<T.UseClauses>(value, 'use_clauses', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.UseList.Config['useClauses'];
 }
 
 export const coerceToUseList: EmptyForm<
@@ -5026,8 +5174,12 @@ export const coerceToArrayType: ConfigSeat<T.ArrayType.Loose, ReturnType<typeof 
 
 export function resolveForLifetimes_lifetimes(
 	value: T.ForLifetimes.LooseConfig['lifetimes']
-): Admit<T.ForLifetimes['_lifetimes']> {
-	return _resolveOneBranch<T.Lifetimes>(value, 'lifetimes');
+): T.ForLifetimes.Config['lifetimes'] {
+	return hoistRead(
+		_resolveOneBranch<T.Lifetimes>(value, 'lifetimes'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.ForLifetimes.Config['lifetimes'];
 }
 
 export const coerceToForLifetimes: Seat<T.Lifetimes.LooseArgs, ReturnType<typeof F.buildForLifetimes>> &
@@ -5047,8 +5199,12 @@ export const coerceToForLifetimes: Seat<T.Lifetimes.LooseArgs, ReturnType<typeof
 
 export function resolveFunctionType_forLifetimes(
 	value: T.FunctionType.LooseConfig['forLifetimes']
-): Admit<T.FunctionType['_for_lifetimes']> {
-	return _resolveOneBranch<T.ForLifetimes>(value, 'for_lifetimes', undefined, true);
+): T.FunctionType.Config['forLifetimes'] {
+	return hoistRead(
+		_resolveOneBranch<T.ForLifetimes>(value, 'for_lifetimes', undefined, true),
+		[storedHop('lifetimes', '_lifetimes', false), storedHop('items', '_item', true)],
+		true
+	) as T.FunctionType.Config['forLifetimes'];
 }
 
 export function resolveFunctionType_content(
@@ -5059,8 +5215,12 @@ export function resolveFunctionType_content(
 
 export function resolveFunctionType_parameters(
 	value: T.FunctionType.LooseConfig['parameters']
-): Admit<T.FunctionType['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.FunctionType.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false)],
+		false
+	) as T.FunctionType.Config['parameters'];
 }
 
 export function resolveFunctionType_returnType(
@@ -5081,13 +5241,17 @@ export const coerceToFunctionType: ConfigSeat<T.FunctionType.Loose, ReturnType<t
 	return F.buildFunctionType({
 		forLifetimes: resolveFunctionType_forLifetimes(input.forLifetimes),
 		content: resolveFunctionType_content(input.content),
-		parameters: resolveFunctionType_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveFunctionType_parameters(input.parameters),
 		returnType: resolveFunctionType_returnType(input.returnType)
 	});
 };
 
-export function resolveTupleType_types(value: T.TupleType.LooseConfig['types']): Admit<T.TupleType['_types']> {
-	return _resolveOneBranch<T.Types>(value, 'types');
+export function resolveTupleType_types(value: T.TupleType.LooseConfig['types']): T.TupleType.Config['types'] {
+	return hoistRead(
+		_resolveOneBranch<T.Types>(value, 'types'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TupleType.Config['types'];
 }
 
 export const coerceToTupleType: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTupleType>> &
@@ -5116,8 +5280,12 @@ export function resolveGenericFunction_function(
 
 export function resolveGenericFunction_typeArguments(
 	value: T.GenericFunction.LooseConfig['typeArguments']
-): Admit<T.GenericFunction['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.GenericFunction.Config['typeArguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeArguments>(value, 'type_arguments'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.GenericFunction.Config['typeArguments'];
 }
 
 export const coerceToGenericFunction: ConfigSeat<T.GenericFunction.Loose, ReturnType<typeof F.buildGenericFunction>> = (
@@ -5138,8 +5306,12 @@ export function resolveGenericType_type(value: T.GenericType.LooseConfig['type']
 
 export function resolveGenericType_typeArguments(
 	value: T.GenericType.LooseConfig['typeArguments']
-): Admit<T.GenericType['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.GenericType.Config['typeArguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeArguments>(value, 'type_arguments'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.GenericType.Config['typeArguments'];
 }
 
 export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typeof F.buildGenericType>> = (
@@ -5162,8 +5334,12 @@ export function resolveGenericTypeWithTurbofish_type(
 
 export function resolveGenericTypeWithTurbofish_typeArguments(
 	value: T.GenericTypeWithTurbofish.LooseConfig['typeArguments']
-): Admit<T.GenericTypeWithTurbofish['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.GenericTypeWithTurbofish.Config['typeArguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeArguments>(value, 'type_arguments'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.GenericTypeWithTurbofish.Config['typeArguments'];
 }
 
 export const coerceToGenericTypeWithTurbofish: ConfigSeat<
@@ -5205,8 +5381,12 @@ export const coerceToBoundedType: ConfigSeat<T.BoundedType.Loose, ReturnType<typ
 	});
 };
 
-export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']): Admit<T.UseBounds['_bounds']> {
-	return _resolveOneBranch<T.UseBoundsElements>(value, 'use_bounds_elements', undefined, true);
+export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']): T.UseBounds.Config['bounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.UseBoundsElements>(value, 'use_bounds_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.UseBounds.Config['bounds'];
 }
 
 export const coerceToUseBounds: EmptyForm<
@@ -5231,8 +5411,12 @@ export const coerceToUseBounds: EmptyForm<
 
 export function resolveTypeArguments_elements(
 	value: T.TypeArguments.LooseConfig['elements']
-): Admit<T.TypeArguments['_elements']> {
-	return _resolveOneBranch<T.TypeArgumentsElements>(value, 'type_arguments_elements');
+): T.TypeArguments.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeArgumentsElements>(value, 'type_arguments_elements'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TypeArguments.Config['elements'];
 }
 
 export const coerceToTypeArguments: Seat<T.TypeArgumentsElements.LooseArgs, ReturnType<typeof F.buildTypeArguments>> &
@@ -5259,8 +5443,12 @@ export function resolveTypeBinding_name(value: T.TypeBinding.LooseConfig['name']
 
 export function resolveTypeBinding_typeArguments(
 	value: T.TypeBinding.LooseConfig['typeArguments']
-): Admit<T.TypeBinding['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
+): T.TypeBinding.Config['typeArguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.TypeBinding.Config['typeArguments'];
 }
 
 export function resolveTypeBinding_type(value: T.TypeBinding.LooseConfig['type']): Admit<T.TypeBinding['_type']> {
@@ -5321,8 +5509,12 @@ export function coerceToNeverType(_input?: T.NeverType.Loose): typeof F.buildNev
 
 export function resolveAbstractType_typeParameters(
 	value: T.AbstractType.LooseConfig['typeParameters']
-): Admit<T.AbstractType['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.AbstractType.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.AbstractType.Config['typeParameters'];
 }
 
 export function resolveAbstractType_trait(value: T.AbstractType.LooseConfig['trait']): Admit<T.AbstractType['_trait']> {
@@ -5913,8 +6105,12 @@ export function resolveCallExpression_function(
 
 export function resolveCallExpression_arguments(
 	value: T.CallExpression.LooseConfig['arguments']
-): Admit<T.CallExpression['_arguments']> {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+): T.CallExpression.Config['arguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.Arguments>(value, 'arguments'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.CallExpression.Config['arguments'];
 }
 
 export const coerceToCallExpression: ConfigSeat<T.CallExpression.Loose, ReturnType<typeof F.buildCallExpression>> = (
@@ -5925,12 +6121,16 @@ export const coerceToCallExpression: ConfigSeat<T.CallExpression.Loose, ReturnTy
 	currentHandle()?.admit(TSKindId.CallExpression, [input]);
 	return F.buildCallExpression({
 		function: resolveCallExpression_function(input.function),
-		arguments: resolveCallExpression_arguments(input.arguments) ?? F.buildArguments()
+		arguments: resolveCallExpression_arguments(input.arguments)
 	});
 };
 
-export function resolveArguments_elements(value: T.Arguments.LooseConfig['elements']): Admit<T.Arguments['_elements']> {
-	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements', undefined, true);
+export function resolveArguments_elements(value: T.Arguments.LooseConfig['elements']): T.Arguments.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.Arguments.Config['elements'];
 }
 
 export const coerceToArguments: EmptyForm<
@@ -5985,8 +6185,12 @@ export const coerceToParenthesizedExpression: ConfigSeat<
 
 export function resolveTupleExpression_elements(
 	value: T.TupleExpression.LooseConfig['elements']
-): Admit<T.TupleExpression['_elements']> {
-	return _resolveOneBranch<T.TupleExpressionElements>(value, 'tuple_expression_elements');
+): T.TupleExpression.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.TupleExpressionElements>(value, 'tuple_expression_elements'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TupleExpression.Config['elements'];
 }
 
 export const coerceToTupleExpression: Seat<
@@ -6025,8 +6229,12 @@ export function resolveStructExpression_name(
 
 export function resolveStructExpression_body(
 	value: T.StructExpression.LooseConfig['body']
-): Admit<T.StructExpression['_body']> {
-	return _resolveOneBranch<T.FieldInitializerList>(value, 'field_initializer_list');
+): T.StructExpression.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.FieldInitializerList>(value, 'field_initializer_list'),
+		[storedHop('initializers', '_initializers', false), storedHop('items', '_item', true)],
+		true
+	) as T.StructExpression.Config['body'];
 }
 
 export const coerceToStructExpression: ConfigSeat<
@@ -6038,14 +6246,18 @@ export const coerceToStructExpression: ConfigSeat<
 	currentHandle()?.admit(TSKindId.StructExpression, [input]);
 	return F.buildStructExpression({
 		name: resolveStructExpression_name(input.name),
-		body: resolveStructExpression_body(input.body) ?? F.buildFieldInitializerList()
+		body: resolveStructExpression_body(input.body)
 	});
 };
 
 export function resolveFieldInitializerList_initializers(
 	value: T.FieldInitializerList.LooseConfig['initializers']
-): Admit<T.FieldInitializerList['_initializers']> {
-	return _resolveOneBranch<T.FieldInitializerListElements>(value, 'field_initializer_list_elements', undefined, true);
+): T.FieldInitializerList.Config['initializers'] {
+	return hoistRead(
+		_resolveOneBranch<T.FieldInitializerListElements>(value, 'field_initializer_list_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.FieldInitializerList.Config['initializers'];
 }
 
 export const coerceToFieldInitializerList: EmptyForm<
@@ -6072,8 +6284,12 @@ export const coerceToFieldInitializerList: EmptyForm<
 
 export function resolveShorthandFieldInitializer_attributes(
 	value: T.ShorthandFieldInitializer.LooseConfig['attributes']
-): Admit<T.ShorthandFieldInitializer['_attributes']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
+): T.ShorthandFieldInitializer.Config['attributes'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.ShorthandFieldInitializer.Config['attributes'];
 }
 
 export function resolveShorthandFieldInitializer_name(
@@ -6097,8 +6313,12 @@ export const coerceToShorthandFieldInitializer: ConfigSeat<
 
 export function resolveFieldInitializer_attributes(
 	value: T.FieldInitializer.LooseConfig['attributes']
-): Admit<T.FieldInitializer['_attributes']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
+): T.FieldInitializer.Config['attributes'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.FieldInitializer.Config['attributes'];
 }
 
 export function resolveFieldInitializer_name(
@@ -6179,8 +6399,12 @@ export function resolveIfExpression_consequence(
 
 export function resolveIfExpression_alternative(
 	value: T.IfExpression.LooseConfig['alternative']
-): Admit<T.IfExpression['_alternative']> {
-	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
+): T.IfExpression.Config['alternative'] {
+	return hoistRead(
+		_resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true),
+		[storedHop('body', '_body', false)],
+		false
+	) as T.IfExpression.Config['alternative'];
 }
 
 export const coerceToIfExpression: ConfigSeat<T.IfExpression.Loose, ReturnType<typeof F.buildIfExpression>> = (
@@ -6277,8 +6501,12 @@ export function resolveMatchExpression_subject(
 
 export function resolveMatchExpression_body(
 	value: T.MatchExpression.LooseConfig['body']
-): Admit<T.MatchExpression['_body']> {
-	return _resolveOneBranch<T.MatchBlock>(value, 'match_block');
+): T.MatchExpression.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.MatchBlock>(value, 'match_block'),
+		[storedHop('matchBlockArms', '_match_block_arms', false), storedHop('arms', '_arms', true)],
+		true
+	) as T.MatchExpression.Config['body'];
 }
 
 export const coerceToMatchExpression: ConfigSeat<T.MatchExpression.Loose, ReturnType<typeof F.buildMatchExpression>> = (
@@ -6289,7 +6517,7 @@ export const coerceToMatchExpression: ConfigSeat<T.MatchExpression.Loose, Return
 	currentHandle()?.admit(TSKindId.MatchExpression, [input]);
 	return F.buildMatchExpression({
 		subject: resolveMatchExpression_subject(input.subject),
-		body: resolveMatchExpression_body(input.body) ?? F.buildMatchBlock()
+		body: resolveMatchExpression_body(input.body)
 	});
 };
 
@@ -6804,8 +7032,12 @@ export function resolveGenericPattern_name(
 
 export function resolveGenericPattern_typeArguments(
 	value: T.GenericPattern.LooseConfig['typeArguments']
-): Admit<T.GenericPattern['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.GenericPattern.Config['typeArguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeArguments>(value, 'type_arguments'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.GenericPattern.Config['typeArguments'];
 }
 
 export const coerceToGenericPattern: ConfigSeat<T.GenericPattern.Loose, ReturnType<typeof F.buildGenericPattern>> = (
@@ -6822,8 +7054,12 @@ export const coerceToGenericPattern: ConfigSeat<T.GenericPattern.Loose, ReturnTy
 
 export function resolveTuplePattern_elements(
 	value: T.TuplePattern.LooseConfig['elements']
-): Admit<T.TuplePattern['_elements']> {
-	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true);
+): T.TuplePattern.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TuplePattern.Config['elements'];
 }
 
 export const coerceToTuplePattern: EmptyForm<
@@ -6848,8 +7084,12 @@ export const coerceToTuplePattern: EmptyForm<
 
 export function resolveSlicePattern_elements(
 	value: T.SlicePattern.LooseConfig['elements']
-): Admit<T.SlicePattern['_elements']> {
-	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
+): T.SlicePattern.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.SlicePattern.Config['elements'];
 }
 
 export const coerceToSlicePattern: EmptyForm<
@@ -6877,8 +7117,12 @@ export function resolveTupleStructPattern_type(
 
 export function resolveTupleStructPattern_fields(
 	value: T.TupleStructPattern.LooseConfig['fields']
-): Admit<T.TupleStructPattern['_fields']> {
-	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
+): T.TupleStructPattern.Config['fields'] {
+	return hoistRead(
+		_resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TupleStructPattern.Config['fields'];
 }
 
 export const coerceToTupleStructPattern: ConfigSeat<
@@ -6900,8 +7144,12 @@ export function resolveStructPattern_type(value: T.StructPattern.LooseConfig['ty
 
 export function resolveStructPattern_fields(
 	value: T.StructPattern.LooseConfig['fields']
-): Admit<T.StructPattern['_fields']> {
-	return _resolveOneBranch<T.StructPatternElements>(value, 'struct_pattern_elements', undefined, true);
+): T.StructPattern.Config['fields'] {
+	return hoistRead(
+		_resolveOneBranch<T.StructPatternElements>(value, 'struct_pattern_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.StructPattern.Config['fields'];
 }
 
 export const coerceToStructPattern: ConfigSeat<T.StructPattern.Loose, ReturnType<typeof F.buildStructPattern>> = (
@@ -8250,8 +8498,12 @@ export const coerceToStringOpen: ConfigSeat<T.StringOpen.Loose, ReturnType<typeo
 
 export function resolveAttributedElement_attributes(
 	value: T.AttributedElement.LooseConfig['attributes']
-): Admit<T.AttributedElement['_attributes']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item') as Admit<T.AttributedElement['_attributes']>;
+): T.AttributedElement.Config['attributes'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.AttributedElement.Config['attributes'];
 }
 
 export function resolveAttributedElement_expression(
@@ -8900,8 +9152,12 @@ export function resolveClosureExpressionBlock_move(
 
 export function resolveClosureExpressionBlock_parameters(
 	value: T.ClosureExpressionBlock.LooseConfig['parameters'] | undefined
-): Admit<T.ClosureExpressionBlock['_parameters']> {
-	return _resolveOneBranch<T.ClosureParameters>(value, 'closure_parameters');
+): T.ClosureExpressionBlock.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.ClosureParameters>(value, 'closure_parameters'),
+		[storedHop('parameters', '_parameters', true)],
+		true
+	) as T.ClosureExpressionBlock.Config['parameters'];
 }
 
 export function resolveClosureExpressionBlock_returnType(
@@ -8930,7 +9186,7 @@ export const coerceToClosureExpressionBlock: OptionalConfigSeat<
 		static: resolveClosureExpressionBlock_static(input?.static),
 		async: resolveClosureExpressionBlock_async(input?.async),
 		move: resolveClosureExpressionBlock_move(input?.move),
-		parameters: resolveClosureExpressionBlock_parameters(input?.parameters) ?? F.buildClosureParameters(),
+		parameters: resolveClosureExpressionBlock_parameters(input?.parameters),
 		returnType: resolveClosureExpressionBlock_returnType(input?.returnType),
 		body: resolveClosureExpressionBlock_body(input?.body) ?? F.buildBlock()
 	});
@@ -8956,8 +9212,12 @@ export function resolveClosureExpressionExpr_move(
 
 export function resolveClosureExpressionExpr_parameters(
 	value: T.ClosureExpressionExpr.LooseConfig['parameters']
-): Admit<T.ClosureExpressionExpr['_parameters']> {
-	return _resolveOneBranch<T.ClosureParameters>(value, 'closure_parameters');
+): T.ClosureExpressionExpr.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.ClosureParameters>(value, 'closure_parameters'),
+		[storedHop('parameters', '_parameters', true)],
+		true
+	) as T.ClosureExpressionExpr.Config['parameters'];
 }
 
 export function resolveClosureExpressionExpr_body(
@@ -8984,7 +9244,7 @@ export const coerceToClosureExpressionExpr: ConfigSeat<
 		static: resolveClosureExpressionExpr_static(input.static),
 		async: resolveClosureExpressionExpr_async(input.async),
 		move: resolveClosureExpressionExpr_move(input.move),
-		parameters: resolveClosureExpressionExpr_parameters(input.parameters) ?? F.buildClosureParameters(),
+		parameters: resolveClosureExpressionExpr_parameters(input.parameters),
 		body: resolveClosureExpressionExpr_body(input.body)
 	});
 };
@@ -9159,8 +9419,12 @@ export function resolveImplItemBody_unsafe(
 
 export function resolveImplItemBody_typeParameters(
 	value: T.ImplItemBody.LooseConfig['typeParameters']
-): Admit<T.ImplItemBody['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.ImplItemBody.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.ImplItemBody.Config['typeParameters'];
 }
 
 export function resolveImplItemBody_traitClause(
@@ -9187,8 +9451,12 @@ export function resolveImplItemBody_whereClause(
 	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
-export function resolveImplItemBody_body(value: T.ImplItemBody.LooseConfig['body']): Admit<T.ImplItemBody['_body']> {
-	return _resolveOneBranch<T.ExtensionDeclarationBody>(value, 'extension_declaration_body');
+export function resolveImplItemBody_body(value: T.ImplItemBody.LooseConfig['body']): T.ImplItemBody.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.ExtensionDeclarationBody>(value, 'extension_declaration_body'),
+		[storedHop('declarations', '_declarations', true)],
+		true
+	) as T.ImplItemBody.Config['body'];
 }
 
 export const coerceToImplItemBody: ConfigSeat<T.ImplItemBody.Loose, ReturnType<typeof F.buildImplItemBody>> = (
@@ -9203,7 +9471,7 @@ export const coerceToImplItemBody: ConfigSeat<T.ImplItemBody.Loose, ReturnType<t
 		traitClause: resolveImplItemBody_traitClause(input.traitClause),
 		type: resolveImplItemBody_type(input.type),
 		whereClause: resolveImplItemBody_whereClause(input.whereClause),
-		body: resolveImplItemBody_body(input.body) ?? F.buildExtensionDeclarationBody()
+		body: resolveImplItemBody_body(input.body)
 	});
 };
 
@@ -9215,8 +9483,12 @@ export function resolveImplItemSemi_unsafe(
 
 export function resolveImplItemSemi_typeParameters(
 	value: T.ImplItemSemi.LooseConfig['typeParameters']
-): Admit<T.ImplItemSemi['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.ImplItemSemi.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.ImplItemSemi.Config['typeParameters'];
 }
 
 export function resolveImplItemSemi_traitClause(
@@ -9369,8 +9641,12 @@ export const coerceToVisibilityModifierPubScope: ConfigSeat<
 
 export function resolveVisibilityModifierPub_visibilityModifierPubScope(
 	value: T.VisibilityModifierPub.LooseConfig['visibilityModifierPubScope']
-): Admit<T.VisibilityModifierPub['_visibility_modifier_pub_scope']> {
-	return _resolveOneBranch<T.VisibilityModifierPubScope>(value, 'visibility_modifier_pub_scope', undefined, true);
+): T.VisibilityModifierPub.Config['visibilityModifierPubScope'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifierPubScope>(value, 'visibility_modifier_pub_scope', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.VisibilityModifierPub.Config['visibilityModifierPubScope'];
 }
 
 export const coerceToVisibilityModifierPub: OptionalConfigSeat<
@@ -9442,8 +9718,12 @@ export const coerceToFunctionTypeFnForm: Seat<
 
 export function resolveModItemExternal_visibilityModifier(
 	value: T.ModItemExternal.LooseConfig['visibilityModifier']
-): Admit<T.ModItemExternal['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.ModItemExternal.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ModItemExternal.Config['visibilityModifier'];
 }
 
 export function resolveModItemExternal_name(
@@ -9466,16 +9746,24 @@ export const coerceToModItemExternal: ConfigSeat<T.ModItemExternal.Loose, Return
 
 export function resolveModItemInline_visibilityModifier(
 	value: T.ModItemInline.LooseConfig['visibilityModifier']
-): Admit<T.ModItemInline['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.ModItemInline.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ModItemInline.Config['visibilityModifier'];
 }
 
 export function resolveModItemInline_name(value: T.ModItemInline.LooseConfig['name']): Admit<T.ModItemInline['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveModItemInline_body(value: T.ModItemInline.LooseConfig['body']): Admit<T.ModItemInline['_body']> {
-	return _resolveOneBranch<T.DeclarationList>(value, 'declaration_list');
+export function resolveModItemInline_body(value: T.ModItemInline.LooseConfig['body']): T.ModItemInline.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.DeclarationList>(value, 'declaration_list'),
+		[storedHop('declarations', '_declarations', true)],
+		true
+	) as T.ModItemInline.Config['body'];
 }
 
 export const coerceToModItemInline: ConfigSeat<T.ModItemInline.Loose, ReturnType<typeof F.buildModItemInline>> = (
@@ -9487,7 +9775,7 @@ export const coerceToModItemInline: ConfigSeat<T.ModItemInline.Loose, ReturnType
 	return F.buildModItemInline({
 		visibilityModifier: resolveModItemInline_visibilityModifier(input.visibilityModifier),
 		name: resolveModItemInline_name(input.name),
-		body: resolveModItemInline_body(input.body) ?? F.buildDeclarationList()
+		body: resolveModItemInline_body(input.body)
 	});
 };
 
@@ -9759,8 +10047,12 @@ export function resolveForeignModItemSemi_unsafe(
 
 export function resolveForeignModItemSemi_externModifier(
 	value: T.ForeignModItemSemi.LooseConfig['externModifier'] | undefined
-): Admit<T.ForeignModItemSemi['_extern_modifier']> {
-	return _resolveOneBranch<T.ExternModifier>(value, 'extern_modifier');
+): T.ForeignModItemSemi.Config['externModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.ExternModifier>(value, 'extern_modifier'),
+		[storedHop('abi', '_abi', false)],
+		false
+	) as T.ForeignModItemSemi.Config['externModifier'];
 }
 
 export const coerceToForeignModItemSemi: OptionalConfigSeat<
@@ -9772,7 +10064,7 @@ export const coerceToForeignModItemSemi: OptionalConfigSeat<
 	currentHandle()?.admit(TSKindId.ForeignModItemSemi, [input]);
 	return F.buildForeignModItemSemi({
 		unsafe: resolveForeignModItemSemi_unsafe(input?.unsafe),
-		externModifier: resolveForeignModItemSemi_externModifier(input?.externModifier) ?? F.buildExternModifier()
+		externModifier: resolveForeignModItemSemi_externModifier(input?.externModifier)
 	});
 };
 
@@ -9784,14 +10076,22 @@ export function resolveForeignModItemBody_unsafe(
 
 export function resolveForeignModItemBody_externModifier(
 	value: T.ForeignModItemBody.LooseConfig['externModifier'] | undefined
-): Admit<T.ForeignModItemBody['_extern_modifier']> {
-	return _resolveOneBranch<T.ExternModifier>(value, 'extern_modifier');
+): T.ForeignModItemBody.Config['externModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.ExternModifier>(value, 'extern_modifier'),
+		[storedHop('abi', '_abi', false)],
+		false
+	) as T.ForeignModItemBody.Config['externModifier'];
 }
 
 export function resolveForeignModItemBody_body(
 	value: T.ForeignModItemBody.LooseConfig['body'] | undefined
-): Admit<T.ForeignModItemBody['_body']> {
-	return _resolveOneBranch<T.DeclarationList>(value, 'declaration_list');
+): T.ForeignModItemBody.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.DeclarationList>(value, 'declaration_list'),
+		[storedHop('declarations', '_declarations', true)],
+		true
+	) as T.ForeignModItemBody.Config['body'];
 }
 
 export const coerceToForeignModItemBody: OptionalConfigSeat<
@@ -9803,8 +10103,8 @@ export const coerceToForeignModItemBody: OptionalConfigSeat<
 	currentHandle()?.admit(TSKindId.ForeignModItemBody, [input]);
 	return F.buildForeignModItemBody({
 		unsafe: resolveForeignModItemBody_unsafe(input?.unsafe),
-		externModifier: resolveForeignModItemBody_externModifier(input?.externModifier) ?? F.buildExternModifier(),
-		body: resolveForeignModItemBody_body(input?.body) ?? F.buildDeclarationList()
+		externModifier: resolveForeignModItemBody_externModifier(input?.externModifier),
+		body: resolveForeignModItemBody_body(input?.body)
 	});
 };
 
@@ -10290,8 +10590,12 @@ export function resolveMacroDefinitionParen_name(
 
 export function resolveMacroDefinitionParen_macroRules(
 	value: T.MacroDefinitionParen.LooseConfig['macroRules']
-): Admit<T.MacroDefinitionParen['_macro_rules']> {
-	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true);
+): T.MacroDefinitionParen.Config['macroRules'] {
+	return hoistRead(
+		_resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.MacroDefinitionParen.Config['macroRules'];
 }
 
 export const coerceToMacroDefinitionParen: ConfigSeat<
@@ -10315,8 +10619,12 @@ export function resolveMacroDefinitionBracket_name(
 
 export function resolveMacroDefinitionBracket_macroRules(
 	value: T.MacroDefinitionBracket.LooseConfig['macroRules']
-): Admit<T.MacroDefinitionBracket['_macro_rules']> {
-	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true);
+): T.MacroDefinitionBracket.Config['macroRules'] {
+	return hoistRead(
+		_resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.MacroDefinitionBracket.Config['macroRules'];
 }
 
 export const coerceToMacroDefinitionBracket: ConfigSeat<
@@ -10340,8 +10648,12 @@ export function resolveMacroDefinitionBrace_name(
 
 export function resolveMacroDefinitionBrace_macroRules(
 	value: T.MacroDefinitionBrace.LooseConfig['macroRules']
-): Admit<T.MacroDefinitionBrace['_macro_rules']> {
-	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true);
+): T.MacroDefinitionBrace.Config['macroRules'] {
+	return hoistRead(
+		_resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.MacroDefinitionBrace.Config['macroRules'];
 }
 
 export const coerceToMacroDefinitionBrace: ConfigSeat<
@@ -10505,8 +10817,12 @@ export const coerceToRangePatternWithLeft: ConfigSeat<
 
 export function resolveStructItemBrace_visibilityModifier(
 	value: T.StructItemBrace.LooseConfig['visibilityModifier']
-): Admit<T.StructItemBrace['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.StructItemBrace.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.StructItemBrace.Config['visibilityModifier'];
 }
 
 export function resolveStructItemBrace_name(
@@ -10517,8 +10833,12 @@ export function resolveStructItemBrace_name(
 
 export function resolveStructItemBrace_typeParameters(
 	value: T.StructItemBrace.LooseConfig['typeParameters']
-): Admit<T.StructItemBrace['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.StructItemBrace.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.StructItemBrace.Config['typeParameters'];
 }
 
 export function resolveStructItemBrace_whereClause(
@@ -10529,8 +10849,12 @@ export function resolveStructItemBrace_whereClause(
 
 export function resolveStructItemBrace_body(
 	value: T.StructItemBrace.LooseConfig['body']
-): Admit<T.StructItemBrace['_body']> {
-	return _resolveOneBranch<T.FieldDeclarationList>(value, 'field_declaration_list');
+): T.StructItemBrace.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.FieldDeclarationList>(value, 'field_declaration_list'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.StructItemBrace.Config['body'];
 }
 
 export const coerceToStructItemBrace: ConfigSeat<T.StructItemBrace.Loose, ReturnType<typeof F.buildStructItemBrace>> = (
@@ -10544,14 +10868,18 @@ export const coerceToStructItemBrace: ConfigSeat<T.StructItemBrace.Loose, Return
 		name: resolveStructItemBrace_name(input.name),
 		typeParameters: resolveStructItemBrace_typeParameters(input.typeParameters),
 		whereClause: resolveStructItemBrace_whereClause(input.whereClause),
-		body: resolveStructItemBrace_body(input.body) ?? F.buildFieldDeclarationList()
+		body: resolveStructItemBrace_body(input.body)
 	});
 };
 
 export function resolveStructItemTuple_visibilityModifier(
 	value: T.StructItemTuple.LooseConfig['visibilityModifier']
-): Admit<T.StructItemTuple['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.StructItemTuple.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.StructItemTuple.Config['visibilityModifier'];
 }
 
 export function resolveStructItemTuple_name(
@@ -10562,14 +10890,22 @@ export function resolveStructItemTuple_name(
 
 export function resolveStructItemTuple_typeParameters(
 	value: T.StructItemTuple.LooseConfig['typeParameters']
-): Admit<T.StructItemTuple['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.StructItemTuple.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.StructItemTuple.Config['typeParameters'];
 }
 
 export function resolveStructItemTuple_body(
 	value: T.StructItemTuple.LooseConfig['body']
-): Admit<T.StructItemTuple['_body']> {
-	return _resolveOneBranch<T.OrderedFieldDeclarationList>(value, 'ordered_field_declaration_list');
+): T.StructItemTuple.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.OrderedFieldDeclarationList>(value, 'ordered_field_declaration_list'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.StructItemTuple.Config['body'];
 }
 
 export function resolveStructItemTuple_whereClause(
@@ -10588,15 +10924,19 @@ export const coerceToStructItemTuple: ConfigSeat<T.StructItemTuple.Loose, Return
 		visibilityModifier: resolveStructItemTuple_visibilityModifier(input.visibilityModifier),
 		name: resolveStructItemTuple_name(input.name),
 		typeParameters: resolveStructItemTuple_typeParameters(input.typeParameters),
-		body: resolveStructItemTuple_body(input.body) ?? F.buildOrderedFieldDeclarationList(),
+		body: resolveStructItemTuple_body(input.body),
 		whereClause: resolveStructItemTuple_whereClause(input.whereClause)
 	});
 };
 
 export function resolveStructItemUnit_visibilityModifier(
 	value: T.StructItemUnit.LooseConfig['visibilityModifier']
-): Admit<T.StructItemUnit['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.StructItemUnit.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.StructItemUnit.Config['visibilityModifier'];
 }
 
 export function resolveStructItemUnit_name(
@@ -10607,8 +10947,12 @@ export function resolveStructItemUnit_name(
 
 export function resolveStructItemUnit_typeParameters(
 	value: T.StructItemUnit.LooseConfig['typeParameters']
-): Admit<T.StructItemUnit['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.StructItemUnit.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.StructItemUnit.Config['typeParameters'];
 }
 
 export const coerceToStructItemUnit: ConfigSeat<T.StructItemUnit.Loose, ReturnType<typeof F.buildStructItemUnit>> = (
@@ -10630,8 +10974,12 @@ export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): typeo
 
 export function resolveAttributedFieldDeclaration_attributeItems(
 	value: T.AttributedFieldDeclaration.LooseConfig['attributeItems']
-): Admit<T.AttributedFieldDeclaration['_attribute_item']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
+): T.AttributedFieldDeclaration.Config['attributeItems'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.AttributedFieldDeclaration.Config['attributeItems'];
 }
 
 export function resolveAttributedFieldDeclaration_fieldDeclaration(
@@ -10655,8 +11003,12 @@ export const coerceToAttributedFieldDeclaration: ConfigSeat<
 
 export function resolveAttributedEnumVariant_attributeItems(
 	value: T.AttributedEnumVariant.LooseConfig['attributeItems']
-): Admit<T.AttributedEnumVariant['_attribute_item']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
+): T.AttributedEnumVariant.Config['attributeItems'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.AttributedEnumVariant.Config['attributeItems'];
 }
 
 export function resolveAttributedEnumVariant_enumVariant(
@@ -10680,8 +11032,12 @@ export const coerceToAttributedEnumVariant: ConfigSeat<
 
 export function resolveAttributedParameter_attributeItem(
 	value: T.AttributedParameter.LooseConfig['attributeItem']
-): Admit<T.AttributedParameter['_attribute_item']> {
-	return _resolveOneBranch<T.AttributeItem>(value, 'attribute_item', undefined, true);
+): T.AttributedParameter.Config['attributeItem'] {
+	return hoistRead(
+		_resolveOneBranch<T.AttributeItem>(value, 'attribute_item', undefined, true),
+		[storedHop('attribute', '_attribute', false)],
+		false
+	) as T.AttributedParameter.Config['attributeItem'];
 }
 
 export function resolveAttributedParameter_content(
@@ -10712,8 +11068,12 @@ export const coerceToAttributedParameter: ConfigSeat<
 
 export function resolveAttributedTypeParameter_attributeItems(
 	value: T.AttributedTypeParameter.LooseConfig['attributeItems']
-): Admit<T.AttributedTypeParameter['_attribute_item']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
+): T.AttributedTypeParameter.Config['attributeItems'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.AttributedTypeParameter.Config['attributeItems'];
 }
 
 export function resolveAttributedTypeParameter_content(
@@ -10737,8 +11097,12 @@ export const coerceToAttributedTypeParameter: ConfigSeat<
 
 export function resolveArgument_attributeItems(
 	value: T.Argument.LooseConfig['attributeItems']
-): Admit<T.Argument['_attribute_item']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
+): T.Argument.Config['attributeItems'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.Argument.Config['attributeItems'];
 }
 
 export function resolveArgument_expression(
@@ -10763,14 +11127,22 @@ export const coerceToArgument: ConfigSeat<T.Argument.Loose, ReturnType<typeof F.
 
 export function resolveAttributedOrderedField_attributeItems(
 	value: T.AttributedOrderedField.LooseConfig['attributeItems']
-): Admit<T.AttributedOrderedField['_attribute_item']> {
-	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
+): T.AttributedOrderedField.Config['attributeItems'] {
+	return hoistRead(
+		_resolveManyBranch<T.AttributeItem>(value, 'attribute_item'),
+		[storedHop('attribute', '_attribute', false)],
+		true
+	) as T.AttributedOrderedField.Config['attributeItems'];
 }
 
 export function resolveAttributedOrderedField_visibilityModifier(
 	value: T.AttributedOrderedField.LooseConfig['visibilityModifier']
-): Admit<T.AttributedOrderedField['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.AttributedOrderedField.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.AttributedOrderedField.Config['visibilityModifier'];
 }
 
 export function resolveAttributedOrderedField_type(
@@ -10809,8 +11181,12 @@ export function resolveTypeArgument_content(
 
 export function resolveTypeArgument_traitBounds(
 	value: T.TypeArgument.LooseConfig['traitBounds']
-): Admit<T.TypeArgument['_trait_bounds']> {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
+): T.TypeArgument.Config['traitBounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true),
+		[storedHop('bounds', '_bounds', true)],
+		true
+	) as T.TypeArgument.Config['traitBounds'];
 }
 
 export const coerceToTypeArgument: ConfigSeat<T.TypeArgument.Loose, ReturnType<typeof F.buildTypeArgument>> = (
@@ -10879,8 +11255,12 @@ export const coerceToArrayExpressionSemi: ConfigSeat<
 
 export function resolveArrayExpressionList_elements(
 	value: T.ArrayExpressionList.LooseConfig['elements']
-): Admit<T.ArrayExpressionList['_elements']> {
-	return _resolveOneBranch<T.ArrayExpressionListElements>(value, 'array_expression_list_elements', undefined, true);
+): T.ArrayExpressionList.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.ArrayExpressionListElements>(value, 'array_expression_list_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.ArrayExpressionList.Config['elements'];
 }
 
 export const coerceToArrayExpressionList: EmptyForm<
@@ -11065,8 +11445,12 @@ export const coerceToReceiverParameterDeclaration: ConfigSeat<
 
 export function resolveAttributedParameterReceiver_attributeItem(
 	value: T.AttributedParameterReceiver.LooseConfig['attributeItem']
-): Admit<T.AttributedParameterReceiver['_attribute_item']> {
-	return _resolveOneBranch<T.AttributeItem>(value, 'attribute_item', undefined, true);
+): T.AttributedParameterReceiver.Config['attributeItem'] {
+	return hoistRead(
+		_resolveOneBranch<T.AttributeItem>(value, 'attribute_item', undefined, true),
+		[storedHop('attribute', '_attribute', false)],
+		false
+	) as T.AttributedParameterReceiver.Config['attributeItem'];
 }
 
 export function resolveAttributedParameterReceiver_content(
@@ -11122,8 +11506,12 @@ export const coerceToParametersElementsReceiver: ConfigSeat<
 
 export function resolveParametersElementsReceiverGroup_elements(
 	value: T.ParametersElementsReceiverGroup.LooseConfig['elements']
-): Admit<T.ParametersElementsReceiverGroup['_elements']> {
-	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
+): T.ParametersElementsReceiverGroup.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.ParametersElementsReceiverGroup.Config['elements'];
 }
 
 export const coerceToParametersElementsReceiverGroup: Seat<
@@ -11252,8 +11640,12 @@ export const coerceToShorthandFieldIdentifier: ConfigSeat<
 
 export function resolveMethodDeclaration_visibilityModifier(
 	value: T.MethodDeclaration.LooseConfig['visibilityModifier']
-): Admit<T.MethodDeclaration['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.MethodDeclaration.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.MethodDeclaration.Config['visibilityModifier'];
 }
 
 export function resolveMethodDeclaration_functionModifiers(
@@ -11270,14 +11662,22 @@ export function resolveMethodDeclaration_name(
 
 export function resolveMethodDeclaration_typeParameters(
 	value: T.MethodDeclaration.LooseConfig['typeParameters']
-): Admit<T.MethodDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.MethodDeclaration.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.MethodDeclaration.Config['typeParameters'];
 }
 
 export function resolveMethodDeclaration_parameters(
 	value: T.MethodDeclaration.LooseConfig['parameters']
-): Admit<T.MethodDeclaration['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.MethodDeclaration.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false)],
+		false
+	) as T.MethodDeclaration.Config['parameters'];
 }
 
 export function resolveMethodDeclaration_returnType(
@@ -11313,7 +11713,7 @@ export const coerceToMethodDeclaration: ConfigSeat<
 		functionModifiers: resolveMethodDeclaration_functionModifiers(input.functionModifiers),
 		name: resolveMethodDeclaration_name(input.name),
 		typeParameters: resolveMethodDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveMethodDeclaration_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveMethodDeclaration_parameters(input.parameters),
 		returnType: resolveMethodDeclaration_returnType(input.returnType),
 		whereClause: resolveMethodDeclaration_whereClause(input.whereClause),
 		body: resolveMethodDeclaration_body(input.body) ?? F.buildBlock()
@@ -11322,8 +11722,12 @@ export const coerceToMethodDeclaration: ConfigSeat<
 
 export function resolveSignatureMethodDeclaration_visibilityModifier(
 	value: T.SignatureMethodDeclaration.LooseConfig['visibilityModifier']
-): Admit<T.SignatureMethodDeclaration['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+): T.SignatureMethodDeclaration.Config['visibilityModifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.SignatureMethodDeclaration.Config['visibilityModifier'];
 }
 
 export function resolveSignatureMethodDeclaration_functionModifiers(
@@ -11340,14 +11744,22 @@ export function resolveSignatureMethodDeclaration_name(
 
 export function resolveSignatureMethodDeclaration_typeParameters(
 	value: T.SignatureMethodDeclaration.LooseConfig['typeParameters']
-): Admit<T.SignatureMethodDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.SignatureMethodDeclaration.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.SignatureMethodDeclaration.Config['typeParameters'];
 }
 
 export function resolveSignatureMethodDeclaration_parameters(
 	value: T.SignatureMethodDeclaration.LooseConfig['parameters']
-): Admit<T.SignatureMethodDeclaration['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.SignatureMethodDeclaration.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false)],
+		false
+	) as T.SignatureMethodDeclaration.Config['parameters'];
 }
 
 export function resolveSignatureMethodDeclaration_returnType(
@@ -11377,7 +11789,7 @@ export const coerceToSignatureMethodDeclaration: ConfigSeat<
 		functionModifiers: resolveSignatureMethodDeclaration_functionModifiers(input.functionModifiers),
 		name: resolveSignatureMethodDeclaration_name(input.name),
 		typeParameters: resolveSignatureMethodDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveSignatureMethodDeclaration_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveSignatureMethodDeclaration_parameters(input.parameters),
 		returnType: resolveSignatureMethodDeclaration_returnType(input.returnType),
 		whereClause: resolveSignatureMethodDeclaration_whereClause(input.whereClause)
 	});

@@ -1016,7 +1016,8 @@ function hoistedReadType(
 		return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `readonly (${storageElementOf(last)})[]` : slotListTypeOf(last, storageElementOf, 'readonly');
 	}
 	const element = spelledReadType(last) ?? storageElementOf(last);
-	if (listed(slot) || chain.slots.some(listed)) return `readonly ${parenthesizeUnion(element)}[]`;
+	if (listed(slot)) return slotListTypeOf(slot, () => element, 'readonly');
+	if (chain.slots.some(listed)) return `readonly ${parenthesizeUnion(element)}[]`;
 	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${element} | undefined` : element;
 }
 
@@ -1318,8 +1319,12 @@ function emitFieldInputHints(
 	kindEntries: readonly KindEnumEntry[],
 	lookupUnion?: LookupUnion
 ): void {
+	const storageElementOf = (s: AssembledNonterminal): string =>
+		withHoles(s, storageFieldTypeExpr(s, nodeMap, fieldTypeExpr(s, nodeMap, lookupUnion), kindEntries));
 	const hintLines = slots
 		.map((field) => {
+			const chain = wrapperChainFor(nodeMap, kind, field.name);
+			if (chain !== undefined) return `    readonly ${quoteKey(field.name)}${isRequired(field) ? '' : '?'}: ${hoistedReadType(chain, field, nodeMap, storageElementOf)};`;
 			const hintType = fieldInputHintTypeExpr(field, kind, nodeMap, kindEntries);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';

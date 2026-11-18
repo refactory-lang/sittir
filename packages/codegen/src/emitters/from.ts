@@ -23,6 +23,7 @@ import type {
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
 import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
+import { wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import {
 	finalSeatOf,
 	DELIMITER_IMPORT,
@@ -84,7 +85,8 @@ import {
 	leadingOptionsSplit,
 	slotStorageCoercion,
 	splicedEnvelopeKindExprs,
-	storageCallExpr
+	storageCallExpr,
+	storedHoistOf
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refineDefaultOf } from './refine-emit.ts';
@@ -159,7 +161,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, numberRefusal, withEmptyForm, withOptions } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, hoistRead, isNodeOfKind, isNodeValue, listStorage, numberRefusal, storedHop, withEmptyForm, withOptions } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
@@ -346,6 +348,10 @@ function siblingLeadRefusalType(fullForm: FullForm, siblings: readonly TriviaSib
 	return `SiblingLeadRefusal<I, ${JSON.stringify(open)}, ${JSON.stringify(close)}, [${leads.join(', ')}]>`;
 }
 
+function hoistedSlotDefault(slot: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | null {
+	return wrapperChainOfSlot(nodeMap, slot) === undefined ? emptyDefaultOf(slot, nodeMap, kindEntries, 'F.') : null;
+}
+
 function emitBranchFrom(
 	node: FormChildForFrom,
 	nodeMap: NodeMap,
@@ -396,6 +402,16 @@ function emitBranchFrom(
 		// accept the `undefined` that reaches it too, even though the field
 		// itself is required within a config that IS provided.
 		const valueType = `T.${typeName}.LooseConfig[${key}]${inputOptional && isRequired(f) ? ' | undefined' : ''}`;
+		const hoist = storedHoistOf(node, f, f, nodeMap);
+		if (hoist !== undefined) {
+			lines.push(
+				`export function ${fieldResolverName(typeName, f)}(value: ${valueType}): T.${typeName}.Config[${key}] {`,
+				`  return hoistRead(${body}, [${hoist.hops.join(', ')}], ${hoist.list}) as T.${typeName}.Config[${key}];`,
+				'}',
+				''
+			);
+			continue;
+		}
 		const signature = `export function ${fieldResolverName(typeName, f)}(value: ${valueType}): Admit<T.${typeName}[${JSON.stringify(f.storageKey)}]> {`;
 		if (needsNonEmptyHoist(f, nodeMap)) {
 			const storageKeyExpr = JSON.stringify(f.storageKey);
@@ -565,7 +581,7 @@ function emitBranchFrom(
 				kindEntries
 			);
 			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
-			const directDefault = emptyDefaultOf(soleField, nodeMap, kindEntries, 'F.');
+			const directDefault = hoistedSlotDefault(soleField, nodeMap, kindEntries);
 			const guardedCall = directDefault ? `${call} ?? ${directDefault}` : call;
 			body.push(`  return ${factory}(${guardedCall}${callOptions})${spelledType === undefined ? '' : ` as ${spelledType}`};`);
 		} else {
@@ -573,7 +589,7 @@ function emitBranchFrom(
 			const entryOf = (f: AssembledNonterminal): string => {
 				const access = `${cfg}${inputOptional ? '?' : ''}.${f.propertyName}`;
 				const call = fieldValue(f, access);
-				const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
+				const emptyDefault = hoistedSlotDefault(f, nodeMap, kindEntries);
 				return `${f.propertyName}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call}`;
 			};
 			if (pinnedByDefault.size === 0) {

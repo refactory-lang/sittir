@@ -350,15 +350,27 @@ function wrapLookaheadAssertion$with(node: Held, setter: string, args: readonly 
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapLookaheadAssertion(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'lookahead_assertion', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapLookaheadAssertion(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'lookahead_assertion', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`lookahead_assertion has no $with.${setter}`);
@@ -432,15 +444,27 @@ function wrapLookbehindAssertion$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapLookbehindAssertion(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'lookbehind_assertion', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapLookbehindAssertion(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'lookbehind_assertion', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`lookbehind_assertion has no $with.${setter}`);
@@ -715,15 +739,27 @@ function wrapAnonymousCapturingGroup$with(node: Held, setter: string, args: read
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.AnonymousCapturingGroup['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapAnonymousCapturingGroup(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'anonymous_capturing_group', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.AnonymousCapturingGroup['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapAnonymousCapturingGroup(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'anonymous_capturing_group', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`anonymous_capturing_group has no $with.${setter}`);
@@ -807,15 +843,27 @@ function wrapNamedCapturingGroup$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapNamedCapturingGroup(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'named_capturing_group', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapNamedCapturingGroup(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'named_capturing_group', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`named_capturing_group has no $with.${setter}`);
@@ -876,15 +924,27 @@ function wrapNonCapturingGroup$with(node: Held, setter: string, args: readonly u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.NonCapturingGroup['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapNonCapturingGroup(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'non_capturing_group', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.NonCapturingGroup['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapNonCapturingGroup(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'non_capturing_group', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`non_capturing_group has no $with.${setter}`);
@@ -1819,15 +1879,27 @@ function wrapInlineFlagsGroupEnable$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.InlineFlagsGroupEnable['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapInlineFlagsGroupEnable(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_enable', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.InlineFlagsGroupEnable['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapInlineFlagsGroupEnable(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_enable', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_enable has no $with.${setter}`);
@@ -1917,15 +1989,27 @@ function wrapInlineFlagsGroupToggle$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.InlineFlagsGroupToggle['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapInlineFlagsGroupToggle(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_toggle', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.InlineFlagsGroupToggle['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapInlineFlagsGroupToggle(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_toggle', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_toggle has no $with.${setter}`);
@@ -2005,15 +2089,27 @@ function wrapInlineFlagsGroupDisable$with(node: Held, setter: string, args: read
 				)
 			);
 		case 'pattern':
-			return hoistedWith(node, 'pattern', '_pattern', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.InlineFlagsGroupDisable['_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapInlineFlagsGroupDisable(
-							{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_disable', 'pattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.InlineFlagsGroupDisable['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapInlineFlagsGroupDisable(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_disable', 'pattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_disable has no $with.${setter}`);

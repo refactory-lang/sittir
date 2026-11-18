@@ -20,9 +20,11 @@ import {
 	configFieldOr,
 	currentHandle,
 	describeValue,
+	hoistRead,
 	isNodeOfKind,
 	isNodeValue,
 	numberRefusal,
+	storedHop,
 	withEmptyForm
 } from '@sittir/common/utils';
 
@@ -722,8 +724,12 @@ export function resolveLookaheadAssertion_operator(
 
 export function resolveLookaheadAssertion_pattern(
 	value: T.LookaheadAssertion.LooseConfig['pattern']
-): Admit<T.LookaheadAssertion['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern');
+): T.LookaheadAssertion.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.LookaheadAssertion.Config['pattern'];
 }
 
 export const coerceToLookaheadAssertion: ConfigSeat<
@@ -750,8 +756,12 @@ export function resolveLookbehindAssertion_operator(
 
 export function resolveLookbehindAssertion_pattern(
 	value: T.LookbehindAssertion.LooseConfig['pattern']
-): Admit<T.LookbehindAssertion['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern');
+): T.LookbehindAssertion.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.LookbehindAssertion.Config['pattern'];
 }
 
 export const coerceToLookbehindAssertion: ConfigSeat<
@@ -892,8 +902,12 @@ export const coerceToClassCharacter: ConfigSeat<T.ClassCharacter.Loose, ReturnTy
 
 export function resolveAnonymousCapturingGroup_pattern(
 	value: T.AnonymousCapturingGroup.LooseConfig['pattern']
-): Admit<T.AnonymousCapturingGroup['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern');
+): T.AnonymousCapturingGroup.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.AnonymousCapturingGroup.Config['pattern'];
 }
 
 export const coerceToAnonymousCapturingGroup: ConfigSeat<
@@ -927,8 +941,12 @@ export function resolveNamedCapturingGroup_groupName(
 
 export function resolveNamedCapturingGroup_pattern(
 	value: T.NamedCapturingGroup.LooseConfig['pattern']
-): Admit<T.NamedCapturingGroup['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern');
+): T.NamedCapturingGroup.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.NamedCapturingGroup.Config['pattern'];
 }
 
 export const coerceToNamedCapturingGroup: ConfigSeat<
@@ -947,8 +965,12 @@ export const coerceToNamedCapturingGroup: ConfigSeat<
 
 export function resolveNonCapturingGroup_pattern(
 	value: T.NonCapturingGroup.LooseConfig['pattern']
-): Admit<T.NonCapturingGroup['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern');
+): T.NonCapturingGroup.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.NonCapturingGroup.Config['pattern'];
 }
 
 export const coerceToNonCapturingGroup: ConfigSeat<
@@ -1426,8 +1448,12 @@ export function resolveInlineFlagsGroupEnable_enabled(
 
 export function resolveInlineFlagsGroupEnable_pattern(
 	value: T.InlineFlagsGroupEnable.LooseConfig['pattern']
-): Admit<T.InlineFlagsGroupEnable['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true);
+): T.InlineFlagsGroupEnable.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.InlineFlagsGroupEnable.Config['pattern'];
 }
 
 export const coerceToInlineFlagsGroupEnable: ConfigSeat<
@@ -1457,8 +1483,12 @@ export function resolveInlineFlagsGroupToggle_disabled(
 
 export function resolveInlineFlagsGroupToggle_pattern(
 	value: T.InlineFlagsGroupToggle.LooseConfig['pattern']
-): Admit<T.InlineFlagsGroupToggle['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true);
+): T.InlineFlagsGroupToggle.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.InlineFlagsGroupToggle.Config['pattern'];
 }
 
 export const coerceToInlineFlagsGroupToggle: ConfigSeat<
@@ -1483,8 +1513,12 @@ export function resolveInlineFlagsGroupDisable_disabled(
 
 export function resolveInlineFlagsGroupDisable_pattern(
 	value: T.InlineFlagsGroupDisable.LooseConfig['pattern']
-): Admit<T.InlineFlagsGroupDisable['_pattern']> {
-	return _resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true);
+): T.InlineFlagsGroupDisable.Config['pattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.InlineFlagsGroupDisable.Config['pattern'];
 }
 
 export const coerceToInlineFlagsGroupDisable: ConfigSeat<

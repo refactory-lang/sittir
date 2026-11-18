@@ -2935,6 +2935,9 @@ export interface ExportClause {
 	readonly __slotNames__?: {
 		readonly _export_specifiers: 'exportSpecifiers';
 	};
+	readonly __inputHints__?: {
+		readonly export_specifiers?: readonly ExportSpecifier[];
+	};
 	readonly __looseHints__?: {
 		readonly export_specifiers?: readonly ExportSpecifier[];
 	};
@@ -3037,6 +3040,9 @@ export interface NamedImports {
 	readonly __slotNames__?: {
 		readonly _import_specifiers: 'importSpecifiers';
 	};
+	readonly __inputHints__?: {
+		readonly import_specifiers?: readonly ImportSpecifier[];
+	};
 	readonly __looseHints__?: {
 		readonly import_specifiers?: readonly ImportSpecifier[];
 	};
@@ -3060,6 +3066,7 @@ export interface ImportAttribute {
 	};
 	readonly __inputHints__?: {
 		readonly attribute_kind: KindEnum<'with' | 'assert', TSKindId.WithKeyword | TSKindId.AssertKeyword>;
+		readonly object: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | null)[];
 	};
 	readonly __looseHints__?: {
 		readonly object: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
@@ -3216,6 +3223,7 @@ export interface IfStatement {
 	};
 	readonly __inputHints__?: {
 		readonly consequence: KindEnum<';', TSKindId.Semi> | Statement;
+		readonly alternative?: Statement | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Statement[];
@@ -3237,6 +3245,9 @@ export interface SwitchStatement {
 	readonly __slotNames__?: {
 		readonly _value: 'value';
 		readonly _body: 'body';
+	};
+	readonly __inputHints__?: {
+		readonly body: readonly (SwitchCase | SwitchDefault)[];
 	};
 	readonly __looseHints__?: {
 		readonly body: readonly (SwitchCase | SwitchDefault)[];
@@ -3404,6 +3415,9 @@ export interface TryStatement {
 		readonly _body: 'body';
 		readonly _handlers: 'handlers';
 		readonly _finalizer: 'finalizer';
+	};
+	readonly __inputHints__?: {
+		readonly finalizer?: StatementBlock | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly body: readonly Statement[];
@@ -3897,6 +3911,17 @@ export interface Class {
 		readonly _heritage: 'heritage';
 		readonly _body: 'body';
 	};
+	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly heritage?: ClassHeritageExtendsClause | ImplementsClause | undefined;
+		readonly body: readonly ClassBodyMember[];
+	};
 	readonly __looseHints__?: {
 		readonly name?: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
@@ -3945,6 +3970,15 @@ export interface ClassDeclaration {
 		readonly _terminator: 'terminator';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly heritage?: ClassHeritageExtendsClause | ImplementsClause | undefined;
+		readonly body: readonly ClassBodyMember[];
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
 	};
 	readonly __looseHints__?: {
@@ -4010,6 +4044,8 @@ export interface FunctionExpression {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
@@ -4062,6 +4098,8 @@ export interface FunctionDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
 	};
 	readonly __looseHints__?: {
@@ -4115,6 +4153,8 @@ export interface GeneratorFunction {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
@@ -4167,6 +4207,8 @@ export interface GeneratorFunctionDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
 	};
 	readonly __looseHints__?: {
@@ -4259,6 +4301,7 @@ export interface NewExpression {
 					| TSKindId.NullKeyword
 			  >
 			| PrimaryExpression;
+		readonly type_arguments?: readonly Type[];
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
@@ -5021,6 +5064,10 @@ export interface DecoratorCallExpression {
 		readonly _type_arguments: 'typeArguments';
 		readonly _arguments: 'arguments';
 	};
+	readonly __inputHints__?: {
+		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement | null)[];
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
@@ -5266,6 +5313,8 @@ export interface FunctionSignature {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 		readonly terminator: KindEnum<
 			'\n' | ';',
 			TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
@@ -5322,6 +5371,7 @@ export interface TypeAssertion {
 		readonly _expression: 'expression';
 	};
 	readonly __inputHints__?: {
+		readonly type_arguments: NonEmptyArray<Type>;
 		readonly expression:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -5487,6 +5537,7 @@ export interface InstantiationExpression {
 					| TSKindId.NullKeyword
 			  >
 			| Expression;
+		readonly type_arguments: NonEmptyArray<Type>;
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
@@ -5553,6 +5604,7 @@ export interface ExtendsClauseSingle {
 					| TSKindId.NullKeyword
 			  >
 			| Expression;
+		readonly type_arguments?: readonly Type[];
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
@@ -5639,6 +5691,17 @@ export interface AbstractClassDeclaration {
 		readonly _type_parameters: 'typeParameters';
 		readonly _heritage: 'heritage';
 		readonly _body: 'body';
+	};
+	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly heritage?: ClassHeritageExtendsClause | ImplementsClause | undefined;
+		readonly body: readonly ClassBodyMember[];
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
@@ -5763,6 +5826,10 @@ export interface InterfaceDeclaration {
 		readonly _extends_type_clause: 'extendsTypeClause';
 		readonly _body: 'body';
 	};
+	readonly __inputHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly extends_type_clause?: readonly (TypeIdentifier | NestedTypeIdentifier | GenericType)[];
+	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
@@ -5814,6 +5881,7 @@ export interface EnumDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly const?: BaseBooleanKeyword<'const'>;
+		readonly body: readonly EnumBodyElement[];
 	};
 	readonly __looseHints__?: {
 		readonly body: readonly EnumBodyElement[];
@@ -5836,6 +5904,9 @@ export interface EnumBody {
 	readonly _elements?: EnumBodyElements;
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
+	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly EnumBodyElement[];
 	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly EnumBodyElement[];
@@ -5899,6 +5970,7 @@ export interface TypeAliasDeclaration {
 		readonly _terminator: 'terminator';
 	};
 	readonly __inputHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
 		readonly value:
 			| KindEnum<
 					| 'any'
@@ -5970,12 +6042,19 @@ export interface RequiredParameter {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
+		readonly type?: Type | undefined;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -6038,6 +6117,12 @@ export interface OptionalParameter {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
@@ -6045,6 +6130,7 @@ export interface OptionalParameter {
 		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly name: KindEnum<'this', TSKindId.This | TSKindId.ThisKeyword> | Pattern;
+		readonly type?: Type | undefined;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -6296,6 +6382,7 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 		readonly function:
 			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
 			| TypeQueryMemberExpressionInTypeAnnotation;
+		readonly arguments: readonly (Expression | SpreadElement | null)[];
 	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
@@ -6329,6 +6416,9 @@ export interface AssertsAnnotation {
 	readonly __slotNames__?: {
 		readonly _asserts: 'asserts';
 	};
+	readonly __inputHints__?: {
+		readonly asserts: TypePredicate | Identifier | TSKindId.This;
+	};
 	readonly __looseHints__?: {
 		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | 'this')[];
 	};
@@ -6345,6 +6435,9 @@ export interface TupleParameter {
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type: 'type';
+	};
+	readonly __inputHints__?: {
+		readonly type: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
@@ -6364,6 +6457,9 @@ export interface OptionalTupleParameter {
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type: 'type';
+	};
+	readonly __inputHints__?: {
+		readonly type: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
@@ -6474,6 +6570,8 @@ export interface ConstructorType {
 	};
 	readonly __inputHints__?: {
 		readonly abstract?: BaseBooleanKeyword<'abstract'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 		readonly type:
 			| KindEnum<
 					| 'any'
@@ -6779,6 +6877,9 @@ export interface GenericType {
 		readonly _name: 'name';
 		readonly _type_arguments: 'typeArguments';
 	};
+	readonly __inputHints__?: {
+		readonly type_arguments: NonEmptyArray<Type>;
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
 	};
@@ -7038,6 +7139,9 @@ export interface TypeQueryCallExpression {
 	readonly __slotNames__?: {
 		readonly _arguments: 'arguments';
 	};
+	readonly __inputHints__?: {
+		readonly arguments: readonly (Expression | SpreadElement | null)[];
+	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
@@ -7061,6 +7165,7 @@ export interface TypeQueryInstantiationExpression {
 			| Identifier
 			| TypeQueryMemberExpression
 			| TypeQuerySubscriptExpression;
+		readonly type_arguments: NonEmptyArray<Type>;
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
@@ -7460,6 +7565,9 @@ export interface TypeArguments {
 	readonly __slotNames__?: {
 		readonly _types: 'types';
 	};
+	readonly __inputHints__?: {
+		readonly types: NonEmptyArray<Type>;
+	};
 	readonly __looseHints__?: {
 		readonly types: readonly Type[];
 	};
@@ -7491,6 +7599,14 @@ export interface ObjectType {
 	};
 	readonly __inputHints__?: {
 		readonly opening: KindEnum<'{' | '{|', TSKindId.Lbrace | TSKindId.LbracePipe>;
+		readonly members?: readonly (
+			| ExportStatement
+			| PropertySignature
+			| CallSignature
+			| ConstructSignature
+			| IndexSignature
+			| MethodSignature
+		)[];
 		readonly closing: KindEnum<'}' | '|}', TSKindId.Rbrace | TSKindId.PipeRbrace>;
 	};
 	readonly __looseHints__?: {
@@ -7541,6 +7657,10 @@ export interface CallSignature {
 		readonly _type_parameters: 'typeParameters';
 		readonly _parameters: 'parameters';
 		readonly _return_type: 'returnType';
+	};
+	readonly __inputHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
@@ -7593,6 +7713,7 @@ export interface PropertySignature {
 		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly optional?: BaseBooleanKeyword<'?'>;
+		readonly type?: Type | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -7633,6 +7754,9 @@ export interface TypeParameters {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements: NonEmptyArray<TypeParameter>;
+	};
 	readonly __looseHints__?: {
 		readonly elements: readonly TypeParameter[];
 	};
@@ -7666,6 +7790,7 @@ export interface TypeParameter {
 	};
 	readonly __inputHints__?: {
 		readonly const?: BaseBooleanKeyword<'const'>;
+		readonly default?: Type | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
@@ -7787,6 +7912,9 @@ export interface ConstructSignature {
 	};
 	readonly __inputHints__?: {
 		readonly abstract?: BaseBooleanKeyword<'abstract'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
+		readonly type?: Type | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
@@ -7862,6 +7990,9 @@ export interface TupleType {
 	readonly _tuple_type_members?: TupleTypeMembers;
 	readonly __slotNames__?: {
 		readonly _tuple_type_members: 'tupleTypeMembers';
+	};
+	readonly __inputHints__?: {
+		readonly tuple_type_members?: readonly (TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type)[];
 	};
 	readonly __looseHints__?: {
 		readonly tuple_type_members?: readonly (TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type)[];
@@ -8089,6 +8220,8 @@ export interface FunctionType {
 		readonly _return_type: 'returnType';
 	};
 	readonly __inputHints__?: {
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 		readonly return_type:
 			| KindEnum<
 					| 'any'
@@ -8314,6 +8447,9 @@ export interface CatchClauseGroup {
 	readonly __slotNames__?: {
 		readonly _parameter: 'parameter';
 		readonly _type: 'type';
+	};
+	readonly __inputHints__?: {
+		readonly type?: Type | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
@@ -8722,6 +8858,12 @@ export interface ClassBodyMemberMethod {
 		readonly _terminator: 'terminator';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	readonly __slotHints__?: {
@@ -8879,6 +9021,9 @@ export interface ImportStatementClauseFrom {
 		readonly _import_clause: 'importClause';
 		readonly _source: 'source';
 	};
+	readonly __inputHints__?: {
+		readonly import_clause: NamespaceImport | NamedImports | ImportClauseDefaultImport;
+	};
 	readonly __looseHints__?: {
 		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
 	};
@@ -8981,6 +9126,7 @@ export interface ParenthesizedExpressionTyped {
 					| TSKindId.NullKeyword
 			  >
 			| Expression;
+		readonly type?: Type | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
@@ -8998,6 +9144,9 @@ export interface ParenthesizedExpressionSequence {
 	readonly _sequence_expression: SequenceExpression;
 	readonly __slotNames__?: {
 		readonly _sequence_expression: 'sequenceExpression';
+	};
+	readonly __inputHints__?: {
+		readonly sequence_expression: NonEmptyArray<Expression>;
 	};
 	readonly __looseHints__?: {
 		readonly sequence_expression: readonly Expression[];
@@ -9081,6 +9230,8 @@ export interface CallExpressionCall {
 					| TSKindId.ImportKeyword
 			  >
 			| Expression;
+		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement | null)[];
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
@@ -9123,6 +9274,7 @@ export interface CallExpressionTemplateCall {
 			  >
 			| PrimaryExpression
 			| NewExpression;
+		readonly arguments: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
 	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
@@ -9157,6 +9309,8 @@ export interface CallExpressionMember {
 					| TSKindId.NullKeyword
 			  >
 			| PrimaryExpression;
+		readonly type_arguments?: readonly Type[];
+		readonly arguments: readonly (Expression | SpreadElement | null)[];
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
@@ -9282,6 +9436,10 @@ export interface ClassHeritageExtendsClause {
 		readonly _extends_clause: 'extendsClause';
 		readonly _implements_clause: 'implementsClause';
 	};
+	readonly __inputHints__?: {
+		readonly extends_clause: NonEmptyArray<ExtendsClauseSingle>;
+		readonly implements_clause?: readonly Type[];
+	};
 	readonly __looseHints__?: {
 		readonly extends_clause: readonly ExtendsClauseSingle[];
 		readonly implements_clause?: readonly Type[];
@@ -9301,6 +9459,9 @@ export interface ImportClauseDefaultImport {
 	readonly __slotNames__?: {
 		readonly _identifier: 'identifier';
 		readonly _import_clause_group: 'importClauseGroup';
+	};
+	readonly __inputHints__?: {
+		readonly import_clause_group?: NamespaceImport | NamedImports | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
@@ -9356,6 +9517,14 @@ export interface ExportStatementDefaultDeclaration {
 		readonly _decorator: 'decorators';
 		readonly _content: 'content';
 	};
+	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
+	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
 		readonly content: SlotHint<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>;
@@ -9407,6 +9576,9 @@ export interface ExportStatementDefaultFromClauseFrom {
 	readonly __slotNames__?: {
 		readonly _export_clause: 'exportClause';
 		readonly _source: 'source';
+	};
+	readonly __inputHints__?: {
+		readonly export_clause: readonly ExportSpecifier[];
 	};
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
@@ -9480,6 +9652,7 @@ export interface VariableDeclaratorPlain {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
+		readonly type?: Type | undefined;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -9512,6 +9685,9 @@ export interface VariableDeclaratorDefinite {
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type: 'type';
+	};
+	readonly __inputHints__?: {
+		readonly type: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
@@ -9742,6 +9918,12 @@ export interface SetterParameter {
 		readonly _type: 'type';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
@@ -9749,6 +9931,7 @@ export interface SetterParameter {
 		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly pattern: KindEnum<'this', TSKindId.This | TSKindId.ThisKeyword> | LhsExpression;
+		readonly type?: Type | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -9818,6 +10001,8 @@ export interface MethodDefinitionPlain {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly generator?: BaseBooleanKeyword<'*'>;
 		readonly optional?: BaseBooleanKeyword<'?'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -9958,6 +10143,7 @@ export interface MethodDefinitionSetter {
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
 		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly parameters: SetterParameter;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -10031,6 +10217,8 @@ export interface MethodSignaturePlain {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly generator?: BaseBooleanKeyword<'*'>;
 		readonly optional?: BaseBooleanKeyword<'?'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -10158,6 +10346,7 @@ export interface MethodSignatureSetter {
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
 		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly parameters: SetterParameter;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -10219,6 +10408,8 @@ export interface AbstractMethodSignaturePlain {
 		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly generator?: BaseBooleanKeyword<'*'>;
 		readonly optional?: BaseBooleanKeyword<'?'>;
+		readonly type_parameters?: readonly TypeParameter[];
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -10335,6 +10526,7 @@ export interface AbstractMethodSignatureSetter {
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly parameters: SetterParameter;
 	};
 	readonly __looseHints__?: {
 		readonly override?: 'override' | 'override';
@@ -10393,6 +10585,12 @@ export interface PublicFieldDefinitionPlain {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
 		readonly declare?: BaseBooleanKeyword<'declare'>;
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
@@ -10403,6 +10601,7 @@ export interface PublicFieldDefinitionPlain {
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 		readonly optionality?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
+		readonly type?: Type | undefined;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -10485,6 +10684,12 @@ export interface PublicFieldDefinitionAccessor {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
@@ -10492,6 +10697,7 @@ export interface PublicFieldDefinitionAccessor {
 		readonly static?: BaseBooleanKeyword<'static'>;
 		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly type?: Type | undefined;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -10562,6 +10768,7 @@ export interface ConstructorDeclaration {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
+		readonly parameters: FormalParametersElements | FormalParametersElementsReceiver | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly parameters: readonly (FormalParametersElements | FormalParametersElementsReceiver)[];
@@ -10607,12 +10814,19 @@ export interface ReceiverParameterDeclaration {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
+		readonly decorator?: readonly (
+			| Identifier
+			| DecoratorMemberExpression
+			| DecoratorCallExpression
+			| DecoratorParenthesizedExpression
+		)[];
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
+		readonly type?: Type | undefined;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -10687,6 +10901,9 @@ export interface FormalParametersElementsReceiverGroup {
 	readonly _elements?: FormalParametersElements;
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
+	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (RequiredParameter | OptionalParameter)[];
@@ -10784,6 +11001,14 @@ export interface InterfaceBody {
 	};
 	readonly __inputHints__?: {
 		readonly opening: KindEnum<'{' | '{|', TSKindId.Lbrace | TSKindId.LbracePipe>;
+		readonly members?: readonly (
+			| ExportStatement
+			| PropertySignature
+			| CallSignature
+			| ConstructSignature
+			| IndexSignature
+			| MethodSignature
+		)[];
 		readonly closing: KindEnum<'}' | '|}', TSKindId.Rbrace | TSKindId.PipeRbrace>;
 	};
 	readonly __looseHints__?: {

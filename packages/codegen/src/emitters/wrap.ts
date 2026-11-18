@@ -316,7 +316,7 @@ function accessorSlotsOf(node: AuthoredCompound | AssembledList, kindEntries: re
 
 function settersOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], plan: SeatPlan): SetterEntry[] {
 	const own = node instanceof AssembledList ? [...inlineSetters(node, nodeMap, kindEntries), ...listOptionSetters(node, nodeMap, kindEntries)] : inlineSetters(node, nodeMap, kindEntries);
-	return delimitedSetters(node, seatedSetters(withHoists(own, node, nodeMap), plan));
+	return delimitedSetters(node, seatedSetters(withHoists(own, node, nodeMap, kindEntries, 'RAW.'), plan));
 }
 
 function delimitedSetters(node: AuthoredCompound | AssembledList, setters: SetterEntry[]): SetterEntry[] {

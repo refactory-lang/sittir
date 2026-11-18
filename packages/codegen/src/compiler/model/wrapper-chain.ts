@@ -8,6 +8,7 @@ import {
 	AssembledLexedPattern,
 	AssembledList,
 	AssembledPolymorph,
+	isMultiple,
 	isNodeRef,
 	isRequired,
 	kindsOf,
@@ -162,13 +163,51 @@ export function wrapperChainsOf(nodeMap: NodeMap): readonly WrapperChain[] {
 	return out;
 }
 
-const tables = new WeakMap<NodeMap, ReadonlyMap<string, WrapperChain>>();
+interface ChainTables {
+	readonly byHolder: ReadonlyMap<string, WrapperChain>;
+	readonly bySlot: ReadonlyMap<AssembledNonterminal, WrapperChain>;
+}
 
-export function wrapperChainFor(nodeMap: NodeMap, holder: string, slotName: string): WrapperChain | undefined {
+const tables = new WeakMap<NodeMap, ChainTables>();
+
+function chainTablesOf(nodeMap: NodeMap): ChainTables {
 	let table = tables.get(nodeMap);
 	if (table === undefined) {
-		table = new Map(wrapperChainsOf(nodeMap).map((chain) => [`${chain.holder}.${chain.slot}`, chain]));
+		const byHolder = new Map<string, WrapperChain>();
+		const bySlot = new Map<AssembledNonterminal, WrapperChain>();
+		for (const node of nodeMap.nodes.values()) {
+			if (!(node instanceof AbstractAssembledCompound)) continue;
+			for (const slot of realSlots(node)) {
+				const chain = wrapperChainOf(nodeMap, node, slot);
+				if (chain === undefined) continue;
+				byHolder.set(`${chain.holder}.${chain.slot}`, chain);
+				bySlot.set(slot, chain);
+			}
+		}
+		table = { byHolder, bySlot };
 		tables.set(nodeMap, table);
 	}
-	return table.get(`${holder}.${slotName}`);
+	return table;
+}
+
+export function wrapperChainFor(nodeMap: NodeMap, holder: string, slotName: string): WrapperChain | undefined {
+	return chainTablesOf(nodeMap).byHolder.get(`${holder}.${slotName}`);
+}
+
+export function wrapperChainOfSlot(nodeMap: NodeMap, slot: AssembledNonterminal): WrapperChain | undefined {
+	return chainTablesOf(nodeMap).bySlot.get(slot);
+}
+
+export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScope = '', holderOptional = false): string {
+	const builder = (kind: string): string => `${factoryScope}${nodeMap.nodes.get(kind)!.rawFactoryName}`;
+	const last = chain.storage.length - 1;
+	const rest = nodeMap.nodes.get(chain.storage[last]!) instanceof AssembledList || isMultiple(chain.slots[last]!);
+	const filled = chain.storage.slice(0, last).reduceRight((wrapped, kind) => `${builder(kind)}(${wrapped})`, rest ? `(${builder(chain.storage[last]!)} as unknown as (...items: never[]) => never)(...v)` : `${builder(chain.storage[last]!)}(v)`);
+	const arrow = (body: string): string => `(v: ${rest ? 'readonly never[]' : 'never'}) => ${body}`;
+	if (!rest) return arrow(filled);
+	if (holderOptional) return arrow(`v.length === 0 ? undefined : ${filled}`);
+	const optional = chain.slots.findIndex((slot) => !isRequired(slot));
+	if (optional < 0) return arrow(filled);
+	const emptied = chain.storage.slice(0, optional).reduceRight((wrapped, kind) => `${builder(kind)}(${wrapped})`, `${builder(chain.storage[optional]!)}()`);
+	return arrow(`v.length === 0 ? ${emptied} : ${filled}`);
 }

@@ -27,10 +27,12 @@ import {
 	configFieldOr,
 	currentHandle,
 	describeValue,
+	hoistRead,
 	isNodeOfKind,
 	isNodeValue,
 	listStorage,
 	numberRefusal,
+	storedHop,
 	withEmptyForm,
 	withOptions
 } from '@sittir/common/utils';
@@ -2115,8 +2117,12 @@ export const coerceToSimpleStatements: Seat<
 
 export function resolveImportStatement_names(
 	value: T.ImportStatement.LooseConfig['names']
-): Admit<T.ImportStatement['_names']> {
-	return _resolveOneBranch<T.Names>(value, 'names');
+): T.ImportStatement.Config['names'] {
+	return hoistRead(
+		_resolveOneBranch<T.Names>(value, 'names'),
+		[storedHop('names', '_name', true)],
+		true
+	) as T.ImportStatement.Config['names'];
 }
 
 export const coerceToImportStatement: Seat<T.Names.LooseArgs, ReturnType<typeof F.buildImportStatement>> &
@@ -2585,14 +2591,22 @@ export const coerceToElseClause: ConfigSeat<T.ElseClause.Loose, ReturnType<typeo
 
 export function resolveMatchStatement_subject(
 	value: T.MatchStatement.LooseConfig['subject']
-): Admit<T.MatchStatement['_subject']> {
-	return _resolveOneBranch<T.Subjects>(value, 'subjects');
+): T.MatchStatement.Config['subject'] {
+	return hoistRead(
+		_resolveOneBranch<T.Subjects>(value, 'subjects'),
+		[storedHop('elements', '_elements', true)],
+		true
+	) as T.MatchStatement.Config['subject'];
 }
 
 export function resolveMatchStatement_body(
 	value: T.MatchStatement.LooseConfig['body']
-): Admit<T.MatchStatement['_body']> {
-	return _resolveOneBranch<T.MatchBlock>(value, 'match_block');
+): T.MatchStatement.Config['body'] {
+	return hoistRead(
+		_resolveOneBranch<T.MatchBlock>(value, 'match_block'),
+		[storedHop('alternatives', '_alternative', true)],
+		true
+	) as T.MatchStatement.Config['body'];
 }
 
 export const coerceToMatchStatement: ConfigSeat<T.MatchStatement.Loose, ReturnType<typeof F.buildMatchStatement>> = (
@@ -2603,7 +2617,7 @@ export const coerceToMatchStatement: ConfigSeat<T.MatchStatement.Loose, ReturnTy
 	currentHandle()?.admit(TSKindId.MatchStatement, [input]);
 	return F.buildMatchStatement({
 		subject: resolveMatchStatement_subject(input.subject),
-		body: resolveMatchStatement_body(input.body) ?? F.buildMatchBlock()
+		body: resolveMatchStatement_body(input.body)
 	});
 };
 
@@ -2631,8 +2645,12 @@ export function resolveCaseClause_pattern(value: T.CaseClause.LooseConfig['patte
 	return _resolveOne<T.CasePattern | T.CasePatternList>(value, _K0, _K12);
 }
 
-export function resolveCaseClause_guard(value: T.CaseClause.LooseConfig['guard']): Admit<T.CaseClause['_guard']> {
-	return _resolveOneBranch<T.IfClause>(value, 'if_clause', undefined, true);
+export function resolveCaseClause_guard(value: T.CaseClause.LooseConfig['guard']): T.CaseClause.Config['guard'] {
+	return hoistRead(
+		_resolveOneBranch<T.IfClause>(value, 'if_clause', undefined, true),
+		[storedHop('condition', '_condition', false)],
+		false
+	) as T.CaseClause.Config['guard'];
 }
 
 export function resolveCaseClause_body(value: T.CaseClause.LooseConfig['body']): Admit<T.CaseClause['_body']> {
@@ -2672,8 +2690,12 @@ export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body
 
 export function resolveForStatement_alternative(
 	value: T.ForStatement.LooseConfig['alternative']
-): Admit<T.ForStatement['_alternative']> {
-	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
+): T.ForStatement.Config['alternative'] {
+	return hoistRead(
+		_resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true),
+		[storedHop('body', '_body', false)],
+		false
+	) as T.ForStatement.Config['alternative'];
 }
 
 export const coerceToForStatement: ConfigSeat<T.ForStatement.Loose, ReturnType<typeof F.buildForStatement>> = (
@@ -2708,8 +2730,12 @@ export function resolveWhileStatement_body(
 
 export function resolveWhileStatement_alternative(
 	value: T.WhileStatement.LooseConfig['alternative']
-): Admit<T.WhileStatement['_alternative']> {
-	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
+): T.WhileStatement.Config['alternative'] {
+	return hoistRead(
+		_resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true),
+		[storedHop('body', '_body', false)],
+		false
+	) as T.WhileStatement.Config['alternative'];
 }
 
 export const coerceToWhileStatement: ConfigSeat<T.WhileStatement.Loose, ReturnType<typeof F.buildWhileStatement>> = (
@@ -2737,14 +2763,22 @@ export function resolveTryStatement_handlers(
 
 export function resolveTryStatement_alternative(
 	value: T.TryStatement.LooseConfig['alternative']
-): Admit<T.TryStatement['_alternative']> {
-	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
+): T.TryStatement.Config['alternative'] {
+	return hoistRead(
+		_resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true),
+		[storedHop('body', '_body', false)],
+		false
+	) as T.TryStatement.Config['alternative'];
 }
 
 export function resolveTryStatement_finalizer(
 	value: T.TryStatement.LooseConfig['finalizer']
-): Admit<T.TryStatement['_finalizer']> {
-	return _resolveOneBranch<T.FinallyClause>(value, 'finally_clause', undefined, true);
+): T.TryStatement.Config['finalizer'] {
+	return hoistRead(
+		_resolveOneBranch<T.FinallyClause>(value, 'finally_clause', undefined, true),
+		[storedHop('body', '_body', false)],
+		false
+	) as T.TryStatement.Config['finalizer'];
 }
 
 export const coerceToTryStatement: ConfigSeat<T.TryStatement.Loose, ReturnType<typeof F.buildTryStatement>> = (
@@ -2767,8 +2801,12 @@ export function resolveExceptClause_group(value: T.ExceptClause.LooseConfig['gro
 
 export function resolveExceptClause_exception(
 	value: T.ExceptClause.LooseConfig['exception']
-): Admit<T.ExceptClause['_exception']> {
-	return _resolveOneBranch<T.ExceptClauseException>(value, 'except_clause_exception', undefined, true);
+): T.ExceptClause.Config['exception'] {
+	return hoistRead(
+		_resolveOneBranch<T.ExceptClauseException>(value, 'except_clause_exception', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ExceptClause.Config['exception'];
 }
 
 export function resolveExceptClause_body(value: T.ExceptClause.LooseConfig['body']): Admit<T.ExceptClause['_body']> {
@@ -2876,20 +2914,32 @@ export function resolveFunctionDefinition_name(
 
 export function resolveFunctionDefinition_typeParameters(
 	value: T.FunctionDefinition.LooseConfig['typeParameters']
-): Admit<T.FunctionDefinition['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true);
+): T.FunctionDefinition.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true),
+		[storedHop('items', '_items', false), storedHop('items', '_item', true)],
+		true
+	) as T.FunctionDefinition.Config['typeParameters'];
 }
 
 export function resolveFunctionDefinition_parameters(
 	value: T.FunctionDefinition.LooseConfig['parameters']
-): Admit<T.FunctionDefinition['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.FunctionDefinition.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.FunctionDefinition.Config['parameters'];
 }
 
 export function resolveFunctionDefinition_returnType(
 	value: T.FunctionDefinition.LooseConfig['returnType']
-): Admit<T.FunctionDefinition['_return_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
+): T.FunctionDefinition.Config['returnType'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.FunctionDefinition.Config['returnType'];
 }
 
 export function resolveFunctionDefinition_body(
@@ -2909,7 +2959,7 @@ export const coerceToFunctionDefinition: ConfigSeat<
 		async: resolveFunctionDefinition_async(input.async),
 		name: resolveFunctionDefinition_name(input.name),
 		typeParameters: resolveFunctionDefinition_typeParameters(input.typeParameters),
-		parameters: resolveFunctionDefinition_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveFunctionDefinition_parameters(input.parameters),
 		returnType: resolveFunctionDefinition_returnType(input.returnType),
 		body: resolveFunctionDefinition_body(input.body)
 	});
@@ -2917,8 +2967,12 @@ export const coerceToFunctionDefinition: ConfigSeat<
 
 export function resolveParameters_elements(
 	value: T.Parameters.LooseConfig['elements']
-): Admit<T.Parameters['_elements']> {
-	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
+): T.Parameters.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.Parameters.Config['elements'];
 }
 
 export const coerceToParameters: EmptyForm<
@@ -2943,8 +2997,12 @@ export const coerceToParameters: EmptyForm<
 
 export function resolveLambdaParameters_parametersElements(
 	value: T.LambdaParameters.LooseConfig['parametersElements']
-): Admit<T.LambdaParameters['_parameters_elements']> {
-	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements');
+): T.LambdaParameters.Config['parametersElements'] {
+	return hoistRead(
+		_resolveOneBranch<T.ParametersElements>(value, 'parameters_elements'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.LambdaParameters.Config['parametersElements'];
 }
 
 export const coerceToLambdaParameters: Seat<
@@ -3102,14 +3160,22 @@ export function resolveTypeAliasStatement_name(
 
 export function resolveTypeAliasStatement_typeParameters(
 	value: T.TypeAliasStatement.LooseConfig['typeParameters']
-): Admit<T.TypeAliasStatement['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true);
+): T.TypeAliasStatement.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true),
+		[storedHop('items', '_items', false), storedHop('items', '_item', true)],
+		true
+	) as T.TypeAliasStatement.Config['typeParameters'];
 }
 
 export function resolveTypeAliasStatement_value(
 	value: T.TypeAliasStatement.LooseConfig['value']
-): Admit<T.TypeAliasStatement['_value']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.TypeAliasStatement.Config['value'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.TypeAliasStatement.Config['value'];
 }
 
 export const coerceToTypeAliasStatement: ConfigSeat<
@@ -3134,8 +3200,12 @@ export function resolveClassDefinition_name(
 
 export function resolveClassDefinition_typeParameters(
 	value: T.ClassDefinition.LooseConfig['typeParameters']
-): Admit<T.ClassDefinition['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true);
+): T.ClassDefinition.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true),
+		[storedHop('items', '_items', false), storedHop('items', '_item', true)],
+		true
+	) as T.ClassDefinition.Config['typeParameters'];
 }
 
 export function resolveClassDefinition_bases(
@@ -3166,8 +3236,12 @@ export const coerceToClassDefinition: ConfigSeat<T.ClassDefinition.Loose, Return
 
 export function resolveTypeParameter_types(
 	value: T.TypeParameter.LooseConfig['types']
-): Admit<T.TypeParameter['_types']> {
-	return _resolveOneBranch<T.Types>(value, 'types');
+): T.TypeParameter.Config['types'] {
+	return hoistRead(
+		_resolveOneBranch<T.Types>(value, 'types'),
+		[storedHop('items', '_item', true), storedHop('content', '_content', false)],
+		true
+	) as T.TypeParameter.Config['types'];
 }
 
 export const coerceToTypeParameter: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTypeParameter>> &
@@ -3206,8 +3280,12 @@ export const coerceToParenthesizedListSplat: ConfigSeat<
 
 export function resolveArgumentList_arguments(
 	value: T.ArgumentList.LooseConfig['arguments']
-): Admit<T.ArgumentList['_arguments']> {
-	return _resolveOneBranch<T.ArgumentListElements>(value, 'argument_list_elements', undefined, true);
+): T.ArgumentList.Config['arguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.ArgumentListElements>(value, 'argument_list_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.ArgumentList.Config['arguments'];
 }
 
 export const coerceToArgumentList: EmptyForm<
@@ -3234,8 +3312,12 @@ export const coerceToArgumentList: EmptyForm<
 
 export function resolveDecoratedDefinition_decorators(
 	value: T.DecoratedDefinition.LooseConfig['decorators']
-): Admit<T.DecoratedDefinition['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator') as Admit<T.DecoratedDefinition['_decorator']>;
+): T.DecoratedDefinition.Config['decorators'] {
+	return hoistRead(
+		_resolveManyBranch<T.Decorator>(value, 'decorator'),
+		[storedHop('expression', '_expression', false)],
+		true
+	) as T.DecoratedDefinition.Config['decorators'];
 }
 
 export function resolveDecoratedDefinition_definition(
@@ -3518,8 +3600,12 @@ export const coerceToSimplePattern: ConfigSeat<T.SimplePattern.Loose, ReturnType
 
 export function resolveCaseAsPattern_casePattern(
 	value: T.CaseAsPattern.LooseConfig['casePattern']
-): Admit<T.CaseAsPattern['_case_pattern']> {
-	return _resolveOneBranch<T.CasePattern>(value, 'case_pattern');
+): T.CaseAsPattern.Config['casePattern'] {
+	return hoistRead(
+		_resolveOneBranch<T.CasePattern>(value, 'case_pattern'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.CaseAsPattern.Config['casePattern'];
 }
 
 export function resolveCaseAsPattern_identifier(
@@ -3638,8 +3724,12 @@ export const coerceToUnionPattern: ConfigSeat<T.UnionPattern.Loose, ReturnType<t
 
 export function resolveDictPattern_elements(
 	value: T.DictPattern.LooseConfig['elements']
-): Admit<T.DictPattern['_elements']> {
-	return _resolveOneBranch<T.DictPatternElements>(value, 'dict_pattern_elements', undefined, true);
+): T.DictPattern.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.DictPatternElements>(value, 'dict_pattern_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.DictPattern.Config['elements'];
 }
 
 export const coerceToDictPattern: EmptyForm<
@@ -3708,8 +3798,12 @@ export function resolveKeyValuePattern_key(
 
 export function resolveKeyValuePattern_value(
 	value: T.KeyValuePattern.LooseConfig['value']
-): Admit<T.KeyValuePattern['_value']> {
-	return _resolveOneBranch<T.CasePattern>(value, 'case_pattern');
+): T.KeyValuePattern.Config['value'] {
+	return hoistRead(
+		_resolveOneBranch<T.CasePattern>(value, 'case_pattern'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.KeyValuePattern.Config['value'];
 }
 
 export const coerceToKeyValuePattern: ConfigSeat<T.KeyValuePattern.Loose, ReturnType<typeof F.buildKeyValuePattern>> = (
@@ -3792,8 +3886,12 @@ export function resolveClassPattern_type(value: T.ClassPattern.LooseConfig['type
 
 export function resolveClassPattern_fields(
 	value: T.ClassPattern.LooseConfig['fields']
-): Admit<T.ClassPattern['_fields']> {
-	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
+): T.ClassPattern.Config['fields'] {
+	return hoistRead(
+		_resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true),
+		[storedHop('items', '_item', true), storedHop('content', '_content', false)],
+		true
+	) as T.ClassPattern.Config['fields'];
 }
 
 export const coerceToClassPattern: ConfigSeat<T.ClassPattern.Loose, ReturnType<typeof F.buildClassPattern>> = (
@@ -3918,8 +4016,12 @@ export const coerceToPatterns: Seat<T.Patterns.LooseArgs, ReturnType<typeof F.bu
 
 export function resolveTuplePattern_elements(
 	value: T.TuplePattern.LooseConfig['elements']
-): Admit<T.TuplePattern['_elements']> {
-	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true);
+): T.TuplePattern.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TuplePattern.Config['elements'];
 }
 
 export const coerceToTuplePattern: EmptyForm<
@@ -3944,8 +4046,12 @@ export const coerceToTuplePattern: EmptyForm<
 
 export function resolveListPattern_elements(
 	value: T.ListPattern.LooseConfig['elements']
-): Admit<T.ListPattern['_elements']> {
-	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
+): T.ListPattern.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.ListPattern.Config['elements'];
 }
 
 export const coerceToListPattern: EmptyForm<
@@ -4001,8 +4107,12 @@ export function resolveTypedDefaultParameter_name(
 
 export function resolveTypedDefaultParameter_type(
 	value: T.TypedDefaultParameter.LooseConfig['type']
-): Admit<T.TypedDefaultParameter['_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.TypedDefaultParameter.Config['type'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.TypedDefaultParameter.Config['type'];
 }
 
 export function resolveTypedDefaultParameter_default(
@@ -4279,8 +4389,12 @@ export const coerceToComparisonOperator: ConfigSeat<
 	});
 };
 
-export function resolveLambda_parameters(value: T.Lambda.LooseConfig['parameters']): Admit<T.Lambda['_parameters']> {
-	return _resolveOneBranch<T.LambdaParameters>(value, 'lambda_parameters', undefined, true);
+export function resolveLambda_parameters(value: T.Lambda.LooseConfig['parameters']): T.Lambda.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.LambdaParameters>(value, 'lambda_parameters', undefined, true),
+		[storedHop('parametersElements', '_parameters_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.Lambda.Config['parameters'];
 }
 
 export function resolveLambda_body(value: T.Lambda.LooseConfig['body']): Admit<T.Lambda['_body']> {
@@ -4303,8 +4417,12 @@ export const coerceToLambda: ConfigSeat<T.Lambda.Loose, ReturnType<typeof F.buil
 
 export function resolveLambdaWithinForInClause_parameters(
 	value: T.LambdaWithinForInClause.LooseConfig['parameters']
-): Admit<T.LambdaWithinForInClause['_parameters']> {
-	return _resolveOneBranch<T.LambdaParameters>(value, 'lambda_parameters', undefined, true);
+): T.LambdaWithinForInClause.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.LambdaParameters>(value, 'lambda_parameters', undefined, true),
+		[storedHop('parametersElements', '_parameters_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.LambdaWithinForInClause.Config['parameters'];
 }
 
 export function resolveLambdaWithinForInClause_body(
@@ -4476,8 +4594,12 @@ export function resolveSubscript_object(value: T.Subscript.LooseConfig['object']
 	);
 }
 
-export function resolveSubscript_index(value: T.Subscript.LooseConfig['index']): Admit<T.Subscript['_index']> {
-	return _resolveOneBranch<T.Subscripts>(value, 'subscripts');
+export function resolveSubscript_index(value: T.Subscript.LooseConfig['index']): T.Subscript.Config['index'] {
+	return hoistRead(
+		_resolveOneBranch<T.Subscripts>(value, 'subscripts'),
+		[storedHop('elements', '_elements', true)],
+		true
+	) as T.Subscript.Config['index'];
 }
 
 export const coerceToSubscript: ConfigSeat<T.Subscript.Loose, ReturnType<typeof F.buildSubscript>> = (
@@ -4556,8 +4678,12 @@ export function resolveTypedParameter_name(
 
 export function resolveTypedParameter_type(
 	value: T.TypedParameter.LooseConfig['type']
-): Admit<T.TypedParameter['_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.TypedParameter.Config['type'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.TypedParameter.Config['type'];
 }
 
 export const coerceToTypedParameter: ConfigSeat<T.TypedParameter.Loose, ReturnType<typeof F.buildTypedParameter>> = (
@@ -4629,8 +4755,12 @@ export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']
 
 export function resolveGenericType_typeParameter(
 	value: T.GenericType.LooseConfig['typeParameter']
-): Admit<T.GenericType['_type_parameter']> {
-	return _resolveOneBranch<T.TypeParameter>(value, 'type_parameter');
+): T.GenericType.Config['typeParameter'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParameter>(value, 'type_parameter'),
+		[storedHop('types', '_types', false), storedHop('items', '_item', true), storedHop('content', '_content', false)],
+		true
+	) as T.GenericType.Config['typeParameter'];
 }
 
 export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typeof F.buildGenericType>> = (
@@ -4645,12 +4775,20 @@ export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typ
 	});
 };
 
-export function resolveUnionType_left(value: T.UnionType.LooseConfig['left']): Admit<T.UnionType['_left']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+export function resolveUnionType_left(value: T.UnionType.LooseConfig['left']): T.UnionType.Config['left'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.UnionType.Config['left'];
 }
 
-export function resolveUnionType_right(value: T.UnionType.LooseConfig['right']): Admit<T.UnionType['_right']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+export function resolveUnionType_right(value: T.UnionType.LooseConfig['right']): T.UnionType.Config['right'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.UnionType.Config['right'];
 }
 
 export const coerceToUnionType: ConfigSeat<T.UnionType.Loose, ReturnType<typeof F.buildUnionType>> = (
@@ -4666,14 +4804,22 @@ export const coerceToUnionType: ConfigSeat<T.UnionType.Loose, ReturnType<typeof 
 
 export function resolveConstrainedType_baseType(
 	value: T.ConstrainedType.LooseConfig['baseType']
-): Admit<T.ConstrainedType['_base_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.ConstrainedType.Config['baseType'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ConstrainedType.Config['baseType'];
 }
 
 export function resolveConstrainedType_constraint(
 	value: T.ConstrainedType.LooseConfig['constraint']
-): Admit<T.ConstrainedType['_constraint']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.ConstrainedType.Config['constraint'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ConstrainedType.Config['constraint'];
 }
 
 export const coerceToConstrainedType: ConfigSeat<T.ConstrainedType.Loose, ReturnType<typeof F.buildConstrainedType>> = (
@@ -4690,8 +4836,12 @@ export const coerceToConstrainedType: ConfigSeat<T.ConstrainedType.Loose, Return
 
 export function resolveMemberType_qualifier(
 	value: T.MemberType.LooseConfig['qualifier']
-): Admit<T.MemberType['_qualifier']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.MemberType.Config['qualifier'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.MemberType.Config['qualifier'];
 }
 
 export function resolveMemberType_name(value: T.MemberType.LooseConfig['name']): Admit<T.MemberType['_name']> {
@@ -4736,8 +4886,12 @@ export const coerceToKeywordArgument: ConfigSeat<T.KeywordArgument.Loose, Return
 	});
 };
 
-export function resolveList_elements(value: T.List.LooseConfig['elements']): Admit<T.List['_elements']> {
-	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements', undefined, true);
+export function resolveList_elements(value: T.List.LooseConfig['elements']): T.List.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.CollectionElements>(value, 'collection_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.List.Config['elements'];
 }
 
 export const coerceToList: EmptyForm<
@@ -4758,8 +4912,12 @@ export const coerceToList: EmptyForm<
 	);
 });
 
-export function resolveSet_elements(value: T.Set.LooseConfig['elements']): Admit<T.Set['_elements']> {
-	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements');
+export function resolveSet_elements(value: T.Set.LooseConfig['elements']): T.Set.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.CollectionElements>(value, 'collection_elements'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.Set.Config['elements'];
 }
 
 export const coerceToSet: Seat<T.CollectionElements.LooseArgs, ReturnType<typeof F.buildSet>> &
@@ -4775,8 +4933,12 @@ export const coerceToSet: Seat<T.CollectionElements.LooseArgs, ReturnType<typeof
 	);
 };
 
-export function resolveTuple_elements(value: T.Tuple.LooseConfig['elements']): Admit<T.Tuple['_elements']> {
-	return _resolveOneBranch<T.TupleElements>(value, 'tuple_elements', undefined, true);
+export function resolveTuple_elements(value: T.Tuple.LooseConfig['elements']): T.Tuple.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.TupleElements>(value, 'tuple_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.Tuple.Config['elements'];
 }
 
 export const coerceToTuple: EmptyForm<
@@ -4799,8 +4961,12 @@ export const coerceToTuple: EmptyForm<
 
 export function resolveDictionary_elements(
 	value: T.Dictionary.LooseConfig['elements']
-): Admit<T.Dictionary['_elements']> {
-	return _resolveOneBranch<T.DictionaryElements>(value, 'dictionary_elements', undefined, true);
+): T.Dictionary.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.DictionaryElements>(value, 'dictionary_elements', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.Dictionary.Config['elements'];
 }
 
 export const coerceToDictionary: EmptyForm<
@@ -4859,8 +5025,12 @@ export function resolveListComprehension_body(
 
 export function resolveListComprehension_clauses(
 	value: T.ListComprehension.LooseConfig['clauses']
-): Admit<T.ListComprehension['_clauses']> {
-	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
+): T.ListComprehension.Config['clauses'] {
+	return hoistRead(
+		_resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses'),
+		[storedHop('contents', '_content', true)],
+		true
+	) as T.ListComprehension.Config['clauses'];
 }
 
 export const coerceToListComprehension: ConfigSeat<
@@ -4884,8 +5054,12 @@ export function resolveDictionaryComprehension_body(
 
 export function resolveDictionaryComprehension_clauses(
 	value: T.DictionaryComprehension.LooseConfig['clauses']
-): Admit<T.DictionaryComprehension['_clauses']> {
-	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
+): T.DictionaryComprehension.Config['clauses'] {
+	return hoistRead(
+		_resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses'),
+		[storedHop('contents', '_content', true)],
+		true
+	) as T.DictionaryComprehension.Config['clauses'];
 }
 
 export const coerceToDictionaryComprehension: ConfigSeat<
@@ -4912,8 +5086,12 @@ export function resolveSetComprehension_body(
 
 export function resolveSetComprehension_clauses(
 	value: T.SetComprehension.LooseConfig['clauses']
-): Admit<T.SetComprehension['_clauses']> {
-	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
+): T.SetComprehension.Config['clauses'] {
+	return hoistRead(
+		_resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses'),
+		[storedHop('contents', '_content', true)],
+		true
+	) as T.SetComprehension.Config['clauses'];
 }
 
 export const coerceToSetComprehension: ConfigSeat<
@@ -4940,8 +5118,12 @@ export function resolveGeneratorExpression_body(
 
 export function resolveGeneratorExpression_clauses(
 	value: T.GeneratorExpression.LooseConfig['clauses']
-): Admit<T.GeneratorExpression['_clauses']> {
-	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
+): T.GeneratorExpression.Config['clauses'] {
+	return hoistRead(
+		_resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses'),
+		[storedHop('contents', '_content', true)],
+		true
+	) as T.GeneratorExpression.Config['clauses'];
 }
 
 export const coerceToGeneratorExpression: ConfigSeat<
@@ -5845,8 +6027,12 @@ export const coerceToFormatSpecifierText: ConfigSeat<
 	return F.buildFormatSpecifierText(input as Parameters<typeof F.buildFormatSpecifierText>[0]);
 };
 
-export function resolveTypeParams_items(value: T.TypeParams.LooseConfig['items']): Admit<T.TypeParams['_items']> {
-	return _resolveOneBranch<T.TypeParamsItems>(value, 'type_params_items');
+export function resolveTypeParams_items(value: T.TypeParams.LooseConfig['items']): T.TypeParams.Config['items'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParamsItems>(value, 'type_params_items'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.TypeParams.Config['items'];
 }
 
 export const coerceToTypeParams: Seat<T.TypeParamsItems.LooseArgs, ReturnType<typeof F.buildTypeParams>> &
@@ -6051,8 +6237,12 @@ export const coerceToExceptClauseExceptionAs: ConfigSeat<
 
 export function resolveCaseTuplePattern_elements(
 	value: T.CaseTuplePattern.LooseConfig['elements']
-): Admit<T.CaseTuplePattern['_elements']> {
-	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
+): T.CaseTuplePattern.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true),
+		[storedHop('items', '_item', true), storedHop('content', '_content', false)],
+		true
+	) as T.CaseTuplePattern.Config['elements'];
 }
 
 export const coerceToCaseTuplePattern: EmptyForm<
@@ -6079,8 +6269,12 @@ export const coerceToCaseTuplePattern: EmptyForm<
 
 export function resolveCaseListPattern_elements(
 	value: T.CaseListPattern.LooseConfig['elements']
-): Admit<T.CaseListPattern['_elements']> {
-	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
+): T.CaseListPattern.Config['elements'] {
+	return hoistRead(
+		_resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true),
+		[storedHop('items', '_item', true), storedHop('content', '_content', false)],
+		true
+	) as T.CaseListPattern.Config['elements'];
 }
 
 export const coerceToCaseListPattern: EmptyForm<
@@ -6256,14 +6450,22 @@ export const coerceToPrintChevronArguments: Seat<
 
 export function resolvePrintStatementChevron_chevron(
 	value: T.PrintStatementChevron.LooseConfig['chevron']
-): Admit<T.PrintStatementChevron['_chevron']> {
-	return _resolveOneBranch<T.Chevron>(value, 'chevron');
+): T.PrintStatementChevron.Config['chevron'] {
+	return hoistRead(
+		_resolveOneBranch<T.Chevron>(value, 'chevron'),
+		[storedHop('expression', '_expression', false)],
+		false
+	) as T.PrintStatementChevron.Config['chevron'];
 }
 
 export function resolvePrintStatementChevron_arguments(
 	value: T.PrintStatementChevron.LooseConfig['arguments']
-): Admit<T.PrintStatementChevron['_arguments']> {
-	return _resolveOneBranch<T.PrintChevronArguments>(value, 'print_chevron_arguments', undefined, true);
+): T.PrintStatementChevron.Config['arguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.PrintChevronArguments>(value, 'print_chevron_arguments', undefined, true),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.PrintStatementChevron.Config['arguments'];
 }
 
 export const coerceToPrintStatementChevron: ConfigSeat<
@@ -6281,8 +6483,12 @@ export const coerceToPrintStatementChevron: ConfigSeat<
 
 export function resolvePrintStatementPlain_arguments(
 	value: T.PrintStatementPlain.LooseConfig['arguments']
-): Admit<T.PrintStatementPlain['_arguments']> {
-	return _resolveOneBranch<T.PrintArguments>(value, 'print_arguments');
+): T.PrintStatementPlain.Config['arguments'] {
+	return hoistRead(
+		_resolveOneBranch<T.PrintArguments>(value, 'print_arguments'),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.PrintStatementPlain.Config['arguments'];
 }
 
 export const coerceToPrintStatementPlain: Seat<
@@ -7517,8 +7723,12 @@ export const coerceToExceptClauseException: ConfigSeat<
 
 export function resolveParenthesizedImportList_importList(
 	value: T.ParenthesizedImportList.LooseConfig['importList']
-): Admit<T.ParenthesizedImportList['_import_list']> {
-	return _resolveOneBranch<T.ImportList>(value, 'import_list');
+): T.ParenthesizedImportList.Config['importList'] {
+	return hoistRead(
+		_resolveOneBranch<T.ImportList>(value, 'import_list'),
+		[storedHop('names', '_name', true)],
+		true
+	) as T.ParenthesizedImportList.Config['importList'];
 }
 
 export const coerceToParenthesizedImportList: Seat<
@@ -7654,8 +7864,12 @@ export function resolveAssignmentType_name(
 
 export function resolveAssignmentType_type(
 	value: T.AssignmentType.LooseConfig['type']
-): Admit<T.AssignmentType['_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.AssignmentType.Config['type'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.AssignmentType.Config['type'];
 }
 
 export const coerceToAssignmentType: ConfigSeat<T.AssignmentType.Loose, ReturnType<typeof F.buildAssignmentType>> = (
@@ -7678,8 +7892,12 @@ export function resolveAssignmentTyped_name(
 
 export function resolveAssignmentTyped_type(
 	value: T.AssignmentTyped.LooseConfig['type']
-): Admit<T.AssignmentTyped['_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type');
+): T.AssignmentTyped.Config['type'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type'),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.AssignmentTyped.Config['type'];
 }
 
 export function resolveAssignmentTyped_value(
@@ -7807,8 +8025,12 @@ export const coerceToWithClauseBare: Seat<T.WithClauseBare.LooseArgs, ReturnType
 
 export function resolveWithClauseParen_items(
 	value: T.WithClauseParen.LooseConfig['items']
-): Admit<T.WithClauseParen['_items']> {
-	return _resolveOneBranch<T.WithClauseWithItems>(value, 'with_clause_with_items');
+): T.WithClauseParen.Config['items'] {
+	return hoistRead(
+		_resolveOneBranch<T.WithClauseWithItems>(value, 'with_clause_with_items'),
+		[storedHop('items', '_item', true), storedHop('value', '_value', false)],
+		true
+	) as T.WithClauseParen.Config['items'];
 }
 
 export const coerceToWithClauseParen: Seat<T.WithClauseWithItems.LooseArgs, ReturnType<typeof F.buildWithClauseParen>> &
@@ -7832,10 +8054,12 @@ export const coerceToWithClauseParen: Seat<T.WithClauseWithItems.LooseArgs, Retu
 
 export function resolveSuiteInline_statements(
 	value: T.SuiteInline.LooseConfig['statements']
-): Admit<T.SuiteInline['_statements']> {
-	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements', [
-		TSKindId.SimpleStatements
-	]);
+): T.SuiteInline.Config['statements'] {
+	return hoistRead(
+		_resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements', [TSKindId.SimpleStatements]),
+		[storedHop('items', '_item', true)],
+		true
+	) as T.SuiteInline.Config['statements'];
 }
 
 export const coerceToSuiteInline: Seat<T.SimpleStatementsElements.LooseArgs, ReturnType<typeof F.buildSuiteInline>> &
@@ -7859,8 +8083,12 @@ export const coerceToSuiteInline: Seat<T.SimpleStatementsElements.LooseArgs, Ret
 
 export function resolveSuiteBlock_block(
 	value: T.SuiteBlock.LooseConfig['block'] | undefined
-): Admit<T.SuiteBlock['_block']> {
-	return _resolveOneBranch<T.Block>(value, 'block');
+): T.SuiteBlock.Config['block'] {
+	return hoistRead(
+		_resolveOneBranch<T.Block>(value, 'block'),
+		[storedHop('statements', '_statements', true)],
+		true
+	) as T.SuiteBlock.Config['block'];
 }
 
 export const coerceToSuiteBlock: Seat<T.Block.LooseArgs, ReturnType<typeof F.buildSuiteBlock>> &
@@ -7875,7 +8103,7 @@ export const coerceToSuiteBlock: Seat<T.Block.LooseArgs, ReturnType<typeof F.bui
 		_resolveOneBranch<T.Block>(
 			configFieldOr(input, 'block', () => input, TSKindId.SuiteBlock),
 			'block'
-		) ?? F.buildBlock()
+		)
 	);
 };
 
@@ -7992,8 +8220,12 @@ export function resolveTypeParamTypeVar_name(
 
 export function resolveTypeParamTypeVar_bounds(
 	value: T.TypeParamTypeVar.LooseConfig['bounds']
-): Admit<T.TypeParamTypeVar['_bounds']> {
-	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
+): T.TypeParamTypeVar.Config['bounds'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.TypeParamTypeVar.Config['bounds'];
 }
 
 export const coerceToTypeParamTypeVar: ConfigSeat<
@@ -8114,20 +8346,32 @@ export function resolveConstructorDeclaration_async(
 
 export function resolveConstructorDeclaration_typeParameters(
 	value: T.ConstructorDeclaration.LooseConfig['typeParameters']
-): Admit<T.ConstructorDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true);
+): T.ConstructorDeclaration.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true),
+		[storedHop('items', '_items', false), storedHop('items', '_item', true)],
+		true
+	) as T.ConstructorDeclaration.Config['typeParameters'];
 }
 
 export function resolveConstructorDeclaration_parameters(
 	value: T.ConstructorDeclaration.LooseConfig['parameters']
-): Admit<T.ConstructorDeclaration['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.ConstructorDeclaration.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.ConstructorDeclaration.Config['parameters'];
 }
 
 export function resolveConstructorDeclaration_returnType(
 	value: T.ConstructorDeclaration.LooseConfig['returnType']
-): Admit<T.ConstructorDeclaration['_return_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
+): T.ConstructorDeclaration.Config['returnType'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.ConstructorDeclaration.Config['returnType'];
 }
 
 export function resolveConstructorDeclaration_body(
@@ -8146,7 +8390,7 @@ export const coerceToConstructorDeclaration: ConfigSeat<
 	return F.buildConstructorDeclaration({
 		async: resolveConstructorDeclaration_async(input.async),
 		typeParameters: resolveConstructorDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveConstructorDeclaration_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveConstructorDeclaration_parameters(input.parameters),
 		returnType: resolveConstructorDeclaration_returnType(input.returnType),
 		body: resolveConstructorDeclaration_body(input.body)
 	});
@@ -8176,8 +8420,12 @@ export const coerceToBlockClassDeclaration: Seat<
 
 export function resolveSuiteBlockClassDeclaration_blockClassDeclaration(
 	value: T.SuiteBlockClassDeclaration.LooseConfig['blockClassDeclaration'] | undefined
-): Admit<T.SuiteBlockClassDeclaration['_block_class_declaration']> {
-	return _resolveOneBranch<T.BlockClassDeclaration>(value, 'block_class_declaration');
+): T.SuiteBlockClassDeclaration.Config['blockClassDeclaration'] {
+	return hoistRead(
+		_resolveOneBranch<T.BlockClassDeclaration>(value, 'block_class_declaration'),
+		[storedHop('statements', '_statements', true)],
+		true
+	) as T.SuiteBlockClassDeclaration.Config['blockClassDeclaration'];
 }
 
 export const coerceToSuiteBlockClassDeclaration: Seat<
@@ -8198,16 +8446,18 @@ export const coerceToSuiteBlockClassDeclaration: Seat<
 		_resolveOneBranch<T.BlockClassDeclaration>(
 			configFieldOr(input, 'blockClassDeclaration', () => input, TSKindId.SuiteBlockClassDeclaration),
 			'block_class_declaration'
-		) ?? F.buildBlockClassDeclaration()
+		)
 	);
 };
 
 export function resolveDecoratedDefinitionClassDeclaration_decorators(
 	value: T.DecoratedDefinitionClassDeclaration.LooseConfig['decorators']
-): Admit<T.DecoratedDefinitionClassDeclaration['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator') as Admit<
-		T.DecoratedDefinitionClassDeclaration['_decorator']
-	>;
+): T.DecoratedDefinitionClassDeclaration.Config['decorators'] {
+	return hoistRead(
+		_resolveManyBranch<T.Decorator>(value, 'decorator'),
+		[storedHop('expression', '_expression', false)],
+		true
+	) as T.DecoratedDefinitionClassDeclaration.Config['decorators'];
 }
 
 export function resolveDecoratedDefinitionClassDeclaration_definition(
@@ -8343,20 +8593,32 @@ export function resolveMethodDeclaration_name(
 
 export function resolveMethodDeclaration_typeParameters(
 	value: T.MethodDeclaration.LooseConfig['typeParameters']
-): Admit<T.MethodDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true);
+): T.MethodDeclaration.Config['typeParameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.TypeParams>(value, 'type_params', undefined, true),
+		[storedHop('items', '_items', false), storedHop('items', '_item', true)],
+		true
+	) as T.MethodDeclaration.Config['typeParameters'];
 }
 
 export function resolveMethodDeclaration_parameters(
 	value: T.MethodDeclaration.LooseConfig['parameters']
-): Admit<T.MethodDeclaration['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+): T.MethodDeclaration.Config['parameters'] {
+	return hoistRead(
+		_resolveOneBranch<T.Parameters>(value, 'parameters'),
+		[storedHop('elements', '_elements', false), storedHop('items', '_item', true)],
+		true
+	) as T.MethodDeclaration.Config['parameters'];
 }
 
 export function resolveMethodDeclaration_returnType(
 	value: T.MethodDeclaration.LooseConfig['returnType']
-): Admit<T.MethodDeclaration['_return_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
+): T.MethodDeclaration.Config['returnType'] {
+	return hoistRead(
+		_resolveOneBranch<T.Type>(value, 'type', undefined, true),
+		[storedHop('content', '_content', false)],
+		false
+	) as T.MethodDeclaration.Config['returnType'];
 }
 
 export function resolveMethodDeclaration_body(
@@ -8376,7 +8638,7 @@ export const coerceToMethodDeclaration: ConfigSeat<
 		async: resolveMethodDeclaration_async(input.async),
 		name: resolveMethodDeclaration_name(input.name),
 		typeParameters: resolveMethodDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveMethodDeclaration_parameters(input.parameters) ?? F.buildParameters(),
+		parameters: resolveMethodDeclaration_parameters(input.parameters),
 		returnType: resolveMethodDeclaration_returnType(input.returnType),
 		body: resolveMethodDeclaration_body(input.body)
 	});

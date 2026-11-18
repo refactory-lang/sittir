@@ -353,20 +353,34 @@ function wrapImportStatement$with(node: Held, setter: string, args: readonly unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'names':
-			return hoistedWith(node, 'names', '_names', 'names', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Names as const, optional: false, make: RAW.buildNames },
-							(v: NonNullable<T.ImportStatement['_names']>) =>
-								wrapImportStatement(
-									{ ...$edited(data), _names: admitSlot(handle, 'import_statement', 'names', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'names',
+				'_names',
+				'names',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Names as const, optional: false, make: RAW.buildNames },
+								(v: NonNullable<T.ImportStatement['_names']>) =>
+									wrapImportStatement(
+										{ ...$edited(data), _names: admitSlot(handle, 'import_statement', 'names', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildNames as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.Names
 			);
 	}
 	throw new Error(`import_statement has no $with.${setter}`);
@@ -1401,28 +1415,59 @@ function wrapMatchStatement$with(node: Held, setter: string, args: readonly unkn
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'subject':
-			return hoistedWith(node, 'subject', '_subject', 'elements', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Subjects as const, optional: false, make: RAW.buildSubjects },
-							(v: NonNullable<T.MatchStatement['_subject']>) =>
-								wrapMatchStatement(
-									{ ...$edited(data), _subject: admitSlot(handle, 'match_statement', 'subject', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'subject',
+				'_subject',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Subjects as const, optional: false, make: RAW.buildSubjects },
+								(v: NonNullable<T.MatchStatement['_subject']>) =>
+									wrapMatchStatement(
+										{ ...$edited(data), _subject: admitSlot(handle, 'match_statement', 'subject', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildSubjects as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.Subjects
 			);
 		case 'body':
-			return hoistedWith(node, 'body', '_body', 'alternatives', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.MatchStatement['_body']>) =>
-					rebuilt(node, handle, () =>
-						wrapMatchStatement({ ...$edited(data), _body: admitSlot(handle, 'match_statement', 'body', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'body',
+				'_body',
+				'alternatives',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.MatchStatement['_body']>) =>
+						rebuilt(node, handle, () =>
+							wrapMatchStatement({ ...$edited(data), _body: admitSlot(handle, 'match_statement', 'body', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? RAW.buildMatchBlock()
+							: (RAW.buildMatchBlock as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.MatchBlock
 			);
 	}
 	throw new Error(`match_statement has no $with.${setter}`);
@@ -1553,12 +1598,24 @@ function wrapCaseClause$with(node: Held, setter: string, args: readonly unknown[
 				)
 			);
 		case 'guard':
-			return hoistedWith(node, 'guard', '_guard', 'condition', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.CaseClause['_guard']>) =>
-					rebuilt(node, handle, () =>
-						wrapCaseClause({ ...$edited(data), _guard: admitSlot(handle, 'case_clause', 'guard', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'guard',
+				'_guard',
+				'condition',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.CaseClause['_guard']>) =>
+						rebuilt(node, handle, () =>
+							wrapCaseClause({ ...$edited(data), _guard: admitSlot(handle, 'case_clause', 'guard', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildIfClause(v))(v as never)),
+				TSKindId.IfClause
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.CaseClause['_body']>) =>
@@ -1668,15 +1725,27 @@ function wrapForStatement$with(node: Held, setter: string, args: readonly unknow
 				)
 			);
 		case 'alternative':
-			return hoistedWith(node, 'alternative', '_alternative', 'body', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.ForStatement['_alternative']>) =>
-					rebuilt(node, handle, () =>
-						wrapForStatement(
-							{ ...$edited(data), _alternative: admitSlot(handle, 'for_statement', 'alternative', v) },
-							tree
+			return hoistedWith(
+				node,
+				'alternative',
+				'_alternative',
+				'body',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.ForStatement['_alternative']>) =>
+						rebuilt(node, handle, () =>
+							wrapForStatement(
+								{ ...$edited(data), _alternative: admitSlot(handle, 'for_statement', 'alternative', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				TSKindId.ElseClause
 			);
 	}
 	throw new Error(`for_statement has no $with.${setter}`);
@@ -1769,15 +1838,27 @@ function wrapWhileStatement$with(node: Held, setter: string, args: readonly unkn
 				)
 			);
 		case 'alternative':
-			return hoistedWith(node, 'alternative', '_alternative', 'body', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.WhileStatement['_alternative']>) =>
-					rebuilt(node, handle, () =>
-						wrapWhileStatement(
-							{ ...$edited(data), _alternative: admitSlot(handle, 'while_statement', 'alternative', v) },
-							tree
+			return hoistedWith(
+				node,
+				'alternative',
+				'_alternative',
+				'body',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.WhileStatement['_alternative']>) =>
+						rebuilt(node, handle, () =>
+							wrapWhileStatement(
+								{ ...$edited(data), _alternative: admitSlot(handle, 'while_statement', 'alternative', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				TSKindId.ElseClause
 			);
 	}
 	throw new Error(`while_statement has no $with.${setter}`);
@@ -1876,23 +1957,50 @@ function wrapTryStatement$with(node: Held, setter: string, args: readonly unknow
 				)
 			);
 		case 'alternative':
-			return hoistedWith(node, 'alternative', '_alternative', 'body', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.TryStatement['_alternative']>) =>
-					rebuilt(node, handle, () =>
-						wrapTryStatement(
-							{ ...$edited(data), _alternative: admitSlot(handle, 'try_statement', 'alternative', v) },
-							tree
+			return hoistedWith(
+				node,
+				'alternative',
+				'_alternative',
+				'body',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.TryStatement['_alternative']>) =>
+						rebuilt(node, handle, () =>
+							wrapTryStatement(
+								{ ...$edited(data), _alternative: admitSlot(handle, 'try_statement', 'alternative', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				TSKindId.ElseClause
 			);
 		case 'finalizer':
-			return hoistedWith(node, 'finalizer', '_finalizer', 'body', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.TryStatement['_finalizer']>) =>
-					rebuilt(node, handle, () =>
-						wrapTryStatement({ ...$edited(data), _finalizer: admitSlot(handle, 'try_statement', 'finalizer', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'finalizer',
+				'_finalizer',
+				'body',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.TryStatement['_finalizer']>) =>
+						rebuilt(node, handle, () =>
+							wrapTryStatement(
+								{ ...$edited(data), _finalizer: admitSlot(handle, 'try_statement', 'finalizer', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildFinallyClause(v))(v as never)),
+				TSKindId.FinallyClause
 			);
 	}
 	throw new Error(`try_statement has no $with.${setter}`);
@@ -1978,12 +2086,27 @@ function wrapExceptClause$with(node: Held, setter: string, args: readonly unknow
 				)
 			);
 		case 'exception':
-			return hoistedWith(node, 'exception', '_exception', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.ExceptClause['_exception']>) =>
-					rebuilt(node, handle, () =>
-						wrapExceptClause({ ...$edited(data), _exception: admitSlot(handle, 'except_clause', 'exception', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'exception',
+				'_exception',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.ExceptClause['_exception']>) =>
+						rebuilt(node, handle, () =>
+							wrapExceptClause(
+								{ ...$edited(data), _exception: admitSlot(handle, 'except_clause', 'exception', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildExceptClauseException(v))(v as never)),
+				TSKindId.ExceptClauseException
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.ExceptClause['_body']>) =>
@@ -2279,47 +2402,98 @@ function wrapFunctionDefinition$with(node: Held, setter: string, args: readonly 
 				)
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
-							(v: NonNullable<T.FunctionDefinition['_type_parameters']>) =>
-								wrapFunctionDefinition(
-									{ ...$edited(data), _type_parameters: admitSlot(handle, 'function_definition', 'typeParameters', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
+								(v: NonNullable<T.FunctionDefinition['_type_parameters']>) =>
+									wrapFunctionDefinition(
+										{
+											...$edited(data),
+											_type_parameters: admitSlot(handle, 'function_definition', 'typeParameters', v)
+										},
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: RAW.buildTypeParams((RAW.buildTypeParamsItems as unknown as (...items: never[]) => never)(...v)))(args)
+				],
+				TSKindId.TypeParams
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
-							(v: NonNullable<T.FunctionDefinition['_parameters']>) =>
-								wrapFunctionDefinition(
-									{ ...$edited(data), _parameters: admitSlot(handle, 'function_definition', 'parameters', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+								(v: NonNullable<T.FunctionDefinition['_parameters']>) =>
+									wrapFunctionDefinition(
+										{ ...$edited(data), _parameters: admitSlot(handle, 'function_definition', 'parameters', v) },
+										tree
+									)
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? RAW.buildParameters()
+							: RAW.buildParameters((RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v)))(
+						args
 					)
-				)
+				],
+				TSKindId.Parameters
 			);
 		case 'returnType':
-			return hoistedWith(node, 'returnType', '_return_type', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.FunctionDefinition['_return_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapFunctionDefinition(
-							{ ...$edited(data), _return_type: admitSlot(handle, 'function_definition', 'returnType', v) },
-							tree
+			return hoistedWith(
+				node,
+				'returnType',
+				'_return_type',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.FunctionDefinition['_return_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapFunctionDefinition(
+								{ ...$edited(data), _return_type: admitSlot(handle, 'function_definition', 'returnType', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.FunctionDefinition['_body']>) =>
@@ -2447,17 +2621,34 @@ function wrapParameters$with(node: Held, setter: string, args: readonly unknown[
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.ParametersElements as const, optional: true, make: RAW.buildParametersElements },
-							(v: NonNullable<T.Parameters['_elements']>) =>
-								wrapParameters({ ...$edited(data), _elements: admitSlot(handle, 'parameters', 'elements', v) }, tree)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ParametersElements as const, optional: true, make: RAW.buildParametersElements },
+								(v: NonNullable<T.Parameters['_elements']>) =>
+									wrapParameters({ ...$edited(data), _elements: admitSlot(handle, 'parameters', 'elements', v) }, tree)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.ParametersElements
 			);
 	}
 	throw new Error(`parameters has no $with.${setter}`);
@@ -2579,7 +2770,14 @@ function wrapLambdaParameters$with(node: Held, setter: string, args: readonly un
 									)
 							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v))(
+						args
 					)
+				],
+				TSKindId.ParametersElements
 			);
 	}
 	throw new Error(`lambda_parameters has no $with.${setter}`);
@@ -2919,34 +3117,63 @@ function wrapTypeAliasStatement$with(node: Held, setter: string, args: readonly 
 				)
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
-							(v: NonNullable<T.TypeAliasStatement['_type_parameters']>) =>
-								wrapTypeAliasStatement(
-									{
-										...$edited(data),
-										_type_parameters: admitSlot(handle, 'type_alias_statement', 'typeParameters', v)
-									},
-									tree
-								)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
+								(v: NonNullable<T.TypeAliasStatement['_type_parameters']>) =>
+									wrapTypeAliasStatement(
+										{
+											...$edited(data),
+											_type_parameters: admitSlot(handle, 'type_alias_statement', 'typeParameters', v)
+										},
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: RAW.buildTypeParams((RAW.buildTypeParamsItems as unknown as (...items: never[]) => never)(...v)))(args)
+				],
+				TSKindId.TypeParams
 			);
 		case 'value':
-			return hoistedWith(node, 'value', '_value', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.TypeAliasStatement['_value']>) =>
-					rebuilt(node, handle, () =>
-						wrapTypeAliasStatement(
-							{ ...$edited(data), _value: admitSlot(handle, 'type_alias_statement', 'value', v) },
-							tree
+			return hoistedWith(
+				node,
+				'value',
+				'_value',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.TypeAliasStatement['_value']>) =>
+						rebuilt(node, handle, () =>
+							wrapTypeAliasStatement(
+								{ ...$edited(data), _value: admitSlot(handle, 'type_alias_statement', 'value', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 	}
 	throw new Error(`type_alias_statement has no $with.${setter}`);
@@ -3036,20 +3263,37 @@ function wrapClassDefinition$with(node: Held, setter: string, args: readonly unk
 				)
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
-							(v: NonNullable<T.ClassDefinition['_type_parameters']>) =>
-								wrapClassDefinition(
-									{ ...$edited(data), _type_parameters: admitSlot(handle, 'class_definition', 'typeParameters', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
+								(v: NonNullable<T.ClassDefinition['_type_parameters']>) =>
+									wrapClassDefinition(
+										{ ...$edited(data), _type_parameters: admitSlot(handle, 'class_definition', 'typeParameters', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: RAW.buildTypeParams((RAW.buildTypeParamsItems as unknown as (...items: never[]) => never)(...v)))(args)
+				],
+				TSKindId.TypeParams
 			);
 		case 'bases':
 			return applySetter(args, (...args: unknown[]) =>
@@ -3177,17 +3421,29 @@ function wrapTypeParameter$with(node: Held, setter: string, args: readonly unkno
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'types':
-			return hoistedWith(node, 'types', '_types', 'items', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
-							(v: NonNullable<T.TypeParameter['_types']>) =>
-								wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
+			return hoistedWith(
+				node,
+				'types',
+				'_types',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
+								(v: NonNullable<T.TypeParameter['_types']>) =>
+									wrapTypeParameter({ ...$edited(data), _types: admitSlot(handle, 'type_parameter', 'types', v) }, tree)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypes(RAW.buildType(v)))(v as never)),
+				TSKindId.Types
 			);
 	}
 	throw new Error(`type_parameter has no $with.${setter}`);
@@ -3337,20 +3593,37 @@ function wrapArgumentList$with(node: Held, setter: string, args: readonly unknow
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'arguments':
-			return hoistedWith(node, 'arguments', '_arguments', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.ArgumentListElements as const, optional: true, make: RAW.buildArgumentListElements },
-							(v: NonNullable<T.ArgumentList['_arguments']>) =>
-								wrapArgumentList(
-									{ ...$edited(data), _arguments: admitSlot(handle, 'argument_list', 'arguments', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ArgumentListElements as const, optional: true, make: RAW.buildArgumentListElements },
+								(v: NonNullable<T.ArgumentList['_arguments']>) =>
+									wrapArgumentList(
+										{ ...$edited(data), _arguments: admitSlot(handle, 'argument_list', 'arguments', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildArgumentListElements as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.ArgumentListElements
 			);
 	}
 	throw new Error(`argument_list has no $with.${setter}`);
@@ -3850,15 +4123,27 @@ function wrapCaseAsPattern$with(node: Held, setter: string, args: readonly unkno
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'casePattern':
-			return hoistedWith(node, 'casePattern', '_case_pattern', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
-					rebuilt(node, handle, () =>
-						wrapCaseAsPattern(
-							{ ...$edited(data), _case_pattern: admitSlot(handle, 'case_as_pattern', 'casePattern', v) },
-							tree
+			return hoistedWith(
+				node,
+				'casePattern',
+				'_case_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapCaseAsPattern(
+								{ ...$edited(data), _case_pattern: admitSlot(handle, 'case_as_pattern', 'casePattern', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				TSKindId.CasePattern
 			);
 		case 'identifier':
 			return applySetter(args, (v: NonNullable<T.CaseAsPattern['_identifier']>) =>
@@ -4082,17 +4367,37 @@ function wrapDictPattern$with(node: Held, setter: string, args: readonly unknown
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.DictPatternElements as const, optional: true, make: RAW.buildDictPatternElements },
-							(v: NonNullable<T.DictPattern['_elements']>) =>
-								wrapDictPattern({ ...$edited(data), _elements: admitSlot(handle, 'dict_pattern', 'elements', v) }, tree)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.DictPatternElements as const, optional: true, make: RAW.buildDictPatternElements },
+								(v: NonNullable<T.DictPattern['_elements']>) =>
+									wrapDictPattern(
+										{ ...$edited(data), _elements: admitSlot(handle, 'dict_pattern', 'elements', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildDictPatternElements as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.DictPatternElements
 			);
 	}
 	throw new Error(`dict_pattern has no $with.${setter}`);
@@ -4185,12 +4490,27 @@ function wrapKeyValuePattern$with(node: Held, setter: string, args: readonly unk
 				)
 			);
 		case 'value':
-			return hoistedWith(node, 'value', '_value', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.KeyValuePattern['_value']>) =>
-					rebuilt(node, handle, () =>
-						wrapKeyValuePattern({ ...$edited(data), _value: admitSlot(handle, 'key_value_pattern', 'value', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'value',
+				'_value',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.KeyValuePattern['_value']>) =>
+						rebuilt(node, handle, () =>
+							wrapKeyValuePattern(
+								{ ...$edited(data), _value: admitSlot(handle, 'key_value_pattern', 'value', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				TSKindId.CasePattern
 			);
 	}
 	throw new Error(`key_value_pattern has no $with.${setter}`);
@@ -4346,21 +4666,34 @@ function wrapClassPattern$with(node: Held, setter: string, args: readonly unknow
 				)
 			);
 		case 'fields':
-			return hoistedWith(node, 'fields', '_fields', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.ListPatternCasePatterns as const,
-								optional: true,
-								make: RAW.buildListPatternCasePatterns
-							},
-							(v: NonNullable<T.ClassPattern['_fields']>) =>
-								wrapClassPattern({ ...$edited(data), _fields: admitSlot(handle, 'class_pattern', 'fields', v) }, tree)
+			return hoistedWith(
+				node,
+				'fields',
+				'_fields',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.ListPatternCasePatterns as const,
+									optional: true,
+									make: RAW.buildListPatternCasePatterns
+								},
+								(v: NonNullable<T.ClassPattern['_fields']>) =>
+									wrapClassPattern({ ...$edited(data), _fields: admitSlot(handle, 'class_pattern', 'fields', v) }, tree)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildListPatternCasePatterns(RAW.buildCasePattern(v)))(v as never)),
+				TSKindId.ListPatternCasePatterns
 			);
 	}
 	throw new Error(`class_pattern has no $with.${setter}`);
@@ -4737,20 +5070,37 @@ function wrapTuplePattern$with(node: Held, setter: string, args: readonly unknow
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
-							(v: NonNullable<T.TuplePattern['_elements']>) =>
-								wrapTuplePattern(
-									{ ...$edited(data), _elements: admitSlot(handle, 'tuple_pattern', 'elements', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
+								(v: NonNullable<T.TuplePattern['_elements']>) =>
+									wrapTuplePattern(
+										{ ...$edited(data), _elements: admitSlot(handle, 'tuple_pattern', 'elements', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildTuplePatternElements as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.TuplePatternElements
 			);
 	}
 	throw new Error(`tuple_pattern has no $with.${setter}`);
@@ -4847,17 +5197,35 @@ function wrapListPattern$with(node: Held, setter: string, args: readonly unknown
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-							(v: NonNullable<T.ListPattern['_elements']>) =>
-								wrapListPattern({ ...$edited(data), _elements: admitSlot(handle, 'list_pattern', 'elements', v) }, tree)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
+								(v: NonNullable<T.ListPattern['_elements']>) =>
+									wrapListPattern(
+										{ ...$edited(data), _elements: admitSlot(handle, 'list_pattern', 'elements', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0 ? undefined : (RAW.buildPatterns as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.Patterns
 			);
 	}
 	throw new Error(`list_pattern has no $with.${setter}`);
@@ -4997,15 +5365,27 @@ function wrapTypedDefaultParameter$with(node: Held, setter: string, args: readon
 				)
 			);
 		case 'type':
-			return hoistedWith(node, 'type', '_type', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.TypedDefaultParameter['_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapTypedDefaultParameter(
-							{ ...$edited(data), _type: admitSlot(handle, 'typed_default_parameter', 'type', v) },
-							tree
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.TypedDefaultParameter['_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapTypedDefaultParameter(
+								{ ...$edited(data), _type: admitSlot(handle, 'typed_default_parameter', 'type', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'default':
 			return applySetter(args, (v: NonNullable<T.TypedDefaultParameter['_default']>) =>
@@ -5589,7 +5969,17 @@ function wrapLambda$with(node: Held, setter: string, args: readonly unknown[]): 
 									wrapLambda({ ...$edited(data), _parameters: admitSlot(handle, 'lambda', 'parameters', v) }, tree)
 							)
 						)
-					)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: RAW.buildLambdaParameters(
+									(RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v)
+								))(args)
+				],
+				TSKindId.LambdaParameters
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.Lambda['_body']>) =>
@@ -5691,7 +6081,17 @@ function wrapLambdaWithinForInClause$with(node: Held, setter: string, args: read
 									)
 							)
 						)
-					)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: RAW.buildLambdaParameters(
+									(RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v)
+								))(args)
+				],
+				TSKindId.LambdaParameters
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.LambdaWithinForInClause['_body']>) =>
@@ -6045,17 +6445,31 @@ function wrapSubscript$with(node: Held, setter: string, args: readonly unknown[]
 				)
 			);
 		case 'index':
-			return hoistedWith(node, 'index', '_index', 'elements', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Subscripts as const, optional: false, make: RAW.buildSubscripts },
-							(v: NonNullable<T.Subscript['_index']>) =>
-								wrapSubscript({ ...$edited(data), _index: admitSlot(handle, 'subscript', 'index', v) }, tree)
+			return hoistedWith(
+				node,
+				'index',
+				'_index',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Subscripts as const, optional: false, make: RAW.buildSubscripts },
+								(v: NonNullable<T.Subscript['_index']>) =>
+									wrapSubscript({ ...$edited(data), _index: admitSlot(handle, 'subscript', 'index', v) }, tree)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildSubscripts as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.Subscripts
 			);
 	}
 	throw new Error(`subscript has no $with.${setter}`);
@@ -6273,12 +6687,24 @@ function wrapTypedParameter$with(node: Held, setter: string, args: readonly unkn
 				)
 			);
 		case 'type':
-			return hoistedWith(node, 'type', '_type', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.TypedParameter['_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapTypedParameter({ ...$edited(data), _type: admitSlot(handle, 'typed_parameter', 'type', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.TypedParameter['_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapTypedParameter({ ...$edited(data), _type: admitSlot(handle, 'typed_parameter', 'type', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 	}
 	throw new Error(`typed_parameter has no $with.${setter}`);
@@ -6447,20 +6873,33 @@ function wrapGenericType$with(node: Held, setter: string, args: readonly unknown
 				)
 			);
 		case 'typeParameter':
-			return hoistedWith(node, 'typeParameter', '_type_parameter', 'types', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TypeParameter as const, optional: false, make: RAW.buildTypeParameter },
-							(v: NonNullable<T.GenericType['_type_parameter']>) =>
-								wrapGenericType(
-									{ ...$edited(data), _type_parameter: admitSlot(handle, 'generic_type', 'typeParameter', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'typeParameter',
+				'_type_parameter',
+				'types',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameter as const, optional: false, make: RAW.buildTypeParameter },
+								(v: NonNullable<T.GenericType['_type_parameter']>) =>
+									wrapGenericType(
+										{ ...$edited(data), _type_parameter: admitSlot(handle, 'generic_type', 'typeParameter', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildTypeParameter(RAW.buildTypes(RAW.buildType(v))))(v as never)),
+				TSKindId.TypeParameter
 			);
 	}
 	throw new Error(`generic_type has no $with.${setter}`);
@@ -6533,20 +6972,44 @@ function wrapUnionType$with(node: Held, setter: string, args: readonly unknown[]
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'left':
-			return hoistedWith(node, 'left', '_left', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.UnionType['_left']>) =>
-					rebuilt(node, handle, () =>
-						wrapUnionType({ ...$edited(data), _left: admitSlot(handle, 'union_type', 'left', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'left',
+				'_left',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.UnionType['_left']>) =>
+						rebuilt(node, handle, () =>
+							wrapUnionType({ ...$edited(data), _left: admitSlot(handle, 'union_type', 'left', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'right':
-			return hoistedWith(node, 'right', '_right', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.UnionType['_right']>) =>
-					rebuilt(node, handle, () =>
-						wrapUnionType({ ...$edited(data), _right: admitSlot(handle, 'union_type', 'right', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'right',
+				'_right',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.UnionType['_right']>) =>
+						rebuilt(node, handle, () =>
+							wrapUnionType({ ...$edited(data), _right: admitSlot(handle, 'union_type', 'right', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 	}
 	throw new Error(`union_type has no $with.${setter}`);
@@ -6628,26 +7091,50 @@ function wrapConstrainedType$with(node: Held, setter: string, args: readonly unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'baseType':
-			return hoistedWith(node, 'baseType', '_base_type', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.ConstrainedType['_base_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapConstrainedType(
-							{ ...$edited(data), _base_type: admitSlot(handle, 'constrained_type', 'baseType', v) },
-							tree
+			return hoistedWith(
+				node,
+				'baseType',
+				'_base_type',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.ConstrainedType['_base_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapConstrainedType(
+								{ ...$edited(data), _base_type: admitSlot(handle, 'constrained_type', 'baseType', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'constraint':
-			return hoistedWith(node, 'constraint', '_constraint', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.ConstrainedType['_constraint']>) =>
-					rebuilt(node, handle, () =>
-						wrapConstrainedType(
-							{ ...$edited(data), _constraint: admitSlot(handle, 'constrained_type', 'constraint', v) },
-							tree
+			return hoistedWith(
+				node,
+				'constraint',
+				'_constraint',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.ConstrainedType['_constraint']>) =>
+						rebuilt(node, handle, () =>
+							wrapConstrainedType(
+								{ ...$edited(data), _constraint: admitSlot(handle, 'constrained_type', 'constraint', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 	}
 	throw new Error(`constrained_type has no $with.${setter}`);
@@ -6715,12 +7202,24 @@ function wrapMemberType$with(node: Held, setter: string, args: readonly unknown[
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'qualifier':
-			return hoistedWith(node, 'qualifier', '_qualifier', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.MemberType['_qualifier']>) =>
-					rebuilt(node, handle, () =>
-						wrapMemberType({ ...$edited(data), _qualifier: admitSlot(handle, 'member_type', 'qualifier', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'qualifier',
+				'_qualifier',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.MemberType['_qualifier']>) =>
+						rebuilt(node, handle, () =>
+							wrapMemberType({ ...$edited(data), _qualifier: admitSlot(handle, 'member_type', 'qualifier', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'name':
 			return applySetter(args, (v: NonNullable<T.MemberType['_name']>) =>
@@ -6883,17 +7382,34 @@ function wrapList$with(node: Held, setter: string, args: readonly unknown[]): un
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.CollectionElements as const, optional: true, make: RAW.buildCollectionElements },
-							(v: NonNullable<T.List['_elements']>) =>
-								wrapList({ ...$edited(data), _elements: admitSlot(handle, 'list', 'elements', v) }, tree)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.CollectionElements as const, optional: true, make: RAW.buildCollectionElements },
+								(v: NonNullable<T.List['_elements']>) =>
+									wrapList({ ...$edited(data), _elements: admitSlot(handle, 'list', 'elements', v) }, tree)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildCollectionElements as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.CollectionElements
 			);
 	}
 	throw new Error(`list has no $with.${setter}`);
@@ -6990,17 +7506,33 @@ function wrapSet$with(node: Held, setter: string, args: readonly unknown[]): unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.CollectionElements as const, optional: false, make: RAW.buildCollectionElements },
-							(v: NonNullable<T.Set['_elements']>) =>
-								wrapSet({ ...$edited(data), _elements: admitSlot(handle, 'set', 'elements', v) }, tree)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.CollectionElements as const, optional: false, make: RAW.buildCollectionElements },
+								(v: NonNullable<T.Set['_elements']>) =>
+									wrapSet({ ...$edited(data), _elements: admitSlot(handle, 'set', 'elements', v) }, tree)
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildCollectionElements as unknown as (...items: never[]) => never)(...v))(
+						args
 					)
-				)
+				],
+				TSKindId.CollectionElements
 			);
 	}
 	throw new Error(`set has no $with.${setter}`);
@@ -7097,17 +7629,34 @@ function wrapTuple$with(node: Held, setter: string, args: readonly unknown[]): u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TupleElements as const, optional: true, make: RAW.buildTupleElements },
-							(v: NonNullable<T.Tuple['_elements']>) =>
-								wrapTuple({ ...$edited(data), _elements: admitSlot(handle, 'tuple', 'elements', v) }, tree)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TupleElements as const, optional: true, make: RAW.buildTupleElements },
+								(v: NonNullable<T.Tuple['_elements']>) =>
+									wrapTuple({ ...$edited(data), _elements: admitSlot(handle, 'tuple', 'elements', v) }, tree)
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0 ? undefined : (RAW.buildTupleElements as unknown as (...items: never[]) => never)(...v))(
+						args
 					)
-				)
+				],
+				TSKindId.TupleElements
 			);
 	}
 	throw new Error(`tuple has no $with.${setter}`);
@@ -7204,17 +7753,34 @@ function wrapDictionary$with(node: Held, setter: string, args: readonly unknown[
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.DictionaryElements as const, optional: true, make: RAW.buildDictionaryElements },
-							(v: NonNullable<T.Dictionary['_elements']>) =>
-								wrapDictionary({ ...$edited(data), _elements: admitSlot(handle, 'dictionary', 'elements', v) }, tree)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.DictionaryElements as const, optional: true, make: RAW.buildDictionaryElements },
+								(v: NonNullable<T.Dictionary['_elements']>) =>
+									wrapDictionary({ ...$edited(data), _elements: admitSlot(handle, 'dictionary', 'elements', v) }, tree)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildDictionaryElements as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.DictionaryElements
 			);
 	}
 	throw new Error(`dictionary has no $with.${setter}`);
@@ -7331,15 +7897,31 @@ function wrapListComprehension$with(node: Held, setter: string, args: readonly u
 				)
 			);
 		case 'clauses':
-			return hoistedWith(node, 'clauses', '_clauses', 'contents', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.ListComprehension['_clauses']>) =>
-					rebuilt(node, handle, () =>
-						wrapListComprehension(
-							{ ...$edited(data), _clauses: admitSlot(handle, 'list_comprehension', 'clauses', v) },
-							tree
+			return hoistedWith(
+				node,
+				'clauses',
+				'_clauses',
+				'contents',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.ListComprehension['_clauses']>) =>
+						rebuilt(node, handle, () =>
+							wrapListComprehension(
+								{ ...$edited(data), _clauses: admitSlot(handle, 'list_comprehension', 'clauses', v) },
+								tree
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildComprehensionClauses as unknown as (...items: never[]) => never)(...v))(
+						args
 					)
-				)
+				],
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`list_comprehension has no $with.${setter}`);
@@ -7416,15 +7998,31 @@ function wrapDictionaryComprehension$with(node: Held, setter: string, args: read
 				)
 			);
 		case 'clauses':
-			return hoistedWith(node, 'clauses', '_clauses', 'contents', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
-					rebuilt(node, handle, () =>
-						wrapDictionaryComprehension(
-							{ ...$edited(data), _clauses: admitSlot(handle, 'dictionary_comprehension', 'clauses', v) },
-							tree
+			return hoistedWith(
+				node,
+				'clauses',
+				'_clauses',
+				'contents',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
+						rebuilt(node, handle, () =>
+							wrapDictionaryComprehension(
+								{ ...$edited(data), _clauses: admitSlot(handle, 'dictionary_comprehension', 'clauses', v) },
+								tree
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildComprehensionClauses as unknown as (...items: never[]) => never)(...v))(
+						args
 					)
-				)
+				],
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`dictionary_comprehension has no $with.${setter}`);
@@ -7491,15 +8089,31 @@ function wrapSetComprehension$with(node: Held, setter: string, args: readonly un
 				)
 			);
 		case 'clauses':
-			return hoistedWith(node, 'clauses', '_clauses', 'contents', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.SetComprehension['_clauses']>) =>
-					rebuilt(node, handle, () =>
-						wrapSetComprehension(
-							{ ...$edited(data), _clauses: admitSlot(handle, 'set_comprehension', 'clauses', v) },
-							tree
+			return hoistedWith(
+				node,
+				'clauses',
+				'_clauses',
+				'contents',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.SetComprehension['_clauses']>) =>
+						rebuilt(node, handle, () =>
+							wrapSetComprehension(
+								{ ...$edited(data), _clauses: admitSlot(handle, 'set_comprehension', 'clauses', v) },
+								tree
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildComprehensionClauses as unknown as (...items: never[]) => never)(...v))(
+						args
 					)
-				)
+				],
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`set_comprehension has no $with.${setter}`);
@@ -7573,15 +8187,31 @@ function wrapGeneratorExpression$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'clauses':
-			return hoistedWith(node, 'clauses', '_clauses', 'contents', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
-					rebuilt(node, handle, () =>
-						wrapGeneratorExpression(
-							{ ...$edited(data), _clauses: admitSlot(handle, 'generator_expression', 'clauses', v) },
-							tree
+			return hoistedWith(
+				node,
+				'clauses',
+				'_clauses',
+				'contents',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
+						rebuilt(node, handle, () =>
+							wrapGeneratorExpression(
+								{ ...$edited(data), _clauses: admitSlot(handle, 'generator_expression', 'clauses', v) },
+								tree
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildComprehensionClauses as unknown as (...items: never[]) => never)(...v))(
+						args
 					)
-				)
+				],
+				TSKindId.ComprehensionClauses
 			);
 	}
 	throw new Error(`generator_expression has no $with.${setter}`);
@@ -9456,17 +10086,31 @@ function wrapTypeParams$with(node: Held, setter: string, args: readonly unknown[
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return hoistedWith(node, 'items', '_items', 'items', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TypeParamsItems as const, optional: false, make: RAW.buildTypeParamsItems },
-							(v: NonNullable<T.TypeParams['_items']>) =>
-								wrapTypeParams({ ...$edited(data), _items: admitSlot(handle, 'type_params', 'items', v) }, tree)
+			return hoistedWith(
+				node,
+				'items',
+				'_items',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParamsItems as const, optional: false, make: RAW.buildTypeParamsItems },
+								(v: NonNullable<T.TypeParams['_items']>) =>
+									wrapTypeParams({ ...$edited(data), _items: admitSlot(handle, 'type_params', 'items', v) }, tree)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildTypeParamsItems as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.TypeParamsItems
 			);
 	}
 	throw new Error(`type_params has no $with.${setter}`);
@@ -10039,24 +10683,37 @@ function wrapCaseTuplePattern$with(node: Held, setter: string, args: readonly un
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.ListPatternCasePatterns as const,
-								optional: true,
-								make: RAW.buildListPatternCasePatterns
-							},
-							(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
-								wrapCaseTuplePattern(
-									{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.ListPatternCasePatterns as const,
+									optional: true,
+									make: RAW.buildListPatternCasePatterns
+								},
+								(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
+									wrapCaseTuplePattern(
+										{ ...$edited(data), _elements: admitSlot(handle, 'case_tuple_pattern', 'elements', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildListPatternCasePatterns(RAW.buildCasePattern(v)))(v as never)),
+				TSKindId.ListPatternCasePatterns
 			);
 	}
 	throw new Error(`case_tuple_pattern has no $with.${setter}`);
@@ -10156,24 +10813,37 @@ function wrapCaseListPattern$with(node: Held, setter: string, args: readonly unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return hoistedWith(node, 'elements', '_elements', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.ListPatternCasePatterns as const,
-								optional: true,
-								make: RAW.buildListPatternCasePatterns
-							},
-							(v: NonNullable<T.CaseListPattern['_elements']>) =>
-								wrapCaseListPattern(
-									{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.ListPatternCasePatterns as const,
+									optional: true,
+									make: RAW.buildListPatternCasePatterns
+								},
+								(v: NonNullable<T.CaseListPattern['_elements']>) =>
+									wrapCaseListPattern(
+										{ ...$edited(data), _elements: admitSlot(handle, 'case_list_pattern', 'elements', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildListPatternCasePatterns(RAW.buildCasePattern(v)))(v as never)),
+				TSKindId.ListPatternCasePatterns
 			);
 	}
 	throw new Error(`case_list_pattern has no $with.${setter}`);
@@ -10439,31 +11109,60 @@ function wrapPrintStatementChevron$with(node: Held, setter: string, args: readon
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'chevron':
-			return hoistedWith(node, 'chevron', '_chevron', 'expression', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.PrintStatementChevron['_chevron']>) =>
-					rebuilt(node, handle, () =>
-						wrapPrintStatementChevron(
-							{ ...$edited(data), _chevron: admitSlot(handle, 'print_statement_chevron', 'chevron', v) },
-							tree
+			return hoistedWith(
+				node,
+				'chevron',
+				'_chevron',
+				'expression',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.PrintStatementChevron['_chevron']>) =>
+						rebuilt(node, handle, () =>
+							wrapPrintStatementChevron(
+								{ ...$edited(data), _chevron: admitSlot(handle, 'print_statement_chevron', 'chevron', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildChevron(v))(v as never)),
+				TSKindId.Chevron
 			);
 		case 'arguments':
-			return hoistedWith(node, 'arguments', '_arguments', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: RAW.buildPrintChevronArguments },
-							(v: NonNullable<T.PrintStatementChevron['_arguments']>) =>
-								wrapPrintStatementChevron(
-									{ ...$edited(data), _arguments: admitSlot(handle, 'print_statement_chevron', 'arguments', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.PrintChevronArguments as const, optional: true, make: RAW.buildPrintChevronArguments },
+								(v: NonNullable<T.PrintStatementChevron['_arguments']>) =>
+									wrapPrintStatementChevron(
+										{ ...$edited(data), _arguments: admitSlot(handle, 'print_statement_chevron', 'arguments', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildPrintChevronArguments as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.PrintChevronArguments
 			);
 	}
 	throw new Error(`print_statement_chevron has no $with.${setter}`);
@@ -10568,20 +11267,34 @@ function wrapPrintStatementPlain$with(node: Held, setter: string, args: readonly
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'arguments':
-			return hoistedWith(node, 'arguments', '_arguments', 'items', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.PrintArguments as const, optional: false, make: RAW.buildPrintArguments },
-							(v: NonNullable<T.PrintStatementPlain['_arguments']>) =>
-								wrapPrintStatementPlain(
-									{ ...$edited(data), _arguments: admitSlot(handle, 'print_statement_plain', 'arguments', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.PrintArguments as const, optional: false, make: RAW.buildPrintArguments },
+								(v: NonNullable<T.PrintStatementPlain['_arguments']>) =>
+									wrapPrintStatementPlain(
+										{ ...$edited(data), _arguments: admitSlot(handle, 'print_statement_plain', 'arguments', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildPrintArguments as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.PrintArguments
 			);
 	}
 	throw new Error(`print_statement_plain has no $with.${setter}`);
@@ -12227,20 +12940,34 @@ function wrapParenthesizedImportList$with(node: Held, setter: string, args: read
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'importList':
-			return hoistedWith(node, 'importList', '_import_list', 'names', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
-							(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
-								wrapParenthesizedImportList(
-									{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'importList',
+				'_import_list',
+				'names',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ImportList as const, optional: false, make: RAW.buildImportList },
+								(v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
+									wrapParenthesizedImportList(
+										{ ...$edited(data), _import_list: admitSlot(handle, 'parenthesized_import_list', 'importList', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (RAW.buildImportList as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.ImportList
 			);
 	}
 	throw new Error(`parenthesized_import_list has no $with.${setter}`);
@@ -12466,12 +13193,24 @@ function wrapAssignmentType$with(node: Held, setter: string, args: readonly unkn
 				)
 			);
 		case 'type':
-			return hoistedWith(node, 'type', '_type', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.AssignmentType['_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapAssignmentType({ ...$edited(data), _type: admitSlot(handle, 'assignment_type', 'type', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.AssignmentType['_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapAssignmentType({ ...$edited(data), _type: admitSlot(handle, 'assignment_type', 'type', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 	}
 	throw new Error(`assignment_type has no $with.${setter}`);
@@ -12548,12 +13287,24 @@ function wrapAssignmentTyped$with(node: Held, setter: string, args: readonly unk
 				)
 			);
 		case 'type':
-			return hoistedWith(node, 'type', '_type', 'content', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.AssignmentTyped['_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapAssignmentTyped({ ...$edited(data), _type: admitSlot(handle, 'assignment_typed', 'type', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.AssignmentTyped['_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapAssignmentTyped({ ...$edited(data), _type: admitSlot(handle, 'assignment_typed', 'type', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'value':
 			return applySetter(args, (v: NonNullable<T.AssignmentTyped['_value']>) =>
@@ -12874,20 +13625,33 @@ function wrapWithClauseParen$with(node: Held, setter: string, args: readonly unk
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'items':
-			return hoistedWith(node, 'items', '_items', 'items', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-							(v: NonNullable<T.WithClauseParen['_items']>) =>
-								wrapWithClauseParen(
-									{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'items',
+				'_items',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
+								(v: NonNullable<T.WithClauseParen['_items']>) =>
+									wrapWithClauseParen(
+										{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => RAW.buildWithClauseWithItems(RAW.buildWithItem(v)))(v as never)),
+				TSKindId.WithClauseWithItems
 			);
 	}
 	throw new Error(`with_clause_paren has no $with.${setter}`);
@@ -12984,36 +13748,51 @@ function wrapSuiteInline$with(node: Held, setter: string, args: readonly unknown
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'statements':
-			return hoistedWith(node, 'statements', '_statements', 'items', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{
-								kind: TSKindId.SimpleStatementsElements as const,
-								optional: false,
-								make: RAW.buildSimpleStatementsElements
-							},
-							(v: NonNullable<T.SuiteInline['_statements']> | Admit<T.SimpleStatements>) =>
-								wrapSuiteInline(
-									{
-										...$edited(data),
-										_statements: admitSlot(
-											handle,
-											'suite_inline',
-											'statements',
-											admitSplicedEnvelope(
-												v,
-												[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
-												'SuiteInline.statements'
+			return hoistedWith(
+				node,
+				'statements',
+				'_statements',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.SimpleStatementsElements as const,
+									optional: false,
+									make: RAW.buildSimpleStatementsElements
+								},
+								(v: NonNullable<T.SuiteInline['_statements']> | Admit<T.SimpleStatements>) =>
+									wrapSuiteInline(
+										{
+											...$edited(data),
+											_statements: admitSlot(
+												handle,
+												'suite_inline',
+												'statements',
+												admitSplicedEnvelope(
+													v,
+													[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
+													'SuiteInline.statements'
+												)
 											)
-										)
-									},
-									tree
-								)
+										},
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(RAW.buildSimpleStatementsElements as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.SimpleStatementsElements
 			);
 	}
 	throw new Error(`suite_inline has no $with.${setter}`);
@@ -13068,12 +13847,27 @@ function wrapSuiteBlock$with(node: Held, setter: string, args: readonly unknown[
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'block':
-			return hoistedWith(node, 'block', '_block', 'statements', false, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.SuiteBlock['_block']>) =>
-					rebuilt(node, handle, () =>
-						wrapSuiteBlock({ ...$edited(data), _block: admitSlot(handle, 'suite_block', 'block', v) }, tree)
-					)
-				)
+			return hoistedWith(
+				node,
+				'block',
+				'_block',
+				'statements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.SuiteBlock['_block']>) =>
+						rebuilt(node, handle, () =>
+							wrapSuiteBlock({ ...$edited(data), _block: admitSlot(handle, 'suite_block', 'block', v) }, tree)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0 ? RAW.buildBlock() : (RAW.buildBlock as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.Block
 			);
 	}
 	throw new Error(`suite_block has no $with.${setter}`);
@@ -13305,15 +14099,27 @@ function wrapTypeParamTypeVar$with(node: Held, setter: string, args: readonly un
 				)
 			);
 		case 'bounds':
-			return hoistedWith(node, 'bounds', '_bounds', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.TypeParamTypeVar['_bounds']>) =>
-					rebuilt(node, handle, () =>
-						wrapTypeParamTypeVar(
-							{ ...$edited(data), _bounds: admitSlot(handle, 'type_param_type_var', 'bounds', v) },
-							tree
+			return hoistedWith(
+				node,
+				'bounds',
+				'_bounds',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.TypeParamTypeVar['_bounds']>) =>
+						rebuilt(node, handle, () =>
+							wrapTypeParamTypeVar(
+								{ ...$edited(data), _bounds: admitSlot(handle, 'type_param_type_var', 'bounds', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 	}
 	throw new Error(`type_param_type_var has no $with.${setter}`);
@@ -13712,50 +14518,98 @@ function wrapConstructorDeclaration$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
-							(v: NonNullable<T.ConstructorDeclaration['_type_parameters']>) =>
-								wrapConstructorDeclaration(
-									{
-										...$edited(data),
-										_type_parameters: admitSlot(handle, 'constructor_declaration', 'typeParameters', v)
-									},
-									tree
-								)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
+								(v: NonNullable<T.ConstructorDeclaration['_type_parameters']>) =>
+									wrapConstructorDeclaration(
+										{
+											...$edited(data),
+											_type_parameters: admitSlot(handle, 'constructor_declaration', 'typeParameters', v)
+										},
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: RAW.buildTypeParams((RAW.buildTypeParamsItems as unknown as (...items: never[]) => never)(...v)))(args)
+				],
+				TSKindId.TypeParams
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
-							(v: NonNullable<T.ConstructorDeclaration['_parameters']>) =>
-								wrapConstructorDeclaration(
-									{ ...$edited(data), _parameters: admitSlot(handle, 'constructor_declaration', 'parameters', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+								(v: NonNullable<T.ConstructorDeclaration['_parameters']>) =>
+									wrapConstructorDeclaration(
+										{ ...$edited(data), _parameters: admitSlot(handle, 'constructor_declaration', 'parameters', v) },
+										tree
+									)
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? RAW.buildParameters()
+							: RAW.buildParameters((RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v)))(
+						args
 					)
-				)
+				],
+				TSKindId.Parameters
 			);
 		case 'returnType':
-			return hoistedWith(node, 'returnType', '_return_type', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.ConstructorDeclaration['_return_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapConstructorDeclaration(
-							{ ...$edited(data), _return_type: admitSlot(handle, 'constructor_declaration', 'returnType', v) },
-							tree
+			return hoistedWith(
+				node,
+				'returnType',
+				'_return_type',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.ConstructorDeclaration['_return_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapConstructorDeclaration(
+								{ ...$edited(data), _return_type: admitSlot(handle, 'constructor_declaration', 'returnType', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.ConstructorDeclaration['_body']>) =>
@@ -13923,7 +14777,15 @@ function wrapSuiteBlockClassDeclaration$with(node: Held, setter: string, args: r
 								tree
 							)
 						)
-					)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? RAW.buildBlockClassDeclaration()
+							: (RAW.buildBlockClassDeclaration as unknown as (...items: never[]) => never)(...v))(args)
+				],
+				TSKindId.BlockClassDeclaration
 			);
 	}
 	throw new Error(`suite_block_class_declaration has no $with.${setter}`);
@@ -14376,47 +15238,98 @@ function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly u
 				)
 			);
 		case 'typeParameters':
-			return hoistedWith(node, 'typeParameters', '_type_parameters', 'items', true, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
-							(v: NonNullable<T.MethodDeclaration['_type_parameters']>) =>
-								wrapMethodDeclaration(
-									{ ...$edited(data), _type_parameters: admitSlot(handle, 'method_declaration', 'typeParameters', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParams as const, optional: true, make: RAW.buildTypeParams },
+								(v: NonNullable<T.MethodDeclaration['_type_parameters']>) =>
+									wrapMethodDeclaration(
+										{
+											...$edited(data),
+											_type_parameters: admitSlot(handle, 'method_declaration', 'typeParameters', v)
+										},
+										tree
+									)
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: RAW.buildTypeParams((RAW.buildTypeParamsItems as unknown as (...items: never[]) => never)(...v)))(args)
+				],
+				TSKindId.TypeParams
 			);
 		case 'parameters':
-			return hoistedWith(node, 'parameters', '_parameters', 'elements', false, undefined, handle, args, (args) =>
-				applySetter(args, (...args: unknown[]) =>
-					rebuilt(node, handle, () =>
-						listSlotWith(
-							args,
-							{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
-							(v: NonNullable<T.MethodDeclaration['_parameters']>) =>
-								wrapMethodDeclaration(
-									{ ...$edited(data), _parameters: admitSlot(handle, 'method_declaration', 'parameters', v) },
-									tree
-								)
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+								(v: NonNullable<T.MethodDeclaration['_parameters']>) =>
+									wrapMethodDeclaration(
+										{ ...$edited(data), _parameters: admitSlot(handle, 'method_declaration', 'parameters', v) },
+										tree
+									)
+							)
 						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? RAW.buildParameters()
+							: RAW.buildParameters((RAW.buildParametersElements as unknown as (...items: never[]) => never)(...v)))(
+						args
 					)
-				)
+				],
+				TSKindId.Parameters
 			);
 		case 'returnType':
-			return hoistedWith(node, 'returnType', '_return_type', 'content', true, undefined, handle, args, (args) =>
-				applySetter(args, (v: NonNullable<T.MethodDeclaration['_return_type']>) =>
-					rebuilt(node, handle, () =>
-						wrapMethodDeclaration(
-							{ ...$edited(data), _return_type: admitSlot(handle, 'method_declaration', 'returnType', v) },
-							tree
+			return hoistedWith(
+				node,
+				'returnType',
+				'_return_type',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.MethodDeclaration['_return_type']>) =>
+						rebuilt(node, handle, () =>
+							wrapMethodDeclaration(
+								{ ...$edited(data), _return_type: admitSlot(handle, 'method_declaration', 'returnType', v) },
+								tree
+							)
 						)
-					)
-				)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				TSKindId.Type
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.MethodDeclaration['_body']>) =>

@@ -923,19 +923,34 @@ export function hoistedWith(
 	handle: EngineHandle | undefined,
 	args: readonly unknown[],
 	apply: (args: readonly unknown[]) => unknown,
-	place: (value: unknown) => unknown = (value) => apply([value])
+	place: ((value: unknown) => unknown) | undefined = undefined,
+	wrap: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined,
+	kind: number | undefined = undefined
 ): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
 	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
 	const value = list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
-	return set?.[slot] === undefined ? apply(value) : place(set[slot](...value));
+	if (set?.[slot] !== undefined) return (place ?? ((placed: unknown) => apply([placed])))(set[slot](...value));
+	if (wrap === undefined || clears || (kind !== undefined && value.length === 1 && isKindNode(value[0], kind))) return apply(value);
+	return apply(handle === undefined ? wrap(value as readonly never[]) : inEngine(handle, () => wrap(value as readonly never[])));
 }
 
 /** The slot `accessor` of a node whose own slot is `storage`: its native read when its tree registered one, else what a built node stores. */
 export function storedSlotRead(node: object, accessor: string, storage: string, many: boolean): unknown {
 	const native = nativeSlotReader(node, accessor);
-	return native !== undefined ? native.call(node) : many ? hydrateStoredSlots(node, storage) : hydrateStoredSlot(node, storage);
+	if (native !== undefined) return native.call(node);
+	if (isRecordPosition(node)) return (node as unknown as Record<string, () => unknown>)[accessor]!.call(node);
+	return many ? hydrateStoredSlots(node, storage) : hydrateStoredSlot(node, storage);
+}
+
+/** `wrap(value)` for a hoisted slot's value, or `undefined` when the slot was left out. */
+export function wrapHoisted<R>(value: unknown, wrap: (value: never) => R, kind: number): R | undefined {
+	return value === undefined ? undefined : isKindNode(value, kind) ? (value as R) : wrap(value as never);
+}
+
+function isKindNode(value: unknown, kind: number): boolean {
+	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
 }
 
 /** A hop of a hoisted read over a built holder: the wrapper's one slot, read as `storedSlotRead` reads it. */

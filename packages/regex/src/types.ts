@@ -591,6 +591,7 @@ export interface LookaheadAssertion {
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
+		readonly pattern: Alternation | Term;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
@@ -613,6 +614,7 @@ export interface LookbehindAssertion {
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
+		readonly pattern: Alternation | Term;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
@@ -720,6 +722,9 @@ export interface AnonymousCapturingGroup {
 	readonly __slotNames__?: {
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern: Alternation | Term;
+	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
@@ -741,6 +746,7 @@ export interface NamedCapturingGroup {
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'(?<' | '(?P<', TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt>;
+		readonly pattern: Alternation | Term;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
@@ -760,6 +766,9 @@ export interface NonCapturingGroup {
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
 		readonly _pattern: 'pattern';
+	};
+	readonly __inputHints__?: {
+		readonly pattern: Alternation | Term;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
@@ -1045,6 +1054,9 @@ export interface InlineFlagsGroupEnable {
 		readonly _enabled: 'enabled';
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern?: Alternation | Term | undefined;
+	};
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
@@ -1066,6 +1078,9 @@ export interface InlineFlagsGroupToggle {
 		readonly _disabled: 'disabled';
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern?: Alternation | Term | undefined;
+	};
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
@@ -1086,6 +1101,9 @@ export interface InlineFlagsGroupDisable {
 	readonly __slotNames__?: {
 		readonly _disabled: 'disabled';
 		readonly _pattern: 'pattern';
+	};
+	readonly __inputHints__?: {
+		readonly pattern?: Alternation | Term | undefined;
 	};
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
