@@ -2173,7 +2173,7 @@ export const coerceToRelativeImport: ConfigSeat<T.RelativeImport.Loose, ReturnTy
 export function resolveFutureImportStatement_content(
 	value: T.FutureImportStatement.LooseConfig['content']
 ): Admit<T.FutureImportStatement['_content']> {
-	return _resolveOne<T.ImportList | T.ParenthesizedImportList>(value, _K0, _K2, 'import_list');
+	return _resolveOne<T.ImportList | T.ParenthesizedImportList>(value, _K0, _K2);
 }
 
 export const coerceToFutureImportStatement: ConfigSeat<
@@ -2186,8 +2186,7 @@ export const coerceToFutureImportStatement: ConfigSeat<
 		_resolveOne<T.ImportList | T.ParenthesizedImportList>(
 			configFieldOr(input, 'content', () => input, TSKindId.FutureImportStatement),
 			_K0,
-			_K2,
-			'import_list'
+			_K2
 		)
 	);
 };
@@ -2203,7 +2202,7 @@ export function resolveImportFromStatement_content(
 ): Admit<T.ImportFromStatement['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.WildcardImport], () =>
-			_resolveOne<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(value, _K4, _K2, 'import_list')
+			_resolveOne<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(value, _K4, _K2)
 		),
 		[['*', TSKindId.WildcardImport] as const]
 	);
@@ -2274,7 +2273,7 @@ export function coerceToWildcardImport(_input?: T.WildcardImport.Loose): typeof 
 export function resolvePrintStatement_content(
 	value: T.PrintStatement.LooseConfig['content']
 ): Admit<T.PrintStatement['_content']> {
-	return _resolveOne<T.PrintStatementChevron | T.PrintStatementPlain>(value, _K0, _K6, 'print_statement_plain');
+	return _resolveOne<T.PrintStatementChevron | T.PrintStatementPlain>(value, _K0, _K6);
 }
 
 export const coerceToPrintStatement: ConfigSeat<T.PrintStatement.Loose, ReturnType<typeof F.buildPrintStatement>> = (
@@ -2285,8 +2284,7 @@ export const coerceToPrintStatement: ConfigSeat<T.PrintStatement.Loose, ReturnTy
 		_resolveOne<T.PrintStatementChevron | T.PrintStatementPlain>(
 			configFieldOr(input, 'content', () => input, TSKindId.PrintStatement),
 			_K0,
-			_K6,
-			'print_statement_plain'
+			_K6
 		)
 	);
 };
@@ -2349,8 +2347,7 @@ export function resolveExpressionStatement_content(
 			_resolveOne<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>(
 				value,
 				_K7,
-				_K9,
-				'expression_statement_tuple'
+				_K9
 			)
 		),
 		[]
@@ -2372,8 +2369,7 @@ export const coerceToExpressionStatement: ConfigSeat<
 					_resolveOne<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>(
 						configFieldOr(input, 'content', () => input, TSKindId.ExpressionStatement),
 						_K7,
-						_K9,
-						'expression_statement_tuple'
+						_K9
 					)
 			),
 			[]
@@ -2412,9 +2408,7 @@ export function resolveReturnStatement_expressions(
 	value: T.ReturnStatement.LooseConfig['expressions']
 ): Admit<T.ReturnStatement['_expressions']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10, 'expression_list')
-		),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
 	);
 }
@@ -2434,8 +2428,7 @@ export const coerceToReturnStatement: OptionalConfigSeat<
 					_resolveOne<T.Expression | T.ExpressionList>(
 						configFieldOr(input, 'expressions', () => input, TSKindId.ReturnStatement),
 						_K7,
-						_K10,
-						'expression_list'
+						_K10
 					)
 			),
 			[]
@@ -2447,9 +2440,7 @@ export function resolveDeleteStatement_expressions(
 	value: T.DeleteStatement.LooseConfig['expressions']
 ): Admit<T.DeleteStatement['_expressions']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10, 'expression_list')
-		),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
 	);
 }
@@ -2468,8 +2459,7 @@ export const coerceToDeleteStatement: ConfigSeat<T.DeleteStatement.Loose, Return
 					_resolveOne<T.Expression | T.ExpressionList>(
 						configFieldOr(input, 'expressions', () => input, TSKindId.DeleteStatement),
 						_K7,
-						_K10,
-						'expression_list'
+						_K10
 					)
 			),
 			[]
@@ -2481,9 +2471,7 @@ export function resolveRaiseStatement_expressions(
 	value: T.RaiseStatement.LooseConfig['expressions']
 ): Admit<T.RaiseStatement['_expressions']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10, 'expression_list')
-		),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
 	);
 }
@@ -2646,7 +2634,7 @@ export const coerceToMatchBlock: EmptyForm<
 });
 
 export function resolveCaseClause_pattern(value: T.CaseClause.LooseConfig['pattern']): Admit<T.CaseClause['_pattern']> {
-	return _resolveOne<T.CasePattern | T.CasePatternList>(value, _K0, _K12, 'case_pattern_list');
+	return _resolveOne<T.CasePattern | T.CasePatternList>(value, _K0, _K12);
 }
 
 export function resolveCaseClause_guard(value: T.CaseClause.LooseConfig['guard']): T.CaseClause.Config['guard'] {
@@ -2674,14 +2662,12 @@ export function resolveForStatement_async(value: T.ForStatement.LooseConfig['asy
 }
 
 export function resolveForStatement_left(value: T.ForStatement.LooseConfig['left']): Admit<T.ForStatement['_left']> {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14, 'pattern_list');
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
 export function resolveForStatement_right(value: T.ForStatement.LooseConfig['right']): Admit<T.ForStatement['_right']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10, 'expression_list')
-		),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
 	);
 }
@@ -3544,7 +3530,7 @@ export function resolveSimplePattern_content(
 						| T.ComplexPattern
 						| T.DottedName
 						| TSKindId.WildcardPattern
-					>(value, _K19, _K20, 'case_list_pattern')
+					>(value, _K19, _K20)
 				),
 				[
 					['True', TSKindId.True] as const,
@@ -3596,8 +3582,7 @@ export const coerceToSimplePattern: ConfigSeat<T.SimplePattern.Loose, ReturnType
 							>(
 								configFieldOr(input, 'content', () => input, TSKindId.SimplePattern),
 								_K19,
-								_K20,
-								'case_list_pattern'
+								_K20
 							)
 					),
 					[
@@ -3665,7 +3650,7 @@ export function resolveUnionPattern_left(value: T.UnionPattern.LooseConfig['left
 						| T.ComplexPattern
 						| T.DottedName
 						| TSKindId.WildcardPattern
-					>(value, _K19, _K20, 'case_list_pattern')
+					>(value, _K19, _K20)
 				),
 				[
 					['True', TSKindId.True] as const,
@@ -3707,7 +3692,7 @@ export function resolveUnionPattern_right(value: T.UnionPattern.LooseConfig['rig
 						| T.ComplexPattern
 						| T.DottedName
 						| TSKindId.WildcardPattern
-					>(value, _K19, _K20, 'case_list_pattern')
+					>(value, _K19, _K20)
 				),
 				[
 					['True', TSKindId.True] as const,
@@ -3796,7 +3781,7 @@ export function resolveKeyValuePattern_key(
 						| T.ComplexPattern
 						| T.DottedName
 						| TSKindId.WildcardPattern
-					>(value, _K19, _K20, 'case_list_pattern')
+					>(value, _K19, _K20)
 				),
 				[
 					['True', TSKindId.True] as const,
@@ -3864,7 +3849,7 @@ export function resolveKeywordPattern_pattern(
 						| T.ComplexPattern
 						| T.DottedName
 						| TSKindId.WildcardPattern
-					>(value, _K19, _K20, 'case_list_pattern')
+					>(value, _K19, _K20)
 				),
 				[
 					['True', TSKindId.True] as const,
@@ -4084,7 +4069,7 @@ export const coerceToListPattern: EmptyForm<
 export function resolveDefaultParameter_name(
 	value: T.DefaultParameter.LooseConfig['name']
 ): Admit<T.DefaultParameter['_name']> {
-	return _resolveOne<T.Identifier | T.TuplePattern>(value, _K13, _K26, 'tuple_pattern');
+	return _resolveOne<T.Identifier | T.TuplePattern>(value, _K13, _K26);
 }
 
 export function resolveDefaultParameter_default(
@@ -4466,7 +4451,7 @@ export const coerceToLambdaWithinForInClause: ConfigSeat<
 export function resolveAugmentedAssignment_left(
 	value: T.AugmentedAssignment.LooseConfig['left']
 ): Admit<T.AugmentedAssignment['_left']> {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14, 'pattern_list');
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
 export function resolveAugmentedAssignment_operator(
@@ -4503,7 +4488,7 @@ export function resolveAugmentedAssignment_right(
 ): Admit<T.AugmentedAssignment['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30, 'expression_list')
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30)
 		),
 		[]
 	);
@@ -4553,7 +4538,7 @@ export const coerceToPatternList: Seat<T.PatternList.LooseArgs, ReturnType<typeo
 export function resolveYield_content(value: T.Yield.LooseConfig['content']): Admit<T.Yield['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(value, _K7, _K31, 'expression_list')
+			_resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(value, _K7, _K31)
 		),
 		[]
 	);
@@ -4573,8 +4558,7 @@ export const coerceToYield: OptionalConfigSeat<T.Yield.Loose, ReturnType<typeof 
 					_resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(
 						configFieldOr(input, 'content', () => input, TSKindId.Yield),
 						_K7,
-						_K31,
-						'expression_list'
+						_K31
 					)
 			),
 			[]
@@ -4671,7 +4655,7 @@ export function resolveCall_function(value: T.Call.LooseConfig['function']): Adm
 }
 
 export function resolveCall_arguments(value: T.Call.LooseConfig['arguments']): Admit<T.Call['_arguments']> {
-	return _resolveOne<T.GeneratorExpression | T.ArgumentList>(value, _K0, _K32, 'argument_list');
+	return _resolveOne<T.GeneratorExpression | T.ArgumentList>(value, _K0, _K32);
 }
 
 export const coerceToCall: ConfigSeat<T.Call.Loose, ReturnType<typeof F.buildCall>> = (
@@ -5247,7 +5231,7 @@ export function resolveForInClause_async(value: T.ForInClause.LooseConfig['async
 }
 
 export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']): Admit<T.ForInClause['_left']> {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14, 'pattern_list');
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
 export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['rights']): Admit<T.ForInClause['_right']> {
@@ -5433,7 +5417,7 @@ export function resolveInterpolation_expression(
 ): Admit<T.Interpolation['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30, 'expression_list')
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30)
 		),
 		[]
 	);
@@ -7826,18 +7810,13 @@ export const coerceToSplatPatternDictionary: ConfigSeat<
 };
 
 export function resolveAssignmentEq_name(value: T.AssignmentEq.LooseConfig['name']): Admit<T.AssignmentEq['_name']> {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14, 'pattern_list');
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
 export function resolveAssignmentEq_value(value: T.AssignmentEq.LooseConfig['value']): Admit<T.AssignmentEq['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(
-				value,
-				_K7,
-				_K50,
-				'expression_list'
-			)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(value, _K7, _K50)
 		),
 		[]
 	);
@@ -7858,7 +7837,7 @@ export const coerceToAssignmentEq: ConfigSeat<T.AssignmentEq.Loose, ReturnType<t
 export function resolveAssignmentType_name(
 	value: T.AssignmentType.LooseConfig['name']
 ): Admit<T.AssignmentType['_name']> {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14, 'pattern_list');
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
 export function resolveAssignmentType_type(
@@ -7882,7 +7861,7 @@ export const coerceToAssignmentType: ConfigSeat<T.AssignmentType.Loose, ReturnTy
 export function resolveAssignmentTyped_name(
 	value: T.AssignmentTyped.LooseConfig['name']
 ): Admit<T.AssignmentTyped['_name']> {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14, 'pattern_list');
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
 export function resolveAssignmentTyped_type(
@@ -7896,7 +7875,7 @@ export function resolveAssignmentTyped_value(
 ): Admit<T.AssignmentTyped['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30, 'expression_list')
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30)
 		),
 		[]
 	);
@@ -8524,7 +8503,7 @@ export function resolveFormatExpression_expression(
 ): Admit<T.FormatExpression['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30, 'expression_list')
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K30)
 		),
 		[]
 	);

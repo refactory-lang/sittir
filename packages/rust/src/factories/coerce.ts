@@ -4349,7 +4349,7 @@ export function resolveWherePredicate_left(
 							| TSKindId.BoolKeyword
 							| TSKindId.StrKeyword
 							| TSKindId.CharKeyword
-						>(value, _K18, _K19, 'tuple_type')
+						>(value, _K18, _K19)
 				),
 				[
 					['u8', TSKindId.U8Keyword] as const,
@@ -4828,7 +4828,7 @@ export function resolveUseDeclaration_argument(
 						| T.UseList
 						| T.ScopedUseList
 						| T.UseWildcard
-					>(value, _K8, _K25, 'use_list')
+					>(value, _K8, _K25)
 				),
 				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -5430,14 +5430,14 @@ export const coerceToGenericTypeWithTurbofish: ConfigSeat<
 
 export function resolveBoundedType_left(value: T.BoundedType.LooseConfig['left']): Admit<T.BoundedType['_left']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K14, _K34, 'use_bounds')),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K14, _K34)),
 		[]
 	);
 }
 
 export function resolveBoundedType_right(value: T.BoundedType.LooseConfig['right']): Admit<T.BoundedType['_right']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K14, _K34, 'use_bounds')),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K14, _K34)),
 		[]
 	);
 }
@@ -5613,7 +5613,7 @@ export function resolveAbstractType_trait(value: T.AbstractType.LooseConfig['tra
 		| T.FunctionType
 		| T.TupleType
 		| T.BoundedType
-	>(value, _K2, _K35, 'tuple_type');
+	>(value, _K2, _K35);
 }
 
 export const coerceToAbstractType: ConfigSeat<T.AbstractType.Loose, ReturnType<typeof F.buildAbstractType>> = (
@@ -5631,7 +5631,7 @@ export const coerceToAbstractType: ConfigSeat<T.AbstractType.Loose, ReturnType<t
 export function resolveDynamicType_trait(value: T.DynamicType.LooseConfig['trait']): Admit<T.DynamicType['_trait']> {
 	return _resolveOne<
 		T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType
-	>(value, _K2, _K36, 'tuple_type');
+	>(value, _K2, _K36);
 }
 
 export const coerceToDynamicType: ConfigSeat<T.DynamicType.Loose, ReturnType<typeof F.buildDynamicType>> = (
@@ -5649,8 +5649,7 @@ export const coerceToDynamicType: ConfigSeat<T.DynamicType.Loose, ReturnType<typ
 		>(
 			configFieldOr(input, 'trait', () => input, TSKindId.DynamicType),
 			_K2,
-			_K36,
-			'tuple_type'
+			_K36
 		)
 	);
 };
@@ -6184,7 +6183,7 @@ export function resolveCallExpression_function(
 					| T.LoopExpression
 					| T.ForExpression
 					| T.ConstBlock
-				>(value, _K12, _K42, 'tuple_expression')
+				>(value, _K12, _K42)
 			),
 			[['self', TSKindId.Self] as const, ['()', TSKindId.UnitExpression] as const]
 		)
@@ -7873,7 +7872,7 @@ export const coerceToUseClauses: Seat<T.UseClauses.LooseArgs, ReturnType<typeof 
 										| T.UseList
 										| T.ScopedUseList
 										| T.UseWildcard
-									>(_e, _K8, _K25, 'use_list')
+									>(_e, _K8, _K25)
 								),
 								[
 									['self', TSKindId.SelfModule] as const,

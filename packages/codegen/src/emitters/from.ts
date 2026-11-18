@@ -23,7 +23,7 @@ import type {
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
 import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
-import { wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
+import { endsAChain, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import {
 	finalSeatOf,
 	DELIMITER_IMPORT,
@@ -1003,7 +1003,7 @@ function defaultArmKindOf(
 	if (first !== undefined && isNodeRef(first)) return storageKindOfRef(first.node);
 	const lists = field.values.filter((v) => isNodeRef(v) && isListKind(nodeMap.nodes.get(storageKindOfRef(v.node))!, nodeMap));
 	const primary = lists[0];
-	return field.values.length > 1 && primary !== undefined && isNodeRef(primary) ? storageKindOfRef(primary.node) : undefined;
+	return field.values.length > 1 && primary !== undefined && isNodeRef(primary) && endsAChain(nodeMap, field) ? storageKindOfRef(primary.node) : undefined;
 }
 
 function buildInternedArrayResolverCall(

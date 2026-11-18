@@ -244,3 +244,8 @@ export function chainReadsAsList(nodeMap: NodeMap, chain: WrapperChain, slot: As
 		chain.slots.some((inner, hop) => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(inner))
 	);
 }
+
+export function endsAChain(nodeMap: NodeMap, slot: { readonly values: unknown }): boolean {
+	for (const chain of chainTablesOf(nodeMap).byHolder.values()) if (chain.slots[chain.slots.length - 1] === slot) return true;
+	return false;
+}
