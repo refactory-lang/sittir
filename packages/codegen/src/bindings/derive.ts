@@ -190,7 +190,7 @@ const addsSlots = (vocabulary: Vocabulary, path: string): boolean => {
 	const kind = vocabulary.kinds.get(path);
 	if (kind === undefined) return false;
 	const inherited = kind.parent === undefined ? new Map<string, unknown>() : vocabulary.slots(kind.parent);
-	return [...kind.own].some(([name, member]) => !member.flag && !inherited.has(name));
+	return [...kind.own].some(([name, slot]) => !slot.flag && !inherited.has(name));
 };
 
 export function derive(inputs: readonly GrammarInput[]): Derivation {
@@ -448,7 +448,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				untargeted.push(`${input.grammar}: ${container.kind} (${container.captures.map((c) => c.name).join(', ')})`);
 				continue;
 			}
-			for (const { capture, name, slot, flag } of resolved.members) {
+			for (const { capture, name, slot, flag } of resolved.slots) {
 				let kinds: string[];
 				let multiple = false;
 				if (flag) kinds = ['boolean'];
@@ -593,7 +593,7 @@ export function directKinds(d: Derivation, kinds: ReadonlySet<string>): string[]
 
 export interface SlotEntry {
 	readonly path: string;
-	readonly member: string;
+	readonly name: string;
 	readonly facts: SlotFacts;
 }
 
@@ -606,7 +606,7 @@ export function slotEntries(d: Derivation): SlotEntry[] {
 		[...levelSlots(d, v)]
 			.sort(([a], [b]) => a.localeCompare(b))
 			.filter(([, f]) => directKinds(d, f.kinds) === undefined)
-			.map(([member, facts]) => ({ path: v, member, facts }))
+			.map(([name, facts]) => ({ path: v, name, facts }))
 	);
 }
 

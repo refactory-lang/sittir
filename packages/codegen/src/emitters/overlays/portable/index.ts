@@ -33,7 +33,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotSubjectOf(nodeMap), presenceKeywordOf(nodeMap), typeOf);
 	const kindIdOf = (kind: string) => kindDiscriminantExpr(kind, nodeMap, kindEntries);
 	const factOf = (entry: ReadEntry) =>
-		portableFactOf(entry, readTest(entry), input.model, slotSubjectOf(nodeMap), (container, slot) => routes.containers.get(container)?.slots?.find((member) => member.slot.name === slot)?.name);
+		portableFactOf(entry, readTest(entry), input.model, slotSubjectOf(nodeMap), (container, slot) => routes.containers.get(container)?.slots?.find((candidate) => candidate.slot.name === slot)?.name);
 	const typesOf = (kind: string): readonly number[] => [...new Set(membershipKindsOf([kind], nodeMap).flatMap((member) => typeOf(member) ?? []))];
 	const flags = new Map<string, ReadonlyMap<string, QueryPlan | null>>();
 	const plansByKind = new Map<string, ReadonlyMap<string, QueryPlan | null>>();
@@ -42,7 +42,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		if (typeOf(kind) === undefined) continue;
 		const plans = flagPlansOf({
 			kind,
-			members: routes.slots.get(kind) ?? [],
+			slots: routes.slots.get(kind) ?? [],
 			claimFlags: (routes.readEntries.get(kind) ?? []).flatMap((entry) =>
 				entry.claim.flag === undefined ? [] : [{ flag: entry.claim.flag, test: readTest(entry), placed: entry.claim.within.length > 0 }]
 			),
@@ -84,13 +84,13 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			node: grammarNodeTypeName(nodeMap.name),
 			imports: { vocabulary: VOCABULARY_MODULE, builders: moduleSpecifier(PORTABLE_BUILD_FILE, 'ir-strict.ts'), map: moduleSpecifier(PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE), utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: moduleSpecifier(PORTABLE_BUILD_FILE, 'types.ts') },
 			table: build.table,
-			slots: emitSlotsOf(typed.slots, (path, member) => input.vocabulary.slots(path).get(member)?.optional === true),
+			slots: emitSlotsOf(typed.slots, (path, slot) => input.vocabulary.slots(path).get(slot)?.optional === true),
 			viewed: typed.reads.viewed,
 			textPaths: typed.reads.textPaths,
 			textInputs: typed.textInputs,
 			textValues: typed.textValues,
 			holes: build.holes,
-			decided: Object.fromEntries(typed.decided.map(([path, members]) => [path, Object.fromEntries(members)]))
+			decided: Object.fromEntries(typed.decided.map(([path, slotKinds]) => [path, Object.fromEntries(slotKinds)]))
 		},
 		typed,
 		pickDiagnostics: [

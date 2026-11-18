@@ -689,14 +689,14 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		}
 	}
 	for (const v of nodes) {
-		const members: SlotFact[] = [];
+		const slots: SlotFact[] = [];
 		for (const name of captures(v)) {
 			if (inClaimPosition(v, name, v === top) || name.startsWith('_') || name === 'element') continue;
 			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
-			const member: SlotFact | null = kindPresence(members[0], v, name) ?? slotFact(v, name, owner ?? top, owner === undefined ? topKind : ownerKind, claimed, leadMatch);
-			if (member !== null) members.push(tested.has(name) ? { ...member, tested: true } : member);
+			const slot: SlotFact | null = kindPresence(slots[0], v, name) ?? slotFact(v, name, owner ?? top, owner === undefined ? topKind : ownerKind, claimed, leadMatch);
+			if (slot !== null) slots.push(tested.has(name) ? { ...slot, tested: true } : slot);
 		}
-		facts.slots.push(...slotNamed(members));
+		facts.slots.push(...slotNamed(slots));
 	}
 }
 
@@ -712,9 +712,9 @@ function kindPresence(first: SlotFact | undefined, v: Visit, name: string): Slot
 	return { route: 'kind', owner: first.owner, name, slot: first.name, kind, ...(first.claims === undefined ? {} : { claims: first.claims }) };
 }
 
-function slotNamed(members: readonly SlotFact[]): readonly SlotFact[] {
-	const [first, ...rest] = members;
-	if (first?.route !== 'rename' || first.field === null || !rest.some((m) => m.route === 'kind')) return members;
+function slotNamed(slots: readonly SlotFact[]): readonly SlotFact[] {
+	const [first, ...rest] = slots;
+	if (first?.route !== 'rename' || first.field === null || !rest.some((m) => m.route === 'kind')) return slots;
 	return [{ ...first, kind: null }, ...rest];
 }
 

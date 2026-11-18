@@ -157,7 +157,7 @@ function declareText(declaration: TypeAliasDeclaration.Parsed, scope: readonly s
 function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly string[], out: Declared[], source: Source): void {
 	const { K, text } = source;
 	let path: string | undefined;
-	const members: DeclaredSlot[] = [];
+	const slots: DeclaredSlot[] = [];
 	for (const member of declaration.body().members() ?? []) {
 		if (member.$type !== K.PropertySignature) continue;
 		const name = identifier(member.name(), [K.PropertyIdentifier], source);
@@ -167,7 +167,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 			path = kindPath(declaration, annotation, source);
 			continue;
 		}
-		members.push({
+		slots.push({
 			name,
 			optional: member.optional(),
 			type: annotation === undefined ? 'any' : text(annotation),
@@ -189,7 +189,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		refines,
 		heritage: heritageNames(heritage, source),
 		restated: restatedKeys(heritage, source),
-		slots: members
+		slots
 	});
 }
 

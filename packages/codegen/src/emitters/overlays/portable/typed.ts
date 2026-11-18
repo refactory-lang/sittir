@@ -26,7 +26,7 @@ export interface PortableTypedInput {
 export interface PortableTypedUnemitted {
 	readonly kind: string;
 	readonly vocab: string;
-	readonly member?: string;
+	readonly slot?: string;
 	readonly reason: string;
 }
 
@@ -71,9 +71,7 @@ const PRELUDE = [
 	'\treadonly [flags]: readonly string[];',
 	'}',
 	'',
-	'type Member<I, P extends keyof I> = I[P];',
-	'',
-	"type Kept<I, P extends keyof I> = P extends '$path' ? never : [Member<I, P>] extends [never] ? never : [NonNullable<Member<I, P>>] extends [Flag | V.Missing<unknown> | readonly never[]] ? never : P;",
+	"type Kept<I, P extends keyof I> = P extends '$path' ? never : [I[P]] extends [never] ? never : [NonNullable<I[P]>] extends [Flag | V.Missing<unknown> | readonly never[]] ? never : P;",
 	'',
 	'type Resolved<R> = R extends readonly (infer E)[]',
 	'\t? readonly Resolved<E>[]',
@@ -85,7 +83,7 @@ const PRELUDE = [
 	'',
 	'type PathOf<I> = I extends { readonly $path: infer K } ? K : never;',
 	'',
-	'export type ViewForm<I> = PortableHandle & { readonly $path?: PathOf<I> } & { readonly [P in keyof I as Kept<I, P>]-?: () => Resolved<Member<I, P>> };',
+	'export type ViewForm<I> = PortableHandle & { readonly $path?: PathOf<I> } & { readonly [P in keyof I as Kept<I, P>]-?: () => Resolved<I[P]> };',
 	'',
 	'type Ret<F> = F extends (...args: never[]) => infer R ? R : never;',
 	'',
@@ -342,7 +340,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		readonly present: readonly PresentStep[];
 	}
 	const readOf = (kind: string, route: SlotRoute, sure: Guaranteed, closed: ReadonlySet<string>): RouteRead | { readonly reason: string } | null => {
-		if (route.route === 'presence') return { reason: 'a presence member that is not a flag' };
+		if (route.route === 'presence') return { reason: 'a presence route that is not a flag' };
 		if (route.path === undefined) return { reason: `no path for its ${route.route} route` };
 		const chain = chainOf(kind, route.path, sure, route.list === false);
 		if (chain === null) return null;
@@ -378,7 +376,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		return root;
 	};
 	const presentTypeOf = (tree: ReadonlyMap<string, PresentTree>): string => tree.size === 0 ? '{}' : `{ ${[...tree].map(([accessor, node]) => `readonly ${accessor}: [${node.ids}, ${presentTypeOf(node.sub)}];`).join(' ')} }`;
-	const memberBody = (reads: readonly RouteRead[]): string => {
+	const slotBody = (reads: readonly RouteRead[]): string => {
 		const bodies = [...new Set(reads.map((r) => r.body))];
 		const last = reads.at(-1)!;
 		return [...bodies, ...(reads.some((r) => r.list) && last.optional ? ['[]'] : [])].join(' ?? ');
@@ -410,7 +408,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 				const read = pin !== undefined ? { body: q(pin), list: false, optional: false, present: [] } : readOf(kind, route, sure, closed);
 				if (read === null) continue;
 				if ('reason' in read) {
-					unemitted.push({ kind, vocab: entry.vocab, member: route.name, reason: read.reason });
+					unemitted.push({ kind, vocab: entry.vocab, slot: route.name, reason: read.reason });
 					continue;
 				}
 				(readsByName.get(route.name) ?? readsByName.set(route.name, []).get(route.name)!).push(read);
@@ -418,14 +416,14 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			const tree = presentTreeOf([...readsByName.values()].flat().map((read) => read.present));
 			const held = tree.size === 0 ? low : `${name}$Held`;
 			if (tree.size > 0) emit(`type ${held} = Present<${low}, ${presentTypeOf(tree)}>;`, '');
-			for (const [member, reads] of readsByName) {
-				if (never(entry.vocab, member)) continue;
-				const fn = `${name}$${member}`;
-				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
-				fields.push(`${member}: ${fn}`);
-				written.add(member);
+			for (const [slot, reads] of readsByName) {
+				if (never(entry.vocab, slot)) continue;
+				const fn = `${name}$${slot}`;
+				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${slotBody(reads)};`, '}', '');
+				fields.push(`${slot}: ${fn}`);
+				written.add(slot);
 			}
-			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member) && !never(entry.vocab, member)) fields.push(`${member}: none`);
+			for (const [slot, facts] of declared) if (!facts.flag && facts.optional && !written.has(slot) && !never(entry.vocab, slot)) fields.push(`${slot}: none`);
 			const value = valueOf(entry.vocab, kind) ?? (textValued(vocabulary, entry.vocab) ? 'text' : undefined);
 			if (value !== undefined && (value !== 'text' || textValued(vocabulary, entry.vocab))) fields.push(`$value: ${VALUE_READERS[value]}`);
 			emit(

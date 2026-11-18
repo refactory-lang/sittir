@@ -67,14 +67,14 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 			if (kind.feature !== undefined) add(kind.qname, [`type ${lastSegment(kind.qname)}<G extends GrammarMap> = ${alias(kind.feature)}.${kind.qname}<G>;`]);
 			continue;
 		}
-		const members = [...(p.owned.get(kind.path) ?? new Map<string, Owned>())].sort(([a], [b]) => byCodepoint(a, b));
-		if (kind.feature === undefined && members.length === 0) continue;
-		gated ||= members.length > 0;
+		const slots = [...(p.owned.get(kind.path) ?? new Map<string, Owned>())].sort(([a], [b]) => byCodepoint(a, b));
+		if (kind.feature === undefined && slots.length === 0) continue;
+		gated ||= slots.length > 0;
 		headed = true;
 		const head = `interface ${lastSegment(kind.qname)}<G extends GrammarMap, K extends gate.Under<'${kind.path}'> = '${kind.path}'>${kind.feature === undefined ? '' : ` extends ${alias(kind.feature)}.${kind.qname}<G, K>`}`;
-		const lines = members.map(
+		const lines = slots.map(
 			([name, o]) =>
-				`readonly ${name}${o.member.optional ? '?' : ''}: gate.In<G, features.${o.feature.name}, ${alias(o.feature)}.${kind.qname}<G, K>['${name}']>;`
+				`readonly ${name}${o.slot.optional ? '?' : ''}: gate.In<G, features.${o.feature.name}, ${alias(o.feature)}.${kind.qname}<G, K>['${name}']>;`
 		);
 		add(kind.qname, lines.length === 0 ? [`${head} {}`] : [`${head} {`, ...lines, '}']);
 	}

@@ -12,7 +12,7 @@ export interface ClaimFlag {
 
 export interface FlagPlansInput {
 	readonly kind: string;
-	readonly members: readonly SlotRoute[];
+	readonly slots: readonly SlotRoute[];
 	readonly claimFlags: readonly ClaimFlag[];
 	readonly subjectOf: SlotSubjectOf;
 	readonly presenceOf: PresenceKeywordOf;
@@ -82,7 +82,7 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 		const known = alternatives.get(flag) ?? alternatives.set(flag, []).get(flag)!;
 		if (!known.some((other) => JSON.stringify(other) === JSON.stringify(plan))) known.push(plan);
 	};
-	for (const route of input.members) if (route.flag === true) add(route.name, planOf(route));
+	for (const route of input.slots) if (route.flag === true) add(route.name, planOf(route));
 	const contextual = new Set<string>();
 	for (const { flag, test, placed } of input.claimFlags) {
 		const lowered = test.map(conditionPlan);

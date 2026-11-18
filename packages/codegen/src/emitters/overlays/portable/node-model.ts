@@ -13,7 +13,7 @@ const readEntryRecord = (entry: ReadEntry, test: readonly PortableCondition[]) =
 		: { template: { target: entry.template.target, template: entry.template.template, holes: entry.template.holes } })
 });
 
-function memberRecord(route: SlotRoute) {
+function slotRecord(route: SlotRoute) {
 	return { ...routeRecord(route), ...(route.flag === true ? { flag: true } : {}), ...(route.spelled === true ? { spelled: true } : {}) };
 }
 
@@ -48,14 +48,14 @@ export function emitPortableNodeModel(routes: GrammarRoutes, readTest: (entry: R
 			kinds.map((kind) => {
 				const vocab = routes.vocabOf.get(kind);
 				const read = routes.readEntries.get(kind);
-				const members = routes.slots.get(kind);
+				const slots = routes.slots.get(kind);
 				const container = routes.containers.get(kind);
 				return [
 					kind,
 					{
 						...(vocab === undefined ? {} : { vocab }),
 						...(read === undefined ? {} : { read: read.map((entry) => readEntryRecord(entry, readTest(entry))) }),
-						...(members === undefined ? {} : { members: members.map(memberRecord) }),
+						...(slots === undefined ? {} : { slots: slots.map(slotRecord) }),
 						...(container === undefined ? {} : { container })
 					}
 				];

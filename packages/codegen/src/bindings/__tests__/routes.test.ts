@@ -715,7 +715,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 			{ name: 'tags', slot: expect.objectContaining({ name: 'tag', multiple: false }), list: true }
 		]);
 		await expect(input({ 'declaration.method': list, 'declaration.class': one }).then(resolveRoutes)).rejects.toThrow(
-			"bindings: holder_x's @tags is a list at declaration.method and one value at declaration.class; one member has one arity"
+			"bindings: holder_x's @tags is a list at declaration.method and one value at declaration.class; one slot has one arity"
 		);
 	});
 
@@ -1191,7 +1191,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const names = async (bindings: string) => (resolveRoutes(await grammar(bindings)).slots.get('param_x') ?? []).map((r) => r.name);
 		expect(await names('(param_x name: (self_kw)) @identifier.receiver')).toEqual([]);
 		expect(await names('(param_x) @declaration.parameter')).toEqual(['name']);
-		await expect(names('(param_x name: (self_kw) @name) @identifier.receiver')).rejects.toThrow(/param_x's capture @name reaches no member: its name slot is pinned to one fixed text by the same claim.*@dropped/);
+		await expect(names('(param_x name: (self_kw) @name) @identifier.receiver')).rejects.toThrow(/param_x's capture @name reaches no slot of its path: its name slot is pinned to one fixed text by the same claim.*@dropped/);
 		const routes = resolveRoutes(
 			await grammar(['(param_x name: (_) @name) @declaration.parameter', '(param_x name: (self_kw)) @declaration.parameter.receiver', '(param_x name: (identifier)) @declaration.parameter.named'].join('\n'))
 		);
@@ -1828,7 +1828,7 @@ describe('flag captures', () => {
 			synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) }
 		};
 		const bindings = await readBindings(['(param) @declaration.parameter', '((param) @declaration.variable (#eq? @declaration.variable "x"))', '(param (mutable_specifier) @mut)'].join('\n'));
-		expect(() => canonicalFacts(bindings, synonymous, FLAGGED_MODEL)).toThrow(/param's capture @mut is a member at declaration\.variable and spells the flag mutable at declaration\.parameter/);
+		expect(() => canonicalFacts(bindings, synonymous, FLAGGED_MODEL)).toThrow(/param's capture @mut is a slot at declaration\.variable and spells the flag mutable at declaration\.parameter/);
 	});
 
 	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {

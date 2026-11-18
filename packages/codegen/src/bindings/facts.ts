@@ -108,7 +108,7 @@ type SlotRouteFact =
 
 export type NamedSlotFact = Exclude<SlotFact, { readonly route: 'dropped' }>;
 
-export const isNamedSlot = (member: SlotFact): member is NamedSlotFact => member.route !== 'dropped';
+export const isNamedSlot = (slot: SlotFact): slot is NamedSlotFact => slot.route !== 'dropped';
 
 export interface ContainerCapture extends SlotSelector {
 	readonly name: string;

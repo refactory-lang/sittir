@@ -212,7 +212,7 @@ describe('deriveGrammarBindings', () => {
 		expect(bindings.renames).toEqual({ call: 'call_expression' });
 		expect(report.residue).toEqual([
 			{ cause: 'kind named by an earlier claim', row: 'call → expression.invocation' },
-			{ cause: 'member not in the vocabulary', row: 'call.callee' }
+			{ cause: 'slot not in the vocabulary', row: 'call.callee' }
 		]);
 	});
 
@@ -288,9 +288,9 @@ describe('deriveGrammarBindings', () => {
 		const facts: BindingFacts = { ...FACTS, claims: [claim('expression', '_item'), claim('expression.call', 'call', { children: [parenthesized] })], slots: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }] };
 		const routes = { slots: NO_MEMBERS, vocabOf: new Map([['_item', 'expression'], ['call', 'expression']]) };
 		const { report } = bind({ file: FILE, facts, base, vocabSlots: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set<string>()]]), routes, model });
-		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'call.callee' });
+		expect(report.residue).toContainEqual({ cause: 'slot not in the vocabulary', row: 'call.callee' });
 		const declared = bind({ file: FILE, facts, base, vocabSlots: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set(['callee'])]]), routes, model });
-		expect(declared.report.residue).not.toContainEqual({ cause: 'member not in the vocabulary', row: 'call.callee' });
+		expect(declared.report.residue).not.toContainEqual({ cause: 'slot not in the vocabulary', row: 'call.callee' });
 	});
 
 	describe('two kinds claiming one path', () => {
@@ -406,7 +406,7 @@ describe('deriveGrammarBindings', () => {
 	it('leaves a member its vocabulary kind does not declare in the residue', () => {
 		const { bindings, report } = bind({ file: FILE, facts: FACTS, base, vocabSlots: new Map([['declaration.variable', new Set<string>()]]), routes: ROUTES, model: MODEL });
 		expect(bindings.patches.size).toBe(0);
-		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'let_item.name' });
+		expect(report.residue).toContainEqual({ cause: 'slot not in the vocabulary', row: 'let_item.name' });
 	});
 
 	it("places a split through the owner's field that reaches its container, names each visible clone by its place, and steps each holder's authored field on the way", () => {
@@ -1043,14 +1043,14 @@ describe('a claim on a supertype owner', () => {
 		const { bindings, report } = derive(body, modelOf({ armBlockSlots: [slot('body', ['identifier'])] }), rename('arm', 'match', 'pattern'));
 		expect(report.fieldRenames).toEqual([]);
 		expect(bindings.patches).toEqual(new Map());
-		expect(report.residue).toEqual([{ cause: 'a form holds the member only under a field the grammar names otherwise', row: 'arm.match' }]);
+		expect(report.residue).toEqual([{ cause: 'a form holds the slot only under a field the grammar names otherwise', row: 'arm.match' }]);
 	});
 
 	it('refuses the rename at every form when one form holds the member in another shape', () => {
 		const { bindings, report } = derive(forms, modelOf({ bareMultiple: false }), rename('clause', 'items', 'items_list'));
 		expect(report.fieldRenames).toEqual([]);
 		expect(bindings.patches).toEqual(new Map());
-		expect(report.residue).toEqual([{ cause: 'a form holds the member in another shape', row: 'clause.items' }]);
+		expect(report.residue).toEqual([{ cause: 'a form holds the slot in another shape', row: 'clause.items' }]);
 	});
 
 	it("refuses the whole row once when one form's rename is refused", () => {
@@ -1059,7 +1059,7 @@ describe('a claim on a supertype owner', () => {
 		expect(report.fieldRenames).toEqual([]);
 		expect(bindings.patches).toEqual(new Map());
 		expect(report.realizedSlots).toEqual([]);
-		expect(report.residue).toEqual([{ cause: 'member name is already a field of the owner', row: 'arm.match' }]);
+		expect(report.residue).toEqual([{ cause: 'slot name is already a field of the owner', row: 'arm.match' }]);
 	});
 
 	it('realizes the member with no edit when every form already spells it', () => {

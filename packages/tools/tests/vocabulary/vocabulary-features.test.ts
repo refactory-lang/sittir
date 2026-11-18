@@ -149,7 +149,7 @@ describe('plan', () => {
 		expect(await issues({ ...CLEAN, ...properties })).toEqual(['declaration.method.accessor: owned by Accessors and Properties']);
 	});
 
-	it('reports members added to a kind the vocabulary does not declare', async () => {
+	it('reports slots added to a kind the vocabulary does not declare', async () => {
 		const lambda = feature('async-await', 'export interface AsyncAwait {\n\treadonly asyncAwait: true;\n}', {
 			'declaration.ts': `export namespace Declaration {
 	export interface Lambda<G extends GrammarMap> {
@@ -158,7 +158,7 @@ describe('plan', () => {
 }
 `
 		});
-		expect(await issues({ ...CLEAN, ...lambda })).toEqual(['AsyncAwait: Declaration.Lambda adds members to a kind the vocabulary does not declare']);
+		expect(await issues({ ...CLEAN, ...lambda })).toEqual(['AsyncAwait: Declaration.Lambda adds slots to a kind the vocabulary does not declare']);
 	});
 
 	it('lets a feature require a member only when it extends the feature that owns it', async () => {
@@ -384,9 +384,9 @@ describe('the synonym collision rule', () => {
 		expect(await synonyms('', "\treadonly async: 'shared';\n\treadonly static: 'shared';\n")).toEqual(['#async: the synonym shared is also a synonym of the flag static']);
 	});
 
-	it("reports a flag's synonym that is a member of a kind with the flag, or a segment or synonym beneath one", async () => {
+	it("reports a flag's synonym that is a slot of a kind with the flag, or a segment or synonym beneath one", async () => {
 		expect(await synonyms('', "\treadonly static: 'accessor';\n")).toEqual([
-			'#static: the synonym accessor is a member of declaration.method, declaration.method.getter, which have the flag'
+			'#static: the synonym accessor is a slot of declaration.method, declaration.method.getter, which have the flag'
 		]);
 		expect(await synonyms('', "\treadonly static: 'getter';\n")).toEqual(['#static: the synonym getter spells declaration.method.getter, beneath kinds that have the flag']);
 	});

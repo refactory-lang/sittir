@@ -73,7 +73,7 @@ export interface GrammarBindingsInput {
 	readonly model: SlotModel;
 }
 
-export const slotFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
+export const slotFieldName = (slot: string): string => slot.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
 function relaxedTexts(rules: Readonly<Record<string, unknown>>, rule: unknown, display: string, entered: Set<string>, out: Set<string>): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) relaxedTexts(rules, r, display, entered, out);
@@ -269,16 +269,16 @@ function formFieldRenames(
 	const claimed = forms.flatMap((form) => slotsOf(form).filter((slot) => slot.name === from).map((slot) => slotShape(model, slot)));
 	const [first] = claimed;
 	if (first === undefined) return 'field is not on the owner';
-	if (claimed.some((other) => other.list !== first.list)) return 'a form holds the member in another shape';
+	if (claimed.some((other) => other.list !== first.list)) return 'a form holds the slot in another shape';
 	const held = new Set(claimed.flatMap((shape) => [...shape.holds]));
 	const renames: FieldRename[] = [];
 	for (const form of forms) {
 		const own = slotsOf(form).find((slot) => slot.name === from);
 		const holders = own !== undefined ? [own] : slotsOf(form).filter((slot) => [...slotShape(model, slot).holds].some((kind) => held.has(kind)));
-		if (holders.some((slot) => slotShape(model, slot).list !== first.list)) return 'a form holds the member in another shape';
-		if (holders.length > 1) return 'a form holds the member in several fields';
+		if (holders.some((slot) => slotShape(model, slot).list !== first.list)) return 'a form holds the slot in another shape';
+		if (holders.length > 1) return 'a form holds the slot in several fields';
 		const [holder] = holders;
-		if (holder !== undefined && own === undefined && !minted(form, holder.name)) return 'a form holds the member only under a field the grammar names otherwise';
+		if (holder !== undefined && own === undefined && !minted(form, holder.name)) return 'a form holds the slot only under a field the grammar names otherwise';
 		if (holder !== undefined && holder.name !== to) renames.push({ owner: form, from: holder.name, to });
 	}
 	return renames;
@@ -290,12 +290,12 @@ const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r
 
 function sameShapeAs(
 	kinds: readonly string[],
-	members: readonly SlotFact[],
+	slots: readonly SlotFact[],
 	routed: ReadonlyMap<string, readonly SlotRoute[]>,
 	model: SlotModel,
 	symbols: SymbolSource
 ): readonly string[] {
-	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
+	const readAsKind = new Set(slots.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
 	const supplied = (kind: string): string =>
 		[
 			...new Set([
@@ -456,7 +456,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				continue;
 			}
 			if (steps.length > 1 && fieldOfReference(rules, c.within[c.within.length - 1]!, c.within[c.within.length - 2] ?? c.kind) === undefined) {
-				left('placement container has no member name', row);
+				left('placement container has no slot name', row);
 				continue;
 			}
 			placedSplits.push({ kind: c.kind, within: c.within, as: to, steps });
@@ -553,7 +553,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		const row = `${m.owner}.${m.name}`;
 		const paths = targets(m);
 		if (paths.length > 0 && paths.every((path) => vocabSlots.get(path)?.has(m.name) === false)) {
-			left('member not in the vocabulary', row);
+			left('slot not in the vocabulary', row);
 			continue;
 		}
 		const to = slotFieldName(m.name);
@@ -579,7 +579,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		}
 		if (m.route === 'rename' && m.field !== null) {
 			if (m.kind !== null || m.after !== null) {
-				left('field shared by several members', row);
+				left('field shared by several slots', row);
 				continue;
 			}
 			if (model.get(m.owner)?.modelType === 'supertype') {
@@ -626,7 +626,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				continue;
 			}
 			if (where.mixed) {
-				left('field shared by several members', row);
+				left('field shared by several slots', row);
 				continue;
 			}
 			candidates.push({ row, request: { owner: m.owner, from: field, to } });
@@ -642,9 +642,9 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const implicitRows = new Set<string>();
 	const routed = new Set(named.map((m) => `${m.owner}.${m.name}`));
 	for (const [owner, vocab] of routes.vocabOf) {
-		for (const member of vocabSlots.get(vocab) ?? []) {
-			const child = slotFieldName(member);
-			const row = `${owner}.${member}`;
+		for (const slot of vocabSlots.get(vocab) ?? []) {
+			const child = slotFieldName(slot);
+			const row = `${owner}.${slot}`;
 			if (routed.has(row) || !ruleNames.has(child)) continue;
 			const where = childFields(checks, owner, { symbol: child });
 			if (!where.unfielded || where.fields.length > 0) continue;
@@ -678,11 +678,11 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	let accepted = candidates.filter((candidate) => {
 		const { request } = candidate;
 		if (slotsOfTarget.get(targetKey(request))!.size > 1) {
-			refuseCandidate('one child or token feeds several members', candidate);
+			refuseCandidate('one child or token feeds several slots', candidate);
 			return false;
 		}
 		if (targetsOfField.get(fieldKey(request))!.size > 1) {
-			refuseCandidate('two fields route to one member', candidate);
+			refuseCandidate('two fields route to one slot', candidate);
 			return false;
 		}
 		return true;

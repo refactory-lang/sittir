@@ -91,7 +91,8 @@ export interface PickDiagnostic {
 	readonly holder?: string;
 	readonly slot?: string;
 	readonly arms?: number;
-	readonly members?: readonly string[];
+	readonly slots?: readonly string[];
+	readonly text?: string;
 }
 
 export interface PortableBuildInput {
@@ -126,7 +127,7 @@ interface Arm {
 	readonly kind: string;
 	readonly entry: ReadEntry;
 	readonly arm: Omit<PortableBuildArm, 'when' | 'holders'>;
-	readonly memberKinds: ReadonlyMap<string, ReadonlySet<number>>;
+	readonly slotKinds: ReadonlyMap<string, ReadonlySet<number>>;
 	readonly required: ReadonlySet<string>;
 	readonly tested: ReadonlySet<string>;
 	readonly text: string | undefined;
@@ -140,7 +141,7 @@ interface Arm {
 
 const portableTemplate = (template: TemplateFact): PortableTemplate => ({ slot: template.target, pattern: template.template, holes: template.holes, match: template.match });
 
-const routeSteps = (member: PortableSlotRoute): readonly PortableSlotStep[] => member.steps.filter((step) => step.flatten !== true);
+const routeSteps = (slot: PortableSlotRoute): readonly PortableSlotStep[] => slot.steps.filter((step) => step.flatten !== true);
 
 const sameSlotStep = (a: PortableSlotStep, b: PortableSlotStep): boolean =>
 	a.key === b.key && a.builder === b.builder && a.mounted?.key === b.mounted?.key && a.mounted?.call === b.mounted?.call;
@@ -155,8 +156,8 @@ function conflicts(a: PortableSlotRoute, b: PortableSlotRoute): boolean {
 	return x.length !== y.length;
 }
 
-function ownersOf(members: readonly PortableSlotRoute[]): readonly (readonly number[])[] {
-	const fit = (i: number, j: number): boolean => !conflicts(members[i]!, members[j]!);
+function ownersOf(slots: readonly PortableSlotRoute[]): readonly (readonly number[])[] {
+	const fit = (i: number, j: number): boolean => !conflicts(slots[i]!, slots[j]!);
 	const owners: number[][] = [];
 	const grow = (owner: readonly number[], open: readonly number[], closed: readonly number[]): void => {
 		if (open.length === 0) {
@@ -167,34 +168,34 @@ function ownersOf(members: readonly PortableSlotRoute[]): readonly (readonly num
 		grow([...owner, next!], rest.filter((i) => fit(i, next!)), closed.filter((i) => fit(i, next!)));
 		grow(owner, rest, [...closed, next!]);
 	};
-	grow([], members.map((_, i) => i), []);
+	grow([], slots.map((_, i) => i), []);
 	return owners;
 }
 
-const takesList = (member: PortableSlotRoute): boolean => member.multiple || member.seats.some((seat) => seat.many === true);
+const takesList = (slot: PortableSlotRoute): boolean => slot.multiple || slot.seats.some((seat) => seat.many === true);
 
-const shapesOf = (member: PortableSlotRoute): ReadonlySet<string> =>
+const shapesOf = (slot: PortableSlotRoute): ReadonlySet<string> =>
 	new Set([
-		...(takesList(member) ? member.seats.flatMap((seat) => [...(seat.text ? ['list text'] : []), ...seat.kinds.map((kind) => `list ${kind}`)]) : []),
-		...(member.multiple ? [] : member.seats.filter((seat) => seat.many !== true).flatMap((seat) => [...(seat.text ? ['one text'] : []), ...seat.kinds.map((kind) => `one ${kind}`)]))
+		...(takesList(slot) ? slot.seats.flatMap((seat) => [...(seat.text ? ['list text'] : []), ...seat.kinds.map((kind) => `list ${kind}`)]) : []),
+		...(slot.multiple ? [] : slot.seats.filter((seat) => seat.many !== true).flatMap((seat) => [...(seat.text ? ['one text'] : []), ...seat.kinds.map((kind) => `one ${kind}`)]))
 	]);
 
-function undecidedShape(members: readonly PortableSlotRoute[], a: readonly number[], b: readonly number[]): readonly string[] | undefined {
-	const routesIn = (owner: readonly number[], name: string): readonly PortableSlotRoute[] => owner.flatMap((i) => (members[i]!.name === name ? [members[i]!] : []));
-	const names = (owner: readonly number[]): ReadonlySet<string> => new Set(owner.map((i) => members[i]!.name));
+function undecidedShape(slots: readonly PortableSlotRoute[], a: readonly number[], b: readonly number[]): readonly string[] | undefined {
+	const routesIn = (owner: readonly number[], name: string): readonly PortableSlotRoute[] => owner.flatMap((i) => (slots[i]!.name === name ? [slots[i]!] : []));
+	const names = (owner: readonly number[]): ReadonlySet<string> => new Set(owner.map((i) => slots[i]!.name));
 	const overlaps = (name: string): boolean => {
-		const left = new Set(routesIn(a, name).flatMap((member) => [...shapesOf(member)]));
-		return routesIn(b, name).some((member) => [...shapesOf(member)].some((shape) => left.has(shape)));
+		const left = new Set(routesIn(a, name).flatMap((slot) => [...shapesOf(slot)]));
+		return routesIn(b, name).some((slot) => [...shapesOf(slot)].some((shape) => left.has(shape)));
 	};
 	const takes = (owner: readonly number[], name: string, shape: readonly string[]): boolean =>
-		routesIn(owner, name).some((member) => (member.requires ?? []).every((group) => group.some((other) => shape.includes(other))));
+		routesIn(owner, name).some((slot) => (slot.requires ?? []).every((group) => group.some((other) => shape.includes(other))));
 	const settle = (shape: readonly string[]): readonly string[] => {
 		const drop = shape.find((name) => !takes(a, name, shape) || !takes(b, name, shape));
 		return drop === undefined ? shape : settle(shape.filter((name) => name !== drop));
 	};
 	const shape = settle([...names(a)].filter((name) => names(b).has(name) && overlaps(name)));
 	if (shape.length === 0) return undefined;
-	const key = (member: PortableSlotRoute): string => JSON.stringify(member.steps);
+	const key = (slot: PortableSlotRoute): string => JSON.stringify(slot.steps);
 	const differs = shape.some((name) => {
 		const left = new Set(routesIn(a, name).map(key));
 		const right = routesIn(b, name).map(key);
@@ -226,8 +227,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const slotOf = (owner: string, slot: string): AssembledNonterminal | undefined => nodeOf(owner)?.slots.find((s) => s.name === slot);
 	const storageName = (kind: string): string => modelNode(model, kind)?.kind ?? kind;
 	const flagSites = new Map<string, Set<string> | 'any'>();
-	for (const members of routes.slots.values())
-		for (const route of members) {
+	for (const slots of routes.slots.values())
+		for (const route of slots) {
 			if (route.flag !== true || route.route !== 'kind') continue;
 			const kind = storageName(route.kind);
 			const step = route.path?.at(-1);
@@ -392,7 +393,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					const builder = mount?.builder ?? builderOf(kind);
 					const outer = mount !== undefined && within.length > 0 ? within.at(-1) : undefined;
 					const mounted = mount === undefined ? undefined : within.length === 0 ? mount.mounted : outer?.mounted !== undefined ? mount.mounted : undefined;
-					const members = (unwrap?.slots ?? []).flatMap(({ name, slot, list }) => memberOf({ route: 'slot', name, slot, path: [{ owner: kind, slot: slot.name }], ...(list === undefined ? {} : { list }) })?.member ?? []);
+					const slots = (unwrap?.slots ?? []).flatMap(({ name, slot, list }) => portableSlotOf({ route: 'slot', name, slot, path: [{ owner: kind, slot: slot.name }], ...(list === undefined ? {} : { list }) })?.slot ?? []);
 					const container: PortableContainer = {
 						...(builder === undefined ? {} : { builder }),
 						key: element.propertyName,
@@ -400,7 +401,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(mounted === undefined ? {} : { mounted }),
 						...(builder === undefined && flattens(owner, slot.name, kind) ? { flatten: true as const } : {}),
 						...(outer === undefined ? {} : { through: [...(outer.through ?? []), outer.key] }),
-						...(members.length === 0 ? {} : { slots: members }),
+						...(slots.length === 0 ? {} : { slots }),
 						...(node.kindId === undefined || (unwrap?.flags ?? []).length === 0
 							? {}
 							: {
@@ -446,7 +447,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		}
 		for (const [text, kinds] of byText)
 			if (kinds.length > 1)
-				tokenDiagnostics.set(`${seat.holder.kind} ${seat.slot.name} ${text}`, { code: 'portable-token-ambiguous', path: seat.holder.kind, kinds: kinds.sort(), holder: seat.holder.kind, slot: seat.slot.name, members: [text] });
+				tokenDiagnostics.set(`${seat.holder.kind} ${seat.slot.name} ${text}`, { code: 'portable-token-ambiguous', path: seat.holder.kind, kinds: kinds.sort(), holder: seat.holder.kind, slot: seat.slot.name, text });
 		const tokens = [...byText].filter(([, kinds]) => kinds.length === 1).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
 		return tokens.length === 0 ? undefined : Object.fromEntries(tokens.map(([text, [kind]]) => [text, typeOf(kind!)!]));
 	};
@@ -589,7 +590,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			})
 		);
 	};
-	const memberOf = (route: SlotRoute, guaranteed?: Guaranteed): { readonly member: PortableSlotRoute; readonly seats: readonly Seat[] } | undefined => {
+	const portableSlotOf = (route: SlotRoute, guaranteed?: Guaranteed): { readonly slot: PortableSlotRoute; readonly seats: readonly Seat[] } | undefined => {
 		if (route.flag === true || route.spelled === true || route.path === undefined) return undefined;
 		const steps = stepsOf(route.path, guaranteed);
 		const slot = lastSlot(route.path);
@@ -597,7 +598,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		if (steps === undefined || slot === undefined || seats === undefined) return undefined;
 		const reads = readsOf(route, slot);
 		return {
-			member: {
+			slot: {
 				name: route.name,
 				steps,
 				multiple: route.route === 'nested' ? route.multiple : isMultiple(slot),
@@ -801,7 +802,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const reaching = tested === undefined ? [] : formRoutes(routed, path, tested);
 		return reaching.length > 0 && reaching.every(({ site }) => site.path.length > path.length);
 	};
-	const requiredMember = (guaranteed: Guaranteed, routed: readonly RoutedFill[], path: readonly SlotStep[]): string | undefined => {
+	const fillingSlot = (guaranteed: Guaranteed, routed: readonly RoutedFill[], path: readonly SlotStep[]): string | undefined => {
 		const tested = guaranteed.present(path);
 		if (tested === undefined) return undefined;
 		const reaching = formRoutes(routed, path, tested);
@@ -877,7 +878,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const wonInputs = [...new Set(won.map(([member]) => member))];
 		const wonPreferences = [...new Set(won.map(([, preference]) => preference))];
 		if (won.length !== wonInputs.length * wonPreferences.length)
-			throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab} claims ${token.kind} by spellings that are no product of its facets' members` });
+			throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab} claims ${token.kind} by spellings that are no product of its facets' texts` });
 		const presetAt = (facet: AssembledNonterminal | undefined, members: readonly (string | null)[], satisfied: boolean): readonly Placed[] => {
 			const among = members.flatMap((member) => (member === null ? [] : [member]));
 			const [first] = among;
@@ -899,23 +900,23 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const path = route.path;
 			if (path === undefined) return [];
 			if (outOfForms(path, refined)) return (pinnedOut.add(path), []);
-			const built = memberOf(route, guaranteed);
+			const built = portableSlotOf(route, guaranteed);
 			if (built === undefined) return [];
 			const seats = built.seats.flatMap((seat) => pinnedSeat(path, seat, refined) ?? []);
 			if (seats.length === 0 && built.seats.length > 0) return (pinnedOut.add(path), []);
-			return [{ seats, member: { ...built.member, seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)) }, name: route.name, site: { path } }];
+			return [{ seats, slot: { ...built.slot, seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)) }, name: route.name, site: { path } }];
 		});
-		const stepped = new Set(routedAll.flatMap(({ name, member, seats }) => (seats.some((seat) => seat.within.length === 0) ? [`${name} ${landingOf(member.steps, [])}`] : [])));
+		const stepped = new Set(routedAll.flatMap(({ name, slot, seats }) => (seats.some((seat) => seat.within.length === 0) ? [`${name} ${landingOf(slot.steps, [])}`] : [])));
 		const routed = routedAll.flatMap((route) => {
-			const seats = route.seats.filter((seat) => seat.within.length === 0 || !stepped.has(`${route.name} ${landingOf(route.member.steps, seat.within)}`));
-			return seats.length === 0 ? [] : [{ ...route, seats, member: { ...route.member, seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)) } }];
+			const seats = route.seats.filter((seat) => seat.within.length === 0 || !stepped.has(`${route.name} ${landingOf(route.slot.steps, seat.within)}`));
+			return seats.length === 0 ? [] : [{ ...route, seats, slot: { ...route.slot, seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)) } }];
 		});
 		const landed = new Map<string, number>();
-		for (const [i, { name, member, seats }] of routed.entries())
+		for (const [i, { name, slot, seats }] of routed.entries())
 			for (const seat of seats) {
-				const at = `${name} ${landingOf(member.steps, seat.within)}`;
+				const at = `${name} ${landingOf(slot.steps, seat.within)}`;
 				const other = landed.get(at);
-				if (other !== undefined && other !== i) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab}: ${kind}'s member ${name} lands on ${landingOf(member.steps, seat.within)} by two routes` });
+				if (other !== undefined && other !== i) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab}: ${kind}'s slot ${name} lands on ${landingOf(slot.steps, seat.within)} by two routes` });
 				landed.set(at, i);
 			}
 		const flagged = entry.slots.flatMap((route) => {
@@ -935,7 +936,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				if (path === undefined) return [];
 				if ('text' in child) return placedText(path, child.text) ?? [];
 				if ('kinds' in child) {
-					const filler = requiredMember(guaranteed, routed, path);
+					const filler = fillingSlot(guaranteed, routed, path);
 					if (filler !== undefined) return (tested.add(filler), []);
 					if (forms > 1 && builtThrough(guaranteed, routed, path)) return [];
 					return child.kinds.length === 1 ? (placedValue(path, child.kinds[0]!) ?? []) : [];
@@ -989,9 +990,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					return form === undefined || (choice === null ? form === null || !bare.includes(form) : form === choice);
 				});
 			const placed = [...claimed, ...combo.flatMap(({ slot, choice }) => (choice === null ? [] : (placedValue([{ owner: kind, slot }], choice) ?? [])))];
-			const members = routed.filter(({ site }) => keeps(site));
+			const fills = routed.filter(({ site }) => keeps(site));
 			const replaced = (site: Site): boolean =>
-				members.some((member) => member.site.path.length === site.path.length && member.site.path.every((step, i) => sameStep(step, site.path[i]!)));
+				fills.some((fill) => fill.site.path.length === site.path.length && fill.site.path.every((step, i) => sameStep(step, site.path[i]!)));
 			const flags = flagged.filter(keeps);
 			const flagFillers = flags.map(({ name, path, enters }): Filler => ({ name, site: { path, ...(enters === undefined ? {} : { enters }) } }));
 			const groupsOf = (frames: readonly Frame[], fillers: readonly Filler[]): readonly (readonly string[])[] | undefined =>
@@ -1001,25 +1002,25 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				}, []);
 			const armFrames = [{ prefix: [], owner: kind }, ...placed.flatMap((site) => framesOf(replaced(site) ? { path: site.path } : site))];
 			const armKeys = new Set(armFrames.map(frameKey));
-			const requiresOf = (member: (typeof members)[number], fillers: readonly Filler[]): readonly (readonly string[])[] | undefined =>
+			const requiresOf = (fill: (typeof fills)[number], fillers: readonly Filler[]): readonly (readonly string[])[] | undefined =>
 				groupsOf(
-					framesOf(member.site).filter((frame) => !armKeys.has(frameKey(frame))),
+					framesOf(fill.site).filter((frame) => !armKeys.has(frameKey(frame))),
 					fillers
 				);
-			const completable = (open: typeof members): typeof members => {
-				const next = open.filter((member) => requiresOf(member, [...open, ...flagFillers]) !== undefined);
+			const completable = (open: typeof fills): typeof fills => {
+				const next = open.filter((fill) => requiresOf(fill, [...open, ...flagFillers]) !== undefined);
 				return next.length === open.length ? open : completable(next);
 			};
-			const survivors = completable(members);
+			const survivors = completable(fills);
 			const fillers = [...survivors, ...flagFillers];
 			if (groupsOf(armFrames, fillers) === undefined) {
 				const gaps = unfilledBy.get(kind) ?? unfilledBy.set(kind, new Set()).get(kind)!;
 				for (const frame of armFrames) for (const slot of slotFillersOf(frame, fillers, placed).gaps) gaps.add(`${frame.owner}.${slot}`);
 				return [];
 			}
-			const completed = survivors.map((member) => {
-				const requires = [...new Map(requiresOf(member, fillers)!.map((group) => [group.join(','), group])).values()];
-				return { ...member, member: { ...member.member, ...(requires.length === 0 ? {} : { requires }) } };
+			const completed = survivors.map((fill) => {
+				const requires = [...new Map(requiresOf(fill, fillers)!.map((group) => [group.join(','), group])).values()];
+				return { ...fill, slot: { ...fill.slot, ...(requires.length === 0 ? {} : { requires }) } };
 			});
 			const presets = placed.map(({ preset }) => preset);
 			const claimedPresets = new Set(claimed.map(({ preset }) => preset));
@@ -1062,17 +1063,17 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 							covered(name, path, i))
 					);
 				});
-			const dropped = new Set(members.flatMap(({ site }) => (survivors.some((member) => member.site === site) ? [] : [site.path])));
+			const dropped = new Set(fills.flatMap(({ site }) => (survivors.some((fill) => fill.site === site) ? [] : [site.path])));
 			const sharedSlot = (name: string, path: readonly SlotStep[]): boolean =>
 				completed.some(
-					({ name: other, site, member }) =>
+					({ name: other, site, slot }) =>
 						other !== name &&
 						site.path.length >= path.length &&
 						path.every((step, i) => sameStep(step, site.path[i]!)) &&
-						!(member.requires ?? []).some((group) => group.every((needed) => needed === name))
+						!(slot.requires ?? []).some((group) => group.every((needed) => needed === name))
 				);
 			const required = new Set([
-				...[...tested].filter((name) => survivors.some((member) => member.name === name)),
+				...[...tested].filter((name) => survivors.some((fill) => fill.name === name)),
 				...entryRoutes(entry).flatMap((route) =>
 					route.flag !== true &&
 					route.spelled !== true &&
@@ -1086,8 +1087,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						: []
 				)
 			]);
-			const memberKinds = new Map<string, ReadonlySet<number>>();
-			for (const { member, seats } of completed) if (!memberKinds.has(member.name)) memberKinds.set(member.name, valueIds(seats));
+			const slotKinds = new Map<string, ReadonlySet<number>>();
+			for (const { slot, seats } of completed) if (!slotKinds.has(slot.name)) slotKinds.set(slot.name, valueIds(seats));
 			const valueScalar = valueScalarOf(entry.vocab);
 			const scalar = armScalar(shape, valueScalar === undefined ? undefined : (kindValueScalars.get(kind) ?? valueScalar));
 			if (valueScalar !== undefined && shape === undefined) formDiagnostics.push({ code: 'portable-value-unshaped', path: entry.vocab, kinds: [kind] });
@@ -1117,26 +1118,26 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					formDiagnostics.push({ code: 'portable-integer-partial', path: entry.vocab, kinds: [kind] });
 				}
 			}
-			const valued = completed.find(({ member }) => member.name === VALUE)?.member;
-			const armMembers = completed.flatMap(({ member }) => (member === valued ? [] : [member]));
+			const valued = completed.find(({ slot }) => slot.name === VALUE)?.slot;
+			const armSlots = completed.flatMap(({ slot }) => (slot === valued ? [] : [slot]));
 			const lexed =
-				valued === undefined && contentSlot !== undefined && node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct'
+				valued === undefined && contentSlot !== undefined && node instanceof AssembledLexedPattern && armSlots.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct'
 					? { name: VALUE, steps: [{ key: contentSlot.propertyName }], multiple: false, list: false, seats: [{ at: [builtId, contentSlot.propertyName] as const, kinds: [], text: true as const }] }
 					: undefined;
 			const content: PortableSlotRoute | undefined = valued ?? lexed;
-			const owners = ownersOf(armMembers);
+			const owners = ownersOf(armSlots);
 			for (const [i, a] of owners.entries())
 				for (const b of owners.slice(i + 1)) {
-					const shape = undecidedShape(armMembers, a, b);
-					if (shape !== undefined) formDiagnostics.push({ code: 'portable-owner-undecided', path: entry.vocab, kinds: [kind], members: shape });
+					const shape = undecidedShape(armSlots, a, b);
+					if (shape !== undefined) formDiagnostics.push({ code: 'portable-owner-undecided', path: entry.vocab, kinds: [kind], slots: shape });
 				}
 			return [
 				{
 					kind,
 					entry,
-					memberKinds,
+					slotKinds,
 					required,
-					tested: new Set([...tested].filter((name) => survivors.some((member) => member.name === name))),
+					tested: new Set([...tested].filter((name) => survivors.some((fill) => fill.name === name))),
 					builds,
 					chosen: deepest.some((preset) => !claimedPresets.has(preset)),
 					text: fixedText.get(kind),
@@ -1152,14 +1153,14 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(scientific ? { scientific } : {}),
 						...(digits === undefined ? {} : { digits }),
 						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
-						slots: armMembers,
-						...emptiedOf(armMembers, owners),
+						slots: armSlots,
+						...emptiedOf(armSlots, owners),
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,
 						flags: flagSteps,
 						...(entry.template === undefined || entry.claim.flag !== undefined ? {} : { template: portableTemplate(entry.template) }),
 						...(spelledFacts.length === 0 ? {} : { facts: spelledFacts }),
-						...soleOf(entry, armMembers),
+						...soleOf(entry, armSlots),
 						...(content === undefined ? {} : { content })
 					}
 				}
@@ -1173,16 +1174,16 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const refuseList = (flag: string, path: string): never => {
 		throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${path}'s ${flag} is the trailing separator of a list no step reaches` });
 	};
-	const soleOf = (entry: ReadEntry, members: readonly PortableSlotRoute[]): { readonly sole?: PortableBuildArm['sole'] } => {
+	const soleOf = (entry: ReadEntry, slots: readonly PortableSlotRoute[]): { readonly sole?: PortableBuildArm['sole'] } => {
 		if (entry.separated !== true) return {};
-		const listed = [...new Set(members.filter((member) => member.list === true).map((member) => member.name))];
-		if (listed.length !== 1) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.kind} as ${entry.vocab} is read by its own separator, so it builds one list member; it has ${listed.length}` });
+		const listed = [...new Set(slots.filter((slot) => slot.list === true).map((slot) => slot.name))];
+		if (listed.length !== 1) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.kind} as ${entry.vocab} is read by its own separator, so it builds one list slot; it has ${listed.length}` });
 		return { sole: { slot: listed[0]!, delimiter: Delimiter.Trailing } };
 	};
-	const emptiedOf = (members: readonly PortableSlotRoute[], owners: readonly (readonly number[])[]): { readonly empty?: readonly string[] } => {
-		const names = [...new Set(members.filter((member) => member.list === true).map((member) => member.name))];
-		const everyForm = (name: string): boolean => owners.every((owner) => owner.some((i) => members[i]!.name === name));
-		const empty = names.filter((name) => everyForm(name) && members.filter((member) => member.name === name).every((member) => member.steps.every((step) => step.optional !== true)));
+	const emptiedOf = (slots: readonly PortableSlotRoute[], owners: readonly (readonly number[])[]): { readonly empty?: readonly string[] } => {
+		const names = [...new Set(slots.filter((slot) => slot.list === true).map((slot) => slot.name))];
+		const everyForm = (name: string): boolean => owners.every((owner) => owner.some((i) => slots[i]!.name === name));
+		const empty = names.filter((name) => everyForm(name) && slots.filter((slot) => slot.name === name).every((slot) => slot.steps.every((step) => step.optional !== true)));
 		return empty.length === 0 ? {} : { empty };
 	};
 	const byPath = new Map<string, Arm[]>();
@@ -1199,8 +1200,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const pickable = arms.filter((arm) => !flagOnly.has(storageName(arm.kind)));
 		if (pickable.length > 0 && pickable.length < arms.length) byPath.set(path, pickable);
 	}
-	const seatedAt = (member: PortableSlotRoute): string[] =>
-		member.seats.flatMap((seat) => [...seat.kinds.map((kind) => `${seat.at[0]} ${seat.at[1]} ${kind}`), ...(seat.within ?? []).flatMap((container) => (container.slots ?? []).flatMap(seatedAt))]);
+	const seatedAt = (slot: PortableSlotRoute): string[] =>
+		slot.seats.flatMap((seat) => [...seat.kinds.map((kind) => `${seat.at[0]} ${seat.at[1]} ${kind}`), ...(seat.within ?? []).flatMap((container) => (container.slots ?? []).flatMap(seatedAt))]);
 	const seated = new Set([...byPath.values()].flatMap((arms) => arms.flatMap(({ arm }) => arm.slots.flatMap(seatedAt))));
 	for (const [path, arms] of byPath) byPath.set(path, arms.filter(({ site, arm }) => site === undefined || seated.has(`${site[0]} ${site[1]} ${arm.kind}`)));
 	const armed = new Set([...byPath.values()].flatMap((arms) => arms.map((arm) => arm.kind)));
@@ -1215,7 +1216,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				path: [...new Set(entries.map((entry) => entry.vocab))].sort((a, b) => a.length - b.length || a.localeCompare(b))[0]!,
 				kinds: [kind],
 				holder: kind,
-				members: [...(unfilledBy.get(kind) ?? [])].sort()
+				slots: [...(unfilledBy.get(kind) ?? [])].sort()
 			})
 		);
 
@@ -1330,21 +1331,21 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		(group) => {
 			const subset = (a: ReadonlySet<number>, b: ReadonlySet<number>): boolean => [...a].every((id) => b.has(id));
 			const partsBy = (name: string): Arm[][] | undefined => {
-				if (group.some((arm) => (arm.memberKinds.get(name)?.size ?? 0) === 0)) return undefined;
+				if (group.some((arm) => (arm.slotKinds.get(name)?.size ?? 0) === 0)) return undefined;
 				const parts = new Map<string, Arm[]>();
 				for (const arm of group) {
-					const key = sortedIds(arm.memberKinds.get(name)!).join(',');
+					const key = sortedIds(arm.slotKinds.get(name)!).join(',');
 					(parts.get(key) ?? parts.set(key, []).get(key)!).push(arm);
 				}
 				if (parts.size < 2) return undefined;
-				const sets = [...parts.values()].map((arms) => arms[0]!.memberKinds.get(name)!);
+				const sets = [...parts.values()].map((arms) => arms[0]!.slotKinds.get(name)!);
 				const nested = sets.every((x, i) => sets.every((y, j) => i === j || disjoint([x, y]) || subset(x, y) || subset(y, x)));
-				return nested ? [...parts.values()].sort((x, y) => x[0]!.memberKinds.get(name)!.size - y[0]!.memberKinds.get(name)!.size) : undefined;
+				return nested ? [...parts.values()].sort((x, y) => x[0]!.slotKinds.get(name)!.size - y[0]!.slotKinds.get(name)!.size) : undefined;
 			};
-			const member = builtSlots(group[0]!.arm).map((m) => m.name).find((name) => partsBy(name) !== undefined);
-			return member === undefined
+			const slot = builtSlots(group[0]!.arm).map((m) => m.name).find((name) => partsBy(name) !== undefined);
+			return slot === undefined
 				? undefined
-				: partsBy(member)!.map((arms): Part => [{ slot: member, kinds: sortedIds(arms[0]!.memberKinds.get(member)!) }, arms]);
+				: partsBy(slot)!.map((arms): Part => [{ slot, kinds: sortedIds(arms[0]!.slotKinds.get(slot)!) }, arms]);
 		},
 		(group) => {
 			if (!group.every((arm) => arm.scalar !== undefined)) return undefined;
@@ -1396,10 +1397,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return group;
 		};
 		const takesValue = (arm: Arm): boolean => textBuilt(builderShapes, arm.arm) || arm.scalar !== undefined || arm.value !== undefined;
-		const memberNames = (arm: Arm): readonly string[] => [...builtSlots(arm.arm).map((member) => member.name), ...(takesValue(arm) ? [VALUE] : [])];
-		const stated = new Set(arms.flatMap(memberNames));
-		const listed = new Set(arms.flatMap((arm) => arm.arm.slots.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
-		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
+		const slotNames = (arm: Arm): readonly string[] => [...builtSlots(arm.arm).map((slot) => slot.name), ...(takesValue(arm) ? [VALUE] : [])];
+		const stated = new Set(arms.flatMap(slotNames));
+		const listed = new Set(arms.flatMap((arm) => arm.arm.slots.filter((slot) => slot.list ?? slot.multiple).map((slot) => slot.name)));
+		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !slotNames(arm).includes(name)).sort();
 		const emptyOf = (arm: Arm): string[] => (arm.text === undefined && arm.entry.empty === true ? missingOf(arm).filter((name) => listed.has(name)) : []);
 		const decidedOrder = decide(arms);
 		const ordered = [...decidedOrder.filter((arm) => emptyOf(arm).length > 0), ...decidedOrder.filter((arm) => emptyOf(arm).length === 0)].sort((a, b) => Number(textBuilt(builderShapes, a.arm)) - Number(textBuilt(builderShapes, b.arm)));

@@ -82,16 +82,16 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 		return rule === undefined ? undefined : fieldedHeadListOf(rule as Rule<'normalize'>, symbols)?.elementName;
 	};
 	const byList = new Map<string, LeadClaim[]>();
-	for (const member of facts.slots) {
-		if (member.leadMatch === undefined || (member.route !== 'nested' && member.route !== 'rename')) continue;
-		const list = member.route === 'nested' ? member.parent : member.owner;
+	for (const slot of facts.slots) {
+		if (slot.leadMatch === undefined || (slot.route !== 'nested' && slot.route !== 'rename')) continue;
+		const list = slot.route === 'nested' ? slot.parent : slot.owner;
 		const item = itemOf(list);
 		if (item === undefined) continue;
-		if ('refused' in member.leadMatch) {
-			refuse(list, [member.leadMatch.line], member.leadMatch.refused);
+		if ('refused' in slot.leadMatch) {
+			refuse(list, [slot.leadMatch.line], slot.leadMatch.refused);
 			continue;
 		}
-		(byList.get(list) ?? byList.set(list, []).get(list)!).push({ item, field: member.name, line: member.leadMatch.line, match: member.leadMatch.match });
+		(byList.get(list) ?? byList.set(list, []).get(list)!).push({ item, field: slot.name, line: slot.leadMatch.line, match: slot.leadMatch.match });
 	}
 	const leads: Lead[] = [];
 	const ctx = verbCtxOf(base as unknown as GrammarRecord);

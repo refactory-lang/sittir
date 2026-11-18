@@ -48,7 +48,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "abstract_class_declaration": {
       "vocab": "declaration.class",
@@ -61,7 +61,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -348,7 +348,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "override",
           "route": "slot",
@@ -525,7 +525,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "override",
           "route": "slot",
@@ -863,7 +863,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "override",
           "route": "slot",
@@ -969,7 +969,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -1014,7 +1014,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -1057,7 +1057,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "arguments": {
       "container": {
@@ -1081,7 +1081,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "elements",
           "route": "slot",
@@ -1115,7 +1115,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "elements",
           "route": "slot",
@@ -1149,7 +1149,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -1182,7 +1182,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "async",
           "route": "slot",
@@ -1414,7 +1414,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -1450,7 +1450,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "value",
           "route": "slot",
@@ -1485,7 +1485,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "left",
           "route": "slot",
@@ -1534,7 +1534,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "left",
           "route": "slot",
@@ -1945,7 +1945,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "left",
           "route": "slot",
@@ -1981,7 +1981,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -2635,7 +2635,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "operand",
           "route": "slot",
@@ -2750,7 +2750,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "break_statement": {
       "vocab": "statement.break",
@@ -2763,7 +2763,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "label",
           "route": "slot",
@@ -2809,7 +2809,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "function",
           "route": "slot",
@@ -2856,7 +2856,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "function",
           "route": "slot",
@@ -2912,7 +2912,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "function",
           "route": "slot",
@@ -2948,7 +2948,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "typeParameters",
           "route": "slot",
@@ -3109,7 +3109,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -3184,7 +3184,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -3417,7 +3417,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -3601,7 +3601,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -3643,7 +3643,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "comment_line": {
       "vocab": "comment.line",
@@ -3656,7 +3656,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "computed_property_name": {
       "container": {
@@ -3679,7 +3679,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "left",
           "route": "slot",
@@ -3737,7 +3737,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "abstract",
           "route": "slot",
@@ -3987,7 +3987,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -4102,7 +4102,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "abstract",
           "route": "slot",
@@ -4288,7 +4288,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "label",
           "route": "slot",
@@ -4313,7 +4313,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "decorator": {
       "container": {
@@ -4339,7 +4339,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "function",
           "route": "slot",
@@ -4386,7 +4386,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "object",
           "route": "slot",
@@ -4422,7 +4422,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -4447,7 +4447,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "default_type": {
       "vocab": "clause.default",
@@ -4460,7 +4460,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -4493,7 +4493,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -4529,7 +4529,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -4562,7 +4562,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "enum_assignment": {
       "vocab": "declaration.enum_member",
@@ -4575,7 +4575,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -4621,7 +4621,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -4656,7 +4656,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "const",
           "route": "slot",
@@ -4704,7 +4704,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "existential_type": {
       "vocab": "type.existential",
@@ -4717,7 +4717,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "export_clause": {
       "vocab": "clause.export",
@@ -4730,7 +4730,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "exportSpecifiers",
           "route": "slot",
@@ -4788,7 +4788,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -4868,7 +4868,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -4999,7 +4999,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "typeOnly",
           "route": "presence",
@@ -5161,7 +5161,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "value",
           "route": "slot",
@@ -5186,7 +5186,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -5222,7 +5222,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "types",
           "route": "slot",
@@ -5255,7 +5255,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "types",
           "route": "slot",
@@ -5290,7 +5290,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "finally_clause": {
       "vocab": "clause.finally",
@@ -5303,7 +5303,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -5336,7 +5336,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -5369,7 +5369,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "header",
           "route": "slot",
@@ -5418,7 +5418,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "initializer",
           "route": "slot",
@@ -5497,7 +5497,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "async",
           "route": "slot",
@@ -5692,7 +5692,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "async",
           "route": "slot",
@@ -5887,7 +5887,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "async",
           "route": "slot",
@@ -6071,7 +6071,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "typeParameters",
           "route": "slot",
@@ -6232,7 +6232,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "async",
           "route": "slot",
@@ -6436,7 +6436,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "async",
           "route": "slot",
@@ -6640,7 +6640,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -6676,7 +6676,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "identifier": {
       "vocab": "identifier",
@@ -6689,7 +6689,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "if_statement": {
       "vocab": "statement.if",
@@ -6702,7 +6702,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "condition",
           "route": "slot",
@@ -6749,7 +6749,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "types",
           "route": "slot",
@@ -6782,7 +6782,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "import_alias": {
       "vocab": "statement.import.alias",
@@ -6795,7 +6795,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -6831,7 +6831,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "attributeKind",
           "route": "slot",
@@ -6867,7 +6867,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "specifiers",
           "route": "slot",
@@ -6976,7 +6976,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -7037,7 +7037,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -7111,7 +7111,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -7184,7 +7184,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "fromClause",
           "route": "slot",
@@ -7286,7 +7286,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "sign",
           "route": "slot",
@@ -7363,7 +7363,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "sign",
           "route": "slot",
@@ -7422,7 +7422,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -7455,7 +7455,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -7491,7 +7491,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "function",
           "route": "slot",
@@ -7562,7 +7562,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -7658,7 +7658,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -7694,7 +7694,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "left",
           "route": "slot",
@@ -7750,7 +7750,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "label",
           "route": "slot",
@@ -7867,7 +7867,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "declarators",
           "route": "slot",
@@ -7892,7 +7892,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "value",
           "route": "slot",
@@ -7931,7 +7931,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "value",
           "route": "slot",
@@ -7964,7 +7964,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -8000,7 +8000,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -8047,7 +8047,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "object",
           "route": "slot",
@@ -8107,7 +8107,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "meta_property_new_target": {
       "vocab": "expression.meta",
@@ -8120,7 +8120,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "method_definition_getter": {
       "vocab": "declaration.property.getter",
@@ -8238,7 +8238,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "static",
           "route": "slot",
@@ -8438,7 +8438,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "static",
           "route": "slot",
@@ -8836,7 +8836,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "static",
           "route": "slot",
@@ -9060,7 +9060,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "static",
           "route": "slot",
@@ -9249,7 +9249,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "static",
           "route": "slot",
@@ -9623,7 +9623,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "static",
           "route": "slot",
@@ -9731,7 +9731,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -9777,7 +9777,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "moduleExportName",
           "route": "slot",
@@ -9813,7 +9813,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -9853,7 +9853,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "qualifier",
           "route": "slot",
@@ -9896,7 +9896,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "qualifier",
           "route": "slot",
@@ -9939,7 +9939,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "new_expression": {
       "vocab": "expression.call.construct",
@@ -9973,7 +9973,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "function",
           "route": "slot",
@@ -10020,7 +10020,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -10053,7 +10053,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_bigint_binary": {
       "vocab": "literal.number.integer.big.binary",
@@ -10073,7 +10073,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_bigint_decimal": {
       "vocab": "literal.number.integer.big",
@@ -10093,7 +10093,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_bigint_hex": {
       "vocab": "literal.number.integer.big.hex",
@@ -10113,7 +10113,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_bigint_octal": {
       "vocab": "literal.number.integer.big.octal",
@@ -10133,7 +10133,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_binary": {
       "vocab": "literal.number.integer.binary",
@@ -10153,7 +10153,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_decimal": {
       "vocab": "literal.number.integer",
@@ -10173,7 +10173,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_float_leading_point": {
       "vocab": "literal.number.float.leading_point",
@@ -10193,7 +10193,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_float_point": {
       "vocab": "literal.number.float",
@@ -10213,7 +10213,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_float_scientific": {
       "vocab": "literal.number.float.scientific",
@@ -10233,7 +10233,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_hex": {
       "vocab": "literal.number.integer.hex",
@@ -10253,7 +10253,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_keyword": {
       "vocab": "type.primitive",
@@ -10273,7 +10273,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_legacy_octal": {
       "vocab": "literal.number.integer.octal",
@@ -10293,7 +10293,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "number_octal": {
       "vocab": "literal.number.integer.octal",
@@ -10313,7 +10313,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "object": {
       "vocab": "expression.collection.object",
@@ -10326,7 +10326,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "properties",
           "route": "slot",
@@ -10362,7 +10362,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "left",
           "route": "slot",
@@ -10405,7 +10405,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "object_pattern": {
       "vocab": "pattern.object",
@@ -10418,7 +10418,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "properties",
           "route": "slot",
@@ -10454,7 +10454,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "opening",
           "route": "slot",
@@ -10641,7 +10641,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -10732,7 +10732,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -10768,7 +10768,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -10801,7 +10801,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "key",
           "route": "slot",
@@ -10849,7 +10849,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "key",
           "route": "slot",
@@ -10897,7 +10897,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -10930,7 +10930,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -10966,7 +10966,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -11006,7 +11006,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "private_property_identifier": {
       "vocab": "identifier",
@@ -11019,7 +11019,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "program": {
       "vocab": "file",
@@ -11032,7 +11032,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "shebang",
           "route": "slot",
@@ -11072,7 +11072,7 @@
           "test": []
         }
       ],
-      "members": [],
+      "slots": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -11198,7 +11198,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "static",
           "route": "slot",
@@ -11313,7 +11313,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "public_field_definition_accessor": {
       "vocab": "declaration.property",
@@ -11455,7 +11455,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -11666,7 +11666,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -11852,7 +11852,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "readonly_type": {
       "vocab": "type.readonly",
@@ -11865,7 +11865,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -12010,7 +12010,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -12081,7 +12081,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "pattern",
           "route": "slot",
@@ -12117,7 +12117,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "regex_pattern": {
       "vocab": "literal.regex.pattern",
@@ -12130,7 +12130,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "required_parameter": {
       "vocab": "declaration.parameter",
@@ -12269,7 +12269,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -12351,7 +12351,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "pattern",
           "route": "slot",
@@ -12390,7 +12390,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -12423,7 +12423,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -12448,7 +12448,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -12484,7 +12484,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expressions",
           "route": "slot",
@@ -12622,7 +12622,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "decorators",
           "route": "slot",
@@ -12693,7 +12693,7 @@
           "test": []
         }
       ],
-      "members": [],
+      "slots": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -12714,7 +12714,7 @@
           "test": []
         }
       ],
-      "members": [],
+      "slots": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -12735,7 +12735,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -12768,7 +12768,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "statements",
           "route": "slot",
@@ -12793,7 +12793,7 @@
           "test": []
         }
       ],
-      "members": [],
+      "slots": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -12814,7 +12814,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "elements",
           "route": "slot",
@@ -12855,7 +12855,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "string_single": {
       "vocab": "literal.string",
@@ -12868,7 +12868,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "elements",
           "route": "slot",
@@ -12902,7 +12902,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "object",
           "route": "slot",
@@ -12950,7 +12950,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "switch_body": {
       "container": {
@@ -12974,7 +12974,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "value",
           "route": "slot",
@@ -13010,7 +13010,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "bodies",
           "route": "slot",
@@ -13043,7 +13043,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "value",
           "route": "slot",
@@ -13086,7 +13086,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "template_literal_type": {
       "vocab": "type.template",
@@ -13099,7 +13099,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "elements",
           "route": "slot",
@@ -13133,7 +13133,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "elements",
           "route": "slot",
@@ -13168,7 +13168,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -13193,7 +13193,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "type",
           "route": "slot",
@@ -13218,7 +13218,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "condition",
           "route": "slot",
@@ -13265,7 +13265,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "this_type": {
       "vocab": "type.receiver",
@@ -13278,7 +13278,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "throw_statement": {
       "vocab": "statement.throw",
@@ -13291,7 +13291,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -13316,7 +13316,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "try_statement": {
       "vocab": "statement.try",
@@ -13329,7 +13329,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "body",
           "route": "slot",
@@ -13376,7 +13376,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -13412,7 +13412,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "tupleTypeMembers",
           "route": "slot",
@@ -13459,7 +13459,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -13526,7 +13526,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -13576,7 +13576,7 @@
           "test": []
         }
       ],
-      "members": [],
+      "slots": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -13597,7 +13597,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "const",
           "route": "slot",
@@ -13690,7 +13690,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -13736,7 +13736,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",
@@ -13786,7 +13786,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "source",
           "route": "nested",
@@ -13872,7 +13872,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "source",
           "route": "nested",
@@ -13928,7 +13928,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "function",
           "route": "slot",
@@ -13982,7 +13982,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "qualifier",
           "route": "slot",
@@ -14018,7 +14018,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "qualifier",
           "route": "slot",
@@ -14239,7 +14239,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "argument",
           "route": "slot",
@@ -14264,7 +14264,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "unescaped_double_string_fragment": {
       "vocab": "literal.string.text",
@@ -14277,7 +14277,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "unescaped_single_string_fragment": {
       "vocab": "literal.string.text",
@@ -14290,7 +14290,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "union_type": {
       "vocab": "type.union",
@@ -14303,7 +14303,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "left",
           "route": "slot",
@@ -14346,7 +14346,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "unknown_keyword": {
       "vocab": "type.primitive",
@@ -14366,7 +14366,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "update_expression_postfix": {
       "vocab": "expression.update",
@@ -14429,7 +14429,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "argument",
           "route": "slot",
@@ -14504,7 +14504,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "argument",
           "route": "slot",
@@ -14529,7 +14529,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "declarators",
           "route": "slot",
@@ -14554,7 +14554,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -14621,7 +14621,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "name",
           "route": "slot",
@@ -14675,7 +14675,7 @@
           "test": []
         }
       ],
-      "members": []
+      "slots": []
     },
     "while_statement": {
       "vocab": "statement.loop.while",
@@ -14688,7 +14688,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "condition",
           "route": "slot",
@@ -14724,7 +14724,7 @@
           "test": []
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "object",
           "route": "slot",
@@ -14781,7 +14781,7 @@
           ]
         }
       ],
-      "members": [
+      "slots": [
         {
           "name": "expression",
           "route": "slot",

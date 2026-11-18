@@ -19,7 +19,7 @@ const TYPES: Readonly<Record<string, readonly number[]>> = { computed_name: [41]
 const plans = (members: readonly SlotRoute[], tests: readonly (readonly [string, readonly PortableCondition[], boolean])[] = []) =>
 	flagPlansOf({
 		kind: 'k',
-		members,
+		slots: members,
 		claimFlags: tests.map(([flag, test, placed]) => ({ flag, test, placed })),
 		subjectOf: (owner, slot) => BY_KEY[`${owner}.${slot}`],
 		presenceOf: (owner, slot) => KEYWORDS[`${owner}.${slot}`],

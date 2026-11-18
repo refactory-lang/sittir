@@ -11,7 +11,7 @@ import {
 	compileBindings,
 	deriveVocabulary,
 	vocabularyDisagreements,
-	vocabularyMembers
+	vocabularySlots
 } from '../../src/inventory/index.ts';
 import { type Derivation, bindingPatterns, camel, levelSlots } from '@sittir/codegen/bindings';
 import { type Vocabulary, readVocabulary } from '@sittir/codegen/bindings';
@@ -266,14 +266,14 @@ describe('the authored vocabulary', () => {
 		};
 		expect(vocabularyDisagreements(d, withoutHole)).toContain(`${path}.${hole}: templated, but its interface does not declare it`);
 	}, 120_000);
-	it('needs no declaration for a refinement pinned slot: the read tells it, so it is no member', async () => {
+	it('needs no declaration for a refinement pinned slot: the read tells it, so it is no slot', async () => {
 		const d = await deriveVocabulary();
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const pinned = [...d.refinements].flatMap(([v, r]) => [...r.literals.keys()].map((field) => [v, camel(field)] as const).filter(([, p]) => !d.slots.get(v)?.has(p)));
 		expect(pinned.length).toBeGreaterThan(0);
 		const unpinned = {
 			...vocabulary,
-			members: (kind: string) => new Map([...vocabulary.slots(kind)].filter(([m]) => !pinned.some(([v, p]) => v === kind && p === m)))
+			slots: (kind: string) => new Map([...vocabulary.slots(kind)].filter(([m]) => !pinned.some(([v, p]) => v === kind && p === m)))
 		};
 		expect(vocabularyDisagreements(d, unpinned)).toEqual(vocabularyDisagreements(d, vocabulary));
 	}, 120_000);
@@ -327,7 +327,7 @@ describe('readVocabulary', () => {
 	});
 
 	it('gives the grammar-bindings derivation every member a kind declares or inherits', () => {
-		expect(vocabularyMembers(vocabulary.composedAs('FixtureFeatures')).get('declaration.function')).toEqual(new Set(['body', 'name']));
+		expect(vocabularySlots(vocabulary.composedAs('FixtureFeatures')).get('declaration.function')).toEqual(new Set(['body', 'name']));
 	});
 });
 
@@ -383,9 +383,9 @@ describe('readVocabulary over feature folders', () => {
 	});
 
 	it("lists a feature's members only for a composition that has the feature, directly or through another composition", () => {
-		expect(vocabularyMembers(vocabulary.composedAs('WithLambdas')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
-		expect(vocabularyMembers(vocabulary.composedAs('Composed')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
-		expect(vocabularyMembers(vocabulary.composedAs('WithoutLambdas')).get('declaration.function')).toEqual(new Set(['body', 'name']));
+		expect(vocabularySlots(vocabulary.composedAs('WithLambdas')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
+		expect(vocabularySlots(vocabulary.composedAs('Composed')).get('declaration.function')).toEqual(new Set(['arrow', 'body', 'name']));
+		expect(vocabularySlots(vocabulary.composedAs('WithoutLambdas')).get('declaration.function')).toEqual(new Set(['body', 'name']));
 		expect(() => vocabulary.featuresOf('Missing')).toThrow('compositions.ts declares no composition Missing');
 	});
 });
@@ -456,6 +456,6 @@ describe('readVocabulary over an owner refined by a value', () => {
 			name: { optional: false, flag: false },
 			scope: { optional: false, flag: false, features: ['Scoped'] }
 		});
-		expect(vocabularyMembers(vocabulary.composedAs('ScopedFeatures')).get('declaration.public')).toEqual(new Set(['name']));
+		expect(vocabularySlots(vocabulary.composedAs('ScopedFeatures')).get('declaration.public')).toEqual(new Set(['name']));
 	});
 });

@@ -147,9 +147,9 @@ const declaredIn = (dir: string, name: string): Promise<Declared[]> => runPinned
 
 const synonymTable = (table: Declared): SynonymTable =>
 	new Map(
-		table.slots.map((member) => {
-			if (member.literals.length === 0) throw new Error(`vocabulary: ${table.qname}.${member.name} lists its synonyms as a union of string literals`);
-			return [member.name, member.literals];
+		table.slots.map((slot) => {
+			if (slot.literals.length === 0) throw new Error(`vocabulary: ${table.qname}.${slot.name} lists its synonyms as a union of string literals`);
+			return [slot.name, slot.literals];
 		})
 	);
 
@@ -176,7 +176,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 			if (level !== undefined && levels.has(level)) throw new Error(`vocabulary: ${d.qname} is declared more than once; a level has one table`);
 			if (level !== undefined) levels.set(level, synonymTable(d));
 			if (d.qname === `${FLAG}${SYNONYMS}`) flags.push(d);
-			if (d.qname === TEXT_PATHS) texts.push(...(d.slots.find((member) => member.name === TEXTS)?.keys ?? []));
+			if (d.qname === TEXT_PATHS) texts.push(...(d.slots.find((slot) => slot.name === TEXTS)?.keys ?? []));
 		}
 	}
 	if (flags.length > 1) throw new Error(`vocabulary: ${FLAG}${SYNONYMS} is declared ${flags.length} times; the flags have one table`);
@@ -268,12 +268,12 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const own = new Map<string, Map<string, VocabularySlot>>(declared.map((d) => [d.qname, new Map(d.slots.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
 	for (const feature of source.features)
 		for (const stub of feature.stubs) {
-			const members = own.get(stub.qname);
-			if (isKind(stub) || members === undefined) continue;
+			const slots = own.get(stub.qname);
+			if (isKind(stub) || slots === undefined) continue;
 			for (const m of stub.slots) {
-				const held = members.get(m.name);
+				const held = slots.get(m.name);
 				const features = held === undefined ? [feature.name] : held.features === undefined ? undefined : [...held.features, feature.name];
-				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
+				slots.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
 			}
 		}
 	for (const d of declared)
@@ -289,15 +289,15 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 		const all = new Map<string, VocabularySlot>();
 		const seen = new Set<string>();
 		for (const at of lineageOf(path, (line) => kinds.get(line)))
-			for (const [name, member] of kinds.get(at)?.own ?? []) {
+			for (const [name, slot] of kinds.get(at)?.own ?? []) {
 				if (seen.has(name)) continue;
 				seen.add(name);
-				if (member.excluded === true || (composed !== undefined && member.features !== undefined && !member.features.some((feature) => composed.has(feature)))) continue;
-				all.set(name, member);
+				if (slot.excluded === true || (composed !== undefined && slot.features !== undefined && !slot.features.some((feature) => composed.has(feature)))) continue;
+				all.set(name, slot);
 			}
 		return all;
 	};
-	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, member]) => (member.flag ? [name] : []))));
+	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, slot]) => (slot.flag ? [name] : []))));
 	const parentsOf = new Map(source.features.map((feature) => [feature.name, feature.parents]));
 	const featuresOf = (composition: string): ReadonlySet<string> => {
 		const heritage = source.compositions.get(composition);
@@ -327,7 +327,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 }
 
 export const declaredFlags = (vocabulary: Vocabulary, path: string): readonly string[] =>
-	vocabulary.kinds.has(path) ? [...vocabulary.slots(path)].flatMap(([name, member]) => (member.flag ? [name] : [])) : [];
+	vocabulary.kinds.has(path) ? [...vocabulary.slots(path)].flatMap(([name, slot]) => (slot.flag ? [name] : [])) : [];
 
 export function flagSegment(vocabulary: Vocabulary, path: string): { readonly parent: string; readonly flag: string } | undefined {
 	const cut = path.lastIndexOf('.');
@@ -340,8 +340,8 @@ export function flagSegment(vocabulary: Vocabulary, path: string): { readonly pa
 }
 
 const flagsSpelledBy = (vocabulary: Vocabulary, path: string, written: string): string[] =>
-	[...vocabulary.slots(path)].flatMap(([name, member]) =>
-		member.flag && vocabulary.synonyms.flags.get(name)?.some((synonym) => camel(synonym) === camel(written)) === true ? [name] : []
+	[...vocabulary.slots(path)].flatMap(([name, slot]) =>
+		slot.flag && vocabulary.synonyms.flags.get(name)?.some((synonym) => camel(synonym) === camel(written)) === true ? [name] : []
 	);
 
 export function canonicalPaths(vocabulary: Vocabulary): (path: string) => string {
@@ -379,14 +379,14 @@ const declares = (vocabulary: Vocabulary, paths: readonly string[], name: string
 	paths.some((path) => vocabulary.slots(path).has(camel(name)) || flagsSpelledBy(vocabulary, path, name).length > 0);
 
 function canonicalCapture(vocabulary: Vocabulary, paths: readonly string[], name: string, owner: string): string {
-	const member = paths.find((path) => vocabulary.slots(path).has(camel(name)));
+	const slotPath = paths.find((path) => vocabulary.slots(path).has(camel(name)));
 	const spelled = paths.flatMap((path) => flagsSpelledBy(vocabulary, path, name).map((flag) => [path, flag] as const));
 	const flags = [...new Set(spelled.map(([, flag]) => flag))];
 	const [first] = spelled;
-	if (member !== undefined && first !== undefined)
-		throw new Error(`bindings: ${owner}'s capture @${name} is a member at ${member} and spells the flag ${first[1]} at ${first[0]}; one name names one thing`);
+	if (slotPath !== undefined && first !== undefined)
+		throw new Error(`bindings: ${owner}'s capture @${name} is a slot at ${slotPath} and spells the flag ${first[1]} at ${first[0]}; one name names one thing`);
 	if (flags.length > 1) throw new Error(`bindings: ${owner}'s capture @${name} spells the flags ${flags.join(' and ')}; a synonym spells one flag`);
-	return member !== undefined ? name : (flags[0] ?? name);
+	return slotPath !== undefined ? name : (flags[0] ?? name);
 }
 
 export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
@@ -399,23 +399,23 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 	const vocabs = kindVocabs(model, reads, refinedContainers(model, reads, facts.containers));
 	const readable = capturePaths(model, reads);
 	const attached = slotTargets(model, reads);
-	const pathsOf = (member: NamedSlotFact): string[] => {
-		const at = attached(member);
-		return at.some((path) => flagsSpelledBy(vocabulary, path, member.name).length > 0) ? at : readable(member);
+	const pathsOf = (slot: NamedSlotFact): string[] => {
+		const at = attached(slot);
+		return at.some((path) => flagsSpelledBy(vocabulary, path, slot.name).length > 0) ? at : readable(slot);
 	};
 	const renamed = new Map<string, string>();
 	return {
 		...facts,
 		claims,
 		templates: facts.templates.map((template) => ({ ...template, vocabs: template.vocabs.map(canonical) })),
-		slots: facts.slots.flatMap((member): SlotFact[] => {
-			if (!isNamedSlot(member)) return [member];
-			const paths = pathsOf(member);
-			if (member.tested === true && !declares(vocabulary, attached(member), member.name)) return [];
-			const name = canonicalCapture(vocabulary, paths, member.name, member.owner);
-			const named = name === member.name ? member : { ...member, name };
+		slots: facts.slots.flatMap((slot): SlotFact[] => {
+			if (!isNamedSlot(slot)) return [slot];
+			const paths = pathsOf(slot);
+			if (slot.tested === true && !declares(vocabulary, attached(slot), slot.name)) return [];
+			const name = canonicalCapture(vocabulary, paths, slot.name, slot.owner);
+			const named = name === slot.name ? slot : { ...slot, name };
 			if (named.route !== 'kind') {
-				renamed.set(`${member.owner} ${member.name}`, name);
+				renamed.set(`${slot.owner} ${slot.name}`, name);
 				return [named];
 			}
 			const referenced = renamed.get(`${named.owner} ${named.slot}`) ?? named.slot;
@@ -442,17 +442,17 @@ export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model:
 		...facts,
 		claims,
 		flagsByPath: new Map([...new Set(claims.map((claim) => claim.vocab))].map((path) => [path, new Set(declaredFlags(vocabulary, path))])),
-		slots: facts.slots.map((member) => {
-			if (!isNamedSlot(member)) return member;
-			const declared = pathsOf(member).flatMap((path) => {
-				const found = vocabulary.slots(path).get(camel(member.name));
+		slots: facts.slots.map((slot) => {
+			if (!isNamedSlot(slot)) return slot;
+			const declared = pathsOf(slot).flatMap((path) => {
+				const found = vocabulary.slots(path).get(camel(slot.name));
 				return found === undefined ? [] : [[path, found.flag] as const];
 			});
 			const flagAt = declared.find(([, flag]) => flag);
 			const dataAt = declared.find(([, flag]) => !flag);
 			if (flagAt !== undefined && dataAt !== undefined)
-				throw new Error(`bindings: ${member.owner}'s capture @${member.name} is a flag at ${flagAt[0]} and data at ${dataAt[0]}; one name names one thing`);
-			return flagAt === undefined ? member : { ...member, flag: true };
+				throw new Error(`bindings: ${slot.owner}'s capture @${slot.name} is a flag at ${flagAt[0]} and data at ${dataAt[0]}; one name names one thing`);
+			return flagAt === undefined ? slot : { ...slot, flag: true };
 		})
 	};
 }

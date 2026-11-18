@@ -24,7 +24,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 });
 
 describe('emitPortableNodeModel', () => {
-	it('writes each kind\'s routes in kind order: its default vocabulary kind, read entries, members with their build paths, and its unwrap', async () => {
+	it('writes each kind\'s routes in kind order: its default vocabulary kind, read entries, slots with their build paths, and its unwrap', async () => {
 		const text = emitPortableNodeModel(
 			resolveRoutes(await input(['(alpha operator: "+") @expression.add', '(alpha left: (_) @lhs) @expression.binary', '(zeta) @expression.z'].join('\n'))),
 			(entry) => (entry.pins.length === 0 ? [] : [{ up: 0, via: [], plan: { op: 'eq', text: entry.pins[0]!.text, slots: { 1: 0 } } }])
@@ -43,7 +43,7 @@ describe('emitPortableNodeModel', () => {
 				},
 				{ vocab: 'expression.binary', toplevel: true, within: [], pins: [], test: [] }
 			],
-			members: [
+			slots: [
 				{ name: 'lhs', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] },
 				{ name: 'left', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] }
 			]

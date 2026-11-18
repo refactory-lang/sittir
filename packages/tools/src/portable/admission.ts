@@ -6,10 +6,10 @@ import { bindingGrammars } from '@sittir/codegen/bindings';
 import { grammarMapName, rawGroupOf, type ExactSet } from '@sittir/codegen';
 import { portableTypedPath, writeTypedModule } from './conformance.ts';
 
-export interface AdmissionMember {
+export interface AdmissionSlot {
 	readonly grammar: string;
 	readonly path: string;
-	readonly member: string;
+	readonly slot: string;
 	readonly excess: readonly string[];
 }
 
@@ -22,12 +22,12 @@ export interface AdmissionRaw {
 export interface AdmissionUnformed {
 	readonly grammar: string;
 	readonly path: string;
-	readonly member: string;
+	readonly slot: string;
 }
 
 export interface AdmissionReport {
 	readonly untyped: readonly string[];
-	readonly members: readonly AdmissionMember[];
+	readonly slots: readonly AdmissionSlot[];
 	readonly raw: readonly AdmissionRaw[];
 	readonly unformed: readonly AdmissionUnformed[];
 }
@@ -50,7 +50,7 @@ const COMPILER_OPTIONS: ts.CompilerOptions = {
 };
 
 function typeAliases(file: string, map: string, aliases: readonly string[]): ReadonlyMap<number, Set<string>> {
-	const census = join(file, '..', '__members.ts');
+	const census = join(file, '..', '__slots.ts');
 	const text = `import type * as V from '../../types/src/vocabulary/index.ts';\nimport type { ${map} } from '../src/${PORTABLE_MAP_FILE}';\n${aliases.map((alias, i) => `export type A${i} = ${alias};`).join('\n')}\n`;
 	const host = ts.createCompilerHost(COMPILER_OPTIONS);
 	const getSourceFile = host.getSourceFile.bind(host);
@@ -78,9 +78,9 @@ function untypedSlots(): string[] {
 		const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.ESNext, true);
 		const visit = (node: ts.Node): void => {
 			if (ts.isTypeReferenceNode(node) && node.typeName.getText() === 'Slot' && node.typeArguments?.length === 4) {
-				const [, path, member, fallback] = node.typeArguments;
+				const [, path, slot, fallback] = node.typeArguments;
 				const arms = ts.isUnionTypeNode(fallback!) ? fallback.types : [fallback!];
-				if (arms.some((arm) => arm.kind === ts.SyntaxKind.UnknownKeyword)) out.push(`${relative(REPO_ROOT, file)}:${source.getLineAndCharacterOfPosition(node.getStart()).line + 1} ${path!.getText().slice(1, -1)}.${member!.getText().slice(1, -1)}`);
+				if (arms.some((arm) => arm.kind === ts.SyntaxKind.UnknownKeyword)) out.push(`${relative(REPO_ROOT, file)}:${source.getLineAndCharacterOfPosition(node.getStart()).line + 1} ${path!.getText().slice(1, -1)}.${slot!.getText().slice(1, -1)}`);
 			}
 			ts.forEachChild(node, visit);
 		};
@@ -106,7 +106,7 @@ function kindsOf(checker: ts.TypeChecker, type: ts.Type, out: Set<string>): Set<
 const nameOf = (name: ts.PropertyName, source: ts.SourceFile): string => (ts.isStringLiteral(name) ? name.text : name.getText(source));
 
 export async function portableAdmission(grammars: readonly string[] = bindingGrammars()): Promise<AdmissionReport> {
-	const members: AdmissionMember[] = [];
+	const slots: AdmissionSlot[] = [];
 	const raw: AdmissionRaw[] = [];
 	const unformed: AdmissionUnformed[] = [];
 	for (const grammar of grammars) {
@@ -124,33 +124,33 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 					const qname = ts.isPropertySignature(member) ? view.exec(member.type?.getText(source) ?? '')?.[1] : undefined;
 					if (ts.isPropertySignature(member) && qname !== undefined) qnames.set(nameOf(member.name, source), qname);
 				}
-		const pairs = [...typed.exact].flatMap(([path, at]) => (qnames.has(path) ? [...at].map(([member, set]) => ({ path, member, set })) : []));
-		const admittedBy = typeAliases(file, map, pairs.map(({ path, member }) => `V.${qnames.get(path)!}<${map}>['${member}']`));
-		pairs.forEach(({ path, member, set }, i) => {
+		const pairs = [...typed.exact].flatMap(([path, at]) => (qnames.has(path) ? [...at].map(([slot, set]) => ({ path, slot, set })) : []));
+		const admittedBy = typeAliases(file, map, pairs.map(({ path, slot }) => `V.${qnames.get(path)!}<${map}>['${slot}']`));
+		pairs.forEach(({ path, slot, set }, i) => {
 			const excess = excessOf(admittedBy.get(i) ?? new Set(), set);
-			if (excess.length > 0) members.push({ grammar, path, member, excess });
+			if (excess.length > 0) slots.push({ grammar, path, slot, excess });
 		});
 		const groups = { kind: 0, value: 0 };
 		for (const [, at] of typed.exact) for (const [, set] of at) for (const arm of set.raw) groups[rawGroupOf(arm.reasons)]++;
 		raw.push({ grammar, ...groups });
 		for (const test of typed.unformed) unformed.push({ grammar, ...test });
 	}
-	return { untyped: untypedSlots(), members, raw, unformed };
+	return { untyped: untypedSlots(), slots, raw, unformed };
 }
 
 export function formatAdmission(report: AdmissionReport): string {
-	const lines = [`${report.untyped.length} member defaults admit unknown`];
+	const lines = [`${report.untyped.length} slot defaults admit unknown`];
 	for (const site of report.untyped) lines.push(`  ${site}`);
 	for (const grammar of new Set(report.raw.map((r) => r.grammar))) {
-		const over = report.members.filter((m) => m.grammar === grammar);
+		const over = report.slots.filter((m) => m.grammar === grammar);
 		const raw = report.raw.find((r) => r.grammar === grammar)!;
 		const unformed = report.unformed.filter((u) => u.grammar === grammar);
 		lines.push(
-			`${grammar}: ${over.length} members admit a kind outside their exact set; raw-node arms ${raw.kind} per kind, ${raw.value} per value; ${unformed.length} build kind tests at a member with no exact set`
+			`${grammar}: ${over.length} slots admit a kind outside their exact set; raw-node arms ${raw.kind} per kind, ${raw.value} per value; ${unformed.length} build kind tests at a slot with no exact set`
 		);
-		for (const m of over) lines.push(`  ${m.path}.${m.member}: ${m.excess.join(' ')}`);
+		for (const m of over) lines.push(`  ${m.path}.${m.slot}: ${m.excess.join(' ')}`);
 		const sites = new Map<string, number>();
-		for (const u of unformed) sites.set(`${u.path}.${u.member}`, (sites.get(`${u.path}.${u.member}`) ?? 0) + 1);
+		for (const u of unformed) sites.set(`${u.path}.${u.slot}`, (sites.get(`${u.path}.${u.slot}`) ?? 0) + 1);
 		for (const [site, count] of sites) lines.push(`  unformed ${site}: ${count}`);
 	}
 	return lines.join('\n');

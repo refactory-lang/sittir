@@ -32,19 +32,19 @@ export function unmappedKindsBlock(
 interface FormTerm {
 	readonly required?: readonly string[];
 	readonly absent?: readonly string[];
-	readonly member?: readonly [name: string, type: string];
+	readonly slot?: readonly [name: string, type: string];
 }
 
 export function mapSlots(typedInput: PortableTypedInput, exact: ExactSlots): ReadonlyMap<string, ReadonlyMap<string, ExactSet>> {
 	const { vocabulary } = typedInput.input;
-	const slotted = (path: string, member: string): boolean =>
-		vocabulary.kinds.get(lineageOf(path, (at) => vocabulary.kinds.get(at)).find((at) => vocabulary.kinds.get(at)?.own.has(member)) ?? '')?.own.get(member)?.slot === true;
+	const slotted = (path: string, slot: string): boolean =>
+		vocabulary.kinds.get(lineageOf(path, (at) => vocabulary.kinds.get(at)).find((at) => vocabulary.kinds.get(at)?.own.has(slot)) ?? '')?.own.get(slot)?.slot === true;
 	return new Map(
 		[...exact]
 			.sort(([a], [b]) => byCodepoint(a, b))
-			.flatMap(([path, members]): [string, ReadonlyMap<string, ExactSet>][] => {
+			.flatMap(([path, sets]): [string, ReadonlyMap<string, ExactSet>][] => {
 				if (vocabulary.kinds.get(path)?.text === true) return [];
-				const kept = [...members].filter(([member]) => slotted(path, member)).sort(([a], [b]) => byCodepoint(a, b));
+				const kept = [...sets].filter(([slot]) => slotted(path, slot)).sort(([a], [b]) => byCodepoint(a, b));
 				return kept.length === 0 ? [] : [[path, new Map(kept)]];
 			})
 	);
@@ -80,18 +80,18 @@ export function mapArmsOf(typedInput: PortableTypedInput, reads: ExactReads, map
 	return { armsOf, pathArms };
 }
 
-export function mapNeverOf(typedInput: PortableTypedInput, reads: ExactReads, exact: ExactSlots): (path: string, member: string) => boolean {
+export function mapNeverOf(typedInput: PortableTypedInput, reads: ExactReads, exact: ExactSlots): (path: string, slot: string) => boolean {
 	const { armsOf } = mapArmsOf(typedInput, reads, grammarMapName(typedInput.input.grammar));
 	const slots = mapSlots(typedInput, exact);
-	return (path, member) => {
-		const set = slots.get(path)?.get(member);
+	return (path, slot) => {
+		const set = slots.get(path)?.get(slot);
 		return set !== undefined && armsOf(set).length === 0;
 	};
 }
 
 export interface UnformedTest {
 	readonly path: string;
-	readonly member: string;
+	readonly slot: string;
 }
 
 export interface MapForms {
@@ -110,14 +110,14 @@ export function mapFormsOf(
 	const kindsOfId = new Map<number, string[]>();
 	for (const entry of kindEntries) (kindsOfId.get(entry.id) ?? kindsOfId.set(entry.id, []).get(entry.id)!).push(entry.kind);
 	const builtBy = (path: string, ids: ReadonlySet<number>): boolean => (table.paths[path]?.arms ?? []).some((arm) => ids.has(arm.kind));
-	const arityOf = (path: string, member: string, type: string): string => {
-		const arity = vocabulary.slots(path).get(member)?.arity;
+	const arityOf = (path: string, slot: string, type: string): string => {
+		const arity = vocabulary.slots(path).get(slot)?.arity;
 		return arity === 'list' ? `readonly (${type})[]` : arity === 'either' ? `${type} | readonly (${type})[]` : type;
 	};
-	const narrowed = (path: string, member: string, kinds: readonly number[]): FormTerm | undefined => {
-		const set = slots.get(path)?.get(member);
+	const narrowed = (path: string, slot: string, kinds: readonly number[]): FormTerm | undefined => {
+		const set = slots.get(path)?.get(slot);
 		if (set === undefined) {
-			unformed.push({ path, member });
+			unformed.push({ path, slot });
 			return undefined;
 		}
 		const ids = new Set(kinds);
@@ -131,13 +131,13 @@ export function mapFormsOf(
 			scalars: [],
 			raw: set.raw.filter((arm) => names.has(arm.kind))
 		});
-		return { member: [member, arityOf(path, member, arms.length === 0 ? 'never' : arms.join(' | '))] };
+		return { slot: [slot, arityOf(path, slot, arms.length === 0 ? 'never' : arms.join(' | '))] };
 	};
 	const unformed: UnformedTest[] = [];
 	const termOf = (path: string, test: PortablePickTest): FormTerm | undefined => {
 		if ('absent' in test) return { required: test.required, absent: test.absent };
 		if ('kinds' in test) return narrowed(path, test.slot, test.kinds);
-		if ('boolean' in test) return { member: ['$value', String(test.boolean)] };
+		if ('boolean' in test) return { slot: ['$value', String(test.boolean)] };
 		return undefined;
 	};
 	const keys = (names: ReadonlySet<string>): string => (names.size === 0 ? 'never' : [...names].sort().map(q).join(' | '));
@@ -147,13 +147,13 @@ export function mapFormsOf(
 			return term === undefined ? [] : [term];
 		});
 		const absent = new Set(terms.flatMap((term) => term.absent ?? []));
-		if ([...absent].some((member) => held.has(member))) return null;
+		if ([...absent].some((slot) => held.has(slot))) return null;
 		const stated = new Set(terms.flatMap((term) => term.required ?? []));
-		const members = new Map(terms.flatMap((term) => (term.member === undefined || absent.has(term.member[0]) ? [] : [term.member])));
-		const required = new Set([...stated].filter((member) => !members.has(member)));
-		const typed = [...members]
+		const slots = new Map(terms.flatMap((term) => (term.slot === undefined || absent.has(term.slot[0]) ? [] : [term.slot])));
+		const required = new Set([...stated].filter((slot) => !slots.has(slot)));
+		const typed = [...slots]
 			.sort(([a], [b]) => byCodepoint(a, b))
-			.map(([member, type]) => `readonly ${member}${stated.has(member) || held.has(member) ? '' : '?'}: ${type}`);
+			.map(([slot, type]) => `readonly ${slot}${stated.has(slot) || held.has(slot) ? '' : '?'}: ${type}`);
 		const args = [keys(required), keys(absent), ...(typed.length === 0 ? [] : [`{ ${typed.join('; ')} }`])];
 		while (args.length > 0 && args.at(-1) === 'never') args.pop();
 		return args.length === 0 ? undefined : `V.Form<${args.join(', ')}>`;
@@ -161,7 +161,7 @@ export function mapFormsOf(
 	const formsOf = (path: string): readonly string[] | undefined => {
 		const arms = (table.paths[path]?.arms ?? []).filter((arm) => !arm.when.some((test) => 'text' in test));
 		if (arms.length === 0 || vocabulary.kinds.get(path)?.text === true) return undefined;
-		const held = new Set([...vocabulary.slots(path)].flatMap(([member, facts]) => (facts.optional || facts.flag ? [] : [member])));
+		const held = new Set([...vocabulary.slots(path)].flatMap(([slot, facts]) => (facts.optional || facts.flag ? [] : [slot])));
 		const forms = arms.map((arm) => formOf(path, arm, held));
 		if (forms.some((form) => form === undefined)) return undefined;
 		return [...new Set(forms.filter((form): form is string => typeof form === 'string'))];
@@ -220,14 +220,14 @@ export function mapNodesOf({ nodeMap, kindEntries }: PortableTypedInput, reads: 
 	return [...ids].sort(([a], [b]) => byCodepoint(a, b));
 }
 
-export type MapDecided = readonly (readonly [path: string, members: readonly (readonly [member: string, decided: string])[]])[];
+export type MapDecided = readonly (readonly [path: string, slots: readonly (readonly [slot: string, decided: string])[]])[];
 
 export function mapDecidedOf({ input }: PortableTypedInput, slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, viewed: ReadonlySet<string>): MapDecided {
 	const structured = (path: string): boolean => input.vocabulary.kinds.has(path) && !input.vocabulary.slots(path).has('$value');
-	return [...slots].flatMap(([path, members]) => {
-		const decided = [...members].flatMap(([member, set]) => {
+	return [...slots].flatMap(([path, sets]) => {
+		const decided = [...sets].flatMap(([slot, set]) => {
 			const built = set.kinds.filter(structured);
-			return built.length === 1 && viewed.has(built[0]!) ? [[member, built[0]!] as const] : [];
+			return built.length === 1 && viewed.has(built[0]!) ? [[slot, built[0]!] as const] : [];
 		});
 		return decided.length === 0 ? [] : [[path, decided] as const];
 	});
@@ -264,19 +264,19 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		'\treadonly overrides: {'
 	];
 	const entries = new Map<string, string[]>();
-	for (const [path, members] of slots)
-		for (const [member, set] of members) {
+	for (const [path, sets] of slots)
+		for (const [slot, set] of sets) {
 			const arms = armsOf(set);
-			(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly ${member}: ${arms.length === 0 ? 'never' : arms.join(' | ')};`);
+			(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly ${slot}: ${arms.length === 0 ? 'never' : arms.join(' | ')};`);
 		}
 	for (const path of reads.textPaths)
 		(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly $text: PortableTexts[${q(path)}];`);
 	for (const [path, at] of forms)
 		(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly $forms: ${at.length === 0 ? 'never' : at.join(' | ')};`);
-	for (const [path, members] of [...entries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
-		lines.push(`\t\treadonly ${q(path)}: {`, ...members, '\t\t};');
-	const unmapped = [...slots.values()].flatMap((members) =>
-		[...members.values()].flatMap((set) => set.unmapped.map((name) => name.slice(name.indexOf(':') + 1)))
+	for (const [path, fields] of [...entries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
+		lines.push(`\t\treadonly ${q(path)}: {`, ...fields, '\t\t};');
+	const unmapped = [...slots.values()].flatMap((sets) =>
+		[...sets.values()].flatMap((set) => set.unmapped.map((name) => name.slice(name.indexOf(':') + 1)))
 	);
 	const decided = mapDecidedOf(typedInput, slots, new Set(reads.viewed));
 	lines.push(
@@ -291,7 +291,7 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		...mapFlagsOf(typedInput).map(([path, flags]) => `\t\treadonly ${q(path)}: ${unionOf(flags.map(q))};`),
 		'\t};',
 		'\treadonly decided: {',
-		...decided.map(([path, members]) => `\t\treadonly ${q(path)}: { ${members.map(([member, at]) => `readonly ${member}: ${q(at)};`).join(' ')} };`),
+		...decided.map(([path, slotKinds]) => `\t\treadonly ${q(path)}: { ${slotKinds.map(([slot, at]) => `readonly ${slot}: ${q(at)};`).join(' ')} };`),
 		'\t};',
 		'}',
 		'',

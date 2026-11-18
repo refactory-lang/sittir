@@ -3,7 +3,7 @@ import { type CommandModule, defineCommand } from '../../framework/command-modul
 export const portableAdmission: CommandModule = {
 	name: 'portable-admission',
 	describe:
-		"List the vocabulary members and own slots whose type admits a kind no read in the grammar's typed portable module gives",
+		"List the vocabulary slots and own slots whose type admits a kind no read in the grammar's typed portable module gives",
 	register: (program) => {
 		defineCommand(program, portableAdmission)
 			.option('--grammar <grammar...>', 'The grammars to read (default: every stable grammar with bindings)')

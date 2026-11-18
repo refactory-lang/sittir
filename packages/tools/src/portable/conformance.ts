@@ -62,27 +62,27 @@ const PATHS: ReadonlySet<string> = new Set(vocabularyPaths);
 
 export const CAUSES: readonly Cause[] = [
 	{ name: 'context fill', why: "an arm of the grammar's own context fill that the namespace map's fill does not admit", test: (d) => d.code === 'TS2344' },
-	{ name: 'extra member', why: 'a member the bindings route that the interface does not declare', test: (d) => d.code === 'TS2353' || d.code === 'TS2561' },
+	{ name: 'extra slot', why: 'a slot the bindings route that the interface does not declare', test: (d) => d.code === 'TS2353' || d.code === 'TS2561' },
 	{ name: 'unreadable route', why: "a route step the grammar's typed surface has no reader for", test: (d) => d.code === 'TS2339' },
 	{
 		name: 'arity',
-		why: 'a list read where the member holds one value, or one value where it holds a list',
+		why: 'a list read where the slot holds one value, or one value where it holds a list',
 		test: (_, reason) => {
 			const pair = sides(reason);
 			return pair !== undefined && pair[0] !== 'undefined' && isList(pair[0]) !== isList(pair[1]);
 		}
 	},
-	{ name: 'missing member', why: 'a member the interface requires that the read entry has no route for', test: (d, reason) => d.code === 'TS2741' || (/ is missing /.test(reason) && sides(reason)?.[1] !== 'PortableHandle') },
+	{ name: 'missing slot', why: 'a slot the interface requires that the read entry has no route for', test: (d, reason) => d.code === 'TS2741' || (/ is missing /.test(reason) && sides(reason)?.[1] !== 'PortableHandle') },
 	{
 		name: 'refinement',
-		why: "a refinement where its parent is admitted: the read gives a sub-path of the member's kind",
+		why: "a refinement where its parent is admitted: the read gives a sub-path of the slot's kind",
 		test: (_, reason) => {
 			const pair = sides(reason);
 			return pair !== undefined && /^"[a-z_.]+"$/.test(pair[0]) && /^"[a-z_.]+"$/.test(pair[1]) && pair[0].slice(1, -1).startsWith(`${pair[1].slice(1, -1)}.`);
 		}
 	},
-	{ name: 'absent', why: 'the read can be absent where the member is required', test: (_, reason) => source(reason) === 'undefined' },
-	{ name: 'token text', why: 'a token read as its const string that the member type does not admit', test: (_, reason) => /^"[^"]*"$/.test(source(reason)) && !PATHS.has(source(reason).slice(1, -1)) },
+	{ name: 'absent', why: 'the read can be absent where the slot is required', test: (_, reason) => source(reason) === 'undefined' },
+	{ name: 'token text', why: 'a token read as its const string that the slot type does not admit', test: (_, reason) => /^"[^"]*"$/.test(source(reason)) && !PATHS.has(source(reason).slice(1, -1)) },
 	{
 		name: 'unmapped',
 		why: 'an unmapped marker on one side where the other is a mapped kind',
@@ -91,12 +91,12 @@ export const CAUSES: readonly Cause[] = [
 			return pair !== undefined && pair[0].includes('Unmapped<') !== pair[1].includes('Unmapped<');
 		}
 	},
-	{ name: 'text leaf', why: 'text read where the member admits only kinds', test: (_, reason) => source(reason) === 'string' },
+	{ name: 'text leaf', why: 'text read where the slot admits only kinds', test: (_, reason) => source(reason) === 'string' },
 	{ name: 'untyped reader', why: 'the low-level reader is typed unknown, as a bare number, or with a $type every kind shares', test: (_, reason) => ['unknown', 'number'].includes(source(reason)) },
-	{ name: 'kind', why: 'a vocabulary kind the member type does not admit', test: (_, reason) => sides(reason) !== undefined }
+	{ name: 'kind', why: 'a vocabulary kind the slot type does not admit', test: (_, reason) => sides(reason) !== undefined }
 ];
 
-export const UNEMITTED_CAUSE = { name: 'unemitted', why: 'a read entry or member the emitter skipped, with its reason' } as const;
+export const UNEMITTED_CAUSE = { name: 'unemitted', why: 'a read entry or slot the emitter skipped, with its reason' } as const;
 export const UNCLASSIFIED_CAUSE = { name: 'unclassified', why: 'an error in the module no cause matches' } as const;
 export const OUTSIDE_CAUSE = { name: 'outside', why: 'an error outside the generated module' } as const;
 
@@ -155,7 +155,7 @@ export function classify(
 		const cause = CAUSES.find((c) => c.test(d, reason));
 		count(cause?.name ?? UNCLASSIFIED_CAUSE.name, `${where} ${reason.slice(0, 160)}`);
 	}
-	for (const u of unemitted) count(UNEMITTED_CAUSE.name, `${u.kind} as ${u.vocab}${u.member === undefined ? '' : `.${u.member}`}: ${u.reason}`);
+	for (const u of unemitted) count(UNEMITTED_CAUSE.name, `${u.kind} as ${u.vocab}${u.slot === undefined ? '' : `.${u.slot}`}: ${u.reason}`);
 	const causes = [...CAUSES, UNEMITTED_CAUSE, UNCLASSIFIED_CAUSE, OUTSIDE_CAUSE].map(({ name, why }) => ({ name, why, count: counts.get(name)?.count ?? 0, example: counts.get(name)?.example }));
 	return { causes, total: causes.reduce((n, c) => n + c.count, 0) };
 }
@@ -184,7 +184,7 @@ export function formatConformance(report: ConformanceReport): string {
 	for (const cause of report.causes) {
 		if (cause.count === 0) continue;
 		lines.push(`  ${String(cause.count).padStart(4)}  ${cause.name.padEnd(16)} ${cause.why}`);
-		if (cause.name === UNEMITTED_CAUSE.name) for (const u of report.unemitted) lines.push(`        ${u.kind} as ${u.vocab}${u.member === undefined ? '' : `.${u.member}`}: ${u.reason}`);
+		if (cause.name === UNEMITTED_CAUSE.name) for (const u of report.unemitted) lines.push(`        ${u.kind} as ${u.vocab}${u.slot === undefined ? '' : `.${u.slot}`}: ${u.reason}`);
 		else if (cause.example !== undefined) lines.push(`        e.g. ${cause.example}`);
 	}
 	for (const test of report.typeTests) lines.push(`  type test ${test.file} under ${test.checker}: ${test.errors} errors${test.example === undefined ? '' : `\n        e.g. ${test.example}`}`);
