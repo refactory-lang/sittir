@@ -17,7 +17,7 @@
 - **No run-time mapping.** Generated code may call shared value helpers (text and number spelling), never a table walker.
 - **No string fallback in the emitter.** A construct the pinned builders can't express is `portable-emit-pinned-gap`.
 - **One source per fact:**
-  - a member's path set comes from the read routes;
+  - a slot's path set comes from the read routes;
   - a path's placement from the build table;
   - a path's node types from `PortableIds`;
   - a path's flags from its arms and facts.
@@ -62,17 +62,17 @@
 **Status:** done.
 - The tests are `packages/{python,rust,typescript}/tests/build-input.portable.test-d.ts`, in the lane that already holds the map-backed portable tests.
 - The node arm types reads as well as inputs, since a read is an input.
-- Every routed member's exact set comes from its read routes, narrowed by its claim's tests. The typed module writes no member the map types `never`.
+- Every routed slot's exact set comes from its read routes, narrowed by its claim's tests. The typed module writes no slot the map types `never`.
 - The user widened `declaration.constant.value` and `expression.yield(.delegate).expression` to what python reads, and allowed python's raw-arm ceilings 145 and 2332 for this change.
 - Python's getter `parameters` moved to Task 4.
 - A map path's `nodes` are the kinds that read as it. `PortableIds` stays family-wide for the guards.
-- A member's exact set is what its read routes return: its own routes, the members a container contributes, a route slot's fixed texts, a claimed text path, and a varying text as `string`. Derivation arms add nothing (a follow-up PR; python's per-value raw arms 2337 by the user's exception, conformance python 6).
+- A slot's exact set is what its read routes return: its own routes, the slots a container contributes, a route slot's fixed texts, a claimed text path, and a varying text as `string`. Derivation arms add nothing (a follow-up PR; python's per-value raw arms 2337 by the user's exception, conformance python 6).
 - A path built from text alone declares `$value: string` (decision 8). The bare-text arm keys on the map's `inputs`. `packages/tools/tests/portable/text-values.test.ts` derives the set from the build tables, where an arm that takes a text `$value` is a text arm or a content arm (rust's metavariable).
 
 **Files:**
 - Modify: `packages/types/src/vocabulary/{map,input,utils}.ts` (`BuildInput`, `nodes`, the flag sets), `packages/codegen/src/emitters/overlays/portable/grammar-map.ts`
 - Modify: the getter vocabulary (`accessors/declaration.ts`, `accessor-signatures/declaration.ts`): a getter takes no `parameters`; setters keep them
-- Modify: the vocabulary interfaces of the paths built from text (spec decision 8), `packages/codegen/src/bindings/vocabulary.ts` (a member's text type), `packages/codegen/src/emitters/overlays/portable/typed.ts` (a view's text `$value` comes from the vocabulary)
+- Modify: the vocabulary interfaces of the paths built from text (spec decision 8), `packages/codegen/src/bindings/vocabulary.ts` (a slot's text type), `packages/codegen/src/emitters/overlays/portable/typed.ts` (a view's text `$value` comes from the vocabulary)
 - Test: `packages/tools/tests/portable/text-values.test.ts` (the text-value set, derived from the build tables)
 - Test: `packages/types/tests/build-input.test-d.ts`
 
@@ -91,7 +91,7 @@
   - Make the getter vocabulary edits, and run `tool bindings-inventory --write` for each grammar and `tool vocabulary-features --write`.
 - [x] **Step 4: Three-way verification,** then commit.
 
-### Task 3b: No member is named `content`
+### Task 3b: No slot is named `content`
 
 **Status:** merged as #1259 (d67a0609516a891a234c3cf988e206754d6fbcf6), 2026-11-16.
 
@@ -102,7 +102,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 **Files:**
 - Modify: `packages/{python,rust,typescript}/bindings.scm`:
   - container patterns for `decorator`, rust's `attribute_item` and `inner_attribute_item` (`"!" @inner`), and python's `type`;
-  - one capture per renamed member.
+  - one capture per renamed slot.
 - Modify: the vocabulary interfaces that declare `content`:
   - `Attribute`, `Attribute.Decorator` and `Type` go;
   - `Statement.Import.From` and `.Future`, `Clause.Import.Names`, `Expression.Yield`, `Element.Spread.Parenthesized`, `Statement.Expression`, `Declaration.Ambient`, `Element.TypeArgument` and `Type.Literal` take the spec's names;
@@ -116,7 +116,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - a decorator reads as its expression in `decorators`;
   - rust's `#![a]` reads as the attribute with `inner`, and builds back;
   - python's `x: int` reads `type: 'int'`;
-  - each renamed member reads under its new name, and `content` is refused in the types;
+  - each renamed slot reads under its new name, and `content` is refused in the types;
   - python's `# x` (a lexed token) and rust's `//x` and `r"a"` (a node whose one slot holds a text-built kind) read `{ $path, $value }`, and each builds back from `$value` and from bare text.
 - [x] **Step 2: Run them.** They fail.
 - [x] **Step 3: Implement.** Bindings and vocabulary for (a) and (b). For (c), widen the content arm in the build table and keep `takesTextValue` the one predicate. The build table is what Task 4's emitter reads, so the widened arm survives the interpreter's removal in Task 6. The interpreter's content arm makes the child from the text until then.
@@ -141,21 +141,21 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - paths that pick their arm by the `$value`'s type, and number arms that take the scalar whole or in their last numeric slot;
   - text-built arms from their text, where the path reads its `$value` as text;
   - containers whose builder takes an elements or spread input, holding a single value;
-  - decision 7's optional `$path`: the map's `decided` names each member's one structure-built path, and a path function's input is `PathInput<Map, P>`;
-  - members that take one value or a list, built by whether the value is a list;
+  - decision 7's optional `$path`: the map's `decided` names each slot's one structure-built path, and a path function's input is `PathInput<Map, P>`;
+  - slots that take one value or a list, built by whether the value is a list;
   - number spelling in decimal parts (exponent forms included) through `decimalSpelling`, with a part the builder takes as an option passed in the call's options;
-  - strict calls for what the loose builders coerced: a token's kind id in its seat's containers, a text through the one path that takes it as its only required member (else `untexted`), an integer passed to a direct builder once per scalar type;
+  - strict calls for what the loose builders coerced: a token's kind id in its seat's containers, a text through the one path that takes it as its only required slot (else `untexted`), an integer passed to a direct builder once per scalar type;
   - the module's own `isNode` guard, typed by the grammar's node union;
-  - token-only members typed as their token texts, read and build (python 16, rust 5, typescript 9), the generated member taking its text type from the map.
+  - token-only slots typed as their token texts, read and build (python 16, rust 5, typescript 9), the generated slot function taking its text type from the map.
 - Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 828, rust 1335, typescript 1315.
 - A path the emitter can't compile whole is left out with `portable-emit-unfit-slot` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
 - A number path is its path, its `$value` and its other slots. Two kinds of slot leave it: the slots its value is written from (`valueSource` on the model), and its options, the slots a preference binds (the model's `registered`). The low-level builder writes an option from its preference default. Python loses 32 fields, rust 4 and typescript 24. Two kinds one path claims stay apart when their options differ.
-- The portable code says "slot" where it said "member": a path holds slots, an option is a slot bound to a preference, and a flag is a slot whose `flag` is true. Renamed so far, each symbol through the TypeScript language service: the `@sittir/types` build table (`PortableSlotRoute`, an arm's and a container's `slots`, a fact's, template's, pick test's and sole delimiter's `slot`), the module emitter's input and its diagnostic `portable-emit-unfit-slot`, the build interpreter's refusals, and the interpreter's own names. Remaining: the bindings, the build table emitter's internals, the tools, and the spec and plan prose.
+- The portable code says "slot" where it said "member": a path holds slots, options (a slot a preference binds) and flags. The bindings' collections that hold slots and flags together are named slots too, since a bindings flag is read from a grammar slot, by its presence or its kind. Each symbol was renamed through the TypeScript language service: the `@sittir/types` build table (`PortableSlotRoute`, an arm's and a container's `slots`, a fact's, template's, pick test's and sole delimiter's `slot`), the module emitter's input and its diagnostic `portable-emit-unfit-slot`, the build interpreter, the bindings (`Vocabulary.slots`, `SlotFact`, `SlotRoute`, `DeclaredSlot`), the build table emitter, the portable tools (`AdmissionSlot`, `holdsSlot`, `UNHELD_SLOTS`, the conformance causes `extra slot` and `missing slot`), the inventory's `--slots`, the tests and the spec. A refused key says whether it is a flag of the path (state it in `$flags`) or an option of the kind (the build writes it from its preference default, and `$with` changes it), from `PortableBuildPath.flags` and `PortableBuildArm.options`.
 - Remaining:
   - decision 5;
-  - decision 7's bare numbers, by the outermost taker (ruled 2026-11-17); in a member with a number taker a number is a number, and the type stops admitting a fixed word's bare kind id there (ruled 2026-11-17). Measured: no member has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 members take a number);
+  - decision 7's bare numbers, by the outermost taker (ruled 2026-11-17); in a slot with a number taker a number is a number, and the type stops admitting a fixed word's bare kind id there (ruled 2026-11-17). Measured: no slot has takers that aren't nested, so none is unfit (python 186, rust 185, typescript 202 slots take a number);
   - python's getter;
   - decision 9's tails;
   - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
@@ -171,8 +171,8 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - The known differences are rows: python's root getter and static method, which the interpreter refuses. Every other difference stops the task for review.
 - [ ] **Step 2: Implement** the emitter over every path:
   - decisions 1, 4, 5 and 7;
-  - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that member's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
-  - decision 9's tails. Each slot's tails are computed beside its exact set, written as `$path` spellings on the map's input side and as `case` labels in the member function, and checked by `portable-emit-tail-is-path`. The type and build tests gain:
+  - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that slot's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
+  - decision 9's tails. Each slot's tails are computed beside its exact set, written as `$path` spellings on the map's input side and as `case` labels in the slot function, and checked by `portable-emit-tail-is-path`. The type and build tests gain:
     - rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`, and the generated build gives `$y`;
     - rust `statement.return.expression` accepts `'arithmetic.add'` and refuses `'add'` and `'binary.arithmetic.add'`;
     - python `statement.return.expression` accepts `'add'`;
@@ -195,13 +195,13 @@ The spec's "A kind id has no meaning on the portable surface", as approved: a li
 What the census checked, so the task needs no new probe:
 - A bare kind id reaches the portable types only through a map's `nodes` block, where `NodeOf` falls back to the id of a kind with no bound node type: the fixed words (python 9 paths, rust 16 with 33 ids, typescript 23 with 25 ids). Each is already a vocabulary path.
 - A structure path's fixed word reads as its structure (`{ $path: 'literal.null' }`, a boolean with its `$value`). A text path's reads as its text (python `'pass'`, `'*'`, `'_'`; rust `'usize'`, `'()'`, `'..'`, `'self'`; typescript `'unique symbol'`, `'import.meta'`, `'super'`).
-- No table data reaches the kind-id branch of the interpreter's `element()`: a spelled fact's items are structures, and no item member holds a number (python's 8 facts and 12 spellings; rust and typescript have none). Presets write their kind ids into the builder config directly.
-- Before this task, the generated members that place a bare number as a kind id: python 52, rust 63, typescript 34.
+- No table data reaches the kind-id branch of the interpreter's `element()`: a spelled fact's items are structures, and no item slot holds a number (python's 8 facts and 12 spellings; rust and typescript have none). Presets write their kind ids into the builder config directly.
+- Before this task, the generated slot functions that place a bare number as a kind id: python 52, rust 63, typescript 34.
 
 - [ ] **Step 1: The failing tests.**
-  - Types: a fixed word's bare kind id is refused where a member holds its path and admits no number (a member that admits `number` admits every numeric enum member, so a number member is pinned at run time instead); its structure is admitted (`{ $path: 'literal.null' }`); a text path admits its text (rust `type.primitive.integral.size` as `'usize'`).
-  - Run time: a bare number in a member with no number taker is refused, by the interpreter and the generated member alike, with the same refusal.
-  - Emit: a member with no takers writes the refusal for a number, never `seated(value, …)`.
+  - Types: a fixed word's bare kind id is refused where a slot holds its path and admits no number (a slot that admits `number` admits every numeric enum member, so a number slot is pinned at run time instead); its structure is admitted (`{ $path: 'literal.null' }`); a text path admits its text (rust `type.primitive.integral.size` as `'usize'`).
+  - Run time: a bare number in a slot with no number taker is refused, by the interpreter and the generated slot function alike, with the same refusal.
+  - Emit: a slot with no takers writes the refusal for a number, never `seated(value, …)`.
 - [ ] **Step 2: Implement.**
   - `NodeOf`'s fallback is `never`.
   - The interpreter's `element()` refuses a number instead of placing it as a kind id.
@@ -219,7 +219,7 @@ What the census checked, so the task needs no new probe:
 - [ ] **Step 1: Prototype first,** on the spec's eight paths, and bring brainstorm the generated getter case and its size beside today's read. The claim test `(#eq? @_self "self")` compiles to code.
 - [ ] **Step 2: The failing test.** For every corpus node in all three grammars, in both storages, the generated projection equals today's read, except for listed rows:
   - the python getter has no `parameters`;
-  - typescript `identifier.qualified`'s honest members, moved here from the portable-grammar-map plan.
+  - typescript `identifier.qualified`'s honest slots, moved here from the portable-grammar-map plan.
 - [ ] **Step 3: Implement,** regenerate, and run the test, validate history and the suite. Commit.
 - [ ] **Step 4: Measure** parse against parse-with-projection over the corpus, per grammar and storage, and put the ratios in the PR body. They don't gate.
 
