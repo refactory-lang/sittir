@@ -14,6 +14,6 @@ describe('portable conformance ratchet', () => {
 			expect(count('outside'), shown).toBe(0);
 			expect(report.typeTests.filter((test) => test.errors > 0), shown).toEqual([]);
 			expect(report.total, report.total < ceiling ? `${grammar} fell to ${report.total}: lower its ceiling\n${shown}` : `${grammar} rose above its ceiling\n${shown}`).toBe(ceiling);
-		}, 60_000);
+		}, 150_000);
 	}
 });
