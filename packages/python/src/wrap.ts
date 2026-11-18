@@ -3442,7 +3442,12 @@ function wrapTypeParameter$with(node: Held, setter: string, args: readonly unkno
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypes(RAW.buildType(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(RAW.buildTypes as unknown as (...items: never[]) => never)(
+							...v.map((item) => RAW.buildType(item as never))
+						))(args)
+				],
 				TSKindId.Types
 			);
 	}
@@ -4691,8 +4696,14 @@ function wrapClassPattern$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildListPatternCasePatterns(RAW.buildCasePattern(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
+									...v.map((item) => RAW.buildCasePattern(item as never))
+								))(args)
+				],
 				TSKindId.ListPatternCasePatterns
 			);
 	}
@@ -6897,8 +6908,14 @@ function wrapGenericType$with(node: Held, setter: string, args: readonly unknown
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildTypeParameter(RAW.buildTypes(RAW.buildType(v))))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						RAW.buildTypeParameter(
+							(RAW.buildTypes as unknown as (...items: never[]) => never)(
+								...v.map((item) => RAW.buildType(item as never))
+							)
+						))(args)
+				],
 				TSKindId.TypeParameter
 			);
 	}
@@ -10711,8 +10728,14 @@ function wrapCaseTuplePattern$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildListPatternCasePatterns(RAW.buildCasePattern(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
+									...v.map((item) => RAW.buildCasePattern(item as never))
+								))(args)
+				],
 				TSKindId.ListPatternCasePatterns
 			);
 	}
@@ -10841,8 +10864,14 @@ function wrapCaseListPattern$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildListPatternCasePatterns(RAW.buildCasePattern(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (RAW.buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
+									...v.map((item) => RAW.buildCasePattern(item as never))
+								))(args)
+				],
 				TSKindId.ListPatternCasePatterns
 			);
 	}
@@ -13649,8 +13678,12 @@ function wrapWithClauseParen$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildWithClauseWithItems(RAW.buildWithItem(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(RAW.buildWithClauseWithItems as unknown as (...items: never[]) => never)(
+							...v.map((item) => RAW.buildWithItem(item as never))
+						))(args)
+				],
 				TSKindId.WithClauseWithItems
 			);
 	}

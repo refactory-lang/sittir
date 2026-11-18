@@ -3259,7 +3259,10 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypes(buildType(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(buildTypes as unknown as (...items: never[]) => never)(...v.map((item) => buildType(item as never))))(args)
+				],
 				TSKindId.Types
 			);
 	}
@@ -4337,7 +4340,12 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 	const _type = config.type;
 	const _fields = wrapHoisted(
 		config.fields,
-		(v: never) => buildListPatternCasePatterns(buildCasePattern(v)),
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
+						...v.map((item) => buildCasePattern(item as never))
+					),
 		TSKindId.ListPatternCasePatterns
 	);
 	const handle = currentHandle();
@@ -4399,8 +4407,14 @@ function buildClassPattern$with(node: Held, setter: string, args: readonly unkno
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildListPatternCasePatterns(buildCasePattern(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
+									...v.map((item) => buildCasePattern(item as never))
+								))(args)
+				],
 				TSKindId.ListPatternCasePatterns
 			);
 	}
@@ -6446,7 +6460,10 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	const _name = config.name;
 	const _type_parameter = wrapHoisted(
 		config.typeParameter,
-		(v: never) => buildTypeParameter(buildTypes(buildType(v))),
+		(v: readonly never[]) =>
+			buildTypeParameter(
+				(buildTypes as unknown as (...items: never[]) => never)(...v.map((item) => buildType(item as never)))
+			),
 		TSKindId.TypeParameter
 	);
 	const handle = currentHandle();
@@ -6516,8 +6533,12 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildTypeParameter(buildTypes(buildType(v))))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						buildTypeParameter(
+							(buildTypes as unknown as (...items: never[]) => never)(...v.map((item) => buildType(item as never)))
+						))(args)
+				],
 				TSKindId.TypeParameter
 			);
 	}
@@ -10442,8 +10463,14 @@ function buildCaseTuplePattern$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildListPatternCasePatterns(buildCasePattern(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
+									...v.map((item) => buildCasePattern(item as never))
+								))(args)
+				],
 				TSKindId.ListPatternCasePatterns
 			);
 	}
@@ -10569,8 +10596,14 @@ function buildCaseListPattern$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildListPatternCasePatterns(buildCasePattern(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
+									...v.map((item) => buildCasePattern(item as never))
+								))(args)
+				],
 				TSKindId.ListPatternCasePatterns
 			);
 	}
@@ -13573,8 +13606,12 @@ function buildWithClauseParen$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildWithClauseWithItems(buildWithItem(v)))(v as never)),
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(buildWithClauseWithItems as unknown as (...items: never[]) => never)(
+							...v.map((item) => buildWithItem(item as never))
+						))(args)
+				],
 				TSKindId.WithClauseWithItems
 			);
 	}

@@ -200,14 +200,28 @@ export function wrapperChainOfSlot(nodeMap: NodeMap, slot: AssembledNonterminal)
 
 export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScope = '', holderOptional = false): string {
 	const builder = (kind: string): string => `${factoryScope}${nodeMap.nodes.get(kind)!.rawFactoryName}`;
-	const last = chain.storage.length - 1;
-	const rest = nodeMap.nodes.get(chain.storage[last]!) instanceof AssembledList || isMultiple(chain.slots[last]!);
-	const filled = chain.storage.slice(0, last).reduceRight((wrapped, kind) => `${builder(kind)}(${wrapped})`, rest ? `(${builder(chain.storage[last]!)} as unknown as (...items: never[]) => never)(...v)` : `${builder(chain.storage[last]!)}(v)`);
+	const consumesList = (hop: number): boolean => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(chain.slots[hop]!);
+	const rest = chain.storage.some((_, hop) => consumesList(hop));
+	const wrapped = (from: number, seed: string, listed: boolean): string => {
+		let expr = seed;
+		let list = listed;
+		for (let hop = chain.storage.length - 1; hop >= from; hop--) {
+			const make = builder(chain.storage[hop]!);
+			if (consumesList(hop)) {
+				expr = `(${make} as unknown as (...items: never[]) => never)(...${expr})`;
+				list = false;
+			} else {
+				expr = list ? `${expr}.map((item) => ${make}(item as never))` : `${make}(${expr})`;
+			}
+		}
+		return expr;
+	};
+	const filled = wrapped(0, 'v', rest);
 	const arrow = (body: string): string => `(v: ${rest ? 'readonly never[]' : 'never'}) => ${body}`;
 	if (!rest) return arrow(filled);
 	if (holderOptional) return arrow(`v.length === 0 ? undefined : ${filled}`);
 	const optional = chain.slots.findIndex((slot) => !isRequired(slot));
 	if (optional < 0) return arrow(filled);
-	const emptied = chain.storage.slice(0, optional).reduceRight((wrapped, kind) => `${builder(kind)}(${wrapped})`, `${builder(chain.storage[optional]!)}()`);
+	const emptied = chain.storage.slice(0, optional).reduceRight((expr, kind) => `${builder(kind)}(${expr})`, `${builder(chain.storage[optional]!)}()`);
 	return arrow(`v.length === 0 ? ${emptied} : ${filled}`);
 }

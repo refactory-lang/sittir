@@ -106,7 +106,17 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('matchExpression builds the parent', () => {
 			const node = ir.expressionStatement.matchExpression({
 				subject: { $type: TSKindId.Identifier, text: 'test' } as never,
-				body: { $type: TSKindId.MatchBlock } as never
+				body: [
+					{
+						$type: TSKindId.LastMatchArm,
+						attributes: [],
+						match: {
+							$type: TSKindId.MatchPattern,
+							pattern: { $type: TSKindId.Identifier, text: 'test' } as never
+						} as never,
+						body: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.ExpressionStatement);
 			expect((node as any).content()?.$type).toBe(TSKindId.MatchExpression);
@@ -363,7 +373,17 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.unionItem({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.FieldDeclarationList } as never
+				body: [
+					{
+						$type: TSKindId.AttributedFieldDeclaration,
+						attributeItems: [],
+						fieldDeclaration: {
+							$type: TSKindId.FieldDeclaration,
+							name: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
+							type: TSKindId.UnitType as never
+						} as never
+					} as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.UnionItem);
 			expectBuiltNode(node);
@@ -371,7 +391,17 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.unionItem({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.FieldDeclarationList } as never
+				body: [
+					{
+						$type: TSKindId.AttributedFieldDeclaration,
+						attributeItems: [],
+						fieldDeclaration: {
+							$type: TSKindId.FieldDeclaration,
+							name: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
+							type: TSKindId.UnitType as never
+						} as never
+					} as never
+				]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -382,7 +412,16 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.enumItem({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.EnumVariantList } as never
+				body: [
+					{
+						$type: TSKindId.AttributedEnumVariant,
+						attributeItems: [],
+						enumVariant: {
+							$type: TSKindId.EnumVariant,
+							name: { $type: TSKindId.Identifier, text: 'test' } as never
+						} as never
+					} as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.EnumItem);
 			expectBuiltNode(node);
@@ -390,7 +429,16 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.enumItem({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.EnumVariantList } as never
+				body: [
+					{
+						$type: TSKindId.AttributedEnumVariant,
+						attributeItems: [],
+						enumVariant: {
+							$type: TSKindId.EnumVariant,
+							name: { $type: TSKindId.Identifier, text: 'test' } as never
+						} as never
+					} as never
+				]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -539,7 +587,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.functionItem({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never,
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never,
 				body: { $type: TSKindId.Block, statements: [] } as never
 			});
 			expect(node.$type).toBe(TSKindId.FunctionItem);
@@ -548,7 +599,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.functionItem({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never,
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never,
 				body: { $type: TSKindId.Block, statements: [] } as never
 			});
 			const rendered = node.$render!();
@@ -560,7 +614,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.functionSignatureItem({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never
 			});
 			expect(node.$type).toBe(TSKindId.FunctionSignatureItem);
 			expectBuiltNode(node);
@@ -568,7 +625,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.functionSignatureItem({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -605,7 +665,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.wherePredicate({
 				left: { $type: TSKindId.Lifetime, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-				bounds: { $type: TSKindId.TraitBounds, bounds: [TSKindId.UnitType as never] } as never
+				bounds: [TSKindId.UnitType as never]
 			});
 			expect(node.$type).toBe(TSKindId.WherePredicate);
 			expectBuiltNode(node);
@@ -613,7 +673,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.wherePredicate({
 				left: { $type: TSKindId.Lifetime, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-				bounds: { $type: TSKindId.TraitBounds, bounds: [TSKindId.UnitType as never] } as never
+				bounds: [TSKindId.UnitType as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -624,7 +684,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.traitItem({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.TraitInterfaceDeclarationBody, declarations: [] } as never
+				body: [TSKindId.EmptyStatement as never]
 			});
 			expect(node.$type).toBe(TSKindId.TraitItem);
 			expectBuiltNode(node);
@@ -632,7 +692,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.traitItem({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.TraitInterfaceDeclarationBody, declarations: [] } as never
+				body: [TSKindId.EmptyStatement as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -669,14 +729,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('higher_ranked_trait_bound', () => {
 		it('factory produces correct type', () => {
 			const node = ir.higherRankedTraitBound({
-				typeParameters: {
-					$type: TSKindId.TypeParameters,
-					elements: ir.typeParametersElements({
+				typeParameters: [
+					{
 						$type: TSKindId.AttributedTypeParameter,
 						attributeItems: [],
 						content: { $type: TSKindId.Metavariable, name: 'test' } as never
-					} as never) as never
-				} as never,
+					} as never
+				],
 				type: TSKindId.UnitType as never
 			});
 			expect(node.$type).toBe(TSKindId.HigherRankedTraitBound);
@@ -684,14 +743,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.higherRankedTraitBound({
-				typeParameters: {
-					$type: TSKindId.TypeParameters,
-					elements: ir.typeParametersElements({
+				typeParameters: [
+					{
 						$type: TSKindId.AttributedTypeParameter,
 						attributeItems: [],
 						content: { $type: TSKindId.Metavariable, name: 'test' } as never
-					} as never) as never
-				} as never,
+					} as never
+				],
 				type: TSKindId.UnitType as never
 			});
 			const rendered = node.$render!();
@@ -815,12 +873,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('scoped_use_list', () => {
 		it('factory produces correct type', () => {
-			const node = ir.scopedUseList({ list: { $type: TSKindId.UseList } as never });
+			const node = ir.scopedUseList({ list: [TSKindId.SelfModule as never] });
 			expect(node.$type).toBe(TSKindId.ScopedUseList);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.scopedUseList({ list: { $type: TSKindId.UseList } as never });
+			const node = ir.scopedUseList({ list: [TSKindId.SelfModule as never] });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -1122,7 +1180,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					$type: TSKindId.FunctionTypeTraitForm,
 					trait: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
 				} as never,
-				parameters: { $type: TSKindId.Parameters } as never
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never
 			});
 			expect(node.$type).toBe(TSKindId.FunctionType);
 			expectBuiltNode(node);
@@ -1133,7 +1194,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					$type: TSKindId.FunctionTypeTraitForm,
 					trait: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
 				} as never,
-				parameters: { $type: TSKindId.Parameters } as never
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1143,7 +1207,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('function_type sub-factories', () => {
 		it('traitForm builds the parent', () => {
 			const node = ir.functionType.traitForm({
-				parameters: { $type: TSKindId.Parameters } as never,
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never,
 				content: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.FunctionType);
@@ -1152,7 +1219,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('fnForm builds the parent', () => {
 			const node = ir.functionType.fnForm({
-				parameters: { $type: TSKindId.Parameters } as never,
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never,
 				content: [
 					{ $type: TSKindId.FunctionModifiers, modifiers: [{ $type: TSKindId.ExternModifier } as never] } as never
 				]
@@ -1187,13 +1257,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.genericFunction({
 				function: { $type: TSKindId.Identifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			expect(node.$type).toBe(TSKindId.GenericFunction);
 			expectBuiltNode(node);
@@ -1201,13 +1265,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.genericFunction({
 				function: { $type: TSKindId.Identifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1218,13 +1276,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.genericType({
 				type: { $type: TSKindId.Identifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			expect(node.$type).toBe(TSKindId.GenericType);
 			expectBuiltNode(node);
@@ -1232,13 +1284,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.genericType({
 				type: { $type: TSKindId.Identifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1249,13 +1295,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.genericTypeWithTurbofish({
 				type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			expect(node.$type).toBe(TSKindId.GenericTypeWithTurbofish);
 			expectBuiltNode(node);
@@ -1263,13 +1303,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.genericTypeWithTurbofish({
 				type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1380,14 +1414,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.dynamicType({
 				$type: TSKindId.HigherRankedTraitBound,
-				typeParameters: {
-					$type: TSKindId.TypeParameters,
-					elements: ir.typeParametersElements({
+				typeParameters: [
+					{
 						$type: TSKindId.AttributedTypeParameter,
 						attributeItems: [],
 						content: { $type: TSKindId.Metavariable, name: 'test' } as never
-					} as never) as never
-				} as never,
+					} as never
+				],
 				type: TSKindId.UnitType as never
 			} as never);
 			expect(node.$type).toBe(TSKindId.DynamicType);
@@ -1396,14 +1429,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.dynamicType({
 				$type: TSKindId.HigherRankedTraitBound,
-				typeParameters: {
-					$type: TSKindId.TypeParameters,
-					elements: ir.typeParametersElements({
+				typeParameters: [
+					{
 						$type: TSKindId.AttributedTypeParameter,
 						attributeItems: [],
 						content: { $type: TSKindId.Metavariable, name: 'test' } as never
-					} as never) as never
-				} as never,
+					} as never
+				],
 				type: TSKindId.UnitType as never
 			} as never);
 			const rendered = node.$render!();
@@ -1621,7 +1653,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.callExpression({
 				function: { $type: TSKindId.Identifier, text: 'test' } as never,
-				arguments: { $type: TSKindId.Arguments } as never
+				arguments: [
+					{
+						$type: TSKindId.Argument,
+						attributeItems: [],
+						expression: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.CallExpression);
 			expectBuiltNode(node);
@@ -1629,7 +1667,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.callExpression({
 				function: { $type: TSKindId.Identifier, text: 'test' } as never,
-				arguments: { $type: TSKindId.Arguments } as never
+				arguments: [
+					{
+						$type: TSKindId.Argument,
+						attributeItems: [],
+						expression: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1690,7 +1734,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.structExpression({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.FieldInitializerList } as never
+				body: [
+					{
+						$type: TSKindId.ShorthandFieldInitializer,
+						attributes: [],
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.StructExpression);
 			expectBuiltNode(node);
@@ -1698,7 +1748,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.structExpression({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.FieldInitializerList } as never
+				body: [
+					{
+						$type: TSKindId.ShorthandFieldInitializer,
+						attributes: [],
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -1829,7 +1885,17 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.matchExpression({
 				subject: { $type: TSKindId.Identifier, text: 'test' } as never,
-				body: { $type: TSKindId.MatchBlock } as never
+				body: [
+					{
+						$type: TSKindId.LastMatchArm,
+						attributes: [],
+						match: {
+							$type: TSKindId.MatchPattern,
+							pattern: { $type: TSKindId.Identifier, text: 'test' } as never
+						} as never,
+						body: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.MatchExpression);
 			expectBuiltNode(node);
@@ -1837,7 +1903,17 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.matchExpression({
 				subject: { $type: TSKindId.Identifier, text: 'test' } as never,
-				body: { $type: TSKindId.MatchBlock } as never
+				body: [
+					{
+						$type: TSKindId.LastMatchArm,
+						attributes: [],
+						match: {
+							$type: TSKindId.MatchPattern,
+							pattern: { $type: TSKindId.Identifier, text: 'test' } as never
+						} as never,
+						body: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -2163,13 +2239,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.genericPattern({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			expect(node.$type).toBe(TSKindId.GenericPattern);
 			expectBuiltNode(node);
@@ -2177,13 +2247,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.genericPattern({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				typeArguments: {
-					$type: TSKindId.TypeArguments,
-					elements: ir.typeArgumentsElements({
-						$type: TSKindId.TypeArgument,
-						content: TSKindId.UnitType as never
-					} as never) as never
-				} as never
+				typeArguments: [{ $type: TSKindId.TypeArgument, content: TSKindId.UnitType as never } as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -2612,7 +2676,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.WherePredicate,
 						left: { $type: TSKindId.Lifetime, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-						bounds: { $type: TSKindId.TraitBounds, bounds: [TSKindId.UnitType as never] } as never
+						bounds: [TSKindId.UnitType as never]
 					} as never
 				]
 			);
@@ -2625,7 +2689,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.WherePredicate,
 						left: { $type: TSKindId.Lifetime, name: { $type: TSKindId.Identifier, text: 'test' } as never } as never,
-						bounds: { $type: TSKindId.TraitBounds, bounds: [TSKindId.UnitType as never] } as never
+						bounds: [TSKindId.UnitType as never]
 					} as never
 				]
 			);
@@ -2862,12 +2926,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('attributed_element', () => {
 		it('factory produces correct type', () => {
 			const node = ir.attributedElement({
-				attributes: [
-					{
-						$type: TSKindId.AttributeItem,
-						attribute: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
-					} as never
-				],
+				attributes: [{ $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never],
 				expression: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.AttributedElement);
@@ -2875,12 +2934,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.attributedElement({
-				attributes: [
-					{
-						$type: TSKindId.AttributeItem,
-						attribute: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
-					} as never
-				],
+				attributes: [{ $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never],
 				expression: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			const rendered = node.$render!();
@@ -3084,7 +3138,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('closure_expression_block', () => {
 		it('factory produces correct type', () => {
 			const node = ir.closureExpressionBlock({
-				parameters: { $type: TSKindId.ClosureParameters, parameters: [] } as never,
+				parameters: [
+					{ $type: TSKindId.ClosureParameter, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
+				],
 				body: { $type: TSKindId.Block, statements: [] } as never
 			});
 			expect(node.$type).toBe(TSKindId.ClosureExpressionBlock);
@@ -3092,7 +3148,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.closureExpressionBlock({
-				parameters: { $type: TSKindId.ClosureParameters, parameters: [] } as never,
+				parameters: [
+					{ $type: TSKindId.ClosureParameter, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
+				],
 				body: { $type: TSKindId.Block, statements: [] } as never
 			});
 			const rendered = node.$render!();
@@ -3103,7 +3161,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('closure_expression_expr', () => {
 		it('factory produces correct type', () => {
 			const node = ir.closureExpressionExpr({
-				parameters: { $type: TSKindId.ClosureParameters, parameters: [] } as never,
+				parameters: [
+					{ $type: TSKindId.ClosureParameter, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
+				],
 				body: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.ClosureExpressionExpr);
@@ -3111,7 +3171,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.closureExpressionExpr({
-				parameters: { $type: TSKindId.ClosureParameters, parameters: [] } as never,
+				parameters: [
+					{ $type: TSKindId.ClosureParameter, content: { $type: TSKindId.Identifier, text: 'test' } as never } as never
+				],
 				body: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
 			const rendered = node.$render!();
@@ -3177,18 +3239,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('impl_item_body', () => {
 		it('factory produces correct type', () => {
-			const node = ir.implItemBody({
-				type: TSKindId.UnitType as never,
-				body: { $type: TSKindId.ExtensionDeclarationBody, declarations: [] } as never
-			});
+			const node = ir.implItemBody({ type: TSKindId.UnitType as never, body: [TSKindId.EmptyStatement as never] });
 			expect(node.$type).toBe(TSKindId.ImplItemBody);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.implItemBody({
-				type: TSKindId.UnitType as never,
-				body: { $type: TSKindId.ExtensionDeclarationBody, declarations: [] } as never
-			});
+			const node = ir.implItemBody({ type: TSKindId.UnitType as never, body: [TSKindId.EmptyStatement as never] });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -3198,7 +3254,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('positiveClause builds the parent', () => {
 			const node = ir.implItemBody.positiveClause({
 				type: TSKindId.UnitType as never,
-				body: { $type: TSKindId.ExtensionDeclarationBody, declarations: [] } as never,
+				body: [TSKindId.EmptyStatement as never],
 				traitClause: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.ImplItemBody);
@@ -3208,7 +3264,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('negativeClause builds the parent', () => {
 			const node = ir.implItemBody.negativeClause({
 				type: TSKindId.UnitType as never,
-				body: { $type: TSKindId.ExtensionDeclarationBody, declarations: [] } as never,
+				body: [TSKindId.EmptyStatement as never],
 				traitClause: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.ImplItemBody);
@@ -3268,7 +3324,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.modItemInline({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				body: { $type: TSKindId.DeclarationList, declarations: [] } as never
+				body: [TSKindId.EmptyStatement as never]
 			});
 			expect(node.$type).toBe(TSKindId.ModItemInline);
 			expectBuiltNode(node);
@@ -3276,7 +3332,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.modItemInline({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				body: { $type: TSKindId.DeclarationList, declarations: [] } as never
+				body: [TSKindId.EmptyStatement as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -3407,12 +3463,24 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('foreign_mod_item_semi', () => {
 		it('factory produces correct type', () => {
-			const node = ir.foreignModItemSemi({ externModifier: { $type: TSKindId.ExternModifier } as never });
+			const node = ir.foreignModItemSemi({
+				externModifier: {
+					$type: TSKindId.StringLiteral,
+					stringOpen: { $type: TSKindId.StringOpen, text: '"' } as never,
+					elements: []
+				} as never
+			});
 			expect(node.$type).toBe(TSKindId.ForeignModItemSemi);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.foreignModItemSemi({ externModifier: { $type: TSKindId.ExternModifier } as never });
+			const node = ir.foreignModItemSemi({
+				externModifier: {
+					$type: TSKindId.StringLiteral,
+					stringOpen: { $type: TSKindId.StringOpen, text: '"' } as never,
+					elements: []
+				} as never
+			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -3421,16 +3489,24 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('foreign_mod_item_body', () => {
 		it('factory produces correct type', () => {
 			const node = ir.foreignModItemBody({
-				externModifier: { $type: TSKindId.ExternModifier } as never,
-				body: { $type: TSKindId.DeclarationList, declarations: [] } as never
+				externModifier: {
+					$type: TSKindId.StringLiteral,
+					stringOpen: { $type: TSKindId.StringOpen, text: '"' } as never,
+					elements: []
+				} as never,
+				body: [TSKindId.EmptyStatement as never]
 			});
 			expect(node.$type).toBe(TSKindId.ForeignModItemBody);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.foreignModItemBody({
-				externModifier: { $type: TSKindId.ExternModifier } as never,
-				body: { $type: TSKindId.DeclarationList, declarations: [] } as never
+				externModifier: {
+					$type: TSKindId.StringLiteral,
+					stringOpen: { $type: TSKindId.StringOpen, text: '"' } as never,
+					elements: []
+				} as never,
+				body: [TSKindId.EmptyStatement as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -3803,7 +3879,17 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.structItemBrace({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.FieldDeclarationList } as never
+				body: [
+					{
+						$type: TSKindId.AttributedFieldDeclaration,
+						attributeItems: [],
+						fieldDeclaration: {
+							$type: TSKindId.FieldDeclaration,
+							name: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
+							type: TSKindId.UnitType as never
+						} as never
+					} as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.StructItemBrace);
 			expectBuiltNode(node);
@@ -3811,7 +3897,17 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.structItemBrace({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.FieldDeclarationList } as never
+				body: [
+					{
+						$type: TSKindId.AttributedFieldDeclaration,
+						attributeItems: [],
+						fieldDeclaration: {
+							$type: TSKindId.FieldDeclaration,
+							name: { $type: TSKindId.FieldIdentifier, text: 'test' } as never,
+							type: TSKindId.UnitType as never
+						} as never
+					} as never
+				]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -3822,7 +3918,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.structItemTuple({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.OrderedFieldDeclarationList } as never
+				body: [
+					{ $type: TSKindId.AttributedOrderedField, attributeItems: [], type: TSKindId.UnitType as never } as never
+				]
 			});
 			expect(node.$type).toBe(TSKindId.StructItemTuple);
 			expectBuiltNode(node);
@@ -3830,7 +3928,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.structItemTuple({
 				name: { $type: TSKindId.TypeIdentifier, text: 'test' } as never,
-				body: { $type: TSKindId.OrderedFieldDeclarationList } as never
+				body: [
+					{ $type: TSKindId.AttributedOrderedField, attributeItems: [], type: TSKindId.UnitType as never } as never
+				]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -4011,7 +4111,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.methodDeclaration({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never,
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never,
 				body: { $type: TSKindId.Block, statements: [] } as never
 			});
 			expect(node.$type).toBe(TSKindId.MethodDeclaration);
@@ -4020,7 +4123,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.methodDeclaration({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never,
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never,
 				body: { $type: TSKindId.Block, statements: [] } as never
 			});
 			const rendered = node.$render!();
@@ -4032,7 +4138,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.signatureMethodDeclaration({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never
 			});
 			expect(node.$type).toBe(TSKindId.SignatureMethodDeclaration);
 			expectBuiltNode(node);
@@ -4040,7 +4149,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.signatureMethodDeclaration({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				parameters: { $type: TSKindId.Parameters } as never
+				parameters: ir.parametersElements({
+					$type: TSKindId.AttributedParameter,
+					content: TSKindId.UnitType as never
+				} as never) as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);

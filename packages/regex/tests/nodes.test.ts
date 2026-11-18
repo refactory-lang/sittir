@@ -153,16 +153,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				$type: TSKindId.LookaheadAssertion,
 				operator: TSKindId.Eq,
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			} as never);
 			expect(node.$type).toBe(TSKindId.LookaroundAssertion);
@@ -173,16 +170,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				$type: TSKindId.LookaheadAssertion,
 				operator: TSKindId.Eq,
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			} as never);
 			const rendered = node.$render!();
@@ -196,16 +190,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.lookaroundAssertion.lookaheadAssertion({
 				operator: '=',
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaroundAssertion);
@@ -216,16 +207,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.lookaroundAssertion.lookbehindAssertion({
 				operator: '=',
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaroundAssertion);
@@ -235,16 +223,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('lookaheadAssertion.eq builds the parent', () => {
 			const node = ir.lookaroundAssertion.lookaheadAssertion.eq({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaroundAssertion);
@@ -254,16 +239,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('lookaheadAssertion.bang builds the parent', () => {
 			const node = ir.lookaroundAssertion.lookaheadAssertion.bang({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaroundAssertion);
@@ -273,16 +255,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('lookbehindAssertion.eq builds the parent', () => {
 			const node = ir.lookaroundAssertion.lookbehindAssertion.eq({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaroundAssertion);
@@ -292,16 +271,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('lookbehindAssertion.bang builds the parent', () => {
 			const node = ir.lookaroundAssertion.lookbehindAssertion.bang({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaroundAssertion);
@@ -315,16 +291,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.lookaheadAssertion({
 				operator: '=',
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaheadAssertion);
@@ -334,16 +307,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.lookaheadAssertion({
 				operator: '=',
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			const rendered = node.$render!();
@@ -355,16 +325,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('eq builds the parent', () => {
 			const node = ir.lookaheadAssertion.eq({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaheadAssertion);
@@ -375,16 +342,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('bang builds the parent', () => {
 			const node = ir.lookaheadAssertion.bang({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookaheadAssertion);
@@ -399,16 +363,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.lookbehindAssertion({
 				operator: '=',
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookbehindAssertion);
@@ -418,16 +379,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.lookbehindAssertion({
 				operator: '=',
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			const rendered = node.$render!();
@@ -439,16 +397,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('eq builds the parent', () => {
 			const node = ir.lookbehindAssertion.eq({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookbehindAssertion);
@@ -459,16 +414,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('bang builds the parent', () => {
 			const node = ir.lookbehindAssertion.bang({
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.LookbehindAssertion);
@@ -592,16 +544,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				operator: '(?<',
 				groupName: { $type: TSKindId.GroupName, text: 'test' } as never,
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
@@ -612,16 +561,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				operator: '(?<',
 				groupName: { $type: TSKindId.GroupName, text: 'test' } as never,
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			const rendered = node.$render!();
@@ -634,16 +580,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.namedCapturingGroup.lparenQmarkLt({
 				groupName: { $type: TSKindId.GroupName, text: 'test' } as never,
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
@@ -655,16 +598,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.namedCapturingGroup.lparenQmarkPLt({
 				groupName: { $type: TSKindId.GroupName, text: 'test' } as never,
 				pattern: {
-					$type: TSKindId.Pattern,
-					content: {
-						$type: TSKindId.Alternation,
-						terms: [
-							{
-								$type: TSKindId.Term,
-								termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
-							} as never
-						]
-					} as never
+					$type: TSKindId.Alternation,
+					terms: [
+						{
+							$type: TSKindId.Term,
+							termGroups: [{ $type: TSKindId.TermGroup, content: TSKindId.StartAssertion as never } as never]
+						} as never
+					]
 				} as never
 			});
 			expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
