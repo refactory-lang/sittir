@@ -596,11 +596,12 @@ export const coerceToCapture: ConfigSeat<T.Capture.Loose, ReturnType<typeof F.bu
 export function resolveString_stringContent(
 	value: T.String.LooseConfig['stringContent']
 ): T.String.Config['stringContent'] {
-	return hoistRead(
-		_resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true),
-		[storedHop('contents', '_content', true)],
+	return _resolveOneBranch<T.StringContent>(
+		value,
+		'string_content',
+		undefined,
 		true
-	) as T.String.Config['stringContent'];
+	) as unknown as T.String.Config['stringContent'];
 }
 
 export const coerceToString: Seat<T.StringContent.LooseArgs, ReturnType<typeof F.buildString>> &
@@ -625,11 +626,12 @@ export const coerceToString: Seat<T.StringContent.LooseArgs, ReturnType<typeof F
 export function resolveImmediateString_stringContent(
 	value: T.ImmediateString.LooseConfig['stringContent']
 ): T.ImmediateString.Config['stringContent'] {
-	return hoistRead(
-		_resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true),
-		[storedHop('contents', '_content', true)],
+	return _resolveOneBranch<T.StringContent>(
+		value,
+		'string_content',
+		undefined,
 		true
-	) as T.ImmediateString.Config['stringContent'];
+	) as unknown as T.ImmediateString.Config['stringContent'];
 }
 
 export const coerceToImmediateString: Seat<T.StringContent.LooseArgs, ReturnType<typeof F.buildImmediateString>> &
@@ -875,11 +877,12 @@ export function resolvePredicate_type(value: T.Predicate.LooseConfig['type']): A
 export function resolvePredicate_parameters(
 	value: T.Predicate.LooseConfig['parameters']
 ): T.Predicate.Config['parameters'] {
-	return hoistRead(
-		_resolveOneBranch<T.Parameters>(value, 'parameters', undefined, true),
-		[storedHop('elements', '_elements', true)],
+	return _resolveOneBranch<T.Parameters>(
+		value,
+		'parameters',
+		undefined,
 		true
-	) as T.Predicate.Config['parameters'];
+	) as unknown as T.Predicate.Config['parameters'];
 }
 
 export const coerceToPredicate: ConfigSeat<T.Predicate.Loose, ReturnType<typeof F.buildPredicate>> = (

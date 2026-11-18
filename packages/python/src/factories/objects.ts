@@ -21,6 +21,7 @@ import {
 	hoistRead,
 	storedHop,
 	wrapHoisted,
+	wrapHoistedEach,
 	listSlotWith,
 	LIST_METHODS,
 	listIterator,
@@ -2892,8 +2893,11 @@ function buildExecStatement$with(node: Held, setter: string, args: readonly unkn
 		case 'inClauses':
 			return applySetter(
 				args,
-				(...values: Admit<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>[number][]>) =>
-					rebuilt(node, handle, () => buildExecStatement({ ...config, inClauses: restItems('inClauses', values) }))
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>, readonly unknown[]>[number][]
+					>
+				) => rebuilt(node, handle, () => buildExecStatement({ ...config, inClauses: restItems('inClauses', values) }))
 			);
 	}
 	throw new Error(`exec_statement has no $with.${setter}`);
@@ -3488,7 +3492,7 @@ export function buildDecoratedDefinition<
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Bound {
 	currentHandle()?.admit(TSKindId.DecoratedDefinition, [config]);
 	const _decorator = listStorage<NonNullable<T.DecoratedDefinition['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator))
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator)
 	);
 	const _definition = config.definition;
 	const handle = currentHandle();
@@ -3541,7 +3545,12 @@ function buildDecoratedDefinition$with(node: Held, setter: string, args: readonl
 						args,
 						(
 							...values: Admit<
-								NonEmptyArray<NonNullable<NonNullable<T.DecoratedDefinition.Config>['decorators']>[number]>
+								NonEmptyArray<
+									Extract<
+										NonNullable<NonNullable<T.DecoratedDefinition.Config>['decorators']>,
+										readonly unknown[]
+									>[number]
+								>
 							>
 						) =>
 							rebuilt(node, handle, () =>
@@ -8053,8 +8062,11 @@ function buildForInClause$with(node: Held, setter: string, args: readonly unknow
 		case 'rights':
 			return applySetter(
 				args,
-				(...values: Admit<NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['rights']>[number]>>) =>
-					rebuilt(node, handle, () => buildForInClause({ ...config, rights: restItems('rights', values) }, options))
+				(
+					...values: Admit<
+						NonEmptyArray<Extract<NonNullable<NonNullable<T.ForInClause.Config>['rights']>, readonly unknown[]>[number]>
+					>
+				) => rebuilt(node, handle, () => buildForInClause({ ...config, rights: restItems('rights', values) }, options))
 			);
 		case 'trailingComma':
 			return applySetter(args, (spelling: TSKindId.Comma | null) =>
@@ -14916,7 +14928,7 @@ export function buildDecoratedDefinitionClassDeclaration(
 ): T.DecoratedDefinitionClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.DecoratedDefinitionClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.DecoratedDefinitionClassDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator))
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator)
 	);
 	const _definition = config.definition;
 	const handle = currentHandle();
@@ -14973,7 +14985,10 @@ function buildDecoratedDefinitionClassDeclaration$with(node: Held, setter: strin
 						(
 							...values: Admit<
 								NonEmptyArray<
-									NonNullable<NonNullable<T.DecoratedDefinitionClassDeclaration.Config>['decorators']>[number]
+									Extract<
+										NonNullable<NonNullable<T.DecoratedDefinitionClassDeclaration.Config>['decorators']>,
+										readonly unknown[]
+									>[number]
 								>
 							>
 						) =>

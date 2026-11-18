@@ -19,6 +19,7 @@ import {
 	checkDelimited,
 	hoistedWith,
 	wrapHoisted,
+	wrapHoistedEach,
 	listSlotWith,
 	ownerView,
 	refuseReadStub,
@@ -195,7 +196,11 @@ function withSourceFile(node: object, setter: string, args: readonly unknown[]):
 		case 'statements':
 			return applySetter(
 				args,
-				(...values: Admit<NonNullable<NonNullable<T.SourceFile.Config>['statements']>[number][]>) =>
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.SourceFile.Config>['statements']>, readonly unknown[]>[number][]
+					>
+				) =>
 					rebuilt(node, handle, () =>
 						buildSourceFile$set(node, 'statements', { statements: restItems('statements', values) })
 					)
@@ -11849,8 +11854,7 @@ export function buildShorthandFieldInitializer(
 ): T.ShorthandFieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(
-		config.attributes?.map((item) => wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)) ??
-			[]
+		wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _name = config.name;
 	const handle = currentHandle();
@@ -11873,8 +11877,7 @@ function buildShorthandFieldInitializer$patch(
 ): T.ShorthandFieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(
-		config.attributes?.map((item) => wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)) ??
-			[]
+		wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _name = config.name;
 	const handle = currentHandle();
@@ -11911,9 +11914,7 @@ function buildShorthandFieldInitializer$set(
 		case 'attributes': {
 			const config = input;
 			const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(
-				config.attributes?.map((item) =>
-					wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-				) ?? []
+				wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 			);
 			return setSlot(
 				source,
@@ -11954,7 +11955,14 @@ function withShorthandFieldInitializer(node: object, setter: string, args: reado
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.ShorthandFieldInitializer.Config>['attributes']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ShorthandFieldInitializer.Config>['attributes']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildShorthandFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) })
 							)
@@ -11981,8 +11989,7 @@ export function buildFieldInitializer<
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.FieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(
-		config.attributes?.map((item) => wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)) ??
-			[]
+		wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.FieldInitializer['_name']>>(config.name, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
@@ -12006,8 +12013,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 function buildFieldInitializer$patch(source: object, config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.FieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(
-		config.attributes?.map((item) => wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)) ??
-			[]
+		wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.FieldInitializer['_name']>>(config.name, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
@@ -12047,9 +12053,7 @@ function buildFieldInitializer$set(
 		case 'attributes': {
 			const config = input;
 			const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(
-				config.attributes?.map((item) =>
-					wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-				) ?? []
+				wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 			);
 			return setSlot(
 				source,
@@ -12104,7 +12108,11 @@ function withFieldInitializer(node: object, setter: string, args: readonly unkno
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.FieldInitializer.Config>['attributes']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.FieldInitializer.Config>['attributes']>, readonly unknown[]>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildFieldInitializer$set(node, 'attributes', { attributes: restItems('attributes', values) })
 							)
@@ -12479,8 +12487,11 @@ function withLetChain(node: object, setter: string, args: readonly unknown[]): u
 				rebuilt(node, handle, () => buildLetChain$set(node, 'left', { left: value }))
 			);
 		case 'rights':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.LetChain.Config>['rights']>[number][]>) =>
-				rebuilt(node, handle, () => buildLetChain$set(node, 'rights', { rights: restItems('rights', values) }))
+			return applySetter(
+				args,
+				(
+					...values: Admit<Extract<NonNullable<NonNullable<T.LetChain.Config>['rights']>, readonly unknown[]>[number][]>
+				) => rebuilt(node, handle, () => buildLetChain$set(node, 'rights', { rights: restItems('rights', values) }))
 			);
 	}
 	throw new Error(`_let_chain has no $with.${setter}`);
@@ -14363,8 +14374,16 @@ function withBlock(node: object, setter: string, args: readonly unknown[]): unkn
 				rebuilt(node, handle, () => buildBlock$set(node, 'label', { label: value }))
 			);
 		case 'statements':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Block.Config>['statements']>[number][]>) =>
-				rebuilt(node, handle, () => buildBlock$set(node, 'statements', { statements: restItems('statements', values) }))
+			return applySetter(
+				args,
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.Block.Config>['statements']>, readonly unknown[]>[number][]
+					>
+				) =>
+					rebuilt(node, handle, () =>
+						buildBlock$set(node, 'statements', { statements: restItems('statements', values) })
+					)
 			);
 		case 'trailingExpression':
 			return applySetter(args, (value?: Admit<NonNullable<T.Block.Config>['trailingExpression']>) =>
@@ -18569,7 +18588,7 @@ export function buildAttributedElement<
 export function buildAttributedElement(config: T.AttributedElement.Config): T.AttributedElement.Bound {
 	currentHandle()?.admit(TSKindId.AttributedElement, [config]);
 	const _attributes = listStorage<NonNullable<T.AttributedElement['_attributes']>>(
-		config.attributes?.map((item) => wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem))
+		wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
 	);
 	const _expression = kindIdStorage<NonNullable<T.AttributedElement['_expression']>>(config.expression);
 	const handle = currentHandle();
@@ -18589,7 +18608,7 @@ export function buildAttributedElement(config: T.AttributedElement.Config): T.At
 function buildAttributedElement$patch(source: object, config: T.AttributedElement.Config): T.AttributedElement.Bound {
 	currentHandle()?.admit(TSKindId.AttributedElement, [config]);
 	const _attributes = listStorage<NonNullable<T.AttributedElement['_attributes']>>(
-		config.attributes?.map((item) => wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem))
+		wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
 	);
 	const _expression = kindIdStorage<NonNullable<T.AttributedElement['_expression']>>(config.expression);
 	const handle = currentHandle();
@@ -18623,7 +18642,7 @@ function buildAttributedElement$set(
 		case 'attributes': {
 			const config = input;
 			const _attributes = listStorage<NonNullable<T.AttributedElement['_attributes']>>(
-				config.attributes?.map((item) => wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem))
+				wrapHoistedEach(config.attributes, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
 			);
 			return setSlot(
 				source,
@@ -18666,7 +18685,12 @@ function withAttributedElement(node: object, setter: string, args: readonly unkn
 						args,
 						(
 							...values: Admit<
-								NonEmptyArray<NonNullable<NonNullable<T.AttributedElement.Config>['attributes']>[number]>
+								NonEmptyArray<
+									Extract<
+										NonNullable<NonNullable<T.AttributedElement.Config>['attributes']>,
+										readonly unknown[]
+									>[number]
+								>
 							>
 						) =>
 							rebuilt(node, handle, () =>
@@ -26469,9 +26493,7 @@ export function buildAttributedFieldDeclaration(
 ): T.AttributedFieldDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.AttributedFieldDeclaration, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedFieldDeclaration['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _field_declaration = config.fieldDeclaration;
 	const handle = currentHandle();
@@ -26497,9 +26519,7 @@ function buildAttributedFieldDeclaration$patch(
 ): T.AttributedFieldDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.AttributedFieldDeclaration, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedFieldDeclaration['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _field_declaration = config.fieldDeclaration;
 	const handle = currentHandle();
@@ -26539,9 +26559,7 @@ function buildAttributedFieldDeclaration$set(
 		case 'attributeItems': {
 			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedFieldDeclaration['_attribute_item']>>(
-				config.attributeItems?.map((item) =>
-					wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-				) ?? []
+				wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 			);
 			return setSlot(
 				source,
@@ -26584,7 +26602,10 @@ function withAttributedFieldDeclaration(node: object, setter: string, args: read
 						args,
 						(
 							...values: Admit<
-								NonNullable<NonNullable<T.AttributedFieldDeclaration.Config>['attributeItems']>[number][]
+								Extract<
+									NonNullable<NonNullable<T.AttributedFieldDeclaration.Config>['attributeItems']>,
+									readonly unknown[]
+								>[number][]
 							>
 						) =>
 							rebuilt(node, handle, () =>
@@ -26619,9 +26640,7 @@ export function buildAttributedEnumVariant<
 export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config): T.AttributedEnumVariant.Bound {
 	currentHandle()?.admit(TSKindId.AttributedEnumVariant, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedEnumVariant['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _enum_variant = config.enumVariant;
 	const handle = currentHandle();
@@ -26644,9 +26663,7 @@ function buildAttributedEnumVariant$patch(
 ): T.AttributedEnumVariant.Bound {
 	currentHandle()?.admit(TSKindId.AttributedEnumVariant, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedEnumVariant['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _enum_variant = config.enumVariant;
 	const handle = currentHandle();
@@ -26683,9 +26700,7 @@ function buildAttributedEnumVariant$set(
 		case 'attributeItems': {
 			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedEnumVariant['_attribute_item']>>(
-				config.attributeItems?.map((item) =>
-					wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-				) ?? []
+				wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 			);
 			return setSlot(
 				source,
@@ -26726,7 +26741,14 @@ function withAttributedEnumVariant(node: object, setter: string, args: readonly 
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.AttributedEnumVariant.Config>['attributeItems']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.AttributedEnumVariant.Config>['attributeItems']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildAttributedEnumVariant$set(node, 'attributeItems', {
 									attributeItems: restItems('attributeItems', values)
@@ -26891,9 +26913,7 @@ export function buildAttributedTypeParameter(
 ): T.AttributedTypeParameter.Bound {
 	currentHandle()?.admit(TSKindId.AttributedTypeParameter, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedTypeParameter['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
@@ -26916,9 +26936,7 @@ function buildAttributedTypeParameter$patch(
 ): T.AttributedTypeParameter.Bound {
 	currentHandle()?.admit(TSKindId.AttributedTypeParameter, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedTypeParameter['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
@@ -26955,9 +26973,7 @@ function buildAttributedTypeParameter$set(
 		case 'attributeItems': {
 			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedTypeParameter['_attribute_item']>>(
-				config.attributeItems?.map((item) =>
-					wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-				) ?? []
+				wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 			);
 			return setSlot(
 				source,
@@ -26999,7 +27015,12 @@ function withAttributedTypeParameter(node: object, setter: string, args: readonl
 					applySetter(
 						args,
 						(
-							...values: Admit<NonNullable<NonNullable<T.AttributedTypeParameter.Config>['attributeItems']>[number][]>
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.AttributedTypeParameter.Config>['attributeItems']>,
+									readonly unknown[]
+								>[number][]
+							>
 						) =>
 							rebuilt(node, handle, () =>
 								buildAttributedTypeParameter$set(node, 'attributeItems', {
@@ -27030,9 +27051,7 @@ export function buildArgument<
 export function buildArgument(config: T.Argument.Config): T.Argument.Bound {
 	currentHandle()?.admit(TSKindId.Argument, [config]);
 	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
 	const handle = currentHandle();
@@ -27052,9 +27071,7 @@ export function buildArgument(config: T.Argument.Config): T.Argument.Bound {
 function buildArgument$patch(source: object, config: T.Argument.Config): T.Argument.Bound {
 	currentHandle()?.admit(TSKindId.Argument, [config]);
 	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
 	const handle = currentHandle();
@@ -27086,9 +27103,7 @@ function buildArgument$set(
 		case 'attributeItems': {
 			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(
-				config.attributeItems?.map((item) =>
-					wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-				) ?? []
+				wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 			);
 			return setSlot(
 				source,
@@ -27129,7 +27144,11 @@ function withArgument(node: object, setter: string, args: readonly unknown[]): u
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.Argument.Config>['attributeItems']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.Argument.Config>['attributeItems']>, readonly unknown[]>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildArgument$set(node, 'attributeItems', { attributeItems: restItems('attributeItems', values) })
 							)
@@ -27159,9 +27178,7 @@ export function buildAttributedOrderedField<
 export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config): T.AttributedOrderedField.Bound {
 	currentHandle()?.admit(TSKindId.AttributedOrderedField, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedOrderedField['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _visibility_modifier = wrapHoisted(
 		config.visibilityModifier,
@@ -27197,9 +27214,7 @@ function buildAttributedOrderedField$patch(
 ): T.AttributedOrderedField.Bound {
 	currentHandle()?.admit(TSKindId.AttributedOrderedField, [config]);
 	const _attribute_item = listStorage<NonNullable<T.AttributedOrderedField['_attribute_item']>>(
-		config.attributeItems?.map((item) =>
-			wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-		) ?? []
+		wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 	);
 	const _visibility_modifier = wrapHoisted(
 		config.visibilityModifier,
@@ -27251,9 +27266,7 @@ function buildAttributedOrderedField$set(
 		case 'attributeItems': {
 			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedOrderedField['_attribute_item']>>(
-				config.attributeItems?.map((item) =>
-					wrapHoisted(item, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)
-				) ?? []
+				wrapHoistedEach(config.attributeItems, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem) ?? []
 			);
 			return setSlot(
 				source,
@@ -27313,7 +27326,14 @@ function withAttributedOrderedField(node: object, setter: string, args: readonly
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.AttributedOrderedField.Config>['attributeItems']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.AttributedOrderedField.Config>['attributeItems']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildAttributedOrderedField$set(node, 'attributeItems', {
 									attributeItems: restItems('attributeItems', values)

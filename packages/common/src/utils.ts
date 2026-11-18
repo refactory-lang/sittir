@@ -956,6 +956,12 @@ export function wrapHoisted<R>(value: unknown, wrap: (value: never) => R, kind: 
 	return value === undefined ? undefined : isKindNode(value, kind) ? (value as R) : wrap(value as never);
 }
 
+/** `wrapHoisted` over each item of a list slot's value; a single item is a one-item list. */
+export function wrapHoistedEach<R>(value: unknown, wrap: (value: never) => R, kind: number): R[] | undefined {
+	if (value === undefined) return undefined;
+	return (Array.isArray(value) ? value : [value]).map((item) => wrapHoisted(item, wrap, kind) as R);
+}
+
 function isKindNode(value: unknown, kind: number): boolean {
 	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
 }

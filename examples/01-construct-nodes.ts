@@ -35,7 +35,7 @@ export function looseGreetFunction() {
 	return rs.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'greet',
-		parameters: [rs.build.parametersElements(rs.build.parameter({ name: 'name', type: 'String', mutable: true }))],
+		parameters: [rs.build.parameter({ name: 'name', type: 'String', mutable: true })],
 		body: rs.build.block({
 			statements: rs.build.statement.let({ name: 'a', mutable: true, value: rs.build.integerLiteral('1') }),
 		}),

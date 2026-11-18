@@ -25,6 +25,7 @@ import {
 	hoistRead,
 	storedHop,
 	wrapHoisted,
+	wrapHoistedEach,
 	listSlotWith,
 	LIST_METHODS,
 	listIterator,
@@ -208,8 +209,13 @@ function buildProgram$with(node: Held, setter: string, args: readonly unknown[])
 				rebuilt(node, handle, () => buildProgram({ ...config, shebang: value }))
 			);
 		case 'statements':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
-				rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
+			return applySetter(
+				args,
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.Program.Config>['statements']>, readonly unknown[]>[number][]
+					>
+				) => rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
 			);
 	}
 	throw new Error(`program has no $with.${setter}`);
@@ -2711,8 +2717,13 @@ function buildSwitchCase$with(node: Held, setter: string, args: readonly unknown
 				rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value }))
 			);
 		case 'bodies':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][]>) =>
-				rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
+			return applySetter(
+				args,
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][]
+					>
+				) => rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
 			);
 	}
 	throw new Error(`switch_case has no $with.${setter}`);
@@ -3455,7 +3466,7 @@ export function buildClass<
 export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound {
 	currentHandle()?.admit(TSKindId.Class, [config]);
 	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.Class['_name']>>(
 		rejectReservedText(config.name, 'Class.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
@@ -3549,8 +3560,13 @@ function buildClass$with(node: Held, setter: string, args: readonly unknown[]): 
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Class.Config>['decorators']>[number][]>) =>
-						rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) }))
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.Class.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) => rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) }))
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -3681,7 +3697,7 @@ export function buildClassDeclaration(
 ): T.ClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(
 		rejectReservedText(config.name, 'ClassDeclaration.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
@@ -3787,7 +3803,11 @@ function buildClassDeclaration$with(node: Held, setter: string, args: readonly u
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.ClassDeclaration.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.ClassDeclaration.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildClassDeclaration({ ...config, decorators: restItems('decorators', values) }, options)
 							)
@@ -8234,7 +8254,7 @@ export function buildAbstractClassDeclaration(
 ): T.AbstractClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.AbstractClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.AbstractClassDeclaration['_name']>>(
 		rejectReservedText(
@@ -8335,7 +8355,14 @@ function buildAbstractClassDeclaration$with(node: Held, setter: string, args: re
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.AbstractClassDeclaration.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.AbstractClassDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) })
 							)
@@ -9432,7 +9459,7 @@ export function buildRequiredParameter<
 export function buildRequiredParameter(config: T.RequiredParameter.Config): T.RequiredParameter.Bound {
 	currentHandle()?.admit(TSKindId.RequiredParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.RequiredParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -9518,7 +9545,14 @@ function buildRequiredParameter$with(node: Held, setter: string, args: readonly 
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.RequiredParameter.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.RequiredParameter.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildRequiredParameter({ ...config, decorators: restItems('decorators', values) })
 							)
@@ -9604,7 +9638,7 @@ export function buildOptionalParameter<
 export function buildOptionalParameter(config: T.OptionalParameter.Config): T.OptionalParameter.Bound {
 	currentHandle()?.admit(TSKindId.OptionalParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.OptionalParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -9690,7 +9724,14 @@ function buildOptionalParameter$with(node: Held, setter: string, args: readonly 
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.OptionalParameter.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.OptionalParameter.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildOptionalParameter({ ...config, decorators: restItems('decorators', values) })
 							)
@@ -16463,7 +16504,7 @@ export function buildClassBodyMemberMethod(
 ): T.ClassBodyMemberMethod.Bound {
 	currentHandle()?.admit(TSKindId.ClassBodyMemberMethod, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
@@ -16527,7 +16568,14 @@ function buildClassBodyMemberMethod$with(node: Held, setter: string, args: reado
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.ClassBodyMemberMethod.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ClassBodyMemberMethod.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
 							)
@@ -18556,7 +18604,7 @@ export function buildExportStatementDefaultDeclaration(
 ): T.ExportStatementDefaultDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ExportStatementDefaultDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
@@ -18609,7 +18657,10 @@ function buildExportStatementDefaultDeclaration$with(node: Held, setter: string,
 						args,
 						(
 							...values: Admit<
-								NonNullable<NonNullable<T.ExportStatementDefaultDeclaration.Config>['decorators']>[number][]
+								Extract<
+									NonNullable<NonNullable<T.ExportStatementDefaultDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
 							>
 						) =>
 							rebuilt(node, handle, () =>
@@ -20001,7 +20052,7 @@ export function buildSetterParameter<
 export function buildSetterParameter(config: T.SetterParameter.Config): T.SetterParameter.Bound {
 	currentHandle()?.admit(TSKindId.SetterParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.SetterParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.SetterParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -20077,7 +20128,11 @@ function buildSetterParameter$with(node: Held, setter: string, args: readonly un
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.SetterParameter.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.SetterParameter.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildSetterParameter({ ...config, decorators: restItems('decorators', values) })
 							)
@@ -21843,7 +21898,7 @@ export function buildPublicFieldDefinitionPlain(
 ): T.PublicFieldDefinitionPlain.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionPlain, [config]);
 	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionPlain['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _declare = strictBooleanStorage(config.declare);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_accessibility_modifier']>>(
@@ -21957,7 +22012,14 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.PublicFieldDefinitionPlain.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.PublicFieldDefinitionPlain.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildPublicFieldDefinitionPlain({ ...config, decorators: restItems('decorators', values) })
 							)
@@ -22089,7 +22151,7 @@ export function buildPublicFieldDefinitionAccessor(
 ): T.PublicFieldDefinitionAccessor.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionAccessor, [config]);
 	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<
 		NonNullable<T.PublicFieldDefinitionAccessor['_accessibility_modifier']>
@@ -22189,7 +22251,12 @@ function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, arg
 					applySetter(
 						args,
 						(
-							...values: Admit<NonNullable<NonNullable<T.PublicFieldDefinitionAccessor.Config>['decorators']>[number][]>
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.PublicFieldDefinitionAccessor.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
 						) =>
 							rebuilt(node, handle, () =>
 								buildPublicFieldDefinitionAccessor({ ...config, decorators: restItems('decorators', values) })
@@ -22518,7 +22585,7 @@ export function buildReceiverParameterDeclaration(
 ): T.ReceiverParameterDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ReceiverParameterDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ReceiverParameterDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -22600,7 +22667,12 @@ function buildReceiverParameterDeclaration$with(node: Held, setter: string, args
 					applySetter(
 						args,
 						(
-							...values: Admit<NonNullable<NonNullable<T.ReceiverParameterDeclaration.Config>['decorators']>[number][]>
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ReceiverParameterDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
 						) =>
 							rebuilt(node, handle, () =>
 								buildReceiverParameterDeclaration({ ...config, decorators: restItems('decorators', values) })

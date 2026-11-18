@@ -21,6 +21,7 @@ import {
 	checkDelimited,
 	hoistedWith,
 	wrapHoisted,
+	wrapHoistedEach,
 	listSlotWith,
 	ownerView,
 	refuseReadStub,
@@ -203,10 +204,16 @@ function withProgram(node: object, setter: string, args: readonly unknown[]): un
 				rebuilt(node, handle, () => buildProgram$set(node, 'shebang', { shebang: value }))
 			);
 		case 'statements':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
-				rebuilt(node, handle, () =>
-					buildProgram$set(node, 'statements', { statements: restItems('statements', values) })
-				)
+			return applySetter(
+				args,
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.Program.Config>['statements']>, readonly unknown[]>[number][]
+					>
+				) =>
+					rebuilt(node, handle, () =>
+						buildProgram$set(node, 'statements', { statements: restItems('statements', values) })
+					)
 			);
 	}
 	throw new Error(`program has no $with.${setter}`);
@@ -3866,8 +3873,13 @@ function withSwitchCase(node: object, setter: string, args: readonly unknown[]):
 				rebuilt(node, handle, () => buildSwitchCase$set(node, 'value', { value: value }))
 			);
 		case 'bodies':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][]>) =>
-				rebuilt(node, handle, () => buildSwitchCase$set(node, 'bodies', { bodies: restItems('bodies', values) }))
+			return applySetter(
+				args,
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][]
+					>
+				) => rebuilt(node, handle, () => buildSwitchCase$set(node, 'bodies', { bodies: restItems('bodies', values) }))
 			);
 	}
 	throw new Error(`switch_case has no $with.${setter}`);
@@ -4841,7 +4853,7 @@ export function buildClass<
 export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound {
 	currentHandle()?.admit(TSKindId.Class, [config]);
 	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.Class['_name']>>(
 		rejectReservedText(config.name, 'Class.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
@@ -4895,7 +4907,7 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 function buildClass$patch(source: object, config: Partial<T.Class.Config> = {}): T.Class.Bound {
 	currentHandle()?.admit(TSKindId.Class, [config]);
 	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.Class['_name']>>(
 		rejectReservedText(config.name, 'Class.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
@@ -4969,7 +4981,7 @@ function buildClass$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(source, TSKindId.Class as const, 'class', 0, 'decorators', _decorator) as unknown as T.Class.Bound;
 		}
@@ -5038,10 +5050,16 @@ function withClass(node: object, setter: string, args: readonly unknown[]): unkn
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Class.Config>['decorators']>[number][]>) =>
-						rebuilt(node, handle, () =>
-							buildClass$set(node, 'decorators', { decorators: restItems('decorators', values) })
-						)
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.Class.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildClass$set(node, 'decorators', { decorators: restItems('decorators', values) })
+							)
 					),
 				undefined,
 				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
@@ -5157,7 +5175,7 @@ export function buildClassDeclaration(
 ): T.ClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(
 		rejectReservedText(config.name, 'ClassDeclaration.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
@@ -5228,7 +5246,7 @@ function buildClassDeclaration$patch(
 ): T.ClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(
 		rejectReservedText(config.name, 'ClassDeclaration.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
@@ -5325,7 +5343,7 @@ function buildClassDeclaration$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -5439,7 +5457,11 @@ function withClassDeclaration(node: object, setter: string, args: readonly unkno
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.ClassDeclaration.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.ClassDeclaration.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildClassDeclaration$set(node, 'decorators', { decorators: restItems('decorators', values) })
 							)
@@ -11950,7 +11972,7 @@ export function buildAbstractClassDeclaration(
 ): T.AbstractClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.AbstractClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.AbstractClassDeclaration['_name']>>(
 		rejectReservedText(
@@ -12018,7 +12040,7 @@ function buildAbstractClassDeclaration$patch(
 ): T.AbstractClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.AbstractClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _name = admitAliasContent<NonNullable<T.AbstractClassDeclaration['_name']>>(
 		rejectReservedText(
@@ -12106,7 +12128,7 @@ function buildAbstractClassDeclaration$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -12210,7 +12232,14 @@ function withAbstractClassDeclaration(node: object, setter: string, args: readon
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.AbstractClassDeclaration.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.AbstractClassDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildAbstractClassDeclaration$set(node, 'decorators', { decorators: restItems('decorators', values) })
 							)
@@ -13838,7 +13867,7 @@ export function buildRequiredParameter<
 export function buildRequiredParameter(config: T.RequiredParameter.Config): T.RequiredParameter.Bound {
 	currentHandle()?.admit(TSKindId.RequiredParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.RequiredParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -13891,7 +13920,7 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 function buildRequiredParameter$patch(source: object, config: T.RequiredParameter.Config): T.RequiredParameter.Bound {
 	currentHandle()?.admit(TSKindId.RequiredParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.RequiredParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -13968,7 +13997,7 @@ function buildRequiredParameter$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -14076,7 +14105,14 @@ function withRequiredParameter(node: object, setter: string, args: readonly unkn
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.RequiredParameter.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.RequiredParameter.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildRequiredParameter$set(node, 'decorators', { decorators: restItems('decorators', values) })
 							)
@@ -14143,7 +14179,7 @@ export function buildOptionalParameter<
 export function buildOptionalParameter(config: T.OptionalParameter.Config): T.OptionalParameter.Bound {
 	currentHandle()?.admit(TSKindId.OptionalParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.OptionalParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -14196,7 +14232,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 function buildOptionalParameter$patch(source: object, config: T.OptionalParameter.Config): T.OptionalParameter.Bound {
 	currentHandle()?.admit(TSKindId.OptionalParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.OptionalParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -14273,7 +14309,7 @@ function buildOptionalParameter$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -14381,7 +14417,14 @@ function withOptionalParameter(node: object, setter: string, args: readonly unkn
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.OptionalParameter.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.OptionalParameter.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildOptionalParameter$set(node, 'decorators', { decorators: restItems('decorators', values) })
 							)
@@ -23800,7 +23843,7 @@ export function buildClassBodyMemberMethod(
 ): T.ClassBodyMemberMethod.Bound {
 	currentHandle()?.admit(TSKindId.ClassBodyMemberMethod, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
@@ -23833,7 +23876,7 @@ function buildClassBodyMemberMethod$patch(
 ): T.ClassBodyMemberMethod.Bound {
 	currentHandle()?.admit(TSKindId.ClassBodyMemberMethod, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
@@ -23886,7 +23929,7 @@ function buildClassBodyMemberMethod$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -23942,7 +23985,14 @@ function withClassBodyMemberMethod(node: object, setter: string, args: readonly 
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.ClassBodyMemberMethod.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ClassBodyMemberMethod.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildClassBodyMemberMethod$set(node, 'decorators', { decorators: restItems('decorators', values) })
 							)
@@ -27163,7 +27213,7 @@ export function buildExportStatementDefaultDeclaration(
 ): T.ExportStatementDefaultDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ExportStatementDefaultDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
@@ -27186,7 +27236,7 @@ function buildExportStatementDefaultDeclaration$patch(
 ): T.ExportStatementDefaultDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ExportStatementDefaultDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
@@ -27223,7 +27273,7 @@ function buildExportStatementDefaultDeclaration$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -27266,7 +27316,10 @@ function withExportStatementDefaultDeclaration(node: object, setter: string, arg
 						args,
 						(
 							...values: Admit<
-								NonNullable<NonNullable<T.ExportStatementDefaultDeclaration.Config>['decorators']>[number][]
+								Extract<
+									NonNullable<NonNullable<T.ExportStatementDefaultDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
 							>
 						) =>
 							rebuilt(node, handle, () =>
@@ -29190,7 +29243,7 @@ export function buildSetterParameter<
 export function buildSetterParameter(config: T.SetterParameter.Config): T.SetterParameter.Bound {
 	currentHandle()?.admit(TSKindId.SetterParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.SetterParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.SetterParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -29234,7 +29287,7 @@ export function buildSetterParameter(config: T.SetterParameter.Config): T.Setter
 function buildSetterParameter$patch(source: object, config: T.SetterParameter.Config): T.SetterParameter.Bound {
 	currentHandle()?.admit(TSKindId.SetterParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.SetterParameter['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.SetterParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -29300,7 +29353,7 @@ function buildSetterParameter$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.SetterParameter['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -29391,7 +29444,11 @@ function withSetterParameter(node: object, setter: string, args: readonly unknow
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.SetterParameter.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.SetterParameter.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildSetterParameter$set(node, 'decorators', { decorators: restItems('decorators', values) })
 							)
@@ -32369,7 +32426,7 @@ export function buildPublicFieldDefinitionPlain(
 ): T.PublicFieldDefinitionPlain.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionPlain, [config]);
 	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionPlain['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _declare = strictBooleanStorage(config.declare);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_accessibility_modifier']>>(
@@ -32449,7 +32506,7 @@ function buildPublicFieldDefinitionPlain$patch(
 ): T.PublicFieldDefinitionPlain.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionPlain, [config]);
 	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionPlain['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _declare = strictBooleanStorage(config.declare);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_accessibility_modifier']>>(
@@ -32561,7 +32618,7 @@ function buildPublicFieldDefinitionPlain$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionPlain['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -32725,7 +32782,14 @@ function withPublicFieldDefinitionPlain(node: object, setter: string, args: read
 				(args) =>
 					applySetter(
 						args,
-						(...values: Admit<NonNullable<NonNullable<T.PublicFieldDefinitionPlain.Config>['decorators']>[number][]>) =>
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.PublicFieldDefinitionPlain.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
 							rebuilt(node, handle, () =>
 								buildPublicFieldDefinitionPlain$set(node, 'decorators', { decorators: restItems('decorators', values) })
 							)
@@ -32822,7 +32886,7 @@ export function buildPublicFieldDefinitionAccessor(
 ): T.PublicFieldDefinitionAccessor.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionAccessor, [config]);
 	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<
 		NonNullable<T.PublicFieldDefinitionAccessor['_accessibility_modifier']>
@@ -32890,7 +32954,7 @@ function buildPublicFieldDefinitionAccessor$patch(
 ): T.PublicFieldDefinitionAccessor.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionAccessor, [config]);
 	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<
 		NonNullable<T.PublicFieldDefinitionAccessor['_accessibility_modifier']>
@@ -32984,7 +33048,7 @@ function buildPublicFieldDefinitionAccessor$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -33113,7 +33177,12 @@ function withPublicFieldDefinitionAccessor(node: object, setter: string, args: r
 					applySetter(
 						args,
 						(
-							...values: Admit<NonNullable<NonNullable<T.PublicFieldDefinitionAccessor.Config>['decorators']>[number][]>
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.PublicFieldDefinitionAccessor.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
 						) =>
 							rebuilt(node, handle, () =>
 								buildPublicFieldDefinitionAccessor$set(node, 'decorators', {
@@ -33497,7 +33566,7 @@ export function buildReceiverParameterDeclaration(
 ): T.ReceiverParameterDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ReceiverParameterDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ReceiverParameterDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -33549,7 +33618,7 @@ function buildReceiverParameterDeclaration$patch(
 ): T.ReceiverParameterDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ReceiverParameterDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ReceiverParameterDeclaration['_decorator']>>(
-		config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -33623,7 +33692,7 @@ function buildReceiverParameterDeclaration$set(
 		case 'decorators': {
 			const config = input;
 			const _decorator = listStorage<NonNullable<T.ReceiverParameterDeclaration['_decorator']>>(
-				config.decorators?.map((item) => wrapHoisted(item, (v: never) => buildDecorator(v), TSKindId.Decorator)) ?? []
+				wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 			);
 			return setSlot(
 				source,
@@ -33720,7 +33789,12 @@ function withReceiverParameterDeclaration(node: object, setter: string, args: re
 					applySetter(
 						args,
 						(
-							...values: Admit<NonNullable<NonNullable<T.ReceiverParameterDeclaration.Config>['decorators']>[number][]>
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ReceiverParameterDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
 						) =>
 							rebuilt(node, handle, () =>
 								buildReceiverParameterDeclaration$set(node, 'decorators', {

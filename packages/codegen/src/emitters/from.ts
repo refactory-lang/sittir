@@ -86,7 +86,8 @@ import {
 	slotStorageCoercion,
 	splicedEnvelopeKindExprs,
 	storageCallExpr,
-	storedHoistOf
+	hoistedListKind,
+	isListKind
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refineDefaultOf } from './refine-emit.ts';
@@ -402,11 +403,15 @@ function emitBranchFrom(
 		// accept the `undefined` that reaches it too, even though the field
 		// itself is required within a config that IS provided.
 		const valueType = `T.${typeName}.LooseConfig[${key}]${inputOptional && isRequired(f) ? ' | undefined' : ''}`;
-		const hoist = storedHoistOf(node, f, f, nodeMap);
-		if (hoist !== undefined) {
+		if (wrapperChainOfSlot(nodeMap, f) !== undefined) {
+			const listed = hoistedListKind(node, f, nodeMap);
+			const items =
+				listed === undefined
+					? undefined
+					: listed.wrappers.reduceRight((inner, wrapper) => `F.${wrapper.rawFactoryName}(${inner})`, `${listed.kind.fromFunctionName}(...(value as unknown as Parameters<typeof ${listed.kind.fromFunctionName}>))`);
 			lines.push(
 				`export function ${fieldResolverName(typeName, f)}(value: ${valueType}): T.${typeName}.Config[${key}] {`,
-				`  return hoistRead(${body}, [${hoist.hops.join(', ')}], ${hoist.list}) as T.${typeName}.Config[${key}];`,
+				`  return ${items === undefined ? body : `(Array.isArray(value) && value.length > 0 ? ${items} : ${body})`} as unknown as T.${typeName}.Config[${key}];`,
 				'}',
 				''
 			);
@@ -995,7 +1000,10 @@ function defaultArmKindOf(
 		});
 	}
 	const first = flagged[0];
-	return first === undefined || !isNodeRef(first) ? undefined : storageKindOfRef(first.node);
+	if (first !== undefined && isNodeRef(first)) return storageKindOfRef(first.node);
+	const lists = field.values.filter((v) => isNodeRef(v) && isListKind(nodeMap.nodes.get(storageKindOfRef(v.node))!, nodeMap));
+	const primary = lists[0];
+	return field.values.length > 1 && primary !== undefined && isNodeRef(primary) ? storageKindOfRef(primary.node) : undefined;
 }
 
 function buildInternedArrayResolverCall(

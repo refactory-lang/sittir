@@ -60,7 +60,7 @@ fn.$render(); // "pub fn main() {}"
 const loose = rs.build.statement.function({
   visibilityModifier: 'pub',
   name: 'greet',
-  parameters: [rs.build.parametersElements(rs.build.parameter({ name: 'name', type: 'String' }))],
+  parameters: [rs.build.parameter({ name: 'name', type: 'String' })],
   body: rs.build.block()
 });
 loose.$render(); // "pub fn greet(name: String) {}"

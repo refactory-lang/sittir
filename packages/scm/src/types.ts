@@ -519,6 +519,9 @@ export interface String {
 	readonly __inputHints__?: {
 		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
 	};
+	readonly __wrapperHints__?: {
+		readonly string_content: StringContent;
+	};
 	readonly __looseHints__?: {
 		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
 	};
@@ -536,6 +539,9 @@ export interface ImmediateString {
 	};
 	readonly __inputHints__?: {
 		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly string_content: StringContent;
 	};
 	readonly __looseHints__?: {
 		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
@@ -696,6 +702,9 @@ export interface Predicate {
 		readonly prefix: KindEnum<'#' | '.', TSKindId.Pound | TSKindId.Dot>;
 		readonly type: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 		readonly parameters?: readonly (Capture | String | Identifier)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly parameters: Parameters;
 	};
 	readonly __looseHints__?: {
 		readonly parameters?: readonly (Capture | String | Identifier)[];

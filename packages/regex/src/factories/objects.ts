@@ -11,6 +11,7 @@ import {
 	hoistRead,
 	storedHop,
 	wrapHoisted,
+	wrapHoistedEach,
 	elementsWith,
 	rebuilt,
 	renderText,

@@ -1295,6 +1295,22 @@ function wrapChildrenListHint(
 	return `${slotListTypeOf(elementSlot, (slot) => fieldTypeExpr(slot, nodeMap, lookupUnion), 'readonly')} | readonly []`;
 }
 
+function hoistedItemsHint(
+	field: AssembledNonterminal,
+	kind: string,
+	nodeMap: NodeMap,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	const chain = wrapperChainFor(nodeMap, kind, field.name);
+	const last = chain?.slots[chain.slots.length - 1];
+	if (last === undefined || isMultiple(last)) return undefined;
+	const list = nodeMap.nodes.get(slotKindNames(last)[0] ?? '');
+	const itemSlot = list instanceof AssembledList ? list.slots.find((slot) => isMultiple(slot)) : undefined;
+	if (itemSlot === undefined) return undefined;
+	const element = (slot: AssembledNonterminal): string => fieldTypeExpr(slot, nodeMap, lookupUnion);
+	return !isRequired(field) || chain!.slots.some((slot) => !isRequired(slot)) ? `readonly (${element(itemSlot)})[]` : slotListTypeOf(itemSlot, element, 'readonly');
+}
+
 function fieldLooseHintTypeExpr(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -1341,9 +1357,17 @@ function emitFieldInputHints(
 		lines.push(...hintLines);
 		lines.push('  };');
 	}
+	const wrapperLines = slots
+		.filter((field) => wrapperChainFor(nodeMap, kind, field.name) !== undefined)
+		.map((field) => `    readonly ${quoteKey(field.name)}: ${storageElementOf(field)};`);
+	if (wrapperLines.length > 0) {
+		lines.push('  readonly __wrapperHints__?: {');
+		lines.push(...wrapperLines);
+		lines.push('  };');
+	}
 	const fromHintLines = slots
 		.map((field) => {
-			const hintType = fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
+			const hintType = hoistedItemsHint(field, kind, nodeMap, lookupUnion) ?? fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;

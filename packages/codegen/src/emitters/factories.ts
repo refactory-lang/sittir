@@ -1023,7 +1023,7 @@ function hoistedValueExpr(f: AssembledNonterminal, valueExpr: string, nodeMap: N
 	if (chain === undefined) return valueExpr;
 	const wrap = chainWrapExpr(chain, nodeMap, '', !isRequired(f));
 	const kind = kindDiscriminantExpr(chain.storage[0]!, nodeMap, kindEntries);
-	return isMultiple(f) ? `${valueExpr}?.map((item) => wrapHoisted(item, ${wrap}, ${kind}))` : `wrapHoisted(${valueExpr}, ${wrap}, ${kind})`;
+	return isMultiple(f) ? `wrapHoistedEach(${valueExpr}, ${wrap}, ${kind})` : `wrapHoisted(${valueExpr}, ${wrap}, ${kind})`;
 }
 
 function defaultedValueExpr(
@@ -1105,7 +1105,7 @@ export function restSetterType(
 				s,
 				resolveFieldStorageInfo(s, nodeMap).kind === 'verbatim' && wrapperChainOfSlot(nodeMap, s) === undefined
 					? constructionFieldElementType(s, nodeMap, kindEntries)
-					: `NonNullable<NonNullable<${configType}>['${s.propertyName}']>[number]`
+					: `Extract<NonNullable<NonNullable<${configType}>['${s.propertyName}']>, readonly unknown[]>[number]`
 			),
 		'mutable'
 	);
@@ -2834,11 +2834,11 @@ function itemsWrapped(node: AssembledNode, slot: AssembledNonterminal, nodeMap: 
 	return list >= 0 && list < chain.storage.length - 1;
 }
 
-function isListKind(kind: AssembledNode, nodeMap: NodeMap): boolean {
+export function isListKind(kind: AssembledNode, nodeMap: NodeMap): boolean {
 	return kind.rawFactoryName !== undefined && listViewTarget(kind, nodeMap) !== undefined;
 }
 
-function hoistedListKind(
+export function hoistedListKind(
 	node: AssembledNode,
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap
@@ -2936,7 +2936,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 	for (const node of nodeMap.nodes.values()) {
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
 		if (plan.slots.length > 0) names.add('listSlotWith');
-		for (const name of ['hoistedWith', 'hoistRead', 'storedHop', 'wrapHoisted']) names.add(name);
+		for (const name of ['hoistedWith', 'hoistRead', 'storedHop', 'wrapHoisted', 'wrapHoistedEach']) names.add(name);
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {

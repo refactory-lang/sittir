@@ -2145,6 +2145,9 @@ export interface ImportStatement {
 	readonly __inputHints__?: {
 		readonly names: NonEmptyArray<DottedName | AliasedImport>;
 	};
+	readonly __wrapperHints__?: {
+		readonly names: Names;
+	};
 	readonly __looseHints__?: {
 		readonly names: readonly (DottedName | AliasedImport)[];
 	};
@@ -2476,6 +2479,10 @@ export interface MatchStatement {
 		readonly subject: NonEmptyArray<Expression>;
 		readonly body: readonly CaseClause[];
 	};
+	readonly __wrapperHints__?: {
+		readonly subject: Subjects;
+		readonly body: MatchBlock;
+	};
 	readonly __looseHints__?: {
 		readonly subject: readonly Expression[];
 		readonly body: readonly CaseClause[];
@@ -2516,6 +2523,9 @@ export interface CaseClause {
 	readonly __inputHints__?: {
 		readonly guard?: Expression | undefined;
 	};
+	readonly __wrapperHints__?: {
+		readonly guard: IfClause;
+	};
 	readonly __looseHints__?: {
 		readonly guard?: readonly Expression[];
 	};
@@ -2551,6 +2561,9 @@ export interface ForStatement {
 			| ExpressionList;
 		readonly alternative?: Suite | undefined;
 	};
+	readonly __wrapperHints__?: {
+		readonly alternative: ElseClause;
+	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Suite[];
 	};
@@ -2584,6 +2597,9 @@ export interface WhileStatement {
 			| Expression;
 		readonly alternative?: Suite | undefined;
 	};
+	readonly __wrapperHints__?: {
+		readonly alternative: ElseClause;
+	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Suite[];
 	};
@@ -2612,6 +2628,10 @@ export interface TryStatement {
 	readonly __inputHints__?: {
 		readonly alternative?: Suite | undefined;
 		readonly finalizer?: Suite | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly alternative: ElseClause;
+		readonly finalizer: FinallyClause;
 	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Suite[];
@@ -2642,6 +2662,9 @@ export interface ExceptClause {
 	readonly __inputHints__?: {
 		readonly group?: BaseBooleanKeyword<'*'>;
 		readonly exception?: ExceptClauseExceptionAs | ExceptClauseExceptionList | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly exception: ExceptClauseException;
 	};
 	readonly __looseHints__?: {
 		readonly exception?: readonly (ExceptClauseExceptionAs | ExceptClauseExceptionList)[];
@@ -2730,6 +2753,11 @@ export interface FunctionDefinition {
 		readonly parameters: readonly Parameter[];
 		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
 	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly parameters: Parameters;
+		readonly return_type: Type;
+	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParam[];
 		readonly parameters: readonly Parameter[];
@@ -2771,6 +2799,9 @@ export interface Parameters {
 	readonly __inputHints__?: {
 		readonly elements?: readonly Parameter[];
 	};
+	readonly __wrapperHints__?: {
+		readonly elements: ParametersElements;
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly Parameter[];
 	};
@@ -2792,6 +2823,9 @@ export interface LambdaParameters {
 	};
 	readonly __inputHints__?: {
 		readonly parameters_elements: NonEmptyArray<Parameter>;
+	};
+	readonly __wrapperHints__?: {
+		readonly parameters_elements: ParametersElements;
 	};
 	readonly __looseHints__?: {
 		readonly parameters_elements: readonly Parameter[];
@@ -2880,7 +2914,11 @@ export interface ExecStatement {
 	};
 	readonly __slotHints__?: {
 		readonly code: SlotHint<T.String | T.Identifier>;
-		readonly inClauses: SlotHint<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>[number][], true, true>;
+		readonly inClauses: SlotHint<
+			Extract<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>, readonly unknown[]>[number][],
+			true,
+			true
+		>;
 	};
 	readonly code: () => String | Identifier;
 	readonly inClauses: () => readonly Expression[];
@@ -2899,6 +2937,10 @@ export interface TypeAliasStatement {
 	readonly __inputHints__?: {
 		readonly type_parameters?: readonly TypeParam[];
 		readonly value: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly value: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParam[];
@@ -2932,6 +2974,9 @@ export interface ClassDefinition {
 	readonly __inputHints__?: {
 		readonly type_parameters?: readonly TypeParam[];
 	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParam[];
 		readonly bases?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
@@ -2963,6 +3008,9 @@ export interface TypeParameter {
 	};
 	readonly __inputHints__?: {
 		readonly types: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly types: Types;
 	};
 	readonly __looseHints__?: {
 		readonly types: readonly Type[];
@@ -3000,6 +3048,9 @@ export interface ArgumentList {
 			| ParenthesizedListSplat
 			| KeywordArgument
 		)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly arguments: ArgumentListElements;
 	};
 	readonly __looseHints__?: {
 		readonly arguments?: readonly (
@@ -3043,9 +3094,14 @@ export interface DecoratedDefinition {
 	readonly __inputHints__?: {
 		readonly decorator: NonEmptyArray<Expression>;
 	};
+	readonly __wrapperHints__?: {
+		readonly decorator: Decorator;
+	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<
-			NonEmptyArray<NonNullable<NonNullable<T.DecoratedDefinition.Config>['decorators']>[number]>,
+			NonEmptyArray<
+				Extract<NonNullable<NonNullable<T.DecoratedDefinition.Config>['decorators']>, readonly unknown[]>[number]
+			>,
 			false,
 			true
 		>;
@@ -3224,6 +3280,9 @@ export interface CaseAsPattern {
 	readonly __inputHints__?: {
 		readonly case_pattern: CaseAsPattern | KeywordPattern | SimplePattern;
 	};
+	readonly __wrapperHints__?: {
+		readonly case_pattern: CasePattern;
+	};
 	readonly __looseHints__?: {
 		readonly case_pattern: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 	};
@@ -3366,6 +3425,9 @@ export interface DictPattern {
 	readonly __inputHints__?: {
 		readonly elements?: readonly (KeyValuePattern | SplatPattern)[];
 	};
+	readonly __wrapperHints__?: {
+		readonly elements: DictPatternElements;
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (KeyValuePattern | SplatPattern)[];
 	};
@@ -3430,6 +3492,9 @@ export interface KeyValuePattern {
 			| ComplexPattern
 			| DottedName;
 		readonly value: CaseAsPattern | KeywordPattern | SimplePattern;
+	};
+	readonly __wrapperHints__?: {
+		readonly value: CasePattern;
 	};
 	readonly __looseHints__?: {
 		readonly value: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
@@ -3540,6 +3605,9 @@ export interface ClassPattern {
 	readonly __inputHints__?: {
 		readonly fields?: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 	};
+	readonly __wrapperHints__?: {
+		readonly fields: ListPatternCasePatterns;
+	};
 	readonly __looseHints__?: {
 		readonly fields?: readonly CasePattern[];
 	};
@@ -3618,6 +3686,9 @@ export interface TuplePattern {
 	readonly __inputHints__?: {
 		readonly elements?: readonly Pattern[];
 	};
+	readonly __wrapperHints__?: {
+		readonly elements: TuplePatternElements;
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly Pattern[];
 	};
@@ -3639,6 +3710,9 @@ export interface ListPattern {
 	};
 	readonly __inputHints__?: {
 		readonly elements?: readonly Pattern[];
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: Patterns;
 	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly Pattern[];
@@ -3689,6 +3763,9 @@ export interface TypedDefaultParameter {
 		readonly default:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
+	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -3929,6 +4006,9 @@ export interface Lambda {
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
+	readonly __wrapperHints__?: {
+		readonly parameters: LambdaParameters;
+	};
 	readonly __looseHints__?: {
 		readonly parameters?: readonly Parameter[];
 	};
@@ -3957,6 +4037,9 @@ export interface LambdaWithinForInClause {
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| LambdaWithinForInClause;
+	};
+	readonly __wrapperHints__?: {
+		readonly parameters: LambdaParameters;
 	};
 	readonly __looseHints__?: {
 		readonly parameters?: readonly Parameter[];
@@ -4111,6 +4194,9 @@ export interface Subscript {
 			| PrimaryExpression;
 		readonly index: NonEmptyArray<Expression | Slice>;
 	};
+	readonly __wrapperHints__?: {
+		readonly index: Subscripts;
+	};
 	readonly __looseHints__?: {
 		readonly index: readonly (Expression | Slice)[];
 	};
@@ -4189,6 +4275,9 @@ export interface TypedParameter {
 	readonly __inputHints__?: {
 		readonly type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
@@ -4254,6 +4343,9 @@ export interface GenericType {
 			| MemberType
 		)[];
 	};
+	readonly __wrapperHints__?: {
+		readonly type_parameter: TypeParameter;
+	};
 	readonly __looseHints__?: {
 		readonly type_parameter: readonly Type[];
 	};
@@ -4284,6 +4376,10 @@ export interface UnionType {
 		readonly left: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 		readonly right: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	};
+	readonly __wrapperHints__?: {
+		readonly left: Type;
+		readonly right: Type;
+	};
 	readonly __looseHints__?: {
 		readonly left: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 		readonly right: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -4308,6 +4404,10 @@ export interface ConstrainedType {
 		readonly base_type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 		readonly constraint: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	};
+	readonly __wrapperHints__?: {
+		readonly base_type: Type;
+		readonly constraint: Type;
+	};
 	readonly __looseHints__?: {
 		readonly base_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 		readonly constraint: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -4330,6 +4430,9 @@ export interface MemberType {
 	};
 	readonly __inputHints__?: {
 		readonly qualifier: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly qualifier: Type;
 	};
 	readonly __looseHints__?: {
 		readonly qualifier: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -4372,6 +4475,9 @@ export interface List {
 	readonly __inputHints__?: {
 		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
+	readonly __wrapperHints__?: {
+		readonly elements: CollectionElements;
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
@@ -4399,6 +4505,9 @@ export interface Set {
 	};
 	readonly __inputHints__?: {
 		readonly elements: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: CollectionElements;
 	};
 	readonly __looseHints__?: {
 		readonly elements: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
@@ -4428,6 +4537,9 @@ export interface Tuple {
 	readonly __inputHints__?: {
 		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
+	readonly __wrapperHints__?: {
+		readonly elements: TupleElements;
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
@@ -4455,6 +4567,9 @@ export interface Dictionary {
 	};
 	readonly __inputHints__?: {
 		readonly elements?: readonly (Pair | DictionarySplat)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: DictionaryElements;
 	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (Pair | DictionarySplat)[];
@@ -4507,6 +4622,9 @@ export interface ListComprehension {
 			| Expression;
 		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
 	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
+	};
 	readonly __looseHints__?: {
 		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
@@ -4528,6 +4646,9 @@ export interface DictionaryComprehension {
 	};
 	readonly __inputHints__?: {
 		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
+	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
 	};
 	readonly __looseHints__?: {
 		readonly clauses: readonly (ForInClause | IfClause)[];
@@ -4554,6 +4675,9 @@ export interface SetComprehension {
 			| Expression;
 		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
 	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
+	};
 	readonly __looseHints__?: {
 		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
@@ -4578,6 +4702,9 @@ export interface GeneratorExpression {
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
+	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
 	};
 	readonly __looseHints__?: {
 		readonly clauses: readonly (ForInClause | IfClause)[];
@@ -4655,7 +4782,7 @@ export interface ForInClause {
 		readonly async: SlotHint<NonNullable<T.ForInClause.Config>['async'], true>;
 		readonly left: SlotHint<T.Pattern | T.PatternList>;
 		readonly rights: SlotHint<
-			NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['rights']>[number]>,
+			NonEmptyArray<Extract<NonNullable<NonNullable<T.ForInClause.Config>['rights']>, readonly unknown[]>[number]>,
 			false,
 			true
 		>;
@@ -4893,6 +5020,9 @@ export interface WithClauseWithItems {
 	readonly __inputHints__?: {
 		readonly item: NonEmptyArray<Expression>;
 	};
+	readonly __wrapperHints__?: {
+		readonly item: WithItem;
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4910,6 +5040,9 @@ export interface Types {
 	};
 	readonly __inputHints__?: {
 		readonly item: NonEmptyArray<Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType>;
+	};
+	readonly __wrapperHints__?: {
+		readonly item: Type;
 	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Type>, false, true>;
@@ -4952,6 +5085,9 @@ export interface ListPatternCasePatterns {
 	};
 	readonly __inputHints__?: {
 		readonly item: NonEmptyArray<CaseAsPattern | KeywordPattern | SimplePattern>;
+	};
+	readonly __wrapperHints__?: {
+		readonly item: CasePattern;
 	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
@@ -5035,6 +5171,9 @@ export interface TypeParams {
 	readonly __inputHints__?: {
 		readonly items: NonEmptyArray<TypeParam>;
 	};
+	readonly __wrapperHints__?: {
+		readonly items: TypeParamsItems;
+	};
 	readonly __looseHints__?: {
 		readonly items: readonly TypeParam[];
 	};
@@ -5087,6 +5226,9 @@ export interface CasePatternList {
 	};
 	readonly __inputHints__?: {
 		readonly elements: NonEmptyArray<CaseAsPattern | KeywordPattern | SimplePattern>;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: CasePattern;
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
@@ -5151,6 +5293,9 @@ export interface CaseTuplePattern {
 	readonly __inputHints__?: {
 		readonly elements?: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 	};
+	readonly __wrapperHints__?: {
+		readonly elements: ListPatternCasePatterns;
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly CasePattern[];
 	};
@@ -5169,6 +5314,9 @@ export interface CaseListPattern {
 	};
 	readonly __inputHints__?: {
 		readonly elements?: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: ListPatternCasePatterns;
 	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly CasePattern[];
@@ -5222,6 +5370,10 @@ export interface PrintStatementChevron {
 		readonly chevron: Expression;
 		readonly arguments?: readonly Expression[];
 	};
+	readonly __wrapperHints__?: {
+		readonly chevron: Chevron;
+		readonly arguments: PrintChevronArguments;
+	};
 	readonly __looseHints__?: {
 		readonly chevron: readonly Expression[];
 		readonly arguments?: readonly Expression[];
@@ -5245,6 +5397,9 @@ export interface PrintStatementPlain {
 	};
 	readonly __inputHints__?: {
 		readonly arguments: NonEmptyArray<Expression>;
+	};
+	readonly __wrapperHints__?: {
+		readonly arguments: PrintArguments;
 	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly Expression[];
@@ -5650,6 +5805,9 @@ export interface ParenthesizedImportList {
 	readonly __inputHints__?: {
 		readonly import_list: NonEmptyArray<DottedName | AliasedImport>;
 	};
+	readonly __wrapperHints__?: {
+		readonly import_list: ImportList;
+	};
 	readonly __looseHints__?: {
 		readonly import_list: readonly (DottedName | AliasedImport)[];
 	};
@@ -5735,6 +5893,9 @@ export interface AssignmentType {
 	readonly __inputHints__?: {
 		readonly type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
@@ -5764,6 +5925,9 @@ export interface AssignmentTyped {
 			| ExpressionList
 			| PatternList
 			| Yield;
+	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -5803,6 +5967,9 @@ export interface WithClauseBare {
 	readonly __inputHints__?: {
 		readonly items: NonEmptyArray<Expression>;
 	};
+	readonly __wrapperHints__?: {
+		readonly items: WithItem;
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -5819,6 +5986,9 @@ export interface WithClauseParen {
 	};
 	readonly __inputHints__?: {
 		readonly items: readonly Expression[];
+	};
+	readonly __wrapperHints__?: {
+		readonly items: WithClauseWithItems;
 	};
 	readonly __looseHints__?: {
 		readonly items: readonly WithItem[];
@@ -5838,6 +6008,9 @@ export interface SuiteInline {
 	};
 	readonly __inputHints__?: {
 		readonly statements: NonEmptyArray<SimpleStatement>;
+	};
+	readonly __wrapperHints__?: {
+		readonly statements: SimpleStatementsElements;
 	};
 	readonly __looseHints__?: {
 		readonly statements: readonly SimpleStatement[];
@@ -5860,6 +6033,9 @@ export interface SuiteBlock {
 	};
 	readonly __inputHints__?: {
 		readonly block: readonly Statement[];
+	};
+	readonly __wrapperHints__?: {
+		readonly block: Block;
 	};
 	readonly __looseHints__?: {
 		readonly block: readonly Statement[];
@@ -5969,6 +6145,9 @@ export interface TypeParamTypeVar {
 	};
 	readonly __inputHints__?: {
 		readonly bounds?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly bounds: Type;
 	};
 	readonly __looseHints__?: {
 		readonly bounds?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -6095,6 +6274,11 @@ export interface ConstructorDeclaration {
 		readonly parameters: readonly Parameter[];
 		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
 	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly parameters: Parameters;
+		readonly return_type: Type;
+	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParam[];
 		readonly parameters: readonly Parameter[];
@@ -6146,6 +6330,9 @@ export interface SuiteBlockClassDeclaration {
 	readonly __inputHints__?: {
 		readonly block_class_declaration: readonly StatementClassDefinition[];
 	};
+	readonly __wrapperHints__?: {
+		readonly block_class_declaration: BlockClassDeclaration;
+	};
 	readonly __looseHints__?: {
 		readonly block_class_declaration: readonly StatementClassDefinition[];
 	};
@@ -6166,9 +6353,17 @@ export interface DecoratedDefinitionClassDeclaration {
 	readonly __inputHints__?: {
 		readonly decorator: NonEmptyArray<Expression>;
 	};
+	readonly __wrapperHints__?: {
+		readonly decorator: Decorator;
+	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<
-			NonEmptyArray<NonNullable<NonNullable<T.DecoratedDefinitionClassDeclaration.Config>['decorators']>[number]>,
+			NonEmptyArray<
+				Extract<
+					NonNullable<NonNullable<T.DecoratedDefinitionClassDeclaration.Config>['decorators']>,
+					readonly unknown[]
+				>[number]
+			>,
 			false,
 			true
 		>;
@@ -6271,6 +6466,11 @@ export interface MethodDeclaration {
 		readonly type_parameters?: readonly TypeParam[];
 		readonly parameters: readonly Parameter[];
 		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly parameters: Parameters;
+		readonly return_type: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParam[];
