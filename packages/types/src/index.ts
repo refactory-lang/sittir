@@ -799,7 +799,17 @@ type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited 
 				: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 /** @internal — the Config value of field `K` of T: a keyword-presence slot as a boolean, a bitflag slot as its enum, a kind-enum slot as its kinds, any other as the node it admits; `undefined` too when an input may omit it. */
-type ConfigFieldValue<T, K extends keyof FieldsOf<T>> = WrapperInput<T, K> | ConfigHoistedValue<T, K>;
+type ConfigFieldValue<T, K extends keyof FieldsOf<T>> = WrapperInput<T, K> | ConfigHoistedValue<T, K> | ItemWrapperInput<T, K>;
+
+type WithItemWrapper<H extends readonly unknown[], W> = [] extends H ? readonly (H[number] | W)[] : readonly [H[number] | W, ...(H[number] | W)[]];
+
+type ItemWrapperInput<T, K extends keyof FieldsOf<T>> = K extends keyof WrapperHintsOf<T>
+	? NonNullable<FieldsOf<T>[K]> extends readonly unknown[]
+		? NonNullable<FieldInputType<T, K>> extends infer H extends readonly unknown[]
+			? Admit<AdmitSlotInput<WithItemWrapper<H, WrapperHintsOf<T>[K]>>> | UndefinedIfOptional<FieldsOf<T>, K>
+			: never
+		: never
+	: never;
 
 /** @internal — `ConfigFieldValue` without the wrapper a hoisted slot also admits. */
 type ConfigHoistedValue<T, K extends keyof FieldsOf<T>> =

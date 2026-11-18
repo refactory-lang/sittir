@@ -29,3 +29,12 @@ export function externModifierReadsItsAbi(): void {
 export function wrapperWithAReceiverFormKeepsTheForm(): void {
 	expectTrue<Equals<ReturnType<T.FunctionItem['parameters']>, T.ParametersElements | T.ParametersElementsReceiver | undefined>>();
 }
+
+type ArgumentAttributeItems = NonNullable<T.Argument.Config>['attributeItems'];
+
+export function aListOfWrapperSlotsAdmitsItsItemsAndTheirWrappersPerItem(): void {
+	expectTrue<readonly T.Attribute.Bound[] extends ArgumentAttributeItems ? true : false>();
+	expectTrue<readonly T.AttributeItem.Bound[] extends ArgumentAttributeItems ? true : false>();
+	expectTrue<readonly (T.Attribute.Bound | T.AttributeItem.Bound)[] extends ArgumentAttributeItems ? true : false>();
+	expectTrue<readonly T.Expression.Bound[] extends ArgumentAttributeItems ? false : true>();
+}
