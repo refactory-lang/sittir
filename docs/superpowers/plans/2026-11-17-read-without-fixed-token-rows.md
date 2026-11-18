@@ -8,7 +8,7 @@
   - named fixed tokens leave query results (Task 6).
 
   Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. The hydrate-at-parse branch replaces `NodeCoordinate` with the node's name, so this plan's `&NodeCoordinate` signature (Task 6's `$treeHandle` row) is re-anchored to it when the stage-one branch is cut.
-- **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, to be filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
+- **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
   - `trivia_table::owner`, the one placement that both the object read's placer and the arena parse walk call;
