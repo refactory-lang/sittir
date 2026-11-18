@@ -1,6 +1,5 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import {
 	NO_REPARSE_HOSTS,
 	applyHost,
@@ -70,7 +69,7 @@ import {
 	type FactoryEntry,
 	type Hydrate
 } from '../grammar-internals.ts';
-import { NODE_MODEL_FILE, PORTABLE_TABLE_FILE, UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, nodeModelPath, sittirDirOf, upstreamPackage } from '@sittir/codegen/grammars';
+import { NODE_MODEL_FILE, PORTABLE_TABLE_FILE, REPO_ROOT, UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, nodeModelPath, sittirDirOf, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
@@ -238,6 +237,11 @@ async function createNativeEngine(grammar: string): Promise<NativeEngine> {
 	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
 }
 
+export async function storageEngineOf(grammar: string, nodeStorage: NodeStorage): Promise<NativeEngine> {
+	assertNativeBinaryFresh(REPO_ROOT, grammar);
+	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { nodeStorage }));
+}
+
 export async function createStrictNativeEngine(grammar: string): Promise<Engine<LanguageAPI, 'strict'>> {
 	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
 }
@@ -249,8 +253,7 @@ export async function disposeNativeEngines(): Promise<void> {
 }
 
 export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
-	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-	const binaries = hostBinaryFreshnessFor(repoRoot, grammar);
+	const binaries = hostBinaryFreshnessFor(REPO_ROOT, grammar);
 	const binaryMtimeMs = binaries.length > 0 ? Math.max(...binaries.map((b) => b.binaryMtimeMs)) : 0;
 
 	const cached = cachedNativeEngines.get(grammar);
@@ -266,7 +269,7 @@ export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
 		return cached.engine;
 	}
 
-	assertNativeBinaryFresh(repoRoot, grammar);
+	assertNativeBinaryFresh(REPO_ROOT, grammar);
 
 	const engine = createNativeEngine(grammar);
 	const entry: NonNullable<ReturnType<typeof cachedNativeEngines.get>> = { engine, binaryMtimeMs };
