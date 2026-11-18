@@ -335,7 +335,7 @@ Per path in the portable map, the sorted unique flags of its build arms, in code
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapInputsOf`
 
-Per path in the portable map, the input shapes that path accepts, sorted by codepoint. A text-built path always accepts a bare `string`. A path whose scalar build is shared with another path's build also accepts `{ readonly $path; readonly $value }` for the owning path.
+Per path in the portable map, the input shapes that path accepts, sorted by codepoint. A text-built path always accepts a bare `string`, and a number path accepts its scalars (`scalarInputsOf`), so a slot whose type holds it admits a bare number. A path whose scalar build is shared with another path's build also accepts `{ readonly $path; readonly $value }` for the owning path.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapNeverOf`
 
