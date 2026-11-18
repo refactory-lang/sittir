@@ -14,7 +14,7 @@ const matchBlockOf = (source: string) => {
 	if (!rs.is.matchExpression(expression)) throw new Error('not a match');
 	const arms = expression.body();
 	if (arms === undefined) throw new Error('no arms');
-	return arms.arms();
+	return arms;
 };
 
 const lastArmOf = (source: string) => {

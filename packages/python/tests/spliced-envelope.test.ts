@@ -11,9 +11,7 @@ const negativeOne = () => pyStrict.build.simplePattern.negative(py.build.integer
 function firstCasePattern(pattern: string) {
 	const statement = py.parse(`match x:\n    case ${pattern}:\n        pass\n`).statements()[0]!;
 	if (!py.is.matchStatement(statement)) throw new Error('expected a match statement');
-	const body = statement.body();
-	if (!py.is.matchBlock(body)) throw new Error('expected a match block');
-	const first = body.alternatives()[0]!.pattern();
+	const first = statement.body()[0]!.pattern();
 	if (!py.is.casePattern(first)) throw new Error('expected one case pattern');
 	return first;
 }
@@ -53,7 +51,7 @@ describe('a slot that splices a hidden rule admits that rule\'s envelope and sto
 		if (!py.is.simpleStatements(parsed)) throw new Error('expected simple statements');
 		for (const envelope of [built, parsed]) {
 			for (const suite of [pyStrict.build.suiteInline(envelope), py.build.suiteInline(envelope), py.build.suiteInline({ statements: envelope })]) {
-				expect(py.is.simpleStatementsElements(suite.statements())).toBe(true);
+				expect(suite.statements()).toHaveLength(2);
 			}
 		}
 		expect(py.build.ifStatement({ condition: py.build.identifier('x'), consequence: py.build.suiteInline(built) }).$render()).toBe('if x: a; a\n');
