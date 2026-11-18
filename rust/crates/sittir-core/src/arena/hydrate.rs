@@ -161,11 +161,9 @@ pub struct Placed {
 }
 
 /// What placing reads of a child a walk met, beside its entry: whether it
-/// is named, and for an extra or an `ERROR` its record's kind and whether
-/// it starts on the row the node before it ends on.
+/// is named, and for an extra or an `ERROR` its record's kind.
 #[derive(Debug, Clone, Copy)]
 struct Beside {
-    trails: bool,
     kind: KindId,
     named: bool,
     /// Whether the node is an extra or an `ERROR`: an entry of a side, and
@@ -266,7 +264,7 @@ impl OpenRun {
         match (index, self.last) {
             (Some(index), _) if self.index == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
-                self.beside.push(Beside { trails: false, kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 } });
+                self.beside.push(Beside { kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 } });
                 self.depth += depth - own;
             }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
@@ -360,37 +358,33 @@ impl OpenRun {
     }
 
     /// Each extra among the children of the record's node and of the rows
-    /// under it, on the side of the child it is placed on: trailing the
-    /// named child before it when it starts on the row that child ends on,
-    /// else leading the named child after it, else trailing the one before;
-    /// with no named child beside it, leading the nearest after or trailing
-    /// the nearest before; with none at all, the `inner` of the node that
-    /// holds it.
-    fn placed(&self, kinds: Option<crate::trivia_table::SurfaceKinds>, out: &mut Vec<Placed>) {
-        use crate::trivia_table::TriviaSide;
+    /// under it, on the side of the child it is placed on
+    /// (`trivia_table::owner`, its siblings the children around it), the
+    /// node that side is kept on its `target`, or the `inner` of the node
+    /// that holds it.
+    fn placed(&self, kinds: Option<crate::trivia_table::SurfaceKinds>, text: &str, out: &mut Vec<Placed>) {
+        use crate::trivia_table::{owner, Owner, Sibling, TriviaSide};
         if self.within || self.beside.iter().all(|beside| beside.extra.is_none()) {
             return;
         }
         let mut open: Vec<(Option<usize>, usize, Vec<usize>)> = vec![(None, self.entries.len(), Vec::new())];
         let close = |holder: Option<usize>, children: &[usize], out: &mut Vec<Placed>| {
+            let siblings: Vec<Sibling> = children
+                .iter()
+                .map(|&child| {
+                    let beside = &self.beside[child];
+                    Sibling { span: beside.span, holder: beside.named && !beside.aside, entry: beside.aside }
+                })
+                .collect();
             for (position, &child) in children.iter().enumerate() {
                 let (Some(kind), RunEntry::Record { at: extra, .. }) = (self.beside[child].extra, self.entries[child]) else { continue };
-                let plain = |&&other: &&usize| !self.beside[other].aside;
-                let named = |&&other: &&usize| plain(&&other) && self.beside[other].named;
-                let before = children[..position].iter().rev().find(plain).copied();
-                let after = children[position + 1..].iter().find(plain).copied();
-                let is_named = |other: usize| self.beside[other].named;
-                let (site, side) = match (before, after) {
-                    (Some(before), _) if is_named(before) && self.beside[child].trails => (self.target(before, false, kinds), TriviaSide::Trailing),
-                    (_, Some(after)) if is_named(after) => (self.target(after, true, kinds), TriviaSide::Leading),
-                    (Some(before), _) if is_named(before) => (self.target(before, false, kinds), TriviaSide::Trailing),
-                    _ => match (children[position + 1..].iter().find(named), children[..position].iter().rev().find(named)) {
-                        (Some(&after), _) => (self.target(after, true, kinds), TriviaSide::Leading),
-                        (None, Some(&before)) => (self.target(before, false, kinds), TriviaSide::Trailing),
-                        (None, None) => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner),
-                    },
+                let span = self.beside[child].span;
+                let (site, side) = match owner(&siblings[..position], span, &siblings[position + 1..], text) {
+                    Owner::Trailing { at } => (self.target(children[at], false, kinds), TriviaSide::Trailing),
+                    Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading),
+                    Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner),
                 };
-                out.push(Placed { site, side, extra, kind, span: self.beside[child].span });
+                out.push(Placed { site, side, extra, kind, span });
             }
         };
         for (at, entry) in self.entries.iter().enumerate() {
@@ -611,9 +605,8 @@ impl<'a> Hydration<'a> {
         let depth = self.depth_of(kid.grammar);
         let stamped = |stamp: Stamp| crate::read::stamp(facts.kind, facts.display(), stamp.0, stamp.1);
         let aside = kid.extra || kid.error();
-        let trails = aside && node.prev_sibling().is_some_and(|before| before.end_position().row == node.start_position().row);
         let kind = if kid.error() { KindId::ERROR } else { self.stamp.map_or(facts.kind, stamped) };
-        let beside = Beside { trails, kind: kid.grammar, named: kid.named && kid.start < kid.end, aside, extra: aside.then_some(kind), span: kid.span() };
+        let beside = Beside { kind: kid.grammar, named: kid.named && kid.start < kid.end, aside, extra: aside.then_some(kind), span: kid.span() };
         if let Some(open) = self.open.last_mut() {
             open.meet(&kid, facts, depth, beside);
         }
@@ -744,7 +737,7 @@ impl<'a> Hydration<'a> {
         let side = match run {
             Some(mut run) => {
                 run.close_to(u32::MAX);
-                run.placed(self.kinds, &mut self.placed);
+                run.placed(self.kinds, self.text, &mut self.placed);
                 let edges = run.edges(side.at.map(|row| row.span), self.kinds);
                 let holder = self.open.last_mut();
                 let parent = holder.as_ref().map(|holder| holder.at);

@@ -32,7 +32,7 @@
 //! taking no lock. What the placement keeps to place further layout owners
 //! stays under the lock.
 
-use super::{Adjacency, Assigned, DepthAnchor, LayoutRun, Place, SurfaceKinds, TriviaSide};
+use super::{owner, Adjacency, Assigned, DepthAnchor, LayoutRun, Owner, Place, Sibling, SurfaceKinds, TriviaSide};
 use crate::nodes::{Kid, Nodes};
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::points::LineTable;
@@ -1443,15 +1443,10 @@ impl<'t> Placer<'t, '_, '_> {
         let from = left.map_or(0, |token| token.end);
         let to = right.map_or(self.len(), |token| token.start);
         let entries = self.gap_entries(shape, left, right);
-        let default = self.place(shape, gap, (from, to), false, false);
+        let default = self.place(shape, gap);
         let mut placed = Vec::with_capacity(entries.len());
         for entry in &entries {
-            placed.push(if self.kinds.layout.contains(&entry.grammar) {
-                None
-            } else {
-                let on_left_row = left.is_some_and(|left| self.same_row(left.end, entry.start));
-                Some(self.place(shape, gap, (from, to), on_left_row, true))
-            });
+            placed.push((!self.kinds.layout.contains(&entry.grammar)).then(|| self.owned(shape, gap, entry)));
         }
         let trailed = placed.iter().rposition(|placed| matches!(placed, Some(Place::Side(_, TriviaSide::Trailing))));
         let moved = trailed.and_then(|last| placed[last]).filter(|&side| side != default);
@@ -1487,11 +1482,6 @@ impl<'t> Placer<'t, '_, '_> {
         let plan = Arc::new(Plan { from, to, left, steps });
         self.plans.insert(key, Arc::clone(&plan));
         plan
-    }
-
-    fn same_row(&self, a: u32, b: u32) -> bool {
-        let (low, high) = (a.min(b) as usize, a.max(b) as usize);
-        !self.text().as_bytes()[low..high].contains(&b'\n')
     }
 
     /// The entries of the gap between `left` and `right`: those of the
@@ -1556,31 +1546,60 @@ impl<'t> Placer<'t, '_, '_> {
         }
     }
 
-    fn place(&mut self, shape: &Shape, gap: usize, (from, to): (u32, u32), on_left_row: bool, through: bool) -> Place {
+    /// Where a run of the gap goes that no entry carries: leading the child
+    /// after the gap, else trailing the one before it, each at its edge of
+    /// the gap; the owner's `inner` when no child holds sides; else no side.
+    fn place(&mut self, shape: &Shape, gap: usize) -> Place {
         let owner = shape.node.index;
         if !shape.holds {
             return Place::Side(owner, TriviaSide::Inner);
         }
-        let before = gap.checked_sub(1).map(|at| shape.segments[at]).and_then(|segment| self.side_holder(shape, segment.kid, through, TriviaSide::Trailing, segment.last.end));
-        let after = shape.segments.get(gap).copied().and_then(|segment| self.side_holder(shape, segment.kid, through, TriviaSide::Leading, segment.first.start));
-        match (before, after) {
-            (None, None) => {
-                if through {
-                    let (node, side) = self.nearest_side(shape, from, to);
-                    Place::Side(node, side)
+        let after = shape.segments.get(gap).copied().and_then(|segment| self.side_holder(shape, segment.kid, false, TriviaSide::Leading, segment.first.start));
+        let before = || gap.checked_sub(1).map(|at| shape.segments[at]);
+        match after {
+            Some(after) => Place::Side(after, TriviaSide::Leading),
+            None => before().and_then(|segment| self.side_holder(shape, segment.kid, false, TriviaSide::Trailing, segment.last.end)).map_or(Place::Unowned, |before| Place::Side(before, TriviaSide::Trailing)),
+        }
+    }
+
+    /// Where `entry`, an extra or `ERROR` of the gap, goes (`trivia_table::owner`),
+    /// the segments before and after the gap its siblings. A child is a holder
+    /// beside the gap only where its tokens reach the gap; one the answer
+    /// reaches beside the gap passes the entry to a list's
+    /// item at its edge (`side_holder`), and one it reaches across other
+    /// children to a list's first or last item (`through_lists`).
+    fn owned(&mut self, shape: &Shape, gap: usize, entry: &Kid) -> Place {
+        if !shape.holds {
+            return Place::Side(shape.node.index, TriviaSide::Inner);
+        }
+        let sibling = |segment: &Segment, edge: fn(&Kid, &Segment) -> bool| Sibling {
+            span: Span { start: segment.first.start, end: segment.last.end },
+            holder: segment.kid.is_some_and(|kid| shape.kids[kid].holder() && edge(&shape.kids[kid], segment)),
+            entry: false,
+        };
+        let before: Vec<Sibling> = shape.segments[..gap].iter().map(|segment| sibling(segment, |kid, segment| kid.end == segment.last.end)).collect();
+        let after: Vec<Sibling> = shape.segments[gap..].iter().map(|segment| sibling(segment, |kid, segment| kid.start == segment.first.start)).collect();
+        let kid = |at: usize| shape.segments[at].kid.map(|kid| shape.kids[kid]);
+        match owner(&before, entry.span(), &after, self.text()) {
+            Owner::Trailing { at } => {
+                let segment = shape.segments[at];
+                let node = if at + 1 == gap {
+                    self.side_holder(shape, segment.kid, true, TriviaSide::Trailing, segment.last.end)
                 } else {
-                    Place::Unowned
-                }
+                    kid(at).map(|kid| self.through_lists(&kid, TriviaSide::Trailing))
+                };
+                node.map_or(Place::Unowned, |node| Place::Side(node, TriviaSide::Trailing))
             }
-            (Some(before), None) => Place::Side(before, TriviaSide::Trailing),
-            (None, Some(after)) => Place::Side(after, TriviaSide::Leading),
-            (Some(before), Some(after)) => {
-                if on_left_row {
-                    Place::Side(before, TriviaSide::Trailing)
+            Owner::Leading { at } => {
+                let segment = shape.segments[gap + at];
+                let node = if at == 0 {
+                    self.side_holder(shape, segment.kid, true, TriviaSide::Leading, segment.first.start)
                 } else {
-                    Place::Side(after, TriviaSide::Leading)
-                }
+                    kid(gap + at).map(|kid| self.through_lists(&kid, TriviaSide::Leading))
+                };
+                node.map_or(Place::Unowned, |node| Place::Side(node, TriviaSide::Leading))
             }
+            Owner::Inner => Place::Side(shape.node.index, TriviaSide::Inner),
         }
     }
 
@@ -1626,15 +1645,6 @@ impl<'t> Placer<'t, '_, '_> {
             }
         }
         child.index
-    }
-
-    fn nearest_side(&mut self, shape: &Shape, from: u32, to: u32) -> (NodeIndex, TriviaSide) {
-        let after = shape.holders().find(|kid| kid.start >= to).copied();
-        let found = after.map(|kid| (kid, TriviaSide::Leading)).or_else(|| shape.holders().rev().find(|kid| kid.end <= from).map(|&kid| (kid, TriviaSide::Trailing)));
-        match found {
-            Some((kid, side)) => (self.through_lists(&kid, side), side),
-            None => (shape.node.index, TriviaSide::Inner),
-        }
     }
 
     fn restore_side(&mut self, shape: &Shape) -> (NodeIndex, TriviaSide) {

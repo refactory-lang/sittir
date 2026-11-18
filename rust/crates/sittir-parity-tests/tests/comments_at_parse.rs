@@ -142,6 +142,31 @@ fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar:
 }
 
 #[test]
+fn a_parse_places_a_comment_beside_a_separator_as_the_tree_s_placement_does() {
+    let sources = [
+        "interface I {\n  a: string; // c\n  b: number\n}\n",
+        "interface I {\n  a: string, // c\n  b: number\n}\n",
+        "enum E {\n  A, // c\n  B\n}\n",
+        "f(a, // c\n  b)\n",
+        "x([a, // c\n  b])\n",
+        "f(a, /* c */ b)\n",
+        "x([/* A */ a, /* B */ b])\n",
+        "const x = b + // c\n  d\n",
+        "const x = // c\n  1\n",
+        "function f() {\n  a; /* x\n  */ /* y */ b;\n}\n",
+    ];
+    let apart: Vec<String> = sources
+        .iter()
+        .flat_map(|source| {
+            let (apart, assigned) = placed_apart::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source);
+            assert!(assigned > 0, "{source:?} holds extras");
+            apart.into_iter().map(move |line| format!("{source:?}: {line}"))
+        })
+        .collect();
+    assert!(apart.is_empty(), "{} sides apart:\n{}", apart.len(), apart.join("\n"));
+}
+
+#[test]
 fn nothing_under_an_error_is_placed() {
     let placed = [
         ("an ERROR holding an ERROR", placed_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "\n    case *x,:\n        y = 0")),

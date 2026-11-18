@@ -79,9 +79,13 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
             return Err(ArenaError::Unwritable("a coordinate in a side naming no record a read left"));
         }
         let nested = std::mem::replace(&mut self.nested, true);
-        let kept = entries.iter().map(|entry| self.kept_entry(entry)).collect();
+        let mut kept = Vec::with_capacity(entries.len());
+        let written = entries.iter().try_for_each(|entry| {
+            kept.push(self.kept_entry(entry)?);
+            Ok(())
+        });
         self.nested = nested;
-        kept
+        written.map(|()| kept)
     }
 
     fn kept_entry(&mut self, entry: &TriviaEntry<T>) -> Result<CompactEntry, ArenaError> {
@@ -616,6 +620,13 @@ mod tests {
         assert_eq!(chunks.text(text), Ok("x"));
         assert_eq!(store.side(Place::Leaf(Site { holder: record, word: 3, item: ItemIndex(0) }), TriviaSide::Trailing, &chunks).expect("read"), Some(vec![entry("// x")]), "a leaf has no record: its sides are kept at its site");
         assert_eq!(items, Vec::<Cell>::new());
+    }
+
+    #[test]
+    fn a_kept_side_takes_the_room_of_its_entries() {
+        let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
+        let kept = RecordSink::built(&mut chunks, &store, &mut unlinked).kept(&[entry("// a")]).expect("kept");
+        assert_eq!(kept.capacity(), 1);
     }
 
     #[test]

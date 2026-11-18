@@ -12,8 +12,9 @@
 //!
 //! A gap's owner is the smallest node containing both its tokens, or the root
 //! at the file's edges. Its entries go to the owner's named child beside the
-//! gap: an entry starting on token *k*'s row trails the child ending at token
-//! *k*, the rest lead the child starting at token *k + 1*. With no child on
+//! gap, the same answer an arena parse gives (`owner`): an entry starting on
+//! token *k*'s row trails the child ending at token *k*, the rest lead the
+//! child starting at token *k + 1*. With no child on
 //! one side, every entry goes to the child on the other; an owner with no
 //! named child takes them as its `inner`; an owner whose named children are
 //! not beside the gap gives an extra or an `ERROR` to the nearest of them,
@@ -91,6 +92,60 @@ impl HeapBytes for Assigned {
         match self {
             Self::Extra(_) | Self::Error(_) | Self::Member(_) | Self::Depth(_) | Self::Layout { run: _, start: _, end: _, owner: _, depth: _ } => 0,
         }
+    }
+}
+
+/// A child of a node beside an extra or `ERROR` among the node's children,
+/// as `owner` reads it: its bytes, whether it holds sides (`Kid::holder`),
+/// and whether it is an entry of a side itself (`Kid::entry`). A child that
+/// is neither is a token: anonymous, or named with no width.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Sibling {
+    pub span: Span,
+    pub holder: bool,
+    pub entry: bool,
+}
+
+/// The side an extra or `ERROR` goes to among its siblings: trailing the
+/// one at `at` of the siblings before it; leading the one at `at` of the
+/// siblings after it; or the `inner` side of the node holding them, which
+/// has no child that holds sides.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Owner {
+    Trailing { at: usize },
+    Leading { at: usize },
+    Inner,
+}
+
+/// Whether no line break lies between the bytes `a` and `b` of `source`.
+fn same_row(source: &str, a: u32, b: u32) -> bool {
+    let (low, high) = (a.min(b) as usize, a.max(b) as usize);
+    !source.as_bytes()[low..high].contains(&b'\n')
+}
+
+/// Where the extra or `ERROR` spanning `entry` goes, `before` and `after`
+/// its siblings in source order, the first answer that holds:
+/// 1. trailing the holder before it with only entries between, when it
+///    starts on the row that holder ends on;
+/// 2. leading the holder after it with only entries between;
+/// 3. trailing the holder before it with only entries between;
+/// 4. leading the nearest holder after it, else trailing the nearest before
+///    it, else the `inner` side of the node holding them.
+#[must_use]
+pub fn owner(before: &[Sibling], entry: Span, after: &[Sibling], source: &str) -> Owner {
+    let beside_before = before.iter().rposition(|sibling| !sibling.entry).filter(|&at| before[at].holder);
+    let beside_after = after.iter().position(|sibling| !sibling.entry).filter(|&at| after[at].holder);
+    if let Some(at) = beside_before.filter(|&at| same_row(source, before[at].span.end, entry.start)) {
+        return Owner::Trailing { at };
+    }
+    match (beside_after, beside_before) {
+        (Some(at), _) => Owner::Leading { at },
+        (None, Some(at)) => Owner::Trailing { at },
+        (None, None) => match (after.iter().position(|sibling| sibling.holder), before.iter().rposition(|sibling| sibling.holder)) {
+            (Some(at), _) => Owner::Leading { at },
+            (None, Some(at)) => Owner::Trailing { at },
+            (None, None) => Owner::Inner,
+        },
     }
 }
 

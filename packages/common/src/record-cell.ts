@@ -234,10 +234,15 @@ export function withKind(kind: number, bits: number): number {
 	return kind;
 }
 
+export function headerOf(word: number, bits: number): { readonly kind: number; readonly flags: number } {
+	return { kind: kindField(word, bits), flags: word >>> bits };
+}
+
 /** The kind a record header word names, refusing a header with flags: a link record's, which names a node of another tree. */
 export function headerKind(word: number, bits: number): number {
-	if (word >>> bits !== 0) throw new Error(`a record header holds flags ${word >>> bits}: a link record is no record of its own arena`);
-	return kindField(word, bits);
+	const { kind, flags } = headerOf(word, bits);
+	if (flags !== 0) throw new Error(`a record header holds flags ${flags}: a link record is no record of its own arena`);
+	return kind;
 }
 
 /** The chunk a packed address names. */
