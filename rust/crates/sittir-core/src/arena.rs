@@ -678,6 +678,24 @@ impl BuiltChunks {
         }
     }
 
+    /// The `len` words at `at`, to write in place.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for words no words chunk holds.
+    pub fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
+        let out = ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len };
+        let mem = self.words_mem(at.chunk()).ok_or(out.clone())?;
+        let (start, end) = (at.word() as usize, at.word() as usize + len as usize);
+        if end > mem.len() {
+            return Err(out);
+        }
+        // SAFETY: `&mut self` is the one mutable borrow of the chunks, so no
+        // other slice of the chunk is live, and a native call runs no
+        // JavaScript.
+        Ok(unsafe { &mut mem.slice_mut()[start..end] })
+    }
+
     /// The memory of the words chunk `chunk` a read wrote, shared with the
     /// buffer JavaScript reads it through; none for any other chunk.
     #[cfg(feature = "napi-bindings")]

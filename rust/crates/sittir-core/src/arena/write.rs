@@ -137,7 +137,7 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
         for (side, entries) in [(TriviaSide::Leading, &trivia.leading), (TriviaSide::Trailing, &trivia.trailing), (TriviaSide::Inner, &trivia.inner)] {
             if let Some(entries) = entries {
                 let kept = self.kept(entries)?;
-                self.store.write_kept(place, side, kept);
+                self.store.write_kept_in(self.writer.chunks_mut(), place, side, kept)?;
             }
         }
         Ok(())

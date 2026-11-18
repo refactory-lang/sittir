@@ -76,15 +76,7 @@ impl super::RecordSpace for ReadWriter<'_> {
     }
 
     fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
-        let out = ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len };
-        let mem = self.chunks.words_mem(at.chunk()).ok_or(out.clone())?;
-        let (start, end) = (at.word() as usize, at.word() as usize + len as usize);
-        if end > mem.len() {
-            return Err(out);
-        }
-        // SAFETY: the writer holds the store's mutable borrow, so no other
-        // slice of the chunk is live, and a native call runs no JavaScript.
-        Ok(unsafe { &mut mem.slice_mut()[start..end] })
+        self.chunks.words_mut(at, len)
     }
 }
 
@@ -93,6 +85,13 @@ impl super::RecordSpace for ReadWriter<'_> {
 pub struct BuiltWriter<'a> {
     chunks: &'a mut BuiltChunks,
     words: Option<Open<u32>>,
+}
+
+impl BuiltWriter<'_> {
+    /// The chunks this writer writes into.
+    pub fn chunks_mut(&mut self) -> &mut BuiltChunks {
+        self.chunks
+    }
 }
 
 impl super::ArenaRead for BuiltWriter<'_> {

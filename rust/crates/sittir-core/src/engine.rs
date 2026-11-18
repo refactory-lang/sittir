@@ -2725,7 +2725,10 @@ pub struct Engine<G: EngineGrammar> {
 
 impl<G: EngineGrammar> Engine<G> {
     pub fn new(grammar: G, options: ResolvedOptions) -> Result<Self, String> {
-        Self::with_store(grammar, options, TriviaStore::with_kind_bits(G::KIND_BITS))
+        let written = TriviaStore::with_kind_bits(G::KIND_BITS);
+        #[cfg(feature = "arena")]
+        let written = written.with_whitespace(grammar.whitespace().0);
+        Self::with_store(grammar, options, written)
     }
 
     /// An engine whose store of written sides, and the built arena it

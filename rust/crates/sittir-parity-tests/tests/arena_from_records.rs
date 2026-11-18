@@ -337,6 +337,34 @@ fn line_comment(text: &str) -> Vec<sittir_core::trivia::TriviaEntry<sittir_rust:
 
 const REBUILT: &str = "fn f() {\n    x = f(a) + g(b);\n    let c = |p: A ,q: B| p;\n}\n";
 
+/// A built node's written sides that start with gap members, which its
+/// record's header keeps as codes before the rest of the side in its row,
+/// render from its record as natively.
+#[test]
+fn a_built_node_s_written_gap_members_render_from_its_record_as_natively() {
+    use sittir_rust::render::node::{BinaryExpressionNode, TriviaNode};
+    use sittir_rust::render::AnyNode;
+    let options = sittir_rust::render::options::defaults();
+    let entries = |members: &[TriviaNode]| members.iter().cloned().map(|member| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(member))).collect::<Vec<_>>();
+    let rendered = |trivia: Option<sittir_core::trivia::NodeTrivia<TriviaNode>>| {
+        let tree = parsed(sittir_rust::RustGrammar, options.clone(), REBUILT);
+        let mut node: AnyNode = tree.read(nth_of_kind(&tree, "binary_expression:0"), Depth::ONE).expect("a node");
+        let AnyNode::BinaryExpression(BinaryExpressionNode { layout, .. }) = &mut node else { panic!("a binary expression") };
+        rebuilt_layout(layout);
+        layout.as_mut().expect("a read node names itself").trivia = trivia;
+        let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
+        let over = OverRead::of::<AnyNode>(sittir_rust::RustGrammar, &options, &tree);
+        let AnyNode::BinaryExpression(BinaryExpressionNode { layout, .. }) = &mut node else { panic!("a binary expression") };
+        let layout = layout.as_mut().expect("a read node names itself");
+        layout.sides = layout.sides.take().map(|sides| over.named(sides));
+        (over.render(&node, &options), native)
+    };
+    let written = sittir_core::trivia::NodeTrivia { leading: Some(entries(&[TriviaNode::Blankline, TriviaNode::Space, TriviaNode::Space, TriviaNode::Newline])), trailing: Some(entries(&[TriviaNode::Space])), ..Default::default() };
+    let (record, native) = rendered(Some(written));
+    assert_eq!(record, native);
+    assert_ne!(record, rendered(None).0, "the written sides render");
+}
+
 /// A built node rebuilt from a parsed one renders from its record as it does
 /// natively: the sides written on it and on its unit child from the store,
 /// each side it holds none of from the node it was rebuilt from, and its list

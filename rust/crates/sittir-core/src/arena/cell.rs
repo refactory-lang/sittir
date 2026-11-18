@@ -23,17 +23,16 @@ pub mod flag {
     pub const BITS: u32 = 1;
 }
 
-/// The layout a record's header word holds for its sides above its flags:
-/// the first layout values of its leading side, then its trailing side's
-/// first, then its inner side's first, each a `LayoutKinds::code`. A side
-/// holds from its first entry on in the store, so its layout values before
-/// its first comment, `ERROR` or text entry are kept here and read before
-/// what the store holds.
+/// The layout a record's header word holds above its flags, each value a
+/// `LayoutKinds::code`: up to three for its leading side, then one for its
+/// trailing side. A built record's are the gap members at the head of each
+/// side a write gave it, read before what the store's row holds for the
+/// side (`TriviaStore`); a read's record's is the blank line its parse set
+/// it apart with, as its leading side's first (`Hydration::set_apart`).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct HeaderLayout {
     pub leading: [LayoutKinds; 3],
     pub trailing: LayoutKinds,
-    pub inner: LayoutKinds,
 }
 
 impl HeaderLayout {
@@ -49,7 +48,7 @@ impl HeaderLayout {
             let code = (codes >> (n * LayoutKinds::CODE_BITS)) & ((1 << LayoutKinds::CODE_BITS) - 1);
             LayoutKinds::of_code(code).ok_or(malformed("header layout code", code))
         };
-        Ok(Self { leading: [at(0)?, at(1)?, at(2)?], trailing: at(3)?, inner: at(4)? })
+        Ok(Self { leading: [at(0)?, at(1)?, at(2)?], trailing: at(3)? })
     }
 
     /// `word`, a header whose kind field takes `bits` bits, holding this
@@ -61,7 +60,7 @@ impl HeaderLayout {
     /// codes past the header's 32 bits.
     pub fn onto(self, word: u32, bits: u32) -> Result<u32, ArenaError> {
         let shift = bits + flag::BITS;
-        let values = [self.leading[0], self.leading[1], self.leading[2], self.trailing, self.inner];
+        let values = [self.leading[0], self.leading[1], self.leading[2], self.trailing];
         let width = LayoutKinds::CODE_BITS * u32::try_from(values.len()).unwrap_or(u32::MAX);
         if shift + width > u32::BITS {
             return Err(ArenaError::Unwritable("a header whose kind field leaves no room for its layout codes"));
@@ -71,6 +70,26 @@ impl HeaderLayout {
             Ok::<_, ArenaError>(codes | code << (u32::try_from(n).unwrap_or(u32::MAX) * LayoutKinds::CODE_BITS))
         })?;
         Ok((word & ((1 << shift) - 1)) | codes << shift)
+    }
+
+    /// The values this layout keeps for `side`, in order: three for the
+    /// leading side, one for the trailing side, none for any other.
+    #[must_use]
+    pub fn side(&self, side: crate::trivia_table::TriviaSide) -> &[LayoutKinds] {
+        match side {
+            crate::trivia_table::TriviaSide::Leading => &self.leading,
+            crate::trivia_table::TriviaSide::Trailing => std::slice::from_ref(&self.trailing),
+            crate::trivia_table::TriviaSide::Inner => &[],
+        }
+    }
+
+    /// The values this layout keeps for `side`, to write (`side`).
+    pub fn side_mut(&mut self, side: crate::trivia_table::TriviaSide) -> &mut [LayoutKinds] {
+        match side {
+            crate::trivia_table::TriviaSide::Leading => &mut self.leading,
+            crate::trivia_table::TriviaSide::Trailing => std::slice::from_mut(&mut self.trailing),
+            crate::trivia_table::TriviaSide::Inner => &mut [],
+        }
     }
 }
 
