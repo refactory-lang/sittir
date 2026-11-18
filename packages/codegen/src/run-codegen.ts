@@ -35,7 +35,7 @@ import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { compareOrdinal } from './emitters/shared.ts';
-import { PORTABLE_TYPED_FILE, PORTABLE_TYPE_TEST_LANES, portableTsconfigText, type PortableTypedOutput } from './emitters/overlays/portable/typed.ts';
+import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, portableTsconfigText, type PortableTypedOutput } from './emitters/overlays/portable/typed.ts';
 export interface CodegenOptions {
 	grammar: string;
 	outputDir: string;
@@ -73,12 +73,12 @@ export async function writeFile(path: string, content: string): Promise<void> {
 
 export async function writePortableTyped(sittirDir: string, typed: PortableTypedOutput | undefined): Promise<void> {
 	const module = join(sittirDir, PORTABLE_TYPED_FILE);
-	const tsconfigs = Object.entries(PORTABLE_TYPE_TEST_LANES).map(([name, tests]) => [join(sittirDir, name), portableTsconfigText(tests)] as const);
+	const tsconfig = join(sittirDir, PORTABLE_TYPED_TSCONFIG);
 	const map = join(dirname(sittirDir), 'src', PORTABLE_MAP_FILE);
-	if (typed === undefined) for (const path of [module, ...tsconfigs.map(([path]) => path), map]) rmSync(path, { force: true });
+	if (typed === undefined) for (const path of [module, tsconfig, map]) rmSync(path, { force: true });
 	else {
 		await writeFile(module, typed.source);
-		for (const [path, text] of tsconfigs) await writeFile(path, text);
+		await writeFile(tsconfig, portableTsconfigText);
 		await writeFile(map, typed.map);
 	}
 }
