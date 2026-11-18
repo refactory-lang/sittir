@@ -543,7 +543,7 @@ pub trait Backing: Sized {
     /// Where the node `name` names is kept in `tree`'s records; none for a
     /// tree whose nodes have no names, or a name its records hold no node of.
     #[cfg(feature = "arena")]
-    fn named<G: EngineGrammar>(tree: &ParsedTree<G, Self>, name: crate::types::NodeName) -> Option<crate::arena::NodeSite> {
+    fn named<G: EngineGrammar>(tree: &ParsedTree<G, Self>, name: crate::types::NodeId) -> Option<crate::arena::NodeSite> {
         let _ = (tree, name);
         None
     }
@@ -634,8 +634,8 @@ impl<'a> Backing for Records<'a> {
         let spans = crate::arena::read_spans(built, root).ok()?;
         let mut runs = crate::arena::RunNodes::over(built, tree.source, &tree.tree.table);
         let (shape, bits) = tree.tree.shape;
-        let mut index_of = |name: crate::types::NodeName, side: TriviaSide| match name.inside_of() {
-            Some(record) if side == TriviaSide::Leading => Some((runs.index_at(crate::arena::NodeSite::Record(crate::arena::Address(record.node.0)))?, TriviaSide::Inner)),
+        let mut index_of = |name: crate::types::NodeId, side: TriviaSide| match name.inside_of() {
+            Some(record) if side == TriviaSide::Leading => Some((runs.index_at(crate::arena::NodeSite::Record(crate::arena::Address(record.address())))?, TriviaSide::Inner)),
             _ => Some((runs.index_at(crate::arena::site::node_site(built, shape, bits, name).ok()?)?, side)),
         };
         Some(tree.store.written(&spans).into_iter().filter_map(|(name, side)| index_of(name, side)).collect())
@@ -644,7 +644,7 @@ impl<'a> Backing for Records<'a> {
     fn set_apart<G: EngineGrammar>(tree: &ParsedTree<G, Self>, index: NodeIndex) -> Option<bool> {
         let blank = crate::layout_kinds::LayoutKinds::BLANKLINE;
         Some(match Self::place(tree, index) {
-            Some(crate::trivia_store::Place::Node(crate::types::NodeName { node, site: None })) => crate::arena::cell::HeaderLayout::of(tree.tree.built.words(crate::arena::Address(node.0), 1).ok()?[0], G::KIND_BITS).ok()?.leading[0] == blank,
+            Some(crate::trivia_store::Place::Node(name)) if name.site().is_none() => crate::arena::cell::HeaderLayout::of(tree.tree.built.words(crate::arena::Address(name.address()), 1).ok()?[0], G::KIND_BITS).ok()?.leading[0] == blank,
             Some(crate::trivia_store::Place::Node(name)) => tree.grammar.whitespace().0.gap_kind(blank).is_some_and(|kind| tree.store.leads_with_layout(crate::trivia_store::Place::Placed(name), TriviaSide::Leading, kind)),
             _ => false,
         })
@@ -654,7 +654,7 @@ impl<'a> Backing for Records<'a> {
         Some(&tree.tree)
     }
 
-    fn named<G: EngineGrammar>(tree: &ParsedTree<G, Self>, name: crate::types::NodeName) -> Option<crate::arena::NodeSite> {
+    fn named<G: EngineGrammar>(tree: &ParsedTree<G, Self>, name: crate::types::NodeId) -> Option<crate::arena::NodeSite> {
         let (shape, bits) = tree.tree.shape;
         crate::arena::site::node_site(tree.tree.built, shape, bits, name).ok()
     }
@@ -662,7 +662,7 @@ impl<'a> Backing for Records<'a> {
 
 #[cfg(feature = "arena")]
 impl crate::read::NodeNames for Records<'_> {
-    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeName> {
+    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId> {
         let site = self.table.site(index)?;
         let (shape, bits) = self.shape;
         self.sites.with(|known| crate::arena::site::site_name(self.built, shape, bits, site, known).ok().flatten())
@@ -699,14 +699,14 @@ impl<'a, G: crate::arena::RecordGrammar> ParsedTree<G, Records<'a>> {
     /// for an index the call gave no node, and for a node with no record
     /// of its own that no slot of its holder holds.
     #[must_use]
-    pub fn name_at(&self, index: NodeIndex) -> Option<crate::types::NodeName> {
+    pub fn name_at(&self, index: NodeIndex) -> Option<crate::types::NodeId> {
         crate::read::NodeNames::name(&self.tree, index)
     }
 
     /// The id this call gives the node `name` names; none for a name no
     /// record of the source holds a node of.
     #[must_use]
-    pub fn index_named(&self, name: crate::types::NodeName) -> Option<NodeIndex> {
+    pub fn index_named(&self, name: crate::types::NodeId) -> Option<NodeIndex> {
         self.index_at(Records::named(self, name)?)
     }
 
@@ -2655,7 +2655,7 @@ impl<G: EngineGrammar, B: Backing> SourceTable for Seating<'_, G, B> {
     }
 
     #[cfg(feature = "arena")]
-    fn name_row(&self, tree: TreeId, name: crate::types::NodeName) -> Option<NodeIndex> {
+    fn name_row(&self, tree: TreeId, name: crate::types::NodeId) -> Option<NodeIndex> {
         let mut lookups = self.own(tree)?;
         let site = B::named(lookups.tree, name)?;
         match &mut lookups.nodes {
@@ -3312,8 +3312,8 @@ impl<G: EngineGrammar, B: Backing> SourceTable for ReadTrees<'_, G, B> {
     }
 
     #[cfg(feature = "arena")]
-    fn name_row(&self, tree: TreeId, name: crate::types::NodeName) -> Option<NodeIndex> {
-        self.trees.tree_holding(tree, crate::arena::Address(name.node.0))?;
+    fn name_row(&self, tree: TreeId, name: crate::types::NodeId) -> Option<NodeIndex> {
+        self.trees.tree_holding(tree, crate::arena::Address(name.address()))?;
         self.seating(tree)?.name_row(tree, name)
     }
 

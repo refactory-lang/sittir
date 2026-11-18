@@ -268,7 +268,7 @@ fn error_roots<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(gram
             let parse = engine.parse_records::<N>(&source).expect("a parse");
             let root = parse.root.expect("the ERROR's record");
             let built = engine.written().built();
-            let place = Place::Placed(sittir_core::types::NodeName { node: sittir_core::types::NodeId(root.0), site: None });
+            let place = Place::Placed(sittir_core::types::NodeId::record(root.0));
             let stored = sides.iter().filter_map(|&side| engine.written().side(place, side, &*built).expect("a placed side")).map(|entries| entries.len()).sum();
             Some((source, assigned, stored))
         })

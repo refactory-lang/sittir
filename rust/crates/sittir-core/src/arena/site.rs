@@ -103,9 +103,9 @@ pub type RowSites = std::collections::HashMap<Address, Vec<(u32, CellSite)>, cra
 /// # Errors
 ///
 /// What reading a holder's cells refuses (`row_sites`).
-pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: super::NodeSite, known: &mut RowSites) -> Result<Option<crate::types::NodeName>, ArenaError> {
+pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: super::NodeSite, known: &mut RowSites) -> Result<Option<crate::types::NodeId>, ArenaError> {
     let (holder, entry) = match site {
-        super::NodeSite::Record(at) => return Ok(Some(crate::types::NodeName { node: crate::types::NodeId(at.0), site: None })),
+        super::NodeSite::Record(at) => return Ok(Some(crate::types::NodeId::record(at.0))),
         super::NodeSite::Row { holder, entry } => (holder, entry),
     };
     let sites = match known.entry(holder) {
@@ -118,7 +118,7 @@ pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>
     };
     Ok(sites.binary_search_by_key(&(entry + 2), |&(row, _)| row).ok().map(|at| {
         let CellSite { word, item } = sites[at].1;
-        crate::types::NodeName { node: crate::types::NodeId(holder.0), site: Some([word, item]) }
+        crate::types::NodeId::leaf(holder.0, word, item)
     }))
 }
 
@@ -160,9 +160,9 @@ pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Op
 /// # Errors
 ///
 /// As `site_row`.
-pub fn node_site(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, name: crate::types::NodeName) -> Result<super::NodeSite, ArenaError> {
-    let holder = Address(name.node.0);
-    let Some([word, item]) = name.site else { return Ok(super::NodeSite::Record(holder)) };
+pub fn node_site(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, name: crate::types::NodeId) -> Result<super::NodeSite, ArenaError> {
+    let holder = Address(name.address());
+    let Some([word, item]) = name.site() else { return Ok(super::NodeSite::Record(holder)) };
     Ok(match site_row(arena, holder, shape, bits, CellSite { word, item })? {
         1 => super::NodeSite::Record(holder),
         row => super::NodeSite::Row { holder, entry: row.checked_sub(2).ok_or(malformed("cell row", row))? },

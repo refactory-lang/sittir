@@ -220,7 +220,7 @@ pub enum ArenaError {
     /// `kind`, whose record only a write could give it.
     ReadOnly { index: crate::types::NodeIndex, kind: crate::types::KindId },
     /// A list slot holding a leaf at `item`, past the leaf items a list slot
-    /// names (`NodeName::SITE_ITEMS`).
+    /// names (`NodeId::SITE_ITEMS`).
     LeafItemPastNames { item: u32 },
 }
 
@@ -248,8 +248,8 @@ impl fmt::Display for ArenaError {
             ArenaError::LeafItemPastNames { item } => write!(
                 f,
                 "a list slot holds a leaf at item {item}, past the {} leaf items a list slot holds in arena storage, whose node names give an item {} bits; object storage holds the list",
-                crate::types::NodeName::SITE_ITEMS,
-                crate::types::NodeName::ITEM_BITS
+                crate::types::NodeId::SITE_ITEMS,
+                crate::types::NodeId::ITEM_BITS
             ),
         }
     }

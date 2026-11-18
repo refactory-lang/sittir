@@ -389,7 +389,7 @@ pub trait SourceTable {
     /// names, whose records outlive their tree; `None` where the table
     /// reads no such source or its records hold no such node.
     #[cfg(feature = "arena")]
-    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeName) -> Option<crate::types::NodeIndex> {
+    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeId) -> Option<crate::types::NodeIndex> {
         let _ = (tree, name);
         None
     }
@@ -505,7 +505,7 @@ impl SourceTable for ThroughTemplates<'_> {
     }
 
     #[cfg(feature = "arena")]
-    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeName) -> Option<crate::types::NodeIndex> {
+    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeId) -> Option<crate::types::NodeIndex> {
         self.0.name_row(tree, name)
     }
 

@@ -256,9 +256,9 @@ impl<'a> BuiltWriter<'a> {
     /// # Errors
     ///
     /// As `header` and `place`.
-    pub fn link(&mut self, kind: KindId, name: crate::types::NodeName, span: Span) -> Result<Address, ArenaError> {
-        let [word, item] = name.site.unwrap_or([0, 0]);
-        let words = [self.header(kind, flag::LINK)?, 0, name.node.0, word, item, 0, span.start, span.end];
+    pub fn link(&mut self, kind: KindId, name: crate::types::NodeId, span: Span) -> Result<Address, ArenaError> {
+        let [word, item] = name.site().unwrap_or([0, 0]);
+        let words = [self.header(kind, flag::LINK)?, 0, name.address(), word, item, 0, span.start, span.end];
         debug_assert_eq!(words.len(), LINK_WORDS as usize);
         self.place(&words, 1)
     }

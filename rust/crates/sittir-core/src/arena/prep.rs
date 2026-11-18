@@ -235,8 +235,8 @@ impl RecordKey {
     fn of<T>(prep: &RecordPrep<'_, T>, at: CellAt, claims: impl Fn(KindId) -> bool) -> Result<Self, ArenaError> {
         let view = prep.view(at.tree)?;
         match at.cell {
-            Cell::Child { kind, at: record, link, changed } if claims(kind) => {
-                let view = view.child(record, link)?;
+            Cell::Child { kind, at: record, changed } if claims(kind) => {
+                let view = view.child(record)?;
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 let place = place_of(view, record)?;
                 Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: super::held_changed(at.site.is_some(), changed, &side) })
@@ -385,13 +385,13 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
         }
         let (mut trivia, units) = match (self.at(prep)?, self.key.place) {
             (Some(at), _) => (source_sides(prep, &at), self.template_units(prep)?),
-            (None, PrepPlace::Stored(place @ Place::Node(crate::types::NodeName { node, site: None }))) => {
-                let record = Address(node.0);
+            (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => {
+                let record = Address(id.address());
                 let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
                 let units = prep.store.units(record, prep.built)?.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
                 (prep.store.sides(place, prep.built)?, units)
             }
-            (None, PrepPlace::Stored(place @ Place::Node(crate::types::NodeName { site: Some(_), .. }))) => (prep.store.sides(place, prep.built)?, Vec::new()),
+            (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (prep.store.sides(place, prep.built)?, Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
         merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref(), prep.sources, prep.lent());
@@ -938,7 +938,7 @@ mod tests {
         let store = TriviaStore::new();
         let prep = RecordPrep::new(&mut prepared, None, &arena, &NoSources, &store, crate::record::PARSED_KIND_BITS);
         let key = RecordKey::of(&prep, CellAt {
-            cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() },
+            cell: Cell::Child { kind, at, changed: ChangedEdges::default() },
             tree: None,
             site: None,
         }, |named| named == kind).expect("valid record");

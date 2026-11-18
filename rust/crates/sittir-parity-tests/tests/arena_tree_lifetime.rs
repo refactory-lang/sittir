@@ -100,7 +100,7 @@ fn unnamed(text: &str) -> String {
         out.push_str(&rest[..at]);
         rest = rest[at..].trim_start_matches(|c: char| c.is_ascii_digit());
     }
-    let named = "carried: Some(CoordinateCarried { changed: ChangedEdges { leading: false, trailing: false }, name: Some(NodeName { node: NodeId(), site: None }) })";
+    let named = "carried: Some(CoordinateCarried { changed: ChangedEdges { leading: false, trailing: false }, name: Some(NodeId()) })";
     (out + rest).replace(named, "carried: None")
 }
 
@@ -327,9 +327,8 @@ fn a_coordinate_of_a_read_s_node_names_its_record() {
     let built = engine.written().built();
     let records = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
     let (coord, index) = held_coordinate(&records);
-    let Some(Place::Node(sittir_core::types::NodeName { node, site: None })) = records.place(index) else { panic!("a comment has a record") };
-    let at = sittir_core::arena::Address(node.0);
-    assert_eq!(coord.name(), Some(sittir_core::types::NodeName { node: sittir_core::types::NodeId(at.0), site: None }));
+    let Some(at) = records.place(index).and_then(Place::as_record) else { panic!("a comment has a record") };
+    assert_eq!(coord.name(), Some(sittir_core::types::NodeId::record(at.0)));
     assert_eq!((coord.span, coord.kind), (kept.span, kept.kind));
 }
 
@@ -354,8 +353,7 @@ fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
         });
         met.into_iter()
             .find_map(|index| {
-                let Some(Place::Node(sittir_core::types::NodeName { node, site: None })) = records.place(index) else { return None };
-        let at = sittir_core::arena::Address(node.0);
+                let at = records.place(index).and_then(Place::as_record)?;
                 [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().find_map(|side| {
                     let entries = records.trivia_side(index, side);
                     (!entries.is_empty()).then(|| (at, side, format!("{entries:?}")))
@@ -403,9 +401,8 @@ fn a_call_s_tree_is_made_from_a_record_and_never_from_its_source_alone() {
     let mut records = Vec::new();
     whole.nodes().walk(NodeIndex::ROOT, &mut |step, kid| {
         if step == Step::Meet {
-            if let Some(sittir_core::types::NodeName { node, site: None }) = whole.name_at(kid.index) {
-                let at = sittir_core::arena::Address(node.0);
-                records.push((at, kid.span(), kid.grammar));
+            if let Some(at) = whole.name_at(kid.index).and_then(sittir_core::types::NodeId::as_record) {
+                records.push((sittir_core::arena::Address(at), kid.span(), kid.grammar));
             }
         }
         Visit::Enter
@@ -442,9 +439,8 @@ fn sites_and_rows_agree<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateN
         let mut records = Vec::new();
         tree.nodes().walk(NodeIndex::ROOT, &mut |step, kid| {
             if step == Step::Meet && !kid.error() {
-                if let Some(sittir_core::types::NodeName { node, site: None }) = tree.name_at(kid.index) {
-                let at = sittir_core::arena::Address(node.0);
-                    records.push(at);
+                if let Some(at) = tree.name_at(kid.index).and_then(sittir_core::types::NodeId::as_record) {
+                    records.push(sittir_core::arena::Address(at));
                 }
             }
             Visit::Enter
@@ -487,5 +483,5 @@ fn a_site_s_word_names_any_cell_of_every_record() {
         widest_record::<sittir_regex::RegexGrammar>(),
         widest_record::<sittir_scm::ScmGrammar>(),
     ];
-    assert!(widest.iter().all(|&words| words > 0 && words <= sittir_core::types::NodeName::SITE_WORDS), "{widest:?}");
+    assert!(widest.iter().all(|&words| words > 0 && words <= sittir_core::types::NodeId::SITE_WORDS), "{widest:?}");
 }

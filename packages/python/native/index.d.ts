@@ -410,7 +410,7 @@ export interface NativeParseOptions {
 
 /**
  * r" The bits of a node's key that hold its holder's address, its
- * r" item and its slot word (`types::NodeName::HOLDER_BITS`,
+ * r" item and its slot word (`types::NodeId::HOLDER_BITS`,
  * r" `ITEM_BITS`, `WORD_BITS`).
  */
 export declare const NODE_ID_HOLDER_BITS: number
@@ -517,7 +517,7 @@ export declare function readSlotSeparator(engine: object, node: number): import(
 /**
  * r" `snapshotLayouts` for the node a read left that the key
  * r" `node` names, as `[key, layout]` pairs in preorder, each
- * r" node a record or a slot names by its key (`NodeName::key`). Refuses as
+ * r" node a record or a slot names by its key (`NodeId::key`). Refuses as
  * r" `with_read_node` and as `snapshotLayouts`.
  */
 export declare function readSnapshotLayouts(engine: object, node: number, holderByte?: number | undefined | null): [number, object][]

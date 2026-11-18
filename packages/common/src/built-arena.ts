@@ -1457,7 +1457,7 @@ export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
 		const words = arena.words(at, 1);
 		const start = wordOf(at, arena.format);
 		const { kind, flags } = headerOf(words[start]!, arena.format);
-		if (flags === 0) return { form: 'child', kind, at, link: undefined, changed };
+		if (flags === 0) return { form: 'child', kind, at, changed };
 		if (flags !== linkFlag) throw new Error(`a built record header holds flags ${flags}, which no builder writes`);
 		const link = arena.words(at, linkWords);
 		if (link[start + 5]! !== 0) throw new Error(`the link record at ${at} names a record of a tree, which no builder writes`);

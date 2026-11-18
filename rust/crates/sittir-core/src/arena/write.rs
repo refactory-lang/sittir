@@ -98,7 +98,7 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
         let cell = write(value, self)?;
         match Cell::decode_built(cell, &self.writer, self.writer.kind_bits())? {
             Cell::Unit { kind, .. } if kind != KindId::BLANK => Ok(CompactEntry::Layout { kind }),
-            Cell::Child { kind, at, link: None, .. } => Ok(CompactEntry::Record { kind, at }),
+            Cell::Child { kind, at, .. } => Ok(CompactEntry::Record { kind, at }),
             Cell::BuiltLeaf { kind, .. } => Ok(CompactEntry::Text { kind, at: cell.address() }),
             Cell::BuiltText { .. } => Ok(CompactEntry::Text { kind: KindId::BLANK, at: cell.address() }),
             _ => Err(ArenaError::Unwritable("a trivia value written as no record, layout member or leaf entry")),
@@ -110,10 +110,8 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
     /// holder's record, or by no record.
     fn read_record(&self, coordinate: &NodeCoordinate) -> Option<CompactEntry> {
         let kind = coordinate.kind?;
-        match coordinate.name()? {
-            crate::types::NodeName { node, site: None } if super::ArenaRead::read_entry(&self.writer, Address(node.0)) => Some(CompactEntry::Record { kind, at: Address(node.0) }),
-            _ => None,
-        }
+        let at = Address(coordinate.name()?.as_record()?);
+        super::ArenaRead::read_entry(&self.writer, at).then_some(CompactEntry::Record { kind, at })
     }
 
     /// Moves a built record's trivia, its units' and its leaves' into the
@@ -219,8 +217,8 @@ pub fn coordinate_cell<T: Clone + HeapBytes>(sink: &mut RecordSink<'_, T>, coord
     let kind = coord.kind.ok_or(ArenaError::Unwritable("a coordinate with no stamped kind"))?;
     let changed = coord.changed();
     match coord.name() {
-        Some(name @ crate::types::NodeName { site: Some(_), .. }) => return CellWord::of(sink.writer.link(kind, name, coord.span)?, changed),
-        Some(crate::types::NodeName { node, site: None }) if sink.writer.hold_read(Address(node.0))? => return CellWord::of(Address(node.0), changed),
+        Some(name) if name.site().is_some() => return CellWord::of(sink.writer.link(kind, name, coord.span)?, changed),
+        Some(name) if sink.writer.hold_read(Address(name.address()))? => return CellWord::of(Address(name.address()), changed),
         _ => {}
     }
     match (sink.link)(coord)? {
@@ -351,7 +349,7 @@ pub fn write_list<'i, T: Clone + HeapBytes, C: WriteCell<T> + 'i>(sink: &mut Rec
         })
         .collect::<Result<Vec<_>, ArenaError>>()?;
     let bits = sink.writer.kind_bits();
-    for (item, &cell) in (crate::types::NodeName::SITE_ITEMS..).zip(cells.get(crate::types::NodeName::SITE_ITEMS as usize..).unwrap_or_default()) {
+    for (item, &cell) in (crate::types::NodeId::SITE_ITEMS..).zip(cells.get(crate::types::NodeId::SITE_ITEMS as usize..).unwrap_or_default()) {
         if matches!(Cell::decode_built(CellWord(cell), &sink.writer, bits)?, Cell::BuiltLeaf { .. }) {
             return Err(ArenaError::LeafItemPastNames { item });
         }
@@ -646,7 +644,7 @@ mod tests {
         let mut link = |coord: &NodeCoordinate| Ok(if coord.index == NodeIndex(5) { Linked::Record(of_tree) } else { Linked::Leaf("y".to_owned()) });
         let changed = ChangedEdges { leading: true, trailing: false };
         let moved = |index| at(index, index + 1).with_changed(changed);
-        let name = crate::types::NodeName { node: crate::types::NodeId(4_000), site: Some([3, 2]) };
+        let name = crate::types::NodeId::leaf(4_000, 3, 2);
         let node = pair(None, SlotValue::Coord(moved(7).named(Some(name))), Vec::new());
         let cell = node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut link)).expect("written");
         let (_, _, _, left, _) = pair_record(&chunks, cell);
@@ -715,7 +713,7 @@ mod tests {
     #[test]
     fn a_built_list_is_refused_at_a_leaf_past_the_items_a_node_name_gives_and_takes_text_there() {
         let (mut chunks, store) = (chunks(), TriviaStore::<TriviaText>::new());
-        let limit = crate::types::NodeName::SITE_ITEMS;
+        let limit = crate::types::NodeId::SITE_ITEMS;
         let mut items: Vec<SlotValue<Name>> = (0..limit).map(|_| name("a", None)).collect();
         let list = write_list(&mut RecordSink::built(&mut chunks, &store, &mut unlinked), &items, "_items").expect("its last item is named");
         assert_eq!(ListCell::of_word(list, &chunks).expect("a list").items(&chunks, 1).expect("its run").count(), limit as usize);

@@ -75,14 +75,14 @@ impl Address {
 #[derive(serde::Deserialize, Clone, Copy, Debug)]
 #[serde(untagged)]
 pub enum NamedAddress {
-    Own(crate::types::NodeName),
-    Child { parent: crate::types::NodeName, index: crate::types::ChildPosition },
+    Own(crate::types::NodeId),
+    Child { parent: crate::types::NodeId, index: crate::types::ChildPosition },
 }
 
 impl NamedAddress {
     /// The name the address holds: the node's own, or its parent's.
     #[must_use]
-    pub fn name(&self) -> crate::types::NodeName {
+    pub fn name(&self) -> crate::types::NodeId {
         match *self {
             NamedAddress::Own(name) | NamedAddress::Child { parent: name, .. } => name,
         }
@@ -90,12 +90,12 @@ impl NamedAddress {
 }
 
 /// A `DescendantBatch` whose nodes are named past the call: each item's
-/// coordinate and the walk's start by name (`NodeName`).
+/// coordinate and the walk's start by name (`NodeId`).
 #[derive(serde::Serialize)]
 pub struct NamedBatch {
     pub items: Vec<NamedItem>,
     pub resume: Option<Vec<crate::types::ChildPosition>>,
-    pub origin: crate::types::NodeName,
+    pub origin: crate::types::NodeId,
 }
 
 /// A `QueryItem` whose node is named past the call.
@@ -111,7 +111,7 @@ pub enum NamedItem {
 #[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct NamedCoordinate {
     #[serde(flatten)]
-    pub name: crate::types::NodeName,
+    pub name: crate::types::NodeId,
     #[serde(rename = "$span")]
     pub span: Span,
     #[serde(rename = "$type")]

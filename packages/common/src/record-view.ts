@@ -176,7 +176,6 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 		case 'parsedText':
 			return arena.readText(holder.$at, cell.span);
 		case 'child':
-			if (cell.link !== undefined) throw new Error(`the record at ${holder.$at} names a record of tree ${cell.link}, and a record names none`);
 			return arena.node(cell.at);
 		case 'unit':
 			return cell.kind;

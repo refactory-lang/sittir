@@ -105,7 +105,7 @@ impl<'a, T> RecordCtx<'a, T> {
         }
         let mut side = super::SideRecord::read(self.arena, at)?;
         if let Some((from, name)) = side.sides.and_then(|from| Some((from, from.name()?))) {
-            let holder = Address(name.node.0);
+            let holder = Address(name.address());
             let tree = TreeId(super::RunNodes::source_of(self.arena, holder)?.0);
             let index = self.sources.name_row(tree, name).ok_or(malformed("rebuilt-from name", holder.0))?;
             let end = self.sources.row_coordinate(tree, index).ok_or(malformed("rebuilt-from name", holder.0))?.end;
@@ -120,7 +120,7 @@ impl<'a, T> RecordCtx<'a, T> {
     fn built_cell(self, word: u32) -> Result<Cell, ArenaError> {
         match Cell::decode_built(CellWord(word), self.arena, self.bits)? {
             Cell::ReadLeaf { kind, at, name, span, changed } => {
-                let holder = Address(name.node.0);
+                let holder = Address(name.address());
                 let tree = TreeId(super::RunNodes::source_of(self.arena, holder)?.0);
                 let row = self.sources.name_row(tree, name).ok_or(malformed("link site", holder.0))?;
                 let end = self.sources.row_coordinate(tree, row).ok_or(malformed("link site", holder.0))?.end;
@@ -165,20 +165,18 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 
     /// The context the record a child cell names at `at` is read in: the
-    /// arena of the tree its `link` names; the source of a record a read
-    /// left, which a built record's cell names as it names a built one;
-    /// else this one.
+    /// source of a record a read left, which a built record's cell names as
+    /// it names a built one; else this one.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of the tree,
     /// and what reading a read's record for its source refuses.
-    pub fn child(self, at: Address, link: Option<TreeId>) -> Result<Self, ArenaError> {
-        match link {
-            Some(tree) => self.linked(tree),
-            None if self.tree.is_none() && self.arena.read_record(at) => self.linked(TreeId(super::RunNodes::source_of(self.arena, at)?.0)),
-            None => Ok(self),
+    pub fn child(self, at: Address) -> Result<Self, ArenaError> {
+        if self.tree.is_none() && self.arena.read_record(at) {
+            return self.linked(TreeId(super::RunNodes::source_of(self.arena, at)?.0));
         }
+        Ok(self)
     }
 
     #[must_use]
@@ -322,8 +320,8 @@ impl<'a, T> RecordCtx<'a, T> {
         Ok(match cell {
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
             Cell::LinkedLeaf { kind, tree, row, changed, .. } => Some(ParsedRow { tree, row, kind, changed }),
-            Cell::Child { kind, at, link, changed } => {
-                let Some(ctx) = self.parsed_child(at, kind, link)? else { return Ok(None) };
+            Cell::Child { kind, at, changed } => {
+                let Some(ctx) = self.parsed_child(at, kind)? else { return Ok(None) };
                 match row_of(ctx, at)? {
                     Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
                     _ => None,
@@ -333,10 +331,10 @@ impl<'a, T> RecordCtx<'a, T> {
         })
     }
 
-    /// The context a child cell's parsed record of `kind` is read in, its
-    /// own arena or the tree its link names; `None` for a built record.
-    fn parsed_child(self, at: Address, kind: KindId, link: Option<TreeId>) -> Result<Option<Self>, ArenaError> {
-        let ctx = self.child(at, link)?;
+    /// The context a child cell's parsed record of `kind` is read in
+    /// (`child`); `None` for a built record.
+    fn parsed_child(self, at: Address, kind: KindId) -> Result<Option<Self>, ArenaError> {
+        let ctx = self.child(at)?;
         if ctx.tree.is_none() {
             return Ok(None);
         }
@@ -637,8 +635,8 @@ pub fn leaf_place<T>(ctx: RecordCtx<'_, T>, row: NodeIndex, site: Option<Site<Pr
 /// What reading the holder's header and side record refuses.
 pub fn linked_leaf_place<T>(ctx: RecordCtx<'_, T>, record: Address, leaf: Sides, site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
     let own: PrepPlace = Place::record(record).into();
-    let Some(Site { holder: PrepPlace::Stored(holder @ Place::Node(crate::types::NodeName { node, site: None })), word, item }) = site else { return Ok(own) };
-    let at = Address(node.0);
+    let Some(Site { holder: PrepPlace::Stored(holder), word, item }) = site else { return Ok(own) };
+    let Some(at) = holder.as_record() else { return Ok(own) };
     let header = ctx.words(at, crate::record::HEADER_WORDS)?;
     let rebuilt_from = ctx.side(Address(header[1]))?.sides;
     Ok(match rebuilt_from {
@@ -656,7 +654,7 @@ pub fn held_changed(site: bool, cell: ChangedEdges, side: &super::SideRecord) ->
 }
 
 /// The place of a built leaf held at `site`: its site in its holder's
-/// record, or, for a root, which has no site, `Place::ROOT_LEAF`, whose sides
+/// record, or, for a root, which has no site, `Place::RootLeaf`, whose sides
 /// the render is given.
 ///
 /// # Errors
@@ -664,8 +662,11 @@ pub fn held_changed(site: bool, cell: ChangedEdges, side: &super::SideRecord) ->
 /// `ArenaError::Malformed` for a site whose holder is no built record.
 pub fn built_leaf_place(site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
     match site {
-        None => Ok(Place::ROOT_LEAF.into()),
-        Some(Site { holder: PrepPlace::Stored(Place::Node(crate::types::NodeName { node, site: None })), word, item }) => Ok(Place::site(Site { holder: Address(node.0), word, item }).into()),
+        None => Ok(Place::RootLeaf.into()),
+        Some(Site { holder: PrepPlace::Stored(holder), word, item }) => match holder.as_record() {
+            Some(holder) => Ok(Place::site(Site { holder, word, item }).into()),
+            None => Err(malformed("built leaf holder", 0)),
+        },
         Some(_) => Err(malformed("built leaf holder", 0)),
     }
 }

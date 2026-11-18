@@ -116,7 +116,6 @@ export type RecordCell =
 			readonly form: 'child';
 			readonly kind: number;
 			readonly at: number;
-			readonly link: number | undefined;
 			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  }
 	| { readonly form: 'unit'; readonly kind: number; readonly row: number | undefined }
@@ -295,7 +294,7 @@ function packed(word: number, at: number, format: CellFormat): { readonly kind: 
 function parsedRecord(first: number, address: number, end: number, at: number, format: CellFormat): RecordCell {
 	const kind = kindField(first, format.kindBits);
 	if (kind === BLANK_KIND_ID || kind === ERROR_KIND_ID || address === 0 || end !== 0) throw new Error(`word ${at} names record ${address} of kind ${kind}, which no parsed cell holds`);
-	return { form: 'child', kind, at: address, link: undefined, changed: { leading: false, trailing: false } };
+	return { form: 'child', kind, at: address, changed: { leading: false, trailing: false } };
 }
 
 /**

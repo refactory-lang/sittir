@@ -100,9 +100,9 @@ impl BuiltImage {
     /// The link record of the node `name` names, a node a read left with
     /// no record of its own: its holder, then the word and item of its
     /// site, both 0 for its holder's own node.
-    pub(crate) fn link(&mut self, kind: KindId, name: crate::types::NodeName, span: Span) -> Address {
-        let [word, item] = name.site.unwrap_or([0, 0]);
-        let words: [u32; LINK_WORDS as usize] = [self.header(kind, flag::LINK), 0, name.node.0, word, item, 0, span.start, span.end];
+    pub(crate) fn link(&mut self, kind: KindId, name: crate::types::NodeId, span: Span) -> Address {
+        let [word, item] = name.site().unwrap_or([0, 0]);
+        let words: [u32; LINK_WORDS as usize] = [self.header(kind, flag::LINK), 0, name.address(), word, item, 0, span.start, span.end];
         self.words(&words)
     }
 

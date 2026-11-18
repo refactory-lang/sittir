@@ -76,7 +76,7 @@ impl Hydrated {
     fn cell(&self) -> Cell {
         match *self {
             Hydrated::Leaf { kind, row, span } => Cell::ParsedLeaf { kind, span, row },
-            Hydrated::Record { kind, at } => Cell::Child { kind, at, link: None, changed: crate::slot::ChangedEdges::default() },
+            Hydrated::Record { kind, at } => Cell::Child { kind, at, changed: crate::slot::ChangedEdges::default() },
             Hydrated::Unit { kind, row } => Cell::Unit { kind, row },
             Hydrated::Text { span } => Cell::ParsedText { span },
         }
@@ -574,7 +574,7 @@ impl<'a> Hydration<'a> {
         let cell = draft.place(shape.word, 1)?;
         let bits = self.tree.kind_bits();
         let items = items.map(|item| item.map(|item| self.held(draft, item)).transpose()).collect::<Result<Vec<_>, _>>()?;
-        if let Some(item) = (crate::types::NodeName::SITE_ITEMS..len).zip(&items[crate::types::NodeName::SITE_ITEMS.min(len) as usize..]).find_map(|(item, value)| matches!(value, Some(Hydrated::Leaf { .. })).then_some(item)) {
+        if let Some(item) = (crate::types::NodeId::SITE_ITEMS..len).zip(&items[crate::types::NodeId::SITE_ITEMS.min(len) as usize..]).find_map(|(item, value)| matches!(value, Some(Hydrated::Leaf { .. })).then_some(item)) {
             return Err(ArenaError::LeafItemPastNames { item }.into());
         }
         self.set_apart(draft, &items)?;

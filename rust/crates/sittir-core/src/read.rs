@@ -196,7 +196,7 @@ pub struct ReadCtx<'s> {
 pub trait NodeNames {
     /// The name of the node the call knows by `index`; none for an index
     /// the call gave no node.
-    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeName>;
+    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId>;
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {

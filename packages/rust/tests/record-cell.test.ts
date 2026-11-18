@@ -53,7 +53,6 @@ function expected(entry: Entry): RecordCell {
 				form: 'child',
 				kind: entry.kind as number,
 				at: entry.at as number,
-				link: (entry.link as number | null) ?? undefined,
 				changed: { leading: entry.leading as boolean, trailing: entry.trailing as boolean }
 			};
 		case 'unit':

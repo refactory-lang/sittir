@@ -417,7 +417,7 @@ fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inside_sit
     use sittir_core::arena::{Cell, Linked, RecordSink};
     use sittir_core::trivia_store::Place;
     use sittir_core::trivia_table::TriviaSide;
-    use sittir_core::types::{NodeId, NodeName};
+    use sittir_core::types::NodeId;
     use sittir_rust::render::node::BlockNode;
     use sittir_rust::render::AnyNode;
     let options = sittir_rust::render::options::defaults();
@@ -443,7 +443,7 @@ fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inside_sit
     };
     {
         let built = over.engine.written().built();
-        let site = Place::Node(NodeName { node: NodeId(at.0), site: Some([NodeName::INSIDE_WORD, 0]) });
+        let site = Place::Node(NodeId::leaf(at.0, NodeId::INSIDE_WORD, 0));
         assert_eq!(over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side").map(|entries| entries.len()), Some(line_comment("// inside").len()), "the inside site's leading side keeps the comment");
         assert_eq!(over.engine.written().side(Place::record(at), TriviaSide::Inner, &*built).expect("a side"), over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side"), "the record's inner side reads as that site's leading side");
     }

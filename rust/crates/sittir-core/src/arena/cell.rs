@@ -146,12 +146,12 @@ pub enum Cell {
     ParsedLeaf { kind: KindId, span: Span, row: NodeIndex },
     /// A captured interior string of a parsed node: its byte span.
     ParsedText { span: Span },
-    /// A child with a record of its own: in this cell's arena, or, `link`
-    /// set, a parsed record in that tree's arena, which a built record names
-    /// for an untouched parsed child. `changed` is the edges whose neighbour
-    /// this holder changed: a fact of this site, held here and never in the
+    /// A child with a record of its own: a built record, or a record a read
+    /// left, which a built record names as it names a built one for an
+    /// untouched parsed child. `changed` is the edges whose neighbour this
+    /// holder changed: a fact of this site, held here and never in the
     /// child's record, so two holders of one record can differ.
-    Child { kind: KindId, at: Address, link: Option<TreeId>, changed: ChangedEdges },
+    Child { kind: KindId, at: Address, changed: ChangedEdges },
     /// A unit, which carries no text. `KindId::BLANK` is a blank arm. A
     /// parsed unit names its row as a parsed leaf does; a built unit has
     /// none.
@@ -171,7 +171,7 @@ pub enum Cell {
     /// own row, an entry of its run plus 2 otherwise), its byte span, whose
     /// text is its source's, and the edges whose neighbour this holder
     /// changed. Its sides are its row's.
-    ReadLeaf { kind: KindId, at: Address, name: crate::types::NodeName, span: Span, changed: ChangedEdges },
+    ReadLeaf { kind: KindId, at: Address, name: crate::types::NodeId, span: Span, changed: ChangedEdges },
     /// A captured interior string of a built node: its text in the string table.
     BuiltText { text: StringRef },
 }
@@ -305,7 +305,7 @@ impl Cell {
             let header = arena.words(at, HEADER_WORDS)?;
             return match header_of(header[0], bits) {
                 (KindId::BLANK, _) => Err(malformed("cell kind", header[0])),
-                (kind, 0) => Ok(Cell::Child { kind, at, link: None, changed }),
+                (kind, 0) => Ok(Cell::Child { kind, at, changed }),
                 (kind, flag::LINK) => linked(arena, at, kind, changed),
                 (_, flags) => Err(malformed("record flags", flags)),
             };
@@ -400,7 +400,7 @@ impl Cell {
                 return Ok(());
             }
             Cell::ParsedLeaf { kind, span, row } => (form::NODE, &[CellShape::pack(kind, row.0, bits)?, span.start, end_word(span)?]),
-            Cell::Child { kind, at, link: None, changed } if changed == ChangedEdges::default() => (form::NODE, &[record_kind(kind, bits)?, record(at.0)?.0, 0]),
+            Cell::Child { kind, at, changed } if changed == ChangedEdges::default() => (form::NODE, &[record_kind(kind, bits)?, record(at.0)?.0, 0]),
             Cell::Unit { kind: KindId::BLANK, row: None } if shape.forms & form::BLANK != 0 => (form::UNIT, &[0]),
             Cell::Unit { kind, row: Some(row) } => (form::UNIT, &[CellShape::pack(kind, row.0, bits)?]),
             Cell::ParsedText { span } => (form::TEXT, &[span.start.checked_add(1).ok_or(ArenaError::Unwritable("a span past what a parsed cell holds"))?, end_word(span)?]),
@@ -474,7 +474,7 @@ fn parsed_record(first: u32, at: u32, end: u32, bits: u32) -> Result<Cell, Arena
     if kind == KindId::BLANK || kind == KindId::ERROR || end != 0 {
         return Err(malformed("parsed record cell", first));
     }
-    Ok(Cell::Child { kind, at: record(at)?, link: None, changed: ChangedEdges::default() })
+    Ok(Cell::Child { kind, at: record(at)?, changed: ChangedEdges::default() })
 }
 
 /// The first word of a node cell naming a record of `kind`.
@@ -507,8 +507,12 @@ fn linked(arena: &dyn ArenaRead, at: Address, kind: KindId, changed: ChangedEdge
     if words[5] != 0 {
         return Err(malformed("link record", words[5]));
     }
-    let site = (words[3] != 0).then_some([words[3], words[4]]);
-    Ok(Cell::ReadLeaf { kind, at, name: crate::types::NodeName { node: crate::types::NodeId(record(words[2])?.0), site }, span: span(words[6], words[7])?, changed })
+    let holder = record(words[2])?.0;
+    let name = match words[3] {
+        0 => crate::types::NodeId::record(holder),
+        word => crate::types::NodeId::try_leaf(holder, word, words[4]).ok_or(malformed("link site", word))?,
+    };
+    Ok(Cell::ReadLeaf { kind, at, name, span: span(words[6], words[7])?, changed })
 }
 
 /// A list slot's cell: the address of its run of item cells and the items
@@ -707,7 +711,6 @@ mod tests {
             "child" => Cell::Child {
                 kind: kind(),
                 at: Address(n("at")),
-                link: entry["link"].as_u64().map(|tree| TreeId(u32::try_from(tree).expect("a tree"))),
                 changed: fixture_changed(entry),
             },
             "unit" => Cell::Unit { kind: kind(), row: row() },
@@ -734,9 +737,9 @@ mod tests {
             "linkedLeaf" => Cell::ReadLeaf {
                 kind: kind(),
                 at: Address(n("at")),
-                name: crate::types::NodeName {
-                    node: crate::types::NodeId(n("holder")),
-                    site: entry["site"].as_array().map(|site| [0, 1].map(|at| u32::try_from(site[at].as_u64().expect("a site number")).expect("a site number"))),
+                name: match entry["site"].as_array().map(|site| [0, 1].map(|at| u32::try_from(site[at].as_u64().expect("a site number")).expect("a site number"))) {
+                    Some([word, item]) => crate::types::NodeId::leaf(n("holder"), word, item),
+                    None => crate::types::NodeId::record(n("holder")),
                 },
                 span: Span { start: n("start"), end: n("spanEnd") },
                 changed: fixture_changed(entry),
@@ -802,9 +805,8 @@ mod tests {
         let text = image.entry(KindId::BLANK, "ab");
         image.entry(KindId::ERROR, "?");
         let record = image.record(KindId(14), 3, &[(2, built_cell(name, ChangedEdges { leading: true, trailing: false }))]);
-        let holder = crate::types::NodeId(5000);
-        image.link(KindId(14), crate::types::NodeName { node: holder, site: Some([3, 2]) }, Span { start: 2, end: 9 });
-        image.link(KindId(16), crate::types::NodeName { node: holder, site: None }, Span { start: 4, end: 8 });
+        image.link(KindId(14), crate::types::NodeId::leaf(5000, 3, 2), Span { start: 2, end: 9 });
+        image.link(KindId(16), crate::types::NodeId::record(5000), Span { start: 4, end: 8 });
         image.run(&[built_cell(record, ChangedEdges::default()), built_cell(text, ChangedEdges::default())]);
         for chunk in built["chunks"].as_array().expect("chunks") {
             let n = fixture_number(chunk, "chunk");
@@ -858,10 +860,9 @@ mod tests {
         for cell in [
             Cell::ParsedLeaf { kind: KindId::BLANK, span, row: NodeIndex(1) },
             Cell::ParsedLeaf { kind: KindId(3), span: Span { start: 2, end: 1 }, row: NodeIndex(1) },
-            Cell::Child { kind: KindId::BLANK, at: Address(4), link: None, changed: ChangedEdges::default() },
-            Cell::Child { kind: KindId(2), at: Address::NONE, link: None, changed: ChangedEdges::default() },
-            Cell::Child { kind: KindId(2), at: Address(4), link: Some(TreeId(1)), changed: ChangedEdges::default() },
-            Cell::Child { kind: KindId(2), at: Address(4), link: None, changed: ChangedEdges { leading: true, trailing: false } },
+            Cell::Child { kind: KindId::BLANK, at: Address(4), changed: ChangedEdges::default() },
+            Cell::Child { kind: KindId(2), at: Address::NONE, changed: ChangedEdges::default() },
+                Cell::Child { kind: KindId(2), at: Address(4), changed: ChangedEdges { leading: true, trailing: false } },
         ] {
             assert!(cell.encode_parsed(&mut words, node, BITS).is_err(), "{cell:?}");
         }

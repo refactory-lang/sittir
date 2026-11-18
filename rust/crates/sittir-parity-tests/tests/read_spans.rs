@@ -9,7 +9,7 @@ use sittir_core::arena::{read_spans, Address};
 use sittir_core::engine::{Engine, ParsedTree};
 use sittir_core::nodes::Nodes;
 use sittir_core::trivia_store::Place;
-use sittir_core::types::{NodeIndex, NodeName};
+use sittir_core::types::NodeIndex;
 use sittir_parity_tests::fixture_sources;
 use sittir_rust::render::AnyNode;
 use sittir_rust::RustGrammar;
@@ -31,8 +31,8 @@ fn records(engine: &Engine<RustGrammar>, root: Address) -> Vec<Address> {
     let mut nodes = tree.nodes();
     let (mut pending, mut found) = (vec![NodeIndex::ROOT], Vec::new());
     while let Some(at) = pending.pop() {
-        if let Some(Place::Node(NodeName { node, site: None })) = tree.place(at) {
-            found.push(Address(node.0));
+        if let Some(record) = tree.place(at).and_then(Place::as_record) {
+            found.push(record);
         }
         pending.extend(nodes.kids(at).iter().map(|kid| kid.index));
     }

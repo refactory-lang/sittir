@@ -974,7 +974,7 @@ The checked JavaScript decoder format derived from native codec exports. It carr
 
 ### `packages/common/src/record-cell.ts::RecordCell`
 
-The decoded cell forms consumed by record views. Ordinary and bounded-inline compound cells both resolve to a child address, with origin-link and changed-edge information retained; byte spans and built-text references keep their distinct provenance.
+The decoded cell forms consumed by record views. A child cell names its record by address, a built record or one a read left, with the edges its holder changed; a node a read left with no record of its own is named through its link record by its holder and site (`linkedLeaf`); byte spans and built-text references keep their distinct provenance.
 
 ### `packages/common/src/record-cell.ts::decodeSideDelimiter`
 
@@ -982,7 +982,7 @@ Reads an optional delimiter setting from a side record. Its offset is the mask-s
 
 ### `packages/common/src/record-cell.ts::CellSite`
 
-A cell's site in its record: the slot's word and the item in that slot, 0 for a slot holding one value. With its holder's address it names a node that has no record of its own, as the native `NodeName` does.
+A cell's site in its record: the slot's word and the item in that slot, 0 for a slot holding one value. With its holder's address it names a node that has no record of its own, as the native `NodeId` does.
 
 ### `packages/common/src/record-cell.ts::NodeIdFormat`
 

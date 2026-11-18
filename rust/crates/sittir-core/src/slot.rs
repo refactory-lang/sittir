@@ -55,7 +55,7 @@ pub struct CoordinateCarried {
     pub changed: ChangedEdges,
     /// The node's name where its records outlive its tree
     /// (`ReadCtx::names`): `tree` and `index` name it for one call only.
-    pub name: Option<crate::types::NodeName>,
+    pub name: Option<crate::types::NodeId>,
 }
 
 impl HeapBytes for CoordinateCarried {
@@ -141,7 +141,7 @@ impl NodeCoordinate {
     /// The node's name where its records outlive its tree
     /// (`CoordinateCarried::name`).
     #[must_use]
-    pub fn name(&self) -> Option<crate::types::NodeName> {
+    pub fn name(&self) -> Option<crate::types::NodeId> {
         self.carried.as_ref().and_then(|carried| carried.name)
     }
 
@@ -154,12 +154,12 @@ impl NodeCoordinate {
 
     /// The coordinate naming its node `name` past the call.
     #[must_use]
-    pub fn named(self, name: Option<crate::types::NodeName>) -> Self {
+    pub fn named(self, name: Option<crate::types::NodeId>) -> Self {
         let changed = self.changed();
         self.carrying(changed, name)
     }
 
-    fn carrying(self, changed: ChangedEdges, name: Option<crate::types::NodeName>) -> Self {
+    fn carrying(self, changed: ChangedEdges, name: Option<crate::types::NodeId>) -> Self {
         let carried = (changed != ChangedEdges::default() || name.is_some()).then(|| Box::new(CoordinateCarried { changed, name }));
         Self { carried, ..self }
     }
@@ -452,8 +452,8 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: &Node
         // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
         return unsafe {
             object_with_present(env, &[
-                present(env, c"$node", Some(name.node.0))?,
-                present(env, c"$site", name.site.map(|site| site.to_vec()))?,
+                present(env, c"$node", Some(name.address()))?,
+                present(env, c"$site", name.site().map(|site| site.to_vec()))?,
                 present(env, c"$span", Some(coord.span))?,
                 present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
             ])

@@ -126,7 +126,7 @@ fn parsed_cells<N: RecordCells>(arena: &dyn ArenaRead, at: Address, bits: u32) -
 /// `None` for a row no cell names.
 fn site_cell<N: RecordCells>(reads: &dyn ArenaRead, site: super::NodeSite, index: NodeIndex, bits: u32) -> Result<Option<Cell>, super::ArenaError> {
     let (holder, entry) = match site {
-        super::NodeSite::Record(at) => return Ok(Some(Cell::Child { kind: reads.header_kind(at, bits)?, at, link: None, changed: ChangedEdges::default() })),
+        super::NodeSite::Record(at) => return Ok(Some(Cell::Child { kind: reads.header_kind(at, bits)?, at, changed: ChangedEdges::default() })),
         super::NodeSite::Row { holder, entry } => (holder, entry),
     };
     Ok(parsed_cells::<N>(reads, holder, bits)?.into_iter().find_map(|cell| match cell {

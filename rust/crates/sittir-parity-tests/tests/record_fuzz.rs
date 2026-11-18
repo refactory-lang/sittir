@@ -214,7 +214,7 @@ fn a_child_cell_naming_a_record_that_holds_it_is_refused() {
         .addresses()
         .into_iter()
         .filter_map(|cell| match built.image.word(cell).ok().map(|word| Cell::decode_built(CellWord(word), &built.image, built.bits)) {
-            Some(Ok(Cell::Child { kind: CALL_EXPRESSION, at, link: None, .. })) => Some((cell, at)),
+            Some(Ok(Cell::Child { kind: CALL_EXPRESSION, at, .. })) => Some((cell, at)),
             _ => None,
         })
         .collect();

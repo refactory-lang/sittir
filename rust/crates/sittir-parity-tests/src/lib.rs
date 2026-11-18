@@ -344,8 +344,7 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
             let mut records = std::collections::HashMap::new();
             let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
             while let Some((run, row)) = pending.pop() {
-                if let Some(Place::Node(sittir_core::types::NodeName { node, site: None })) = over.place(run) {
-                    let at = sittir_core::arena::Address(node.0);
+                if let Some(at) = over.place(run).and_then(Place::as_record) {
                     records.insert(row, at);
                 }
                 let (met, kept) = (ours.kids(run), theirs.kids(row));
@@ -358,8 +357,8 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
 
     /// The name of the record the read left the tree's node at `index`.
     #[must_use]
-    pub fn name(&self, index: sittir_core::types::NodeIndex) -> Option<sittir_core::types::NodeName> {
-        self.records.get(&index).map(|at| sittir_core::types::NodeName { node: sittir_core::types::NodeId(at.0), site: None })
+    pub fn name(&self, index: sittir_core::types::NodeIndex) -> Option<sittir_core::types::NodeId> {
+        self.records.get(&index).map(|at| sittir_core::types::NodeId::record(at.0))
     }
 
     /// `coord`, a node of the tree, named by the record the read left it.
