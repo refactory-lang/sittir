@@ -24,7 +24,7 @@ import type {
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { Delimiter } from '@sittir/common/delimiter';
 import { builtSlots, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
-import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
+import type { ChildTest, GrammarRoutes, SlotRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
@@ -226,7 +226,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const slotOf = (owner: string, slot: string): AssembledNonterminal | undefined => nodeOf(owner)?.slots.find((s) => s.name === slot);
 	const storageName = (kind: string): string => modelNode(model, kind)?.kind ?? kind;
 	const flagSites = new Map<string, Set<string> | 'any'>();
-	for (const members of routes.members.values())
+	for (const members of routes.slots.values())
 		for (const route of members) {
 			if (route.flag !== true || route.route !== 'kind') continue;
 			const kind = storageName(route.kind);
@@ -392,7 +392,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					const builder = mount?.builder ?? builderOf(kind);
 					const outer = mount !== undefined && within.length > 0 ? within.at(-1) : undefined;
 					const mounted = mount === undefined ? undefined : within.length === 0 ? mount.mounted : outer?.mounted !== undefined ? mount.mounted : undefined;
-					const members = (unwrap?.members ?? []).flatMap(({ name, slot, list }) => memberOf({ route: 'slot', name, slot, path: [{ owner: kind, slot: slot.name }], ...(list === undefined ? {} : { list }) })?.member ?? []);
+					const members = (unwrap?.slots ?? []).flatMap(({ name, slot, list }) => memberOf({ route: 'slot', name, slot, path: [{ owner: kind, slot: slot.name }], ...(list === undefined ? {} : { list }) })?.member ?? []);
 					const container: PortableContainer = {
 						...(builder === undefined ? {} : { builder }),
 						key: element.propertyName,
@@ -570,7 +570,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		return out;
 	};
 
-	const readsOf = (route: MemberRoute, slot: AssembledNonterminal): readonly number[] | undefined => {
+	const readsOf = (route: SlotRoute, slot: AssembledNonterminal): readonly number[] | undefined => {
 		const all = admitted(slot);
 		const captured = route.route === 'kind' ? route.kind : route.route === 'nested' ? route.selector.kind : null;
 		const excepted = route.route === 'slot' ? membershipKindsOf((route.except ?? []).map(storageName), nodeMap) : [];
@@ -589,7 +589,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			})
 		);
 	};
-	const memberOf = (route: MemberRoute, guaranteed?: Guaranteed): { readonly member: PortableSlotRoute; readonly seats: readonly Seat[] } | undefined => {
+	const memberOf = (route: SlotRoute, guaranteed?: Guaranteed): { readonly member: PortableSlotRoute; readonly seats: readonly Seat[] } | undefined => {
 		if (route.flag === true || route.spelled === true || route.path === undefined) return undefined;
 		const steps = stepsOf(route.path, guaranteed);
 		const slot = lastSlot(route.path);
@@ -638,7 +638,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const leaf = (seatsOfRoute(path) ?? []).flatMap((seat) => defaultLeaf(seat.slot, seat.kinds)?.leaf ?? [])[0];
 		return { preset: { steps, text, ...(leaf === undefined ? {} : { builder: leaf }) }, path };
 	};
-	const placedFlag = (route: MemberRoute): Placed | undefined => {
+	const placedFlag = (route: SlotRoute): Placed | undefined => {
 		if (route.flag !== true || route.path === undefined) return undefined;
 		switch (route.route) {
 			case 'presence':
@@ -918,7 +918,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				if (other !== undefined && other !== i) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab}: ${kind}'s member ${name} lands on ${landingOf(member.steps, seat.within)} by two routes` });
 				landed.set(at, i);
 			}
-		const flagged = entry.members.flatMap((route) => {
+		const flagged = entry.slots.flatMap((route) => {
 			const placed = placedFlag(route);
 			return placed === undefined ? [] : [{ ...placed, name: route.name }];
 		});
@@ -1032,7 +1032,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			}
 			for (const spelled of (routes.readEntries.get(kind) ?? []).filter((other) => other.vocab === entry.vocab && other.claim.flag !== undefined && other.template !== undefined))
 				flagSteps[spelled.claim.flag!] = { ...(flagSteps[spelled.claim.flag!] ?? { presets: [] }), template: portableTemplate(spelled.template!) };
-			for (const route of entry.members) {
+			for (const route of entry.slots) {
 				if (route.route !== 'delimiter') continue;
 				const list = route.path === undefined ? undefined : (stepsOf(route.path) ?? refuseList(route.name, entry.vocab));
 				flagSteps[route.name] = { ...(flagSteps[route.name] ?? { presets: [] }), delimiter: route.delimiter, ...(list === undefined ? {} : { list }) };

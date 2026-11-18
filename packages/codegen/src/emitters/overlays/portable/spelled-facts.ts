@@ -12,7 +12,7 @@ export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: G
 	const vocabOf = (kind: string): string => routes.vocabOf.get(kind) ?? refuse(`${kind}, a kind its item holds, reads as no path`);
 	const memberOf = (holder: string, slot: string): string => {
 		const plain = routes.readEntries.get(holder)?.find((other) => other.vocab === routes.vocabOf.get(holder));
-		const route = plain?.members.find((member) => member.route === 'slot' && member.path.at(-1)?.owner === holder && member.path.at(-1)?.slot === slot);
+		const route = plain?.slots.find((member) => member.route === 'slot' && member.path.at(-1)?.owner === holder && member.path.at(-1)?.slot === slot);
 		return route?.name ?? refuse(`${holder}'s ${slot}, a slot its item spells, is no member of ${holder}'s path`);
 	};
 	const placed = entry.claim.predicates.filter((predicate) => predicate.subject?.up === 1);

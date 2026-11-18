@@ -1,6 +1,6 @@
 import type { PortableCondition, QueryPlan, QuerySubject, SlotFlagRefusal, SlotFlagTest, SlotSubject } from '@sittir/types';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
-import type { MemberRoute, SlotStep } from '../../../bindings/routes.ts';
+import type { SlotRoute, SlotStep } from '../../../bindings/routes.ts';
 import type { AssembledNode, AssembledNonterminal } from '../../../compiler/model/node-map.ts';
 import { keywordTestOf, loweredPlan, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
 
@@ -12,7 +12,7 @@ export interface ClaimFlag {
 
 export interface FlagPlansInput {
 	readonly kind: string;
-	readonly members: readonly MemberRoute[];
+	readonly members: readonly SlotRoute[];
 	readonly claimFlags: readonly ClaimFlag[];
 	readonly subjectOf: SlotSubjectOf;
 	readonly presenceOf: PresenceKeywordOf;
@@ -46,7 +46,7 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 		throw emitShapeFailure({ code: 'portable-flag-untestable', ownerKind: kind, message: `cannot test ${kind}'s flag ${flag}: ${why}`, details: { flag, why } });
 	};
 	const subjectAt = (flag: string, step: SlotStep): SlotSubject => subjectOf(step.owner, step.slot) ?? refuse(flag, `no number for ${step.owner}'s slot ${step.slot}`);
-	const leafOf = (route: MemberRoute, last: SlotStep): QueryPlan => {
+	const leafOf = (route: SlotRoute, last: SlotStep): QueryPlan => {
 		switch (route.route) {
 			case 'slot':
 				return { op: 'present', ...subjectAt(route.name, last) };
@@ -64,7 +64,7 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 				return refuse(route.name, 'a list\'s delimiter is no slot a route ends in');
 		}
 	};
-	const planOf = (route: MemberRoute): QueryPlan => {
+	const planOf = (route: SlotRoute): QueryPlan => {
 		if (route.spelled === true) return ALWAYS;
 		const into = (steps: readonly SlotStep[], of: QueryPlan): QueryPlan =>
 			steps.reduceRight<QueryPlan>((inner, step) => ({ op: 'child', ...subjectAt(route.name, step), ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of: inner }), of);

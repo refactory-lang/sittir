@@ -3,7 +3,7 @@ import { tsname } from '../../../bindings/names.ts';
 import { textValued } from '../../../bindings/vocabulary.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_TS6_TYPE_TESTS, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
-import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type SlotRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
@@ -341,7 +341,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		readonly optional: boolean;
 		readonly present: readonly PresentStep[];
 	}
-	const readOf = (kind: string, route: MemberRoute, sure: Guaranteed, closed: ReadonlySet<string>): RouteRead | { readonly reason: string } | null => {
+	const readOf = (kind: string, route: SlotRoute, sure: Guaranteed, closed: ReadonlySet<string>): RouteRead | { readonly reason: string } | null => {
 		if (route.route === 'presence') return { reason: 'a presence member that is not a flag' };
 		if (route.path === undefined) return { reason: `no path for its ${route.route} route` };
 		const chain = chainOf(kind, route.path, sure, route.list === false);
@@ -397,14 +397,14 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			let name = factoryNameOf(entry);
 			while (names.has(name)) name = `${name}_`;
 			names.add(name);
-			const declared = vocabulary.members(entry.vocab);
+			const declared = vocabulary.slots(entry.vocab);
 			const fields: string[] = [];
 			const written = new Set<string>();
-			const pins = new Map(entry.pins.map((pin) => [pin.member, pin.text]));
+			const pins = new Map(entry.pins.map((pin) => [pin.name, pin.text]));
 			const readsByName = new Map<string, RouteRead[]>();
 			const sure = guaranteedBy(model, entry);
 			const closed = new Set(freeTextClosedBy.get(entry) ?? []);
-			for (const route of token(kind) ? [] : entry.members) {
+			for (const route of token(kind) ? [] : entry.slots) {
 				if (route.flag === true) continue;
 				const pin = pins.get(route.name);
 				const read = pin !== undefined ? { body: q(pin), list: false, optional: false, present: [] } : readOf(kind, route, sure, closed);

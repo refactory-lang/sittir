@@ -82,7 +82,7 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 		return rule === undefined ? undefined : fieldedHeadListOf(rule as Rule<'normalize'>, symbols)?.elementName;
 	};
 	const byList = new Map<string, LeadClaim[]>();
-	for (const member of facts.members) {
+	for (const member of facts.slots) {
 		if (member.leadMatch === undefined || (member.route !== 'nested' && member.route !== 'rename')) continue;
 		const list = member.route === 'nested' ? member.parent : member.owner;
 		const item = itemOf(list);

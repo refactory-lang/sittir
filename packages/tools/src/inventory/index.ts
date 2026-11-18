@@ -80,7 +80,7 @@ export interface BindingsModule {
 }
 
 export function vocabularyMembers(vocabulary: Vocabulary): ReadonlyMap<string, ReadonlySet<string>> {
-	return new Map([...vocabulary.kinds.keys()].map((path) => [path, new Set(vocabulary.members(path).keys())]));
+	return new Map([...vocabulary.kinds.keys()].map((path) => [path, new Set(vocabulary.slots(path).keys())]));
 }
 
 export async function bindingsModule(grammar: GrammarName): Promise<BindingsModule> {
@@ -96,7 +96,7 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		base,
 		wordMatcher: unbound.nodeMap.wordMatcher,
 			layerRules: layer.rules,
-		vocabMembers: vocabularyMembers(input.vocabulary),
+		vocabSlots: vocabularyMembers(input.vocabulary),
 		routes: resolveRoutes(input),
 		model: input.model
 	});
@@ -142,7 +142,7 @@ export function grammarBindingsSummary(grammar: string, { bindings, report }: Om
 	const lines = [
 		`${grammar}: ${Object.keys(bindings.renames).length} renames, ${Object.keys(report.aliases).length} aliases, ${report.fieldRenames.length} field renames, ${report.fieldWraps.length} field wraps, ${bindings.splits.length} splits, ${sites} patch sites (${bindings.patches.size} rules)`,
 		`  claims realized as kinds ${pct(report.realizedKinds.length + report.realizedByParent.length, report.claims)} (${report.realizedByParent.length} by the parent)`,
-		`  members realized as field names ${pct(report.realizedMembers.length, report.members)}; implicit routes fielded ${report.implicitMembers.length}${report.implicitMembers.length > 0 ? ` (${report.implicitMembers.join(', ')})` : ''}`
+		`  members realized as field names ${pct(report.realizedSlots.length, report.slots)}; implicit routes fielded ${report.implicitSlots.length}${report.implicitSlots.length > 0 ? ` (${report.implicitSlots.join(', ')})` : ''}`
 	];
 	const byCause = new Map<string, string[]>();
 	for (const r of report.residue) (byCause.get(r.cause) ?? byCause.set(r.cause, []).get(r.cause)!).push(r.row);
@@ -162,9 +162,9 @@ export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): 
 		if (!vocabulary.kinds.has(v)) out.push(`${v}: claimed, but no vocabulary interface has this kind`);
 	}
 	const undeclared = (v: string, member: string, how: string): void => {
-		if (vocabulary.kinds.has(v) && !vocabulary.members(v).has(member)) out.push(`${v}.${member}: ${how}, but its interface does not declare it`);
+		if (vocabulary.kinds.has(v) && !vocabulary.slots(v).has(member)) out.push(`${v}.${member}: ${how}, but its interface does not declare it`);
 	};
-	for (const [v, members] of d.members) {
+	for (const [v, members] of d.slots) {
 		for (const member of members.keys()) undeclared(v, member, 'routed');
 	}
 	for (const [v, holes] of d.holes) {
@@ -177,7 +177,7 @@ export function summarize(d: Derivation): string {
 	const lines: string[] = [];
 	const total = [...d.unmapped.values()].reduce((a, b) => a + b, 0);
 	lines.push(
-		`vocab kinds ${d.allvocab.size}, prefixes ${d.prefixes.size}, content-derived ${d.contentDerived.size}, members ${[...d.members.values()].reduce((a, m) => a + m.size, 0)}`
+		`vocab kinds ${d.allvocab.size}, prefixes ${d.prefixes.size}, content-derived ${d.contentDerived.size}, members ${[...d.slots.values()].reduce((a, m) => a + m.size, 0)}`
 	);
 	lines.push(
 		`refinements ${d.refinements.size}, unmapped references ${total} over ${d.unmapped.size} kinds, set-inclusion cycles ${d.cycles.length === 0 ? 'none' : d.cycles.join('; ')}`
@@ -201,7 +201,7 @@ export function summarize(d: Derivation): string {
 
 export function membersTable(d: Derivation): string {
 	const lines: string[] = [];
-	for (const v of [...d.members.keys()].sort()) {
+	for (const v of [...d.slots.keys()].sort()) {
 		const claimers = d.claimers.get(v) ?? new Set();
 		if (claimers.size < 2 || d.refinements.has(v)) continue;
 		lines.push(
@@ -210,7 +210,7 @@ export function membersTable(d: Derivation): string {
 				.sort()
 				.join('')}]`
 		);
-		for (const [cm, f] of [...(d.members.get(v) ?? [])].sort(([a], [b]) => a.localeCompare(b))) {
+		for (const [cm, f] of [...(d.slots.get(v) ?? [])].sort(([a], [b]) => a.localeCompare(b))) {
 			const tag = [...f.grammars]
 				.map((g) => g.charAt(0))
 				.sort()

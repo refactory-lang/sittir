@@ -17,7 +17,7 @@ import {
 	type BindingFacts,
 	type ClaimFact,
 	type GrammarBindings,
-	type MemberRoute,
+	type SlotRoute,
 	type ModelNode,
 	type ModelSlot,
 	type SlotModel,
@@ -48,15 +48,15 @@ const FACTS: BindingFacts = {
 		claim('expression.call.method', 'call', { tokens: ['.'] }),
 		claim('type.unit', 'nope')
 	],
-	members: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null }],
+	slots: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null }],
 	containers: [],
 	templates: [],
 	unclaimed: []
 };
 const FILE = 'packages/bindtest/bindings.scm';
 const LEADS = [lead('parameters_elements', 'item', 'receiver', match('required_parameter', { pattern: [match('this')] }, 'this_parameter'), match('attributed_parameter', [match('self_parameter')]))];
-const named = (...names: string[]): MemberRoute[] => names.map((name) => ({ route: 'kind', name, kind: name, path: undefined }));
-const NO_MEMBERS: ReadonlyMap<string, readonly MemberRoute[]> = new Map();
+const named = (...names: string[]): SlotRoute[] => names.map((name) => ({ route: 'kind', name, kind: name, path: undefined }));
+const NO_MEMBERS: ReadonlyMap<string, readonly SlotRoute[]> = new Map();
 const NO_MODEL: SlotModel = new Map();
 const node = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 	kind,
@@ -85,7 +85,7 @@ const MODEL: SlotModel = new Map([
 	['call', node('call')]
 ]);
 const ROUTES = {
-	members: NO_MEMBERS,
+	slots: NO_MEMBERS,
 	vocabOf: new Map([
 		['let_item', 'declaration.variable'],
 		['call', 'expression.call'],
@@ -136,16 +136,16 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe('deriveGrammarBindings', () => {
 	it("renames each plain claimed kind to its path's bound name, subkind first", () => {
-		const { bindings } = bind({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings } = bind({ file: FILE, facts: FACTS, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.renames).toEqual({ let_item: 'variable_declaration', call: 'call_expression' });
 	});
 
 	it('makes no grammar change for a slot a claim drops', () => {
 		const facts: BindingFacts = {
 			...FACTS,
-			members: [{ route: 'dropped', owner: 'let_item', field: 'left', kind: null, after: null, anchor: null }]
+			slots: [{ route: 'dropped', owner: 'let_item', field: 'left', kind: null, after: null, anchor: null }]
 		};
-		const { bindings, report } = bind({ file: FILE, facts, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings, report } = bind({ file: FILE, facts, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.patches).toEqual(new Map());
 		expect(report.residue.filter((r) => r.row.startsWith('let_item.'))).toEqual([]);
 	});
@@ -158,12 +158,12 @@ describe('deriveGrammarBindings', () => {
 				members: [{ type: 'BLANK' }, { type: 'STRING', value: 'let' }, { type: 'FIELD', name: 'left', content: { type: 'SYMBOL', name: 'identifier' } }, { type: 'STRING', value: ';' }]
 			}
 		};
-		const { bindings } = bind({ layerRules, file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		const { bindings } = bind({ layerRules, file: FILE, facts: FACTS, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '2', edit: { field: 'name' } }]]]]));
 	});
 
 	it("patches a member routed to a field of another name into a field of the member's name", () => {
-		const { bindings } = bind({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings } = bind({ file: FILE, facts: FACTS, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
 	});
 
@@ -171,24 +171,24 @@ describe('deriveGrammarBindings', () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [...FACTS.claims, claim('declaration.constant', 'let_item')],
-			members: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]
+			slots: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]
 		};
 		const patches = (constant: ReadonlySet<string>) =>
-			bind({ file: FILE, facts, base, vocabMembers: new Map([...VOCABULARY, ['declaration.constant', constant]]), routes: ROUTES, model: NO_MODEL }).bindings.patches;
+			bind({ file: FILE, facts, base, vocabSlots: new Map([...VOCABULARY, ['declaration.constant', constant]]), routes: ROUTES, model: NO_MODEL }).bindings.patches;
 		expect(patches(new Set())).toEqual(new Map());
 		expect(patches(new Set(['name']))).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
 	});
 
 	it('patches no field for a member an anchor ties to its neighbour: its slot is a position, not a field', () => {
 		const left = { route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null } as const;
-		const facts = { ...FACTS, members: [{ ...left, adjacent: { previous: { field: null, kind: 'identifier', after: null, anchor: null } } }] };
-		const { bindings, report } = bind({ file: FILE, facts, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const facts = { ...FACTS, slots: [{ ...left, adjacent: { previous: { field: null, kind: 'identifier', after: null, anchor: null } } }] };
+		const { bindings, report } = bind({ file: FILE, facts, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.patches).toEqual(new Map());
 		expect(report.residue).toContainEqual({ cause: 'positional child', row: 'let_item.name' });
 	});
 
 	it('leaves each claim it does not turn into a grammar change in the residue, with the reason', () => {
-		const { report } = bind({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { report } = bind({ file: FILE, facts: FACTS, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(report.residue).toEqual([
 			{ cause: 'token refinement', row: 'call → expression.call.method' },
 			{ cause: 'not a base rule', row: 'nope → type.unit' }
@@ -199,13 +199,13 @@ describe('deriveGrammarBindings', () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [claim('expression.call', 'call'), claim('expression.invocation', 'call')],
-			members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }]
+			slots: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }]
 		};
 		const { bindings, report } = bind({
 			file: FILE,
 			facts,
 			base,
-			vocabMembers: new Map([...VOCABULARY, ['expression.invocation', new Set<string>()]]),
+			vocabSlots: new Map([...VOCABULARY, ['expression.invocation', new Set<string>()]]),
 			routes: ROUTES,
 			model: MODEL
 		});
@@ -248,9 +248,9 @@ describe('deriveGrammarBindings', () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [claim('expression', '_item'), claim('expression.let', 'let_item'), claim('expression.call', 'call', { children: [parenthesized] })],
-			members: []
+			slots: []
 		};
-		const { bindings, report } = bind({ file: FILE, facts, base, vocabMembers: VOCABULARY, routes: ROUTES, model });
+		const { bindings, report } = bind({ file: FILE, facts, base, vocabSlots: VOCABULARY, routes: ROUTES, model });
 		expect(bindings.renames.let_item).toBe('let_expression');
 		expect(bindings.renames).not.toHaveProperty('call');
 		expect(report.residue).toContainEqual({ cause: 'child-pattern refinement', row: 'call → expression.call' });
@@ -285,28 +285,28 @@ describe('deriveGrammarBindings', () => {
 			['call', form('call')]
 		]);
 		const parenthesized = { subject: { up: 0, down: [] }, kinds: ['identifier'], captured: false };
-		const facts: BindingFacts = { ...FACTS, claims: [claim('expression', '_item'), claim('expression.call', 'call', { children: [parenthesized] })], members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }] };
-		const routes = { members: NO_MEMBERS, vocabOf: new Map([['_item', 'expression'], ['call', 'expression']]) };
-		const { report } = bind({ file: FILE, facts, base, vocabMembers: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set<string>()]]), routes, model });
+		const facts: BindingFacts = { ...FACTS, claims: [claim('expression', '_item'), claim('expression.call', 'call', { children: [parenthesized] })], slots: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }] };
+		const routes = { slots: NO_MEMBERS, vocabOf: new Map([['_item', 'expression'], ['call', 'expression']]) };
+		const { report } = bind({ file: FILE, facts, base, vocabSlots: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set<string>()]]), routes, model });
 		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'call.callee' });
-		const declared = bind({ file: FILE, facts, base, vocabMembers: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set(['callee'])]]), routes, model });
+		const declared = bind({ file: FILE, facts, base, vocabSlots: new Map([['expression', new Set(['identifier'])], ['expression.call', new Set(['callee'])]]), routes, model });
 		expect(declared.report.residue).not.toContainEqual({ cause: 'member not in the vocabulary', row: 'call.callee' });
 	});
 
 	describe('two kinds claiming one path', () => {
-		const sharing = (members: BindingFacts['members']): BindingFacts => ({
+		const sharing = (members: BindingFacts['slots']): BindingFacts => ({
 			...FACTS,
 			claims: [claim('expression.call', 'call'), claim('expression.call', 'let_item')],
-			members
+			slots: members
 		});
 		const vocab = new Map([['expression.call', new Set(['name', 'callee', 'private', 'key'])]]);
-		const routed = (call: readonly string[], letItem: readonly string[]): ReadonlyMap<string, readonly MemberRoute[]> =>
+		const routed = (call: readonly string[], letItem: readonly string[]): ReadonlyMap<string, readonly SlotRoute[]> =>
 			new Map([
 				['call', named(...call)],
 				['let_item', named(...letItem)]
 			]);
-		const derive = (facts: BindingFacts, routedMembers: ReadonlyMap<string, readonly MemberRoute[]>, model: SlotModel = NO_MODEL) =>
-			bind({ file: FILE, facts, base, vocabMembers: vocab, routes: { members: routedMembers, vocabOf: new Map([['call', 'expression.call'], ['let_item', 'expression.call']]) }, model });
+		const derive = (facts: BindingFacts, routedMembers: ReadonlyMap<string, readonly SlotRoute[]>, model: SlotModel = NO_MODEL) =>
+			bind({ file: FILE, facts, base, vocabSlots: vocab, routes: { slots: routedMembers, vocabOf: new Map([['call', 'expression.call'], ['let_item', 'expression.call']]) }, model });
 
 		it("aliases both to the path's name when they supply the same members, as a form restricted to a context does", () => {
 			const { report } = derive(sharing([]), routed(['parameters', 'body'], ['body', 'parameters']));
@@ -343,7 +343,7 @@ describe('deriveGrammarBindings', () => {
 			const facts = {
 				...FACTS,
 				claims: [claim('expression.call', 'call'), claim('expression.call', 'identifier')],
-				members: []
+				slots: []
 			};
 			const { bindings, report } = derive(facts, NO_MEMBERS);
 			expect(report.aliases).toEqual({});
@@ -358,7 +358,7 @@ describe('deriveGrammarBindings', () => {
 			const facts = {
 				...FACTS,
 				claims: [claim('expression.call', 'nope'), claim('expression.call', 'call'), claim('expression.call', 'let_item')],
-				members: []
+				slots: []
 			};
 			const { bindings, report } = derive(facts, routed([], ['name']));
 			expect(report.aliases).toEqual({});
@@ -371,7 +371,7 @@ describe('deriveGrammarBindings', () => {
 		});
 
 		it('keeps the further kind apart when a flag reads it', () => {
-			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' }]);
+			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', slot: 'callee', kind: 'let_item' }]);
 			const { bindings, report } = derive(facts, routed([], []));
 			expect(report.aliases).toEqual({});
 			expect(bindings.renames).toEqual({ call: 'call_expression' });
@@ -382,7 +382,7 @@ describe('deriveGrammarBindings', () => {
 		});
 
 		it('realizes a flag without a field edit', () => {
-			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' }]);
+			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', slot: 'callee', kind: 'let_item' }]);
 			const { bindings, report } = derive(facts, routed([], []));
 			expect(bindings.patches.size).toBe(0);
 			expect(report.residue.filter((r) => r.row === 'call.private')).toEqual([]);
@@ -393,18 +393,18 @@ describe('deriveGrammarBindings', () => {
 		const predictedKinds = base.predictedKinds;
 		if (predictedKinds === undefined || !('entries' in predictedKinds)) throw new Error('fixture grammar carries a predicted catalog');
 		const stamped = { ...base, predictedKinds: { ...predictedKinds, entries: predictedKinds.entries.map((e) => (e.kind === 'let_item' ? { ...e, hidden: true } : e)) } };
-		const { bindings } = bind({ file: FILE, facts: FACTS, base: stamped, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings } = bind({ file: FILE, facts: FACTS, base: stamped, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.renames).toMatchObject({ let_item: 'variable_declaration' });
 	});
 
 	it('derives the leads and their refusals beside the other bindings', () => {
-		const { bindings, diagnostics } = bind({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings, diagnostics } = bind({ file: FILE, facts: FACTS, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.leads).toEqual([]);
 		expect(diagnostics).toEqual([]);
 	});
 
 	it('leaves a member its vocabulary kind does not declare in the residue', () => {
-		const { bindings, report } = bind({ file: FILE, facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]), routes: ROUTES, model: MODEL });
+		const { bindings, report } = bind({ file: FILE, facts: FACTS, base, vocabSlots: new Map([['declaration.variable', new Set<string>()]]), routes: ROUTES, model: MODEL });
 		expect(bindings.patches.size).toBe(0);
 		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'let_item.name' });
 	});
@@ -433,9 +433,9 @@ describe('deriveGrammarBindings', () => {
 				claim('declaration.method', 'fn_x', { toplevel: false, within: ['block_x', 'class_x'] }),
 				claim('declaration.method', 'fn_x', { toplevel: false, within: ['deco_x', 'block_x', 'class_x'] })
 			],
-			members: []
+			slots: []
 		};
-		const { bindings } = bind({ file: FILE, facts, base: { ...base, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		const { bindings } = bind({ file: FILE, facts, base: { ...base, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 		const body = { field: 'body', kind: 'block_x', as: 'block_x_class_x' };
 		expect(bindings.splits).toEqual([
 			{ owner: 'trait_x', path: [{ field: 'body', kind: 'list_x', as: 'trait_x_body' }, { field: null, kind: 'fn_x', as: null }], as: 'method_declaration' },
@@ -460,9 +460,9 @@ describe('deriveGrammarBindings', () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [claim('statement.block', 'list_x'), claim('statement.block', 'inline_x'), claim('declaration.method', 'fn_x', { toplevel: false, within: ['list_x', 'trait_x'] })],
-			members: []
+			slots: []
 		};
-		const { bindings, report } = bind({ file: FILE, facts, base: { ...base, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		const { bindings, report } = bind({ file: FILE, facts, base: { ...base, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 		expect(report.aliases).toEqual({ list_x: 'block_statement', inline_x: 'block_statement' });
 		expect(bindings.splits).toEqual([
 			{ owner: 'trait_x', path: [{ field: 'body', kind: 'block_statement', as: 'trait_x_body' }, { field: null, kind: 'fn_x', as: null }], as: 'method_declaration' }
@@ -479,8 +479,8 @@ describe('deriveGrammarBindings', () => {
 			list_z: { type: 'SEQ', members: [{ type: 'STRING', value: '[' }, { type: 'REPEAT', content: shown }, { type: 'STRING', value: ']' }] },
 			_arg_z: { type: 'SEQ', members: [{ type: 'STRING', value: '#' }, symbol('identifier')] }
 		};
-		const facts: BindingFacts = { ...FACTS, claims: [claim('declaration.method', 'arg_z', { toplevel: false, within: ['call_z_elements', 'call_z'] })], members: [] };
-		const { bindings } = bind({ file: FILE, facts, base: { ...base, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		const facts: BindingFacts = { ...FACTS, claims: [claim('declaration.method', 'arg_z', { toplevel: false, within: ['call_z_elements', 'call_z'] })], slots: [] };
+		const { bindings } = bind({ file: FILE, facts, base: { ...base, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 		expect(bindings.splits).toEqual([{ owner: 'call_z', path: [{ field: null, kind: 'arg_z', as: null }], as: 'method_declaration', copies: '_arg_z' }]);
 	});
 
@@ -496,10 +496,10 @@ describe('deriveGrammarBindings', () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [claim('declaration.method', 'fn_y', { toplevel: false, within: ['stmt_y', 'block_y', 'class_y'] })],
-			members: []
+			slots: []
 		};
 		const grammar = { ...base, rules, supertypes: [symbol('stmt_y')] };
-		const { bindings } = bind({ file: FILE, facts, base: grammar, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		const { bindings } = bind({ file: FILE, facts, base: grammar, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 		expect(bindings.splits).toEqual([
 			{
 				owner: 'class_y',
@@ -543,7 +543,7 @@ describe('deriveGrammarBindings', () => {
 			});
 		};
 		const derive = (claims: readonly ClaimFact[]) =>
-			bind({ file: FILE, facts: { ...FACTS, claims, members: [] }, base: literalGrammar(), vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+			bind({ file: FILE, facts: { ...FACTS, claims, slots: [] }, base: literalGrammar(), vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 
 		it('splits beside its source at the site it names, through a supertype the path has to name', () => {
 			const { bindings, diagnostics } = derive([literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor')]);
@@ -566,7 +566,7 @@ describe('deriveGrammarBindings', () => {
 			const rules = { ...grammar.rules, trait_m: { type: 'SEQ', members: [{ type: 'STRING', value: 'trait' }, { type: 'FIELD', name: 'body', content: { type: 'REPEAT', content: symbol('member_m') } }] } };
 			const minting = (owner: string) => claim('declaration.method', 'meth_plain', { toplevel: false, within: ['member_m', owner] });
 			const claims = [minting('class_m'), minting('trait_m'), literalClaim('method_declaration', [], 'prop_id', 'constructor')];
-			const { bindings, diagnostics, report } = bind({ file: FILE, facts: { ...FACTS, claims, members: [] }, base: { ...grammar, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+			const { bindings, diagnostics, report } = bind({ file: FILE, facts: { ...FACTS, claims, slots: [] }, base: { ...grammar, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 			expect(diagnostics).toEqual([]);
 			expect(report.residue).toEqual([]);
 			const literal = { field: 'name', leaf: 'prop_id', texts: ['constructor'], absent: [], relax: [] };
@@ -597,7 +597,7 @@ describe('deriveGrammarBindings', () => {
 				closed_m: { type: 'CHOICE', members: [relaxed('prop_id', 'get'), relaxed('prop_id', 'set')] },
 				seq_m: { type: 'CHOICE', members: [{ type: 'SEQ', members: [{ type: 'STRING', value: '(' }, symbol('identifier'), { type: 'STRING', value: ')' }] }, relaxed('identifier', 'get')] }
 			};
-			const { bindings, diagnostics } = bind({ file: FILE, facts: { ...FACTS, claims: [literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor')], members: [] }, base: { ...grammar, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+			const { bindings, diagnostics } = bind({ file: FILE, facts: { ...FACTS, claims: [literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor')], slots: [] }, base: { ...grammar, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 			expect(diagnostics).toEqual([]);
 			expect(bindings.splits.map((split) => split.literal?.relax)).toEqual([
 				[
@@ -615,7 +615,7 @@ describe('deriveGrammarBindings', () => {
 			const both = (child: string) => ({ type: 'SEQ', members: [{ type: 'FIELD', name: 'left', content: symbol(child) }, { type: 'STRING', value: '=' }, { type: 'FIELD', name: 'right', content: symbol(child) }] });
 			const rules = { ...grammar.rules, assign_m: both('meth_plain'), texts_m: both('text_m') };
 			const claims = [literalClaim('meth_plain', ['assign_m'], 'prop_id', 'constructor'), claim('declaration.method', 'text_m', { toplevel: false, within: ['texts_m'] })];
-			const { bindings, report } = bind({ file: FILE, facts: { ...FACTS, claims, members: [] }, base: { ...grammar, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+			const { bindings, report } = bind({ file: FILE, facts: { ...FACTS, claims, slots: [] }, base: { ...grammar, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 			expect(bindings.splits).toEqual([]);
 			expect(report.residue).toEqual([
 				{ cause: 'placement reaches a kind through several fields', row: 'meth_plain → declaration.constructor' },
@@ -700,7 +700,7 @@ export default grammar(
 			file: FILE,
 			facts: FACTS,
 			base,
-			vocabMembers: VOCABULARY,
+			vocabSlots: VOCABULARY,
 			routes: ROUTES,
 			model: NO_MODEL
 		});
@@ -916,19 +916,19 @@ describe('a child that shares a union slot', () => {
 	const facts: BindingFacts = {
 		...FACTS,
 		claims: [claim("expression.call", "call")],
-		members: [{ route: "rename", owner: "call", name: "callee", field: null, kind: "identifier", after: null, anchor: null }]
+		slots: [{ route: "rename", owner: "call", name: "callee", field: null, kind: "identifier", after: null, anchor: null }]
 	};
 
 	it("takes no field wrap and is realized as a member when its slot holds other kinds too", () => {
-		const { bindings, report } = bind({ file: FILE, facts, base: union, vocabMembers: vocab, routes: ROUTES, model: modelWith(["identifier", "number"]) });
+		const { bindings, report } = bind({ file: FILE, facts, base: union, vocabSlots: vocab, routes: ROUTES, model: modelWith(["identifier", "number"]) });
 		expect(report.fieldWraps).toEqual([]);
 		expect(report.fieldRenames).toEqual([]);
-		expect(report.realizedMembers).toEqual(["call.callee"]);
+		expect(report.realizedSlots).toEqual(["call.callee"]);
 		expect(bindings.patches.get("call")).toBeUndefined();
 	});
 
 	it("still wraps a child that sits alone in its slot", () => {
-		const { bindings, report } = bind({ file: FILE, facts, base: lone, vocabMembers: vocab, routes: ROUTES, model: modelWith(["identifier"]) });
+		const { bindings, report } = bind({ file: FILE, facts, base: lone, vocabSlots: vocab, routes: ROUTES, model: modelWith(["identifier"]) });
 		expect(report.fieldWraps).toEqual([{ owner: "call", field: "callee", target: { symbol: "identifier" } }]);
 		expect(bindings.patches.get("call")).toEqual([[{ path: "0/0", edit: { field: "callee" } }]]);
 	});
@@ -1004,9 +1004,9 @@ describe('a claim on a supertype owner', () => {
 			['clause_items', node('clause_items', { modelType: 'list', elementKinds: ['item'], slots: [slot('item', ['item'], true)] })]
 		]);
 	const rename = (owner: string, name: string, field: string) => ({ route: 'rename', owner, name, field, kind: null, after: null, anchor: null }) as const;
-	const factsOf = (...members: ReturnType<typeof rename>[]): BindingFacts => ({ ...FACTS, claims: [], members });
+	const factsOf = (...members: ReturnType<typeof rename>[]): BindingFacts => ({ ...FACTS, claims: [], slots: members });
 	const routes = {
-		members: NO_MEMBERS,
+		slots: NO_MEMBERS,
 		vocabOf: new Map([
 			['arm', 'clause.arm'],
 			['clause', 'clause.resource']
@@ -1017,7 +1017,7 @@ describe('a claim on a supertype owner', () => {
 		['clause.resource', new Set(['items'])]
 	]);
 	const derive = (base: RawGrammar, model: SlotModel, ...members: ReturnType<typeof rename>[]) =>
-		bind({ file: FILE, facts: factsOf(...members), base, vocabMembers: vocab, routes, model });
+		bind({ file: FILE, facts: factsOf(...members), base, vocabSlots: vocab, routes, model });
 
 	it("renames the field at each form that holds it, and leaves a form holding no such member alone", () => {
 		const { bindings, report } = derive(forms, modelOf(), rename('arm', 'match', 'pattern'));
@@ -1026,7 +1026,7 @@ describe('a claim on a supertype owner', () => {
 			{ owner: 'arm_block', from: 'pattern', to: 'match' }
 		]);
 		expect([...bindings.patches.keys()]).toEqual(['arm_block', 'arm_comma']);
-		expect(report.realizedMembers).toEqual(['arm.match']);
+		expect(report.realizedSlots).toEqual(['arm.match']);
 		expect(report.residue).toEqual([]);
 	});
 
@@ -1036,7 +1036,7 @@ describe('a claim on a supertype owner', () => {
 			{ owner: 'clause_bare', from: 'item', to: 'items' },
 			{ owner: 'clause_paren', from: 'items_list', to: 'items' }
 		]);
-		expect(report.realizedMembers).toEqual(['clause.items']);
+		expect(report.realizedSlots).toEqual(['clause.items']);
 	});
 
 	it('refuses the row when a form holds the member\'s kinds only under a field the grammar names otherwise', () => {
@@ -1058,7 +1058,7 @@ describe('a claim on a supertype owner', () => {
 		const { bindings, report } = derive(taken, model, rename('arm', 'match', 'pattern'));
 		expect(report.fieldRenames).toEqual([]);
 		expect(bindings.patches).toEqual(new Map());
-		expect(report.realizedMembers).toEqual([]);
+		expect(report.realizedSlots).toEqual([]);
 		expect(report.residue).toEqual([{ cause: 'member name is already a field of the owner', row: 'arm.match' }]);
 	});
 
@@ -1066,6 +1066,6 @@ describe('a claim on a supertype owner', () => {
 		const { bindings, report } = derive(forms, modelOf(), rename('arm', 'pattern', 'pattern'));
 		expect(report.fieldRenames).toEqual([]);
 		expect(bindings.patches).toEqual(new Map());
-		expect(report.realizedMembers).toEqual(['arm.pattern']);
+		expect(report.realizedSlots).toEqual(['arm.pattern']);
 	});
 });

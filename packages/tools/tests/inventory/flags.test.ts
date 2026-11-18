@@ -35,7 +35,7 @@ describe('the vocabulary flags', () => {
 		const vocabulary = await readVocabulary(dir);
 		rmSync(dir, { recursive: true, force: true });
 		expect([...vocabulary.flags].sort()).toEqual(['exclusive', 'writable']);
-		expect(vocabulary.members('expression.complex').get('sign')).toEqual({ optional: true, flag: false });
-		expect(vocabulary.members('expression.complex').get('writable')).toEqual({ optional: true, flag: true });
+		expect(vocabulary.slots('expression.complex').get('sign')).toEqual({ optional: true, flag: false });
+		expect(vocabulary.slots('expression.complex').get('writable')).toEqual({ optional: true, flag: true });
 	});
 });

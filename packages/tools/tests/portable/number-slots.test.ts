@@ -11,7 +11,7 @@ interface Classes {
 const classesOf = async (grammar: 'python' | 'rust' | 'typescript'): Promise<Readonly<Record<string, Classes>>> => {
 	const [input] = await loadInputs([grammar]);
 	const { vocabulary, model } = input!;
-	const scalarValued = (path: string): boolean => vocabulary.kinds.has(path) && vocabulary.members(path).get('$value')?.scalar !== undefined;
+	const scalarValued = (path: string): boolean => vocabulary.kinds.has(path) && vocabulary.slots(path).get('$value')?.scalar !== undefined;
 	const kinds = [...resolveRoutes(input!).vocabOf].filter(([, path]) => scalarValued(path)).map(([kind]) => kind);
 	return Object.fromEntries(
 		kinds.sort().flatMap((kind) => {

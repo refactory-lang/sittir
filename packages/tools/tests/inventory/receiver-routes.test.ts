@@ -15,7 +15,7 @@ for (const [grammar, owner] of [
 		const input = inputs.find((input) => input.grammar === grammar)!;
 		const entries = resolveRoutes(input).readEntries.get(owner) ?? [];
 		const members = entries
-			.flatMap((entry) => entry.members)
+			.flatMap((entry) => entry.slots)
 			.filter((member) => member.name === 'parameters' && member.route === 'nested');
 		expect(members.length).toBeGreaterThanOrEqual(2);
 		for (const member of members) {

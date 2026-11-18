@@ -13,7 +13,7 @@ import {
 	vocabularyDisagreements,
 	vocabularyMembers
 } from '../../src/inventory/index.ts';
-import { type Derivation, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
+import { type Derivation, bindingPatterns, camel, levelSlots } from '@sittir/codegen/bindings';
 import { type Vocabulary, readVocabulary } from '@sittir/codegen/bindings';
 import { GENERATED_FILES } from '../../src/vocabulary/write.ts';
 
@@ -82,7 +82,7 @@ describe('deriveVocabulary', () => {
 		d = await deriveVocabulary();
 	}, 120_000);
 	it('reads a minted text kind as the token text it replaced', () => {
-		const format = d.members.get('expression.interpolation.format');
+		const format = d.slots.get('expression.interpolation.format');
 		const kinds = [...(format?.values() ?? [])].flatMap((member) => [...member.kinds]);
 		expect(kinds).toContain('text:[^{}\\n]+');
 		expect(d.unmapped.has('<python:format_specifier_text>')).toBe(false);
@@ -110,7 +110,7 @@ describe('deriveVocabulary', () => {
 		expect(d.cycles).toEqual([]);
 	});
 	it('maps a python match body to its clause and no longer leaves the match block placeholder unmapped', () => {
-		const body = levelMembers(d, 'statement.match').get('body');
+		const body = levelSlots(d, 'statement.match').get('body');
 		expect(body?.kinds).toContain('clause.case.match');
 		expect(d.unmapped.has('<python:_match_block>')).toBe(false);
 		expect(d.unmapped.has('<python:match_block>')).toBe(false);
@@ -120,10 +120,10 @@ describe('deriveVocabulary', () => {
 		expect(total).toBeLessThanOrEqual(CEILING.unmapped);
 	});
 	it('makes a member required only when every claiming grammar carries it and every claimed child does', () => {
-		const fn = levelMembers(d, 'declaration.function');
+		const fn = levelSlots(d, 'declaration.function');
 		expect(fn.get('name')?.optional).toBe(false);
 		expect(fn.get('parameters')?.optional).toBe(false);
-		const method = levelMembers(d, 'declaration.method');
+		const method = levelSlots(d, 'declaration.method');
 		expect(method.get('name')?.optional).toBe(false);
 		expect(method.get('parameters')?.optional).toBe(false);
 		expect(method.get('decorators')?.optional).toBe(true);
@@ -138,9 +138,9 @@ describe('deriveVocabulary', () => {
 		expect([...(constant?.literals.values() ?? [])].flatMap((texts) => [...texts])).toEqual(['const']);
 	});
 	it('lands a container pattern capture only on the kinds its element slot names directly', () => {
-		expect(levelMembers(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);
-		expect(levelMembers(d, 'declaration.function').get('decorators')?.grammars.has('python')).toBe(true);
-		expect(levelMembers(d, 'declaration.method').get('decorators')?.grammars.has('typescript')).toBe(true);
+		expect(levelSlots(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);
+		expect(levelSlots(d, 'declaration.function').get('decorators')?.grammars.has('python')).toBe(true);
+		expect(levelSlots(d, 'declaration.method').get('decorators')?.grammars.has('typescript')).toBe(true);
 		for (const v of [
 			'declaration.enum_member',
 			'declaration.field',
@@ -151,63 +151,63 @@ describe('deriveVocabulary', () => {
 			'declaration.type_parameter.lifetime',
 			'declaration.type_parameter.value'
 		])
-			expect(d.members.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
+			expect(d.slots.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
 		for (const v of ['statement.block', 'declaration.function', 'declaration.class', 'declaration.variable'])
-			expect(d.members.get(v)?.has('declare') ?? false, v).toBe(false);
+			expect(d.slots.get(v)?.has('declare') ?? false, v).toBe(false);
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
 	});
 	it('keeps rest-type markers out of the portable members without losing the held type', () => {
-		const rest = levelMembers(d, 'type.rest');
+		const rest = levelSlots(d, 'type.rest');
 		expect(rest.has('type')).toBe(true);
 		for (const grammar of ['python', 'typescript']) expect(rest.get('type')?.grammars.has(grammar), grammar).toBe(true);
 		expect(rest.has('operator')).toBe(false);
-		expect(levelMembers(d, 'type.rest.map').has('operator')).toBe(false);
+		expect(levelSlots(d, 'type.rest.map').has('operator')).toBe(false);
 	});
 	it('keeps bounds introducers out of the portable members without losing the bounds', () => {
-		expect([...levelMembers(d, 'clause.bounds').keys()]).toEqual([]);
-		const parameter = levelMembers(d, 'declaration.type_parameter');
+		expect([...levelSlots(d, 'clause.bounds').keys()]).toEqual([]);
+		const parameter = levelSlots(d, 'declaration.type_parameter');
 		for (const grammar of ['rust', 'typescript']) expect(parameter.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
 	});
 	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
-		const argument = d.members.get('element.type_argument');
+		const argument = d.slots.get('element.type_argument');
 		expect(argument?.has('constraint')).toBe(false);
 		expect(argument?.get('bounds')?.kinds.has('identifier')).toBe(true);
 		expect(argument?.get('bounds')?.kinds.has('clause.bounds')).toBe(false);
 		expect(argument?.get('bounds')?.multiple).toBe(true);
 		expect(argument?.get('bounds')?.optional).toBe(true);
 		expect(argument?.get('argument')?.kinds.has('element.type_binding')).toBe(true);
-		expect(d.members.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
+		expect(d.slots.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
 			new Set(['element.type_argument'])
 		);
 	});
 	it('claims a container whose capture has no direct target as a vocabulary kind of its own', () => {
-		const ambient = d.members.get('declaration.ambient');
+		const ambient = d.slots.get('declaration.ambient');
 		expect([...(ambient?.keys() ?? [])]).toEqual(['body']);
 		expect(ambient?.get('body')?.kinds.has('statement.block')).toBe(true);
-		expect(levelMembers(d, 'declaration.ambient').get('body')?.optional).toBe(false);
-		expect([...(d.members.get('statement.labeled')?.keys() ?? [])].sort()).toEqual(['body', 'label']);
+		expect(levelSlots(d, 'declaration.ambient').get('body')?.optional).toBe(false);
+		expect([...(d.slots.get('statement.labeled')?.keys() ?? [])].sort()).toEqual(['body', 'label']);
 		for (const v of ['statement.expression', 'statement.return', 'statement.if'])
-			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(false);
+			expect(d.slots.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(false);
 		for (const v of ['statement.block', 'statement.loop.counted', 'statement.loop.for_each', 'statement.loop.while', 'statement.loop.do_while'])
-			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(true);
+			expect(d.slots.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(true);
 	});
 	it('lifts a capture nested inside a container child onto the claimed kind', () => {
-		const cls = levelMembers(d, 'declaration.class');
+		const cls = levelSlots(d, 'declaration.class');
 		expect(cls.has('extends')).toBe(true);
 		expect(cls.has('implements')).toBe(true);
 		expect(cls.has('heritage')).toBe(false);
 	});
 	it('renames the slot a positional wildcard capture stands at', () => {
-		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument']);
-		expect(d.members.get('expression.propagate')?.has('argument')).toBe(true);
-		expect(d.members.get('expression.propagate')?.has('value')).toBe(false);
+		expect([...(d.slots.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument']);
+		expect(d.slots.get('expression.propagate')?.has('argument')).toBe(true);
+		expect(d.slots.get('expression.propagate')?.has('value')).toBe(false);
 	});
 	it('resolves a declared container, a list and an envelope to the kinds their element admits', () => {
-		const parameters = d.members.get('declaration.function')?.get('parameters')?.kinds ?? new Set();
+		const parameters = d.slots.get('declaration.function')?.get('parameters')?.kinds ?? new Set();
 		expect(parameters.has('declaration.parameter')).toBe(true);
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
-		const body = d.members.get('expression.class')?.get('body');
+		const body = d.slots.get('expression.class')?.get('body');
 		expect([...(body?.kinds ?? [])].sort()).toEqual([
 			'declaration.constructor',
 			'declaration.field',
@@ -228,12 +228,12 @@ describe('deriveVocabulary', () => {
 		expect(body?.multiple).toBe(true);
 	});
 	it('reads a polymorph through its forms, keeping a list form apart from a scalar form', () => {
-		const type = d.members.get('clause.catch')?.get('type');
+		const type = d.slots.get('clause.catch')?.get('type');
 		expect(type?.multiple).toBe(true);
 		expect(type?.scalar).toBe(true);
 	});
 	it('never makes a layout slot a member: an options-block address or a slot of unclaimed kinds', () => {
-		for (const [v, members] of d.members) {
+		for (const [v, members] of d.slots) {
 			for (const name of ['terminator', 'automaticSemicolon', 'stringStart', 'stringEnd', 'stringOpen'])
 				expect(members.has(name), `${v}.${name}`).toBe(false);
 		}
@@ -250,7 +250,7 @@ describe('the authored vocabulary', () => {
 	it('has its scope routed wherever it declares one, but where the ceiling records', async () => {
 		const d = await deriveVocabulary();
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
-		const unrouted = [...d.members].filter(([path, members]) => vocabulary.members(path).has('scope') && !members.has('scope')).map(([path]) => path);
+		const unrouted = [...d.slots].filter(([path, members]) => vocabulary.slots(path).has('scope') && !members.has('scope')).map(([path]) => path);
 		expect(unrouted.sort()).toEqual(CEILING.unroutedScope);
 	}, 120_000);
 	it('reports a template hole its interface does not declare', async () => {
@@ -262,18 +262,18 @@ describe('the authored vocabulary', () => {
 		if (path === undefined || hole === undefined) return;
 		const withoutHole = {
 			...vocabulary,
-			members: (kind: string) => new Map([...vocabulary.members(kind)].filter(([m]) => kind !== path || m !== hole))
+			slots: (kind: string) => new Map([...vocabulary.slots(kind)].filter(([m]) => kind !== path || m !== hole))
 		};
 		expect(vocabularyDisagreements(d, withoutHole)).toContain(`${path}.${hole}: templated, but its interface does not declare it`);
 	}, 120_000);
 	it('needs no declaration for a refinement pinned slot: the read tells it, so it is no member', async () => {
 		const d = await deriveVocabulary();
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
-		const pinned = [...d.refinements].flatMap(([v, r]) => [...r.literals.keys()].map((field) => [v, camel(field)] as const).filter(([, p]) => !d.members.get(v)?.has(p)));
+		const pinned = [...d.refinements].flatMap(([v, r]) => [...r.literals.keys()].map((field) => [v, camel(field)] as const).filter(([, p]) => !d.slots.get(v)?.has(p)));
 		expect(pinned.length).toBeGreaterThan(0);
 		const unpinned = {
 			...vocabulary,
-			members: (kind: string) => new Map([...vocabulary.members(kind)].filter(([m]) => !pinned.some(([v, p]) => v === kind && p === m)))
+			members: (kind: string) => new Map([...vocabulary.slots(kind)].filter(([m]) => !pinned.some(([v, p]) => v === kind && p === m)))
 		};
 		expect(vocabularyDisagreements(d, unpinned)).toEqual(vocabularyDisagreements(d, vocabulary));
 	}, 120_000);
@@ -320,7 +320,7 @@ describe('readVocabulary', () => {
 	});
 
 	it('gives a kind its inherited members, each marked optional or required', () => {
-		expect(Object.fromEntries(vocabulary.members('declaration.function'))).toEqual({
+		expect(Object.fromEntries(vocabulary.slots('declaration.function'))).toEqual({
 			body: { optional: true, flag: false },
 			name: { optional: false, flag: false }
 		});
@@ -375,7 +375,7 @@ describe('readVocabulary over feature folders', () => {
 	});
 
 	it('gives a kind the members a feature adds to it, optional when any declaration of one is', () => {
-		expect(Object.fromEntries(vocabulary.members('declaration.function.lambda'))).toEqual({
+		expect(Object.fromEntries(vocabulary.slots('declaration.function.lambda'))).toEqual({
 			arrow: { optional: true, flag: true, features: ['Lambdas'] },
 			body: { optional: true, flag: false },
 			name: { optional: false, flag: false }
@@ -452,7 +452,7 @@ describe('readVocabulary over an owner refined by a value', () => {
 	});
 
 	it("gives an owner's refinement the members its value adds, beside the owner's", () => {
-		expect(Object.fromEntries(vocabulary.members('declaration.public.restricted'))).toEqual({
+		expect(Object.fromEntries(vocabulary.slots('declaration.public.restricted'))).toEqual({
 			name: { optional: false, flag: false },
 			scope: { optional: false, flag: false, features: ['Scoped'] }
 		});

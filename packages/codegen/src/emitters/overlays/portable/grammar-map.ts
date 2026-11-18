@@ -111,7 +111,7 @@ export function mapFormsOf(
 	for (const entry of kindEntries) (kindsOfId.get(entry.id) ?? kindsOfId.set(entry.id, []).get(entry.id)!).push(entry.kind);
 	const builtBy = (path: string, ids: ReadonlySet<number>): boolean => (table.paths[path]?.arms ?? []).some((arm) => ids.has(arm.kind));
 	const arityOf = (path: string, member: string, type: string): string => {
-		const arity = vocabulary.members(path).get(member)?.arity;
+		const arity = vocabulary.slots(path).get(member)?.arity;
 		return arity === 'list' ? `readonly (${type})[]` : arity === 'either' ? `${type} | readonly (${type})[]` : type;
 	};
 	const narrowed = (path: string, member: string, kinds: readonly number[]): FormTerm | undefined => {
@@ -161,7 +161,7 @@ export function mapFormsOf(
 	const formsOf = (path: string): readonly string[] | undefined => {
 		const arms = (table.paths[path]?.arms ?? []).filter((arm) => !arm.when.some((test) => 'text' in test));
 		if (arms.length === 0 || vocabulary.kinds.get(path)?.text === true) return undefined;
-		const held = new Set([...vocabulary.members(path)].flatMap(([member, facts]) => (facts.optional || facts.flag ? [] : [member])));
+		const held = new Set([...vocabulary.slots(path)].flatMap(([member, facts]) => (facts.optional || facts.flag ? [] : [member])));
 		const forms = arms.map((arm) => formOf(path, arm, held));
 		if (forms.some((form) => form === undefined)) return undefined;
 		return [...new Set(forms.filter((form): form is string => typeof form === 'string'))];
@@ -223,7 +223,7 @@ export function mapNodesOf({ nodeMap, kindEntries }: PortableTypedInput, reads: 
 export type MapDecided = readonly (readonly [path: string, members: readonly (readonly [member: string, decided: string])[]])[];
 
 export function mapDecidedOf({ input }: PortableTypedInput, slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, viewed: ReadonlySet<string>): MapDecided {
-	const structured = (path: string): boolean => input.vocabulary.kinds.has(path) && !input.vocabulary.members(path).has('$value');
+	const structured = (path: string): boolean => input.vocabulary.kinds.has(path) && !input.vocabulary.slots(path).has('$value');
 	return [...slots].flatMap(([path, members]) => {
 		const decided = [...members].flatMap(([member, set]) => {
 			const built = set.kinds.filter(structured);

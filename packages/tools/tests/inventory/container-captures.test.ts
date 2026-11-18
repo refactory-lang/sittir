@@ -68,9 +68,9 @@ const CLAIMS = ['(leaf_a) @declaration.a', '(leaf_b) @declaration.b', '(decorato
 describe('container captures', () => {
 	it('land on the kinds the element slot names directly, not on kinds behind a supertype', async () => {
 		const d = derive([await grammar([...CLAIMS, '(decorated (decorator)* @decorators body: (_) @element)'].join('\n'))]);
-		expect(d.members.get('declaration.b')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
-		expect(d.members.get('declaration.b')?.get('decorators')?.multiple).toBe(true);
-		expect(d.members.get('declaration.a')?.has('decorators') ?? false).toBe(false);
+		expect(d.slots.get('declaration.b')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
+		expect(d.slots.get('declaration.b')?.get('decorators')?.multiple).toBe(true);
+		expect(d.slots.get('declaration.a')?.has('decorators') ?? false).toBe(false);
 		expect(d.untargeted).toEqual([]);
 	});
 
@@ -83,7 +83,7 @@ describe('container captures', () => {
 			kinds,
 			flags: new Set(['async']),
 			synonyms: { levels: new Map(), flags: new Map([['async', ['concurrent']]]) },
-			members: (path) => kinds.get(path)?.own ?? new Map(),
+			slots: (path) => kinds.get(path)?.own ?? new Map(),
 			featuresOf: () => new Set(),
 			composedAs: () => built
 		};
@@ -92,7 +92,7 @@ describe('container captures', () => {
 	const envelopeMembers = async (vocabulary: Vocabulary, claims: readonly string[], name: string) => {
 		const input = await grammar([...CLAIMS, ...claims, `(marked (mark)* @marks "async" @${name} body: (_) @element)`].join('\n'));
 		const bindings = resolveFlags(canonicalFacts(input.bindings, vocabulary, input.model), vocabulary, input.model);
-		return derive([{ ...input, bindings }]).members.get('declaration.b');
+		return derive([{ ...input, bindings }]).slots.get('declaration.b');
 	};
 
 	it('derive a flag captured on the envelope by its synonym as they derive the canonical flag', async () => {
@@ -113,7 +113,7 @@ describe('container captures', () => {
 	it('are reported, not spread, when the element slot names no kind directly', async () => {
 		const d = derive([await grammar([...CLAIMS, '(declared "declare" @declare (_) @element)'].join('\n'))]);
 		expect(d.untargeted).toEqual(['g: declared (declare)']);
-		for (const [v, members] of d.members) expect(members.has('declare'), v).toBe(false);
+		for (const [v, members] of d.slots) expect(members.has('declare'), v).toBe(false);
 	});
 
 	it('leave no slot of the container behind unless the pattern drops it on purpose', async () => {
@@ -131,7 +131,7 @@ describe('container captures', () => {
 			)
 		]);
 		expect(marked.uncaptured).toEqual([]);
-		expect(marked.members.get('declaration.b')?.get('async')?.kinds).toEqual(new Set(['boolean']));
+		expect(marked.slots.get('declaration.b')?.get('async')?.kinds).toEqual(new Set(['boolean']));
 	});
 
 	it('report a drop with no reason, and stop codegen at a drop that names no slot', async () => {
@@ -152,7 +152,7 @@ describe('container captures', () => {
 	it('leave a claimed wrapper to its own members', async () => {
 		const d = derive([await grammar([...CLAIMS, '(declared) @declaration.declared'].join('\n'))]);
 		expect(d.untargeted).toEqual([]);
-		expect([...(d.members.get('declaration.declared')?.keys() ?? [])]).toEqual(['content']);
+		expect([...(d.slots.get('declaration.declared')?.keys() ?? [])]).toEqual(['content']);
 	});
 });
 
@@ -196,7 +196,7 @@ describe('derive: wildcard claims and members', () => {
 
 	it('folds no members from a kind a wildcard claim reaches; the path keeps its explicit claims\' members', async () => {
 		const d = derive([await placedModel(['(declared) @declaration.d', '(holder (_) @declaration.d)'].join('\n'))]);
-		expect([...(d.members.get('declaration.d')?.keys() ?? [])]).toEqual(['content']);
+		expect([...(d.slots.get('declaration.d')?.keys() ?? [])]).toEqual(['content']);
 	});
 
 	it('records each required member of the path a wildcard-reached kind has no route for', async () => {
@@ -226,8 +226,8 @@ describe('container captures through variant forms', () => {
 			]
 		);
 		const d = derive([input]);
-		expect(d.members.get('declaration.a')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
-		expect(d.members.get('declaration.b')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
+		expect(d.slots.get('declaration.a')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
+		expect(d.slots.get('declaration.b')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
 		expect(d.untargeted).toEqual([]);
 	});
 

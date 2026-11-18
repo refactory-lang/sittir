@@ -14,7 +14,7 @@ import type {
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, SLOT, SUB_KIND_OF, TEXT } from './vocabulary.ts';
+import { type Declared, type FeatureIndex, FLAG, FLAGGED, type DeclaredSlot, type SlotArity, REFINED_BY, SLOT, SUB_KIND_OF, TEXT } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -149,7 +149,7 @@ function declareText(declaration: TypeAliasDeclaration.Parsed, scope: readonly s
 		refines: undefined,
 		heritage: [],
 		restated: [],
-		members: flags.map((name) => ({ name, optional: true, type: FLAG, flag: true, references: [], literals: [] })),
+		slots: flags.map((name) => ({ name, optional: true, type: FLAG, flag: true, references: [], literals: [] })),
 		text: true
 	});
 }
@@ -157,7 +157,7 @@ function declareText(declaration: TypeAliasDeclaration.Parsed, scope: readonly s
 function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly string[], out: Declared[], source: Source): void {
 	const { K, text } = source;
 	let path: string | undefined;
-	const members: Member[] = [];
+	const members: DeclaredSlot[] = [];
 	for (const member of declaration.body().members() ?? []) {
 		if (member.$type !== K.PropertySignature) continue;
 		const name = identifier(member.name(), [K.PropertyIdentifier], source);
@@ -189,7 +189,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		refines,
 		heritage: heritageNames(heritage, source),
 		restated: restatedKeys(heritage, source),
-		members
+		slots: members
 	});
 }
 
@@ -241,7 +241,7 @@ function hasArrayArm(type: Annotation | undefined, source: Source): boolean {
 	return (left !== undefined && hasArrayArm(left, source)) || hasArrayArm(type.right(), source);
 }
 
-function arityOf(type: Annotation | undefined, source: Source): { readonly arity?: MemberArity } {
+function arityOf(type: Annotation | undefined, source: Source): { readonly arity?: SlotArity } {
 	return arrayType(type, source) ? { arity: 'list' } : hasArrayArm(type, source) ? { arity: 'either' } : {};
 }
 

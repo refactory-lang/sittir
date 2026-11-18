@@ -1,5 +1,5 @@
 import type { LeadEffect, LeadMatch } from '../dsl/verbs/effects.ts';
-import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotModel, type SlotSelector } from './facts.ts';
+import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type SlotFact, type SlotModel, type SlotSelector } from './facts.ts';
 import { concreteKinds, formsOf, heldInto, heldSteps, holdsCapture, holdsContainer, reachedBy, shownSlots } from './routes.ts';
 
 const selector = (kind: string, field: string | null = null): SlotSelector => ({
@@ -74,7 +74,7 @@ function headChild(child: ChildFact, claim: ClaimFact, effect: LeadEffect): read
 	];
 }
 
-const isHeadMember = (member: MemberFact, effect: LeadEffect): boolean =>
+const isHeadSlot = (member: SlotFact, effect: LeadEffect): boolean =>
 	member.route === 'nested' &&
 	member.parent === effect.list &&
 	member.name === effect.field &&
@@ -132,7 +132,7 @@ function headClaim(claim: ClaimFact, effect: LeadEffect): ClaimFact {
 	};
 }
 
-const passesList = (member: MemberFact, effect: LeadEffect): boolean => member.route === 'nested' && member.via.some((step) => step.kind === effect.list);
+const passesList = (member: SlotFact, effect: LeadEffect): boolean => member.route === 'nested' && member.via.some((step) => step.kind === effect.list);
 
 type SelectorPath = readonly SlotSelector[];
 
@@ -187,31 +187,31 @@ function heldPaths(model: SlotModel, at: string, steps: SelectorPath): readonly 
 	});
 }
 
-const memberAlong = (member: Extract<MemberFact, { readonly route: 'nested' }>, path: SelectorPath): MemberFact => ({
+const slotAlong = (member: Extract<SlotFact, { readonly route: 'nested' }>, path: SelectorPath): SlotFact => ({
 	...member,
 	parent: path.at(-2)?.kind ?? member.parent,
 	via: path.slice(0, -1).toReversed()
 });
 
-function heldMembers(member: MemberFact, model: SlotModel): readonly MemberFact[] {
+function heldSlots(member: SlotFact, model: SlotModel): readonly SlotFact[] {
 	if (member.route !== 'nested' || member.via.every((step) => step.kind !== null)) return [member];
 	const steps = [...member.via.toReversed(), member];
 	const paths = distinctPaths(formsOf(model, member.owner).flatMap((form) => heldPaths(model, form, steps)));
-	return paths.length === 0 ? [member] : paths.map((path) => memberAlong(member, path));
+	return paths.length === 0 ? [member] : paths.map((path) => slotAlong(member, path));
 }
 
-export function expandHeldMembers(facts: BindingFacts, model: SlotModel): BindingFacts {
-	return { ...facts, members: facts.members.flatMap((member) => heldMembers(member, model)) };
+export function expandHeldSlots(facts: BindingFacts, model: SlotModel): BindingFacts {
+	return { ...facts, slots: facts.slots.flatMap((member) => heldSlots(member, model)) };
 }
 
-function headMembers(member: MemberFact, effect: LeadEffect, model: SlotModel): readonly MemberFact[] {
+function headSlots(member: SlotFact, effect: LeadEffect, model: SlotModel): readonly SlotFact[] {
 	if (member.route !== 'nested') return [];
 	const steps = [...member.via.toReversed(), member];
 	return distinctPaths(formsOf(model, member.owner).flatMap((form) => headWalk(model, form, steps, effect))).flatMap((path) => {
 		const last = path.at(-1);
 		if (last === undefined) return [];
 		const { field, kind, after, anchor, adjacent } = last;
-		return [memberAlong({ ...member, field, kind, after, anchor, adjacent }, path)];
+		return [slotAlong({ ...member, field, kind, after, anchor, adjacent }, path)];
 	});
 }
 
@@ -220,7 +220,7 @@ interface ClaimIndices {
 	readonly head: readonly number[];
 }
 
-function memberWithClaims(member: MemberFact, indices: ReadonlyMap<number, ClaimIndices>, side: keyof ClaimIndices | 'both'): MemberFact | undefined {
+function slotWithClaims(member: SlotFact, indices: ReadonlyMap<number, ClaimIndices>, side: keyof ClaimIndices | 'both'): SlotFact | undefined {
 	if (member.claims === undefined) return member;
 	const claims = [...new Set(member.claims.flatMap((index) => {
 		const projected = indices.get(index);
@@ -229,20 +229,20 @@ function memberWithClaims(member: MemberFact, indices: ReadonlyMap<number, Claim
 	return claims.length === 0 ? undefined : { ...member, claims };
 }
 
-function projectedMembers(facts: BindingFacts, variants: BindingFacts, effect: LeadEffect, indices: ReadonlyMap<number, ClaimIndices>, model: SlotModel): readonly MemberFact[] {
-	return facts.members.flatMap((member, index): MemberFact[] => {
+function projectedSlots(facts: BindingFacts, variants: BindingFacts, effect: LeadEffect, indices: ReadonlyMap<number, ClaimIndices>, model: SlotModel): readonly SlotFact[] {
+	return facts.slots.flatMap((member, index): SlotFact[] => {
 		if (passesList(member, effect)) {
 			return [
-				...(isHeadMember(member, effect) ? [] : [memberWithClaims(member, indices, 'plain')]),
-				...headMembers(member, effect, model).map((head) => memberWithClaims(head, indices, 'head'))
+				...(isHeadSlot(member, effect) ? [] : [slotWithClaims(member, indices, 'plain')]),
+				...headSlots(member, effect, model).map((head) => slotWithClaims(head, indices, 'head'))
 			].filter((member) => member !== undefined);
 		}
 		if (member.owner in effect.variants) {
-			const copy = variants.members[index]!;
+			const copy = variants.slots[index]!;
 			const held = !((copy.route === 'rename' && copy.flag !== true) || copy.route === 'dropped') || holdsCapture(model, copy);
-			return [memberWithClaims(member, indices, 'plain'), held ? memberWithClaims(copy, indices, 'head') : undefined].filter((member) => member !== undefined);
+			return [slotWithClaims(member, indices, 'plain'), held ? slotWithClaims(copy, indices, 'head') : undefined].filter((member) => member !== undefined);
 		}
-		const unchanged = memberWithClaims(member, indices, 'both');
+		const unchanged = slotWithClaims(member, indices, 'both');
 		return unchanged === undefined ? [] : [unchanged];
 	});
 }
@@ -252,7 +252,7 @@ function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel):
 	const claims: ClaimFact[] = [];
 	const indices = new Map<number, ClaimIndices>();
 	const receiverClaims = new Set(
-		facts.members.filter((member) => isHeadMember(member, effect)).flatMap((member) => member.claims ?? [])
+		facts.slots.filter((member) => isHeadSlot(member, effect)).flatMap((member) => member.claims ?? [])
 	);
 	for (const [index, claim] of facts.claims.entries()) {
 		const projected = receiverClaims.has(index)
@@ -271,7 +271,7 @@ function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel):
 	return {
 		...facts,
 		claims,
-		members: projectedMembers(facts, variants, effect, indices, model),
+		slots: projectedSlots(facts, variants, effect, indices, model),
 		containers: [...facts.containers, ...variants.containers.filter((copy, index) => facts.containers[index]!.kind in effect.variants && holdsContainer(model, copy))],
 		unclaimed: [...facts.unclaimed, ...variants.unclaimed.filter((_, index) => facts.unclaimed[index]!.kind in effect.variants)]
 	};

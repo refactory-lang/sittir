@@ -38,7 +38,7 @@ describe('emitPortableNodeModel', () => {
 					vocab: 'expression.add',
 					toplevel: true,
 					within: [],
-					pins: [{ member: 'operator', slot: 'operator', text: '+' }],
+					pins: [{ name: 'operator', slot: 'operator', text: '+' }],
 					test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { 1: 0 } } }]
 				},
 				{ vocab: 'expression.binary', toplevel: true, within: [], pins: [], test: [] }

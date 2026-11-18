@@ -1,5 +1,5 @@
 import { posix } from 'node:path';
-import { type DeclaredKind, type Feature, type Member, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, lineageOf, pathChildren, snake } from '@sittir/codegen/bindings';
+import { type DeclaredKind, type Feature, type DeclaredSlot, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, lineageOf, pathChildren, snake } from '@sittir/codegen/bindings';
 
 export interface Kind {
 	readonly qname: string;
@@ -13,7 +13,7 @@ export interface Kind {
 
 export interface Owned {
 	readonly feature: Feature;
-	readonly member: Member;
+	readonly member: DeclaredSlot;
 }
 
 export interface Plan {
@@ -27,8 +27,8 @@ export interface Plan {
 }
 
 type Declaration =
-	| { readonly gated: false; readonly by: Feature | undefined; readonly member: Member }
-	| { readonly gated: true; readonly by: Feature; readonly member: Member };
+	| { readonly gated: false; readonly by: Feature | undefined; readonly member: DeclaredSlot }
+	| { readonly gated: true; readonly by: Feature; readonly member: DeclaredSlot };
 
 export const RESERVED_ALIASES: ReadonlySet<string> = new Set(['features', 'gate', 'V']);
 
@@ -89,7 +89,7 @@ export function plan(source: VocabularySource): Plan {
 		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true, restated: d.restated };
 		kinds.set(d.path, kind);
 		byQname.set(d.qname, kind);
-		for (const member of d.members) declare(d.path, { gated: false, by: feature, member });
+		for (const member of d.slots) declare(d.path, { gated: false, by: feature, member });
 	}
 	for (const kind of kinds.values()) {
 		const parent = kind.parent === undefined ? undefined : kinds.get(kind.parent);
@@ -104,7 +104,7 @@ export function plan(source: VocabularySource): Plan {
 			if (isKind(stub)) continue;
 			const kind = byQname.get(stub.qname);
 			if (kind === undefined) issues.push(`${feature.name}: ${stub.qname} adds members to a kind the vocabulary does not declare`);
-			else for (const member of stub.members) declare(kind.path, { gated: true, by: feature, member });
+			else for (const member of stub.slots) declare(kind.path, { gated: true, by: feature, member });
 		}
 	}
 

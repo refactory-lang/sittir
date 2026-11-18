@@ -1,5 +1,5 @@
 import type { PortableCondition } from '@sittir/types';
-import type { GrammarRoutes, MemberRoute, ReadEntry } from '../../../bindings/routes.ts';
+import type { GrammarRoutes, SlotRoute, ReadEntry } from '../../../bindings/routes.ts';
 import { namespaceSection } from './namespaces.ts';
 
 const readEntryRecord = (entry: ReadEntry, test: readonly PortableCondition[]) => ({
@@ -13,11 +13,11 @@ const readEntryRecord = (entry: ReadEntry, test: readonly PortableCondition[]) =
 		: { template: { target: entry.template.target, template: entry.template.template, holes: entry.template.holes } })
 });
 
-function memberRecord(route: MemberRoute) {
+function memberRecord(route: SlotRoute) {
 	return { ...routeRecord(route), ...(route.flag === true ? { flag: true } : {}), ...(route.spelled === true ? { spelled: true } : {}) };
 }
 
-function routeRecord(route: MemberRoute) {
+function routeRecord(route: SlotRoute) {
 	switch (route.route) {
 		case 'slot':
 			return { name: route.name, route: route.route, slot: route.slot.name, ...(route.except === undefined ? {} : { except: route.except }), path: route.path };
@@ -48,7 +48,7 @@ export function emitPortableNodeModel(routes: GrammarRoutes, readTest: (entry: R
 			kinds.map((kind) => {
 				const vocab = routes.vocabOf.get(kind);
 				const read = routes.readEntries.get(kind);
-				const members = routes.members.get(kind);
+				const members = routes.slots.get(kind);
 				const container = routes.containers.get(kind);
 				return [
 					kind,

@@ -11,7 +11,7 @@ const TABLES: Readonly<Record<string, PortableBuildTable>> = { python, rust, typ
 describe('a text $value', () => {
 	it('is declared at exactly the paths a grammar builds from text alone, and builds no other value there', async () => {
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
-		const valueAt = (path: string) => (vocabulary.kinds.get(path)?.text === true ? undefined : vocabulary.kinds.has(path) ? vocabulary.members(path).get('$value') : undefined);
+		const valueAt = (path: string) => (vocabulary.kinds.get(path)?.text === true ? undefined : vocabulary.kinds.has(path) ? vocabulary.slots(path).get('$value') : undefined);
 		for (const [grammar, table] of Object.entries(TABLES)) {
 			const paths = Object.entries(table.paths);
 			const fromText = paths

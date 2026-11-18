@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, literalClaimOf, refineClaims, type RefinedClaim, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerCapture, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, literalClaimOf, refineClaims, type RefinedClaim, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerCapture, type ContainerFact, type EnumMember, type SlotFact, type NamedSlotFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { Delimiter } from '@sittir/common/delimiter';
 import { boundKindName, camel, snake } from './names.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
@@ -28,7 +28,7 @@ const stepOf = (owner: string, slot: string, anchor: Anchor | null): SlotStep =>
 	anchor === null ? { owner, slot } : { owner, slot, anchor };
 
 export interface Pin {
-	readonly member: string;
+	readonly name: string;
 	readonly slot: string;
 	readonly text: string;
 }
@@ -49,15 +49,15 @@ export interface ReadEntry {
 	readonly present: readonly string[];
 	readonly children: readonly ChildTest[];
 	readonly template: TemplateFact | undefined;
-	readonly members: readonly MemberRoute[];
-	readonly value?: MemberRoute;
+	readonly slots: readonly SlotRoute[];
+	readonly value?: SlotRoute;
 	readonly separated?: true;
 	readonly spelled?: true;
 	readonly decided?: true;
 	readonly empty?: true;
 }
 
-export type MemberRoute = (
+export type SlotRoute = (
 	| {
 			readonly route: 'slot';
 			readonly name: string;
@@ -86,14 +86,14 @@ export type MemberRoute = (
 	| { readonly route: 'delimiter'; readonly name: string; readonly delimiter: Delimiter; readonly items?: SlotStep; readonly path: readonly SlotStep[] | undefined }
 ) & { readonly flag?: true; readonly spelled?: true; readonly list?: boolean };
 
-export const readsList = (route: MemberRoute, slotHoldsList: boolean): boolean => route.list ?? slotHoldsList;
+export const readsList = (route: SlotRoute, slotHoldsList: boolean): boolean => route.list ?? slotHoldsList;
 
 export const VALUE = '$value';
 
-export const entryRoutes = (entry: Pick<ReadEntry, 'members' | 'value'>): readonly MemberRoute[] => (entry.value === undefined ? entry.members : [...entry.members, entry.value]);
+export const entryRoutes = (entry: Pick<ReadEntry, 'slots' | 'value'>): readonly SlotRoute[] => (entry.value === undefined ? entry.slots : [...entry.slots, entry.value]);
 
-const declaredArity = (vocabulary: Vocabulary, path: string, route: MemberRoute): MemberRoute => {
-	const declared = vocabulary.members(path).get(route.name);
+const declaredArity = (vocabulary: Vocabulary, path: string, route: SlotRoute): SlotRoute => {
+	const declared = vocabulary.slots(path).get(route.name);
 	return declared === undefined || declared.arity === 'either' ? route : { ...route, list: declared.arity === 'list' };
 };
 
@@ -102,14 +102,14 @@ export interface ContainerUnwrap {
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
 	readonly list: boolean;
-	readonly members?: readonly ContainerDataMember[];
+	readonly slots?: readonly ContainerDataSlot[];
 	readonly flags?: readonly string[];
 	readonly flagged?: readonly string[];
 	readonly refined?: true;
 	readonly named?: true;
 }
 
-export interface ContainerDataMember {
+export interface ContainerDataSlot {
 	readonly name: string;
 	readonly slot: ModelSlot;
 	readonly list?: boolean;
@@ -125,7 +125,7 @@ export interface GrammarRoutes {
 	readonly grammar: string;
 	readonly readEntries: ReadonlyMap<string, readonly ReadEntry[]>;
 	readonly vocabOf: ReadonlyMap<string, string>;
-	readonly members: ReadonlyMap<string, readonly MemberRoute[]>;
+	readonly slots: ReadonlyMap<string, readonly SlotRoute[]>;
 	readonly containers: ReadonlyMap<string, ContainerUnwrap>;
 	readonly stopped: readonly StoppedRead[];
 	readonly unplaced: readonly ClaimFact[];
@@ -170,7 +170,7 @@ const separatedBy = (model: SlotModel, kind: string, claim: ClaimFact): boolean 
 	return separator !== undefined && claim.tokens.includes(separator);
 };
 
-type SlotCapture = Extract<MemberFact, { readonly route: 'rename' | 'dropped' }>;
+type SlotCapture = Extract<SlotFact, { readonly route: 'rename' | 'dropped' }>;
 
 const droppedToken = (member: SlotCapture): string | undefined => (member.route === 'dropped' && member.field === null ? (member.token ?? undefined) : undefined);
 
@@ -280,7 +280,7 @@ const heldPath = (held: readonly HeldStep[], anchor: Anchor | null): SlotStep[] 
 
 export type SlotNames = ReadonlyMap<string, string | null>;
 
-export function memberNameOf(renames: SlotNames, slotName: string, propertyName: string): string {
+export function slotNameOf(renames: SlotNames, slotName: string, propertyName: string): string {
 	return camel(renames.get(slotName) ?? propertyName.replace(/_$/, '').replace(/Modifier$/, ''));
 }
 
@@ -361,10 +361,10 @@ function namedElementsOf(containers: readonly ContainerFact[]): readonly string[
 	return containers.length > 0 && named.length === containers.length ? [...new Set(named)] : undefined;
 }
 
-function containerDataMembers(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): NonNullable<ContainerUnwrap['members']> {
-	const members = new Map<string, ContainerDataMember>();
+function containerDataSlots(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): NonNullable<ContainerUnwrap['slots']> {
+	const members = new Map<string, ContainerDataSlot>();
 	for (const container of declaredContainersOf(input, node)) {
-		const resolved = containerMembers(input, container, vocabOf);
+		const resolved = containerSlots(input, container, vocabOf);
 		if (resolved.targets.length === 0) continue;
 		for (const { name, slot, flag } of resolved.members) {
 			const own = slot === undefined || flag ? undefined : node.slots.find((candidate) => candidate.name === slot.name);
@@ -387,7 +387,7 @@ function narrowedTo(model: SlotModel, node: ModelNode, element: SlotSelector): s
 function containerFlags(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): { readonly flags: readonly string[]; readonly flagged?: readonly string[] } {
 	const lines: { readonly flags: readonly string[]; readonly scope: string | null }[] = [];
 	for (const container of declaredContainersOf(input, node)) {
-		const resolved = containerMembers(input, container, vocabOf);
+		const resolved = containerSlots(input, container, vocabOf);
 		if (resolved.targets.length === 0) continue;
 		const set = resolved.members.filter(
 			({ capture, slot, flag }) => flag && (slot === undefined || (slot.required && slot.kinds.length === 0 && slot.terminals.every((terminal) => terminal === capture.token)))
@@ -410,7 +410,7 @@ function containerFlags(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyM
 
 function declaredListAt(vocabulary: Vocabulary, kind: string, targets: readonly string[], name: string): boolean | undefined {
 	const lists = targets.flatMap((target) => {
-		const declared = vocabulary.members(target).get(name);
+		const declared = vocabulary.slots(target).get(name);
 		return declared === undefined || declared.arity === 'either' ? [] : [{ target, list: declared.arity === 'list' }];
 	});
 	const listed = lists.filter((at) => at.list);
@@ -466,7 +466,7 @@ function pinsOf(model: SlotModel, kind: string, claim: ClaimFact, renames: SlotN
 		throw new Error(`bindings: ${kind}'s claim as ${claim.vocab} tests ${unheld.map((text) => `"${text}"`).join(', ')}, which no slot of ${kind} holds and its own text does not spell`);
 	return pinnedLiterals(model, slots, claim).map(([field, text]) => {
 		const slot = slotByField(slots, field);
-		return { member: memberNameOf(renames, slot?.name ?? field, slot?.propertyName ?? field), slot: slot?.name ?? field, text };
+		return { name: slotNameOf(renames, slot?.name ?? field, slot?.propertyName ?? field), slot: slot?.name ?? field, text };
 	});
 }
 
@@ -623,20 +623,20 @@ const unconditional = (entry: ReadEntry): boolean =>
 	entry.separated !== true &&
 	entry.children.length === 0;
 
-const attaches = (member: MemberFact, inherited: ReadonlySet<number>): boolean => member.claims === undefined || member.claims.some((index) => inherited.has(index));
+const attaches = (member: SlotFact, inherited: ReadonlySet<number>): boolean => member.claims === undefined || member.claims.some((index) => inherited.has(index));
 
 type Declares = (path: string, member: string) => boolean;
 
-const names = (member: MemberFact, entry: { readonly vocab: string }, inherited: ReadonlySet<number>, declares: Declares): boolean =>
+const names = (member: SlotFact, entry: { readonly vocab: string }, inherited: ReadonlySet<number>, declares: Declares): boolean =>
 	attaches(member, inherited) || (member.route === 'rename' && declares(entry.vocab, member.name));
 
-export const namesEvery = (member: MemberFact, entries: readonly { readonly vocab: string; readonly index: number }[], declares: Declares): boolean =>
+export const namesEvery = (member: SlotFact, entries: readonly { readonly vocab: string; readonly index: number }[], declares: Declares): boolean =>
 	entries.every((entry) => names(member, entry, inheritedClaims(entry, entries), declares));
 
 const declaredBy =
 	(vocabulary: Vocabulary): Declares =>
 	(path, member) =>
-		vocabulary.kinds.has(path) && vocabulary.members(path).has(member);
+		vocabulary.kinds.has(path) && vocabulary.slots(path).has(member);
 
 const testCount = ({ claim }: ReadEntry): number =>
 	Object.keys(claim.fieldLiterals).length + claim.tokens.length + claim.children.length + claim.predicates.length + claim.within.length;
@@ -697,11 +697,11 @@ function heldElements(input: GrammarInput, slot: ModelSlot): readonly string[] {
 	});
 }
 
-function listFormItems(input: GrammarInput, node: ModelNode, slotNamesOf: (kind: string) => SlotNames): MemberRoute[] {
+function listFormItems(input: GrammarInput, node: ModelNode, slotNamesOf: (kind: string) => SlotNames): SlotRoute[] {
 	const owner = node.variantOf;
 	const items = listItems(node);
 	if (items === undefined) return [];
-	const own: MemberRoute[] = [{ route: 'slot', name: memberNameOf(slotNamesOf(node.kind), items.name, items.propertyName), slot: items, path: [{ owner: node.kind, slot: items.name }] }];
+	const own: SlotRoute[] = [{ route: 'slot', name: slotNameOf(slotNamesOf(node.kind), items.name, items.propertyName), slot: items, path: [{ owner: node.kind, slot: items.name }] }];
 	if (owner === null || !formsOf(input.model, owner).includes(node.kind)) return own;
 	for (const sibling of formsOf(input.model, owner)) {
 		const at = modelNode(input.model, sibling);
@@ -711,7 +711,7 @@ function listFormItems(input: GrammarInput, node: ModelNode, slotNamesOf: (kind:
 			return held.length > 0 && node.elementKinds.every((kind) => held.includes(kind));
 		});
 		if (holder !== undefined)
-			return [{ route: 'slot', name: memberNameOf(slotNamesOf(sibling), holder.name, holder.propertyName), slot: items, path: [{ owner: node.kind, slot: items.name }] }];
+			return [{ route: 'slot', name: slotNameOf(slotNamesOf(sibling), holder.name, holder.propertyName), slot: items, path: [{ owner: node.kind, slot: items.name }] }];
 	}
 	return own;
 }
@@ -725,21 +725,21 @@ function interiorPartOf(model: SlotModel, slot: ModelSlot, claimed: (kind: strin
 
 const holdsOnlyText = (slot: ModelSlot): boolean => slot.storage !== 'boolean' && slot.kinds.length === 0 && slot.terminals.length === 0;
 
-type DeepMember = Extract<MemberFact, { readonly route: 'presence' | 'nested' }>;
+type DeepSlot = Extract<SlotFact, { readonly route: 'presence' | 'nested' }>;
 
-const isDeep = (member: MemberFact): member is DeepMember => member.route === 'presence' || member.route === 'nested';
+const isDeep = (member: SlotFact): member is DeepSlot => member.route === 'presence' || member.route === 'nested';
 
-const isListDelimiter = (model: SlotModel, member: MemberFact, kind: string): member is Extract<DeepMember, { readonly route: 'presence' }> =>
+const isListDelimiter = (model: SlotModel, member: SlotFact, kind: string): member is Extract<DeepSlot, { readonly route: 'presence' }> =>
 	member.route === 'presence' && member.anchor !== undefined && reachedBy(model, kind, member.owner).length > 0;
 
-function deepRoutesOf(model: SlotModel, kind: string, member: DeepMember): readonly MemberRoute[] {
+function deepRoutesOf(model: SlotModel, kind: string, member: DeepSlot): readonly SlotRoute[] {
 	const chains = viaPath(model, kind, member.via);
 	const routes = (chains.length === 0 ? [undefined] : chains).map((chain) => deepRouteAt(model, member, chain));
 	const reached = routes.filter((route) => route.path !== undefined);
 	return reached.length > 0 ? reached : routes.slice(0, 1);
 }
 
-function deepRouteAt(model: SlotModel, member: DeepMember, chain: Chain | undefined): MemberRoute {
+function deepRouteAt(model: SlotModel, member: DeepSlot, chain: Chain | undefined): SlotRoute {
 	if (member.route === 'presence' && member.anchor !== undefined) return delimiterRouteOf(member, chain);
 	if (member.route === 'presence') {
 		const held = chain === undefined ? undefined : heldBy(model, chain.at.kind, (slots) => slots.find((s) => s.terminals.includes(member.token)));
@@ -771,7 +771,7 @@ function deepRouteAt(model: SlotModel, member: DeepMember, chain: Chain | undefi
 	};
 }
 
-function delimiterRouteOf(member: Extract<DeepMember, { readonly route: 'presence' }>, chain: Chain | undefined): MemberRoute {
+function delimiterRouteOf(member: Extract<DeepSlot, { readonly route: 'presence' }>, chain: Chain | undefined): SlotRoute {
 	const name = camel(member.name);
 	const list = chain?.at;
 	const separated = list?.list?.trailing === 'optional' && list.list.separator === member.token;
@@ -852,20 +852,20 @@ export function guaranteedBy(
 	};
 }
 
-function membersOf(
+function slotsOf(
 	input: GrammarInput,
 	kind: string,
 	entries: readonly ReadEntry[],
 	entry: ReadEntry,
 	slotNamesOf: (kind: string) => SlotNames,
 	claimed: (kind: string) => boolean
-): MemberRoute[] {
+): SlotRoute[] {
 	const guaranteed = guaranteedBy(input.model, entry);
 	const inherited = inheritedClaims(entry, entries);
 	const node = modelNode(input.model, kind);
 	if (node === undefined) return [];
 	if (node.modelType === 'list') {
-		const delimiters = input.bindings.members.filter((member) => isListDelimiter(input.model, member, kind));
+		const delimiters = input.bindings.slots.filter((member) => isListDelimiter(input.model, member, kind));
 		const items = listItems(node);
 		const counted = items !== undefined && entries.some((entry) => entry.separated === true);
 		const routes = delimiters
@@ -881,9 +881,9 @@ function membersOf(
 	const pathTo = (slot: ModelSlot): readonly SlotStep[] => [...through, { owner: holder, slot: slot.name }];
 	const kindNames = claims === kind ? slotNamesOf(kind) : new Map([...slotNamesOf(claims), ...slotNamesOf(kind)]);
 	const owns = (member: { readonly owner: string }): boolean => member.owner === kind || member.owner === claims;
-	const routesHere = (member: MemberFact): boolean =>
+	const routesHere = (member: SlotFact): boolean =>
 		owns(member) || (isDeep(member) && attaches(member, inherited) && captureReaches(input.model, member, kind));
-	const deepRoutes = (member: DeepMember): readonly MemberRoute[] => {
+	const deepRoutes = (member: DeepSlot): readonly SlotRoute[] => {
 		if (member.owner === kind) return deepRoutesOf(input.model, kind, member);
 		if (envelope === undefined) return deepRoutesOf(input.model, kind, member.route === 'nested' && member.parent === member.owner ? { ...member, parent: kind } : member);
 		return deepRoutesOf(input.model, holder, member).map((route) => (route.path === undefined ? route : { ...route, path: [...through, ...route.path] }));
@@ -933,7 +933,7 @@ function membersOf(
 		return (
 			isLayout(input, at, held) ||
 			slotNamesOf(at).get(held.name) === null ||
-			input.bindings.members.some((m) => routesHere(m) && m.route === 'nested' && m.parent === at && slotFor(input.model, shownSlots(input.model, at), m) === held) ||
+			input.bindings.slots.some((m) => routesHere(m) && m.route === 'nested' && m.parent === at && slotFor(input.model, shownSlots(input.model, at), m) === held) ||
 			(values !== undefined && values.every((value) => told.has(value))) ||
 			concreteKinds(input.model, held.kinds).every((k) => told.has(k))
 		);
@@ -951,8 +951,8 @@ function membersOf(
 	};
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
 	const textual = !identifier && textValued(input.vocabulary, entry.vocab);
-	const scalarValued = input.vocabulary.kinds.has(entry.vocab) && input.vocabulary.members(entry.vocab).get(VALUE)?.scalar !== undefined;
-	const shaping = input.bindings.members.filter((m) => routesHere(m) && m.route !== 'rename' && m.route !== 'dropped');
+	const scalarValued = input.vocabulary.kinds.has(entry.vocab) && input.vocabulary.slots(entry.vocab).get(VALUE)?.scalar !== undefined;
+	const shaping = input.bindings.slots.filter((m) => routesHere(m) && m.route !== 'rename' && m.route !== 'dropped');
 	const deep = shaping.filter((m) => attaches(m, inherited));
 	const paths = new Map(shaping.flatMap((m) => (isDeep(m) ? [[m, deepRoutes(m)] as const] : [])));
 	const counted = new Set([...paths.values()].flat().flatMap((route) => route.path?.filter((step) => step.owner === holder && step.anchor === 'only').map((step) => step.slot) ?? []));
@@ -973,11 +973,11 @@ function membersOf(
 			)
 		)
 	);
-	const captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[] = input.bindings.members.flatMap((m) =>
+	const captures: readonly Extract<SlotFact, { readonly route: 'rename' }>[] = input.bindings.slots.flatMap((m) =>
 		m.route === 'rename' && attaches(m, inherited) && (captureReaches(input.model, m, kind) || (claims !== kind && captureReaches(input.model, m, claims))) ? [m] : []
 	);
 	const declares = declaredBy(input.vocabulary);
-	const named = input.bindings.members.flatMap((m) =>
+	const named = input.bindings.slots.flatMap((m) =>
 		m.route === 'rename' && m.flag !== true && names(m, entry, inherited, declares) && (captureReaches(input.model, m, kind) || (claims !== kind && captureReaches(input.model, m, claims))) ? [m] : []
 	);
 	const byPrecedence = [...named.filter((m) => !attaches(m, inherited)), ...named.filter((m) => attaches(m, inherited))];
@@ -986,7 +986,7 @@ function membersOf(
 		return slot === undefined ? [] : [[slot.name, m.name] as const];
 	})]);
 	const flags = captures.filter((m) => m.flag === true);
-	const spelledFlags: MemberRoute[] = [];
+	const spelledFlags: SlotRoute[] = [];
 	const flagSlots = new Map(flags.flatMap((m) => {
 		const slot = slotFor(input.model, slots, m);
 		if (slot === undefined && formsOf(input.model, m.owner).every((form) => slotFor(input.model, modelNode(input.model, form)?.slots ?? [], m) === undefined)) {
@@ -1003,7 +1003,7 @@ function membersOf(
 	const unrouted = (slot: ModelSlot, why: string, [capture] = capturesOf(slot)): void => {
 		if (capture !== undefined) throw new Error(`bindings: ${kind}'s capture @${capture.name} reaches no member: its ${slot.name} slot ${why}; capture a slot a member reads, or mark it @dropped`);
 	};
-	const routes: MemberRoute[] = [];
+	const routes: SlotRoute[] = [];
 	for (const slot of isLeafAlias(input, node) ? [] : slots) {
 		if (([...flagSlots.values()].includes(slot) && !slotNames.has(slot.name)) || slotNames.get(slot.name) === null || guaranteed.absent(pathTo(slot))) continue;
 		if (isLayout(input, holder, slot)) {
@@ -1039,8 +1039,8 @@ function membersOf(
 				: pin !== undefined
 					? { ...rest, required: true, terminals: rest.terminals.filter((t) => t === pin), kinds: concreteKinds(input.model, rest.kinds).filter((k) => textOfKind(input.model, k) === pin) }
 					: undefined;
-		const named = memberNameOf(slotNames, slot.name, slot.propertyName);
-		const name = textual && (!captured || !input.vocabulary.members(entry.vocab).has(named)) ? VALUE : named;
+		const named = slotNameOf(slotNames, slot.name, slot.propertyName);
+		const name = textual && (!captured || !input.vocabulary.slots(entry.vocab).has(named)) ? VALUE : named;
 		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
 		if (captured && flag.flag !== true && !slot.multiple && (pin ?? onlyTextOf(input.model, guaranteed.present(pathTo(slot)) ?? [])) !== undefined) {
 			unrouted(slot, 'is pinned to one fixed text by the same claim', capturesOf(slot).filter((m) => m.claims?.includes(entry.index) === true));
@@ -1068,11 +1068,11 @@ function membersOf(
 	for (const [member, slot] of flagSlots) routes.push(flagRouteOf(kind, member, slot, pathTo(slot)));
 	routes.push(...spelledFlags);
 	const ownPaths = [...reached].flatMap(([m, held]) => (m.claims?.includes(entry.index) === true ? held.flatMap((route) => (route.path === undefined ? [] : [route.path])) : []));
-	const beneathOwn = (route: MemberRoute): boolean =>
+	const beneathOwn = (route: SlotRoute): boolean =>
 		route.path !== undefined && ownPaths.some((path) => path.length > route.path!.length && stepPast(route.path, path) !== undefined);
 	for (const member of deep) {
 		if (member.route === 'kind') {
-			const named = routes.find((r) => r.route === 'slot' && r.name === camel(member.member));
+			const named = routes.find((r) => r.route === 'slot' && r.name === camel(member.slot));
 			routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined, ...flagOf(member) });
 			continue;
 		}
@@ -1094,7 +1094,7 @@ function membersOf(
 
 const slotSelectorOf = ({ field, kind, after, anchor, adjacent }: SlotSelector): SlotSelector => ({ field, kind, after, anchor, ...(adjacent === undefined ? {} : { adjacent }) });
 
-function landedKinds(model: SlotModel, route: MemberRoute): readonly string[] {
+function landedKinds(model: SlotModel, route: SlotRoute): readonly string[] {
 	switch (route.route) {
 		case 'slot':
 			return route.slot.kinds.filter((kind) => !(route.except ?? []).includes(kind));
@@ -1116,7 +1116,7 @@ const stepPast = (path: readonly SlotStep[] | undefined, longer: readonly SlotSt
 
 const pathText = (path: readonly SlotStep[] | undefined): string => (path ?? []).map((step) => `${step.owner}.${step.slot}`).join(' > ');
 
-function flagRouteOf(kind: string, member: Extract<MemberFact, { readonly route: 'rename' }>, slot: ModelSlot, path: readonly SlotStep[]): MemberRoute {
+function flagRouteOf(kind: string, member: Extract<SlotFact, { readonly route: 'rename' }>, slot: ModelSlot, path: readonly SlotStep[]): SlotRoute {
 	const name = camel(member.name);
 	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path, flag: true };
 	const [only, ...more] = slot.terminals;
@@ -1126,15 +1126,15 @@ function flagRouteOf(kind: string, member: Extract<MemberFact, { readonly route:
 	return { route: 'presence', name, via: [], token, path, flag: true };
 }
 
-function spelledFlagRouteOf(member: Extract<MemberFact, { readonly route: 'rename' }>): MemberRoute | undefined {
+function spelledFlagRouteOf(member: Extract<SlotFact, { readonly route: 'rename' }>): SlotRoute | undefined {
 	const name = camel(member.name);
 	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path: undefined, flag: true, spelled: true };
 	return member.token === undefined ? undefined : { route: 'presence', name, via: [], token: member.token, path: undefined, flag: true, spelled: true };
 }
 
-const flagOf = (member: MemberFact): { readonly flag?: true } => (member.flag === true ? { flag: true } : {});
+const flagOf = (member: SlotFact): { readonly flag?: true } => (member.flag === true ? { flag: true } : {});
 
-const flaggedDelimiter = (kind: string, route: MemberRoute): MemberRoute => {
+const flaggedDelimiter = (kind: string, route: SlotRoute): SlotRoute => {
 	if (route.route === 'delimiter' && route.flag !== true) throw new Error(`bindings: ${kind}'s ${route.name} reads a list's trailing separator, which is a flag`);
 	return route;
 };
@@ -1160,7 +1160,7 @@ export function concreteKinds(model: SlotModel, kinds: readonly string[]): strin
 	return [...new Set(kinds.flatMap((kind) => concreteKindsOf(model, kind, seen)))].sort();
 }
 
-function keptKinds(model: SlotModel, slot: ModelSlot, captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[]): ReadonlySet<string> {
+function keptKinds(model: SlotModel, slot: ModelSlot, captures: readonly Extract<SlotFact, { readonly route: 'rename' }>[]): ReadonlySet<string> {
 	const members = captures.filter((m) => m.flag !== true);
 	const named = members.flatMap((m) => (m.field === null && m.kind !== null && m.kind !== WILDCARD ? [m.kind] : []));
 	if (slot.kinds.length < 2 || members.length === 0 || named.length < members.length) return new Set(slot.kinds);
@@ -1323,10 +1323,10 @@ export function kindVocabs(model: SlotModel, reads: ClaimReads, refined: Readonl
 	return vocabOf;
 }
 
-type ReadPick = (member: NamedMemberFact, kind: string, at: readonly ClaimRead[]) => readonly ClaimRead[];
+type ReadPick = (member: NamedSlotFact, kind: string, at: readonly ClaimRead[]) => readonly ClaimRead[];
 
 const pathsOfReads = (model: SlotModel, reads: ClaimReads, pick: ReadPick) =>
-	(member: NamedMemberFact): string[] => [
+	(member: NamedSlotFact): string[] => [
 		...new Set([...reads].flatMap(([kind, at]) => (modelNode(model, kind) !== undefined && captureReaches(model, member, kind) ? pick(member, kind, at).map((read) => read.vocab) : [])))
 	];
 
@@ -1339,12 +1339,12 @@ const attachedReads = (model: SlotModel): ReadPick => (member, kind, at) => {
 	});
 };
 
-export function capturePaths(model: SlotModel, reads: ClaimReads): (member: NamedMemberFact) => string[] {
+export function capturePaths(model: SlotModel, reads: ClaimReads): (member: NamedSlotFact) => string[] {
 	const attached = attachedReads(model);
 	return pathsOfReads(model, reads, (member, kind, at) => (member.route === 'rename' ? at : attached(member, kind, at)));
 }
 
-export function memberTargets(model: SlotModel, reads: ClaimReads): (member: NamedMemberFact) => string[] {
+export function slotTargets(model: SlotModel, reads: ClaimReads): (member: NamedSlotFact) => string[] {
 	return pathsOfReads(model, reads, attachedReads(model));
 }
 
@@ -1366,7 +1366,7 @@ export function envelopeTargets(model: SlotModel, container: ContainerFact, voca
 	];
 }
 
-export interface ContainerMember {
+export interface ContainerSlot {
 	readonly capture: ContainerCapture;
 	readonly name: string;
 	readonly slot: ModelSlot | undefined;
@@ -1378,11 +1378,11 @@ export function containerCaptureSlot(model: SlotModel, slots: readonly ModelSlot
 	return token !== null ? slotHoldingText(model, slots, token) : slotFor(model, slots, capture);
 }
 
-export function containerMembers(
+export function containerSlots(
 	input: GrammarInput,
 	container: ContainerFact,
 	vocabOf: ReadonlyMap<string, string>
-): { readonly targets: readonly string[]; readonly members: readonly ContainerMember[] } {
+): { readonly targets: readonly string[]; readonly members: readonly ContainerSlot[] } {
 	const slots = modelNode(input.model, container.kind)?.slots ?? [];
 	const targets = envelopeTargets(input.model, container, vocabOf);
 	const members = container.captures.map((capture) => {
@@ -1395,7 +1395,7 @@ export function containerMembers(
 	return { targets, members };
 }
 
-export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: string): boolean {
+export function captureReaches(model: SlotModel, member: NamedSlotFact, kind: string): boolean {
 	if (isListDelimiter(model, member, kind)) return true;
 	if (member.route !== 'rename' && !(isDeep(member) && member.claims !== undefined)) return member.owner === kind;
 	const forms = formsOf(model, member.owner);
@@ -1415,7 +1415,7 @@ function liftMounted(model: SlotModel, refined: readonly RefinedClaim[], readEnt
 		if (tests > 0 || entry.separated === true || entry.template !== undefined)
 			throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, so its claim tests nothing of ${kind} itself`);
 		const at = stepOf(holder, mount.slot, null);
-		const lift = (route: MemberRoute): MemberRoute => {
+		const lift = (route: SlotRoute): SlotRoute => {
 			if ((route.route !== 'slot' && route.route !== 'kind') || route.path === undefined)
 				throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, which routes no ${route.route} member ${route.name} through ${kind}`);
 			return { ...route, path: [at, ...route.path] };
@@ -1424,7 +1424,7 @@ function liftMounted(model: SlotModel, refined: readonly RefinedClaim[], readEnt
 		const children = childTestsOf(model, holder, { subject, kinds: [kind], captured: false }, []);
 		const into = readEntries.get(holder);
 		if (into === undefined) throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, which no claim reads`);
-		into.push({ ...entry, kind: holder, children, present: [], members: entry.members.map(lift), ...(entry.value === undefined ? {} : { value: lift(entry.value) }) });
+		into.push({ ...entry, kind: holder, children, present: [], slots: entry.slots.map(lift), ...(entry.value === undefined ? {} : { value: lift(entry.value) }) });
 		order(holder, into);
 	}
 	for (const { kind, entry } of lifts) {
@@ -1444,7 +1444,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				throw new Error(`bindings: ${container.kind}'s container selects ${selectorText(selector)}, which no form of ${container.kind} holds`);
 
 	const slotNames = new Map<string, Map<string, string | null>>();
-	for (const member of input.bindings.members) {
+	for (const member of input.bindings.slots) {
 		if ((member.route !== 'rename' && member.route !== 'dropped') || (member.route === 'rename' && member.flag === true)) continue;
 		for (const form of formsOf(input.model, member.owner)) {
 			const slot = capturedSlot(input.model, member, form);
@@ -1477,7 +1477,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 						present: [],
 						children: [...claimChildTests(input.model, kind, claim), ...elementExclusionsOf(input, kind, claim)],
 						template: claim.template,
-						members: [],
+						slots: [],
 						...(separatedBy(input.model, kind, claim) ? { separated: true as const } : {}),
 						...(spelled ? { spelled: true as const } : {}),
 						...(decided ? { decided: true as const } : {})
@@ -1510,16 +1510,16 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const declares = declaredBy(input.vocabulary);
 	const restricted = (kind: string, entry: ReadEntry): boolean =>
 		entry.claimed !== kind && modelNode(input.model, entry.claimed)?.modelType === 'supertype' && input.vocabulary.kinds.has(entry.vocab);
-	const routesDeclared = (kind: string, entry: ReadEntry) => (route: MemberRoute): boolean => !restricted(kind, entry) || declares(entry.vocab, route.name);
+	const routesDeclared = (kind: string, entry: ReadEntry) => (route: SlotRoute): boolean => !restricted(kind, entry) || declares(entry.vocab, route.name);
 	for (const [kind, entries] of readEntries)
 		readEntries.set(
 			kind,
 			entries.map((entry) => {
-				const routed = membersOf(input, kind, entries, entry, slotNamesOf, (held) => reads.has(held));
+				const routed = slotsOf(input, kind, entries, entry, slotNamesOf, (held) => reads.has(held));
 				const value = routed.find((route) => route.name === VALUE);
 				return {
 					...entry,
-					members: routed
+					slots: routed
 						.filter((route) => route !== value)
 						.filter(routesDeclared(kind, entry))
 						.map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route))),
@@ -1530,17 +1530,17 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const claims = refineClaims(input.bindings.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
 	liftMounted(input.model, claims, readEntries, order);
 	for (const [kind, target] of layoutDefaultsOf(input, readEntries)) {
-		const entries = (readEntries.get(target) ?? []).filter(untested).map((entry): ReadEntry => ({ ...entry, kind, absent: [], template: undefined, members: [], empty: true }));
+		const entries = (readEntries.get(target) ?? []).filter(untested).map((entry): ReadEntry => ({ ...entry, kind, absent: [], template: undefined, slots: [], empty: true }));
 		if (entries.length > 0) readEntries.set(kind, entries);
 	}
 
-	const members = new Map<string, MemberRoute[]>();
+	const members = new Map<string, SlotRoute[]>();
 	for (const [kind, routed] of readEntries) {
-		const union: MemberRoute[] = [];
+		const union: SlotRoute[] = [];
 		const keys: string[] = [];
 		for (const entry of routed) {
 			let at = -1;
-			for (const route of entry.members) {
+			for (const route of entry.slots) {
 				const key = JSON.stringify(route);
 				const found = keys.indexOf(key);
 				if (found >= 0) {
@@ -1559,19 +1559,19 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const node of input.model.values()) {
 		const unwrap = containerOf(input, node);
 		if (unwrap === undefined) continue;
-		const members = containerDataMembers(input, node, vocabOf);
+		const members = containerDataSlots(input, node, vocabOf);
 		const { flags, flagged } = containerFlags(input, node, vocabOf);
 		const isRefined = refined.has(node.kind);
 		const separated = (readEntries.get(node.kind) ?? []).some((entry) => entry.separated === true);
 		if (isRefined && unwrap.list && !separated)
 			throw new Error(`bindings: ${node.kind} is claimed and also unwraps to its elements, a list; only a list claimed by its own separator holds one element when the claim fails`);
-		containers.set(node.kind, { ...unwrap, ...(isRefined && separated ? { list: false } : {}), ...(members.length === 0 ? {} : { members }), ...(flags.length === 0 ? {} : { flags }), ...(flagged === undefined ? {} : { flagged }), ...(isRefined ? { refined: true as const } : {}) });
+		containers.set(node.kind, { ...unwrap, ...(isRefined && separated ? { list: false } : {}), ...(members.length === 0 ? {} : { slots: members }), ...(flags.length === 0 ? {} : { flags }), ...(flagged === undefined ? {} : { flagged }), ...(isRefined ? { refined: true as const } : {}) });
 	}
 
 	const placed = new Set([...readEntries.values()].flatMap((entries) => entries.map((entry) => entry.claim)));
 	const unplaced = input.bindings.claims.filter((claim) => !placed.has(claim));
 
-	return { grammar: input.grammar, readEntries, vocabOf, members, containers, stopped, unplaced, claims };
+	return { grammar: input.grammar, readEntries, vocabOf, slots: members, containers, stopped, unplaced, claims };
 }
 
 export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): string[] {

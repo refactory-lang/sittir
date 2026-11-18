@@ -4,7 +4,7 @@ import { compileGrammarOf, evaluateGrammar, invoke } from '../../src/codegen-sur
 import { loadInputs } from '../../src/inventory/index.ts';
 
 const memberNames = (input: GrammarInput, kind: string): string[] =>
-	(resolveRoutes(input).members.get(kind) ?? []).map((m) => m.name).sort();
+	(resolveRoutes(input).slots.get(kind) ?? []).map((m) => m.name).sort();
 
 describe('the unbound base grammar\'s model', () => {
 	it('gives each claimed kind the members the bound model gives it, uncaptured slots included', async () => {

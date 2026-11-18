@@ -68,8 +68,8 @@ export async function heldBy(grammar: GrammarName): Promise<Held> {
 	const forms = new Map([...readEntries.keys()].map((kind) => [kind, kind]));
 	const paths = new Set<string>([...d.allvocab, ...d.contentDerived.keys(), ...d.refinements.keys()]);
 	const members = new Set<string>([
-		...[...d.members].flatMap(([path, at]) => [...at.keys()].map((member) => memberKey(path, member))),
-		...entries.flatMap((entry) => entry.members.map((route) => memberKey(entry.vocab, route.name))),
+		...[...d.slots].flatMap(([path, at]) => [...at.keys()].map((member) => memberKey(path, member))),
+		...entries.flatMap((entry) => entry.slots.map((route) => memberKey(entry.vocab, route.name))),
 		...[...readEntries.values()].flatMap((onKind) =>
 			onKind.flatMap(({ claim: { flag } }) =>
 				flag === undefined ? [] : onKind.filter((other) => other.claim.flag === flag || declaredFlags(input!.vocabulary, other.vocab).includes(flag)).map((other) => memberKey(other.vocab, flag))

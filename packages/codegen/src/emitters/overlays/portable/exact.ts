@@ -1,7 +1,7 @@
 import { builtFlags, nullaryBuilt, readableEntries, textBuilt, type PortableCarry } from '@sittir/common/engine';
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
-import { derive, levelMembers, type Derivation, type Scalar } from '../../../bindings/derive.ts';
+import { derive, levelSlots, type Derivation, type Scalar } from '../../../bindings/derive.ts';
 import { concreteKinds, entryRoutes, guaranteedBy, modelNode, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { findKindEntry, fixedTextKinds } from '../../kind-discriminant.ts';
@@ -90,7 +90,7 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, ta
 		return text === null || text === undefined ? undefined : [text];
 	};
 	const memberLevelOf = (path: string, member: string): string | undefined => {
-		if (levelMembers(own, path).has(member)) return path;
+		if (levelSlots(own, path).has(member)) return path;
 		const parent = own.refinements.get(path)?.parent ?? (path.includes('.') ? path.slice(0, path.lastIndexOf('.')) : undefined);
 		return parent === undefined ? undefined : memberLevelOf(parent, member);
 	};
@@ -217,9 +217,9 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 	};
 	const carried = new Map<string, Map<string, ModelSlot[]>>();
 	for (const [, unwrap] of routes.containers)
-		if ((unwrap.members?.length ?? 0) > 0)
+		if ((unwrap.slots?.length ?? 0) > 0)
 			for (const path of readsIn(unwrap.kinds).paths)
-				for (const { name, slot } of unwrap.members!) {
+				for (const { name, slot } of unwrap.slots!) {
 					const at = carried.get(path) ?? carried.set(path, new Map()).get(path)!;
 					at.set(name, [...(at.get(name) ?? []), slot]);
 				}
@@ -233,7 +233,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 				if (entry.vocab !== path) continue;
 				const closes = new Set(freeTextClosedBy.get(entry) ?? []);
 				const sure = guaranteedBy(model, entry);
-				for (const route of entry.members) {
+				for (const route of entry.slots) {
 					if (route.name !== member || route.flag === true) continue;
 					const except = new Set(route.route === 'slot' ? (route.except ?? []) : []);
 					const slotKinds = route.route === 'kind' ? [route.kind] : route.route === 'slot' || route.route === 'nested' ? (route.slot?.kinds ?? []).filter((k) => !except.has(k)) : [];
@@ -260,12 +260,12 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 	const claimed = new Set([...routes.readEntries.values()].flatMap((list) => list.map((entry) => entry.vocab)));
 	const out = new Map<string, Map<string, ExactSet>>();
 	for (const path of [...vocabulary.kinds.keys()].filter((p) => readPaths.has(p) || claimed.has(p)).sort())
-		for (const [member, declared] of vocabulary.members(path)) {
+		for (const [member, declared] of vocabulary.slots(path)) {
 			if (declared.flag) continue;
 			const level = memberLevelOf(path, member);
 			const { kinds: routed, texts: terminals, interior } = routeKinds(path, member);
 			if (level === undefined && routed.length === 0 && terminals.length === 0 && !interior) continue;
-			const arms = level === undefined ? [] : [...levelMembers(own, level).get(member)!.kinds];
+			const arms = level === undefined ? [] : [...levelSlots(own, level).get(member)!.kinds];
 			const read = readsIn(routed);
 			const unmapped = read.unmapped.map((kind) => `${grammarInput.grammar}:${kind}`);
 			const scalars: readonly Scalar[] = interior || read.varies ? ['string'] : [];

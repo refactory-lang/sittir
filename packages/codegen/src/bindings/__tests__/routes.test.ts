@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularySlot, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 import { guaranteedBy } from '../routes.ts';
-import { isNamedMember } from '../facts.ts';
+import { isNamedSlot } from '../facts.ts';
 import { EMPTY_VOCABULARY } from '../../__tests__/helpers/vocabulary.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
@@ -247,7 +247,7 @@ describe("a base's claim on its clones", () => {
 
 	it("keeps a base's deep captures off a clone with an unrelated claim of its own, a member-only pattern's and the stopped claim's alike", async () => {
 		const deep = async (bindings: readonly string[]) =>
-			(resolveRoutes(await cloned([...bindings, '(constructor_declaration) @declaration.constructor'])).members.get('constructor_declaration') ?? []).flatMap((r) =>
+			(resolveRoutes(await cloned([...bindings, '(constructor_declaration) @declaration.constructor'])).slots.get('constructor_declaration') ?? []).flatMap((r) =>
 				r.route === 'nested' ? [r.name] : []
 			);
 		expect(await deep(['(function_definition) @declaration.function', '(function_definition body: (block (function_definition) @inner))'])).toEqual([]);
@@ -257,7 +257,7 @@ describe("a base's claim on its clones", () => {
 	it("keeps a clone's own members when its base's stopped claim reads through the slot that holds them", async () => {
 		const members = async (bindings: readonly string[]) =>
 			(
-				resolveRoutes(await cloned([...bindings, '(constructor_declaration) @declaration.constructor'])).members.get(
+				resolveRoutes(await cloned([...bindings, '(constructor_declaration) @declaration.constructor'])).slots.get(
 					'constructor_declaration'
 				) ?? []
 			).map((r) => r.name);
@@ -330,7 +330,7 @@ describe('resolveRoutes', () => {
 		const routes = resolveRoutes(
 			await grammar(['(function_definition) @declaration.function', '((function_definition name: (identifier) @_n) @declaration.main (#eq? @_n "main"))'].join('\n'))
 		);
-		const membersAt = (vocab: string) => routes.readEntries.get('function_definition')?.find((e) => e.vocab === vocab)?.members.map((m) => m.name);
+		const membersAt = (vocab: string) => routes.readEntries.get('function_definition')?.find((e) => e.vocab === vocab)?.slots.map((m) => m.name);
 		expect(membersAt('declaration.main')).not.toContain('name');
 		expect(membersAt('declaration.function')).toContain('name');
 	});
@@ -339,7 +339,7 @@ describe('resolveRoutes', () => {
 		const routes = resolveRoutes(
 			await grammar(['(outer) @statement.outer', '(outer mid: (middle inner: (_) @inner))', '(outer mid: (middle inner: (binary left: (expr) @left))) @statement.left'].join('\n'))
 		);
-		const membersAt = (vocab: string) => routes.readEntries.get('outer')?.find((e) => e.vocab === vocab)?.members.map((m) => m.name);
+		const membersAt = (vocab: string) => routes.readEntries.get('outer')?.find((e) => e.vocab === vocab)?.slots.map((m) => m.name);
 		expect(membersAt('statement.left')).toEqual(['left']);
 		expect(membersAt('statement.outer')).toEqual(['inner']);
 	});
@@ -437,12 +437,12 @@ describe('resolveRoutes', () => {
 		const routes = resolveRoutes(
 			await grammar(['(binary operator: "+") @expression.binary.add', '(binary left: (_) @lhs) @expression.binary'].join('\n'))
 		);
-		expect(routes.readEntries.get('binary')?.[0]?.pins).toEqual([{ member: 'operator', slot: 'operator', text: '+' }]);
+		expect(routes.readEntries.get('binary')?.[0]?.pins).toEqual([{ name: 'operator', slot: 'operator', text: '+' }]);
 	});
 
 	it('routes every non-layout slot by its member name, renames applied, and builds each back through its own slot', async () => {
 		const routes = resolveRoutes(await grammar('(binary left: (_) @lhs) @expression.binary'));
-		expect(routes.members.get('binary')).toEqual([
+		expect(routes.slots.get('binary')).toEqual([
 			{ route: 'slot', name: 'lhs', slot: MODEL[2]!.slots[0], path: [{ owner: 'binary', slot: 'left' }] },
 			{ route: 'slot', name: 'operator', slot: MODEL[2]!.slots[1], path: [{ owner: 'binary', slot: 'operator' }] },
 			{ route: 'slot', name: 'right', slot: MODEL[2]!.slots[2], path: [{ owner: 'binary', slot: 'right' }] }
@@ -453,7 +453,7 @@ describe('resolveRoutes', () => {
 		const routes = resolveRoutes(
 			await grammar('(function_definition (modifiers "async" @isAsync)) @declaration.function')
 		);
-		const members = routes.members.get('function_definition') ?? [];
+		const members = routes.slots.get('function_definition') ?? [];
 		expect(members.map((m) => m.name)).toEqual(['name', 'body', 'isAsync']);
 		expect(members[2]).toEqual({
 			route: 'presence',
@@ -469,7 +469,7 @@ describe('resolveRoutes', () => {
 
 	it("takes only the arm a deep member routes through, and keeps the slot's other arms", async () => {
 		const routes = resolveRoutes(await grammar('(choice_holder (modifiers "async" @isAsync)) @declaration.function'));
-		const members = routes.members.get('choice_holder') ?? [];
+		const members = routes.slots.get('choice_holder') ?? [];
 		expect(members.map((m) => m.name)).toEqual(['part', 'isAsync']);
 		expect(members[0]).toEqual({
 			route: 'slot',
@@ -482,7 +482,7 @@ describe('resolveRoutes', () => {
 
 	it("keeps the kinds a slot's captures name and lists the others in except", async () => {
 		const routes = resolveRoutes(await grammar("(choice_holder (identifier) @part_name) @declaration.function"));
-		expect(routes.members.get("choice_holder")?.find((m) => m.name === "partName")).toEqual({
+		expect(routes.slots.get("choice_holder")?.find((m) => m.name === "partName")).toEqual({
 			route: "slot",
 			name: "partName",
 			slot: slot("part", ["identifier"]),
@@ -493,21 +493,21 @@ describe('resolveRoutes', () => {
 
 	it("keeps every kind of a slot when its capture is by field", async () => {
 		const routes = resolveRoutes(await grammar("(choice_holder part: (identifier) @x) @declaration.function"));
-		expect(routes.members.get("choice_holder")).toEqual([
+		expect(routes.slots.get("choice_holder")).toEqual([
 			{ route: "slot", name: "x", slot: slot("part", ["modifiers", "identifier"]), path: [{ owner: "choice_holder", slot: "part" }] }
 		]);
 	});
 
 	it("keeps every kind of a slot when its capture is a wildcard", async () => {
 		const routes = resolveRoutes(await grammar("(choice_holder (_) @x) @declaration.function"));
-		expect(routes.members.get("choice_holder")).toEqual([
+		expect(routes.slots.get("choice_holder")).toEqual([
 			{ route: "slot", name: "x", slot: slot("part", ["modifiers", "identifier"]), path: [{ owner: "choice_holder", slot: "part" }] }
 		]);
 	});
 
 	it("leaves a single-kind slot unnarrowed", async () => {
 		const routes = resolveRoutes(await grammar("(function_definition (identifier) @x) @declaration.function"));
-		expect(routes.members.get("function_definition")?.find((m) => m.name === "x")).toEqual({
+		expect(routes.slots.get("function_definition")?.find((m) => m.name === "x")).toEqual({
 			route: "slot",
 			name: "x",
 			slot: slot("name", ["identifier"]),
@@ -532,10 +532,10 @@ describe('guaranteedBy', () => {
 		const modifiers = [{ owner: 'function_definition', slot: 'modifiers' }];
 		expect(plain.absent).toEqual(['modifiers']);
 		expect(guaranteedBy(input.model, plain).absent(modifiers)).toBe(true);
-		expect(plain.members.map((member) => member.name)).not.toContain('modifiers');
+		expect(plain.slots.map((member) => member.name)).not.toContain('modifiers');
 		expect(base.present).toEqual(['modifiers']);
 		expect(guaranteedBy(input.model, base).present(modifiers)).toEqual(['modifiers']);
-		expect(base.members.map((member) => member.name)).toContain('modifiers');
+		expect(base.slots.map((member) => member.name)).toContain('modifiers');
 	});
 
 	it('implies nothing present on the refined entry when the negating refinement tests more than the absence', async () => {
@@ -564,9 +564,9 @@ describe('guaranteedBy', () => {
 		const base = entries.find((entry) => entry.vocab === 'expression.call')!;
 		const args = [{ owner: 'call_alias', slot: 'content' }, { owner: 'call_storage', slot: 'args' }];
 		expect(guaranteedBy(input.model, bare).absent(args)).toBe(true);
-		expect(bare.members.map((member) => member.name)).not.toContain('args');
+		expect(bare.slots.map((member) => member.name)).not.toContain('args');
 		expect(guaranteedBy(input.model, base).present(args)).toEqual(['identifier']);
-		expect(base.members.map((member) => member.name)).toContain('args');
+		expect(base.slots.map((member) => member.name)).toContain('args');
 	});
 });
 
@@ -583,7 +583,7 @@ describe("keptKinds over a flag capture", () => {
 		kinds: new Map([["declaration.function", { name: "declaration.function", own: new Map([["marked", { optional: true, flag: true }]]), parent: undefined, refines: undefined }]]),
 		flags: new Set(["marked"]),
 		synonyms: { levels: new Map(), flags: new Map() },
-		members: (path) => (path === "declaration.function" ? new Map([["marked", { optional: true, flag: true }]]) : new Map()),
+		slots: (path) => (path === "declaration.function" ? new Map([["marked", { optional: true, flag: true }]]) : new Map()),
 		featuresOf: () => new Set(),
 		composedAs: () => KEPT_VOCABULARY
 	};
@@ -595,7 +595,7 @@ describe("keptKinds over a flag capture", () => {
 		layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 	});
 	it("ignores a flag capture, so the kind capture alone decides what the slot keeps", async () => {
-		const members = resolveRoutes(await kept("(holder (a_kind) @x @marked) @declaration.function")).members.get("holder") ?? [];
+		const members = resolveRoutes(await kept("(holder (a_kind) @x @marked) @declaration.function")).slots.get("holder") ?? [];
 		expect(members[0]).toEqual({ route: "slot", name: "x", slot: slot("part", ["a_kind"]), except: ["b_kind"], path: [{ owner: "holder", slot: "part" }] });
 		expect(members[1]).toMatchObject({ name: "marked", flag: true, kind: "a_kind" });
 	});
@@ -620,7 +620,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it("keeps the supertype the slot holds when the capture names one of its subtypes, and lists the other kind in except", async () => {
-		const members = resolveRoutes(await superGrammar("(holder (a_kind) @x) @declaration.function")).members.get("holder");
+		const members = resolveRoutes(await superGrammar("(holder (a_kind) @x) @declaration.function")).slots.get("holder");
 		expect(members).toEqual([{ route: "slot", name: "x", slot: slot("part", ["s_kind"]), except: ["b_kind"], path: [{ owner: "holder", slot: "part" }] }]);
 	});
 });
@@ -631,7 +631,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 				'(function_definition) @declaration.function\n(function_definition name: (identifier) @name @private)'
 			)
 		);
-		expect(routes.members.get('function_definition')?.find((m) => m.name === 'private')).toEqual({
+		expect(routes.slots.get('function_definition')?.find((m) => m.name === 'private')).toEqual({
 			route: 'kind',
 			name: 'private',
 			kind: 'identifier',
@@ -644,7 +644,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		model.set('word', node('word', [], { modelType: 'pattern', pattern: '[a-z]+' }));
 		model.set('field_name', node('field_name', [slot('content', ['word'])], { modelType: 'alias' }));
 		const input = { ...(await grammar('(field_name) @identifier')), model };
-		expect(resolveRoutes(input).members.get('field_name')).toEqual([]);
+		expect(resolveRoutes(input).slots.get('field_name')).toEqual([]);
 	});
 
 	it('gives a container capture only to the kind its element pattern names, and to every kind its element slot holds under a wildcard', async () => {
@@ -700,18 +700,18 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		for (const kind of ['tag_x', 'fn_x', 'cls_x']) model.set(kind, node(kind));
 		model.set('holder_x', node('holder_x', [slot('tag', ['tag_x'], { required: false }), slot('definition', ['fn_x', 'cls_x'])]));
-		const declaring = (arities: Readonly<Record<string, VocabularyMember>>): Vocabulary => ({
+		const declaring = (arities: Readonly<Record<string, VocabularySlot>>): Vocabulary => ({
 			...EMPTY_VOCABULARY,
-			members: (path) => new Map(arities[path] === undefined ? [] : [['tags', arities[path]!]])
+			slots: (path) => new Map(arities[path] === undefined ? [] : [['tags', arities[path]!]])
 		});
-		const input = async (arities: Readonly<Record<string, VocabularyMember>>): Promise<GrammarInput> => ({
+		const input = async (arities: Readonly<Record<string, VocabularySlot>>): Promise<GrammarInput> => ({
 			...(await grammar('(fn_x) @declaration.method\n(cls_x) @declaration.class\n(holder_x (tag_x)? @tags (_) @element)')),
 			model,
 			vocabulary: declaring(arities)
 		});
-		const list: VocabularyMember = { optional: true, flag: false, arity: 'list' };
-		const one: VocabularyMember = { optional: true, flag: false };
-		expect(resolveRoutes(await input({ 'declaration.method': list, 'declaration.class': list })).containers.get('holder_x')?.members).toEqual([
+		const list: VocabularySlot = { optional: true, flag: false, arity: 'list' };
+		const one: VocabularySlot = { optional: true, flag: false };
+		expect(resolveRoutes(await input({ 'declaration.method': list, 'declaration.class': list })).containers.get('holder_x')?.slots).toEqual([
 			{ name: 'tags', slot: expect.objectContaining({ name: 'tag', multiple: false }), list: true }
 		]);
 		await expect(input({ 'declaration.method': list, 'declaration.class': one }).then(resolveRoutes)).rejects.toThrow(
@@ -723,7 +723,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const declaring: Vocabulary = {
 			...EMPTY_VOCABULARY,
 			kinds: new Map([['declaration.constant', {} as never]]),
-			members: (path) => new Map(path === 'declaration.constant' ? [['value', { optional: false, flag: false }]] : [])
+			slots: (path) => new Map(path === 'declaration.constant' ? [['value', { optional: false, flag: false }]] : [])
 		};
 		const bindings = [
 			'(binary right: (_) @value) @declaration.variable',
@@ -735,7 +735,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 			routes.readEntries
 				.get('binary')
 				?.find((entry) => entry.vocab === vocab)
-				?.members.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
+				?.slots.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
 		expect(['declaration.variable', 'declaration.method', 'declaration.constant'].map(named)).toEqual(['value', 'right', 'value']);
 	});
 
@@ -743,7 +743,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const declaring: Vocabulary = {
 			...EMPTY_VOCABULARY,
 			kinds: new Map([['declaration.constant', {} as never]]),
-			members: (path) =>
+			slots: (path) =>
 				new Map(path === 'declaration.constant' ? [['value', { optional: false, flag: false }], ['result', { optional: false, flag: false }]] : [])
 		};
 		const lines = ['(binary right: (_) @value) @declaration.variable', '((binary left: (_) @_left right: (_) @result) @declaration.constant (#eq? @_left "K"))'];
@@ -753,7 +753,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 				routes.readEntries
 					.get('binary')
 					?.find((entry) => entry.vocab === vocab)
-					?.members.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
+					?.slots.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
 			expect(['declaration.variable', 'declaration.constant'].map(named)).toEqual(['value', 'result']);
 		}
 	});
@@ -762,7 +762,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));
 		const input = { ...(await grammar('(wrapped left: (_) @lhs) @expression.wrapped')), model };
-		const members = resolveRoutes(input).members.get('wrapped') ?? [];
+		const members = resolveRoutes(input).slots.get('wrapped') ?? [];
 		expect(members.map((m) => [m.name, m.path])).toEqual([
 			[
 				'lhs',
@@ -801,8 +801,8 @@ describe("keptKinds over a supertype the slot holds", () => {
 		].join('\n');
 		const routes = resolveRoutes({ ...(await grammar(bindings)), model });
 		expect(routes.readEntries.get('call_env')?.[0]?.children).toEqual([]);
-		expect(routes.readEntries.get('bin_env')?.[0]?.pins).toEqual([{ member: 'operator', slot: 'operator', text: '+' }]);
-		expect(routes.members.get('outer_env')?.find((m) => m.name === 'lhs')?.path).toEqual([
+		expect(routes.readEntries.get('bin_env')?.[0]?.pins).toEqual([{ name: 'operator', slot: 'operator', text: '+' }]);
+		expect(routes.slots.get('outer_env')?.find((m) => m.name === 'lhs')?.path).toEqual([
 			{ owner: 'outer_env', slot: 'content' },
 			{ owner: 'outer', slot: 'mid' },
 			{ owner: 'middle', slot: 'inner' },
@@ -812,7 +812,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {
 		const routes = resolveRoutes(await grammar('(outer (middle (binary left: (_) @lhs))) @expression.outer'));
-		const member = routes.members.get('outer')?.find((m) => m.name === 'lhs');
+		const member = routes.slots.get('outer')?.find((m) => m.name === 'lhs');
 		expect(member?.route === 'nested' ? member.via.map((step) => step.kind) : undefined).toEqual(['binary', 'middle']);
 		expect(member?.path).toEqual([
 			{ owner: 'outer', slot: 'mid' },
@@ -823,7 +823,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('steps through the kind a slot holds that the parser shows by the named kind, not a node of that name', async () => {
 		const routes = resolveRoutes(await grammar('(shown_outer (mid_shown (binary left: (_) @lhs))) @expression.outer'));
-		expect(routes.members.get('shown_outer')?.find((m) => m.name === 'lhs')?.path).toEqual([
+		expect(routes.slots.get('shown_outer')?.find((m) => m.name === 'lhs')?.path).toEqual([
 			{ owner: 'shown_outer', slot: 'mid' },
 			{ owner: '_mid_copy', slot: 'inner' },
 			{ owner: 'binary', slot: 'left' }
@@ -832,7 +832,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('steps through the split a slot holds of the named kind', async () => {
 		const routes = resolveRoutes(await grammar('(split_outer (mid_shown (binary left: (_) @lhs))) @expression.outer'));
-		expect(routes.members.get('split_outer')?.find((m) => m.name === 'lhs')?.path).toEqual([
+		expect(routes.slots.get('split_outer')?.find((m) => m.name === 'lhs')?.path).toEqual([
 			{ owner: 'split_outer', slot: 'mid' },
 			{ owner: 'mid_split', slot: 'inner' },
 			{ owner: 'binary', slot: 'left' }
@@ -841,7 +841,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it.each(['copy_first', 'named_first'])('steps through whichever kind %s holds that takes the rest of the path, whatever order the slot lists them in', async (outer) => {
 		const routes = resolveRoutes(await grammar(`(${outer} (dual_shown (binary left: (_) @lhs))) @expression.outer`));
-		expect(routes.members.get(outer)?.filter((m) => m.name === 'lhs').map((m) => m.path)).toEqual([
+		expect(routes.slots.get(outer)?.filter((m) => m.name === 'lhs').map((m) => m.path)).toEqual([
 			[
 				{ owner: outer, slot: 'mid' },
 				{ owner: 'dual_shown', slot: 'inner' },
@@ -852,7 +852,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('routes a member through each kind a slot holds that shows the named kind and takes the rest of the path, in slot order', async () => {
 		const routes = resolveRoutes(await grammar('(pair_outer (pair_shown (binary left: (_) @lhs))) @expression.outer'));
-		expect(routes.members.get('pair_outer')?.filter((m) => m.name === 'lhs').map((m) => m.path)).toEqual(
+		expect(routes.slots.get('pair_outer')?.filter((m) => m.name === 'lhs').map((m) => m.path)).toEqual(
 			['_pair_copy', 'pair_shown'].map((held) => [
 				{ owner: 'pair_outer', slot: 'mid' },
 				{ owner: held, slot: 'inner' },
@@ -863,7 +863,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('routes a member captured through the copy a slot holds once, deeper, and not also as the slot itself', async () => {
 		const routes = resolveRoutes(await grammar('(setter_x (params_shown (params_items item: (_)* @params))) @expression.setter'));
-		expect(routes.members.get('setter_x')?.filter((m) => m.name === 'params').map((m) => m.path)).toEqual([
+		expect(routes.slots.get('setter_x')?.filter((m) => m.name === 'params').map((m) => m.path)).toEqual([
 			[
 				{ owner: 'setter_x', slot: 'params' },
 				{ owner: '_params_copy', slot: 'elements' },
@@ -874,7 +874,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('steps through a slot that admits the next kind by a supertype', async () => {
 		const routes = resolveRoutes(await grammar('(holder (binary left: (_) @lhs)) @expression.holder'));
-		expect(routes.members.get('holder')?.find((m) => m.name === 'lhs')?.path).toEqual([
+		expect(routes.slots.get('holder')?.find((m) => m.name === 'lhs')?.path).toEqual([
 			{ owner: 'holder', slot: 'item' },
 			{ owner: 'binary', slot: 'left' }
 		]);
@@ -882,7 +882,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it("routes a claimed list's items through its item slot", async () => {
 		const routes = resolveRoutes(await grammar('(params_items) @expression.tuple'));
-		expect(routes.members.get('params_items')).toEqual([
+		expect(routes.slots.get('params_items')).toEqual([
 			{ route: 'slot', name: 'item', slot: expect.objectContaining({ name: 'item', multiple: true }), path: [{ owner: 'params_items', slot: 'item' }] }
 		]);
 	});
@@ -895,7 +895,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const routes = resolveRoutes(
 			await grammar('(block . (function_definition name: (identifier) @first)) @statement.block')
 		);
-		expect(routes.members.get('block')?.find((m) => m.name === 'first')?.path).toEqual([
+		expect(routes.slots.get('block')?.find((m) => m.name === 'first')?.path).toEqual([
 			{ owner: 'block', slot: 'statements', anchor: 'first' },
 			{ owner: 'function_definition', slot: 'name' }
 		]);
@@ -903,7 +903,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('cannot build a deep member back through a slot that holds many', async () => {
 		const routes = resolveRoutes(await grammar('(block (function_definition name: (identifier) @first)) @statement.block'));
-		const member = routes.members.get('block')?.find((m) => m.name === 'first');
+		const member = routes.slots.get('block')?.find((m) => m.name === 'first');
 		expect(member?.route).toBe('nested');
 		expect(member?.path).toBeUndefined();
 	});
@@ -917,22 +917,22 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it('reads a member capture inside a pattern grouped with its directives under that pattern, as it reads the bare pattern', async () => {
-		const bare = (await grammar('(outer (middle (binary) @inner))')).bindings.members;
-		const grouped = (await grammar('((outer (middle (binary) @inner)) (#set! reason "grouped with a directive"))')).bindings.members;
+		const bare = (await grammar('(outer (middle (binary) @inner))')).bindings.slots;
+		const grouped = (await grammar('((outer (middle (binary) @inner)) (#set! reason "grouped with a directive"))')).bindings.slots;
 		expect(bare).toEqual([expect.objectContaining({ route: 'nested', owner: 'outer', name: 'inner', parent: 'middle' })]);
 		expect(grouped).toEqual(bare);
 	});
 
 	it('reads a member under its pattern when a predicate sits in a grouping of its own, as it reads the predicate ungrouped', async () => {
-		const ungrouped = (await grammar('((outer (middle (binary) @inner)) (#eq? @inner "x"))')).bindings.members;
+		const ungrouped = (await grammar('((outer (middle (binary) @inner)) (#eq? @inner "x"))')).bindings.slots;
 		expect(ungrouped).toEqual([expect.objectContaining({ route: 'nested', owner: 'outer', name: 'inner', parent: 'middle' })]);
 		for (const grouped of ['((outer (middle (binary) @inner)) ((#eq? @inner "x")))', '((outer (middle (binary) @inner)) (((#eq? @inner "x"))))'])
-			expect((await grammar(grouped)).bindings.members).toEqual(ungrouped);
+			expect((await grammar(grouped)).bindings.slots).toEqual(ungrouped);
 	});
 
 	it('homes no member on a sibling root when another root of the pattern is a nested grouping', async () => {
-		const members = (await grammar('((outer (middle (binary) @inner)) ((middle (binary) @second)))')).bindings.members;
-		expect(members.find((m) => isNamedMember(m) && m.name === 'second')).not.toMatchObject({ owner: 'outer' });
+		const members = (await grammar('((outer (middle (binary) @inner)) ((middle (binary) @second)))')).bindings.slots;
+		expect(members.find((m) => isNamedSlot(m) && m.name === 'second')).not.toMatchObject({ owner: 'outer' });
 	});
 
 	it('reads a nested capture of a bare path as a claim only where #set! claim names it, and as a member otherwise', async () => {
@@ -1011,7 +1011,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')));
 		expect(routes.readEntries.get('struct_unit')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
 		expect(routes.readEntries.get('struct_tuple')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
-		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['name', 'fields']);
+		expect(routes.slots.get('struct_tuple')?.map((r) => r.name)).toEqual(['name', 'fields']);
 		expect(routes.readEntries.get('struct_named')?.map((e) => [e.claimed, e.vocab])).toEqual([
 			['struct_named', 'declaration.struct.named'],
 			['_struct', 'declaration.struct']
@@ -1059,21 +1059,21 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it("carries a supertype claim's field renames to each form it reaches", async () => {
 		const routes = resolveRoutes(await grammar('(_struct name: (_) @title) @declaration.struct'));
-		expect(routes.members.get('struct_unit')?.map((r) => r.name)).toEqual(['title']);
-		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
+		expect(routes.slots.get('struct_unit')?.map((r) => r.name)).toEqual(['title']);
+		expect(routes.slots.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
 	});
 
 	it('routes at a supertype-claimed path only the members that path declares, and every slot where a form is claimed on its own', async () => {
 		const declaring: Vocabulary = {
 			...EMPTY_VOCABULARY,
 			kinds: new Map([['declaration.struct', {} as never]]),
-			members: (path) => new Map(path === 'declaration.struct' ? [['title', { optional: false, flag: false }]] : [])
+			slots: (path) => new Map(path === 'declaration.struct' ? [['title', { optional: false, flag: false }]] : [])
 		};
 		const membersAt = async (bindings: string, kind: string, vocab: string): Promise<readonly string[] | undefined> =>
 			resolveRoutes({ ...(await grammar(bindings)), vocabulary: declaring })
 				.readEntries.get(kind)
 				?.find((entry) => entry.vocab === vocab)
-				?.members.map((route) => route.name);
+				?.slots.map((route) => route.name);
 		expect(await membersAt('(_struct name: (_) @title) @declaration.struct', 'struct_tuple', 'declaration.struct')).toEqual(['title']);
 		expect(await membersAt('(struct_tuple name: (_) @title) @declaration.struct', 'struct_tuple', 'declaration.struct')).toEqual(['title', 'fields']);
 		expect(await membersAt('(_struct name: (_) @title) @declaration.class', 'struct_tuple', 'declaration.class')).toEqual(['title', 'fields']);
@@ -1082,7 +1082,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	it("carries a supertype claim's nested captures to each form, through the slot each form holds", async () => {
 		const routes = resolveRoutes(await grammar('(_arm match: (arm_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case'));
 		for (const form of ['arm_comma', 'arm_block']) {
-			const members = routes.members.get(form) ?? [];
+			const members = routes.slots.get(form) ?? [];
 			expect(members.map((r) => r.name)).toEqual(['body', 'pattern', 'guard']);
 			expect(members.find((r) => r.name === 'guard')).toMatchObject({ route: 'nested', path: [{ owner: form, slot: 'match' }, { owner: 'arm_pattern', slot: 'condition' }] });
 		}
@@ -1094,7 +1094,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 				['(_struct name: (_) @title) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')
 			)
 		);
-		expect(routes.members.get('struct_named')?.map((r) => r.name)).toEqual(['title']);
+		expect(routes.slots.get('struct_named')?.map((r) => r.name)).toEqual(['title']);
 	});
 
 	it('enters a claim on every kind the parser shows by the claimed name', async () => {
@@ -1136,13 +1136,13 @@ describe("keptKinds over a supertype the slot holds", () => {
 	it('enters a claim on the forms of a form that is itself a supertype', async () => {
 		const routes = resolveRoutes(await grammar('(_decl) @statement.export'));
 		expect(routes.readEntries.get('default_fn')?.map((e) => [e.claimed, e.vocab])).toEqual([['_decl', 'statement.export']]);
-		expect(routes.members.get('default_fn')?.map((r) => r.name)).toEqual(['declaration']);
+		expect(routes.slots.get('default_fn')?.map((r) => r.name)).toEqual(['declaration']);
 	});
 
 	it("routes a list form's items as the member its sibling forms hold the same elements under", async () => {
 		const routes = resolveRoutes(await grammar('(_clause wrapped: (_) @entries) @clause.resource'));
-		expect(routes.members.get('clause_paren')?.map((r) => r.name)).toEqual(['entries']);
-		expect(routes.members.get('clause_bare')).toEqual([
+		expect(routes.slots.get('clause_paren')?.map((r) => r.name)).toEqual(['entries']);
+		expect(routes.slots.get('clause_bare')).toEqual([
 			{ route: 'slot', name: 'entries', slot: slot('item', ['identifier'], { propertyName: 'items', multiple: true }), path: [{ owner: 'clause_bare', slot: 'item' }] }
 		]);
 	});
@@ -1161,48 +1161,48 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('routes no member through a required slot that can hold only one fixed text', async () => {
 		const routes = resolveRoutes(await grammar('(range) @expression.range'));
-		expect(routes.members.get('range')?.map((r) => r.name)).toEqual(['start']);
+		expect(routes.slots.get('range')?.map((r) => r.name)).toEqual(['start']);
 	});
 
 	it('routes no member through a slot whose every value a refinement pins, and keeps one a refinement leaves open', async () => {
 		const told = resolveRoutes(
 			await grammar(['(binary) @expression.binary', '(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.binary.subtract'].join('\n'))
 		);
-		expect(told.members.get('binary')?.map((r) => r.name)).toEqual(['left', 'right']);
+		expect(told.slots.get('binary')?.map((r) => r.name)).toEqual(['left', 'right']);
 		const open = resolveRoutes(await grammar(['(binary) @expression.binary', '(binary operator: "+") @expression.binary.add'].join('\n')));
-		expect(open.members.get('binary')?.map((r) => r.name)).toEqual(['left', 'operator', 'right']);
+		expect(open.slots.get('binary')?.map((r) => r.name)).toEqual(['left', 'operator', 'right']);
 	});
 
 	it('routes no member through an optional slot whose every value a refinement pins, and keeps an optional one-value slot as its presence', async () => {
 		const routes = resolveRoutes(
 			await grammar(['(maybe_op) @expression.binary', '(maybe_op operator: "+") @expression.binary.add', '(maybe_op operator: "-") @expression.binary.subtract'].join('\n'))
 		);
-		expect(routes.members.get('maybe_op')?.map((r) => r.name)).toEqual(['left', 'bang']);
+		expect(routes.slots.get('maybe_op')?.map((r) => r.name)).toEqual(['left', 'bang']);
 	});
 
 	it('routes no member through a slot that holds only text on a kind read as an identifier, and keeps its node slots', async () => {
 		const routes = resolveRoutes(await grammar(['(private_name) @identifier', '(scoped_name) @identifier.qualified', '(char_text) @literal.character'].join('\n')));
-		expect(routes.members.get('private_name')).toEqual([]);
-		expect(routes.members.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
-		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);
+		expect(routes.slots.get('private_name')).toEqual([]);
+		expect(routes.slots.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
+		expect(routes.slots.get('char_text')?.map((r) => r.name)).toEqual(['content']);
 	});
 
 	it("routes no member through a slot the entry's test narrows to a fixed-text kind, though the slot holds other kinds or a base claim captures it, and refuses the entry's own capture there", async () => {
-		const names = async (bindings: string) => (resolveRoutes(await grammar(bindings)).members.get('param_x') ?? []).map((r) => r.name);
+		const names = async (bindings: string) => (resolveRoutes(await grammar(bindings)).slots.get('param_x') ?? []).map((r) => r.name);
 		expect(await names('(param_x name: (self_kw)) @identifier.receiver')).toEqual([]);
 		expect(await names('(param_x) @declaration.parameter')).toEqual(['name']);
 		await expect(names('(param_x name: (self_kw) @name) @identifier.receiver')).rejects.toThrow(/param_x's capture @name reaches no member: its name slot is pinned to one fixed text by the same claim.*@dropped/);
 		const routes = resolveRoutes(
 			await grammar(['(param_x name: (_) @name) @declaration.parameter', '(param_x name: (self_kw)) @declaration.parameter.receiver', '(param_x name: (identifier)) @declaration.parameter.named'].join('\n'))
 		);
-		const membersOf = (vocab: string) => routes.readEntries.get('param_x')?.find((entry) => entry.vocab === vocab)?.members.map((r) => r.name);
+		const membersOf = (vocab: string) => routes.readEntries.get('param_x')?.find((entry) => entry.vocab === vocab)?.slots.map((r) => r.name);
 		expect(membersOf('declaration.parameter')).toEqual(['name']);
 		expect(membersOf('declaration.parameter.receiver')).toEqual([]);
 		expect(membersOf('declaration.parameter.named')).toEqual(['name']);
 	});
 
 	it("routes a slot that holds only an unclaimed token on into the token's one interior part, and stops at a claimed one", async () => {
-		const paths = async (bindings: string) => (resolveRoutes(await grammar(bindings)).members.get('script') ?? []).map((r) => (r.route === 'slot' ? r.path : undefined));
+		const paths = async (bindings: string) => (resolveRoutes(await grammar(bindings)).slots.get('script') ?? []).map((r) => (r.route === 'slot' ? r.path : undefined));
 		expect(await paths('(script) @file\n(script line: (_) @line)')).toEqual([
 			[
 				{ owner: 'script', slot: 'line' },
@@ -1213,7 +1213,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it("routes no member through a slot the entry's own pin narrows to one text, as a terminal or as a fixed-text kind", async () => {
-		const names = async (bindings: string, kind: string) => (resolveRoutes(await grammar(bindings)).members.get(kind) ?? []).map((r) => r.name);
+		const names = async (bindings: string, kind: string) => (resolveRoutes(await grammar(bindings)).slots.get(kind) ?? []).map((r) => r.name);
 		expect(await names('(binary operator: "+") @expression.binary.add', 'binary')).toEqual(['left', 'right']);
 		expect(await names('(span "..") @expression.range.exclusive', 'span')).toEqual(['lo']);
 		expect(await names('(binary) @expression.binary', 'binary')).toEqual(['left', 'operator', 'right']);
@@ -1224,17 +1224,17 @@ describe("keptKinds over a supertype the slot holds", () => {
 			await grammar(['(span) @expression.range', '(span "..") @expression.range.exclusive', '(span "..=") @expression.range.inclusive'].join('\n'))
 		);
 		expect(routes.readEntries.get('span')?.map((e) => e.pins)).toEqual([
-			[{ member: 'op', slot: 'op', text: '..' }],
-			[{ member: 'op', slot: 'op', text: '..=' }],
+			[{ name: 'op', slot: 'op', text: '..' }],
+			[{ name: 'op', slot: 'op', text: '..=' }],
 			[]
 		]);
-		expect(routes.members.get('span')?.map((r) => r.name)).toEqual(['lo']);
+		expect(routes.slots.get('span')?.map((r) => r.name)).toEqual(['lo']);
 	});
 
 	it('routes no member through a slot a claim marks @dropped, on each form the claim reaches', async () => {
 		const routes = resolveRoutes(await grammar('(binary left: (_) @dropped) @expression.binary\n(_struct name: (_) @dropped) @declaration.struct'));
-		expect(routes.members.get('binary')?.map((r) => r.name)).toEqual(['operator', 'right']);
-		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
+		expect(routes.slots.get('binary')?.map((r) => r.name)).toEqual(['operator', 'right']);
+		expect(routes.slots.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
 	});
 
 	it.each([
@@ -1242,7 +1242,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		{ kind: 'span', token: '..', vocab: 'expression.range', members: ['lo'] }
 	])('drops the slot holding the anonymous token $token on $kind, keeping its other members', async ({ kind, token, vocab, members }) => {
 		const routes = resolveRoutes(await grammar(`(${kind}) @${vocab}\n(${kind} "${token}" @dropped)`));
-		expect(routes.members.get(kind)?.map((route) => route.name)).toEqual(members);
+		expect(routes.slots.get(kind)?.map((route) => route.name)).toEqual(members);
 	});
 
 	it('tests a child of a narrower kind than its slot holds, and orders that entry before the plain one', async () => {
@@ -1298,9 +1298,9 @@ describe("keptKinds over a supertype the slot holds", () => {
 	it('routes no slot whose values, beside the kinds a member path leads through, a child test of a refinement tells', async () => {
 		const rows = ['(rng) @pattern.range', '(rng (rng_right "..=")) @pattern.range.inclusive', '(rng (rng_right right: (_) @right))'];
 		const told = resolveRoutes(await grammar([...rows, '(rng (_dots)) @pattern.range.exclusive'].join('\n')));
-		expect(told.members.get('rng')?.map((r) => r.name)).toEqual(['left', 'right']);
+		expect(told.slots.get('rng')?.map((r) => r.name)).toEqual(['left', 'right']);
 		const untold = resolveRoutes(await grammar(rows.join('\n')));
-		expect(untold.members.get('rng')?.map((r) => r.name)).toEqual(['left', 'content', 'right']);
+		expect(untold.slots.get('rng')?.map((r) => r.name)).toEqual(['left', 'content', 'right']);
 	});
 
 	it('tests a fieldless token below the claimed node in the slot that holds its text, as a pin finds its slot', async () => {
@@ -1324,9 +1324,9 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const claims = (...levels: readonly string[]): Promise<GrammarInput> =>
 			grammar(['(meth) @declaration.method', ...levels.map((level) => `(meth (access_mod "${level}")) @declaration.method.${level}`)].join('\n'));
 		const told = resolveRoutes(await claims('public', 'private', 'protected'));
-		expect(told.members.get('meth')?.map((r) => r.name)).not.toContain('access');
+		expect(told.slots.get('meth')?.map((r) => r.name)).not.toContain('access');
 		const open = resolveRoutes(await claims('public', 'private'));
-		expect(open.members.get('meth')?.map((r) => r.name)).toContain('access');
+		expect(open.slots.get('meth')?.map((r) => r.name)).toContain('access');
 	});
 
 	it("routes no member through a slot whose node's every kind a refinement tests one level below, and keeps it while one is open", async () => {
@@ -1339,9 +1339,9 @@ describe("keptKinds over a supertype the slot holds", () => {
 				'(fn_x (vis_mod (crate_kw))) @declaration.function.public.internal'
 			)
 		);
-		expect(told.members.get('fn_x')?.map((r) => r.name)).toEqual(['name', 'scope']);
+		expect(told.slots.get('fn_x')?.map((r) => r.name)).toEqual(['name', 'scope']);
 		const open = resolveRoutes(await claims('(fn_x (vis_mod (vis_pub))) @declaration.function.public'));
-		expect(open.members.get('fn_x')?.map((r) => r.name)).toEqual(['vis', 'name']);
+		expect(open.slots.get('fn_x')?.map((r) => r.name)).toEqual(['vis', 'name']);
 	});
 
 	it('refuses to hide a slot whose covered kind holds content no claim captures, naming the owner, the slot, the kind and its slots', async () => {
@@ -1362,7 +1362,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 				].join('\n')
 			)
 		);
-		expect(routes.members.get('fn_x')?.map((r) => r.name)).toEqual(['visibility', 'name']);
+		expect(routes.slots.get('fn_x')?.map((r) => r.name)).toEqual(['visibility', 'name']);
 	});
 
 	it('tests a field literal through a child, and not the child the slot can only hold', async () => {
@@ -1423,9 +1423,9 @@ describe("keptKinds over a supertype the slot holds", () => {
 			'(cmp . (_) . (cmp_op (_) @right) .)'
 		];
 		const routes = resolveRoutes(await grammar(rows.join('\n')));
-		const byPath = Object.fromEntries((routes.readEntries.get('cmp') ?? []).map((e) => [e.vocab, e.members.map((m) => m.name)]));
+		const byPath = Object.fromEntries((routes.readEntries.get('cmp') ?? []).map((e) => [e.vocab, e.slots.map((m) => m.name)]));
 		expect(byPath).toEqual({ 'expression.binary': ['left'], 'expression.binary.chain': ['left', 'ops'], 'expression.binary.less': ['left', 'right'] });
-		expect(routes.members.get('cmp')?.map((m) => m.name).sort()).toEqual(['left', 'ops', 'right']);
+		expect(routes.slots.get('cmp')?.map((m) => m.name).sort()).toEqual(['left', 'ops', 'right']);
 	});
 
 	it("routes on each entry the captures of its own claim and of member-only patterns, never a sibling claim's", async () => {
@@ -1442,7 +1442,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 			routes.readEntries
 				.get('outer')
 				?.find((e) => e.vocab === vocab)
-				?.members.flatMap((r) => (r.route === 'slot' ? [] : [r.name]));
+				?.slots.flatMap((r) => (r.route === 'slot' ? [] : [r.name]));
 		expect(deep('expression.outer.nested')).toEqual(['operation', 'left']);
 		expect(deep('expression.outer')).toEqual(['left']);
 	});
@@ -1454,17 +1454,17 @@ describe("keptKinds over a supertype the slot holds", () => {
 			)
 		);
 		for (const entry of routes.readEntries.get('outer') ?? [])
-			expect(entry.members.map((r) => r.name)).not.toContain('mid');
+			expect(entry.slots.map((r) => r.name)).not.toContain('mid');
 	});
 
 	it('keeps every route a member has, though several share its name', async () => {
 		const routes = resolveRoutes(await grammar('(function_definition (modifiers "async" @flag)) @declaration.function\n(function_definition (modifiers "static" @flag))'));
-		expect(routes.members.get('function_definition')?.filter((m) => m.name === 'flag')).toHaveLength(2);
+		expect(routes.slots.get('function_definition')?.filter((m) => m.name === 'flag')).toHaveLength(2);
 	});
 
 	it('routes a slot no member counts through on every entry', async () => {
 		const routes = resolveRoutes(await grammar('(cmp) @expression.binary\n(cmp (cmp_op) . (cmp_op)) @expression.binary.chain'));
-		for (const entry of routes.readEntries.get('cmp') ?? []) expect(entry.members.map((m) => m.name)).toEqual(['left', 'ops']);
+		for (const entry of routes.readEntries.get('cmp') ?? []) expect(entry.slots.map((m) => m.name)).toEqual(['left', 'ops']);
 	});
 
 	it("routes a path through a slot's first node on every entry: a first node is no count", async () => {
@@ -1474,12 +1474,12 @@ describe("keptKinds over a supertype the slot holds", () => {
 			)
 		);
 		for (const entry of routes.readEntries.get('block') ?? [])
-			expect(entry.members.map((m) => m.name)).toContain('first');
+			expect(entry.slots.map((m) => m.name)).toContain('first');
 	});
 
 	it('inherits a capture of the claim a refinement refines with the conditions its pattern put on the path, so another first node reads no member', async () => {
 		const routes = resolveRoutes(await grammar('(block . (function_definition name: (identifier) @first)) @statement.block\n(block (function_definition)) @statement.block.defs'));
-		const first = (vocab: string) => routes.readEntries.get('block')?.find((e) => e.vocab === vocab)?.members.find((m) => m.name === 'first');
+		const first = (vocab: string) => routes.readEntries.get('block')?.find((e) => e.vocab === vocab)?.slots.find((m) => m.name === 'first');
 		expect(first('statement.block.defs')).toEqual(first('statement.block'));
 		expect(first('statement.block.defs')).toMatchObject({
 			via: [{ kind: 'function_definition', anchor: 'first' }],
@@ -1509,10 +1509,10 @@ describe('flag captures', () => {
 		node('ref_expr_mut', [slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
 		node('def', [slot('async', [], { required: false, storage: 'boolean', terminals: ['async'] }), slot('name', ['identifier'])])
 	];
-	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
+	const member = (flag: boolean): VocabularySlot => ({ optional: true, flag });
 	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
 		const kinds = new Map(Object.entries(own).map(([path, members]) => [path, { name: path, own: new Map(Object.entries(members).map(([n, flag]) => [n, member(flag)])), parent: undefined, refines: undefined }]));
-		const built: Vocabulary = { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, members: (path) => kinds.get(path)?.own ?? new Map(), featuresOf: () => new Set(), composedAs: () => built };
+		const built: Vocabulary = { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, slots: (path) => kinds.get(path)?.own ?? new Map(), featuresOf: () => new Set(), composedAs: () => built };
 		return built;
 	};
 	const VOCABULARY = vocabulary({
@@ -1532,7 +1532,7 @@ describe('flag captures', () => {
 		textTokens: new Set(),
 		layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 	});
-	const membersOf = async (bindings: string, kind: string) => resolveRoutes(await flagged(bindings)).members.get(kind);
+	const membersOf = async (bindings: string, kind: string) => resolveRoutes(await flagged(bindings)).slots.get(kind);
 
 	it("keeps a flag claim's template on the flag claim's own entry, never on the plain claim of its path", async () => {
 		const routes = resolveRoutes(
@@ -1597,7 +1597,7 @@ describe('flag captures', () => {
 				model,
 				textTokens: new Set(),
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
-			}).members.get('binding_plain');
+			}).slots.get('binding_plain');
 		for (const [claim, capture] of [
 			['(binding)', '(binding_plain (mutable_specifier) @NAME)'],
 			['(binding_plain)', '(binding (mutable_specifier) @NAME)']
@@ -1621,7 +1621,7 @@ describe('flag captures', () => {
 		const both = vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mutable: false } });
 		const bindings = await readBindings(['(binding_flag) @declaration.parameter', '(binding_data) @declaration.variable', '(binding value: (_) @mutable)'].join('\n'));
 		const routes = resolveRoutes({ grammar: 'g', bindings: resolveFlags(canonicalFacts(bindings, both, model), both, model), model, textTokens: new Set(), layoutSlots: [], vocabulary: EMPTY_VOCABULARY });
-		const data = routes.members.get('binding_data')?.find((r) => r.name === 'mutable');
+		const data = routes.slots.get('binding_data')?.find((r) => r.name === 'mutable');
 		expect(data).toMatchObject({ route: 'slot', name: 'mutable' });
 		expect(data).not.toHaveProperty('flag');
 	});
@@ -1636,7 +1636,7 @@ describe('flag captures', () => {
 				model,
 				textTokens: new Set(),
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
-			}).members.get('param');
+			}).slots.get('param');
 		const canonical = await of('mutable');
 		expect(canonical?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
 		expect(await of('mut')).toEqual(canonical);
@@ -1665,7 +1665,7 @@ describe('flag captures', () => {
 				model,
 				textTokens: new Set(),
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
-			}).members.get('binding_plain');
+			}).slots.get('binding_plain');
 		const canonical = await of('mutable');
 		expect(canonical?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
 		expect(await of('mut')).toEqual(canonical);
@@ -1700,7 +1700,7 @@ describe('flag captures', () => {
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('outer');
 		const canonical = await of('shared');
-		const routesAt = (path: string) => canonical?.find((entry) => entry.vocab === path)?.members.filter((r) => r.name === 'shared');
+		const routesAt = (path: string) => canonical?.find((entry) => entry.vocab === path)?.slots.filter((r) => r.name === 'shared');
 		expect(routesAt('declaration.function')).toMatchObject([{ route: 'presence', name: 'shared', flag: true }]);
 		expect(routesAt('expression.container')).toEqual([]);
 		expect(await of('static')).toEqual(canonical);
@@ -1730,7 +1730,7 @@ describe('flag captures', () => {
 				model,
 				textTokens: new Set(),
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
-			}).members;
+			}).slots;
 		const canonical = await of('mutable');
 		expect(canonical.get('binding_flag')?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
 		expect(await of('mut')).toEqual(canonical);
@@ -1762,7 +1762,7 @@ describe('flag captures', () => {
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('outer');
 		const canonical = await of('shared');
-		expect(canonical?.find((entry) => entry.vocab === 'declaration.function')?.members.filter((r) => r.name === 'shared')).toMatchObject([{ route: 'presence', flag: true }]);
+		expect(canonical?.find((entry) => entry.vocab === 'declaration.function')?.slots.filter((r) => r.name === 'shared')).toMatchObject([{ route: 'presence', flag: true }]);
 		expect(await of('static')).toEqual(canonical);
 	});
 
@@ -1792,7 +1792,7 @@ describe('flag captures', () => {
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('entry');
 		const canonical = await of('static');
-		expect(canonical?.find((entry) => entry.vocab === 'declaration.method')?.members.filter((r) => r.name === 'static')).toMatchObject([{ flag: true }]);
+		expect(canonical?.find((entry) => entry.vocab === 'declaration.method')?.slots.filter((r) => r.name === 'static')).toMatchObject([{ flag: true }]);
 		expect(await of('shared')).toEqual(canonical);
 	});
 
@@ -1817,7 +1817,7 @@ describe('flag captures', () => {
 				layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 			}).readEntries.get('entry');
 		const canonical = await of('default');
-		const optional = canonical?.find((entry) => entry.vocab === 'declaration.parameter')?.members.find((r) => r.name === 'optional');
+		const optional = canonical?.find((entry) => entry.vocab === 'declaration.parameter')?.slots.find((r) => r.name === 'optional');
 		expect(optional).toMatchObject({ route: 'kind', path: [{ owner: 'entry', slot: 'value' }] });
 		expect(await of('provided')).toEqual(canonical);
 	});
@@ -1858,7 +1858,7 @@ describe('flag captures', () => {
 		const routes = resolveRoutes(
 			await flagged(['(method) @declaration.method', '(method accessor_kind: "*" @generator)', '(method accessor_kind: "get") @declaration.method.getter'].join('\n'))
 		);
-		expect(routes.readEntries.get('method')?.find((e) => e.vocab === 'declaration.method.getter')?.pins).toEqual([{ member: 'accessorKind', slot: 'accessor_kind', text: 'get' }]);
+		expect(routes.readEntries.get('method')?.find((e) => e.vocab === 'declaration.method.getter')?.pins).toEqual([{ name: 'accessorKind', slot: 'accessor_kind', text: 'get' }]);
 	});
 
 	it('keeps a capture that is data on its path a member that names its slot', async () => {
@@ -1876,7 +1876,7 @@ describe('derive', () => {
 		const d = derive([
 			await grammar('(fn_item (params_x (params_elements item: (_)* @parameters)?)) @declaration.function')
 		]);
-		expect(d.members.get('declaration.function')?.get('parameters')).toMatchObject({
+		expect(d.slots.get('declaration.function')?.get('parameters')).toMatchObject({
 			multiple: true,
 			scalar: false,
 			optional: false
@@ -1887,7 +1887,7 @@ describe('derive', () => {
 		const d = derive([
 			await grammar('(fn_item (params_x (params_elements . (attr_param) @first))) @declaration.function')
 		]);
-		expect(d.members.get('declaration.function')?.get('first')).toMatchObject({
+		expect(d.slots.get('declaration.function')?.get('first')).toMatchObject({
 			multiple: false,
 			scalar: true,
 			optional: true
@@ -1896,14 +1896,14 @@ describe('derive', () => {
 
 	it('keeps an optional single capture of a list wrapper optional', async () => {
 		const d = derive([await grammar('(fn_item (params_x (params_elements) @parameters)?) @declaration.function')]);
-		expect(d.members.get('declaration.function')?.get('parameters')).toMatchObject({ multiple: true, optional: true });
+		expect(d.slots.get('declaration.function')?.get('parameters')).toMatchObject({ multiple: true, optional: true });
 	});
 
 	it('does not infer a required capture from a repeated target slot alone', async () => {
 		const d = derive([
 			await grammar('(fn_item (params_x (params_elements item: (_) @parameters)?)) @declaration.function')
 		]);
-		expect(d.members.get('declaration.function')?.get('parameters')).toMatchObject({ multiple: true, optional: true });
+		expect(d.slots.get('declaration.function')?.get('parameters')).toMatchObject({ multiple: true, optional: true });
 	});
 
 	it('keeps a repeated member optional if another claimed kind has no capture for it', async () => {
@@ -1912,19 +1912,19 @@ describe('derive', () => {
 				'(fn_item (params_x (params_elements item: (_)* @parameters)?)) @declaration.function\n(function_definition) @declaration.function'
 			)
 		]);
-		expect(d.members.get('declaration.function')?.get('parameters')).toMatchObject({ multiple: true, optional: true });
+		expect(d.slots.get('declaration.function')?.get('parameters')).toMatchObject({ multiple: true, optional: true });
 	});
 
 	it('gives each path the members of its own entries', async () => {
 		const rows = ['(cmp (cmp_op) . (cmp_op)) @expression.binary.chain', '(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less', '(cmp . (_) . (cmp_op (_) @right) .)'];
 		const d = derive([await grammar(rows.join('\n'))]);
-		expect([...(d.members.get('expression.binary.less')?.keys() ?? [])].sort()).toEqual(['left', 'right']);
-		expect([...(d.members.get('expression.binary.chain')?.keys() ?? [])].sort()).toEqual(['left', 'ops']);
+		expect([...(d.slots.get('expression.binary.less')?.keys() ?? [])].sort()).toEqual(['left', 'right']);
+		expect([...(d.slots.get('expression.binary.chain')?.keys() ?? [])].sort()).toEqual(['left', 'ops']);
 	});
 
 	it('types a flag as an optional boolean member of the claimed kind', async () => {
 		const d = derive([await grammar('(function_definition) @declaration.function\n(function_definition name: (identifier) @name @private)')]);
-		const flag = d.members.get('declaration.function')?.get('private');
+		const flag = d.slots.get('declaration.function')?.get('private');
 		expect([...(flag?.kinds ?? [])]).toEqual(['boolean']);
 		expect(flag?.optional).toBe(true);
 	});
@@ -1933,15 +1933,15 @@ describe('derive', () => {
 		const d = derive([
 			await grammar(['(_struct) @declaration.struct', '(struct_tuple) @declaration.struct.tuple'].join('\n'))
 		]);
-		expect([...(d.members.get('declaration.struct')?.keys() ?? [])]).toEqual(['name']);
-		expect(d.members.get('declaration.struct')?.get('name')?.optional).toBe(false);
-		expect([...(d.members.get('declaration.struct.tuple')?.keys() ?? [])].sort()).toEqual(['fields', 'name']);
+		expect([...(d.slots.get('declaration.struct')?.keys() ?? [])]).toEqual(['name']);
+		expect(d.slots.get('declaration.struct')?.get('name')?.optional).toBe(false);
+		expect([...(d.slots.get('declaration.struct.tuple')?.keys() ?? [])].sort()).toEqual(['fields', 'name']);
 	});
 
 	it('types a member optional unless every kind the path is read from carries it', async () => {
 		const d = derive([await grammar('(_struct) @declaration.struct')]);
-		expect(d.members.get('declaration.struct')?.get('fields')?.optional).toBe(true);
-		expect(d.members.get('declaration.struct')?.get('name')?.optional).toBe(false);
+		expect(d.slots.get('declaration.struct')?.get('fields')?.optional).toBe(true);
+		expect(d.slots.get('declaration.struct')?.get('name')?.optional).toBe(false);
 	});
 
 	it('types a member by the kind the parser shows, never by a name with its underscores stripped', async () => {
@@ -1950,8 +1950,8 @@ describe('derive', () => {
 				['(plain_text) @literal.string.plain', '(text_fragment) @literal.string.text', '(plain_holder) @statement.plain', '(shown_holder) @statement.shown'].join('\n')
 			)
 		]);
-		expect([...(d.members.get('statement.shown')?.get('text')?.kinds ?? [])]).toEqual(['literal.string.text']);
-		expect([...(d.members.get('statement.plain')?.get('text')?.kinds ?? [])]).toEqual(['<g:_plain_text>']);
+		expect([...(d.slots.get('statement.shown')?.get('text')?.kinds ?? [])]).toEqual(['literal.string.text']);
+		expect([...(d.slots.get('statement.plain')?.get('text')?.kinds ?? [])]).toEqual(['<g:_plain_text>']);
 	});
 });
 
@@ -1972,13 +1972,13 @@ describe('a list\'s trailing separator', () => {
 		kinds: new Map(),
 		flags: new Set(['trailingComma']),
 		synonyms: { levels: new Map(), flags: new Map() },
-		members: () => new Map([['trailingComma', { optional: true, flag: true }]]),
+		slots: () => new Map([['trailingComma', { optional: true, flag: true }]]),
 		featuresOf: () => new Set(),
 		composedAs: () => FLAGGED
 	};
 	const membersOf = async (bindings: string, kind: string) => {
 		const input = await grammar(bindings);
-		return resolveRoutes({ ...input, bindings: resolveFlags(input.bindings, FLAGGED, input.model) }).members.get(kind) ?? [];
+		return resolveRoutes({ ...input, bindings: resolveFlags(input.bindings, FLAGGED, input.model) }).slots.get(kind) ?? [];
 	};
 
 	it('reads as the list\'s Trailing bit, and by two items or more where one item always spells it', async () => {
@@ -2010,7 +2010,7 @@ describe('a list\'s trailing separator', () => {
 		const held = async (bindings: string) => {
 			const input = await grammar(bindings);
 			const model = new Map([...input.model, ['call_stmt', node('call_stmt', [slot('args', ['call_items', 'tuple_items', 'fixed_items'], { required: false })])]]);
-			return (resolveRoutes({ ...input, model, bindings: resolveFlags(input.bindings, FLAGGED, model) }).members.get('call_stmt') ?? []).find((m) => m.name === 'trailingComma');
+			return (resolveRoutes({ ...input, model, bindings: resolveFlags(input.bindings, FLAGGED, model) }).slots.get('call_stmt') ?? []).find((m) => m.name === 'trailingComma');
 		};
 		const args = [{ owner: 'call_stmt', slot: 'args' }];
 		expect(await held('(call_stmt) @statement.call\n(call_stmt (call_items "," @trailingComma .))')).toEqual({ route: 'delimiter', name: 'trailingComma', delimiter: 2, path: args, flag: true });
@@ -2059,7 +2059,7 @@ describe('a claim on a kind its holder mounts', () => {
 		expect(routes.readEntries.has('delegate')).toBe(false);
 		const [delegate] = routes.readEntries.get('yielder') ?? [];
 		expect(delegate).toMatchObject({ vocab: 'expression.yield.delegate', kind: 'yielder', children: [{ kinds: ['delegate'] }] });
-		expect(delegate?.members.map((route) => [route.name, route.path])).toEqual([['operand', [{ owner: 'yielder', slot: 'content' }, { owner: 'delegate', slot: 'operand' }]]]);
+		expect(delegate?.slots.map((route) => [route.name, route.path])).toEqual([['operand', [{ owner: 'yielder', slot: 'content' }, { owner: 'delegate', slot: 'operand' }]]]);
 		expect(routes.claims.map((claim) => [claim.vocab, claim.refines, claim.mountedIn])).toEqual([
 			['expression.yield', null, null],
 			['expression.yield.delegate', 'expression.yield', 'yielder']
@@ -2110,7 +2110,7 @@ describe('a claim token', () => {
 	const entriesOf = async (bindings: string, kind: string) => resolveRoutes(await grammar(bindings)).readEntries.get(kind) ?? [];
 
 	it('pins the slot that holds it, or is the kind\'s own text', async () => {
-		expect((await entriesOf('(binary "+") @expression.binary.add', 'binary')).map((entry) => entry.pins)).toEqual([[{ member: 'operator', slot: 'operator', text: '+' }]]);
+		expect((await entriesOf('(binary "+") @expression.binary.add', 'binary')).map((entry) => entry.pins)).toEqual([[{ name: 'operator', slot: 'operator', text: '+' }]]);
 		expect((await entriesOf('(true_keyword "true") @literal.boolean.true', 'true_keyword')).map((entry) => entry.pins)).toEqual([[]]);
 	});
 
@@ -2137,7 +2137,7 @@ describe("a kind a deep member's path enters stays in the holder's other slots",
 	});
 
 	it("excludes the entered kind only from the slot the path enters it through, by field", async () => {
-		const members = resolveRoutes(await entered("(pair left: (wrap (identifier) @name) right: (_) @value) @declaration.function")).members.get("pair") ?? [];
+		const members = resolveRoutes(await entered("(pair left: (wrap (identifier) @name) right: (_) @value) @declaration.function")).slots.get("pair") ?? [];
 		expect(members.find((m) => m.name === "value")).toEqual({ route: "slot", name: "value", slot: slot("right", ["wrap"]), path: [{ owner: "pair", slot: "right" }] });
 		expect(members.find((m) => m.name === "name")?.path).toEqual([
 			{ owner: "pair", slot: "left" },
@@ -2146,7 +2146,7 @@ describe("a kind a deep member's path enters stays in the holder's other slots",
 	});
 
 	it("excludes the entered kind only from the slot the path enters it through, unfielded", async () => {
-		const members = resolveRoutes(await entered("(pair (wrap (identifier) @name) right: (_) @value) @declaration.function")).members.get("pair") ?? [];
+		const members = resolveRoutes(await entered("(pair (wrap (identifier) @name) right: (_) @value) @declaration.function")).slots.get("pair") ?? [];
 		expect(members.find((m) => m.name === "value")).toEqual({ route: "slot", name: "value", slot: slot("right", ["wrap"]), path: [{ owner: "pair", slot: "right" }] });
 		expect(members.find((m) => m.name === "name")?.path).toEqual([
 			{ owner: "pair", slot: "left" },

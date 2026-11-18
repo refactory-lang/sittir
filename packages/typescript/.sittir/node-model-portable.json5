@@ -1568,7 +1568,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "+="
             }
@@ -1593,7 +1593,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "-="
             }
@@ -1618,7 +1618,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "*="
             }
@@ -1643,7 +1643,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "/="
             }
@@ -1668,7 +1668,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "%="
             }
@@ -1693,7 +1693,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "**="
             }
@@ -1718,7 +1718,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "&="
             }
@@ -1743,7 +1743,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "|="
             }
@@ -1768,7 +1768,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "^="
             }
@@ -1793,7 +1793,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "<<="
             }
@@ -1818,7 +1818,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": ">>="
             }
@@ -1843,7 +1843,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": ">>>="
             }
@@ -1868,7 +1868,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "&&="
             }
@@ -1893,7 +1893,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "||="
             }
@@ -1918,7 +1918,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "??="
             }
@@ -2019,7 +2019,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "<<"
             }
@@ -2044,7 +2044,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": ">>"
             }
@@ -2069,7 +2069,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": ">>>"
             }
@@ -2115,7 +2115,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "+"
             }
@@ -2140,7 +2140,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "-"
             }
@@ -2165,7 +2165,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "*"
             }
@@ -2190,7 +2190,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "/"
             }
@@ -2215,7 +2215,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "%"
             }
@@ -2240,7 +2240,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "**"
             }
@@ -2265,7 +2265,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "=="
             }
@@ -2290,7 +2290,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "!="
             }
@@ -2315,7 +2315,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "==="
             }
@@ -2340,7 +2340,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "!=="
             }
@@ -2365,7 +2365,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "<"
             }
@@ -2390,7 +2390,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": ">"
             }
@@ -2415,7 +2415,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "<="
             }
@@ -2440,7 +2440,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": ">="
             }
@@ -2465,7 +2465,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "&"
             }
@@ -2490,7 +2490,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "|"
             }
@@ -2515,7 +2515,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "^"
             }
@@ -2540,7 +2540,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "&&"
             }
@@ -2565,7 +2565,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "||"
             }
@@ -2590,7 +2590,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "??"
             }
@@ -2615,7 +2615,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "instanceof"
             }
@@ -3377,7 +3377,7 @@
         ],
         "terminals": [],
         "list": false,
-        "members": [
+        "slots": [
           {
             "name": "decorators",
             "slot": {
@@ -4761,7 +4761,7 @@
           "within": [],
           "pins": [
             {
-              "member": "typeKeyword",
+              "name": "typeKeyword",
               "slot": "type_keyword",
               "text": "typeof"
             }
@@ -7010,7 +7010,7 @@
           "within": [],
           "pins": [
             {
-              "member": "typeKeyword",
+              "name": "typeKeyword",
               "slot": "type_keyword",
               "text": "typeof"
             }
@@ -7084,7 +7084,7 @@
           "within": [],
           "pins": [
             {
-              "member": "typeKeyword",
+              "name": "typeKeyword",
               "slot": "type_keyword",
               "text": "typeof"
             }
@@ -7164,7 +7164,7 @@
           "within": [],
           "pins": [
             {
-              "member": "typeKeyword",
+              "name": "typeKeyword",
               "slot": "type_keyword",
               "text": "typeof"
             }
@@ -7786,7 +7786,7 @@
         "terminals": [],
         "list": false,
         "named": true,
-        "members": [
+        "slots": [
           {
             "name": "label",
             "slot": {
@@ -7815,7 +7815,7 @@
           "within": [],
           "pins": [
             {
-              "member": "kind",
+              "name": "kind",
               "slot": "kind",
               "text": "const"
             }
@@ -7840,7 +7840,7 @@
           "within": [],
           "pins": [
             {
-              "member": "kind",
+              "name": "kind",
               "slot": "kind",
               "text": "let"
             }
@@ -11429,7 +11429,7 @@
           "within": [],
           "pins": [
             {
-              "member": "abstract",
+              "name": "abstract",
               "slot": "abstract",
               "text": "abstract"
             }
@@ -13962,7 +13962,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "."
             }
@@ -14069,7 +14069,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "-"
             }
@@ -14094,7 +14094,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "+"
             }
@@ -14119,7 +14119,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "!"
             }
@@ -14144,7 +14144,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "~"
             }
@@ -14169,7 +14169,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "typeof"
             }
@@ -14194,7 +14194,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "void"
             }
@@ -14219,7 +14219,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "delete"
             }
@@ -14377,7 +14377,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "++"
             }
@@ -14402,7 +14402,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "--"
             }
@@ -14452,7 +14452,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "++"
             }
@@ -14477,7 +14477,7 @@
           "within": [],
           "pins": [
             {
-              "member": "operator",
+              "name": "operator",
               "slot": "operator",
               "text": "--"
             }

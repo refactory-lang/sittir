@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
-import { type BindingFacts, type ClaimFact, isNamedMember, type MemberFact, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind, refinedContainers } from './routes.ts';
+import { type BindingFacts, type ClaimFact, isNamedSlot, type SlotFact, type NamedSlotFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { capturePaths, envelopeTargets, kindVocabs, slotTargets, readsByKind, refinedContainers } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { grammarDisplayName } from '../grammars.ts';
 import { runPinned } from './read.ts';
@@ -22,11 +22,11 @@ export const SUB_KIND_OF = 'SubKindOf';
 export const SYNONYMS = 'Synonyms';
 const NEVER = 'never';
 
-export interface Member {
+export interface DeclaredSlot {
 	readonly name: string;
 	readonly optional: boolean;
 	readonly type: string;
-	readonly arity?: MemberArity;
+	readonly arity?: SlotArity;
 	readonly flag: boolean;
 	readonly references: readonly string[];
 	readonly literals: readonly string[];
@@ -41,7 +41,7 @@ export interface Declared {
 	readonly refines: string | undefined;
 	readonly heritage: readonly string[];
 	readonly restated: readonly string[];
-	readonly members: readonly Member[];
+	readonly slots: readonly DeclaredSlot[];
 	readonly text?: true;
 }
 
@@ -83,11 +83,11 @@ export interface FeatureIndex {
 	readonly exports: readonly string[];
 }
 
-export type MemberArity = 'list' | 'either';
+export type SlotArity = 'list' | 'either';
 
-export interface VocabularyMember {
+export interface VocabularySlot {
 	readonly optional: boolean;
-	readonly arity?: MemberArity;
+	readonly arity?: SlotArity;
 	readonly flag: boolean;
 	readonly slot?: true;
 	readonly features?: readonly string[];
@@ -104,11 +104,11 @@ const scalarOf = (type: string): { readonly scalar?: VocabularyScalar } => {
 	return { scalar: arms.includes('number') ? 'number' : 'bigint' };
 };
 
-const textOf = (m: Member): { readonly text?: true } => (m.name === '$value' && m.type === 'string' ? { text: true } : {});
+const textOf = (m: DeclaredSlot): { readonly text?: true } => (m.name === '$value' && m.type === 'string' ? { text: true } : {});
 
 export interface VocabularyKind {
 	readonly name: string;
-	readonly own: ReadonlyMap<string, VocabularyMember>;
+	readonly own: ReadonlyMap<string, VocabularySlot>;
 	readonly parent: string | undefined;
 	readonly refines: string | undefined;
 	readonly text?: true;
@@ -119,7 +119,7 @@ export interface Vocabulary {
 	readonly kinds: ReadonlyMap<string, VocabularyKind>;
 	readonly flags: ReadonlySet<string>;
 	readonly synonyms: Synonyms;
-	members(path: string): ReadonlyMap<string, VocabularyMember>;
+	slots(path: string): ReadonlyMap<string, VocabularySlot>;
 	featuresOf(composition: string): ReadonlySet<string>;
 	composedAs(composition: string): Vocabulary;
 }
@@ -147,7 +147,7 @@ const declaredIn = (dir: string, name: string): Promise<Declared[]> => runPinned
 
 const synonymTable = (table: Declared): SynonymTable =>
 	new Map(
-		table.members.map((member) => {
+		table.slots.map((member) => {
 			if (member.literals.length === 0) throw new Error(`vocabulary: ${table.qname}.${member.name} lists its synonyms as a union of string literals`);
 			return [member.name, member.literals];
 		})
@@ -176,7 +176,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 			if (level !== undefined && levels.has(level)) throw new Error(`vocabulary: ${d.qname} is declared more than once; a level has one table`);
 			if (level !== undefined) levels.set(level, synonymTable(d));
 			if (d.qname === `${FLAG}${SYNONYMS}`) flags.push(d);
-			if (d.qname === TEXT_PATHS) texts.push(...(d.members.find((member) => member.name === TEXTS)?.keys ?? []));
+			if (d.qname === TEXT_PATHS) texts.push(...(d.slots.find((member) => member.name === TEXTS)?.keys ?? []));
 		}
 	}
 	if (flags.length > 1) throw new Error(`vocabulary: ${FLAG}${SYNONYMS} is declared ${flags.length} times; the flags have one table`);
@@ -255,7 +255,7 @@ export function pathChildren(paths: Iterable<string>): ReadonlyMap<string, Reado
 
 export const textValued = (vocabulary: Vocabulary, path: string): boolean => {
 	const kind = vocabulary.kinds.get(path);
-	return kind !== undefined && kind.text !== true && vocabulary.members(path).get('$value')?.text === true;
+	return kind !== undefined && kind.text !== true && vocabulary.slots(path).get('$value')?.text === true;
 };
 
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
@@ -264,13 +264,13 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const declared = [...source.kinds, ...stubs.filter(isKind)];
 	const featureOf = new Map(source.features.flatMap((feature) => feature.stubs.filter(isKind).map((stub) => [stub.qname, feature.name] as const)));
 	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
-	const slotted = (m: Member): { readonly slot?: true } => (m.slotted === true ? { slot: true } : {});
-	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
+	const slotted = (m: DeclaredSlot): { readonly slot?: true } => (m.slotted === true ? { slot: true } : {});
+	const own = new Map<string, Map<string, VocabularySlot>>(declared.map((d) => [d.qname, new Map(d.slots.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
 	for (const feature of source.features)
 		for (const stub of feature.stubs) {
 			const members = own.get(stub.qname);
 			if (isKind(stub) || members === undefined) continue;
-			for (const m of stub.members) {
+			for (const m of stub.slots) {
 				const held = members.get(m.name);
 				const features = held === undefined ? [feature.name] : held.features === undefined ? undefined : [...held.features, feature.name];
 				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
@@ -285,8 +285,8 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 		const feature = featureOf.get(d.qname);
 		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: pathOf(d.parent), refines: pathOf(d.refines), ...(d.text === true ? { text: true as const } : {}), ...(feature === undefined ? {} : { feature }) });
 	}
-	const membersWithin = (composed: ReadonlySet<string> | undefined) => (path: string): ReadonlyMap<string, VocabularyMember> => {
-		const all = new Map<string, VocabularyMember>();
+	const slotsWithin = (composed: ReadonlySet<string> | undefined) => (path: string): ReadonlyMap<string, VocabularySlot> => {
+		const all = new Map<string, VocabularySlot>();
 		const seen = new Set<string>();
 		for (const at of lineageOf(path, (line) => kinds.get(line)))
 			for (const [name, member] of kinds.get(at)?.own ?? []) {
@@ -319,7 +319,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 		kinds,
 		flags,
 		synonyms: source.synonyms,
-		members: membersWithin(composed),
+		slots: slotsWithin(composed),
 		featuresOf,
 		composedAs: (composition) => view(featuresOf(composition))
 	});
@@ -327,7 +327,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 }
 
 export const declaredFlags = (vocabulary: Vocabulary, path: string): readonly string[] =>
-	vocabulary.kinds.has(path) ? [...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])) : [];
+	vocabulary.kinds.has(path) ? [...vocabulary.slots(path)].flatMap(([name, member]) => (member.flag ? [name] : [])) : [];
 
 export function flagSegment(vocabulary: Vocabulary, path: string): { readonly parent: string; readonly flag: string } | undefined {
 	const cut = path.lastIndexOf('.');
@@ -340,7 +340,7 @@ export function flagSegment(vocabulary: Vocabulary, path: string): { readonly pa
 }
 
 const flagsSpelledBy = (vocabulary: Vocabulary, path: string, written: string): string[] =>
-	[...vocabulary.members(path)].flatMap(([name, member]) =>
+	[...vocabulary.slots(path)].flatMap(([name, member]) =>
 		member.flag && vocabulary.synonyms.flags.get(name)?.some((synonym) => camel(synonym) === camel(written)) === true ? [name] : []
 	);
 
@@ -376,10 +376,10 @@ const flagResolved = (vocabulary: Vocabulary, claims: readonly ClaimFact[]): Cla
 	});
 
 const declares = (vocabulary: Vocabulary, paths: readonly string[], name: string): boolean =>
-	paths.some((path) => vocabulary.members(path).has(camel(name)) || flagsSpelledBy(vocabulary, path, name).length > 0);
+	paths.some((path) => vocabulary.slots(path).has(camel(name)) || flagsSpelledBy(vocabulary, path, name).length > 0);
 
 function canonicalCapture(vocabulary: Vocabulary, paths: readonly string[], name: string, owner: string): string {
-	const member = paths.find((path) => vocabulary.members(path).has(camel(name)));
+	const member = paths.find((path) => vocabulary.slots(path).has(camel(name)));
 	const spelled = paths.flatMap((path) => flagsSpelledBy(vocabulary, path, name).map((flag) => [path, flag] as const));
 	const flags = [...new Set(spelled.map(([, flag]) => flag))];
 	const [first] = spelled;
@@ -398,8 +398,8 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 	const reads = readsByKind(model, flagResolved(vocabulary, claims));
 	const vocabs = kindVocabs(model, reads, refinedContainers(model, reads, facts.containers));
 	const readable = capturePaths(model, reads);
-	const attached = memberTargets(model, reads);
-	const pathsOf = (member: NamedMemberFact): string[] => {
+	const attached = slotTargets(model, reads);
+	const pathsOf = (member: NamedSlotFact): string[] => {
 		const at = attached(member);
 		return at.some((path) => flagsSpelledBy(vocabulary, path, member.name).length > 0) ? at : readable(member);
 	};
@@ -408,8 +408,8 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		...facts,
 		claims,
 		templates: facts.templates.map((template) => ({ ...template, vocabs: template.vocabs.map(canonical) })),
-		members: facts.members.flatMap((member): MemberFact[] => {
-			if (!isNamedMember(member)) return [member];
+		slots: facts.slots.flatMap((member): SlotFact[] => {
+			if (!isNamedSlot(member)) return [member];
 			const paths = pathsOf(member);
 			if (member.tested === true && !declares(vocabulary, attached(member), member.name)) return [];
 			const name = canonicalCapture(vocabulary, paths, member.name, member.owner);
@@ -418,8 +418,8 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 				renamed.set(`${member.owner} ${member.name}`, name);
 				return [named];
 			}
-			const referenced = renamed.get(`${named.owner} ${named.member}`) ?? named.member;
-			return [referenced === named.member ? named : { ...named, member: referenced }];
+			const referenced = renamed.get(`${named.owner} ${named.slot}`) ?? named.slot;
+			return [referenced === named.slot ? named : { ...named, slot: referenced }];
 		}),
 		containers: facts.containers.map((container) => {
 			const paths = envelopeTargets(model, container, vocabs);
@@ -437,15 +437,15 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 
 export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const claims = flagResolved(vocabulary, facts.claims);
-	const pathsOf = memberTargets(model, readsByKind(model, claims));
+	const pathsOf = slotTargets(model, readsByKind(model, claims));
 	return {
 		...facts,
 		claims,
 		flagsByPath: new Map([...new Set(claims.map((claim) => claim.vocab))].map((path) => [path, new Set(declaredFlags(vocabulary, path))])),
-		members: facts.members.map((member) => {
-			if (!isNamedMember(member)) return member;
+		slots: facts.slots.map((member) => {
+			if (!isNamedSlot(member)) return member;
 			const declared = pathsOf(member).flatMap((path) => {
-				const found = vocabulary.members(path).get(camel(member.name));
+				const found = vocabulary.slots(path).get(camel(member.name));
 				return found === undefined ? [] : [[path, found.flag] as const];
 			});
 			const flagAt = declared.find(([, flag]) => flag);

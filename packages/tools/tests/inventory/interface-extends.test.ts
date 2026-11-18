@@ -37,7 +37,7 @@ for (const form of forms) {
 	describe(`${form.grammar}: interface extends`, () => {
 		it('derives an optional array of parent types or bounds directly on the node', async () => {
 			const d = await deriveVocabulary([form.grammar]);
-			const member = d.members.get(form.path)?.get('extends');
+			const member = d.slots.get(form.path)?.get('extends');
 			expect(member).toBeDefined();
 			expect(member?.multiple).toBe(true);
 			expect(member?.scalar).toBe(false);

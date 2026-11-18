@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { type BindingFacts, type ClaimFact, type MemberFact, type ModelNode, type Vocabulary, canonicalFacts, canonicalPaths, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
+import { type BindingFacts, type ClaimFact, type SlotFact, type ModelNode, type Vocabulary, canonicalFacts, canonicalPaths, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
 
 const vocabularyIn = async (...lines: readonly string[]) => {
 	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
@@ -33,7 +33,7 @@ describe('readVocabulary', () => {
 		);
 		for (const path of ['declaration.generic', 'declaration.parenthesized', 'declaration.bare']) {
 			expect(vocabulary.kinds.get(path)?.parent, path).toBe('declaration');
-			expect([...vocabulary.members(path).keys()], path).toEqual(['name']);
+			expect([...vocabulary.slots(path).keys()], path).toEqual(['name']);
 		}
 	});
 
@@ -63,8 +63,8 @@ describe('readVocabulary', () => {
 			'\treadonly parameters?: never;',
 			'}'
 		);
-		expect([...vocabulary.members('declaration').keys()]).toEqual(['name', 'parameters']);
-		expect([...vocabulary.members('declaration.bare').keys()]).toEqual(['name']);
+		expect([...vocabulary.slots('declaration').keys()]).toEqual(['name', 'parameters']);
+		expect([...vocabulary.slots('declaration.bare').keys()]).toEqual(['name']);
 	});
 
 	it('drops a member the feature that owns it narrows to never at a refinement, in every composition', async () => {
@@ -106,10 +106,10 @@ describe('readVocabulary', () => {
 		try {
 			const vocabulary = await readVocabulary(dir);
 			for (const view of [vocabulary, vocabulary.composedAs('WithBounded')]) {
-				expect([...view.members('declaration.parameter').keys()]).toEqual(['bounds', 'name']);
-				expect([...view.members('declaration.parameter.rest').keys()]).toEqual(['name']);
+				expect([...view.slots('declaration.parameter').keys()]).toEqual(['bounds', 'name']);
+				expect([...view.slots('declaration.parameter.rest').keys()]).toEqual(['name']);
 			}
-			expect([...vocabulary.composedAs('WithoutBounded').members('declaration.parameter.rest').keys()]).toEqual(['name']);
+			expect([...vocabulary.composedAs('WithoutBounded').slots('declaration.parameter.rest').keys()]).toEqual(['name']);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}
@@ -138,9 +138,9 @@ describe('readVocabulary', () => {
 		write('compositions.ts', ['export interface WithIntegers extends LeadingIntegers {}', 'export interface WithoutIntegers {}']);
 		try {
 			const vocabulary = await readVocabulary(dir);
-			expect([...vocabulary.composedAs('WithIntegers').members('literal.float.leading_point').keys()].sort()).toEqual(['fraction', 'integer']);
-			expect([...vocabulary.composedAs('WithoutIntegers').members('literal.float.leading_point').keys()]).toEqual(['fraction']);
-			expect([...vocabulary.composedAs('WithoutIntegers').members('literal.float').keys()]).toEqual(['integer', 'fraction']);
+			expect([...vocabulary.composedAs('WithIntegers').slots('literal.float.leading_point').keys()].sort()).toEqual(['fraction', 'integer']);
+			expect([...vocabulary.composedAs('WithoutIntegers').slots('literal.float.leading_point').keys()]).toEqual(['fraction']);
+			expect([...vocabulary.composedAs('WithoutIntegers').slots('literal.float').keys()]).toEqual(['integer', 'fraction']);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}
@@ -181,7 +181,7 @@ describe('readVocabulary', () => {
 			['type.primitive', 'Type.Primitive', 'type'],
 			['type.primitive.unchecked', 'Type.Primitive.Unchecked', 'type.primitive']
 		]);
-		expect([...vocabulary.members('type.primitive')].map(([name, facts]) => [name, facts.flag])).toEqual([
+		expect([...vocabulary.slots('type.primitive')].map(([name, facts]) => [name, facts.flag])).toEqual([
 			['unsigned', true],
 			['wide', true]
 		]);
@@ -223,13 +223,13 @@ describe('readVocabulary', () => {
 			'\treadonly arguments: V.Expression<G> | V.Expression<G>[];',
 			'}'
 		);
-		const members = vocabulary.members('declaration');
+		const members = vocabulary.slots('declaration');
 		expect(Object.fromEntries([...members].map(([name, member]) => [name, member.arity ?? 'one']))).toEqual({ extern: 'one', name: 'one', bounds: 'list', extends: 'list', arguments: 'either' });
 	});
 
 	it('reads a member named by a keyword like any other', async () => {
 		const vocabulary = await vocabularyIn('export interface Declaration<G, K = "declaration"> {', "\treadonly $path: K;", '\treadonly static?: Flag;', '\treadonly type: string;', '}');
-		expect([...vocabulary.members('declaration')]).toEqual([
+		expect([...vocabulary.slots('declaration')]).toEqual([
 			['static', { optional: true, flag: true }],
 			['type', { optional: false, flag: false }]
 		]);
@@ -341,7 +341,7 @@ describe('flagSegment', () => {
 
 describe('resolveFlags', () => {
 	it('claims a flag segment\'s parent path with the flag, and leaves every other claim as it is', async () => {
-		const facts: BindingFacts = { claims: [claim('declaration.method.static'), claim('declaration.method')], members: [], containers: [], templates: [], unclaimed: [] };
+		const facts: BindingFacts = { claims: [claim('declaration.method.static'), claim('declaration.method')], slots: [], containers: [], templates: [], unclaimed: [] };
 		const resolved = resolveFlags(facts, await vocabularyOf(), new Map());
 		expect(resolved.claims.map((c) => [c.vocab, c.flag])).toEqual([
 			['declaration.method', 'static'],
@@ -480,7 +480,7 @@ describe('canonicalPaths', () => {
 	});
 });
 
-const member = (name: string): MemberFact => ({ route: 'rename', owner: 'parameter', name, field: null, kind: null, after: null, anchor: null });
+const member = (name: string): SlotFact => ({ route: 'rename', owner: 'parameter', name, field: null, kind: null, after: null, anchor: null });
 
 describe('canonicalFacts', () => {
 	it("drops a capture its pattern's predicates name where no path its claim reads declares it, and keeps one a path declares", async () => {
@@ -491,16 +491,16 @@ describe('canonicalFacts', () => {
 		);
 		const slot = (name: string) => ({ name, propertyName: name, required: true, multiple: false, storage: 'verbatim', kinds: ['identifier'], terminals: [] });
 		const assignment: ModelNode = { kind: 'assignment', modelType: 'branch', unit: false, layout: false, seated: false, slots: [slot('name'), slot('body')], subtypes: [], defaultSubtype: null, elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, interiorPart: null, textLeavesThrough: [], shownAs: [], spells: [] };
-		const named = (name: string, claims: readonly number[], tested?: true): MemberFact => ({ route: 'rename', owner: 'assignment', name, field: name, kind: null, after: null, anchor: null, claims, ...(tested ? { tested } : {}) });
+		const named = (name: string, claims: readonly number[], tested?: true): SlotFact => ({ route: 'rename', owner: 'assignment', name, field: name, kind: null, after: null, anchor: null, claims, ...(tested ? { tested } : {}) });
 		const facts: BindingFacts = {
 			claims: [{ ...claim('declaration.constant'), kind: 'assignment' }, { ...claim('declaration.constructor'), kind: 'assignment' }],
-			members: [named('name', [0], true), named('name', [1], true), named('body', [1])],
+			slots: [named('name', [0], true), named('name', [1], true), named('body', [1])],
 			containers: [],
 			templates: [],
 			unclaimed: []
 		};
 		const canonical = canonicalFacts(facts, vocabulary, new Map([['assignment', assignment]]));
-		expect(canonical.members.map((member) => [member.route === 'dropped' ? null : member.name, member.claims])).toEqual([
+		expect(canonical.slots.map((member) => [member.route === 'dropped' ? null : member.name, member.claims])).toEqual([
 			['name', [0]],
 			['body', [1]]
 		]);
@@ -510,7 +510,7 @@ describe('canonicalFacts', () => {
 		const vocabulary = await synonymVocabulary();
 		const facts: BindingFacts = {
 			claims: [{ ...claim('declaration.parameter.self'), kind: 'parameter' }, { ...claim('declaration.parameter.mut'), kind: 'parameter' }],
-			members: [member('mut'), member('name'), member('other')],
+			slots: [member('mut'), member('name'), member('other')],
 			containers: [],
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [], match: '^$' }],
 			unclaimed: []
@@ -520,13 +520,13 @@ describe('canonicalFacts', () => {
 		const canonical = canonicalFacts(facts, vocabulary, model);
 		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);
 		expect(canonical.templates.map((t) => t.vocabs)).toEqual([['declaration.parameter.receiver']]);
-		expect(canonical.members.map((m) => (m.route === 'dropped' ? null : m.name))).toEqual(['mutable', 'name', 'other']);
+		expect(canonical.slots.map((m) => (m.route === 'dropped' ? null : m.name))).toEqual(['mutable', 'name', 'other']);
 		const resolved = resolveFlags(canonical, vocabulary, model);
 		expect(resolved.claims.map((c) => [c.vocab, c.flag])).toEqual([
 			['declaration.parameter.receiver', undefined],
 			['declaration.parameter', 'mutable']
 		]);
-		expect(resolved.members.map((m) => [m.route === 'dropped' ? null : m.name, m.flag])).toEqual([
+		expect(resolved.slots.map((m) => [m.route === 'dropped' ? null : m.name, m.flag])).toEqual([
 			['mutable', true],
 			['name', undefined],
 			['other', undefined]
