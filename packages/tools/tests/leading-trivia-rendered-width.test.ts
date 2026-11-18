@@ -59,10 +59,10 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		const triviaPy = (node: object) => sidesOf(node);
 		const statement = py.parse('if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n').statements()[0];
 		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
-		const suite = statement.consequence();
-		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
+		const found = statement.$query().$descendants.ofType(py.kinds.Block).at(0);
+		if (found === undefined) throw new Error('expected a block');
 		const pyAccessorOf = await loadSlotAccessorOf('python');
-		const block = materializeDetached(suite.block(), pyAccessorOf);
+		const block = materializeDetached(found, pyAccessorOf);
 		expect(renderPy(block).startsWith('# one\n# two\n  # three\nb')).toBe(true);
 		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy, pyAccessorOf)).toBe('# one\n# two\n  # three\n'.length);
 	});

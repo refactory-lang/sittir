@@ -29,7 +29,7 @@ describe('a loose builder takes every argument its strict builder takes', () => 
 	it('python: parameters spreads its elements into the list it wraps', () => {
 		const fn = python.parse('def f(a, b):\n    pass\n').statements()[0]!;
 		if (!python.is.functionDefinition(fn)) throw new Error('expected a function definition');
-		const [a, b] = fn.parameters()!.items();
+		const [a, b] = fn.parameters();
 		expect(python.render(python.build.parameters(a!, b!)).toString()).toBe('(a, b)');
 	});
 

@@ -16,7 +16,7 @@ export function interfaceToPythonDataclass(tsSource: string) {
 		throw new Error('Expected a top-level TypeScript interface declaration.');
 	}
 
-	const fields = iface.body().members().flatMap((member) => {
+	const fields = (iface.body().members() ?? []).flatMap((member) => {
 		if (!ts.is.propertySignature(member)) return [];
 		const annotation = member.type();
 		const rawType = annotation === undefined ? 'Any' : ts.render(annotation).toString();
