@@ -3693,7 +3693,7 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -3931,7 +3931,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -4194,7 +4194,7 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -4432,7 +4432,7 @@ export function wrapGeneratorFunctionDeclaration(
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -6689,7 +6689,7 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -10042,7 +10042,7 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		type() {
@@ -11697,7 +11697,7 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle): T.Ca
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -12422,7 +12422,7 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		type() {
@@ -12989,7 +12989,7 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -19031,7 +19031,7 @@ export function wrapMethodDefinitionPlain(
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -19710,7 +19710,7 @@ export function wrapMethodSignaturePlain(
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -20324,7 +20324,7 @@ export function wrapAbstractMethodSignaturePlain(
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -21404,7 +21404,7 @@ export function wrapConstructorDeclaration(
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		body() {
@@ -24150,7 +24150,7 @@ function viewFunctionExpression$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewFunctionExpression$returnType(this: RecordHandle) {
@@ -24237,7 +24237,7 @@ function viewFunctionDeclaration$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewFunctionDeclaration$returnType(this: RecordHandle) {
@@ -24329,7 +24329,7 @@ function viewGeneratorFunction$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewGeneratorFunction$returnType(this: RecordHandle) {
@@ -24416,7 +24416,7 @@ function viewGeneratorFunctionDeclaration$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewGeneratorFunctionDeclaration$returnType(this: RecordHandle) {
@@ -25522,7 +25522,7 @@ function viewFunctionSignature$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewFunctionSignature$returnType(this: RecordHandle) {
@@ -27052,7 +27052,7 @@ function viewConstructorType$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewConstructorType$type(this: RecordHandle) {
@@ -27909,7 +27909,7 @@ function viewCallSignature$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewCallSignature$returnType(this: RecordHandle) {
@@ -28258,7 +28258,7 @@ function viewConstructSignature$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewConstructSignature$type(this: RecordHandle) {
@@ -28544,7 +28544,7 @@ function viewFunctionType$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewFunctionType$returnType(this: RecordHandle) {
@@ -31477,7 +31477,7 @@ function viewMethodDefinitionPlain$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewMethodDefinitionPlain$returnType(this: RecordHandle) {
@@ -31739,7 +31739,7 @@ function viewMethodSignaturePlain$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewMethodSignaturePlain$returnType(this: RecordHandle) {
@@ -31977,7 +31977,7 @@ function viewAbstractMethodSignaturePlain$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewAbstractMethodSignaturePlain$returnType(this: RecordHandle) {
@@ -32385,7 +32385,7 @@ function viewConstructorDeclaration$parameters(this: RecordHandle) {
 				);
 			}
 		],
-		false
+		true
 	);
 }
 function viewConstructorDeclaration$body(this: RecordHandle) {

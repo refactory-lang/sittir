@@ -2652,7 +2652,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -2957,7 +2957,7 @@ export function wrapFunctionSignatureItem(
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -5905,7 +5905,7 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -21371,7 +21371,7 @@ export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandl
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -21682,7 +21682,7 @@ export function wrapSignatureMethodDeclaration(
 						);
 					}
 				],
-				false
+				true
 			);
 		},
 		returnType() {
@@ -23207,7 +23207,7 @@ function viewFunctionItem$parameters(this: RecordHandle) {
 				return viewSlot<T.ParametersElements | T.ParametersElementsReceiver | undefined>(this, 2, 3, 1, 0, 2);
 			}
 		],
-		false
+		true
 	);
 }
 function viewFunctionItem$returnType(this: RecordHandle) {
@@ -23308,7 +23308,7 @@ function viewFunctionSignatureItem$parameters(this: RecordHandle) {
 				return viewSlot<T.ParametersElements | T.ParametersElementsReceiver | undefined>(this, 2, 3, 1, 0, 2);
 			}
 		],
-		false
+		true
 	);
 }
 function viewFunctionSignatureItem$returnType(this: RecordHandle) {
@@ -24741,7 +24741,7 @@ function viewFunctionType$parameters(this: RecordHandle) {
 				return viewSlot<T.ParametersElements | T.ParametersElementsReceiver | undefined>(this, 2, 3, 1, 0, 2);
 			}
 		],
-		false
+		true
 	);
 }
 function viewFunctionType$returnType(this: RecordHandle) {
@@ -32577,7 +32577,7 @@ function viewMethodDeclaration$parameters(this: RecordHandle) {
 				return viewSlot<T.ParametersElements | T.ParametersElementsReceiver | undefined>(this, 2, 3, 1, 0, 2);
 			}
 		],
-		false
+		true
 	);
 }
 function viewMethodDeclaration$returnType(this: RecordHandle) {
@@ -32678,7 +32678,7 @@ function viewSignatureMethodDeclaration$parameters(this: RecordHandle) {
 				return viewSlot<T.ParametersElements | T.ParametersElementsReceiver | undefined>(this, 2, 3, 1, 0, 2);
 			}
 		],
-		false
+		true
 	);
 }
 function viewSignatureMethodDeclaration$returnType(this: RecordHandle) {

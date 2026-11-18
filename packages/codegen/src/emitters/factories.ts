@@ -137,7 +137,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { BuiltViewTable, leafAdoptLines, patchTwinLines, RECORD_CONSTRUCTION_IMPORTS, RECORD_VIEW_TYPES, recordParts, recordRefusalLines } from './record-construction.ts';
 import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
-import { chainWrapExpr, wrapperChainFor, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
+import { chainReadsAsList, chainWrapExpr, wrapperChainFor, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import { splicedEnvelopeOf } from '../compiler/model/spliced-envelopes.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -2915,7 +2915,7 @@ export function storedHoistOf(holder: AssembledNode, lookup: AssembledNontermina
 	const chain = wrapperChainFor(nodeMap, holder.kind, lookup.name);
 	if (chain === undefined) return undefined;
 	const hops = chain.storage.map((kind, hop) => storedHopOf(nodeMap.nodes.get(kind)!, chain.slots[hop]!));
-	return { hops, list: isMultiple(slot) || chain.slots.some((inner, hop) => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(inner)) };
+	return { hops, list: chainReadsAsList(nodeMap, chain, slot) };
 }
 
 function storedAccessor(

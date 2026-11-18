@@ -4022,7 +4022,7 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -4249,7 +4249,7 @@ export function buildFunctionDeclaration(
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		terminator: () => blankArmRead(_terminator),
@@ -4477,7 +4477,7 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -4704,7 +4704,7 @@ export function buildGeneratorFunctionDeclaration(
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		terminator: () => blankArmRead(_terminator),
@@ -7355,7 +7355,7 @@ export function buildFunctionSignature(
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
@@ -10588,7 +10588,7 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12472,7 +12472,7 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -13142,7 +13142,7 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -13711,7 +13711,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20221,7 +20221,7 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -20814,7 +20814,7 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -21360,7 +21360,7 @@ export function buildAbstractMethodSignaturePlain(
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -22404,7 +22404,7 @@ export function buildConstructorDeclaration(
 		$with: undefined as unknown as object,
 		accessibilityModifier: () => _accessibility_modifier,
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

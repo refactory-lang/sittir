@@ -517,7 +517,7 @@ export interface String {
 		readonly _string_content: 'stringContent';
 	};
 	readonly __inputHints__?: {
-		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
+		readonly string_content?: readonly (StringContentText | EscapeSequence)[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly string_content: StringContent;
@@ -528,7 +528,7 @@ export interface String {
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<NonNullable<T.StringContent>, true>;
 	};
-	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[];
+	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[] | undefined;
 }
 
 export interface ImmediateString {
@@ -538,7 +538,7 @@ export interface ImmediateString {
 		readonly _string_content: 'stringContent';
 	};
 	readonly __inputHints__?: {
-		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
+		readonly string_content?: readonly (StringContentText | EscapeSequence)[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly string_content: StringContent;
@@ -549,7 +549,7 @@ export interface ImmediateString {
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<NonNullable<T.StringContent>, true>;
 	};
-	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[];
+	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[] | undefined;
 }
 
 export interface StringContent {
@@ -701,7 +701,7 @@ export interface Predicate {
 	readonly __inputHints__?: {
 		readonly prefix: KindEnum<'#' | '.', TSKindId.Pound | TSKindId.Dot>;
 		readonly type: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
-		readonly parameters?: readonly (Capture | String | Identifier)[];
+		readonly parameters?: readonly (Capture | String | Identifier)[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly parameters: Parameters;
@@ -718,7 +718,7 @@ export interface Predicate {
 	readonly prefix: () => TSKindId.Pound | TSKindId.Dot;
 	readonly name: () => ImmediateIdentifier;
 	readonly type: () => TSKindId.Qmark | TSKindId.Bang;
-	readonly parameters: () => readonly (Capture | String | Identifier)[];
+	readonly parameters: () => readonly (Capture | String | Identifier)[] | undefined;
 }
 
 export interface ListElementQuantifier {

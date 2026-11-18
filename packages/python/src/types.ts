@@ -2749,7 +2749,7 @@ export interface FunctionDefinition {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: readonly TypeParam[] | undefined;
 		readonly parameters: readonly Parameter[];
 		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
 	};
@@ -2777,7 +2777,7 @@ export interface FunctionDefinition {
 	};
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
-	readonly typeParameters: () => readonly TypeParam[];
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
 	readonly parameters: () => readonly Parameter[];
 	readonly returnType: () =>
 		| Expression
@@ -2797,7 +2797,7 @@ export interface Parameters {
 		readonly _elements: 'elements';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: readonly Parameter[];
+		readonly elements?: readonly Parameter[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly elements: ParametersElements;
@@ -2812,7 +2812,7 @@ export interface Parameters {
 			readonly elements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => readonly Parameter[];
+	readonly elements: () => readonly Parameter[] | undefined;
 }
 
 export interface LambdaParameters {
@@ -2935,7 +2935,7 @@ export interface TypeAliasStatement {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: readonly TypeParam[] | undefined;
 		readonly value: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	};
 	readonly __wrapperHints__?: {
@@ -2955,7 +2955,7 @@ export interface TypeAliasStatement {
 		};
 	};
 	readonly name: () => Identifier;
-	readonly typeParameters: () => readonly TypeParam[];
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
 	readonly value: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
@@ -2972,7 +2972,7 @@ export interface ClassDefinition {
 		readonly _body: 'body';
 	};
 	readonly __inputHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: readonly TypeParam[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly type_parameters: TypeParams;
@@ -2995,7 +2995,7 @@ export interface ClassDefinition {
 		};
 	};
 	readonly name: () => Identifier;
-	readonly typeParameters: () => readonly TypeParam[];
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
 	readonly bases: () => ArgumentList | undefined;
 	readonly body: () => SuiteClassDefinition;
 }
@@ -3041,13 +3041,9 @@ export interface ArgumentList {
 		readonly _arguments: 'arguments';
 	};
 	readonly __inputHints__?: {
-		readonly arguments?: readonly (
-			| Expression
-			| ListSplat
-			| DictionarySplat
-			| ParenthesizedListSplat
-			| KeywordArgument
-		)[];
+		readonly arguments?:
+			| readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[]
+			| undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly arguments: ArgumentListElements;
@@ -3074,13 +3070,9 @@ export interface ArgumentList {
 			>;
 		};
 	};
-	readonly arguments: () => readonly (
-		| Expression
-		| ListSplat
-		| DictionarySplat
-		| ParenthesizedListSplat
-		| KeywordArgument
-	)[];
+	readonly arguments: () =>
+		| readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[]
+		| undefined;
 }
 
 export interface DecoratedDefinition {
@@ -3423,7 +3415,7 @@ export interface DictPattern {
 		readonly _elements: 'elements';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: readonly (KeyValuePattern | SplatPattern)[];
+		readonly elements?: readonly (KeyValuePattern | SplatPattern)[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly elements: DictPatternElements;
@@ -3444,7 +3436,7 @@ export interface DictPattern {
 			>;
 		};
 	};
-	readonly elements: () => readonly (KeyValuePattern | SplatPattern)[];
+	readonly elements: () => readonly (KeyValuePattern | SplatPattern)[] | undefined;
 }
 
 export interface KeyValuePattern {
@@ -3684,7 +3676,7 @@ export interface TuplePattern {
 		readonly _elements: 'elements';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: readonly Pattern[];
+		readonly elements?: readonly Pattern[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly elements: TuplePatternElements;
@@ -3699,7 +3691,7 @@ export interface TuplePattern {
 			readonly elements: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => readonly Pattern[];
+	readonly elements: () => readonly Pattern[] | undefined;
 }
 
 export interface ListPattern {
@@ -3709,7 +3701,7 @@ export interface ListPattern {
 		readonly _elements: 'elements';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: readonly Pattern[];
+		readonly elements?: readonly Pattern[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly elements: Patterns;
@@ -3724,7 +3716,7 @@ export interface ListPattern {
 			readonly elements: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => readonly Pattern[];
+	readonly elements: () => readonly Pattern[] | undefined;
 }
 
 export interface DefaultParameter {
@@ -4001,7 +3993,7 @@ export interface Lambda {
 		readonly _body: 'body';
 	};
 	readonly __inputHints__?: {
-		readonly parameters?: readonly Parameter[];
+		readonly parameters?: readonly Parameter[] | undefined;
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
@@ -4019,7 +4011,7 @@ export interface Lambda {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parameters: () => readonly Parameter[];
+	readonly parameters: () => readonly Parameter[] | undefined;
 	readonly body: () => Expression;
 }
 
@@ -4032,7 +4024,7 @@ export interface LambdaWithinForInClause {
 		readonly _body: 'body';
 	};
 	readonly __inputHints__?: {
-		readonly parameters?: readonly Parameter[];
+		readonly parameters?: readonly Parameter[] | undefined;
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
@@ -4051,7 +4043,7 @@ export interface LambdaWithinForInClause {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parameters: () => readonly Parameter[];
+	readonly parameters: () => readonly Parameter[] | undefined;
 	readonly body: () => Expression | LambdaWithinForInClause;
 }
 
@@ -4473,7 +4465,7 @@ export interface List {
 		readonly _elements: 'elements';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly elements: CollectionElements;
@@ -4494,7 +4486,7 @@ export interface List {
 			>;
 		};
 	};
-	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
 }
 
 export interface Set {
@@ -4535,7 +4527,7 @@ export interface Tuple {
 		readonly _elements: 'elements';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly elements: TupleElements;
@@ -4556,7 +4548,7 @@ export interface Tuple {
 			>;
 		};
 	};
-	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
 }
 
 export interface Dictionary {
@@ -4566,7 +4558,7 @@ export interface Dictionary {
 		readonly _elements: 'elements';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: readonly (Pair | DictionarySplat)[];
+		readonly elements?: readonly (Pair | DictionarySplat)[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly elements: DictionaryElements;
@@ -4581,7 +4573,7 @@ export interface Dictionary {
 			readonly elements: ListSlotHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => readonly (Pair | DictionarySplat)[];
+	readonly elements: () => readonly (Pair | DictionarySplat)[] | undefined;
 }
 
 export interface Pair {
@@ -5368,7 +5360,7 @@ export interface PrintStatementChevron {
 	};
 	readonly __inputHints__?: {
 		readonly chevron: Expression;
-		readonly arguments?: readonly Expression[];
+		readonly arguments?: readonly Expression[] | undefined;
 	};
 	readonly __wrapperHints__?: {
 		readonly chevron: Chevron;
@@ -5386,7 +5378,7 @@ export interface PrintStatementChevron {
 		};
 	};
 	readonly chevron: () => Expression;
-	readonly arguments: () => readonly Expression[];
+	readonly arguments: () => readonly Expression[] | undefined;
 }
 
 export interface PrintStatementPlain {
@@ -6270,7 +6262,7 @@ export interface ConstructorDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: readonly TypeParam[] | undefined;
 		readonly parameters: readonly Parameter[];
 		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
 	};
@@ -6296,7 +6288,7 @@ export interface ConstructorDeclaration {
 		};
 	};
 	readonly async: () => boolean;
-	readonly typeParameters: () => readonly TypeParam[];
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
 	readonly parameters: () => readonly Parameter[];
 	readonly returnType: () =>
 		| Expression
@@ -6463,7 +6455,7 @@ export interface MethodDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: readonly TypeParam[] | undefined;
 		readonly parameters: readonly Parameter[];
 		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
 	};
@@ -6491,7 +6483,7 @@ export interface MethodDeclaration {
 	};
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
-	readonly typeParameters: () => readonly TypeParam[];
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
 	readonly parameters: () => readonly Parameter[];
 	readonly returnType: () =>
 		| Expression

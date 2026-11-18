@@ -15,10 +15,10 @@ describe.each(['arena', 'object'] as const)('the rust hoist reads through its wr
 		e[Symbol.dispose]();
 	});
 
-	it('reads no type parameters as an empty list', async () => {
+	it('reads absent type parameters as undefined', async () => {
 		const { e, item } = await firstItem('fn f() {}\n');
 		if (!e.is.functionItem(item)) throw new Error('expected a function');
-		expect(item.typeParameters()).toEqual([]);
+		expect(item.typeParameters()).toBeUndefined();
 		e[Symbol.dispose]();
 	});
 

@@ -2915,7 +2915,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		body: () => hydrateStoredSlot(node, '_body'),
@@ -3187,7 +3187,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		$render: () => renderText(handle, node),
@@ -6002,7 +6002,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 			),
 		content: () => hydrateStoredSlot(node, '_content'),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -21513,7 +21513,7 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		body: () => hydrateStoredSlot(node, '_body'),
@@ -21787,7 +21787,7 @@ export function buildSignatureMethodDeclaration(
 				true
 			),
 		parameters: () =>
-			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
 		$render: () => renderText(handle, node),

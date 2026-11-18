@@ -111,6 +111,7 @@ import {
 	listOptionStorageMembers,
 	slotSetter,
 	withHoles,
+	isListKind,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
@@ -1013,12 +1014,16 @@ function hoistedReadType(
 	const listed = (s: AssembledNonterminal): boolean => isMultiple(s) && !resolveFieldStorageInfo(s, nodeMap).collapsesMultiplicity;
 	const last = chain.slots[chain.slots.length - 1]!;
 	if (listed(last)) {
-		return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `readonly (${storageElementOf(last)})[]` : slotListTypeOf(last, storageElementOf, 'readonly');
+		if (isMultiple(slot)) return slotListTypeOf(slot, () => storageElementOf(last), 'readonly');
+		const items = !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `readonly (${storageElementOf(last)})[]` : slotListTypeOf(last, storageElementOf, 'readonly');
+		return isRequired(slot) ? items : `${items} | undefined`;
 	}
 	const element = spelledReadType(last) ?? storageElementOf(last);
 	if (listed(slot)) return slotListTypeOf(slot, () => element, 'readonly');
 	if (chain.slots.some(listed)) return `readonly ${parenthesizeUnion(element)}[]`;
-	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${element} | undefined` : element;
+	const endsInList = slotKindNames(last).some((name) => isListKind(nodeMap.nodes.get(name)!, nodeMap));
+	const read = endsInList ? `${element} | readonly []` : element;
+	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${read} | undefined` : read;
 }
 
 function emitInterface(
@@ -1065,7 +1070,7 @@ function emitInterface(
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
 			const chain = wrapperChainFor(nodeMap, node.kind, f.name);
 			if (chain !== undefined) {
-				lines.push(`  readonly ${propName}: () => ${hoistedItemsType(chain, f, nodeMap, lookupUnion) ?? hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
+				lines.push(`  readonly ${propName}: () => ${hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
 			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				lines.push(`  readonly ${propName}: () => ${slotListTypeOf(f, storageElementOf, 'readonly')};`);
 			} else if (hasBlankArm(f)) {

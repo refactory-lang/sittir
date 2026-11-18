@@ -235,3 +235,12 @@ export function hoistedCardinality(chain: WrapperChain, slot: AssembledNontermin
 	const last = chain.slots[chain.slots.length - 1]!;
 	return { required: isRequired(slot) && chain.slots.every(isRequired), multiple, nonEmpty: isMultiple(slot) ? isNonEmpty(slot) : isNonEmpty(last) };
 }
+
+export function chainReadsAsList(nodeMap: NodeMap, chain: WrapperChain, slot: AssembledNonterminal): boolean {
+	const last = chain.slots[chain.slots.length - 1]!;
+	return (
+		isMultiple(slot) ||
+		kindsOf(last).some((name) => nodeMap.nodes.get(name) instanceof AssembledList) ||
+		chain.slots.some((inner, hop) => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(inner))
+	);
+}

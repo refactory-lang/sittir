@@ -31,7 +31,7 @@ import {
 	spelledReadImports
 } from './shared.ts';
 import { formDefinedProperties } from './refine-emit.ts';
-import { wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
+import { chainReadsAsList, wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
 import { builtTypeSurfaceOf, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -303,8 +303,7 @@ function hoistOf(holder: AuthoredCompound | AssembledList, accessor: AccessorSlo
 		if (found === undefined) throw new Error(`emitWrap: the wrapper '${kind}' of '${holder.kind}.${accessor.slot.name}' has no accessor for its slot '${chain.slots[hop]!.name}'`);
 		return { accessor: found, node };
 	});
-	const list = accessor.slot.arity === 'many' || readers.some(({ accessor: reader }) => reader.slot.arity === 'many');
-	return { readers, list };
+	return { readers, list: chainReadsAsList(nodeMap, chain, accessor.config.source) };
 }
 
 function accessorSlotsOf(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): AccessorSlot[] {

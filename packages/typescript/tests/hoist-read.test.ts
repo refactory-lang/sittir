@@ -15,10 +15,10 @@ describe.each(['arena', 'object'] as const)('the typescript hoist reads through 
 		e[Symbol.dispose]();
 	});
 
-	it('reads no type parameters as an empty list', async () => {
+	it('reads absent type parameters as undefined', async () => {
 		const { e, item } = await firstStatement('class A {}\n');
 		if (!e.is.classDeclaration(item)) throw new Error('expected a class');
-		expect(item.typeParameters()).toEqual([]);
+		expect(item.typeParameters()).toBeUndefined();
 		e[Symbol.dispose]();
 	});
 
