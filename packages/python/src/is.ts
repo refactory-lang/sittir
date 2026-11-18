@@ -357,24 +357,58 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePattern };
-		caseAsPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-		keywordPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+		caseAsPattern<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.CaseAsPattern };
+		keywordPattern<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.KeywordPattern };
 		readonly simplePattern: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			classPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			unionPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			caseListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			caseTuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			dictPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			string<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			concatenatedString<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			true<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			false<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			none<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			negative<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			complexPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			dottedName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			wildcardPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			classPattern<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			unionPattern<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			caseListPattern<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			caseTuplePattern<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			dictPattern<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			string<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			concatenatedString<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			true<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			false<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			none<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			negative<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			complexPattern<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			dottedName<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
+			wildcardPattern<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CasePattern | TSKindId.SimplePattern };
 		};
 	};
 	readonly simplePattern: {
@@ -496,11 +530,21 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Type };
-		splatType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
-		genericType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
-		unionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
-		constrainedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
-		memberType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
+		splatType<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.Type | TSKindId.SplatType };
+		genericType<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.Type | TSKindId.GenericType };
+		unionType<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.Type | TSKindId.UnionType };
+		constrainedType<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.Type | TSKindId.ConstrainedType };
+		memberType<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.Type | TSKindId.MemberType };
 	};
 	splatType<T extends { readonly $type: number } | number>(
 		v: T
@@ -1359,12 +1403,13 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G, hoisted = false): G {
 	const inner = guard as unknown as (v: unknown) => boolean;
 	const forms: Record<string, object> = {};
-	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	for (const name of Object.keys(guard))
+		forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted);
 	return _vg(
-		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		(v: unknown): boolean => (host(v) && inner((v as Record<string, () => unknown>)[seat]!())) || (hoisted && inner(v)),
 		forms
 	) as unknown as G;
 }
@@ -1616,14 +1661,14 @@ export function guardsWith(test: KindTest): IsGuards {
 			_kind_ExceptClause_guard,
 			'exception',
 			_vg(_g(TSKindId.ExceptClauseException), {
-				as: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionAs_guard),
-				list: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionList_guard)
+				as: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionAs_guard, true),
+				list: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionList_guard, true)
 			})
 		)
 	});
 	const _form_CasePattern_guard = _vg(_g(TSKindId.CasePattern), {
-		caseAsPattern: _at(_kind_CasePattern_guard, 'content', _kind_CaseAsPattern_guard),
-		keywordPattern: _at(_kind_CasePattern_guard, 'content', _kind_KeywordPattern_guard),
+		caseAsPattern: _at(_kind_CasePattern_guard, 'content', _kind_CaseAsPattern_guard, true),
+		keywordPattern: _at(_kind_CasePattern_guard, 'content', _kind_KeywordPattern_guard, true),
 		simplePattern: _at(
 			_kind_CasePattern_guard,
 			'content',
@@ -1642,7 +1687,8 @@ export function guardsWith(test: KindTest): IsGuards {
 				complexPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ComplexPattern_guard),
 				dottedName: _at(_kind_SimplePattern_guard, 'content', _kind_DottedName_guard),
 				wildcardPattern: _at(_kind_SimplePattern_guard, 'content', _kind_WildcardPattern_guard)
-			})
+			}),
+			true
 		)
 	});
 	const _form_SimplePattern_guard = _vg(_g(TSKindId.SimplePattern), {
@@ -1665,11 +1711,11 @@ export function guardsWith(test: KindTest): IsGuards {
 		fromClause: _at(_kind_Yield_guard, 'content', _kind_YieldFromClause_guard)
 	});
 	const _form_Type_guard = _vg(_g(TSKindId.Type), {
-		splatType: _at(_kind_Type_guard, 'content', _kind_SplatType_guard),
-		genericType: _at(_kind_Type_guard, 'content', _kind_GenericType_guard),
-		unionType: _at(_kind_Type_guard, 'content', _kind_UnionType_guard),
-		constrainedType: _at(_kind_Type_guard, 'content', _kind_ConstrainedType_guard),
-		memberType: _at(_kind_Type_guard, 'content', _kind_MemberType_guard)
+		splatType: _at(_kind_Type_guard, 'content', _kind_SplatType_guard, true),
+		genericType: _at(_kind_Type_guard, 'content', _kind_GenericType_guard, true),
+		unionType: _at(_kind_Type_guard, 'content', _kind_UnionType_guard, true),
+		constrainedType: _at(_kind_Type_guard, 'content', _kind_ConstrainedType_guard, true),
+		memberType: _at(_kind_Type_guard, 'content', _kind_MemberType_guard, true)
 	});
 	const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
 		futureImport: _form_FutureImportStatement_guard,

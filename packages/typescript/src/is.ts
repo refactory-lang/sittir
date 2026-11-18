@@ -330,14 +330,26 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportClause };
-		namespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
-		namedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
+		namespaceImport<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.ImportClause | TSKindId.NamespaceImport };
+		namedImports<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.ImportClause | TSKindId.NamedImports };
 		readonly defaultImport: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
+			<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.ImportClause | TSKindId.ImportClauseDefaultImport };
 			readonly importClauseGroup: {
-				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
-				namespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
-				namedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
+				<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.ImportClause | TSKindId.ImportClauseDefaultImport };
+				namespaceImport<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.ImportClause | TSKindId.ImportClauseDefaultImport };
+				namedImports<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.ImportClause | TSKindId.ImportClauseDefaultImport };
 			};
 		};
 	};
@@ -462,8 +474,12 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassHeritage };
-		extendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritage };
-		implementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritage };
+		extendsClause<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.ClassHeritage | TSKindId.ClassHeritageExtendsClause };
+		implementsClause<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.ClassHeritage | TSKindId.ImplementsClause };
 	};
 	functionExpression<T extends { readonly $type: number } | number>(
 		v: T
@@ -1032,7 +1048,11 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersSetAccessorSignature };
 		elements<T extends { readonly $type: number }>(
 			v: T
-		): v is T & { readonly $type: TSKindId.FormalParametersSetAccessorSignature };
+		): v is T & {
+			readonly $type:
+				| TSKindId.FormalParametersSetAccessorSignature
+				| TSKindId.FormalParametersElementsSetAccessorSignature;
+		};
 	};
 	formalParametersElementsSetAccessorSignature<T extends { readonly $type: number } | number>(
 		v: T
@@ -1685,12 +1705,13 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G, hoisted = false): G {
 	const inner = guard as unknown as (v: unknown) => boolean;
 	const forms: Record<string, object> = {};
-	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	for (const name of Object.keys(guard))
+		forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted);
 	return _vg(
-		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		(v: unknown): boolean => (host(v) && inner((v as Record<string, () => unknown>)[seat]!())) || (hoisted && inner(v)),
 		forms
 	) as unknown as G;
 }
@@ -2018,8 +2039,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		)
 	});
 	const _form_ImportClause_guard = _vg(_g(TSKindId.ImportClause), {
-		namespaceImport: _at(_kind_ImportClause_guard, 'content', _kind_NamespaceImport_guard),
-		namedImports: _at(_kind_ImportClause_guard, 'content', _kind_NamedImports_guard),
+		namespaceImport: _at(_kind_ImportClause_guard, 'content', _kind_NamespaceImport_guard, true),
+		namedImports: _at(_kind_ImportClause_guard, 'content', _kind_NamedImports_guard, true),
 		defaultImport: _at(
 			_kind_ImportClause_guard,
 			'content',
@@ -2028,19 +2049,20 @@ export function guardsWith(test: KindTest): IsGuards {
 					_kind_ImportClauseDefaultImport_guard,
 					'importClauseGroup',
 					_vg(_g(TSKindId.ImportClauseGroup), {
-						namespaceImport: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamespaceImport_guard),
-						namedImports: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamedImports_guard)
+						namespaceImport: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamespaceImport_guard, true),
+						namedImports: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamedImports_guard, true)
 					})
 				)
-			})
+			}),
+			true
 		)
 	});
 	const _form_YieldExpression_guard = _vg(_g(TSKindId.YieldExpression), {
 		delegate: _at(_kind_YieldExpression_guard, 'expression', _kind_YieldExpressionDelegate_guard)
 	});
 	const _form_ClassHeritage_guard = _vg(_g(TSKindId.ClassHeritage), {
-		extendsClause: _at(_kind_ClassHeritage_guard, 'content', _kind_ClassHeritageExtendsClause_guard),
-		implementsClause: _at(_kind_ClassHeritage_guard, 'content', _kind_ImplementsClause_guard)
+		extendsClause: _at(_kind_ClassHeritage_guard, 'content', _kind_ClassHeritageExtendsClause_guard, true),
+		implementsClause: _at(_kind_ClassHeritage_guard, 'content', _kind_ImplementsClause_guard, true)
 	});
 	const _form_ArrowFunction_guard = _vg(_g(TSKindId.ArrowFunction), {
 		parameter: _at(_kind_ArrowFunction_guard, 'content', _kind_ArrowFunctionParameter_guard),
@@ -2060,7 +2082,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		elements: _at(
 			_kind_FormalParametersSetAccessorSignature_guard,
 			'elements',
-			_kind_FormalParametersElementsSetAccessorSignature_guard
+			_kind_FormalParametersElementsSetAccessorSignature_guard,
+			true
 		)
 	});
 	const _supertype_declaration_guard = _vg(_mg(196), {
