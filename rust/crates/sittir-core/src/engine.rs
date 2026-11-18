@@ -2727,7 +2727,7 @@ impl<G: EngineGrammar> Engine<G> {
     pub fn new(grammar: G, options: ResolvedOptions) -> Result<Self, String> {
         let written = TriviaStore::with_kind_bits(G::KIND_BITS);
         #[cfg(feature = "arena")]
-        let written = written.with_whitespace(grammar.whitespace().0);
+        let written = written.with_whitespace(grammar.whitespace().0).with_surface_kinds(grammar.surface_kinds());
         Self::with_store(grammar, options, written)
     }
 

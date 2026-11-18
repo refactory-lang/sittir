@@ -2157,7 +2157,7 @@ pub fn dispose<G: crate::engine::EngineGrammar>(_env: &napi::Env, tree: crate::e
 #[cfg(feature = "arena")]
 #[must_use]
 pub fn engine_store<G: crate::arena::RecordGrammar>(grammar: G) -> crate::trivia_store::TriviaStore<G::Trivia> {
-    crate::trivia_store::TriviaStore::for_records(G::KIND_BITS, G::shape).with_whitespace(grammar.whitespace().0)
+    crate::trivia_store::TriviaStore::for_records(G::KIND_BITS, G::shape).with_whitespace(grammar.whitespace().0).with_surface_kinds(grammar.surface_kinds())
 }
 
 /// The store an engine of grammar `G` writes sides into.
