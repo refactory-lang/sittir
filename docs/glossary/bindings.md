@@ -143,30 +143,6 @@ that fails to carry it. A level no
 grammar claims takes a member as required when every claimed child does.
 ```
 
-### `packages/codegen/src/bindings/derive.ts::armClass`
-
-What one collapsed member kind stands for: a `scalar` keyword (`boolean`, `string`, `number`), a `role` (a top-level namespace), a `ref` (a dotted vocabulary kind or a `set:` prefix), `text` (a `text:` or `literal:` token), or `unmapped` (a `<grammar:kind>` no binding claims).
-
-### `packages/codegen/src/bindings/derive.ts::collapsedKinds`
-
-A member's kinds collapsed to the smallest covering set: a namespace's leaves fold into the namespace when it is itself admitted or their common prefix is the namespace root, and into a `set:<prefix>` when that prefix is a claimed one; other kinds stand as they are. The slot table's entries and a grammar's fill of them both collapse through it, so they agree.
-
-### `packages/codegen/src/bindings/derive.ts::soleRole`
-
-The one role a member's collapsed kinds state, with the text beside it, when every other arm is text: the member is typed as the role, and the text is keyword text a grammar aliases into that role, which the grammar's context admits under the role rather than the vocabulary naming it.
-
-### `packages/codegen/src/bindings/derive.ts::directKinds`
-
-A member typed without the language context: its `soleRole`, or its collapsed kinds when they are all refs or all scalars. Anything else, differing roles, roles beside refs, text alone or nothing, is `undefined`, and the member is typed through its slot entry.
-
-### `packages/codegen/src/bindings/derive.ts::levelsWithSlots`
-
-The kind paths that declare their own members: every claimed kind and prefix except refinements and template holes, which pin literals or holes over their parent's members. Sorted, so the slot table's order is stable.
-
-### `packages/codegen/src/bindings/derive.ts::slotEntries`
-
-Every member the language context states, one per kind path and member, in path then member order: the members of `levelsWithMembers` that `directKinds` leaves `undefined`.
-
 ### `packages/codegen/src/bindings/derive.ts::Resolution`
 
 What a grammar kind or slot resolves to as a member type: its type tokens (vocabulary paths, `text:` and `literal:` spellings, `boolean`, and `<grammar:kind>` for an unmapped kind), and whether it holds a list or a single value.
@@ -182,10 +158,6 @@ A vocabulary path that refines its parent by literals rather than members: the p
 ### `packages/codegen/src/bindings/derive.ts::Derivation`
 
 Everything the vocabulary derivation finds across the bound grammars, which the inventory prints and checks against the authored vocabulary: the claimed paths and their prefixes, who claims each, the paths derived from content predicates, refinements, template holes, members per path, set-inclusion cycles, and the report lists (untargeted containers, uncaptured slots, unmapped references with their counts, unknown predicates, wildcard containers, wildcard claims with unrouted members, forms left with no entry for their supertype's claim).
-
-### `packages/codegen/src/bindings/derive.ts::commonPrefix`
-
-The longest dotted prefix every path shares, or `null` when they share none.
 
 ### `packages/codegen/src/bindings/derive.ts::facts`
 
@@ -219,25 +191,9 @@ The paths one segment below a path, among the claimed paths and their prefixes, 
 
 The path itself and every claimed path beneath it that is not a refinement, sorted: the kinds a namespace's union spans.
 
-### `packages/codegen/src/bindings/derive.ts::ArmClass`
-
-How a member type token takes part in a union: a scalar, a role (a top-level vocabulary kind), a ref (a path or a set), a text or literal spelling, or unmapped.
-
 ### `packages/codegen/src/bindings/derive.ts::Scalar`
 
 The member types that are plain values rather than kinds.
-
-### `packages/codegen/src/bindings/derive.ts::SCALARS`
-
-The `Scalar` names as a set, for `isScalar`.
-
-### `packages/codegen/src/bindings/derive.ts::isScalar`
-
-Whether a member type token is a `Scalar`.
-
-### `packages/codegen/src/bindings/derive.ts::SlotEntry`
-
-One member of one path that the language context states: its path, its member name and its facts.
 
 ### `packages/codegen/src/bindings/facts.ts::VOCABULARY_DIR`
 

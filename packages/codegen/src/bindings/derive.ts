@@ -93,19 +93,6 @@ export interface Derivation {
 
 const unmappedToken = (grammar: string, kind: string): string => `<${grammar}:${kind}>`;
 
-export function commonPrefix(paths: readonly string[]): string | null {
-	if (paths.length === 0) return null;
-	const parts = paths.map((p) => p.split('.'));
-	const first = parts[0] ?? [];
-	const out: string[] = [];
-	for (let i = 0; i < Math.min(...parts.map((p) => p.length)); i += 1) {
-		const seg = first[i];
-		if (seg !== undefined && parts.every((p) => p[i] === seg)) out.push(seg);
-		else break;
-	}
-	return out.length > 0 ? out.join('.') : null;
-}
-
 const facts = (): SlotFacts => ({
 	kinds: new Set(),
 	optional: false,
@@ -562,78 +549,4 @@ export function levelSlots(d: Derivation, v: string): Map<string, SlotFacts> {
 	return merged;
 }
 
-export type ArmClass = 'scalar' | 'role' | 'ref' | 'text' | 'unmapped';
 export type Scalar = 'string' | 'boolean' | 'number';
-const SCALARS: ReadonlySet<string> = new Set<Scalar>(['string', 'boolean', 'number']);
-export const isScalar = (kind: string): kind is Scalar => SCALARS.has(kind);
-
-export function armClass(kind: string): ArmClass {
-	if (isScalar(kind)) return 'scalar';
-	if (kind.startsWith('text:') || kind.startsWith('literal:')) return 'text';
-	if (kind.startsWith('<')) return 'unmapped';
-	return kind.startsWith('set:') || kind.includes('.') ? 'ref' : 'role';
-}
-
-export function soleRole(d: Derivation, kinds: ReadonlySet<string>): { role: string; text: string[] } | undefined {
-	const collapsed = collapsedKinds(d, kinds);
-	const [role, ...others] = collapsed.filter((k) => armClass(k) === 'role');
-	if (role === undefined || others.length > 0) return undefined;
-	const text = collapsed.filter((k) => armClass(k) === 'text');
-	return text.length + 1 === collapsed.length ? { role, text } : undefined;
-}
-
-export function directKinds(d: Derivation, kinds: ReadonlySet<string>): string[] | undefined {
-	const sole = soleRole(d, kinds);
-	if (sole !== undefined) return [sole.role];
-	const collapsed = collapsedKinds(d, kinds);
-	const classes = new Set(collapsed.map(armClass));
-	if (collapsed.length > 0 && classes.size === 1 && (classes.has('ref') || classes.has('scalar'))) return collapsed;
-	return undefined;
-}
-
-export interface SlotEntry {
-	readonly path: string;
-	readonly name: string;
-	readonly facts: SlotFacts;
-}
-
-export function levelsWithSlots(d: Derivation): string[] {
-	return [...new Set([...d.allvocab, ...d.prefixes])].filter((v) => !d.refinements.has(v) && !d.holes.has(v)).sort();
-}
-
-export function slotEntries(d: Derivation): SlotEntry[] {
-	return levelsWithSlots(d).flatMap((v) =>
-		[...levelSlots(d, v)]
-			.sort(([a], [b]) => a.localeCompare(b))
-			.filter(([, f]) => directKinds(d, f.kinds) === undefined)
-			.map(([name, facts]) => ({ path: v, name, facts }))
-	);
-}
-
-export function collapsedKinds(d: Derivation, kinds: ReadonlySet<string>): string[] {
-	const byns = new Map<string, Set<string>>();
-	for (const k of kinds) {
-		if (k.includes('.') && !k.startsWith('text:') && !k.startsWith('literal:') && !k.startsWith('<')) {
-			const ns = k.split('.')[0] ?? k;
-			(byns.get(ns) ?? byns.set(ns, new Set()).get(ns))?.add(k);
-		}
-	}
-	const remaining = new Set(kinds);
-	const all = new Set([...d.allvocab, ...d.prefixes]);
-	for (const [ns, ks] of byns) {
-		if (remaining.has(ns)) {
-			for (const k of ks) remaining.delete(k);
-			continue;
-		}
-		if (ks.size < 2) continue;
-		const prefix = commonPrefix([...ks].sort()) ?? ns;
-		if (prefix === ns) {
-			for (const k of ks) remaining.delete(k);
-			remaining.add(ns);
-		} else if ([...all].some((o) => o.startsWith(`${prefix}.`))) {
-			for (const k of ks) remaining.delete(k);
-			remaining.add(`set:${prefix}`);
-		}
-	}
-	return [...remaining].sort();
-}
