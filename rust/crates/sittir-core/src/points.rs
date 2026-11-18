@@ -119,18 +119,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for PointSpan {
     }
 }
 
-/// The byte offset at which each row of one source starts, built once and
-/// shared by every render of that source.
+/// Whether `byte` may sit between the two line breaks of a blank line: a
+/// space, tab, carriage return or form feed.
+#[must_use]
+pub const fn blank(byte: u8) -> bool {
+    matches!(byte, b' ' | b'\t' | b'\r' | b'\x0c')
+}
+
+/// The byte offset at which each row of one source starts, and its blank
+/// lines, built once and shared by every render of that source. A blank line
+/// is a row after a line break that holds only `blank` bytes before the next
+/// one. `list_slots::sets_apart` sets no item apart in a holder whose bytes
+/// hold none, since the two breaks it counts are such a pair, the first
+/// being an extra's last byte where the extra ends its row.
 #[derive(Debug, Clone)]
 pub struct LineTable {
     starts: Vec<u32>,
     len: u32,
+    /// The rows that are blank lines, in order.
+    blank_rows: Vec<u32>,
 }
 
 impl HeapBytes for LineTable {
     fn heap_bytes(&self) -> usize {
-        let Self { starts, len } = self;
-        starts.heap_bytes() + len.heap_bytes()
+        let Self { starts, len, blank_rows } = self;
+        starts.heap_bytes() + len.heap_bytes() + blank_rows.heap_bytes()
     }
 }
 
@@ -138,8 +151,30 @@ impl LineTable {
     #[must_use]
     pub fn new(source: &str) -> Self {
         let mut starts = vec![0];
-        starts.extend(source.bytes().enumerate().filter(|&(_, b)| b == b'\n').map(|(i, _)| crate::types::narrow(i) + 1));
-        Self { starts, len: crate::types::Span::whole(source).end }
+        let mut blank_rows = Vec::new();
+        let mut blank_so_far = false;
+        for (at, byte) in (0u32..).zip(source.bytes()) {
+            if byte == b'\n' {
+                if blank_so_far {
+                    blank_rows.push(crate::types::narrow(starts.len() - 1));
+                }
+                starts.push(at + 1);
+                blank_so_far = true;
+            } else if !blank(byte) {
+                blank_so_far = false;
+            }
+        }
+        Self { starts, len: crate::types::Span::whole(source).end, blank_rows }
+    }
+
+    /// Whether the bytes `span` covers hold both line breaks of a blank line:
+    /// of the blank lines whose first break lies in it, the earliest ends
+    /// first.
+    #[must_use]
+    pub fn holds_blank_line(&self, span: crate::types::Span) -> bool {
+        let breaks = |row: u32| (self.starts[row as usize] - 1, self.starts[row as usize + 1] - 1);
+        let first = self.blank_rows.partition_point(|&row| breaks(row).0 < span.start);
+        self.blank_rows.get(first).is_some_and(|&row| breaks(row).1 < span.end)
     }
 
     /// The point of byte offset `byte`, or `None` past the source's end.
@@ -219,6 +254,25 @@ mod tests {
         let trailing = LineTable::new("ab\n");
         assert_eq!(trailing.point(3), Some(p(1, 0)));
         assert_eq!(trailing.byte(p(1, 0)), Some(3));
+    }
+
+    #[test]
+    fn a_span_holds_a_blank_line_only_where_two_breaks_meet_inside_it_with_only_blanks_between() {
+        let span = |start, end| crate::types::Span { start, end };
+        for source in ["a\n\nb", "a\n \t\r\n b", "a # t\n\nb", "a(); /* m\n\nn */\nb();", "\n\n"] {
+            assert!(LineTable::new(source).holds_blank_line(crate::types::Span::whole(source)), "{source:?}");
+        }
+        for source in ["a\nb\nc", "a\n// c\nb", "a, b", "\n", "  \nb"] {
+            assert!(!LineTable::new(source).holds_blank_line(crate::types::Span::whole(source)), "{source:?}");
+        }
+        let lines = LineTable::new("a\n\nb c");
+        assert!(!lines.holds_blank_line(span(3, 6)), "a blank line before the span is not the holder's");
+        assert!(!lines.holds_blank_line(span(0, 2)), "a span that holds the first break alone holds no blank line");
+        assert!(lines.holds_blank_line(span(1, 3)));
+        let lines = LineTable::new("a\n\n\nb\n\nc");
+        assert!(lines.holds_blank_line(span(2, 4)), "the second and third breaks of a run meet as a blank line of their own");
+        assert!(lines.holds_blank_line(span(5, 8)));
+        assert!(!lines.holds_blank_line(span(4, 6)), "a span that ends on the second break does not hold it");
     }
 
     #[test]
