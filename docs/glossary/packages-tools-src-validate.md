@@ -2046,3 +2046,7 @@ The grammars to check.
 ### `packages/tools/src/portable/admission.ts::run`
 
 The admission command: prints the formatted report and returns 0.
+
+### `packages/tools/src/portable/feature-guard.ts::UNHELD_SLOTS`
+
+The slots of a composed feature that the guard doesn't require a grammar's bindings to hold, as `path.slot` keys. Every other slot a composed feature owns is a `composed-not-claimed` row when the bindings hold none of it.

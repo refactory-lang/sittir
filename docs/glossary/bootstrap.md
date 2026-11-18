@@ -76,3 +76,7 @@ The pinned build's modules, imported once and shared.
 ### `packages/codegen/src/bootstrap/pinned.ts::importPinned`
 
 Imports the pinned build's packages (`PinnedBuild`) from the bootstrap directory. A directory the bootstrap did not finish is an error that names the command to build it.
+
+### `packages/codegen/src/bootstrap/pinned-types.ts::PINNED_TYPES_TSCONFIG`
+
+The tsconfig of the program that types codegen's pinned readers, the child that loads them and the pinned TypeScript module by the pinned build's declarations, not the workspace's, so a change to the workspace's generated types can't break code that runs on the pinned build.

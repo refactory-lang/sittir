@@ -1326,3 +1326,11 @@ The current text of a file, read as UTF-8, or `undefined` when no file exists at
 Creates the `Pending` of a file write: `open` makes its commit, `diff` describes its change, and `hooks` intercept the write in order. The write runs once, when the result is awaited or disposed. A hook's `next` and `diff` are valid only while its write is in flight.
 
 The thenable method of a pending write: it starts the write once and settles when the write is done, so awaiting a Pending performs it.
+
+### `packages/common/src/number.ts::DecimalSpelling`
+
+The decimal parts `decimalSpelling` writes, typed from the parts object and whether the spelling is scientific. The integer and fraction are always present when the parts name them; the exponent and its marker are always present in a scientific spelling and optional otherwise. The marker is typed `'e'` and the sign `'-'`, the only texts the function writes.
+
+### `packages/common/src/number.ts::decimalSpelling`
+
+Spells a number in a builder's decimal parts, scientific or not, or returns `undefined` when the parts can't spell it; each caller throws its own message. The interpreter and the generated build module both spell a float through it.

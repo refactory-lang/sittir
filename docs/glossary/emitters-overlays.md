@@ -126,7 +126,7 @@ The trailing options parameter of a form builder, typed by its parent's options.
 
 A read entry as the routes model writes it: its vocabulary path, placement, pins, compiled test and template.
 
-### `packages/codegen/src/emitters/overlays/portable/node-model.ts::memberRecord`
+### `packages/codegen/src/emitters/overlays/portable/node-model.ts::slotRecord`
 
 A member route as the routes model writes it: its name, its route kind and that route's own facts, a slot by name, and `null` for a build path it has none of.
 
@@ -228,7 +228,7 @@ The test that a slot holds a keyword: a presence leaf when the slot is a boolean
 
 ### `packages/codegen/src/emitters/overlays/portable/flags.ts::flagPlansOf`
 
-One kind's flags, each as the plan that tests it on a node of the kind. A member flag lowers its route: each step before the last becomes a `child` step over that step's slot by its number, keeping its anchor, and the last slot gives the leaf, presence for a flag slot, `keywordTestOf` for a keyword, and an `is` over the slot for a captured kind. A flag the kind's own form spells (`MemberRoute.spelled`) always holds, `{ op: 'and', of: [] }`; any other route with no path is refused. A claim flag lowers its read test when the test is node-local (no placement, no context condition); otherwise it depends on the node's context and is `null`, which a query refuses by name. A claim flag whose test still compares the node's own text, one no fixed text decided, is refused: a where plan reads no node's own text. A flag declared by several routes lists each distinct plan once and `or`s them. A flag both declared on the node and by a contextual claim is refused, as is a route that reaches no slot.
+One kind's flags, each as the plan that tests it on a node of the kind. A member flag lowers its route: each step before the last becomes a `child` step over that step's slot by its number, keeping its anchor, and the last slot gives the leaf, presence for a flag slot, `keywordTestOf` for a keyword, and an `is` over the slot for a captured kind. A flag the kind's own form spells (`SlotRoute.spelled`) always holds, `{ op: 'and', of: [] }`; any other route with no path is refused. A claim flag lowers its read test when the test is node-local (no placement, no context condition); otherwise it depends on the node's context and is `null`, which a query refuses by name. A claim flag whose test still compares the node's own text, one no fixed text decided, is refused: a where plan reads no node's own text. A flag declared by several routes lists each distinct plan once and `or`s them. A flag both declared on the node and by a contextual claim is refused, as is a route that reaches no slot.
 
 ### `packages/codegen/src/emitters/overlays/portable/flags.ts::slotFlagsOf`
 
@@ -297,7 +297,7 @@ The grammar kind of the skipped read entry.
 
 The vocabulary path the skipped entry reads into.
 
-### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedUnemitted::member`
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedUnemitted::slot`
 
 The member the skip applies to, when the skip is per member. Absent when the whole entry was skipped.
 
@@ -344,3 +344,47 @@ Predicate for the map's `never` members: true when a path's member has an exact 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapNodesOf`
 
 Per path, the sorted discriminant ids of the kinds that read it. Each read kind contributes its discriminant to every path its read reaches (`readPathsOf`), so a path's `nodes` entry lists the kinds that yield it.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::MapDecided`
+
+Per path, the slots whose structure without `$path` is read as one decided path, with that path. The map writes them as `decided`, and the build emitter takes the same entries as its input.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::ScalarInput`
+
+The TypeScript type a number path's scalar takes in the map's inputs: `number` for an integer or a float, `bigint` for a bigint.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapDecidedOf`
+
+Derives `MapDecided` once, from the exact sets: for each path and slot, the slot's only path built from a structure (a vocabulary kind with no `$value`), when the read views it. A slot with several, or with one the read doesn't view, has none.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::scalarInputsOf`
+
+Per path the build table builds from a scalar (`builds`), the sorted TypeScript types of those scalars (`ScalarInput`). The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number, and the generated slot function's parameter takes the same types.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitCode`
+
+The portable module emitter's diagnostic codes: a path in a slot's type with no arm that fits the slot's seats (`portable-emit-unplaced-path`); a path the emitter can't compile whole, which the module leaves out (`portable-emit-unfit-slot`); a construct the pinned builders can't express (`portable-emit-pinned-gap`); a generated module that fails its type-check (`portable-emit-type`); and a slot's tail that is the full name of another path (`portable-emit-tail-is-path`).
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitDiagnostic`
+
+One portable emit diagnostic: its code, the path it is about, the slot when it is about one, and its message. Gen reports them as grammar warnings. They count only functions the module keeps.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitInput`
+
+What codegen hands the pinned child to emit a grammar's portable build module: the grammar, the map and node type names, the import specifiers, the build table, each path's slots as the slot functions type them (`PortableEmitSlot`), the paths the read views, the text paths, text inputs and text values, the holder and key of each strict list argument that takes a hole, and each path's decided slots (`MapDecided`). It is generic over the table type and imports nothing: codegen instantiates it with `@sittir/types`' `PortableBuildTable`, and the emitter with the same declarations through the one workspace file its program admits.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitOutput`
+
+The emitted module's text and its diagnostics.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitSlot`
+
+One slot of one path as its generated slot function types the value: the paths it takes, the token texts it takes, the unclaimed kinds it holds, whether it takes bare text, the scalar types a bare number in it may have (the scalar inputs of its number paths), and whether it is optional.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::emitPortableBuildInProcess`
+
+Emits a grammar's portable build module in the current process: it loads the pinned build, opens a TypeScript engine on it, writes the module with `emitPortableModule` and renders it. The pinned child calls it for its `portableBuild` mode, through `EMITTER_ENTRY`; the engine is disposed when the call returns.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::emitPortableModule`
+
+Writes a grammar's portable build module through the pinned TypeScript builders: a function per path the emitter compiles whole, each slot placed through its slot function, and only the helpers and imports those functions use. It returns the program with the diagnostics of what it left out. A path it can't compile whole is left out with `portable-emit-unfit-slot`, never written with an empty body.

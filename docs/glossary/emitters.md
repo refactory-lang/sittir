@@ -15305,6 +15305,14 @@ Whether a number shape has every part it needs to read a number.
 
 The number shapes of a node map, by kind.
 
+### `packages/codegen/src/emitters/interior.ts::DECIMAL_PARTS`
+
+The decimal parts a number kind's slots can spell, in the order a spelling writes them: integer, fraction, exponent, marker, exponent sign. Each is a key of `PortableDecimalParts`. `numberSlotsOf` returns a kind's numeric slots in this order and refuses a numeric slot that is none of them.
+
+### `packages/codegen/src/emitters/interior.ts::numberSlotsOf`
+
+The slots a number kind's value is written from, for a kind with a number shape; none for any other kind. When the kind's builder takes no config, they are the slots of its lexed content's number spelling. When it takes a config, they are the numeric slots that spell their own base; two or more must each be a decimal part (`DECIMAL_PARTS`) and come back in that order, else the emit fails with `portable-vocabulary-mismatch`. The factory map stamps them, less the kind's options, as the slots' `valueSource`.
+
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
 
 The codes a pick diagnostic can carry.
