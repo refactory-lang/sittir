@@ -2,12 +2,37 @@
 
 > **Execution:** the engine-api session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** written 2026-11-17. Tasks 2–9 start when the hydrate-at-parse branch has merged to master; the branch is cut from that merge. Task 1 runs ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It writes no production code, and that branch is merged into the stage-one branch when the stage-one branch is cut. **Stopped at Task 1** until the maintainer rules: `delimiter_disagreements` is 7, all on next.js, and `named_fixed_query_items` is non-zero on seven of the nine corpora. The census README's "Stage-one counts" lists every case.
+**Status:** written 2026-11-17, updated 2026-11-18. Waiting for the hydrate-at-parse merge. Tasks 2–9 and 3a start when the hydrate-at-parse branch has merged to master, on a branch cut from that merge.
+- **Task 1** is done. It ran ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It wrote no production code. That branch is merged into the stage-one branch when the stage-one branch is cut. Both of its stops are ruled (2026-11-17):
+  - a parsed list's delimiter is its delimiter option, resolved by the generated read code by one logic for both storages (Task 4). This superseded the same day's "decided by kind" and "store nothing; the options decide";
+  - named fixed tokens leave query results (Task 6).
+
+  Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. The hydrate-at-parse branch replaces `NodeCoordinate` with the node's name, so this plan's `&NodeCoordinate` signature (Task 6's `$treeHandle` row) is re-anchored to it when the stage-one branch is cut.
+- **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
+
+  The branch still carries:
+  - `trivia_table::owner`, the one placement that both the object read's placer and the arena parse walk call;
+  - the same-row rule measured from the holder's end row in both storages;
+  - the kept-side capacity fix (`RecordSink::kept`);
+  - `headerOf`.
+
+  It merges into the hydrate-at-parse branch.
+- **The scanner change Task 4 relies on** (no automatic semicolon in a list's trailing spot) is one commit on `fix/ts-asi-before-same-line-comment`. It is not pushed and has no pull request. It waited for the placement fix, which is withdrawn. Under master's ownership, the comment after an interface member's automatic semicolon leads the next member, so the change adds the interface case to the known gap. Brainstorm decides whether it opens as it is.
+- **The storage audit** (2026-11-18): its table is `docs/superpowers/specs/2026-11-18-one-read-rule-per-fact-design.md`, "The four facts" and "Left unread by the audit". Its baseline is three numbers, measured on the validation corpus of the five grammars (440 sources, 15,024 nodes), comparing object and arena storage:
+  - 0 root snapshots differ;
+  - 0 untouched node renders differ;
+  - 0 of 13,880 layout runs are apart.
+
+  Of the six facts it left unread, three are still to read: a list slot's separator kind, MISSING, and an `ERROR` as a side entry against its own record. The other three are read and go to brainstorm with them.
+
+  That spec is an enhancement, not stage-one work.
+- **Task 3a** is added: the spec's gate "The layout diagnostics answer for an arena tree" (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage.
 
 How this line is kept:
 - Each finished task is ticked, and this line names the task in progress.
 - A stop condition replaces this line with the stop and its cases until it is ruled. The stop conditions are:
-  - Task 1: a non-zero `delimiter_disagreements` or `named_fixed_query_items`, reported to brainstorm with every case, for the maintainer to rule on;
+  - Task 4: a `validate history` row that moves, or a list whose stored delimiter or separators differ between object and arena storage;
+  - Task 6: a dropped named fixed token that is not one of the pairs in the spec's "What navigation lists";
   - Task 8: a placement change that is not beside a named fixed token;
   - Task 9: a failed gate.
 
@@ -30,7 +55,7 @@ How this line is kept:
 - "A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. It writes none for a unit either."
 - "A fixed token's text comes from its kind. … No byte offset of a fixed token is stored."
 - "A record's own coordinate (`AT`: kind, start, end) stays, and so does every offset of text the source carries."
-- A list's delimiter and separator choices render exactly as shipped. That includes `separator_kind` and `tokens` on mixed `object_type_content` lists, and the single-element rule (`AssembledList::singleElementNeedsTrailing`).
+- A list's separator choices render exactly as shipped. That includes `separator_kind` and `tokens` on mixed `object_type_content` lists, and the single-element rule (`AssembledList::singleElementNeedsTrailing`). A list carries a delimiter option, as a built list given one does; the generated read resolves its value from the tree once, and that resolution is the same code whichever storage holds the result.
 - No new storage form: no bit beside the run, and no new place in `SideSlot::tokens`.
 - A unit's place among its holder's children is where the kind's render body writes its slot.
 - Named fixed tokens leave navigation. A comment beside one is seated as a built node seats it.
@@ -41,7 +66,7 @@ How this line is kept:
 
 ## Review Focus
 
-1. **A list rebuilt from a source list whose last item was replaced.** It takes the options' trailing flag, not the source's stamp: `source_trailing_delimiter` applies only while the last item is still the source's. Task 4 pins it: `a_rebuilt_list_whose_last_item_changed_takes_the_options_trailing_flag`.
+1. **A list rebuilt from a parsed list whose last item was replaced.** The option its read resolved stays with it, so rust `f(a, b,)` with `b` replaced renders `a, a,`. Cleared, it takes the options' value. Task 4 pins it: `a_cleared_delimiter_takes_the_options`.
 2. **A comment between a unit and its neighbour**, such as `& /* c */ mut T` and `a /* c */ ?.[0]`. The side is keyed by the unit's site and renders where it did. Task 8 pins it: `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`.
 3. **A zero-width fixed token at a record's edge:** python's `newline` from a `tokenSeam`, `indent` and `dedent`, and typescript's automatic semicolon in a separator gap. Edge levels and depth moves answer as today. Task 5 pins it: `edge_levels_at_a_zero_width_fixed_token_agree`.
 4. **A MISSING fixed token inside a list**, for example rust `fn f( {` and typescript `if (a {`. The list's stamps and its edge levels match the old tree, and the holder keeps `HOLDS_ERROR`. Tasks 4 and 5 cover it through `with_errors`, which the parity fixtures include.
@@ -49,17 +74,19 @@ How this line is kept:
 
 ## Public surfaces this stage changes
 
-These rows are from the spec's § Public surfaces, approved by the maintainer.
+These rows are from the spec's § Public surfaces, approved by the maintainer. The rows marked *new* come from the 2026-11-17 rulings and go to the maintainer before Task 4.
 
 | surface | change | task |
 |---|---|---|
 | addon `siblings` | a unit sibling has no span; a named fixed token is no sibling | 6 |
-| addon `descendants` / `readDescendants`, `$children`, `$descendants` | items unchanged except for named fixed tokens returned as units today (Task 1 counts these; a non-zero count goes to the maintainer before Task 6); resume paths renumber | 6 |
+| addon `descendants` / `readDescendants`, `$children`, `$descendants` | a named fixed token of a pair in the spec's "What navigation lists" is no longer yielded (29,447 items across the census corpora); every other item is unchanged; resume paths renumber | 6, 9 |
+| *new:* `$query()` views (`$children`, `$descendants`, `ofType`, `where`, `find` and the rest) | a query for such a token's kind finds none of them; a query for the holder's kind finds each, as for a built node: `ofType(kinds.SelfParameter)` matches `&self`, and `ofType(kinds.Self)` finds nothing inside it | 6, 9 |
+| *new:* a parsed list whose delimiter option is cleared (`$with.delimiter(undefined)`) | it renders the options' trailing separator, where it rendered its source's: rust `f(a, b,)` renders `a, b`. `.delimiter` and `_delimiter` are unchanged | 4 |
 | `NodeCoordinate.$treeHandle`, `$end` | values renumber | 6 |
 | `$text`, `lineStartsInsideTokens`, the parse's error list | unchanged | 1, 7 |
-| `$snapshot` | unchanged, or its own row if Task 1 finds it lists a fixed token | 1 |
+| `$snapshot` | lists no fixed token (Task 1's test); its `_delimiter` changes as the delimiter row says | 1, 4 |
 
-Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), still guarded by `Engine::with_store` and `record_nodes.rs::field_fits`. `NodeSite` gains `Unit`, `RecordShape` gains `order` and `edges`, and `SourceTable::last_list_child_kind` becomes `SourceTable::source_trailing`.
+Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), still guarded by `Engine::with_store` and `record_nodes.rs::field_fits`. `NodeSite` gains `Unit`, `RecordShape` gains `order` and `edges`, and `SourceTable::last_list_child_kind`, `engine::last_list_child` and `prepare::source_trailing_delimiter` go, as second derivations of a list's delimiter.
 
 ## File map
 
@@ -68,9 +95,9 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - `rust/crates/sittir-core/src/arena/admit.rs`: `RecordShape::{order, edges}`, `EdgePart`.
 - `rust/crates/sittir-core/src/arena/run_nodes.rs`: navigation lists units from cells and names `NodeSite::Unit`.
 - `rust/crates/sittir-core/src/engine.rs`: the readers (`Lookups::edge_levels`, `depth_move`, `node_slots`, `separator_before`, `line_starts_inside_tokens`) and `parse_records_with`.
-- `rust/crates/sittir-core/src/prepare.rs`, `render.rs`, `napi_engine.rs`: `source_trailing_delimiter` and `SourceTable::source_trailing`.
+- `rust/crates/sittir-core/src/prepare.rs`, `render.rs`, `napi_engine.rs`: `source_trailing_delimiter` and `SourceTable::last_list_child_kind` go.
 - `rust/crates/sittir-node-macros/src/{attrs,hydrate,expand}.rs`: the `order` and `edges` attributes, roles at meet, separator stamps.
-- `packages/codegen/src/emitters/render-body.ts` and `render-module.ts`: `bodySlotOrder`, `bodyEdgeParts`, the depth-kind check.
+- `packages/codegen/src/emitters/render-body.ts` and `render-module.ts`: `bodySlotOrder`, `bodyEdgeParts`, the depth-kind check; a list's prepare fills an unset delimiter from the options, and `sourceTrailingSeparator` goes.
 - `rust/crates/sittir-parity-tests/src/lib.rs`: `read_fixtures`, moved out of `record_nodes.rs`, plus `out_of_order_units`.
 - `rust/crates/sittir-parity-tests/tests/stage_one_parity.rs`: new; every parity test below.
 - `rust/crates/sittir-parity-tests/tests/read_census.rs`: new; the census probe, kept.
@@ -93,7 +120,7 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - `abutting_leaves`: variable-text leaves whose text ends in `\n` and whose next token in the token walk starts at their end, that token being a fixed token or a unit.
   - `choice_lists`: parsed lists of a kind with more than one separator candidate and at least one gap.
   - `choice_outliers`: gaps whose kind is not their list's majority.
-  - `delimiter_disagreements`: parsed flanked lists where the stamped `DELIMITER`'s `TRAILING` differs from whether `engine::last_list_child` is one of the list's separators.
+  - `delimiter_disagreements`: parsed flanked lists whose kind leaves the trailing flank optional and whose stamped `TRAILING` differs from the kind rule (a child routed `Route::Separator` for the list's slot follows its last item), by direction and list kind (`delimiter_to_trailing`, `delimiter_to_none`). The first sweep compared the stamp with `engine::last_list_child`; that comparison went with the ruling.
   - `named_fixed_query_items`: named nodes that `ParsedTree::descendants` yields whose stage-one fate is dropped, with the role their holder's route gives them (the spec's navigation table). Every one the census found is a `QueryItem::Unit`.
 
   Rerun Step 1's command. Expected: the five tallies are printed per corpus.
@@ -107,7 +134,7 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - Add the counts to the README under "Stage-one counts".
   - Send brainstorm the five tallies and the two checks.
   - A non-zero `delimiter_disagreements` or `named_fixed_query_items` stops the plan. Report it to brainstorm with every case (source, node kind, span and both answers) and set the Status line to the stop; brainstorm takes it to the maintainer.
-  - Commit: landed as `fe7115ea4` on `test/read-census`.
+  - Commit: landed as `fe7115ea4` on `test/read-census`, and the kind-rule tally as `9eeca19fb`.
 
 ### Task 2: Body facts generated per kind
 
@@ -174,35 +201,100 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `cargo test --workspace --no-default-features` is unchanged, since `parse_records` is still `All`.
 - [ ] **Step 5: Commit:** `feat(core): a read that writes slot content and trivia rows only, beside today's`.
 
-### Task 4: List facts from stamps
+### Task 3a: The layout diagnostics answer for an arena tree
+
+The spec's gate (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage.
+
+Today the three diagnostics answer only for an object tree:
+- the addon's `layoutBaseline`, `storedLayout` and `layoutWork` each take a tree id;
+- an arena parse has no tree id;
+- so `packages/tools/src/validate/layout-runs.ts` (`layoutRunsOf`, `storedLayoutOf`, `layoutWorkOf`) parses with a bare native engine.
+
+As a result, the layout-runs lane of `validate --node-storage arena` describes object trees.
 
 **Files:**
-- Modify `rust/crates/sittir-core/src/read.rs`, `arena/hydrate.rs`, `rust/crates/sittir-node-macros/src/hydrate.rs`, `engine.rs`, `prepare.rs`, `render.rs`, `napi_engine.rs` and `arena/prep.rs`.
-- Test: `stage_one_parity.rs`, `packages/typescript/tests/edited-object-type.test.ts`.
+- Modify `rust/crates/sittir-core/src/napi_engine.rs` (the three calls), `packages/common/src/engine.ts` (`NativeEngineLike`) and `packages/tools/src/validate/layout-runs.ts`.
+- Test: `packages/tools/tests/layout-baseline.test.ts`, `layout-scaling.test.ts` and `render-root-descents.test.ts`.
+
+**Interfaces:**
+- Consumes the runs that `backerParity` already computes from an arena read's records: 13,880 on the validation corpus, 0 apart from the object tree's.
+- What each call takes in place of a tree id for an arena tree is an addon signature change. It goes to brainstorm, and through brainstorm to the maintainer, before code.
+
+- [ ] **Step 1: Write the failing tests.** `layout-baseline.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars:
+  - `layoutRunsOf` under arena answers the records' runs, equal to `backerParity`'s (0 apart);
+  - `storedLayoutOf` and `layoutWorkOf` answer from the arena tree, not from a bare parse.
+- [ ] **Step 2: Run them.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/layout-baseline.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
+- [ ] **Step 3: Implement.**
+  - The three calls answer from an arena tree's records, by the signature brainstorm returned.
+  - `layout-runs.ts` parses with the engine of the storage the lane names.
+- [ ] **Step 4: Run.**
+  - Step 2's command. Expected: PASS.
+  - `validate --node-storage arena`: its layout-runs rows now describe arena trees. Each row that moves is listed and sent to brainstorm. Once accepted, it is the arena baseline that Task 4 compares against. Object storage's rows do not move.
+  - The full unit suite.
+- [ ] **Step 5: Commit:** `feat(tools): the layout diagnostics answer for an arena tree from its records`.
+
+### Task 4: A list's delimiter and separators, resolved once in the read
+
+The maintainer's rulings (2026-11-17, the spec's Decided list):
+- A list carries a delimiter option. The generated read resolves its value from the tree once, by the same code for both storages.
+- Where the storages differ, object storage's read is the reference.
+- The automatic semicolon is not permitted in a list's trailing spot. The grammar cannot say it, because the scanner emits the token wherever a gap admits it. It is fixed in typescript's vendored scanner, which inserts the token before a same-line `//` comment as tree-sitter-javascript 0.25 does. That lands ahead of this stage on its own branch, so the reader's test is unchanged.
+
+**Audited** on the hydrate-at-parse head (`36e7493cf`), in both storages, over the spec's fixed sources and the 1,251 flanked lists of the paired corpora:
+- The storages already share the delimiter's resolution. `read::delimiter` is called by the derive at parse, by `list_inits` for object and by `hydrate::routed` for arena, over the same tree-sitter children. The two agree on every list.
+- What duplicates is the readers. One fact has three derivations:
+  1. **The parse's:** `read::delimiter`, a span test, or a count test when the end item is a scalar unit.
+  2. **The query's:** on every `Plan::Delimiter` evaluation, the generated `ReadNode::delimiter` re-runs `routes` and `read::delimiter` over `ParsedTree::nodes()`. In arena storage that navigation is the run rows, which Task 9 strips of separators. Python's portable `trailingComma` flag goes through this reader.
+  3. **The render's fallback:** `prepare::source_trailing_delimiter` → `SourceTable::last_list_child_kind` → `engine::last_list_child`, a width-and-kind test. It is reached only by a list with a source and no delimiter, that is, after `$with.delimiter(undefined)`.
+- Separators have no resolution at read. `Lookups::node_slots` derives them at render from the tree's gaps (each gap's kind, the majority, and the outliers by item place), cached per tree.
+
+**What changes:**
+- **The delimiter at parse:** unchanged.
+- **The query:** `EngineGrammar::delimiter` answers from the stored option where the backing holds records: arena reads the list record's side `DELIMITER`. A backing that holds tree-sitter's tree is object storage, whose read results live in the JavaScript nodes. It answers by the same `read::delimiter` call over the tree's children, at query time. The two differ only in when they run, which is the one difference between storages the maintainer allows (brainstorm, 2026-11-17).
+- **The render fallback goes.** A list whose delimiter option is unset takes the options' value, as a built list does: its generated prepare fills `ctx.options.delimiter_at(site)`.
+- **Separators at parse:**
+  - The read walk resolves each separated slot's gap kinds once, while it holds the children. `read::separator_choices` gives a `SlotLayout` entry: the majority kind in `separator`, the outliers by item place in `tokens`.
+  - Object storage writes the entry into the node's layout (`ctx.layout`); arena writes it into the side record's slot entry.
+  - The render reads the entry where it reads a built node's (`LayoutTarget::slot`), then runs `majority(kinds, preferred)` with today's written-text preference.
+  - `Lookups::node_slots` stops deriving from the tree; `separator_before` and `slot_separator` read the stamp.
+
+**Files:**
+- Modify `rust/crates/sittir-node-macros/src/expand.rs` (`routed_body`, `flank_delimiter`, `list_inits`) and `hydrate.rs` (`routed`, `record_end`).
+- Modify `rust/crates/sittir-core/src/read.rs`: add `separator_choices`; `delimiter` is unchanged.
+- Modify `rust/crates/sittir-core/src/engine.rs`: `EngineGrammar::delimiter`, plus `Lookups::node_slots`, `separator_before` and `slot_separator`.
+- Modify `arena/hydrate.rs` and `arena/prep.rs`.
+- Modify `packages/codegen/src/emitters/native-crate.ts` (the generated `EngineGrammar::delimiter`) and `render-module.ts` (`prepareStructImpl`: the options' delimiter). Update `emitters/__tests__/render-module-emit.test.ts`.
+- Delete `prepare::source_trailing_delimiter` and its test table `ListTrees`, and `engine::last_list_child`.
+- Delete every `SourceTable::last_list_child_kind`: `render.rs` twice, `engine.rs` three times, and `napi_engine.rs::ArenaSources`.
+- Delete `render-module.ts::sourceTrailingSeparator` and its glossary entry.
+- Delete five tests in `rust/crates/sittir-core/tests/engine_tree.rs`: `last_list_child_of`, `a_list_the_tree_holds_no_node_for_ends_in_its_holder_child_within_its_span`, `a_comment_in_a_list_span_is_not_its_last_child`, `a_single_item_list_spanning_its_item_ends_in_that_item` and `a_list_the_tree_holds_a_node_for_ends_in_that_node_child`.
+- Test: `stage_one_parity.rs`, `packages/rust/tests/rebuilt-list-trailing.test.ts`, `packages/typescript/tests/edited-object-type.test.ts`, `packages/tools/tests/portable/delimiter-parity.test.ts`.
 
 **Interfaces:**
 - Consumes Task 3's `parse_records_with`.
-- Produces `read::separator_choices(children: &[Kid], routes: &[Route], items: SlotId, candidates: &[KindId]) -> Option<SideSlot>`. It holds the gaps' majority in `separator` and the outliers by item place in `tokens`.
-- Produces `SourceTable::source_trailing(&self, coord: &NodeCoordinate) -> Option<bool>`, replacing `last_list_child_kind`.
+- Produces `read::separator_choices(children: &[Kid], routes: &[Route], items: SlotId, candidates: &[KindId]) -> Option<crate::layout::SlotLayout>`.
+- `EngineGrammar::delimiter(self, nodes, at)` keeps its signature.
+- Drops `prepare::source_trailing_delimiter`, `SourceTable::last_list_child_kind`, `engine::last_list_child` and codegen's `sourceTrailingSeparator`.
 
 - [ ] **Step 1: Write the failing tests.**
-  - `parsed_lists_answer_their_delimiter_and_separators_from_stamps`. Over `read_fixtures(name)` for the five grammars, for every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's:
-    - `source_trailing_delimiter`'s trailing flag (old: `last_list_child`; new: `source_trailing`);
-    - `slot_separator`;
-    - `slot_layouts`;
-    - `separator_before` for every item.
-
-    Nodes are matched by (grammar, display, span) in pre-order.
-  - `a_mixed_object_type_keeps_each_gaps_separator`: typescript `type T = { a: string; b: number, c: boolean }`, with `b` edited through `$with`, renders `{ a: string; b: …, c: boolean }` from both trees.
-  - `a_rebuilt_list_whose_last_item_changed_takes_the_options_trailing_flag`: rust `f(a, b,)` with `b` replaced renders without a trailing comma from both trees.
-- [ ] **Step 2: Run them.** Run `PARITY parsed_lists` and `pnpm exec vitest run --config vitest.config.ts packages/typescript/tests/edited-object-type.test.ts`. Expected: FAIL on the `SlotContent` tree, whose `last_list_child` finds no separator row.
-- [ ] **Step 3: Implement the stamps and readers.**
-  - **Stamp.** The derive's `record_end` passes `separator_choices` into `parsed_side`, which gains a `slots: Vec<SideSlot>` parameter. That happens only for a list struct with `#[separator_kind(candidates = …)]`, so other lists stamp nothing.
-  - **Separators.** `LayoutAt::stored_slots` reads a parsed record's own side record as it reads a built one's. It rebuilds every gap's kind from the majority and the outliers, then runs today's `majority(kinds, preferred)`, which keeps the render-time preference.
-  - **Trailing.** `source_trailing` reads the source list's stamped `DELIMITER` through its `sides`. `source_trailing_delimiter` keeps the options' leading flag.
-  - **Old path.** `ReadRows::All` trees keep the old path until Task 9.
-- [ ] **Step 4: Run.** Run Step 2's commands. Expected: PASS. `validate:history` is unchanged per row.
-- [ ] **Step 5: Commit:** `feat(core): a parsed choice list's separators are stamped where the walk meets them`.
+  - `the_query_reads_the_stored_delimiter`, arena, over `read_fixtures(name)` for the five grammars: for every flanked list, `Plan::Delimiter` holds iff the list's side `DELIMITER` has the flag, on the `SlotContent` tree.
+  - `parsed_lists_answer_their_separators_from_stamps`, both storages, over `read_fixtures(name)` for the five grammars. For every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's: `slot_separator`; `slot_layouts`; `separator_before` for every item. Nodes are matched by (grammar, display, span) in pre-order.
+  - `a_mixed_object_type_keeps_each_gaps_separator`, both storages: typescript `type T = { a: string; b: number, c: boolean }`, with `b` edited through `$with`, renders `{ a: string; b: …, c: boolean }`.
+  - `a_cleared_delimiter_takes_the_options`, in `rebuilt-list-trailing.test.ts`, both storages. The `arguments_elements` of rust `fn main() { f(a, b,); }`:
+    - rebuilt through `$with.items` with its own items, renders `a, b,`;
+    - after `$with.delimiter(undefined)` and the same rebuild, renders `a, b`;
+    - after the same, under an engine whose `delimiter` option at that site is trailing, renders `a, b,`.
+  - `delimiter-parity.test.ts` runs under `nodeStorage: 'arena'` as well as object.
+- [ ] **Step 2: Run them.** Run `PARITY the_query_reads`, `PARITY parsed_lists`, `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts packages/typescript/tests/edited-object-type.test.ts packages/tools/tests/portable/delimiter-parity.test.ts`. Expected:
+  - `the_query_reads…` FAILs: the `SlotContent` tree has no separator rows to count.
+  - `parsed_lists…` FAILs on the `SlotContent` tree.
+  - `a_cleared_delimiter…` FAILs, rendering `a, b,`.
+- [ ] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
+- [ ] **Step 4: Run.**
+  - Step 2's commands. Expected: PASS.
+  - `validate:history` per row, both storages. Expected: no row moves. A cleared delimiter is the one behaviour change, and only `$with.delimiter(undefined)` reaches it (not checked: that the validator never clears a delimiter).
+  - The full unit suite.
+- [ ] **Step 5: Commit:** `feat(core): a list's delimiter and separators are resolved once in the read, and its readers take the resolved option`.
 
 ### Task 5: Edge levels from body facts
 
@@ -237,18 +329,21 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 
 **Interfaces:**
 - Consumes `RecordShape::order`.
+- Produces `named_fixed_pairs(name) -> &'static [NamedFixedPair]`, with `NamedFixedPair { holder: &'static str, token: &'static str, source: &'static str }`: one source for each pair in the spec's "What navigation lists", taken from the census cases. That is 16 pairs: rust 7, typescript 6, python 3. Python's `block_statement` is the display of `block`.
 - Produces `out_of_order_units(name) -> Vec<&'static str>`: one source for each of the 20 kinds whose cells are out of document order. Examples are `&'a mut T`, `a?.[0]` and `fn f(&'a mut self) {}`, and the corpus gives the other 17. A kind that `fixture_sources` already covers needs no added source.
 
 - [ ] **Step 1: Write the failing test.** `queries_list_units_in_render_body_order`. For every node of `read_fixtures(name)` plus `out_of_order_units(name)`, `$children` and `$descendants` as (stamped kind, span or none) sequences are equal between the trees, with two exceptions:
   - units compare by kind only;
   - the `All` side drops the named fixed tokens Task 1 counted, and the test prints each one it drops.
-- [ ] **Step 2: Run it.** Run `PARITY queries_list_units`. Expected: FAIL, the `SlotContent` tree lists no units.
+
+  And `a_named_fixed_token_leaves_query_results`: for each pair of `named_fixed_pairs(name)`, on the `SlotContent` tree, `ParsedTree::descendants` from the root yields no item of the token's kind, and yields one item of the holder's kind for each that the `All` tree yields (the maintainer, 2026-11-17: "Yes, they leave queries too").
+- [ ] **Step 2: Run them.** Run `PARITY queries_list_units` and `PARITY a_named_fixed_token_leaves_query_results`. Expected: FAIL. The `SlotContent` tree lists no units, and the token's kind is yielded.
 - [ ] **Step 3: Implement the merge in `kids_of`.** For a record, walk its cells in `order`:
   - a cell naming a run entry emits the run's entries up to and including that one, in run order, so trivia keeps its place;
   - a unit cell emits a unit kid with its kind and no span.
 
   The rest of the run follows. `siblings_of` gives a unit sibling no span.
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS, and the dropped list equals Task 1's count.
+- [ ] **Step 4: Run.** Run Step 2's commands. Expected: PASS, and the dropped list equals Task 1's count. A dropped token outside the pairs stops the plan.
 - [ ] **Step 5: Commit:** `feat(core): navigation lists a unit from its cell, where its body writes it`.
 
 ### Task 7: Depth moves and line starts
@@ -292,18 +387,21 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 ### Task 9: Rows go
 
 **Files:**
-- Modify `engine.rs` (`parse_records`), every `ReadRows::All` branch from Tasks 3–7, `engine::last_list_child`, `record_nodes.rs` (`backers_agree`), `arena/parsed.rs` (`runs_agree`), `stage_one_parity.rs` and `deep_read_words.rs`.
+- Modify `engine.rs` (`parse_records`), every `ReadRows::All` branch from Tasks 3–7, `record_nodes.rs` (`backers_agree`), `arena/parsed.rs` (`runs_agree`), `stage_one_parity.rs` and `deep_read_words.rs`.
+- Test: `packages/{rust,typescript,python}/tests/named-fixed-query.test.ts`.
 
 **Interfaces:**
+- Consumes Task 6's `named_fixed_pairs`.
 - `ReadRows` is deleted, and `parse_records` writes slot content and trivia rows only.
-- `last_list_child` and `SourceTable::last_list_child_kind` are deleted.
 
 - [ ] **Step 1: Show the row-pinning tests pin rows (working standard 4).**
   - Run `backers_agree` and `runs_agree` with `parse_records` switched to `SlotContent`. Expected: FAIL on a fixed-token row.
   - Record the first failing node in the ledger.
+  - Write `named-fixed-query.test.ts` in the three packages, both storages: for each pair's source, `root.$query().$descendants.ofType(kinds.<Token>)` holds no item, and `ofType(kinds.<Holder>)` holds one item for each holder in the source. Run them before the switch. Expected: FAIL, the token query finds each.
 - [ ] **Step 2: Retake them.** Both compare against the tree with fixed tokens and units filtered by role (`slot_routes`: not `Route::Slot` and not `Route::Trivia`, or a unit). Expected: PASS.
 - [ ] **Step 3: Delete the old paths.**
-  - Delete `ReadRows`, the `All` branches and `last_list_child`.
+  - Delete `ReadRows` and the `All` branches.
+  - Rerun `named-fixed-query.test.ts`. Expected: PASS.
   - The stage-one parity tests become checks of the new tree against the tree-sitter tree, filtered the same way.
 - [ ] **Step 4: Tighten the pins.**
   - Rerun `deep_read_words` and set its two pins to the new word counts, which must be lower than 62,092 and 35,611.
@@ -313,7 +411,7 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - [ ] **Step 5: Run the gates.** These are the spec's § Gates, with each result reported as numbers.
   - **The three-way verification** (working standard 5):
     1. targeted probes of the cases this stage changes, wrap and render layers: Tasks 4–8's named tests, rerun on the final tree;
-    2. `pnpm run validate:native`, then `pnpm run validate:history` against master's recorded baseline. Every row of all three grammars is compared, and every row must be unchanged;
+    2. `pnpm run validate:native`, then `pnpm run validate:history` against master's recorded baseline. Every row of all three grammars is compared. Each row is unchanged, except as Task 4 records;
     3. the full unit suites, with any new failure isolated by reapplying the stage's diff in reverse and rebuilding before it is accepted as already present:
        - `cargo test --workspace --no-default-features`;
        - `cargo clippy` in the three configurations;

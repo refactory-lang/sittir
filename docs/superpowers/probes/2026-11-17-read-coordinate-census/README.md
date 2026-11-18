@@ -215,20 +215,20 @@ A child's role comes from its holder's route: `Route::Slot` is slot content, `Ro
 | choice gaps | the gaps of those lists |
 | choice outliers | gaps whose separator kind is not their list's majority (`list_slots::majority`) |
 | flanked lists | records whose side record stores a `DELIMITER` |
-| delimiter disagreements | flanked lists whose stored `TRAILING` differs from whether `engine::last_list_child` is one of the list's separators |
+| delimiter disagreements | flanked lists whose kind leaves the trailing flank optional and whose stored `TRAILING` differs from the kind rule: a child routed `Route::Separator` for the list's slot follows its last item |
 | named fixed query items | named nodes `ParsedTree::descendants` yields whose fate is dropped, by their holder's route. Every one counted is a unit (`QueryItem::Unit`) |
 
 | corpus | abutting leaves | choice lists | choice gaps | choice outliers | flanked lists | delimiter disagreements | named fixed query items |
 |---|---|---|---|---|---|---|---|
 | paired rust | 1 | 0 | 0 | 0 | 271 | 0 | 29 |
-| paired typescript | 0 | 14 | 20 | 0 | 208 | 0 | 33 |
+| paired typescript | 0 | 14 | 20 | 0 | 208 | 26 | 33 |
 | paired python | 1 | 0 | 0 | 0 | 772 | 0 | 453 |
 | paired regex | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | paired scm | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | `engine.rs` | 15 | 0 | 0 | 0 | 213 | 0 | 29 |
-| `create-engine.ts` | 0 | 0 | 0 | 0 | 76 | 0 | 1 |
-| matter.js | 1 | 953 | 2,440 | 0 | 20,300 | 0 | 1,464 |
-| next.js | 243 | 4,673 | 22,401 | 0 | 53,038 | 7 | 27,431 |
+| `create-engine.ts` | 0 | 0 | 0 | 0 | 76 | 1 | 1 |
+| matter.js | 1 | 953 | 2,440 | 0 | 20,300 | 725 | 1,464 |
+| next.js | 243 | 4,673 | 22,401 | 0 | 53,038 | 5,466 | 27,431 |
 
 No choice list on any corpus has an outlier gap: each list uses one separator throughout.
 
@@ -237,13 +237,38 @@ No choice list on any corpus has an outlier gap: each list uses one separator th
 - **Error list:** both parse paths build it from the tree-sitter tree before the tree is dropped, so it reads no record. `parse` uses the tree backing's `error_regions`, and `parseRecords` uses `parsed.errors`, computed over `TreeNodes`.
 - **`$snapshot`:** the snapshot of a parsed rust `fn f(a: u8, b: u8) {}` holds no `(`, `)` or `,` kind (`packages/rust/tests/snapshot-fixed-tokens.test.ts`).
 
-### Delimiter disagreements
+### Delimiter by kind
 
-All 7 are next.js `object_type_content` lists of one shape:
-- the members are separated by line breaks only: every separator is a zero-width `automatic_semicolon`, and the list holds no `;` or `,`;
-- the last member is followed by a comment on its line, then by a zero-width `automatic_semicolon` at the comment's end.
+The maintainer ruled (2026-11-17): "By kind: a separator child follows the last item". A parsed list ends with a separator when a child of a separator kind follows its last item, whatever its width. The zero-width `automatic_semicolon` is a choice arm encoded by kind id.
 
-The list's span ends at that automatic semicolon, past its last item, so `read::delimiter` stores `TRAILING`. `last_list_child` skips the zero-width automatic semicolon and the comment, and answers the member: no trailing separator. In the source there is no separator text either way. What a stored `TRAILING` would render for such a list is not checked.
+Measured against that rule, every disagreement is a list stored with no trailing flag where the rule says `TRAILING`, and every one is an `object_type_content`: 26 on paired typescript, 1 on `create-engine.ts`, 725 on matter.js and 5,466 on next.js. No list is stored `TRAILING` where the rule says none. These are the flags that flip when the stamp takes the rule.
+
+The flips are lists whose last member gets a zero-width automatic semicolon at its own end. Today's stamp asks whether the list's span runs past its last item. That span ends at the member, so the stamp says none. The first sweep compared the stamp with `engine::last_list_child`, the last child that is not an extra and has width, and found the opposite case on next.js. There, a comment sits between the last member and its automatic semicolon, which stretches the span: today's stamp says `TRAILING`, and so does the kind rule.
+
+How each rule reads three lists (`type T = {\n  a?: boolean\n  b?: string\n}\n`, the same with ` // note` after `b?: string`, and the same with `;` after each member and the comment):
+
+| list | span (today) | width (`last_list_child`) | kind |
+|---|---|---|---|
+| line breaks only | none | none | `TRAILING` |
+| line breaks, comment after the last member | `TRAILING` | none | `TRAILING` |
+| `;` after each member | `TRAILING` | `TRAILING` | `TRAILING` |
+
+Renders on the hydrate-at-parse head, the same in both storages:
+- A parsed list, and a root rebuilt around it, render as their source.
+- Rebuilt through `$with`, a list keeps its stored `_delimiter`. With `TRAILING` stored, the list with the comment renders `b?: string // note\n\n}`, a blank line added; with none, it renders as source. The list without the comment renders as source with either flag. The blank line is a render defect and goes with prototype's fix.
+- A rebuilt list whose delimiter is cleared (`$with.delimiter(undefined)`) takes its source's trailing flag through `prepare::source_trailing_delimiter`, which is today's only reader of `last_list_child`. Rust `f(a, b,)` cleared renders `a, b,`, and with `b` replaced by `a`, `a, a,`: the source's flag holds whatever the items.
+
+`validate history` with the rule applied to `read::delimiter`, compared with the same head without it. The edit was a measurement and is not committed. In object and in arena storage alike:
+- python, regex, rust and scm are unchanged;
+- typescript goes from 101 rows to 260 (+159, −0), over 13 corpus entries: `built-render-parse-ast-mismatch` 0 → 100, `read-render-parse-ast-mismatch` 0 → 25 and `read-render-parse-folded-mismatch` 3 → 37.
+
+Each moved row is an `object_type_content` whose last item is followed by a zero-width automatic semicolon, while its other separators, or its default, are not that arm. The stored `TRAILING` then renders the list's separator there: `{ color: "green", code: "x" }` gains a trailing `,`, and `T as { [t: T]: T }` renders `{\n  [t: T]: T;\n}`.
+
+On a list of line breaks only, appending or removing a member renders as before. Setting its separator to `;` (`$with.separator`) now ends it with a `;`, which it did not before.
+
+The stamp keeps that the list ends with a separator, but not which kind. The rule waits for a ruling on the trailing separator's kind.
+
+The seven next.js lists of the first sweep, the shape behind the ruling:
 
 | source, under next.js | list | last member | comment |
 |---|---|---|---|

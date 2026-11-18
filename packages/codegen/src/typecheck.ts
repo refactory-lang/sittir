@@ -1,4 +1,7 @@
 import { execFileSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 export interface TypeCheckDiagnostic {
 	readonly head: string;
@@ -35,5 +38,38 @@ export function typeCheckOutput(command: string, args: readonly string[], cwd: s
 		const out = String(failure.stdout ?? '');
 		if (!out.includes('error TS')) throw e;
 		return out;
+	}
+}
+
+export const tsrsDiagnostics = (tsconfig: string, cwd: string): TypeCheckDiagnostic[] =>
+	parseTypeCheckDiagnostics(typeCheckOutput('pnpm', ['exec', 'tsrs', '-p', tsconfig, '--noEmit'], cwd));
+
+export interface TypeCheckProbe {
+	readonly extends: string;
+	readonly sources: Readonly<Record<string, string>>;
+	readonly compilerOptions?: Readonly<Record<string, unknown>>;
+}
+
+export function probeDiagnostics(probe: TypeCheckProbe, cwd: string): TypeCheckDiagnostic[] {
+	const dir = mkdtempSync(join(tmpdir(), 'sittir-probe-'));
+	try {
+		const include = Object.entries(probe.sources).map(([name, text]) => {
+			const path = join(dir, name);
+			writeFileSync(path, text);
+			return path;
+		});
+		writeFileSync(join(dir, 'package.json'), JSON.stringify({ type: 'module' }));
+		const tsconfig = join(dir, 'tsconfig.json');
+		writeFileSync(
+			tsconfig,
+			JSON.stringify({
+				extends: probe.extends,
+				compilerOptions: { noEmit: true, types: ['node'], typeRoots: [join(cwd, 'node_modules', '@types')], allowImportingTsExtensions: true, rewriteRelativeImportExtensions: false, ...probe.compilerOptions },
+				include
+			})
+		);
+		return tsrsDiagnostics(tsconfig, cwd);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
 	}
 }

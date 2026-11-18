@@ -79,6 +79,10 @@ The rule, first match wins:
 3. `prev` exists: trailing of `prev`, own line.
 4. Otherwise: inner of `P`, in the gap `c` occupies (see "Gaps").
 
+A comment that follows an item's separator and is last on its row (`a: string; // c`, `f(a, // c⏎ b)`, an enum variant, an array item, the right side of an operator or `=`) is leading of the next item, by rule 2: the skipped separator lies between it and `prev`, so rule 1 does not reach across it. Replacing the next item therefore takes the comment with it. That loss is known and left as it is (the maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now"). Giving the comment to the item it follows was built and measured the same day and withdrawn: it kept the comment on a replace, but a comment written back, or a tree rebuilt through its factories, was then written before the separator, and holding it after the separator needed a fact on the stored entry that nothing else uses.
+
+- **One decision for both storages.** The owner is decided in one function that the object read's placer and the arena parse walk both reach.
+
 Rule 1 differs from today's reader. Today every comment between two siblings
 becomes leading of `next`, so `a; // note` re-renders on the following line in a
 detached render. Rule 4 is new: today a comment with no named sibling is not

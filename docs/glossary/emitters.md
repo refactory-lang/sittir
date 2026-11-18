@@ -3213,7 +3213,7 @@ between the seams the template and the joins write.
 
 `TriviaNode` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own. Its seam text is the kind's fixed text: JS names a whitespace entry by its exact spelling, so the kind determines the text.
 
-A line continuation kind with a text of its own (`continuationTriviaKinds`) holds a `sittir_core::trivia::TriviaText` rather than its kind's struct, so it carries the adjacency an `ERROR` carries (`$before`/`$after`, the source's in-line runs beside it, `TriviaText::verbatim`). Without an adjacency (a built continuation) it is a seam member: its text replaces its gap's spacing. With one (a read continuation, `ParsedTree::assigned_side`) it is no seam member and renders verbatim with the runs, as an `ERROR` does, so the continuation line's alignment survives as text.
+A line continuation kind with a text of its own (`continuationTriviaKinds`) holds a `sittir_core::trivia::TriviaText` rather than its kind's struct, so it carries the adjacency an `ERROR` carries (`$before`/`$after`, the source's in-line runs beside it, `TriviaText::verbatim`). It is never a seam member: `seam_gap` returns a layout kind for whitespace trivia only. It renders verbatim with the runs beside it (a read continuation, `ParsedTree::assigned_side`), as an `ERROR` does, so the continuation line's alignment survives as text.
 
 `NodeLayout` is an alias for `sittir_core::layout::NodeLayout<TriviaNode>`, the layout every struct node carries; its trivia is a `sittir_core::trivia::NodeTrivia<TriviaNode>`.
 The carrier's shape (leading, trailing and inner entries, each with its
@@ -15468,3 +15468,27 @@ Parses type-checker output into one diagnostic per `error TS` line. Each indente
 ### `packages/codegen/src/typecheck.ts::typeCheckOutput`
 
 Runs a type-checker command in a directory and returns its output. A non-zero exit that still prints `error TS` lines counts as a result; any other failure is rethrown. The output is requested without colour.
+
+### `packages/codegen/src/typecheck.ts::tsrsDiagnostics`
+
+Type-checks the program a tsconfig names with tsrs, run from `cwd`, and returns its diagnostics, parsed. tsrs is the one checker the repo type-checks with.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe`
+
+A program of probe files to type-check: the tsconfig its own tsconfig extends, the files' text by file name, and compiler options laid over the probe defaults.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe::extends`
+
+The path of the tsconfig the probe's tsconfig extends.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe::sources`
+
+The probe files' text by file name. They are the program's only includes; what they import comes in through their imports.
+
+### `packages/codegen/src/typecheck.ts::TypeCheckProbe::compilerOptions`
+
+Compiler options laid over the probe defaults, after them, so an option set here wins.
+
+### `packages/codegen/src/typecheck.ts::probeDiagnostics`
+
+Type-checks a probe with tsrs and returns its diagnostics, through `tsrsDiagnostics`. The probe's files and tsconfig go in a fresh temporary directory, which is removed afterwards. The directory is marked as an ES module package. The tsconfig sets `noEmit`, the node types from `cwd`'s `node_modules/@types`, and `.ts` imports with no rewrite, so a probe file may import any module of the repo by its absolute path. Without those type roots, tsrs stops at the missing node types and checks no file.

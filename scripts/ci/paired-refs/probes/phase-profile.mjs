@@ -1,6 +1,8 @@
-// Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <render|edit> <receipt.json> <warmup batches> <batches> <batches per engine>
+// Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <parse|render|edit> <receipt.json> <warmup batches> <batches> <batches per engine>
 // One corpus phase alone, in arena storage (STORAGE=object for object storage), for a profiler. Each batch parses
-// <grammar>'s corpus (corpus-batch.mjs's parsePhase), runs the phase over every
+// <grammar>'s corpus (corpus-batch.mjs's parsePhase), the parse being the phase
+// itself for parse (the roots' text, from an untimed renderPhase, checked
+// after it), else runs the phase over every
 // parsed root (renderPhase: render, toString, dispose; or editPhase, after an
 // untimed renderPhase as in corpusBatch: a same-value edit of each root's
 // settable members, each result rendered and released after the timed
@@ -16,7 +18,7 @@
 // (V8_HEAP_INTERVAL bytes between samples, objects later collected kept) is
 // started, and the windows' samples are summed there by allocating function
 // and script, those whose stack passes through the phase's own function
-// (renderPhase or editPhase) apart from the rest, which are this driver's;
+// (parsePhase, renderPhase or editPhase) apart from the rest, which are this driver's;
 // when JS_PROFILE names a file, the
 // inspector's Profiler (JS_PROFILE_INTERVAL_US between samples) is started,
 // and the windows' profiles are merged into one there, their timelines
@@ -43,9 +45,22 @@ const sources = JSON.parse(readFileSync(path.join(here, '..', `corpus-${grammar}
 const language = (await import(`${root}/packages/${grammar}/dist/index.js`)).default;
 
 let engine;
+const parsed = () => parsePhase(engine, sources);
 const phases = {
-  render: { fn: renderPhase, before() {}, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {} },
-  edit: { fn: editPhase, before: (roots) => renderPhase(engine, roots), run: editPhase, texts: (changed) => changed.map((node) => node.$render()), release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); } }
+  parse: { fn: parsePhase, input: () => sources, run: (input) => parsePhase(engine, input), texts: (roots) => renderPhase(engine, roots), release() {}, roots: (_, roots) => roots },
+  render: { fn: renderPhase, input: parsed, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {}, roots: (roots) => roots },
+  edit: {
+    fn: editPhase,
+    input() {
+      const roots = parsed();
+      renderPhase(engine, roots);
+      return roots;
+    },
+    run: editPhase,
+    texts: (changed) => changed.map((node) => node.$render()),
+    release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); },
+    roots: (roots) => roots
+  }
 };
 const timed = phases[phase];
 assert.ok(timed, `phase ${phase} is not one of ${Object.keys(phases).join(', ')}`);
@@ -209,11 +224,10 @@ async function batch(index, sampled) {
     engine = await language.createEngine({ nodeStorage: storage });
     mapped ??= mappedImages();
   }
-  const roots = parsePhase(engine, sources);
-  timed.before(roots);
+  const input = timed.input();
   if (sampled) await sampler?.open();
   const start = performance.now();
-  const result = timed.run(roots);
+  const result = timed.run(input);
   const ms = performance.now() - start;
   if (sampled) {
     await sampler?.close();
@@ -223,7 +237,7 @@ async function batch(index, sampled) {
   if (texts === undefined) texts = current;
   else assert.equal(current, texts);
   timed.release(result);
-  for (const node of roots) node[Symbol.dispose]?.();
+  for (const node of timed.roots(input, result)) node[Symbol.dispose]?.();
   await new Promise(setImmediate);
 }
 

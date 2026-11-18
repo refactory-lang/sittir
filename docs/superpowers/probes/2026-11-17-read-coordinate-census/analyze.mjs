@@ -142,7 +142,7 @@ for (const t of tallies) {
 		rowsByRole: Object.fromEntries(Object.entries(roles).sort((a, b) => b[1].words - a[1].words).map(([k, v]) => [k, { ...v, share: +((v.words / total) * 100).toFixed(2) }])),
 		unexplained: Object.fromEntries(Object.entries(unexplained).sort((a, b) => b[1] - a[1]).slice(0, 25)),
 		cellWordsToday,
-		stageOne: t.stage_one && { abuttingLeaves: t.stage_one.abutting_leaves, choiceLists: t.stage_one.choice_lists, choiceGaps: t.stage_one.choice_gaps, choiceOutliers: t.stage_one.choice_outliers, flankedLists: t.stage_one.flanked_lists, delimiterDisagreements: t.stage_one.delimiter_disagreements, namedFixedQueryItems: t.stage_one.named_fixed_query_items },
+		stageOne: t.stage_one && { abuttingLeaves: t.stage_one.abutting_leaves, choiceLists: t.stage_one.choice_lists, choiceGaps: t.stage_one.choice_gaps, choiceOutliers: t.stage_one.choice_outliers, flankedLists: t.stage_one.flanked_lists, delimiterDisagreements: t.stage_one.delimiter_disagreements, delimiterToTrailing: t.stage_one.delimiter_to_trailing, delimiterToNone: t.stage_one.delimiter_to_none, namedFixedQueryItems: t.stage_one.named_fixed_query_items },
 		options: Object.fromEntries(Object.entries(options).map(([name, delta]) => [name, { delta, total: total + delta, share: +(((total + delta) / total) * 100).toFixed(1) }])),
 	});
 }

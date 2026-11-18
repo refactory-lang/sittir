@@ -15,6 +15,8 @@
 - **"Hoist all that meet the rule"** (2026-11-15). No wrapper that meets the rule is held back, including the polymorphs that hold their own forms, the parameter lists with a receiver form, and the wrappers that are the thing read. See §5 and §7.
 - **"Through the tree only"** (2026-11-15). A wrapper node is reached through the tree, with no second getter. See §3.
 - **"Hoist; separator via the tree"** (2026-11-16). A list whose trailing separator is optional still hoists, and the separator stays on the wrapper. See §1.
+- **"Input also admits the wrapper"** (2026-11-18). A hoisted slot's input, strict and loose, in a factory and in a setter, admits the hoisted type and each wrapper on its chain; a wrapper given as input passes through whole, with what it holds (a list's delimiter included). Reads stay hoisted. So the route to a hoisted list's delimiter is the tree: reach the wrapper by query, set its delimiter, and give the wrapper back to the holder's setter. A setter does not refuse a wrapper of its own chain.
+- **A hoisted list reads as an empty list when its wrapper is there and holds no items** ("An empty list", 2026-11-18). `undefined` means the wrapper is absent. `fn f() {}` reads `parameters()` as `[]`; a function with no `<…>` reads `typeParameters()` as `undefined`. This replaces, for a chain that ends in a list, §3's "absent means the wrapper is there with its slot empty".
 
 ## 1. The rule
 
