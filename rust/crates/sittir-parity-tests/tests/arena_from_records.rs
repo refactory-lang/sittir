@@ -409,15 +409,15 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
     }
 }
 
-/// A built empty node's inner side is the leading side of its inner-site
-/// slot: its record's store keeps it at that slot's site, item 0, and reads
-/// it there. It renders from its record as natively.
+/// A built empty node's inner side is the leading side of its record's
+/// inside site: its record's store keeps it at that site, and reads it
+/// there. It renders from its record as natively.
 #[test]
-fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inner_site_slot() {
+fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inside_site() {
     use sittir_core::arena::{Cell, Linked, RecordSink};
-    use sittir_core::trivia_store::{Place, Site};
+    use sittir_core::trivia_store::Place;
     use sittir_core::trivia_table::TriviaSide;
-    use sittir_core::types::ItemIndex;
+    use sittir_core::types::{NodeId, NodeName};
     use sittir_rust::render::node::BlockNode;
     use sittir_rust::render::AnyNode;
     let options = sittir_rust::render::options::defaults();
@@ -441,13 +441,11 @@ fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inner_site
             other => panic!("a built root: {other:?}"),
         }
     };
-    let word = sittir_rust::render::kind_ids::SURFACE_KINDS.inner_site(sittir_rust::render::kind_ids::BLOCK).expect("block is an inner-site kind");
-    assert_eq!(word, 5, "block's inner-site slot is statements, after label's three words");
     {
         let built = over.engine.written().built();
-        let site = Place::Leaf(Site { holder: at, word, item: ItemIndex(0) });
-        assert_eq!(over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side").map(|entries| entries.len()), Some(line_comment("// inside").len()), "the inner-site slot's leading side keeps the comment");
-        assert_eq!(over.engine.written().side(Place::Record(at), TriviaSide::Inner, &*built).expect("a side"), over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side"), "the record's inner side reads as that site's leading side");
+        let site = Place::Node(NodeName { node: NodeId(at.0), site: Some([NodeName::INSIDE_WORD, 0]) });
+        assert_eq!(over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side").map(|entries| entries.len()), Some(line_comment("// inside").len()), "the inside site's leading side keeps the comment");
+        assert_eq!(over.engine.written().side(Place::record(at), TriviaSide::Inner, &*built).expect("a side"), over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side"), "the record's inner side reads as that site's leading side");
     }
     assert_eq!(over.render_at(at, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), native);
     assert!(native.contains("// inside"), "{native:?}");

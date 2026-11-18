@@ -604,7 +604,7 @@ pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address) -> Result<Option<Place>, Ar
 /// or a row that holds another record.
 pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address) -> Result<PrepPlace, ArenaError> {
     if ctx.tree.is_none() {
-        return Ok(Place::Record(at).into());
+        return Ok(Place::record(at).into());
     }
     row_of(ctx, at)?.map(PrepPlace::from).ok_or(malformed("parsed record whose row holds another record", at.0))
 }
@@ -636,8 +636,9 @@ pub fn leaf_place<T>(ctx: RecordCtx<'_, T>, row: NodeIndex, site: Option<Site<Pr
 ///
 /// What reading the holder's header and side record refuses.
 pub fn linked_leaf_place<T>(ctx: RecordCtx<'_, T>, record: Address, leaf: Sides, site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
-    let own: PrepPlace = Place::Record(record).into();
-    let Some(Site { holder: PrepPlace::Stored(holder @ Place::Record(at)), word, item }) = site else { return Ok(own) };
+    let own: PrepPlace = Place::record(record).into();
+    let Some(Site { holder: PrepPlace::Stored(holder @ Place::Node(crate::types::NodeName { node, site: None })), word, item }) = site else { return Ok(own) };
+    let at = Address(node.0);
     let header = ctx.words(at, crate::record::HEADER_WORDS)?;
     let rebuilt_from = ctx.side(Address(header[1]))?.sides;
     Ok(match rebuilt_from {
@@ -664,7 +665,7 @@ pub fn held_changed(site: bool, cell: ChangedEdges, side: &super::SideRecord) ->
 pub fn built_leaf_place(site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
     match site {
         None => Ok(Place::ROOT_LEAF.into()),
-        Some(Site { holder: PrepPlace::Stored(Place::Record(holder)), word, item }) => Ok(Place::Leaf(Site { holder, word, item }).into()),
+        Some(Site { holder: PrepPlace::Stored(Place::Node(crate::types::NodeName { node, site: None })), word, item }) => Ok(Place::site(Site { holder: Address(node.0), word, item }).into()),
         Some(_) => Err(malformed("built leaf holder", 0)),
     }
 }
@@ -933,7 +934,7 @@ mod tests {
     }
 
     fn site(item: u32) -> Site<PrepPlace> {
-        Site { holder: Place::Record(Address(1)).into(), word: 2, item: ItemIndex(item) }
+        Site { holder: Place::record(Address(1)).into(), word: 2, item: ItemIndex(item) }
     }
 
     const SLOT: CellShape = CellShape { word: 2, width: 3, run: None, forms: crate::record::form::NODE, built: 2, key: "_slot" };
@@ -992,7 +993,7 @@ mod tests {
     #[test]
     fn a_layout_keeps_prepared_defaults_below_stored_settings() {
         let mut fixture = Fixture::new();
-        let place = PrepPlace::Stored(Place::Record(Address(1)));
+        let place = PrepPlace::Stored(Place::record(Address(1)));
         let node = fixture.prepared.node_mut(place);
         node.separator_kind = Some(KindId(7));
         node.slot_mut(2).space_before = Some(KindId(8));
@@ -1041,7 +1042,7 @@ mod tests {
         let mut fixture = Fixture::new();
         let cells = ["a", "b"].map(|text| built_cell(fixture.arena.entry(KindId::BLANK, text), ChangedEdges::default()));
         let list = fixture.arena.run(&cells);
-        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), Address(1), &holding(list), LIST).expect("a list");
+        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::record(Address(1)).into(), Address(1), &holding(list), LIST).expect("a list");
         assert_eq!(items.count(), 2);
         assert_eq!(rendered(&items.item(1).expect("an item")).expect("rendered"), "b");
         assert_eq!(items.item(1).expect("an item").site, site(1));
@@ -1054,7 +1055,7 @@ mod tests {
         let text = built_cell(fixture.arena.entry(KindId::BLANK, "x"), ChangedEdges::default());
         let len = crate::arena::CHUNK_WORDS + 2;
         let list = fixture.arena.run(&vec![text; len as usize]);
-        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), Address(1), &holding(list), LIST).expect("a list");
+        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::record(Address(1)).into(), Address(1), &holding(list), LIST).expect("a list");
         assert_eq!(items.count(), len as usize);
         for index in [0, len / 2, len - 1] {
             let item = items.item(index as usize).expect("an item in the oversized run");
@@ -1069,7 +1070,7 @@ mod tests {
     fn a_list_whose_run_the_arena_never_wrote_is_refused_with_its_holder() {
         let fixture = Fixture::new();
         let list = Address::new(3, 0).expect("in range").0 << 2;
-        assert!(matches!(RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), Address(1), &holding(list), LIST), Err(ArenaError::OutOfBounds { .. })));
+        assert!(matches!(RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::record(Address(1)).into(), Address(1), &holding(list), LIST), Err(ArenaError::OutOfBounds { .. })));
     }
 
     #[test]

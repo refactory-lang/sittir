@@ -171,6 +171,10 @@ struct Beside {
     aside: bool,
     extra: Option<KindId>,
     span: Span,
+    /// Whether its holder keeps the node as a fixed token or a flag
+    /// (`Route::keeps_as_fixed_token_or_flag`), which has no cell: no side is
+    /// placed on it.
+    fixed_token_or_flag: bool,
 }
 
 /// The two answers `read::stamp` takes of a grammar: whether a display kind
@@ -180,9 +184,17 @@ type Stamp = (fn(KindId) -> bool, fn(KindId, KindId) -> bool);
 type Edges = (super::NodeSite, super::NodeSite);
 
 /// What a hydration writes into: the space its records take.
-pub trait HydrateInto: RecordSpace {}
+pub trait HydrateInto: RecordSpace {
+    /// The addresses the records written so far lie in, one range for each
+    /// run of chunks written in turn.
+    fn spans(&self) -> Vec<std::ops::Range<Address>>;
+}
 
-impl HydrateInto for super::ReadWriter<'_> {}
+impl HydrateInto for super::ReadWriter<'_> {
+    fn spans(&self) -> Vec<std::ops::Range<Address>> {
+        super::ReadWriter::spans(self)
+    }
+}
 
 /// A record whose walk is open: where it is, the node it is of, and the run
 /// of its children so far. `rows` holds the rows still open, each by its
@@ -264,7 +276,7 @@ impl OpenRun {
         match (index, self.last) {
             (Some(index), _) if self.index == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
-                self.beside.push(Beside { kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 } });
+                self.beside.push(Beside { kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false });
                 self.depth += depth - own;
             }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
@@ -279,6 +291,12 @@ impl OpenRun {
             }
             (None, _) => {}
         }
+    }
+
+    /// Whether the node kept at `site` is a row of this record its node keeps
+    /// as a fixed token or a flag.
+    fn keeps_as_fixed_token_or_flag(&self, site: super::NodeSite) -> bool {
+        matches!(site, super::NodeSite::Row { holder, entry } if holder == self.at && self.beside[entry as usize].fixed_token_or_flag)
     }
 
     /// Where the entry at `entry` is kept: its record, else its row here.
@@ -385,7 +403,9 @@ impl OpenRun {
                     Owner::Inner if holder.is_some_and(|holder| kinds.is_some_and(|kinds| kinds.units.contains(&self.beside[holder].kind))) => continue,
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner),
                 };
-                out.push(Placed { site, side, extra, kind, span });
+                if !self.keeps_as_fixed_token_or_flag(site) {
+                    out.push(Placed { site, side, extra, kind, span });
+                }
             }
         };
         for (at, entry) in self.entries.iter().enumerate() {
@@ -626,7 +646,7 @@ impl<'a> Hydration<'a> {
         let stamped = |stamp: Stamp| crate::read::stamp(facts.kind, facts.display(), stamp.0, stamp.1);
         let aside = kid.extra || kid.error();
         let kind = if kid.error() { KindId::ERROR } else { self.stamp.map_or(facts.kind, stamped) };
-        let beside = Beside { kind: kid.grammar, named: kid.named && kid.start < kid.end, aside, extra: aside.then_some(kind), span: kid.span() };
+        let beside = Beside { kind: kid.grammar, named: kid.named && kid.start < kid.end, aside, extra: aside.then_some(kind), span: kid.span(), fixed_token_or_flag: false };
         if let Some(open) = self.open.last_mut() {
             open.meet(&kid, facts, depth, beside);
         }
@@ -639,6 +659,15 @@ impl<'a> Hydration<'a> {
             self.errors.push((draft, kid.index.get() + kid.count, Row { kind, span: kid.span() }));
         }
         Ok(kid)
+    }
+
+    /// The node the walk met last is one its holder keeps as a fixed token or
+    /// a flag (`Route::keeps_as_fixed_token_or_flag`), which has no cell: no
+    /// side is placed on it.
+    pub fn met_fixed_token_or_flag(&mut self) {
+        if let Some(beside) = self.open.last_mut().and_then(|open| open.beside.last_mut()) {
+            beside.fixed_token_or_flag = true;
+        }
     }
 
     /// Ends the record of each `ERROR` whose subtree ends at or before the
@@ -764,7 +793,8 @@ impl<'a> Hydration<'a> {
                 if let Some(holder) = holder {
                     holder.name(run.index, draft.at, run.depth, run.own, edges);
                 }
-                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, ..side.clone() }
+                let spans = if parent.is_none() { self.tree.spans() } else { Vec::new() };
+                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, spans, ..side.clone() }
             }
             None => side,
         };

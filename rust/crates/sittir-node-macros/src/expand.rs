@@ -1074,6 +1074,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
     }
 
     let accs: Vec<Ident> = slots.iter().map(|(i, ..)| format_ident!("__acc{}", i)).collect();
+    let flags: Vec<bool> = slots.iter().map(|(_, _, slot)| slot.cell.bit.is_some()).collect();
     let tys: Vec<&Type> = slots.iter().map(|(_, field, _)| field.ty).collect();
     let idxs: Vec<TokenStream> = slots.iter().map(|&(i, ..)| slot_id(i)).collect();
     let names: Vec<&Ident> = slots.iter().map(|(_, field, _)| field.ident).collect();
@@ -1110,7 +1111,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                 }
                 let children = nodes.kids(at.index).to_vec();
                 let routes = children.iter().map(__route).collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>().ok()?;
-                ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*], elided: __ELIDED })
+                ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*], elided: __ELIDED, flags: __FLAGS })
             }
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                 <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit, <Self as __rt::ReadNode>::routes))
@@ -1119,6 +1120,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
         },
         items: quote! {
             const __ELIDED: &[bool] = &[#(<#tys as __rt::ReadSlot>::ELIDED),*];
+            const __FLAGS: &[bool] = &[#(#flags),*];
             #[allow(unused_variables)]
             fn __unit(slot: ::sittir_core::types::SlotId, nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__Kind> {
                 match slot {

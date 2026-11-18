@@ -224,7 +224,7 @@ id_newtype! {
 /// record `node`, or, with a `site`, the node with no record of its own
 /// that the record `node` keeps in a slot: the word the slot's cell starts
 /// at and, in a list slot, the item. On the wire, `{ $node, $site? }`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize)]
 pub struct NodeName {
     #[serde(rename = "$node")]
     pub node: NodeId,
@@ -257,6 +257,24 @@ impl NodeName {
     /// The most leaf items a list slot holds: one past the last item a
     /// site names.
     pub const SITE_ITEMS: u32 = 1 << Self::ITEM_BITS;
+    /// The word of a record's inside site: the record's second word, which
+    /// holds no cell, so no slot's site names it, in every kind.
+    pub const INSIDE_WORD: u32 = 1;
+
+    /// The inside site of the record this name names, whose leading side
+    /// is the record's inside; none for a name with a site, which names no
+    /// record.
+    #[must_use]
+    pub fn inside(self) -> Option<NodeName> {
+        self.site.is_none().then_some(NodeName { site: Some([Self::INSIDE_WORD, 0]), ..self })
+    }
+
+    /// The record whose inside site this name names (`inside`); none for
+    /// any other name.
+    #[must_use]
+    pub fn inside_of(self) -> Option<NodeName> {
+        (self.site == Some([Self::INSIDE_WORD, 0])).then_some(NodeName { site: None, ..self })
+    }
 
     /// Refuses, when a constant is evaluated, a kind whose record takes
     /// `words` words, header included, past `SITE_WORDS`: the build stops

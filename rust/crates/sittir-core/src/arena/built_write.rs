@@ -33,12 +33,52 @@ impl<T: ChunkUnit> Open<T> {
 /// open chunk is left as it is.
 pub struct ReadWriter<'a> {
     chunks: &'a mut BuiltChunks,
+    spans: Vec<std::ops::Range<Address>>,
+    open: Option<usize>,
+}
+
+/// Where a read's writer took the words of a record.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Taken {
+    Open,
+    Opened,
+    Own,
 }
 
 impl<'a> ReadWriter<'a> {
     /// A writer appending to the chunk `chunks` has open for reads.
     pub fn new(chunks: &'a mut BuiltChunks) -> Self {
-        Self { chunks }
+        Self { chunks, spans: Vec::new(), open: None }
+    }
+
+    /// The addresses the writer's records lie in, one range for each run of
+    /// chunks it wrote in turn.
+    #[must_use]
+    pub fn spans(&self) -> Vec<std::ops::Range<Address>> {
+        self.spans.clone()
+    }
+
+    /// The record of `words` words at `at` among the writer's spans, as
+    /// `taken`: in the chunk open for reads, the open span goes on; in a
+    /// chunk opened for reads, it goes on when that chunk is the next
+    /// number after the one it left, whose rest no read writes again; in a
+    /// chunk of its own, it is a span of its own, the open chunk staying
+    /// open. A span ends where its last chunk's addresses do at most.
+    fn note(&mut self, at: Address, words: u32, taken: Taken) {
+        let end = Address(at.0 + words.min(CHUNK_WORDS - at.word()));
+        let goes_on = self.open.filter(|&open| match taken {
+            Taken::Open => self.spans[open].end == at,
+            Taken::Opened => Address(self.spans[open].end.0 - 1).chunk() + 1 == at.chunk(),
+            Taken::Own => false,
+        });
+        if let Some(open) = goes_on {
+            self.spans[open].end = end;
+        } else {
+            if taken != Taken::Own {
+                self.open = Some(self.spans.len());
+            }
+            self.spans.push(at..end);
+        }
     }
 }
 
@@ -58,19 +98,20 @@ impl super::RecordSpace for ReadWriter<'_> {
     }
 
     fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
-        let at = match self.chunks.reads {
-            _ if words > CHUNK_WORDS => Address::new(self.chunks.alloc_read_words(words)?, 0),
+        let (at, taken) = match self.chunks.reads {
+            _ if words > CHUNK_WORDS => (Address::new(self.chunks.alloc_read_words(words)?, 0), Taken::Own),
             Some((chunk, used)) if used + words <= CHUNK_WORDS => {
                 self.chunks.reads = Some((chunk, used + words));
-                Address::new(chunk, used)
+                (Address::new(chunk, used), Taken::Open)
             }
             _ => {
                 let chunk = self.chunks.alloc_read_words(CHUNK_WORDS)?;
                 self.chunks.reads = Some((chunk, words));
-                Address::new(chunk, 0)
+                (Address::new(chunk, 0), Taken::Opened)
             }
-        }
-        .ok_or(ArenaError::Full)?;
+        };
+        let at = at.ok_or(ArenaError::Full)?;
+        self.note(at, words, taken);
         self.chunks.place(at, 1)?;
         Ok(at)
     }
@@ -323,5 +364,64 @@ mod tests {
         assert_eq!(text_at(&chunks, javascript), (NAME, "js".to_owned()));
         assert_eq!(text_at(&chunks, native), (NAME, "native".to_owned()));
         assert_eq!(text_at(&chunks, after), (NAME, "after".to_owned()));
+    }
+
+    fn past(at: Address, words: u32) -> Address {
+        Address(at.0 + words)
+    }
+
+    #[test]
+    fn a_read_s_records_in_its_chunk_and_the_next_number_are_one_span() {
+        use crate::arena::RecordSpace;
+        let mut chunks = store();
+        let earlier = ReadWriter::new(&mut chunks).alloc(4).expect("an earlier read's record");
+        let mut read = ReadWriter::new(&mut chunks);
+        let first = read.alloc(6).expect("a record");
+        let filling = read.alloc(CHUNK_WORDS - 10).expect("a record filling the chunk");
+        let next = read.alloc(6).expect("a record in the next number");
+        assert_eq!((first, filling.chunk(), next.chunk()), (past(earlier, 4), first.chunk(), first.chunk() + 1));
+        assert_eq!(read.spans(), vec![first..past(next, 6)], "from the read's first record, past the earlier read's, to its last word");
+    }
+
+    #[test]
+    fn a_chunk_numbered_between_two_of_a_read_s_chunks_parts_its_spans() {
+        use crate::arena::RecordSpace;
+        let mut chunks = store();
+        let earlier = ReadWriter::new(&mut chunks).alloc(4).expect("an earlier read's record");
+        let built = chunks.alloc_words(16).expect("a builder's chunk").chunk;
+        let mut read = ReadWriter::new(&mut chunks);
+        let first = read.alloc(6).expect("a record in the open chunk");
+        let second = read.alloc(CHUNK_WORDS).expect("a record taking a new chunk");
+        assert_eq!((first.chunk(), second.chunk()), (earlier.chunk(), built + 1));
+        assert_eq!(read.spans(), vec![first..past(first, 6), second..past(second, CHUNK_WORDS)]);
+        let inside = Address::new(built, 0).expect("an address");
+        assert!(!read.spans().iter().any(|span| span.contains(&inside)), "no span holds the builder's chunk");
+    }
+
+    #[test]
+    fn a_record_wider_than_a_chunk_is_a_span_of_its_own_and_the_read_writes_on_where_it_was() {
+        use crate::arena::RecordSpace;
+        let mut chunks = store();
+        let mut read = ReadWriter::new(&mut chunks);
+        let first = read.alloc(6).expect("a record");
+        let wide = read.alloc(CHUNK_WORDS + 1).expect("a record of its own chunk");
+        let after = read.alloc(6).expect("a record after it");
+        assert_eq!((wide.word(), after), (0, past(first, 6)));
+        let spans = read.spans();
+        assert_eq!(spans, vec![first..past(after, 6), wide..past(wide, CHUNK_WORDS)], "the wide record's span ends where its chunk's addresses do");
+        let next = ReadWriter::new(&mut chunks).alloc(6).expect("the next read's record");
+        assert!(!spans.iter().any(|span| span.contains(&next)), "the next read writes on past the read's spans");
+    }
+
+    #[test]
+    fn a_read_on_a_reused_lower_number_starts_a_span_there() {
+        use crate::arena::RecordSpace;
+        let mut chunks = store();
+        let freed = chunks.alloc_words(16).expect("a builder's chunk").chunk;
+        let mut read = ReadWriter::new(&mut chunks);
+        let first = read.alloc(CHUNK_WORDS).expect("a full chunk");
+        let lower = Address::new(freed, 0).expect("an address");
+        read.note(lower, 6, Taken::Opened);
+        assert_eq!(read.spans(), vec![first..past(first, CHUNK_WORDS), lower..past(lower, 6)], "a chunk numbered below the last is not the next number");
     }
 }

@@ -332,7 +332,6 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
     ///
     /// When the read refuses, or leaves its root no record.
     pub fn of<N: sittir_core::read::ReadNode + sittir_core::arena::HydrateNode + sittir_core::arena::RecordCells>(grammar: G, options: &sittir_core::options::ResolvedOptions, tree: &sittir_core::engine::ParsedTree<G>) -> Self {
-        use sittir_core::arena::NodeSite;
         use sittir_core::nodes::Nodes;
         use sittir_core::trivia_store::Place;
         use sittir_core::types::NodeIndex;
@@ -345,7 +344,8 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
             let mut records = std::collections::HashMap::new();
             let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
             while let Some((run, row)) = pending.pop() {
-                if let Some(Place::Read { site: NodeSite::Record(at), .. }) = over.place(run) {
+                if let Some(Place::Node(sittir_core::types::NodeName { node, site: None })) = over.place(run) {
+                    let at = sittir_core::arena::Address(node.0);
                     records.insert(row, at);
                 }
                 let (met, kept) = (ours.kids(run), theirs.kids(row));

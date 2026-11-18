@@ -342,7 +342,7 @@ mod tests {
     }
 
     fn site(holder: u32, item: u32) -> Site<PrepPlace> {
-        Site { holder: Place::Record(Address(holder)).into(), word: 2, item: ItemIndex(item) }
+        Site { holder: Place::record(Address(holder)).into(), word: 2, item: ItemIndex(item) }
     }
 
     #[test]
@@ -356,7 +356,7 @@ mod tests {
         let node = prepared.node(child());
         assert_eq!(prepared.edges(stored, Some(site(5, 0)), node), Edges { before: Some(arm(9)), after: Some(arm(8)) }, "a holder's fill leaves a stored side alone");
         assert_eq!(prepared.edges(stored, None, node), Edges { before: Some(arm(9)), after: Some(arm(2)) }, "unheld, its own kind's fills what it stores nothing for");
-        assert_eq!(prepared.edges(Edges::default(), None, prepared.node(Place::Record(Address(6)).into())), Edges::default(), "a node prepare never reached has only what it stores");
+        assert_eq!(prepared.edges(Edges::default(), None, prepared.node(Place::record(Address(6)).into())), Edges::default(), "a node prepare never reached has only what it stores");
     }
 
     #[test]
@@ -389,19 +389,19 @@ mod tests {
         assert_eq!(node.slot(2), Some(&PreparedSlot { word: 2, space_before: Some(KindId(8)), space_after: Some(KindId(1)), ..PreparedSlot::default() }));
         assert_eq!(node.slot(4).and_then(|slot| slot.unit), Some(KindId(3)));
         assert_eq!(node.slot(6), None);
-        assert_eq!(prepared.node(Place::Record(Address(9)).into()), None);
+        assert_eq!(prepared.node(Place::record(Address(9)).into()), None);
     }
 
     #[test]
     fn a_built_record_an_envelope_and_the_content_at_the_same_numbers_keep_their_own_facts() {
         let mut prepared = Prepared::<TriviaText>::new();
         let envelope = Place::Row { tree: TreeId(1), row: NodeIndex(3) };
-        let places = [Place::Record(Address(3)).into(), envelope.into(), PrepPlace::Content(Site { holder: envelope, word: 2, item: ItemIndex(0) })];
+        let places = [Place::record(Address(3)).into(), envelope.into(), PrepPlace::Content(Site { holder: envelope, word: 2, item: ItemIndex(0) })];
         for (place, kind) in places.into_iter().zip(1..) {
             prepared.node_mut(place).edges.before = Some(arm(kind));
         }
         let kept: Vec<_> = places.into_iter().map(|place| prepared.node(place).and_then(|node| node.edges.before)).collect();
         assert_eq!(kept, [Some(arm(1)), Some(arm(2)), Some(arm(3))]);
-        assert_eq!(places.map(PrepPlace::stored), [Some(Place::Record(Address(3))), Some(envelope), None], "a content has no place in the store");
+        assert_eq!(places.map(PrepPlace::stored), [Some(Place::record(Address(3))), Some(envelope), None], "a content has no place in the store");
     }
 }

@@ -34,7 +34,7 @@ impl<G: RecordGrammar> Engine<G> {
         let at = at.record()?;
         match self.read_node(at, |tree, index| tree.trivia_side(index, side))? {
             Some(entries) => Ok(Some(entries)),
-            None => self.written().side(Place::Record(at), side, &*self.written().built()),
+            None => self.written().side(Place::record(at), side, &*self.written().built()),
         }
     }
 
@@ -49,7 +49,7 @@ impl<G: RecordGrammar> Engine<G> {
         if self.written().built().read_record(at) {
             return self.write_read_side(crate::types::NodeName { node: crate::types::NodeId(at.0), site: None }, side, entries);
         }
-        self.written().write_held_side(Place::Record(at), side, entries)
+        self.written().write_held_side(Place::record(at), side, entries)
     }
 
     /// Replace `side` of the node a read left that `name` names with
@@ -61,12 +61,13 @@ impl<G: RecordGrammar> Engine<G> {
     /// no source.
     pub fn write_read_side(&self, name: crate::types::NodeName, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         let record = Address(name.node.0).record()?;
-        let site = {
+        {
             let chunks = self.written().built();
             let built = chunks.readable()?;
-            (crate::types::TreeId(super::RunNodes::source_of(built, record)?.0), super::site::node_site(built, G::shape, G::KIND_BITS, name)?)
-        };
-        self.written().write_held_side(Place::Read { tree: site.0, site: site.1 }, side, entries)
+            super::RunNodes::source_of(built, record)?;
+            super::site::node_site(built, G::shape, G::KIND_BITS, name)?;
+        }
+        self.written().write_held_side(Place::Node(name), side, entries)
     }
 
     /// What `f` answers of the node a read left a record of at `at`: the
@@ -148,7 +149,7 @@ impl<G: RecordGrammar> Engine<G> {
     /// `ArenaError::Malformed` for a site whose holder is address 0.
     pub fn built_leaf_side(&self, site: Site<Address>, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
         site.holder.record()?;
-        self.written().side(Place::Leaf(site), side, &*self.written().built())
+        self.written().side(Place::site(site), side, &*self.written().built())
     }
 
     /// The sides of every unit and leaf site of the built record at `from`,
@@ -176,7 +177,7 @@ impl<G: RecordGrammar> Engine<G> {
         for site in sites {
             site.holder.record()?;
         }
-        sites.iter().try_for_each(|&site| self.written().write_held_side(Place::Leaf(site), side, entries))
+        sites.iter().try_for_each(|&site| self.written().write_held_side(Place::site(site), side, entries))
     }
 }
 

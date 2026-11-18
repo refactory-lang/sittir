@@ -161,10 +161,6 @@ pub trait RecordGrammar: EngineGrammar<Trivia: super::WriteCell<<Self as EngineG
     /// As `render_record`.
     fn render_entry(self, root: CellAt, reads: Option<&dyn ArenaRead>, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult;
 
-    /// The record a node of `kind` is written as, `None` for a kind that has
-    /// no record (`RecordCells::shape` of the grammar's node).
-    fn shape(kind: KindId) -> Option<super::RecordShape>;
-
     /// The storage key of the slot a record of `kind` holds at `word`
     /// (`PrepareRecord::slot_key` of the grammar's node).
     fn slot_key(kind: KindId, word: u32) -> Option<&'static str>;

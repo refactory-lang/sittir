@@ -3,7 +3,8 @@
 //! after an arena parse and before anything reads a side, are those of the
 //! extras and `ERROR`s the tree's placement assigns that side, in order. A
 //! unit has no inside: what the tree's placement assigns inside one, the
-//! parse keeps nowhere. The parse sets apart the list items the tree's
+//! parse keeps nowhere, as it keeps no side of a node its holder keeps as a
+//! fixed token or a flag. The parse sets apart the list items the tree's
 //! lookup does: an item with a record in its record's header, any other with
 //! a blank-line member first on the leading side it places.
 #![cfg(feature = "arena")]
@@ -40,14 +41,18 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     let placement = tree.placed_trivia();
     let (mut ours, mut theirs) = (records.nodes(), tree.nodes());
     let (mut apart, mut assigned) = (Vec::new(), 0);
-    let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
-    while let Some((run, row)) = pending.pop() {
+    let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT, None)];
+    while let Some((run, row, holder)) = pending.pop() {
+        let fixed_token_or_flag = holder.is_some_and(|holder| {
+            let at = theirs.kid(holder);
+            grammar.slot_routes(&mut theirs, &at).is_some_and(|routed| routed.keeps_as_fixed_token_or_flag(row))
+        });
         for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
             let inside_a_unit = side == TriviaSide::Inner && grammar.surface_kinds().units.contains(&theirs.kid(row).grammar);
             let kept: Vec<Bytes> = placement
                 .tables()
                 .flat_map(|table| table.side(row, side).iter())
-                .filter(|_| !inside_a_unit)
+                .filter(|_| !inside_a_unit && !fixed_token_or_flag)
                 .filter_map(|entry| match *entry {
                     Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => Some(at),
                     _ => None,
@@ -58,7 +63,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
             let stored = records
                 .place(run)
                 .and_then(|place| match place {
-                    Place::Read { tree, site } => engine.written().side(Place::Placed { tree, site }, side, &*built).expect("a placed side"),
+                    Place::Node(name) => engine.written().side(Place::Placed(name), side, &*built).expect("a placed side"),
                     _ => None,
                 })
                 .unwrap_or_default();
@@ -89,7 +94,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
             }
         }
         let (met, kept) = (ours.kids(run), theirs.kids(row));
-        pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
+        pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index, Some(row))));
     }
     (apart, assigned)
 }
@@ -136,7 +141,7 @@ fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar:
             placed += records
                 .place(at)
                 .and_then(|place| match place {
-                    Place::Read { tree, site } => engine.written().side(Place::Placed { tree, site }, side, &*built).expect("a placed side"),
+                    Place::Node(name) => engine.written().side(Place::Placed(name), side, &*built).expect("a placed side"),
                     _ => None,
                 })
                 .map_or(0, |entries| entries.len());
@@ -172,6 +177,44 @@ fn a_parse_places_a_comment_beside_a_separator_as_the_tree_s_placement_does() {
 }
 
 #[test]
+fn a_parse_keeps_no_side_of_a_node_its_holder_keeps_as_a_fixed_token_or_a_flag() {
+    let rust = [
+        "fn f() { let y = & /*c*/ mut x; }\n",
+        "fn f() { let y = &mut /*c*/ x; }\n",
+        "static /*d*/ mut X: u8 = 0;\n",
+        "fn f(&mut /*c*/ self) {}\n",
+        "fn f() { let /*c*/ mut x = 1; }\n",
+        "fn f() { let mut /*c*/ x = 1; }\n",
+        "fn f(x: & /*c*/ mut u8) {}\n",
+        "fn f() { let &mut /*c*/ x = y; }\n",
+        "fn f(x: *mut /*c*/ u8) {}\n",
+        "fn f() { let y = &raw mut /*c*/ x; }\n",
+        "extern crate /*c*/ foo;\n",
+        "pub(crate /*c*/) fn f() {}\n",
+        "pub(/*c*/ crate) fn f() {}\n",
+        "fn f(& /*c*/ self) {}\n",
+        "fn f(/*c*/ self) {}\n",
+        "fn f(self /*c*/) {}\n",
+        "pub(self /*c*/) fn f() {}\n",
+    ];
+    let typescript = [
+        "let x: typeof import /*c*/ ('a');\n",
+        "function f(this /*c*/: T) {}\n",
+        "a?. /*c*/ [0];\n",
+        "a /*c*/ ?.[0];\n",
+        "class C extends B { override /*c*/ m() {} }\n",
+        "class C extends B { /*c*/ override m() {} }\n",
+        "class C { constructor(override /*c*/ x: T) {} }\n",
+    ];
+    let found = rust
+        .iter()
+        .map(|source| (*source, placed_apart::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, source)))
+        .chain(typescript.iter().map(|source| (*source, placed_apart::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source))));
+    let apart: Vec<String> = found.flat_map(|(source, (apart, _))| apart.into_iter().map(move |line| format!("{source:?}: {line}"))).collect();
+    assert!(apart.is_empty(), "{} sides apart:\n{}", apart.len(), apart.join("\n"));
+}
+
+#[test]
 fn nothing_under_an_error_is_placed() {
     let placed = [
         ("an ERROR holding an ERROR", 1, placed_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "\n    case *x,:\n        y = 0")),
@@ -197,8 +240,8 @@ fn a_placed_error_is_the_entry_a_built_side_holds_for_it() {
     let mut runs = RunNodes::holding(&*built, text, root, &table).expect("its root");
     let error = runs.kids(NodeIndex::ROOT).iter().find(|kid| kid.grammar == sittir_core::types::KindId::ERROR).copied().expect("the source's ERROR");
     let Some(sittir_core::arena::NodeSite::Record(at)) = runs.site(error.index) else { panic!("the ERROR has a record of its own") };
-    let Some(Place::Read { tree, site }) = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
-    let stored = engine.written().side(Place::Placed { tree, site }, TriviaSide::Inner, &*built).expect("a placed side").expect("the root's inner side");
+    let Some(Place::Node(name)) = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
+    let stored = engine.written().side(Place::Placed(name), TriviaSide::Inner, &*built).expect("a placed side").expect("the root's inner side");
     assert_eq!(stored.len(), 1, "the root's inner holds the ERROR alone");
     let TriviaEntry::Record(entry) = &stored[0] else { panic!("the ERROR is named by its record, as a built side names it: {:?}", stored[0]) };
     assert_eq!((entry.record.kind, entry.record.at), (sittir_core::types::KindId::ERROR, at), "the entry names the ERROR's own record");
@@ -225,7 +268,7 @@ fn error_roots<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(gram
             let parse = engine.parse_records::<N>(&source).expect("a parse");
             let root = parse.root.expect("the ERROR's record");
             let built = engine.written().built();
-            let place = Place::Placed { tree: sittir_core::types::TreeId(parse.source.0), site: sittir_core::arena::NodeSite::Record(root) };
+            let place = Place::Placed(sittir_core::types::NodeName { node: sittir_core::types::NodeId(root.0), site: None });
             let stored = sides.iter().filter_map(|&side| engine.written().side(place, side, &*built).expect("a placed side")).map(|entries| entries.len()).sum();
             Some((source, assigned, stored))
         })

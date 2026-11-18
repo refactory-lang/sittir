@@ -115,6 +115,10 @@ impl EngineGrammar for RustGrammar {
         ) -> Option<std::result::Result<(), String>> {
             Some(sittir_core::arena::render_record_read::<Self, AnyNode>(self, read, store, render, baseline))
         }
+
+        fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
+            <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
+        }
     }
 }
 
@@ -142,10 +146,6 @@ sittir_core::records_codec! {
             w: &mut dyn sittir_core::render::RenderSink,
         ) -> sittir_core::render::RenderResult {
             render::node::render_entry_record(root, reads, built, store, ctx, w)
-        }
-
-        fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
-            <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
         }
 
         fn slot_key(kind: sittir_core::types::KindId, word: u32) -> Option<&'static str> {

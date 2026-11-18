@@ -122,13 +122,13 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
     /// (`kept`).
     fn keep_sides(&mut self, at: Address, trivia: Option<&NodeTrivia<T>>, units: &[(u32, &UnitSides<T>)], leaves: &[(u32, ItemIndex, NodeTrivia<T>)]) -> Result<(), ArenaError> {
         if let Some(trivia) = trivia {
-            self.keep(Place::Record(at), trivia)?;
+            self.keep(Place::record(at), trivia)?;
         }
         for &(word, unit) in units {
-            self.keep(Place::Unit(Site { holder: at, word, item: unit.item }), &unit.trivia)?;
+            self.keep(Place::site(Site { holder: at, word, item: unit.item }), &unit.trivia)?;
         }
         for (word, item, trivia) in leaves {
-            self.keep(Place::Leaf(Site { holder: at, word: *word, item: *item }), trivia)?;
+            self.keep(Place::site(Site { holder: at, word: *word, item: *item }), trivia)?;
         }
         Ok(())
     }
@@ -582,7 +582,7 @@ mod tests {
         let held = decode(&chunks, CellWord(chunks.words(at, 3).expect("its words")[2]));
         let Cell::Child { at: child, .. } = held else { panic!("a child cell, not {held:?}") };
         assert!(child < at, "the child is its own record, written before its holder");
-        assert_eq!(store.side(Place::Record(child), TriviaSide::Leading, &chunks).expect("read"), Some(vec![entry("// child")]));
+        assert_eq!(store.side(Place::record(child), TriviaSide::Leading, &chunks).expect("read"), Some(vec![entry("// child")]));
     }
 
     /// An envelope: its content built at word 2, read from the same row.
@@ -610,15 +610,15 @@ mod tests {
         let node = Pair { items_space: Some(KindId(2)), ..pair(layout, name("x", leaf), Vec::new()) };
         let cell = node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut unlinked)).expect("written");
         let Cell::Child { at: record, .. } = decode(&chunks, cell) else { panic!("a record") };
-        assert_eq!(store.side(Place::Record(record), TriviaSide::Leading, &chunks).expect("read"), Some(vec![entry("// a")]));
-        assert_eq!(store.side(Place::Record(record), TriviaSide::Trailing, &chunks).expect("read"), None, "a side no write set stays unwritten");
-        assert_eq!(store.side(Place::Unit(Site { holder: record, word: 6, item: ItemIndex(1) }), TriviaSide::Trailing, &chunks).expect("read"), Some(Vec::new()));
+        assert_eq!(store.side(Place::record(record), TriviaSide::Leading, &chunks).expect("read"), Some(vec![entry("// a")]));
+        assert_eq!(store.side(Place::record(record), TriviaSide::Trailing, &chunks).expect("read"), None, "a side no write set stays unwritten");
+        assert_eq!(store.side(Place::site(Site { holder: record, word: 6, item: ItemIndex(1) }), TriviaSide::Trailing, &chunks).expect("read"), Some(Vec::new()));
         let (kind, side, open, left, items) = pair_record(&chunks, cell);
         assert_eq!((kind, open), (PAIR, 1));
         assert_eq!(side.slots, vec![SideSlot { word: 6, space_after: Some(KindId(2)), ..SideSlot::default() }], "the setting is in its slot's entry");
         let Cell::BuiltLeaf { kind: NAME, text, .. } = left else { panic!("a built leaf, not {left:?}") };
         assert_eq!(chunks.text(text), Ok("x"));
-        assert_eq!(store.side(Place::Leaf(Site { holder: record, word: 3, item: ItemIndex(0) }), TriviaSide::Trailing, &chunks).expect("read"), Some(vec![entry("// x")]), "a leaf has no record: its sides are kept at its site");
+        assert_eq!(store.side(Place::site(Site { holder: record, word: 3, item: ItemIndex(0) }), TriviaSide::Trailing, &chunks).expect("read"), Some(vec![entry("// x")]), "a leaf has no record: its sides are kept at its site");
         assert_eq!(items, Vec::<Cell>::new());
     }
 

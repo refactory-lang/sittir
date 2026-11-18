@@ -171,6 +171,7 @@ mod tests {
             ],
             keys: &["_item"],
             elided: &[false],
+            flags: &[false],
         };
         let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert_eq!(slot.key, "_item");
@@ -185,6 +186,7 @@ mod tests {
             routes: vec![Route::Slot { slot: crate::types::SlotId(0), scalar: false }, Route::Slot { slot: crate::types::SlotId(0), scalar: false }],
             keys: &["_statements"],
             elided: &[false],
+            flags: &[false],
         };
         let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
@@ -205,6 +207,7 @@ mod tests {
             ],
             keys: &["_item"],
             elided: &[false],
+            flags: &[false],
         };
         let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert_eq!(slot.gaps.len(), 2, "{:?}", slot.gaps);
@@ -225,6 +228,7 @@ mod tests {
             ],
             keys: &["_item", "_other"],
             elided: &[false, false],
+            flags: &[false, false],
         };
         let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);

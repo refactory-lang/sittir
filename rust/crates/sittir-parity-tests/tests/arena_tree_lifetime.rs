@@ -237,16 +237,11 @@ fn a_read_s_records_store_the_layout_its_tree_does() {
 /// Each `ERROR` node of `source` as its records keep it: where it is kept,
 /// and where each of its children is.
 fn errors_kept<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Vec<(Option<sittir_core::arena::NodeSite>, Vec<Option<sittir_core::arena::NodeSite>>)> {
-    use sittir_core::trivia_store::Place;
     let mut engine = Engine::new(grammar, options()).expect("an engine");
     let Some(root) = engine.parse_records::<N>(source).expect("a parse").root else { return Vec::new() };
     let built = engine.written().built();
-    let records = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
-    let site = |index| match records.place(index) {
-        Some(Place::Read { site, .. }) => Some(site),
-        _ => None,
-    };
-    let mut nodes = records.nodes();
+    let table = RunTable::default();
+    let mut nodes = RunNodes::holding(&*built, source, root, &table).expect("its root");
     let mut errors = Vec::new();
     nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
         if step == Step::Meet && kid.grammar == sittir_core::types::KindId::ERROR {
@@ -254,7 +249,13 @@ fn errors_kept<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(gram
         }
         Visit::Enter
     });
-    errors.into_iter().map(|index| (site(index), nodes.kids(index).iter().map(|kid| site(kid.index)).collect())).collect()
+    errors
+        .into_iter()
+        .map(|index| {
+            let kids: Vec<NodeIndex> = nodes.kids(index).iter().map(|kid| kid.index).collect();
+            (nodes.site(index), kids.into_iter().map(|kid| nodes.site(kid)).collect())
+        })
+        .collect()
 }
 
 #[test]
@@ -316,7 +317,6 @@ fn held_coordinate<G: EngineGrammar, B: sittir_core::engine::Backing>(tree: &sit
 
 #[test]
 fn a_coordinate_of_a_read_s_node_names_its_record() {
-    use sittir_core::arena::NodeSite;
     use sittir_core::trivia_store::Place;
     let source = "// lead\nfn f() {}\n";
     let (grammar, options) = (sittir_rust::RustGrammar, sittir_rust::render::options::defaults);
@@ -327,14 +327,15 @@ fn a_coordinate_of_a_read_s_node_names_its_record() {
     let built = engine.written().built();
     let records = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
     let (coord, index) = held_coordinate(&records);
-    let Some(Place::Read { site: NodeSite::Record(at), .. }) = records.place(index) else { panic!("a comment has a record") };
+    let Some(Place::Node(sittir_core::types::NodeName { node, site: None })) = records.place(index) else { panic!("a comment has a record") };
+    let at = sittir_core::arena::Address(node.0);
     assert_eq!(coord.name(), Some(sittir_core::types::NodeName { node: sittir_core::types::NodeId(at.0), site: None }));
     assert_eq!((coord.span, coord.kind), (kept.span, kept.kind));
 }
 
 #[test]
 fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
-    use sittir_core::arena::{Address, NodeSite};
+    use sittir_core::arena::Address;
     use sittir_core::trivia_store::Place;
     use sittir_core::trivia_table::TriviaSide;
     let source = "fn f() {\n    // why\n    a;\n}\n";
@@ -353,7 +354,8 @@ fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
         });
         met.into_iter()
             .find_map(|index| {
-                let Some(Place::Read { site: NodeSite::Record(at), .. }) = records.place(index) else { return None };
+                let Some(Place::Node(sittir_core::types::NodeName { node, site: None })) = records.place(index) else { return None };
+        let at = sittir_core::arena::Address(node.0);
                 [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().find_map(|side| {
                     let entries = records.trivia_side(index, side);
                     (!entries.is_empty()).then(|| (at, side, format!("{entries:?}")))

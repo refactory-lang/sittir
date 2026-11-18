@@ -54,7 +54,8 @@ mod mask {
     pub const SOURCE: u32 = 1 << 13;
     pub const DEPTH: u32 = 1 << 14;
     pub const RUN: u32 = 1 << 15;
-    pub const ALL: u32 = (1 << 16) - 1;
+    pub const SPANS: u32 = 1 << 16;
+    pub const ALL: u32 = (1 << 17) - 1;
 }
 
 /// The bits of a node's packed facts that hold its field id.
@@ -281,6 +282,10 @@ pub struct SideRecord {
     pub depth: i32,
     /// A parsed node's children, in document order.
     pub run: Vec<RunEntry>,
+    /// A read's root: the addresses the read's records lie in, one range
+    /// for each run of chunks its writer wrote in turn
+    /// (`ReadWriter::spans`).
+    pub spans: Vec<std::ops::Range<Address>>,
 }
 
 /// The words of one slot entry: word, before, after, separator, the two
@@ -289,6 +294,10 @@ const SLOT_WORDS: u32 = 8;
 /// An edge side's word marks a set side with this bit, so a blank arm with
 /// no strength still differs from an unset side.
 const EDGE_SET: u32 = 1 << 31;
+/// A span's two addresses are stored with this bit, which no chunk number a
+/// built arena gives reaches, so no word of a read's spans names a record
+/// that a header could be read at.
+const SPAN_WORD: u32 = 1 << 31;
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
@@ -493,6 +502,13 @@ impl SideRecord {
             words(&[u32::try_from(entries.len()).map_err(|_| ArenaError::Full)?]);
             words(&entries);
         }
+        if !self.spans.is_empty() {
+            flags |= mask::SPANS;
+            words(&[u32::try_from(self.spans.len()).map_err(|_| ArenaError::Full)?]);
+            for span in &self.spans {
+                words(&[span.start.0 | SPAN_WORD, span.end.0 | SPAN_WORD]);
+            }
+        }
         Ok(flags)
     }
 
@@ -635,8 +651,31 @@ impl SideRecord {
             }
             run = Some(found);
         }
+        if has(mask::SPANS) {
+            let [len] = fields.array()?;
+            if len == 0 {
+                return Err(malformed("side record spans", len));
+            }
+            for _ in 0..len {
+                let [start, end] = fields.array()?;
+                if start & end & SPAN_WORD == 0 || start >= end {
+                    return Err(malformed("side record span", end));
+                }
+                record.spans.push(Address(start & !SPAN_WORD)..Address(end & !SPAN_WORD));
+            }
+        }
         Ok((record, run))
     }
+}
+
+/// The spans the root of a read at `root` names: the addresses the read's
+/// records lie in (`SideRecord::spans`).
+///
+/// # Errors
+///
+/// What reading the root's header and its side record refuses.
+pub fn read_spans(arena: &dyn ArenaRead, root: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
+    SideRecord::read_facts(arena, super::borrowed::side_of(arena, root)?).map(|(record, _)| record.spans)
 }
 
 /// Where a side record's run lies: its first word and its words.
@@ -712,6 +751,7 @@ mod tests {
                 RunEntry::Row { facts: NodeFacts { named: true, ..plain(7) }, span: Span { start: 6, end: 6 }, inner: 0 },
                 RunEntry::Record { at: Address(96), shared: true },
             ],
+            spans: vec![Address(5)..Address(40), Address(3 << crate::arena::CHUNK_SHIFT)..Address(5 << crate::arena::CHUNK_SHIFT)],
         }
     }
 
@@ -780,6 +820,7 @@ mod tests {
             SideRecord { source: whole.source, ..SideRecord::default() },
             SideRecord { depth: 3, ..SideRecord::default() },
             SideRecord { run: whole.run, ..SideRecord::default() },
+            SideRecord { spans: whole.spans, ..SideRecord::default() },
         ];
         let mut arena = Arena::new();
         for record in alone {
@@ -815,6 +856,18 @@ mod tests {
             assert_eq!(arena.words(at, len).expect("its words"), expected.as_slice(), "side {n}");
             assert_eq!(SideRecord::read(&arena, at), Ok(record), "side {n}");
         }
+    }
+
+    #[test]
+    fn no_word_of_a_read_s_spans_names_a_chunk() {
+        let mut arena = Arena::new();
+        let root = Address::new(2, 0).expect("an address");
+        let record = SideRecord { spans: vec![root..Address(root.0 + 105)], ..SideRecord::default() };
+        let at = record.write(&mut |words| arena.push(words)).expect("room");
+        let words = arena.words(at, 4).expect("its words");
+        assert_eq!(words[1], 1, "one span");
+        assert!(words[2..].iter().all(|&word| Address(word).chunk() >= crate::arena::MAX_BUILT_CHUNKS), "{words:?}: a span's address word names no record a header could be read at");
+        assert_eq!(SideRecord::read(&arena, at), Ok(record));
     }
 
     #[test]

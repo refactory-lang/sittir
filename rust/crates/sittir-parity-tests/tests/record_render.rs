@@ -345,6 +345,78 @@ fn python() -> Renders<sittir_python::PythonGrammar, sittir_python::render::AnyN
     Renders { grammar: sittir_python::PythonGrammar, options: sittir_python::render::options::defaults, native: sittir_python::render::render_node_parts }
 }
 
+/// `source` parses, renders from its records as its source, and renders
+/// alike natively and from its records, untouched and with each node's
+/// inner side written back (`nodes_alike`).
+fn renders_alike_and_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(renders: &Renders<G, N>, source: &str) {
+    assert_eq!(renders.renders_alike(source), Ok(Alike::Rendered), "{source:?}");
+    let mut engine = renders.engine();
+    let options = engine.options().clone();
+    let tree = Renders::<G, N>::parse(&mut engine, source);
+    let over = renders.read(&tree);
+    assert_eq!(Renders::<G, N>::record(&over, over.root, &options).as_deref(), Ok(source), "{source:?} from its records");
+    let (_, apart) = renders.nodes_alike(source).unwrap_or_else(|e| panic!("{source:?}: {e}"));
+    let apart: Vec<String> = apart.into_iter().map(|node| format!("{}: native {:?}, record {:?}", node.at, node.native, node.record)).collect();
+    assert!(apart.is_empty(), "{source:?}: {apart:?}");
+}
+
+#[test]
+fn a_comment_inside_a_node_that_has_no_slot_for_it_renders_as_its_source_in_both_storages() {
+    let typescript = Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts };
+    for source in [
+        "interface I { /* c */ }\n",
+        "interface I {\n  // c\n}\n",
+        "type T = { /* c */ };\n",
+        "function f() { return /* c */; }\n",
+        "for (;;) { break /* c */; }\n",
+        "for (;;) { continue /* c */; }\n",
+        "debugger /* c */;\n",
+        "let x: unique /* c */ symbol;\n",
+    ] {
+        renders_alike_and_as_its_source(&typescript, source);
+    }
+    let scm = Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts };
+    for source in ["( ; c\n _)\n", "[ ; c\n]\n"] {
+        renders_alike_and_as_its_source(&scm, source);
+    }
+    for source in ["m!( /* c */ $);\n", "m!($ /* c */);\n"] {
+        renders_alike_and_as_its_source(&rust(), source);
+    }
+}
+
+#[test]
+fn a_node_s_inside_is_its_own_and_its_first_item_keeps_its_leading_comment_in_both_storages() {
+    use sittir_core::nodes::Nodes;
+    use sittir_core::trivia_table::TriviaSide::{Inner, Leading};
+    type TypeScript = Renders<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>;
+    let renders: TypeScript = Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts };
+    let mut engine = renders.engine();
+    let source = "x([/* A */ a, /* B */ b]);\n";
+    let mut tree = TypeScript::parse(&mut engine, source);
+    let array = node_spanning(&tree, source, "array", "[/* A */ a, /* B */ b]");
+    let first = |nodes: &mut dyn Nodes<'_>, at: NodeIndex| nodes.kids(at).iter().find(|kid| kid.named && !kid.extra).expect("a first item").index;
+    let commented = |entries: &[sittir_core::trivia::TriviaEntry<_>]| entries.iter().any(|entry| !entry.is_layout());
+    let over = renders.read(&tree);
+    let name = over.name(array).expect("the array has a record");
+    for written in [false, true] {
+        if written {
+            tree.write_trivia_side(array, Inner, Vec::new()).expect("a write of nothing");
+            over.engine.write_read_side(name, Inner, &[]).expect("a write of nothing");
+        }
+        let item = first(&mut tree.nodes(), array);
+        assert_eq!((tree.trivia_side(array, Inner).len(), commented(&tree.trivia_side(item, Leading))), (0, true), "object storage, written: {written}");
+        let read = over
+            .engine
+            .read_named(name, |records, at| {
+                let item = first(&mut records.nodes(), at);
+                (records.trivia_side(at, Inner).len(), commented(&records.trivia_side(item, Leading)))
+            })
+            .expect("the records read")
+            .expect("a read wrote the record");
+        assert_eq!(read, (0, true), "arena storage, written: {written}");
+    }
+}
+
 #[test]
 fn a_list_child_renders_with_the_extras_and_errors_its_edge_items_hold() {
     for source in ["(e, f=g)", "(a:str=\"x\", b=c)"] {

@@ -919,6 +919,20 @@ impl HeapBytes for Route {
     }
 }
 
+impl Route {
+    /// Whether a child routed here is a node its holder keeps as a fixed
+    /// token or a flag, which has no cell: a token the kind's own template
+    /// writes, or the keyword of a slot `flags` marks a flag, by its number.
+    #[must_use]
+    pub fn keeps_as_fixed_token_or_flag(self, flags: &[bool]) -> bool {
+        match self {
+            Self::Layout => true,
+            Self::Slot { slot, scalar: _ } => flags.get(slot.index()).copied().unwrap_or(false),
+            Self::Trivia | Self::Separator { slot: _, tagged: _ } => false,
+        }
+    }
+}
+
 /// Why a read failed. Each names the node's kind and its index.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ReadError {
@@ -1087,24 +1101,34 @@ pub enum Router {
 }
 
 /// A node's children as its read routes them: each child (`survey`), the
-/// route it takes (`Route`), and, by each slot's number, its wire key and
-/// whether it is an elided list (`ReadSlot::ELIDED`).
+/// route it takes (`Route`), and, by each slot's number, its wire key,
+/// whether it is an elided list (`ReadSlot::ELIDED`) and whether it is a
+/// flag, which its record keeps in a bit and no cell.
 #[derive(Debug, Clone)]
 pub struct Routed {
     pub children: Vec<Kid>,
     pub routes: Vec<Route>,
     pub keys: &'static [&'static str],
     pub elided: &'static [bool],
+    pub flags: &'static [bool],
 }
 
 impl HeapBytes for Routed {
     fn heap_bytes(&self) -> usize {
-        let Self { children, routes, keys, elided: _ } = self;
+        let Self { children, routes, keys, elided: _, flags: _ } = self;
         children.heap_bytes() + routes.heap_bytes() + keys.heap_bytes()
     }
 }
 
 impl Routed {
+    /// Whether the child at `child` is a node the routed node keeps as a
+    /// fixed token or a flag (`Route::keeps_as_fixed_token_or_flag`); false
+    /// for a node that is no child of it.
+    #[must_use]
+    pub fn keeps_as_fixed_token_or_flag(&self, child: NodeIndex) -> bool {
+        self.children.iter().position(|kid| kid.index == child).is_some_and(|at| self.routes[at].keeps_as_fixed_token_or_flag(self.flags))
+    }
+
     /// Each child a slot stores, by its place among `children`, with its slot
     /// and its item there (`slot_items`).
     #[must_use]

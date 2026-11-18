@@ -38,6 +38,21 @@ fn slot_words(words: &[u32], cell: CellShape) -> Result<&[u32], ArenaError> {
     words.get(cell.word as usize..(cell.word + cell.width) as usize).ok_or(malformed("cell word", cell.word))
 }
 
+/// The cell at `site` of the read's record at `holder`, the record's shape
+/// found by `shape`; none for an item past the end of the list there.
+fn parsed_cell(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: CellSite) -> Result<Option<Cell>, ArenaError> {
+    let (shape, words) = shape_of(arena, holder, shape, bits)?;
+    let cell = *shape.cells.iter().find(|cell| cell.word == site.word).ok_or(malformed("cell site word", site.word))?;
+    match cell.run {
+        None if site.item == 0 => Cell::decode_parsed(slot_words(words, cell)?, cell, bits).map(Some),
+        None => Err(malformed("cell site item", site.item)),
+        Some(width) => {
+            let list = ListCell::of_word(CellWord(slot_words(words, CellShape { width: 1, ..cell })?[0]), arena)?;
+            list.items(arena, width)?.nth(site.item as usize).map(|item| Cell::decode_parsed(item, cell, bits)).transpose()
+        }
+    }
+}
+
 /// The row in its run that the cell at `site` of the read's record at
 /// `holder` names, the record's shape found by `shape`.
 ///
@@ -46,18 +61,65 @@ fn slot_words(words: &[u32], cell: CellShape) -> Result<&[u32], ArenaError> {
 /// What reading the record refuses, and `ArenaError::Malformed` for a site
 /// no cell of the record is at or whose cell holds no such node.
 pub fn site_row(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: CellSite) -> Result<u32, ArenaError> {
-    let (shape, words) = shape_of(arena, holder, shape, bits)?;
-    let cell = *shape.cells.iter().find(|cell| cell.word == site.word).ok_or(malformed("cell site word", site.word))?;
-    let decoded = match cell.run {
-        None if site.item == 0 => Cell::decode_parsed(slot_words(words, cell)?, cell, bits)?,
-        None => return Err(malformed("cell site item", site.item)),
-        Some(width) => {
-            let list = ListCell::of_word(CellWord(slot_words(words, CellShape { width: 1, ..cell })?[0]), arena)?;
-            let item = list.items(arena, width)?.nth(site.item as usize).ok_or(malformed("cell site item", site.item))?;
-            Cell::decode_parsed(item, cell, bits)?
+    let cell = parsed_cell(arena, holder, shape, bits, site)?.ok_or(malformed("cell site item", site.item))?;
+    leaf_row(&cell).ok_or(malformed("cell site", site.word))
+}
+
+/// Whether the child the record at `holder` holds at `site` is a unit: the
+/// cell there, a read's record's parsed cell or a built record's cell,
+/// the record's shape found by `shape`; false for an item past the end of
+/// the list there, which holds no child.
+///
+/// # Errors
+///
+/// What reading the record refuses, and `ArenaError::Malformed` for a site
+/// no cell of the record is at.
+pub fn holds_unit(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: CellSite) -> Result<bool, ArenaError> {
+    if arena.read_chunk(holder.chunk()) {
+        return Ok(matches!(parsed_cell(arena, holder, shape, bits, site)?, Some(Cell::Unit { .. })));
+    }
+    let (record, _) = shape_of(arena, holder, shape, bits)?;
+    if !record.cells.iter().any(|cell| cell.word == site.word) {
+        return Err(malformed("cell site word", site.word));
+    }
+    let mut unit = false;
+    super::cell::built_cells(arena, holder, record, super::cell::Lists::Items, |cell, item, word| {
+        if cell.word == site.word && item == site.item {
+            unit = matches!(Cell::decode_built(word, arena, bits)?, Cell::Unit { .. });
+        }
+        Ok(())
+    })?;
+    Ok(unit)
+}
+
+/// The rows a cell of each read's record names, with the cell's site, by
+/// record, sorted by row: what `site_name` reads once a record.
+pub type RowSites = std::collections::HashMap<Address, Vec<(u32, CellSite)>, crate::heap::IndexState>;
+
+/// The name of the node kept at `site`: its record's, or its holder's and
+/// the site of the cell naming its row, `known` holding each holder's
+/// cells once read; none for a row no cell of its holder names.
+///
+/// # Errors
+///
+/// What reading a holder's cells refuses (`row_sites`).
+pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: super::NodeSite, known: &mut RowSites) -> Result<Option<crate::types::NodeName>, ArenaError> {
+    let (holder, entry) = match site {
+        super::NodeSite::Record(at) => return Ok(Some(crate::types::NodeName { node: crate::types::NodeId(at.0), site: None })),
+        super::NodeSite::Row { holder, entry } => (holder, entry),
+    };
+    let sites = match known.entry(holder) {
+        std::collections::hash_map::Entry::Occupied(sites) => sites.into_mut(),
+        std::collections::hash_map::Entry::Vacant(unread) => {
+            let mut sites = row_sites(arena, holder, shape, bits)?;
+            sites.sort_unstable_by_key(|&(row, _)| row);
+            unread.insert(sites)
         }
     };
-    leaf_row(&decoded).ok_or(malformed("cell site", site.word))
+    Ok(sites.binary_search_by_key(&(entry + 2), |&(row, _)| row).ok().map(|at| {
+        let CellSite { word, item } = sites[at].1;
+        crate::types::NodeName { node: crate::types::NodeId(holder.0), site: Some([word, item]) }
+    }))
 }
 
 /// Each row of its run that a cell of the read's record at `holder` names

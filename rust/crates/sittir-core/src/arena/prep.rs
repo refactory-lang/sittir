@@ -385,12 +385,13 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
         }
         let (mut trivia, units) = match (self.at(prep)?, self.key.place) {
             (Some(at), _) => (source_sides(prep, &at), self.template_units(prep)?),
-            (None, PrepPlace::Stored(Place::Record(record))) => {
+            (None, PrepPlace::Stored(place @ Place::Node(crate::types::NodeName { node, site: None }))) => {
+                let record = Address(node.0);
                 let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
                 let units = prep.store.units(record, prep.built)?.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
-                (prep.store.sides(Place::Record(record), prep.built)?, units)
+                (prep.store.sides(place, prep.built)?, units)
             }
-            (None, PrepPlace::Stored(place @ Place::Leaf(_))) => (prep.store.sides(place, prep.built)?, Vec::new()),
+            (None, PrepPlace::Stored(place @ Place::Node(crate::types::NodeName { site: Some(_), .. }))) => (prep.store.sides(place, prep.built)?, Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
         merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref(), prep.sources, prep.lent());

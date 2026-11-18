@@ -331,7 +331,7 @@ macro_rules! napi_engine {
                     None => $defaults(),
                 };
                 let grammar = <$grammar as ::std::default::Default>::default();
-                let engine = $crate::engine::Engine::with_store(grammar, table, $crate::napi_engine::engine_store(grammar))
+                let engine = $crate::engine::Engine::new(grammar, table)
                 .map_err(::napi::Error::from_reason)?;
                 Ok(Self { engine: ::std::rc::Rc::new(EngineHold { engine: HeldEngine::new(engine), given }) })
             }
@@ -2148,23 +2148,6 @@ pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, mut tree: crate
 pub fn dispose<G: crate::engine::EngineGrammar>(_env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
     drop(tree);
     Ok(())
-}
-
-/// The store an engine of `grammar` writes sides into, whose built arena
-/// takes the grammar's kind width and record shapes, and whose built
-/// records keep their sides' head gap members as the grammar's whitespace
-/// table names them.
-#[cfg(feature = "arena")]
-#[must_use]
-pub fn engine_store<G: crate::arena::RecordGrammar>(grammar: G) -> crate::trivia_store::TriviaStore<G::Trivia> {
-    crate::trivia_store::TriviaStore::for_records(G::KIND_BITS, G::shape).with_whitespace(grammar.whitespace().0).with_surface_kinds(grammar.surface_kinds())
-}
-
-/// The store an engine of grammar `G` writes sides into.
-#[cfg(not(feature = "arena"))]
-#[must_use]
-pub fn engine_store<G: crate::engine::EngineGrammar>(_: G) -> crate::trivia_store::TriviaStore<G::Trivia> {
-    crate::trivia_store::TriviaStore::with_kind_bits(G::KIND_BITS)
 }
 
 /// Detaches every buffer over the built arena `store` holds, then frees its
