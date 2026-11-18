@@ -2,7 +2,31 @@
 
 > **Execution:** the engine-api session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** written 2026-11-17. Tasks 2–9 start when the hydrate-at-parse branch has merged to master; the branch is cut from that merge. Task 1 ran ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It wrote no production code, and that branch is merged into the stage-one branch when the stage-one branch is cut. Task 1 is done, and both of its stops are ruled (2026-11-17): a parsed list's delimiter is its delimiter option, resolved by the generated read code by one logic for both storages (Task 4; this superseded the same day's "decided by kind" and "store nothing; the options decide"), and named fixed tokens leave query results (Task 6). Waiting for the hydrate-at-parse merge. Task 4 is written from the delimiter audit (2026-11-17). The typescript scanner change it relies on, no automatic semicolon in a list's trailing spot, lands ahead of this stage on its own branch. `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. The hydrate-at-parse branch replaces `NodeCoordinate` with the node's name, so this plan's `&NodeCoordinate` signature (Task 6's `$treeHandle` row) is re-anchored to it when the stage-one branch is cut.
+**Status:** written 2026-11-17, updated 2026-11-18. Waiting for the hydrate-at-parse merge. Tasks 2–9 and 3a start when the hydrate-at-parse branch has merged to master, on a branch cut from that merge.
+- **Task 1** is done. It ran ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It wrote no production code. That branch is merged into the stage-one branch when the stage-one branch is cut. Both of its stops are ruled (2026-11-17):
+  - a parsed list's delimiter is its delimiter option, resolved by the generated read code by one logic for both storages (Task 4). This superseded the same day's "decided by kind" and "store nothing; the options decide";
+  - named fixed tokens leave query results (Task 6).
+
+  Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. The hydrate-at-parse branch replaces `NodeCoordinate` with the node's name, so this plan's `&NodeCoordinate` signature (Task 6's `$treeHandle` row) is re-anchored to it when the stage-one branch is cut.
+- **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, to be filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
+
+  The branch still carries:
+  - `trivia_table::owner`, the one placement that both the object read's placer and the arena parse walk call;
+  - the same-row rule measured from the holder's end row in both storages;
+  - the kept-side capacity fix (`RecordSink::kept`);
+  - `headerOf`.
+
+  It merges into the hydrate-at-parse branch.
+- **The scanner change Task 4 relies on** (no automatic semicolon in a list's trailing spot) is one commit on `fix/ts-asi-before-same-line-comment`. It is not pushed and has no pull request. It waited for the placement fix, which is withdrawn. Under master's ownership, the comment after an interface member's automatic semicolon leads the next member, so the change adds the interface case to the known gap. Brainstorm decides whether it opens as it is.
+- **The storage audit** (2026-11-18): its table is `docs/superpowers/specs/2026-11-18-one-read-rule-per-fact-design.md`, "The four facts" and "Left unread by the audit". Its baseline is three numbers, measured on the validation corpus of the five grammars (440 sources, 15,024 nodes), comparing object and arena storage:
+  - 0 root snapshots differ;
+  - 0 untouched node renders differ;
+  - 0 of 13,880 layout runs are apart.
+
+  Of the six facts it left unread, three are still to read: a list slot's separator kind, MISSING, and an `ERROR` as a side entry against its own record. The other three are read and go to brainstorm with them.
+
+  That spec is an enhancement, not stage-one work.
+- **Task 3a** is added: the spec's gate "The layout diagnostics answer for an arena tree" (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage.
 
 How this line is kept:
 - Each finished task is ticked, and this line names the task in progress.
@@ -176,6 +200,38 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - **Seating.** `placed` reads the working list. A dropped fixed token counts as unnamed for seating. A dropped unit's site is `NodeSite::Unit` of its holder, slot word and item.
 - [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `cargo test --workspace --no-default-features` is unchanged, since `parse_records` is still `All`.
 - [ ] **Step 5: Commit:** `feat(core): a read that writes slot content and trivia rows only, beside today's`.
+
+### Task 3a: The layout diagnostics answer for an arena tree
+
+The spec's gate (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage.
+
+Today the three diagnostics answer only for an object tree:
+- the addon's `layoutBaseline`, `storedLayout` and `layoutWork` each take a tree id;
+- an arena parse has no tree id;
+- so `packages/tools/src/validate/layout-runs.ts` (`layoutRunsOf`, `storedLayoutOf`, `layoutWorkOf`) parses with a bare native engine.
+
+As a result, the layout-runs lane of `validate --node-storage arena` describes object trees.
+
+**Files:**
+- Modify `rust/crates/sittir-core/src/napi_engine.rs` (the three calls), `packages/common/src/engine.ts` (`NativeEngineLike`) and `packages/tools/src/validate/layout-runs.ts`.
+- Test: `packages/tools/tests/layout-baseline.test.ts`, `layout-scaling.test.ts` and `render-root-descents.test.ts`.
+
+**Interfaces:**
+- Consumes the runs that `backerParity` already computes from an arena read's records: 13,880 on the validation corpus, 0 apart from the object tree's.
+- What each call takes in place of a tree id for an arena tree is an addon signature change. It goes to brainstorm, and through brainstorm to the maintainer, before code.
+
+- [ ] **Step 1: Write the failing tests.** `layout-baseline.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars:
+  - `layoutRunsOf` under arena answers the records' runs, equal to `backerParity`'s (0 apart);
+  - `storedLayoutOf` and `layoutWorkOf` answer from the arena tree, not from a bare parse.
+- [ ] **Step 2: Run them.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/layout-baseline.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
+- [ ] **Step 3: Implement.**
+  - The three calls answer from an arena tree's records, by the signature brainstorm returned.
+  - `layout-runs.ts` parses with the engine of the storage the lane names.
+- [ ] **Step 4: Run.**
+  - Step 2's command. Expected: PASS.
+  - `validate --node-storage arena`: its layout-runs rows now describe arena trees. Each row that moves is listed and sent to brainstorm. Once accepted, it is the arena baseline that Task 4 compares against. Object storage's rows do not move.
+  - The full unit suite.
+- [ ] **Step 5: Commit:** `feat(tools): the layout diagnostics answer for an arena tree from its records`.
 
 ### Task 4: A list's delimiter and separators, resolved once in the read
 
