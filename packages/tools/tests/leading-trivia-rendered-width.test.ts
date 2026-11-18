@@ -27,7 +27,7 @@ function secondTypeArgument(source: string): AnyUntypedNode {
 	if (declaration === undefined || !ts.is.typeAliasDeclaration(declaration)) throw new Error('expected a type alias');
 	const value = declaration.value();
 	if (!ts.is.genericType(value)) throw new Error('expected a generic type');
-	const second = value.typeArguments().types().items()[1];
+	const second = value.typeArguments()[1];
 	if (second === undefined) throw new Error('expected a second type argument');
 	return materializeDetached(second, accessorOf);
 }

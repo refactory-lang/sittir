@@ -30,7 +30,7 @@ describe.each(constructions)('a built node read through its holder (%s)', (_, rs
 			body: heldCoordinate(fn.body()) as never
 		});
 		expect(built.parameters()).toBe(fn.parameters());
-		expect(built.parameters().elements()).toHaveLength(1);
+		expect(built.parameters()).toHaveLength(1);
 		expect(built.body()).toBe(fn.body());
 		const file = b.sourceFile({ statements: parsed.statements().map((statement) => heldCoordinate(statement as object)) as never });
 		expect(file.statements()[1]).toBe(fn);

@@ -16,7 +16,7 @@ function typeArgument(ts: Engine, source: string, index: number) {
 	if (declaration === undefined || !ts.is.typeAliasDeclaration(declaration)) throw new Error('expected a type alias');
 	const value = declaration.value();
 	if (!ts.is.genericType(value)) throw new Error('expected a generic type');
-	const argument = value.typeArguments().types().items()[index];
+	const argument = value.typeArguments()[index];
 	if (argument === undefined || !ts.is.typeIdentifier(argument)) throw new Error('expected a type identifier');
 	return argument;
 }
@@ -24,7 +24,7 @@ function typeArgument(ts: Engine, source: string, index: number) {
 function fieldName(ts: Engine, source: string) {
 	const declaration = ts.parse(source).statements()[0];
 	if (declaration === undefined || !ts.is.classDeclaration(declaration)) throw new Error('expected a class');
-	const holder = declaration.body().members()[0];
+	const holder = declaration.body()[0];
 	if (holder === undefined || !ts.is.classBodyMemberDeclaration(holder)) throw new Error('expected a class member');
 	const member = holder.member();
 	if (!ts.is.publicFieldDefinition(member)) throw new Error('expected a field');
