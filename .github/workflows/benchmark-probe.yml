@@ -47,6 +47,10 @@ on:
         description: What a phase profile records, samples of time or a count of allocations.
         type: string
         default: samples
+      batches-per-engine:
+        description: The batches a phase profile runs in one engine before a fresh one; 0 for one engine for the whole run.
+        type: string
+        default: '50'
 
 permissions:
   contents: read
@@ -141,6 +145,7 @@ jobs:
           PHASE: ${{ inputs.phase }}
           MEASURE: ${{ inputs.measure }}
           STORAGE: ${{ inputs.storage }}
+          PER_ENGINE: ${{ inputs.batches-per-engine }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" feature="$RUNNER_TEMP/trees/feature")
           if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
