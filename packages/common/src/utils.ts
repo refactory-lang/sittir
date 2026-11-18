@@ -626,7 +626,6 @@ export function ownerElements(list: unknown, reader: string): readonly unknown[]
 	return read?.call(list) ?? [];
 }
 
-/** The last hop of a hoisted read that reaches a list view: the elements its own fill reads, as stored, with no wrapper read as its content. */
 export function listElementsHop(owner: string | undefined, reader: string): HoistHop {
 	return function (this: never) {
 		const elements = ownerElements(owner === undefined ? this : (this as Record<string, () => unknown>)[owner]!.call(this), reader);
@@ -949,12 +948,10 @@ function hoistedWithUnchecked(
 	return apply(handle === undefined ? wrap(value as readonly never[]) : inEngine(handle, () => wrap(value as readonly never[])));
 }
 
-/** `wrap(value)` for a hoisted slot's value, or `undefined` when the slot was left out. */
 export function wrapHoisted<R>(value: unknown, wrap: (value: never) => R, kind: number): R | undefined {
 	return value === undefined ? undefined : isKindNode(value, kind) ? (value as R) : wrap(value as never);
 }
 
-/** `wrapHoisted` over each item of a list slot's value; a single item is a one-item list. */
 export function wrapHoistedEach<R>(value: unknown, wrap: (value: never) => R, kind: number): R[] | undefined {
 	if (value === undefined) return undefined;
 	return (Array.isArray(value) ? value : [value]).map((item) => wrapHoisted(item, wrap, kind) as R);
@@ -964,7 +961,6 @@ function isKindNode(value: unknown, kind: number): boolean {
 	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
 }
 
-/** A hop of a hoisted read over a built holder: the wrapper's one slot, read as `storedSlotRead` reads it. */
 export function storedHop(accessor: string, storage: string, many: boolean): HoistHop {
 	return function (this: never) {
 		return storedSlotRead(this, accessor, storage, many);
