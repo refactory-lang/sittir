@@ -131,10 +131,15 @@ fn same_row(source: &str, a: u32, b: u32) -> bool {
 /// 3. trailing the holder before it with only entries between;
 /// 4. leading the nearest holder after it, else trailing the nearest before
 ///    it, else the `inner` side of the node holding them.
+///
+/// A sibling with an empty span that holds nothing is passed over as an
+/// entry is: an automatic semicolon placed before a same-line comment has no
+/// text, so the comment still trails the holder before it.
 #[must_use]
 pub fn owner(before: &[Sibling], entry: Span, after: &[Sibling], source: &str) -> Owner {
-    let beside_before = before.iter().rposition(|sibling| !sibling.entry).filter(|&at| before[at].holder);
-    let beside_after = after.iter().position(|sibling| !sibling.entry).filter(|&at| after[at].holder);
+    let passed = |sibling: &Sibling| sibling.entry || (!sibling.holder && sibling.span.start == sibling.span.end);
+    let beside_before = before.iter().rposition(|sibling| !passed(sibling)).filter(|&at| before[at].holder);
+    let beside_after = after.iter().position(|sibling| !passed(sibling)).filter(|&at| after[at].holder);
     if let Some(at) = beside_before.filter(|&at| same_row(source, before[at].span.end, entry.start)) {
         return Owner::Trailing { at };
     }
@@ -533,5 +538,27 @@ mod tests {
         let kinds = SurfaceKinds { inner: &[(KindId(3), 2), (KindId(9), 5), (KindId(12), 6)], ..SurfaceKinds::default() };
         assert_eq!([3, 9, 12, 4, 0, 13].map(|kind| kinds.inner_site(KindId(kind))), [Some(2), Some(5), Some(6), None, None, None]);
         assert_eq!(SurfaceKinds::default().inner_site(KindId(3)), None);
+    }
+
+    fn sibling(start: u32, end: u32, holder: bool) -> Sibling {
+        Sibling { span: Span { start, end }, holder, entry: false }
+    }
+
+    #[test]
+    fn owner_passes_over_an_empty_sibling_that_holds_nothing() {
+        let source = "a: string // c\n  b: number";
+        let (a, b) = (sibling(0, 9, true), sibling(17, 26, true));
+        assert_eq!(owner(&[a, sibling(10, 10, false)], Span { start: 10, end: 14 }, &[b], source), Owner::Trailing { at: 0 });
+        let source = "a\n// c\nb";
+        assert_eq!(owner(&[sibling(0, 1, true)], Span { start: 2, end: 6 }, &[sibling(7, 7, false), sibling(7, 8, true)], source), Owner::Leading { at: 1 });
+    }
+
+    #[test]
+    fn owner_stops_at_a_separator_and_at_an_empty_sibling_that_holds_sides() {
+        let source = "a, // c\n  b";
+        let (a, b) = (sibling(0, 1, true), sibling(10, 11, true));
+        assert_eq!(owner(&[a, sibling(1, 2, false)], Span { start: 3, end: 7 }, &[b], source), Owner::Leading { at: 0 });
+        let source = "a // c\n  b";
+        assert_eq!(owner(&[sibling(0, 1, true), sibling(2, 2, true)], Span { start: 2, end: 6 }, &[sibling(9, 10, true)], source), Owner::Trailing { at: 1 });
     }
 }
