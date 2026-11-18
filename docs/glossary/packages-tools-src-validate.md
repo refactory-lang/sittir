@@ -1807,6 +1807,10 @@ Whether two texts carry the same spelled meaning under a delimiter spelling: the
 
 `true` on a flatten seat that always merges its group's members into the parent, rather than nesting them under the key.
 
+### `packages/tools/src/validate/common.ts::storageEngineOf`
+
+A grammar's engine of the named node storage, built with `createEngine`'s default options, for a check that reads one source through both storages side by side (`storage-parity`). It refuses a stale binary and a debug build as `loadNativeEngine` does, but it is not cached and takes neither validation's storage nor its `verifyStructure: 'runtime'`: a comparison of the storages is made on the engine a caller gets by default. The caller disposes it.
+
 ### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
 
 The stage a round-trip failure reached: read, build, render, reparse or ast.
@@ -2050,3 +2054,67 @@ The grammars to check.
 ### `packages/tools/src/portable/admission.ts::run`
 
 The admission command: prints the formatted report and returns 0.
+
+### `packages/tools/src/validate/backer-parity.ts::backerParityOf`
+
+Reads one source of a grammar through arena storage's two backers: how many nodes the record backer answers apart from the tree backer (`backerParity`), and the layout runs read after that check against the layout runs of a second parse of the same source (`runParity`). The one per-source read of the backer comparison: `computeBackerParity` sums it over a corpus's files, and `storage-parity` calls it on every validation corpus source of every grammar.
+
+### `packages/tools/src/validate/storage-parity.ts::StorageCheck`
+
+The five comparisons `storage-parity` makes, each a named output: `snapshots` (each source's root snapshot, error count and node sequence), `renders` (each node rendered untouched), `layoutRuns` (arena storage's record backer against its tree backer, by `backerParityOf`), `rebuilds` (each list rebuilt from its own items through its list slot's setter, then rendered) and `writeBacks` (each non-empty side written back with its own entries on a fresh parse, then rendered).
+
+### `packages/tools/src/validate/storage-parity.ts::SourceFacts`
+
+What one storage reads of one source for the checks that compare object storage with arena storage: the error count; the root snapshot; each node in walk order (the root, then `$query().$descendants`) with its kind name, its untouched render and, for a list, its rebuild; and each non-empty side of each node with its entry count, whether an entry is an ERROR, and its write-back. A value whose read throws is kept as `throws: ` and the first line of the message, so a throw in one storage is a difference like any other.
+
+### `packages/tools/src/validate/storage-parity.ts::StorageDifference`
+
+One fact of one source on which object storage and arena storage disagree: where it sits (the node's index in walk order, its kind, the side) and each storage's answer. On a write-back, `holdsError` is set when either storage's side holds an ERROR entry; the accepted differences key on it.
+
+### `packages/tools/src/validate/storage-parity.ts::BackerDifference`
+
+A source whose arena record backer answers a node, or places or measures a layout run, apart from its tree backer, with the counts `backerParityOf` gives; or the first line of what that read threw.
+
+### `packages/tools/src/validate/storage-parity.ts::Difference`
+
+Any difference `storage-parity` reports, told apart by `check`: a `BackerDifference` for `layoutRuns`, a `StorageDifference` for the other four checks.
+
+### `packages/tools/src/validate/storage-parity.ts::StorageParityReport`
+
+`storage-parity`'s whole result for the grammars it read: how many of each check's units it compared (sources, nodes, layout runs, lists, sides), how many layout runs the two backers measure alike, and every difference.
+
+### `packages/tools/src/validate/storage-parity.ts::AcceptedDifference`
+
+A known difference between the storages that the gate accepts: its shape (`matches`), its name, which says what differs, and a ceiling per grammar. A grammar it names no ceiling for has ceiling 0, so the same shape in another grammar fails.
+
+### `packages/tools/src/validate/storage-parity.ts::AcceptedCount`
+
+How many differences of one accepted shape one grammar has, against that grammar's ceiling for it.
+
+### `packages/tools/src/validate/storage-parity.ts::StorageVerdict`
+
+The gate's reading of a report: each accepted shape's count in each grammar against its ceiling, the differences no accepted shape matches, and whether the report passes.
+
+### `packages/tools/src/validate/storage-parity.ts::StorageParityOptions`
+
+The grammars to compare (none named: every stable grammar, as `bench-storage` reads them) and whether to print the report and its verdict as JSON.
+
+### `packages/tools/src/validate/storage-parity.ts::ACCEPTED_DIFFERENCES`
+
+The differences between the storages the gate accepts, each at the count measured where it occurs. Object storage throws rebuilding a rust list whose item is a hidden group it reads as a bare unit, where arena storage rebuilds it: an open defect, rust 11. A written-back side holding an ERROR takes the ERROR's in-line whitespace from the render options (python 1, typescript 1), and a root's written-back inner side takes its gaps from the render options (rust 6): both are intentional, since a written-back side takes its gaps from the render options. A ceiling only falls: a count under its ceiling is reported so the ceiling can be lowered, and a count above it fails.
+
+### `packages/tools/src/validate/storage-parity.ts::storageFactsOf`
+
+Reads a source through one engine and collects its `SourceFacts`. A list is rebuilt through the one setter among its kind's query slots (`loadSlotAccessorOf`); a list kind with no such setter or with more than one throws, so a change to the model shows up instead of the list being skipped. Each side is written back on a fresh parse of the source, so no write-back reads another's result.
+
+### `packages/tools/src/validate/storage-parity.ts::differencesOf`
+
+Compares two storages' facts for one source and lists every disagreement: the error count, the snapshot's first differing path and the node count, then for each node in walk order its kind (a snapshot difference), its render and its rebuild, then each side present in either storage, keyed by node index and side name.
+
+### `packages/tools/src/validate/storage-parity.ts::verdictOf`
+
+Gives each difference to the first accepted shape it matches and counts them per grammar read, as `checkCodeCeilings` counts codes. It passes only when no difference is left unaccepted, no count is above its ceiling, at least one source was read and at least one layout run measured alike, so parity cannot pass on nothing.
+
+### `packages/tools/src/validate/storage-parity.ts::run`
+
+The `sittir tool storage-parity` command. It compares the two storages on each grammar's validation corpus (`loadCorpusEntries`, what `bench-storage --validation` reads) and prints, for each check, how many of its units are apart, then each accepted count against its ceiling and each unaccepted difference with both storages' answers (or the report and its verdict as JSON). It exits 1 unless the verdict passes.
