@@ -13,7 +13,7 @@ type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B 
 function expectTrue<_T extends true>(): void {}
 
 export function chainOfTwoReadsAsItsElements(): void {
-	expectTrue<Equals<ReturnType<T.FunctionItem['typeParameters']>, readonly T.AttributedTypeParameter[]>>();
+	expectTrue<Equals<ReturnType<T.FunctionItem['typeParameters']>, readonly T.AttributedTypeParameter[] | undefined>>();
 	expectTrue<Equals<ReturnType<T.TypeParameters['elements']>, NonEmptyArray<T.AttributedTypeParameter>>>();
 	expectTrue<Equals<ReturnType<T.CallExpression['arguments']>, readonly T.Argument[]>>();
 }
@@ -27,7 +27,7 @@ export function externModifierReadsItsAbi(): void {
 }
 
 export function wrapperWithAReceiverFormKeepsTheForm(): void {
-	expectTrue<Equals<ReturnType<T.FunctionItem['parameters']>, T.ParametersElements | T.ParametersElementsReceiver | undefined>>();
+	expectTrue<Equals<ReturnType<T.FunctionItem['parameters']>, T.ParametersElements | T.ParametersElementsReceiver | readonly never[] | undefined>>();
 }
 
 type ArgumentAttributeItems = NonNullable<T.Argument.Config>['attributeItems'];
