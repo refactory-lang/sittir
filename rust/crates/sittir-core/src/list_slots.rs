@@ -122,7 +122,7 @@ pub fn sets_apart(source: &str, from: u32, to: u32, extras: impl IntoIterator<It
         }
         match bytes.get(at as usize) {
             Some(b'\n') => breaks += 1,
-            Some(b' ' | b'\t' | b'\r' | b'\x0c') => {}
+            Some(&byte) if crate::points::blank(byte) => {}
             Some(_) if breaks > 0 => return breaks >= 2,
             _ => {}
         }

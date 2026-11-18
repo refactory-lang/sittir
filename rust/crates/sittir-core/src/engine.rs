@@ -1058,7 +1058,8 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         Some(SourceTable::framed_span(&seating, &coord))
     }
 
-    /// The source's row starts (`LineTable`), built on first use.
+    /// The source's row starts and blank lines (`LineTable`), built on first
+    /// use.
     pub fn lines(&self) -> &crate::points::LineTable {
         self.lines.get_or_init(|| {
             self.grew();
@@ -1751,10 +1752,11 @@ struct Lookups<'t, G: EngineGrammar, B: Backing> {
     /// Each frame a gap no anchor measures was read from, by its record and
     /// its node, with the record it is a frame of (`aligned`).
     aligned: HashMap<(usize, NodeIndex), (Record, std::rc::Rc<Aligned>), crate::heap::IndexState>,
-    /// Each routed child of a node one of whose children's leading side was
-    /// asked, by its index: for an item of a list slot, whether the source
-    /// sets it apart with a blank line (`list_slots::list_items`), and none
-    /// for any other child.
+    /// Each child of a node one of whose children's leading side was asked,
+    /// by its index: for an item of a list slot, whether the source sets it
+    /// apart with a blank line (`list_slots::list_items`); none for any
+    /// other child, and for every child of a node whose bytes hold no blank
+    /// line (`LineTable::holds_blank_line`), whose children are not routed.
     apart: HashMap<NodeIndex, Option<bool>, crate::heap::IndexState>,
 }
 
@@ -2146,16 +2148,19 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// (`list_slots::list_items`): a blank-line member first, in place of the
     /// runs before its first extra.
     fn list_item_leading(&mut self, index: NodeIndex, entries: &mut Vec<SideEntry<G::Trivia>>) {
-        if let std::collections::hash_map::Entry::Vacant(unasked) = self.apart.entry(index) {
-            unasked.insert(None);
+        if !self.apart.contains_key(&index) {
+            let Some(parent) = self.nodes.parent(index) else { return };
             let tree = self.tree;
-            if let Some(parent) = self.nodes.parent(index) {
-                let at = self.nodes.kid(parent);
-                if let Some(routed) = tree.grammar.slot_routes(&mut self.nodes, &at) {
-                    self.apart.extend(routed.children.iter().map(|child| (child.index, None)));
-                    self.apart.extend(crate::list_slots::list_items(&routed, &tree.source).into_iter().map(|(item, apart)| (item, Some(apart))));
-                }
+            let at = self.nodes.kid(parent);
+            let routed = if tree.lines().holds_blank_line(at.span()) { tree.grammar.slot_routes(&mut self.nodes, &at) } else { None };
+            if let Some(routed) = routed {
+                self.apart.extend(routed.children.iter().map(|child| (child.index, None)));
+                self.apart.extend(crate::list_slots::list_items(&routed, &tree.source).into_iter().map(|(item, apart)| (item, Some(apart))));
+            } else {
+                let kids = self.nodes.kids(parent);
+                self.apart.extend(kids.iter().map(|kid| (kid.index, None)));
             }
+            self.apart.entry(index).or_insert(None);
         }
         if self.apart[&index] != Some(true) {
             return;
