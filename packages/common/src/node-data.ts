@@ -1,5 +1,5 @@
 import type { AnyUntypedNode, ByteSpan, ErrorRegion, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry, UnitSidesWire } from '@sittir/types';
-import type { CellSite } from './record-cell.ts';
+import { leafItemPastNames, type CellSite, type NodeIdFormat } from './record-cell.ts';
 import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
@@ -90,7 +90,7 @@ export function parseErrorsOf(node: object): readonly ErrorRegion[] | undefined 
 	const tree = treeOf(node);
 	const at = coordinateOf(node);
 	if (tree?.built === undefined || at === undefined || !('$node' in at)) return tree?.errors;
-	return tree.built.errorsOf(coordinateIndex(at)) as readonly ErrorRegion[];
+	return tree.built.errorsOf(coordinateIndex(at, tree.built.format.nodeId)) as readonly ErrorRegion[];
 }
 
 /** The trivia a node owns: its layout's, read or written. */
@@ -226,31 +226,29 @@ export function sourceHandleOf(node: object): number | undefined {
 /** The descendant index a read node or a coordinate names itself by, in its tree. */
 export function indexOf(node: object): number | undefined {
 	const at = coordinateOf(node);
-	return at === undefined ? undefined : coordinateIndex(at);
+	return at === undefined ? undefined : coordinateIndex(at, treeOf(node)?.built?.format.nodeId);
 }
 
-const SITE_WORDS = 2 ** 7;
-const SITE_ITEMS = 2 ** 16;
-const KEY_SITES = SITE_WORDS * SITE_ITEMS;
-const KEY_NODES = 2 ** 30;
-
-export function packedSite(site: CellSite | undefined): number {
+export function packedSite(site: CellSite | undefined, format: NodeIdFormat): number {
 	if (site === undefined) return 0;
 	const [word, item] = site;
-	if (word <= 0 || word >= SITE_WORDS || item >= SITE_ITEMS) throw new Error(`the site at word ${word}, item ${item} is past what a node's key holds`);
-	return item * SITE_WORDS + word;
+	if (word <= 0 || word >= 2 ** format.wordBits) throw new Error(`the site at word ${word} is past the ${2 ** format.wordBits} words a record takes in arena storage`);
+	if (item >= 2 ** format.itemBits) throw new Error(leafItemPastNames(item, format));
+	return item * 2 ** format.wordBits + word;
 }
 
-export function keyName(key: number): { readonly node: number; readonly site: number } {
-	return key >= 0 ? { node: key, site: 0 } : { node: Math.floor(-key / KEY_SITES), site: -key % KEY_SITES };
+export function keyName(key: number, format: NodeIdFormat): { readonly node: number; readonly site: number } {
+	const sites = 2 ** (format.itemBits + format.wordBits);
+	return key >= 0 ? { node: key, site: 0 } : { node: Math.floor(-key / sites), site: -key % sites };
 }
 
-export function coordinateIndex(at: NodeCoordinate): number {
+export function coordinateIndex(at: NodeCoordinate, format: NodeIdFormat | undefined): number {
 	const { $node, $site } = at as { readonly $node?: number; readonly $site?: CellSite };
 	if ($node === undefined) return decodeIndex(at.$treeHandle);
 	if ($site === undefined) return $node;
-	if ($node >= KEY_NODES) throw new Error(`the record at ${$node} is past what a node's key holds`);
-	return -($node * KEY_SITES + packedSite($site));
+	if (format === undefined) throw new Error(`the node at item ${$site[1]} of record ${$node} is named in arena storage, and no arena reads it`);
+	if ($node >= 2 ** format.holderBits) throw new Error(`the record at ${$node} is past the ${2 ** format.holderBits} addresses a node's key holds`);
+	return -($node * 2 ** (format.itemBits + format.wordBits) + packedSite($site, format));
 }
 
 /** Whether `key` names one of a node's slots (`_<name>`). */
@@ -336,7 +334,7 @@ export function placeOf(node: object): SourceIdentity | undefined {
 	const token = treeTokenOf(node);
 	const at = coordinateOf(node);
 	if (token === undefined || at === undefined) return undefined;
-	return { token, index: coordinateIndex(at), treeHandle: at.$treeHandle, end: at.$end, span: at.$span, kind: at.$type };
+	return { token, index: coordinateIndex(at, treeOf(node)?.built?.format.nodeId), treeHandle: at.$treeHandle, end: at.$end, span: at.$span, kind: at.$type };
 }
 
 /**

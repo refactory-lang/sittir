@@ -408,6 +408,17 @@ export interface NativeParseOptions {
   adoptStyle?: boolean
 }
 
+/**
+ * r" The bits of a node's key that hold its holder's address, its
+ * r" item and its slot word (`types::NodeName::HOLDER_BITS`,
+ * r" `ITEM_BITS`, `WORD_BITS`).
+ */
+export declare const NODE_ID_HOLDER_BITS: number
+
+export declare const NODE_ID_ITEM_BITS: number
+
+export declare const NODE_ID_WORD_BITS: number
+
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex = number
 

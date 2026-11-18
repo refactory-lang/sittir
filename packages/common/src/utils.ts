@@ -847,7 +847,7 @@ export type WrapNode = (data: object, tree: TreeHandle) => unknown;
 export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, depth?: number, role: Role = 'node'): unknown {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
 	if (isCoordinate(value)) {
-		if (tree.built !== undefined && '$node' in value) return registered(tree, coordinateIndex(value), role) ?? hydrateWith(tree.built.named(value as never), tree, wrap, undefined, role);
+		if (tree.built !== undefined && '$node' in value) return registered(tree, coordinateIndex(value, tree.built.format.nodeId), role) ?? hydrateWith(tree.built.named(value as never), tree, wrap, undefined, role);
 		const known = decodeTree(value.$treeHandle) === tree.id ? registered(tree, decodeIndex(value.$treeHandle), role) : undefined;
 		return known ?? hydrateWith(readNode(tree, value, depth), tree, wrap, undefined, role);
 	}

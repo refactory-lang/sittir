@@ -244,7 +244,8 @@ describe('a built arena rendered natively', () => {
 			expect(at.$node).toBe(item.$at);
 			expect(at.$site).toEqual([expect.any(Number), 0]);
 			expect(at.$site[0]).toBeGreaterThan(0);
-			expect(keyName(coordinateIndex(at as never))).toEqual({ node: item.$at, site: at.$site[0] });
+			const { nodeId } = treeOf(leaf)!.built!.format;
+			expect(keyName(coordinateIndex(at as never, nodeId), nodeId)).toEqual({ node: item.$at, site: at.$site[0] });
 			expect((treeOf(leaf)!.built!.named(at as never) as { $text(): string }).$text()).toBe('f');
 		});
 
@@ -253,7 +254,7 @@ describe('a built arena rendered natively', () => {
 			const block = (engine.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
 			const tree = treeOf(block)!;
 			const holder = (block as { readonly $at: number }).$at;
-			const key = (site: readonly [number, number]): number => coordinateIndex({ $node: holder, $site: site, $span: { start: 0, end: 0 }, $type: 0 } as never);
+			const key = (site: readonly [number, number]): number => coordinateIndex({ $node: holder, $site: site, $span: { start: 0, end: 0 }, $type: 0 } as never, tree.built!.format.nodeId);
 			const sites = Array.from({ length: 16 }, (_, word) => [word + 1, 0] as const);
 			const comments = sites.map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
 			const unit = sites.findIndex((site, n) => {

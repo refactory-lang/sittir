@@ -485,5 +485,5 @@ fn a_site_s_word_names_any_cell_of_every_record() {
         widest_record::<sittir_regex::RegexGrammar>(),
         widest_record::<sittir_scm::ScmGrammar>(),
     ];
-    assert!(widest.iter().all(|&words| words > 0 && words < sittir_core::types::NodeName::SITE_WORDS), "{widest:?}");
+    assert!(widest.iter().all(|&words| words > 0 && words <= sittir_core::types::NodeName::SITE_WORDS), "{widest:?}");
 }

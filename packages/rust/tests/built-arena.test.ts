@@ -453,6 +453,17 @@ describe('a built arena', () => {
 		expect(written).toEqual([[[at, 11, 0], 'leading', [3]]]);
 	});
 
+	it('refuses a list holding a built leaf past the leaf items a list slot holds in arena storage, and takes text there', () => {
+		const arena = arenaOf();
+		const limit = 2 ** format!.nodeId.itemBits;
+		const items: unknown[] = Array.from({ length: limit + 1 }, () => 'a');
+		storeList(arena, arena.draft(9, 13), 11, 11, items);
+		items[limit] = arena.leaf(leafOf(4), 'x');
+		expect(() => storeList(arena, arena.draft(9, 13), 11, 11, items)).toThrow(
+			'a list slot holds a leaf at item 262144, past the 262144 leaf items a list slot holds in arena storage, whose node names give an item 18 bits; object storage holds the list'
+		);
+	});
+
 	it('drafts a record of its kind at the width its builders write, and refuses a kind no builder writes', () => {
 		const arena = arenaOf(NO_SIDES, { ...NO_VIEWS, words: { 9: 13 } });
 		expect(arena.record(9).words).toBe(13);
@@ -474,14 +485,15 @@ describe('a built arena', () => {
 		storeListOptions(arena, record, 3, 6);
 		const node = arena.view(record);
 		const at = builtRecordOf(node, arena)!;
-		const copy = arena.rebuiltFromRead(node, -(7 * 2 ** 23 + 3 * 2 ** 7 + 21), { start: 40, end: 52 }, false);
+		const { itemBits, wordBits } = format!.nodeId;
+		const copy = arena.rebuiltFromRead(node, -(7 * 2 ** (itemBits + wordBits) + 3 * 2 ** wordBits + 21), { start: 40, end: 52 }, false);
 		const copiedAt = builtRecordOf(copy, arena)!;
 		expect(copiedAt).not.toBe(at);
 		const [kind, side, ...cells] = placed(arena, copy, 13);
 		expect([kind, ...cells]).toEqual([9, ...placed(arena, node, 13).slice(2)]);
 		expect(Array.from(arena.words(side!, 8).subarray(wordOf(side!, format!), wordOf(side!, format!) + 8))).toEqual([
 			format!.sideSides.bit | format!.sideDelimiter | format!.sideSeparatorKind,
-			7, 3 * 2 ** 7 + 21, 0, 40, 52,
+			7, 3 * 2 ** wordBits + 21, 0, 40, 52,
 			3, 6
 		]);
 		expect(leafSitesOf(leaf)).toEqual([at, 11, 0]);

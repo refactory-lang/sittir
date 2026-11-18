@@ -233,14 +233,49 @@ pub struct NodeName {
 }
 
 impl NodeName {
-    /// The bits of a key that hold a site's word, and those that hold its
-    /// item above them. A record's address takes 30 bits, so with these a
-    /// key is a whole number a double holds exactly.
-    const WORD_BITS: u32 = 7;
-    /// One past the widest record a site's word can name a cell of.
+    /// The bits of a key that hold a site's word, lowest; those that hold
+    /// its item above them; and those that hold its holder's address above
+    /// both: 53 bits, so a key is a whole number a double holds exactly. The
+    /// record codec exports the three, and the JavaScript side reads them
+    /// from there.
+    ///
+    /// The word is the one a slot's cell starts at in its holder's parsed
+    /// record: words 1 to 31, 0 being a name with no site (a record's
+    /// header takes word 0, so no cell starts there). A record is therefore
+    /// at most `SITE_WORDS`, 32 words, header included, and each generated
+    /// kind asserts so (`refuse_wider_record`). The item is the slot's
+    /// item, 0 for a slot that holds one value: items 0 to 262,143, so a
+    /// list slot names at most `SITE_ITEMS`, 262,144, leaf items, and a
+    /// read or build of a list holding a leaf past that is refused
+    /// (`ArenaError::LeafItemPastNames`).
+    pub const WORD_BITS: u32 = 5;
+    pub const ITEM_BITS: u32 = 18;
+    pub const HOLDER_BITS: u32 = 30;
+    /// The most words a record takes, header included: one past the last
+    /// word a site names.
     pub const SITE_WORDS: u32 = 1 << Self::WORD_BITS;
-    const ITEM_BITS: u32 = 16;
-    const NODE_BITS: u32 = 30;
+    /// The most leaf items a list slot holds: one past the last item a
+    /// site names.
+    pub const SITE_ITEMS: u32 = 1 << Self::ITEM_BITS;
+
+    /// Refuses, when a constant is evaluated, a kind whose record takes
+    /// `words` words, header included, past `SITE_WORDS`: the build stops
+    /// with `refusal`, which names the kind and its width.
+    ///
+    /// ```
+    /// const _: () = sittir_core::types::NodeName::refuse_wider_record(32, "a record of 32 words fits");
+    /// ```
+    ///
+    /// ```compile_fail,E0080
+    /// const _: () = sittir_core::types::NodeName::refuse_wider_record(33, "kind `wide` has a record of 33 words");
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// For `words` past `SITE_WORDS`, with `refusal`.
+    pub const fn refuse_wider_record(words: u32, refusal: &'static str) {
+        assert!(words <= Self::SITE_WORDS, "{}", refusal);
+    }
 
     /// The name's site as one word, its item above its word; 0 for a name
     /// with no site, since a cell starts past its record's header.
@@ -261,7 +296,7 @@ impl NodeName {
     #[must_use]
     pub fn key(self) -> Option<f64> {
         let Some([word, item]) = self.site else { return Some(f64::from(self.node.0)) };
-        if word == 0 || word >> Self::WORD_BITS != 0 || item >> Self::ITEM_BITS != 0 || self.node.0 >> Self::NODE_BITS != 0 {
+        if word == 0 || word >> Self::WORD_BITS != 0 || item >> Self::ITEM_BITS != 0 || self.node.0 >> Self::HOLDER_BITS != 0 {
             return None;
         }
         let packed = (u64::from(self.node.0) << (Self::ITEM_BITS + Self::WORD_BITS)) | u64::from(self.packed_site());
@@ -279,7 +314,7 @@ impl NodeName {
         if key >= 0.0 {
             return (key <= f64::from(u32::MAX)).then_some(Self { node: NodeId(key as u32), site: None });
         }
-        if -key >= (1u64 << (Self::NODE_BITS + Self::ITEM_BITS + Self::WORD_BITS)) as f64 {
+        if -key >= (1u64 << (Self::HOLDER_BITS + Self::ITEM_BITS + Self::WORD_BITS)) as f64 {
             return None;
         }
         let packed = (-key) as u64;
@@ -298,7 +333,7 @@ mod name_tests {
             NodeName { node: NodeId(0), site: None },
             NodeName { node: NodeId(u32::MAX), site: None },
             NodeName { node: NodeId(32_768), site: Some([2, 0]) },
-            NodeName { node: NodeId((1 << 30) - 1), site: Some([127, 65_535]) },
+            NodeName { node: NodeId((1 << 30) - 1), site: Some([31, 262_143]) },
         ];
         for name in names {
             let key = name.key().expect("a key");
@@ -313,12 +348,20 @@ mod name_tests {
 
     #[test]
     fn a_site_past_what_a_key_holds_has_none() {
-        for site in [[128, 0], [2, 65_536], [0, 0]] {
+        for site in [[32, 0], [2, 262_144], [0, 0]] {
             assert_eq!(NodeName { node: NodeId(32_768), site: Some(site) }.key(), None, "{site:?}");
         }
         assert_eq!(NodeName { node: NodeId(1 << 30), site: Some([2, 0]) }.key(), None);
         assert_eq!(NodeName::from_key(-0.5), None);
         assert_eq!(NodeName::from_key(-(2f64.powi(53))), None);
+    }
+
+    #[test]
+    fn a_leaf_key_gives_its_holder_30_bits_its_item_18_and_its_word_5() {
+        assert_eq!((NodeName::HOLDER_BITS, NodeName::ITEM_BITS, NodeName::WORD_BITS), (30, 18, 5));
+        assert_eq!(NodeName::SITE_WORDS, 32);
+        assert_eq!(NodeName::SITE_ITEMS, 262_144);
+        assert_eq!(NodeName { node: NodeId(1), site: Some([3, 2]) }.key(), Some(-f64::from((1 << 23) | (2 << 5) | 3)));
     }
 }
 

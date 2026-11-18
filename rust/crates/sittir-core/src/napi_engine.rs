@@ -848,6 +848,15 @@ macro_rules! napi_engine {
             /// chunk (`arena::CHUNK_SHIFT`).
             #[::napi_derive::napi]
             pub const ARENA_CHUNK_SHIFT: u32 = $crate::arena::CHUNK_SHIFT;
+            /// The bits of a node's key that hold its holder's address, its
+            /// item and its slot word (`types::NodeName::HOLDER_BITS`,
+            /// `ITEM_BITS`, `WORD_BITS`).
+            #[::napi_derive::napi]
+            pub const NODE_ID_HOLDER_BITS: u32 = $crate::types::NodeName::HOLDER_BITS;
+            #[::napi_derive::napi]
+            pub const NODE_ID_ITEM_BITS: u32 = $crate::types::NodeName::ITEM_BITS;
+            #[::napi_derive::napi]
+            pub const NODE_ID_WORD_BITS: u32 = $crate::types::NodeName::WORD_BITS;
             /// A side record's fields before a list's delimiters setting, each
             /// one's mask bit and its words (`arena::side::field`).
             #[::napi_derive::napi]

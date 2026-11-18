@@ -559,6 +559,9 @@ impl<'a> Hydration<'a> {
         let cell = draft.place(shape.word, 1)?;
         let bits = self.tree.kind_bits();
         let items = items.map(|item| item.map(|item| self.held(draft, item)).transpose()).collect::<Result<Vec<_>, _>>()?;
+        if let Some(item) = (crate::types::NodeName::SITE_ITEMS..len).zip(&items[crate::types::NodeName::SITE_ITEMS.min(len) as usize..]).find_map(|(item, value)| matches!(value, Some(Hydrated::Leaf { .. })).then_some(item)) {
+            return Err(ArenaError::LeafItemPastNames { item }.into());
+        }
         self.set_apart(draft, &items);
         let run = self.tree.alloc(words)?;
         let out = self.tree.words_mut(run, words)?;

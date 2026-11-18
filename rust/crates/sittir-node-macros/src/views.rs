@@ -364,6 +364,10 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     } else {
         quote!(#accepts.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*] }))
     };
+    let refusal = format!(
+        "`{ident}`, of kind `{}`, has a record of {words} words, header included, past `sittir_core::types::NodeName::SITE_WORDS`, the most words a record takes in arena storage, where a node's name gives a cell's word `NodeName::WORD_BITS` bits: give the kind fewer cells, or widen `NodeName::WORD_BITS`",
+        kind.segments.last().map_or_else(String::new, |segment| segment.ident.to_string())
+    );
     let accepts_method = if shown_as.is_empty() {
         TokenStream::new()
     } else {
@@ -382,6 +386,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         impl ::sittir_core::arena::HasRecord for #ident {
             type Record<'a> = #view<'a>;
         }
+        const _: () = ::sittir_core::types::NodeName::refuse_wider_record(#words, #refusal);
         impl ::sittir_core::arena::RecordCells for #ident {
             fn shape(kind: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
                 #shape
@@ -718,6 +723,28 @@ mod tests {
         assert!(has(&out, "__layout: layout, __words: words, __at: at, kind: kind,"));
         assert!(has(&out, "fn kind(&self) -> KindId { self.kind }"));
         assert!(has(&out, "self.__write_as(__sink, self.kind,"));
+    }
+
+    #[test]
+    fn a_struct_s_record_width_is_refused_when_it_builds_past_the_words_a_node_name_gives_a_cell() {
+        let out = expand(&parse_quote! {
+            #[node(kind = kind::FUNCTION_ITEM, words = 33, built_words = 3, fields = FunctionItemFields, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item)]
+            pub struct FunctionItemNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = "_name")]
+                #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
+                pub name: SlotValue<NameNode>,
+            }
+        })
+        .expect("expands");
+        assert!(has(
+            &out,
+            r#"const _: () = ::sittir_core::types::NodeName::refuse_wider_record(33u32, "`FunctionItemNode`, of kind `FUNCTION_ITEM`, has a record of 33 words, header included, past `sittir_core::types::NodeName::SITE_WORDS`, the most words a record takes in arena storage, where a node's name gives a cell's word `NodeName::WORD_BITS` bits: give the kind fewer cells, or widen `NodeName::WORD_BITS`");"#
+        ));
     }
 
     #[test]

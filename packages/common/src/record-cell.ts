@@ -41,6 +41,16 @@ export interface RecordCodecConstants {
 	readonly SIDE_WORDS_SEPARATOR: number;
 	readonly SIDE_FIELD_DELIMITER: number;
 	readonly SIDE_FIELD_SEPARATOR_KIND: number;
+	readonly NODE_ID_HOLDER_BITS: number;
+	readonly NODE_ID_ITEM_BITS: number;
+	readonly NODE_ID_WORD_BITS: number;
+}
+
+/** The bits a node's key gives its holder's address, its item and its slot word, the lowest. */
+export interface NodeIdFormat {
+	readonly holderBits: number;
+	readonly itemBits: number;
+	readonly wordBits: number;
 }
 
 /** A side record field before a list's delimiters setting: its mask bit and its words. */
@@ -85,6 +95,7 @@ export interface CellFormat {
 	readonly sideChanged: { readonly leading: number; readonly trailing: number };
 	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
 	readonly sideSeparatorKind: number;
+	readonly nodeId: NodeIdFormat;
 }
 
 /** What a parsed node's coordinate names, as its record's side record stamps it. */
@@ -164,8 +175,16 @@ const CODEC_KEYS = [
 	'SIDE_FIELD_SEPARATOR',
 	'SIDE_WORDS_SEPARATOR',
 	'SIDE_FIELD_DELIMITER',
-	'SIDE_FIELD_SEPARATOR_KIND'
+	'SIDE_FIELD_SEPARATOR_KIND',
+	'NODE_ID_HOLDER_BITS',
+	'NODE_ID_ITEM_BITS',
+	'NODE_ID_WORD_BITS'
 ] as const satisfies readonly (keyof RecordCodecConstants)[];
+
+/** Why a list slot holding a leaf at `item` is refused in arena storage: past the leaf items a list slot holds there. */
+export function leafItemPastNames(item: number, format: NodeIdFormat): string {
+	return `a list slot holds a leaf at item ${item}, past the ${2 ** format.itemBits} leaf items a list slot holds in arena storage, whose node names give an item ${format.itemBits} bits; object storage holds the list`;
+}
 
 /** The cell format of `native`, `undefined` for an addon built without the record codec. */
 export function cellFormatOf(native: object): CellFormat | undefined {
@@ -195,7 +214,8 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		sideDelimiter: codec.SIDE_FIELD_DELIMITER,
 		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
 		sideChanged: { leading: codec.SIDE_FIELD_CHANGED_LEADING, trailing: codec.SIDE_FIELD_CHANGED_TRAILING },
-		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND
+		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND,
+		nodeId: { holderBits: codec.NODE_ID_HOLDER_BITS, itemBits: codec.NODE_ID_ITEM_BITS, wordBits: codec.NODE_ID_WORD_BITS }
 	};
 }
 

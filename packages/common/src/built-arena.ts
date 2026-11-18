@@ -8,8 +8,8 @@ import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
 import type { TreeQuery } from './query.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
-import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
-import { builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
+import { addressOf, chunkOf, headerKind, kindField, leafItemPastNames, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
+import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
 import { isParsedPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
 import { keepExemplar } from './exemplars.ts';
@@ -1214,7 +1214,7 @@ export class BuiltArena {
 
 	/** The built record `node` is, naming the node a read left in this arena that the key `key` names, spanning `span`, as the one it was rebuilt from: in place when `own` and only its handle holds it, else as a copy. */
 	rebuiltFromRead(node: object, key: number, span: { readonly start: number; readonly end: number }, own: boolean): object {
-		const { node: holder, site } = keyName(key);
+		const { node: holder, site } = keyName(key, this.format.nodeId);
 		return this.#rebuilt(node, [holder, site, 0, span.start, span.end], own);
 	}
 
@@ -1537,6 +1537,7 @@ function foreignValue(value: unknown, ref: BuiltRef | undefined): string {
 /** Writes the list cell at `cell` of the drafted `record`, its slot `word`: a run of `items.length` one-word cells after their number. */
 export function storeList(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, items: readonly unknown[]): void {
 	if (items.length === 0) return;
+	for (let item = 2 ** arena.format.nodeId.itemBits; item < items.length; item++) if (builtLeafOf(items[item]) !== undefined) throw new Error(leafItemPastNames(item, arena.format.nodeId));
 	const run = arena.run(items.length);
 	record.data[record.base + cell] = builtCell(run.at);
 	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n);

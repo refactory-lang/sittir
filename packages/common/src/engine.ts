@@ -18,7 +18,7 @@ import type {
 } from '@sittir/types';
 import { decodeIndex, decodeTree, readObject, type TreeHandle, type TriviaSideName } from './read.ts';
 import { coordinateIndex, coordinateOf, holdReadTree, rootEdges, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
-import { mintTreeToken, registerTree } from './tree-token.ts';
+import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
 import type { DescendantBatch, TreeQuery } from './query.ts';
 import { cellFormatOf, type CellFormat } from './record-cell.ts';
 import { readOwnEntries, readOwnUnits, type BuiltRecords, type ParsedRecords, type WritableWords } from './built-arena.ts';
@@ -690,7 +690,7 @@ export function createNativeEngine<
 			const { readRenderAt } = engine;
 			if (readRenderAt === undefined) throw new Error(ARENA_FEATURE_REFUSED);
 			const changed = rootEdges(node);
-			return readRenderAt.call(engine, coordinateIndex(named), changed.leading, changed.trailing, options, templates);
+			return readRenderAt.call(engine, coordinateIndex(named, treeOf(node)?.built?.format.nodeId), changed.leading, changed.trailing, options, templates);
 		}
 
 		function renderTemplates(node: AnyUntypedNode): string {

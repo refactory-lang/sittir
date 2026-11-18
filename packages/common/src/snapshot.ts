@@ -83,7 +83,7 @@ function snapshotStep({ value, measure }: SnapshotTask, walk: SnapshotWalk): unk
 	const at = coordinateOf(value);
 	const tree = at === undefined ? undefined : (measure?.tree ?? snapshotTreeOf(value));
 	if (at === undefined || tree === undefined) return copyStep(value, walk, undefined);
-	const row = coordinateIndex(at);
+	const row = coordinateIndex(at, tree.built?.format.nodeId);
 	const measured = measure ?? measureOf(tree, row, value);
 	const layout = measured.rows.get(row);
 	if (layout === undefined) throw new Error(`snapshot: the measure of a parsed subtree holds no layout for its row ${row}`);

@@ -219,6 +219,9 @@ pub enum ArenaError {
     /// A render over arenas lent read-only met the node at `index`, of kind
     /// `kind`, whose record only a write could give it.
     ReadOnly { index: crate::types::NodeIndex, kind: crate::types::KindId },
+    /// A list slot holding a leaf at `item`, past the leaf items a list slot
+    /// names (`NodeName::SITE_ITEMS`).
+    LeafItemPastNames { item: u32 },
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -242,6 +245,12 @@ impl fmt::Display for ArenaError {
             ArenaError::MissingField(key) => write!(f, "Missing field `{key}`"),
             ArenaError::EmptyList { owner, key } => write!(f, "{} on {owner}.{key}", crate::non_empty::EmptyList),
             ArenaError::ReadOnly { index, kind } => write!(f, "a render over arenas lent read-only met node {} of kind {}, which has no record to read", index.0, kind.0),
+            ArenaError::LeafItemPastNames { item } => write!(
+                f,
+                "a list slot holds a leaf at item {item}, past the {} leaf items a list slot holds in arena storage, whose node names give an item {} bits; object storage holds the list",
+                crate::types::NodeName::SITE_ITEMS,
+                crate::types::NodeName::ITEM_BITS
+            ),
         }
     }
 }

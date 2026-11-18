@@ -43,7 +43,7 @@ export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value:
 	const at = coordinateOf(value);
 	const named = at !== undefined && '$node' in at;
 	if (at === undefined || (named ? tree.built === undefined : decodeTree(at.$treeHandle) !== tree.id)) return wrap(value, tree);
-	const index = coordinateIndex(at);
+	const index = coordinateIndex(at, tree.built?.format.nodeId);
 	const known = registered(tree, index, role);
 	if (known !== undefined) return known as T;
 	const wrapper = wrap(value, tree);

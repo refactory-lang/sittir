@@ -346,6 +346,12 @@ pub fn write_list<'i, T: Clone + HeapBytes, C: WriteCell<T> + 'i>(sink: &mut Rec
             Ok(cell.0)
         })
         .collect::<Result<Vec<_>, ArenaError>>()?;
+    let bits = sink.writer.kind_bits();
+    for (item, &cell) in (crate::types::NodeName::SITE_ITEMS..).zip(cells.get(crate::types::NodeName::SITE_ITEMS as usize..).unwrap_or_default()) {
+        if matches!(Cell::decode_built(CellWord(cell), &sink.writer, bits)?, Cell::BuiltLeaf { .. }) {
+            return Err(ArenaError::LeafItemPastNames { item });
+        }
+    }
     sink.writer.run(&cells)
 }
 
@@ -693,6 +699,19 @@ mod tests {
         assert_eq!(chunks.text(text), Ok("a b"));
         let Cell::BuiltLeaf { kind: KindId::ERROR, text, changed } = decode(&chunks, error) else { panic!("an ERROR leaf") };
         assert_eq!((chunks.text(text), changed), (Ok("@@"), ChangedEdges::default()));
+    }
+
+    #[test]
+    fn a_built_list_is_refused_at_a_leaf_past_the_items_a_node_name_gives_and_takes_text_there() {
+        let (mut chunks, store) = (chunks(), TriviaStore::<TriviaText>::new());
+        let limit = crate::types::NodeName::SITE_ITEMS;
+        let mut items: Vec<SlotValue<Name>> = (0..limit).map(|_| name("a", None)).collect();
+        let list = write_list(&mut RecordSink::built(&mut chunks, &store, &mut unlinked), &items, "_items").expect("its last item is named");
+        assert_eq!(ListCell::of_word(list, &chunks).expect("a list").items(&chunks, 1).expect("its run").count(), limit as usize);
+        let text: Vec<VerbatimNode> = (0..=limit).map(|_| VerbatimNode { text: "a".to_owned(), kind: KindId::BLANK }).collect();
+        assert!(write_list(&mut RecordSink::built(&mut chunks, &store, &mut unlinked), &text, "_items").is_ok(), "text has no node name");
+        items.push(name("a", None));
+        assert_eq!(write_list(&mut RecordSink::built(&mut chunks, &store, &mut unlinked), &items, "_items"), Err(ArenaError::LeafItemPastNames { item: limit }));
     }
 
     #[test]
