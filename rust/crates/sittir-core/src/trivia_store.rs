@@ -474,6 +474,14 @@ impl<T: Clone> TriviaStore<T> {
         self.read().get(place, side).map(|kept| self.expanded(kept, arena)).transpose()
     }
 
+    /// Whether the entries a write gave `side` of the node at `place` start
+    /// with the layout member of `kind`, read without expanding them.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn leads_with_layout(&self, place: Place, side: TriviaSide, kind: KindId) -> bool {
+        matches!(self.read().get(place, side).and_then(<[CompactEntry]>::first), Some(&CompactEntry::Layout { kind: first }) if first == kind)
+    }
+
     /// The sides writes gave the node at `place`, as its trivia, or `None`
     /// when no write gave it any, read under `arena`.
     ///

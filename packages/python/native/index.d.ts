@@ -557,6 +557,12 @@ export declare function readUnitSides(engine: object, node: number): import('@si
  */
 export declare function readWords(engine: object, chunk: number): Uint32Array | null
 
+/**
+ * r" The bits a record header's flags take above its kind field;
+ * r" its layout codes lie above them (`arena::cell::flag::BITS`).
+ */
+export declare const RECORD_FLAG_BITS: number
+
 /** r" The flag above a link record's kind field (`arena::cell::flag`). */
 export declare const RECORD_FLAG_LINK: number
 

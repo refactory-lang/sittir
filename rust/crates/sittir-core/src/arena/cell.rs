@@ -8,6 +8,7 @@
 //! never a read outside its record.
 
 use super::{Address, ArenaError, ArenaRead, CellShape, RecordShape, StringRef};
+use crate::layout_kinds::LayoutKinds;
 use crate::record::{form, tagged};
 use crate::record::HEADER_WORDS;
 use crate::slot::ChangedEdges;
@@ -17,6 +18,60 @@ use crate::types::{KindId, NodeIndex, Span, TreeId};
 pub mod flag {
     /// A link record: it names a parsed node of another tree.
     pub const LINK: u32 = 1;
+    /// The bits the flags take above the kind field. The record's layout
+    /// codes take the bits above them (`HeaderLayout`).
+    pub const BITS: u32 = 1;
+}
+
+/// The layout a record's header word holds for its sides above its flags:
+/// the first layout values of its leading side, then its trailing side's
+/// first, then its inner side's first, each a `LayoutKinds::code`. A side
+/// holds from its first entry on in the store, so its layout values before
+/// its first comment, `ERROR` or text entry are kept here and read before
+/// what the store holds.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct HeaderLayout {
+    pub leading: [LayoutKinds; 3],
+    pub trailing: LayoutKinds,
+    pub inner: LayoutKinds,
+}
+
+impl HeaderLayout {
+    /// The layout `word`, a header whose kind field takes `bits` bits,
+    /// holds.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a code past the widest layout kind.
+    pub fn of(word: u32, bits: u32) -> Result<Self, ArenaError> {
+        let codes = word >> (bits + flag::BITS);
+        let at = |n: u32| {
+            let code = (codes >> (n * LayoutKinds::CODE_BITS)) & ((1 << LayoutKinds::CODE_BITS) - 1);
+            LayoutKinds::of_code(code).ok_or(malformed("header layout code", code))
+        };
+        Ok(Self { leading: [at(0)?, at(1)?, at(2)?], trailing: at(3)?, inner: at(4)? })
+    }
+
+    /// `word`, a header whose kind field takes `bits` bits, holding this
+    /// layout in place of its own.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a value that is not one layout kind, or
+    /// codes past the header's 32 bits.
+    pub fn onto(self, word: u32, bits: u32) -> Result<u32, ArenaError> {
+        let shift = bits + flag::BITS;
+        let values = [self.leading[0], self.leading[1], self.leading[2], self.trailing, self.inner];
+        let width = LayoutKinds::CODE_BITS * u32::try_from(values.len()).unwrap_or(u32::MAX);
+        if shift + width > u32::BITS {
+            return Err(ArenaError::Unwritable("a header whose kind field leaves no room for its layout codes"));
+        }
+        let codes = values.iter().enumerate().try_fold(0u32, |codes, (n, value)| {
+            let code = value.code().ok_or(ArenaError::Unwritable("a header layout value of more than one kind"))?;
+            Ok::<_, ArenaError>(codes | code << (u32::try_from(n).unwrap_or(u32::MAX) * LayoutKinds::CODE_BITS))
+        })?;
+        Ok((word & ((1 << shift) - 1)) | codes << shift)
+    }
 }
 
 /// A link record's words: its header, an empty side word, then the parsed
@@ -54,10 +109,10 @@ pub fn with_kind(kind: KindId, bits: u32) -> Result<u32, ArenaError> {
 }
 
 /// The kind and the flags of a record header word whose kind field takes
-/// `bits` bits.
+/// `bits` bits; its layout codes above them are `HeaderLayout`'s.
 #[must_use]
 pub fn header_of(word: u32, bits: u32) -> (KindId, u32) {
-    (kind_field(word, bits), word >> bits)
+    (kind_field(word, bits), (word >> bits) & ((1 << flag::BITS) - 1))
 }
 
 /// What one cell holds.

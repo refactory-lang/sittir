@@ -17,7 +17,7 @@ use sittir_parity_tests::fixture_sources;
 fn items_set_apart<G: EngineGrammar + Copy>(grammar: G, options: fn() -> sittir_core::options::ResolvedOptions, name: &str) -> usize {
     let mut apart = 0;
     for source in fixture_sources(name) {
-        let lines = sittir_core::points::LineTable::new(&source);
+        let lines = sittir_core::points::LineTable::with_blank_rows(&source);
         let mut engine = Engine::new(grammar, options()).expect("an engine");
         let Ok(tree) = engine.parse(&source, claim_tree_id().expect("a tree id")) else { continue };
         let mut nodes = tree.nodes();
@@ -30,7 +30,7 @@ fn items_set_apart<G: EngineGrammar + Copy>(grammar: G, options: fn() -> sittir_
             for (item, set_apart) in sittir_core::list_slots::list_items(&routed, &source) {
                 if set_apart {
                     apart += 1;
-                    assert!(lines.holds_blank_line(span), "{name}: item {item:?} of the holder at {span:?} in {source:?}");
+                    assert_eq!(lines.holds_blank_line(span), Some(true), "{name}: item {item:?} of the holder at {span:?} in {source:?}");
                 }
             }
         }

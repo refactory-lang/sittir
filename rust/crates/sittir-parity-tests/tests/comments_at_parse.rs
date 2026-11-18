@@ -1,9 +1,10 @@
 //! A parse places its extras and `ERROR`s: for every node of every fixture,
 //! the records the engine's side store names for a side of the node, right
 //! after an arena parse and before anything reads a side, are those of the
-//! extras and `ERROR`s the tree's placement assigns that side, in order. A
-//! list item the source sets apart with a blank line holds a blank-line
-//! member first on its leading side, there as in the tree's lookup.
+//! extras and `ERROR`s the tree's placement assigns that side, in order. The
+//! parse sets apart the list items the tree's lookup does: an item with a
+//! record in its record's header, any other with a blank-line member first
+//! on the leading side it places.
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::source::Source;
@@ -77,9 +78,10 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                     SideEntry::Layout(entry) => is_blank_line(entry),
                     SideEntry::Source { .. } | SideEntry::Written(_) => false,
                 });
-                if blank_first != looked_up {
+                let set_apart = records.set_apart(run) == Some(true);
+                if set_apart != looked_up {
                     let kid = theirs.kid(row);
-                    apart.push(format!("{}..{} {}: parse set it apart {blank_first}, the tree's lookup {looked_up}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                    apart.push(format!("{}..{} {}: parse set it apart {set_apart}, the tree's lookup {looked_up}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
                 }
             }
         }

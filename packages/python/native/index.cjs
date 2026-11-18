@@ -755,6 +755,7 @@ module.exports.readText = nativeBinding.readText
 module.exports.readTriviaSide = nativeBinding.readTriviaSide
 module.exports.readUnitSides = nativeBinding.readUnitSides
 module.exports.readWords = nativeBinding.readWords
+module.exports.RECORD_FLAG_BITS = nativeBinding.RECORD_FLAG_BITS
 module.exports.RECORD_FLAG_LINK = nativeBinding.RECORD_FLAG_LINK
 module.exports.RECORD_HEADER_WORDS = nativeBinding.RECORD_HEADER_WORDS
 module.exports.releaseBuilt = nativeBinding.releaseBuilt

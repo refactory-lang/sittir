@@ -18,6 +18,7 @@ export interface RecordCodecConstants {
 	readonly CELL_BLANK_UNIT: number;
 	readonly KIND_BITS: number;
 	readonly RECORD_FLAG_LINK: number;
+	readonly RECORD_FLAG_BITS: number;
 	readonly LINK_RECORD_WORDS: number;
 	readonly RECORD_HEADER_WORDS: number;
 	readonly COUNT_OWNED: number;
@@ -79,6 +80,8 @@ export interface CellFormat {
 	readonly kindBits: number;
 	/** The flag above a link record's kind field. */
 	readonly linkFlag: number;
+	/** The bits a record header's flags take above its kind field. */
+	readonly flagBits: number;
 	readonly linkWords: number;
 	readonly headerWords: number;
 	readonly countOwned: number;
@@ -153,6 +156,7 @@ const CODEC_KEYS = [
 	'CELL_BLANK_UNIT',
 	'KIND_BITS',
 	'RECORD_FLAG_LINK',
+	'RECORD_FLAG_BITS',
 	'LINK_RECORD_WORDS',
 	'RECORD_HEADER_WORDS',
 	'COUNT_OWNED',
@@ -197,6 +201,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		blankUnit: codec.CELL_BLANK_UNIT,
 		kindBits: codec.KIND_BITS,
 		linkFlag: codec.RECORD_FLAG_LINK,
+		flagBits: codec.RECORD_FLAG_BITS,
 		linkWords: codec.LINK_RECORD_WORDS,
 		headerWords: codec.RECORD_HEADER_WORDS,
 		countOwned: codec.COUNT_OWNED,
@@ -234,13 +239,13 @@ export function withKind(kind: number, bits: number): number {
 	return kind;
 }
 
-export function headerOf(word: number, bits: number): { readonly kind: number; readonly flags: number } {
-	return { kind: kindField(word, bits), flags: word >>> bits };
+export function headerOf(word: number, format: Pick<CellFormat, 'kindBits' | 'flagBits'>): { readonly kind: number; readonly flags: number } {
+	return { kind: kindField(word, format.kindBits), flags: (word >>> format.kindBits) & (2 ** format.flagBits - 1) };
 }
 
 /** The kind a record header word names, refusing a header with flags: a link record's, which names a node of another tree. */
-export function headerKind(word: number, bits: number): number {
-	const { kind, flags } = headerOf(word, bits);
+export function headerKind(word: number, format: Pick<CellFormat, 'kindBits' | 'flagBits'>): number {
+	const { kind, flags } = headerOf(word, format);
 	if (flags !== 0) throw new Error(`a record header holds flags ${flags}: a link record is no record of its own arena`);
 	return kind;
 }

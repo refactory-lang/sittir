@@ -819,6 +819,10 @@ macro_rules! napi_engine {
             /// The flag above a link record's kind field (`arena::cell::flag`).
             #[::napi_derive::napi]
             pub const RECORD_FLAG_LINK: u32 = $crate::arena::cell::flag::LINK;
+            /// The bits a record header's flags take above its kind field;
+            /// its layout codes lie above them (`arena::cell::flag::BITS`).
+            #[::napi_derive::napi]
+            pub const RECORD_FLAG_BITS: u32 = $crate::arena::cell::flag::BITS;
             /// The words of a link record (`arena::cell::LINK_WORDS`).
             #[::napi_derive::napi]
             pub const LINK_RECORD_WORDS: u32 = $crate::arena::cell::LINK_WORDS;

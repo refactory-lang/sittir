@@ -556,7 +556,7 @@ impl<'a> Hydration<'a> {
         if let Some(item) = (crate::types::NodeName::SITE_ITEMS..len).zip(&items[crate::types::NodeName::SITE_ITEMS.min(len) as usize..]).find_map(|(item, value)| matches!(value, Some(Hydrated::Leaf { .. })).then_some(item)) {
             return Err(ArenaError::LeafItemPastNames { item }.into());
         }
-        self.set_apart(draft, &items);
+        self.set_apart(draft, &items)?;
         let run = self.tree.alloc(words)?;
         let out = self.tree.words_mut(run, words)?;
         out[0] = len;
@@ -567,12 +567,19 @@ impl<'a> Hydration<'a> {
         Ok(())
     }
 
-    /// Notes where each of `items`, the list of `draft` as its run holds
-    /// them, is kept when the source sets it apart from the item before it
-    /// with a blank line (`list_slots::sets_apart`), the extras and `ERROR`s
-    /// between the two among the run's entries.
-    fn set_apart(&mut self, draft: Draft, items: &[Option<Hydrated>]) {
-        let Some(open) = self.open.iter().rfind(|open| open.at == draft.at) else { return };
+    /// Marks each of `items`, the list of `draft` as its run holds them,
+    /// that the source sets apart from the item before it with a blank line
+    /// (`list_slots::sets_apart`), the extras and `ERROR`s between the two
+    /// among the run's entries: an item with a record leads with a blank
+    /// line in its header's layout (`HeaderLayout`), and any other item's
+    /// site is noted for its side.
+    ///
+    /// # Errors
+    ///
+    /// What reading or writing an item record's header refuses.
+    fn set_apart(&mut self, draft: Draft, items: &[Option<Hydrated>]) -> Result<(), ArenaError> {
+        let Some(open) = self.open.iter().rfind(|open| open.at == draft.at) else { return Ok(()) };
+        let mut apart = Vec::new();
         let mut unsearched = 0;
         let mut before: Option<usize> = None;
         for item in items.iter().flatten() {
@@ -586,9 +593,21 @@ impl<'a> Hydration<'a> {
             let Some(last) = before.replace(entry) else { continue };
             let extras = (last + 1..entry).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span);
             if crate::list_slots::sets_apart(self.text, open.beside[last].span.end, open.beside[entry].span.start, extras) {
-                self.apart.push(open.site(entry));
+                apart.push(open.site(entry));
             }
         }
+        let bits = self.tree.kind_bits();
+        for site in apart {
+            let super::NodeSite::Record(at) = site else {
+                self.apart.push(site);
+                continue;
+            };
+            let header = &mut self.tree.words_mut(at, 1)?[0];
+            let mut layout = super::cell::HeaderLayout::of(*header, bits)?;
+            layout.leading[0] = crate::layout_kinds::LayoutKinds::BLANKLINE;
+            *header = layout.onto(*header, bits)?;
+        }
+        Ok(())
     }
 
     /// The facts of the node `cursor` stands on (`Kid::at`), met by the

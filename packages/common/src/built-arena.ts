@@ -867,7 +867,7 @@ export class BuiltArena {
 
 	/** The kind the header of the record at `at` names. */
 	kindAt(at: number): number {
-		return headerKind(this.words(at, 1)[wordOf(at, this.format)]!, this.format.kindBits);
+		return headerKind(this.words(at, 1)[wordOf(at, this.format)]!, this.format);
 	}
 
 	record(kind: number): BuiltDraft {
@@ -897,7 +897,7 @@ export class BuiltArena {
 
 	carry(source: object, record: BuiltDraft, place: number): void {
 		if (record.copyOf !== undefined) return;
-		const kind = headerKind(record.data[record.base]!, this.format.kindBits);
+		const kind = headerKind(record.data[record.base]!, this.format);
 		this.#carry(source, kind, record, place + 1, this.#placesOf(kind).length);
 	}
 
@@ -914,7 +914,7 @@ export class BuiltArena {
 	keep(record: BuiltDraft, word: number): void {
 		const source = record.copyOfParsed;
 		if (source === undefined) return;
-		const kind = headerKind(record.data[record.base]!, this.format.kindBits);
+		const kind = headerKind(record.data[record.base]!, this.format);
 		const place = this.#placesOf(kind).find((row) => row.length === 5 && row[0] === word);
 		if (place === undefined) throw new Error(`a kind ${kind} record keeps no cell at word ${word}`);
 		this.#carryPlace(source, record, place);
@@ -1093,7 +1093,7 @@ export class BuiltArena {
 		const placed = record.placed;
 		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, record.at, placed[n + 1] as number, placed[n + 2] as number);
 		if (record.copyOf !== undefined) this.#copySites(record.copyOf, record.at, record.patched ?? []);
-		const node = this.#view(record.at, headerKind(record.data[record.base]!, this.format.kindBits), record.data);
+		const node = this.#view(record.at, headerKind(record.data[record.base]!, this.format), record.data);
 		this.#placedLast = placed === undefined ? undefined : { node, placed };
 		return node;
 	}
@@ -1452,11 +1452,11 @@ export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
 		const kind = wordOf(at, arena.format);
 		return { form: 'unit', kind: kind === arena.format.blankUnit ? BLANK_KIND_ID : kind, row: undefined };
 	}
-	const { kindBits, linkFlag, linkWords } = arena.format;
+	const { linkFlag, linkWords } = arena.format;
 	if (arena.holdsRecords(chunk)) {
 		const words = arena.words(at, 1);
 		const start = wordOf(at, arena.format);
-		const { kind, flags } = headerOf(words[start]!, kindBits);
+		const { kind, flags } = headerOf(words[start]!, arena.format);
 		if (flags === 0) return { form: 'child', kind, at, link: undefined, changed };
 		if (flags !== linkFlag) throw new Error(`a built record header holds flags ${flags}, which no builder writes`);
 		const link = arena.words(at, linkWords);

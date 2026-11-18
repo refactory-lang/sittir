@@ -87,7 +87,7 @@ function sideOf(records: RecordWords, at: number): number {
 function readRow(tree: TreeHandle, at: number): { readonly kind: number; readonly span: ByteSpan; readonly stamped: number } {
 	const records = recordsOf(tree);
 	const { words, start } = wordsAt(records, at, 2);
-	const kind = headerKind(words[start]!, records.format.kindBits);
+	const kind = headerKind(words[start]!, records.format);
 	const side = words[start + 1]!;
 	if (side === 0) throw new Error(`a read's record of kind ${kind} names no side record, so no span`);
 	const sides = sideWordsAt(records, side);

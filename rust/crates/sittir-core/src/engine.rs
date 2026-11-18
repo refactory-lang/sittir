@@ -485,6 +485,13 @@ pub trait Backing: Sized {
     /// The source text, held as long as the tree.
     type Text: std::ops::Deref<Target = str>;
 
+    /// Whether a tree of this backing keeps its source's blank rows with its
+    /// row starts (`LineTable::with_blank_rows`), which spare its lookups the
+    /// routing of a list's holder whose bytes hold none
+    /// (`Lookups::list_item_leading`): a tree whose parse stamps the items
+    /// it sets apart (`set_apart`) routes no holder and keeps none.
+    const KEEPS_BLANK_ROWS: bool;
+
     /// Navigation of `tree` for one call.
     fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_>;
 
@@ -512,6 +519,14 @@ pub trait Backing: Sized {
     /// keeps them; none for a tree that keeps its written sides itself.
     fn written<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>>;
 
+    /// Whether the parse of `tree` set the node at `index` apart from the
+    /// list item before it with a blank line, as the parse stamped it
+    /// (`Hydration::list`); none for a tree whose parse stamps no item.
+    fn set_apart<G: EngineGrammar>(tree: &ParsedTree<G, Self>, index: NodeIndex) -> Option<bool> {
+        let _ = (tree, index);
+        None
+    }
+
     /// The names `tree`'s nodes keep past a call; none for a tree whose
     /// nodes are named by its id and their indexes.
     fn names<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::read::NodeNames>;
@@ -527,6 +542,7 @@ pub trait Backing: Sized {
 
 impl Backing for tree_sitter::Tree {
     type Text = Arc<str>;
+    const KEEPS_BLANK_ROWS: bool = true;
 
     fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_> {
         Navigation::Tree(tree.tree_nodes())
@@ -584,6 +600,7 @@ type RowSites = HashMap<crate::arena::Address, Vec<(u32, crate::arena::site::Cel
 #[cfg(feature = "arena")]
 impl<'a> Backing for Records<'a> {
     type Text = &'a str;
+    const KEEPS_BLANK_ROWS: bool = false;
 
     fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_> {
         Navigation::Runs(crate::arena::RunNodes::over(tree.tree.built, tree.source, &tree.tree.table))
@@ -609,6 +626,15 @@ impl<'a> Backing for Records<'a> {
     fn written<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>> {
         let mut runs = crate::arena::RunNodes::over(tree.tree.built, tree.source, &tree.tree.table);
         Some(tree.store.written(tree.tree_id).into_iter().filter_map(|(site, side)| Some((runs.index_at(site)?, side))).collect())
+    }
+
+    fn set_apart<G: EngineGrammar>(tree: &ParsedTree<G, Self>, index: NodeIndex) -> Option<bool> {
+        let blank = crate::layout_kinds::LayoutKinds::BLANKLINE;
+        Some(match Self::place(tree, index) {
+            Some(crate::trivia_store::Place::Read { site: crate::arena::NodeSite::Record(at), .. }) => crate::arena::cell::HeaderLayout::of(tree.tree.built.words(at, 1).ok()?[0], G::KIND_BITS).ok()?.leading[0] == blank,
+            Some(crate::trivia_store::Place::Read { tree: id, site }) => tree.grammar.whitespace().0.gap_kind(blank).is_some_and(|kind| tree.store.leads_with_layout(crate::trivia_store::Place::Placed { tree: id, site }, TriviaSide::Leading, kind)),
+            _ => false,
+        })
     }
 
     fn names<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::read::NodeNames> {
@@ -1058,12 +1084,12 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         Some(SourceTable::framed_span(&seating, &coord))
     }
 
-    /// The source's row starts and blank lines (`LineTable`), built on first
-    /// use.
+    /// The source's row starts (`LineTable`), built on first use, with its
+    /// blank rows where the tree keeps them (`Backing::KEEPS_BLANK_ROWS`).
     pub fn lines(&self) -> &crate::points::LineTable {
         self.lines.get_or_init(|| {
             self.grew();
-            crate::points::LineTable::new(&self.source)
+            if B::KEEPS_BLANK_ROWS { crate::points::LineTable::with_blank_rows(&self.source) } else { crate::points::LineTable::new(&self.source) }
         })
     }
 
@@ -1730,6 +1756,14 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     pub fn place(&self, index: crate::types::NodeIndex) -> Option<crate::trivia_store::Place> {
         B::place(self, index)
     }
+
+    /// Whether the parse set the node at `index` apart from the list item
+    /// before it with a blank line, as it stamped it; none for a tree whose
+    /// parse stamps no item.
+    #[must_use]
+    pub fn set_apart(&self, index: crate::types::NodeIndex) -> Option<bool> {
+        B::set_apart(self, index)
+    }
 }
 
 // ─── Lookups ─────────────────────────────────────────────────────────────────
@@ -2148,21 +2182,11 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// (`list_slots::list_items`): a blank-line member first, in place of the
     /// runs before its first extra.
     fn list_item_leading(&mut self, index: NodeIndex, entries: &mut Vec<SideEntry<G::Trivia>>) {
-        if !self.apart.contains_key(&index) {
-            let Some(parent) = self.nodes.parent(index) else { return };
-            let tree = self.tree;
-            let at = self.nodes.kid(parent);
-            let routed = if tree.lines().holds_blank_line(at.span()) { tree.grammar.slot_routes(&mut self.nodes, &at) } else { None };
-            if let Some(routed) = routed {
-                self.apart.extend(routed.children.iter().map(|child| (child.index, None)));
-                self.apart.extend(crate::list_slots::list_items(&routed, &tree.source).into_iter().map(|(item, apart)| (item, Some(apart))));
-            } else {
-                let kids = self.nodes.kids(parent);
-                self.apart.extend(kids.iter().map(|kid| (kid.index, None)));
-            }
-            self.apart.entry(index).or_insert(None);
-        }
-        if self.apart[&index] != Some(true) {
+        let apart = match B::set_apart(self.tree, index) {
+            Some(apart) => apart,
+            None => self.routed_apart(index),
+        };
+        if !apart {
             return;
         }
         let first = entries.iter().position(|entry| !matches!(entry, SideEntry::Layout(_))).unwrap_or(entries.len());
@@ -2174,6 +2198,28 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         });
         let blank = self.tree.layout_member(crate::layout_kinds::LayoutKinds::BLANKLINE);
         entries.splice(0..0, blank.map(|member| SideEntry::Layout(TriviaEntry::new(SlotValue::Node(member)))));
+    }
+
+    /// Whether the source sets the node at `index` apart as an item of a
+    /// list slot (`list_slots::list_items`), its holder routed once for all
+    /// its children, and not at all when the holder's bytes hold no blank
+    /// line (`LineTable::holds_blank_line`).
+    fn routed_apart(&mut self, index: NodeIndex) -> bool {
+        if !self.apart.contains_key(&index) {
+            let Some(parent) = self.nodes.parent(index) else { return false };
+            let tree = self.tree;
+            let at = self.nodes.kid(parent);
+            let routed = if tree.lines().holds_blank_line(at.span()) == Some(false) { None } else { tree.grammar.slot_routes(&mut self.nodes, &at) };
+            if let Some(routed) = routed {
+                self.apart.extend(routed.children.iter().map(|child| (child.index, None)));
+                self.apart.extend(crate::list_slots::list_items(&routed, &tree.source).into_iter().map(|(item, apart)| (item, Some(apart))));
+            } else {
+                let kids = self.nodes.kids(parent);
+                self.apart.extend(kids.iter().map(|kid| (kid.index, None)));
+            }
+            self.apart.entry(index).or_insert(None);
+        }
+        self.apart[&index] == Some(true)
     }
 
     /// The entries the placement gives `side` of the node at `index`
