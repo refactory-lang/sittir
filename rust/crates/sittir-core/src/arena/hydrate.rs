@@ -361,7 +361,7 @@ impl OpenRun {
     /// under it, on the side of the child it is placed on
     /// (`trivia_table::owner`, its siblings the children around it), the
     /// node that side is kept on its `target`, or the `inner` of the node
-    /// that holds it.
+    /// that holds it, unless that node is a unit, which has no inside.
     fn placed(&self, kinds: Option<crate::trivia_table::SurfaceKinds>, text: &str, out: &mut Vec<Placed>) {
         use crate::trivia_table::{owner, Owner, Sibling, TriviaSide};
         if self.within || self.beside.iter().all(|beside| beside.extra.is_none()) {
@@ -382,6 +382,7 @@ impl OpenRun {
                 let (site, side) = match owner(&siblings[..position], span, &siblings[position + 1..], text) {
                     Owner::Trailing { at } => (self.target(children[at], false, kinds), TriviaSide::Trailing),
                     Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading),
+                    Owner::Inner if holder.is_some_and(|holder| kinds.is_some_and(|kinds| kinds.units.contains(&self.beside[holder].kind))) => continue,
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner),
                 };
                 out.push(Placed { site, side, extra, kind, span });

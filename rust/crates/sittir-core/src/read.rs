@@ -556,8 +556,9 @@ impl<'s> ReadCtx<'s> {
 
     /// The sides of the unit child at `index`, read at `depth` under its
     /// holder, which its slot stores as a bare kind, as this context seats
-    /// them: `None` when the context seats none, when the read keeps the unit
-    /// a coordinate (`reads_leaf_inline`), or when the unit has none.
+    /// them, leading and trailing, a unit having no inside: `None` when the
+    /// context seats none, when the read keeps the unit a coordinate
+    /// (`reads_leaf_inline`), or when the unit has none.
     #[must_use]
     pub fn unit_sides<T: crate::trivia::FromTriviaText + 'static>(&self, index: NodeIndex, depth: Depth) -> Option<NodeTrivia<T>> {
         if !self.reads_leaf_inline(depth) {
@@ -565,8 +566,7 @@ impl<'s> ReadCtx<'s> {
         }
         let leading = self.side(index, TriviaSide::Leading);
         let trailing = self.side(index, TriviaSide::Trailing);
-        let inner = self.side(index, TriviaSide::Inner);
-        (leading.is_some() || trailing.is_some() || inner.is_some()).then_some(NodeTrivia { leading, trailing, inner })
+        (leading.is_some() || trailing.is_some()).then_some(NodeTrivia { leading, trailing, inner: None })
     }
 
     /// In a snapshot, makes the node `at` the holder its slots are measured

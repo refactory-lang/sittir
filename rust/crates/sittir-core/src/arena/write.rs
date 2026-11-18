@@ -604,7 +604,7 @@ mod tests {
     fn a_built_write_moves_its_trivia_and_units_into_the_store() {
         let (mut chunks, store) = (chunks(), TriviaStore::with_kind_bits(BITS));
         let trivia = Some(NodeTrivia { leading: Some(vec![entry("// a")]), trailing: None, inner: None });
-        let unit = UnitSides { slot: "_items".to_owned(), item: ItemIndex(1), trivia: NodeTrivia { leading: None, trailing: None, inner: Some(Vec::new()) } };
+        let unit = UnitSides { slot: "_items".to_owned(), item: ItemIndex(1), trivia: NodeTrivia { leading: None, trailing: Some(Vec::new()), inner: None } };
         let layout = Some(Box::new(NodeLayout { trivia, units: vec![unit], ..NodeLayout::default() }));
         let leaf = Some(Box::new(NodeLayout { trivia: Some(NodeTrivia { leading: None, trailing: Some(vec![entry("// x")]), inner: None }), ..NodeLayout::default() }));
         let node = Pair { items_space: Some(KindId(2)), ..pair(layout, name("x", leaf), Vec::new()) };
@@ -612,7 +612,7 @@ mod tests {
         let Cell::Child { at: record, .. } = decode(&chunks, cell) else { panic!("a record") };
         assert_eq!(store.side(Place::Record(record), TriviaSide::Leading, &chunks).expect("read"), Some(vec![entry("// a")]));
         assert_eq!(store.side(Place::Record(record), TriviaSide::Trailing, &chunks).expect("read"), None, "a side no write set stays unwritten");
-        assert_eq!(store.side(Place::Unit(Site { holder: record, word: 6, item: ItemIndex(1) }), TriviaSide::Inner, &chunks).expect("read"), Some(Vec::new()));
+        assert_eq!(store.side(Place::Unit(Site { holder: record, word: 6, item: ItemIndex(1) }), TriviaSide::Trailing, &chunks).expect("read"), Some(Vec::new()));
         let (kind, side, open, left, items) = pair_record(&chunks, cell);
         assert_eq!((kind, open), (PAIR, 1));
         assert_eq!(side.slots, vec![SideSlot { word: 6, space_after: Some(KindId(2)), ..SideSlot::default() }], "the setting is in its slot's entry");

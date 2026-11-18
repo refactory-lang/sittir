@@ -385,10 +385,14 @@ impl<T> TriviaStore<T> {
     /// `arena`: a built record's inner side is the leading side of its
     /// kind's inner-site slot, item 0 (`SurfaceKinds::inner_site`); every
     /// other side is kept where `place` and `side` name it. `None` for the
-    /// inner side of a record whose kind has no inner site, and of an
-    /// address that holds no words, which names no kind.
+    /// inner side of a unit, which has no inside, of a record whose kind has
+    /// no inner site, and of an address that holds no words, which names no
+    /// kind.
     #[cfg(feature = "arena")]
     fn keyed(&self, place: Place, side: TriviaSide, arena: &dyn ArenaRead) -> Result<Option<(Place, TriviaSide)>, ArenaError> {
+        if let (Place::Unit(_), TriviaSide::Inner) = (place, side) {
+            return Ok(None);
+        }
         let (Place::Record(at), TriviaSide::Inner) = (place, side) else { return Ok(Some((place, side))) };
         if arena.word(at).is_err() {
             return Ok(None);
@@ -598,7 +602,7 @@ impl<T: Clone> TriviaStore<T> {
             let held = match side {
                 TriviaSide::Leading => &mut unit.2.leading,
                 TriviaSide::Trailing => &mut unit.2.trailing,
-                TriviaSide::Inner => &mut unit.2.inner,
+                TriviaSide::Inner => return Err(ArenaError::Malformed { what: "an inner side kept for a unit", word: site.word }),
             };
             *held = Some(self.expanded(kept, arena)?);
         }
@@ -621,15 +625,18 @@ impl<T: Clone> TriviaStore<T> {
     {
         let mut kept = Vec::new();
         for (word, item, trivia) in units {
+            if trivia.inner.as_ref().is_some_and(|inner| !inner.is_empty()) {
+                return Err(ArenaError::Unwritable("an entry inside a unit, which has no inside"));
+            }
             let place = Place::Unit(Site { holder, word: *word, item: *item });
-            for (side, entries) in [(TriviaSide::Leading, &trivia.leading), (TriviaSide::Trailing, &trivia.trailing), (TriviaSide::Inner, &trivia.inner)] {
+            for (side, entries) in [(TriviaSide::Leading, &trivia.leading), (TriviaSide::Trailing, &trivia.trailing)] {
                 if let Some(entries) = entries {
                     kept.push((place, side, self.compact(entries)?));
                 }
             }
         }
         for (_, _, trivia) in units {
-            for entries in [&trivia.leading, &trivia.trailing, &trivia.inner].into_iter().flatten() {
+            for entries in [&trivia.leading, &trivia.trailing].into_iter().flatten() {
                 self.hold(entries)?;
             }
         }
@@ -1129,7 +1136,7 @@ mod tests {
         let store = TriviaStore::<TriviaText>::new();
         let unit = |holder, word, item| Place::Unit(Site { holder: Address(holder), word, item: ItemIndex(item) });
         store.write_side(unit(5, 2, 0), TriviaSide::Leading, &[entry("// gone")]).expect("kept");
-        store.write_side(unit(5, 7, 1), TriviaSide::Inner, &[]).expect("kept");
+        store.write_side(unit(5, 7, 1), TriviaSide::Trailing, &[]).expect("kept");
         store.write_side(unit(6, 2, 0), TriviaSide::Leading, &[entry("// other")]).expect("kept");
         store.write_side(Place::Record(Address(5)), TriviaSide::Leading, &[entry("// own")]).expect("kept");
         let leaf = Place::Leaf(Site { holder: Address(5), word: 2, item: ItemIndex(0) });
@@ -1254,6 +1261,22 @@ mod tests {
         let stamped = layout.onto(header, store.kind_bits).expect("a header");
         let read = crate::arena::RecordSpace::push(&mut crate::arena::ReadWriter::new(&mut chunks), &[stamped, 0]).expect("a read's record");
         (built, read)
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_unit_keeps_no_inner_side() {
+        use crate::arena::Address;
+        use crate::trivia::NodeTrivia;
+        use crate::types::ItemIndex;
+        let store = TriviaStore::<TriviaText>::new();
+        let unit = Place::Unit(Site { holder: Address(5), word: 2, item: ItemIndex(0) });
+        assert!(store.write_side(unit, TriviaSide::Inner, &[entry("// in")]).is_err(), "an entry inside a unit is refused");
+        store.write_side(unit, TriviaSide::Inner, &[]).expect("a write of nothing");
+        assert_eq!(read_side(&store, unit, TriviaSide::Inner), None, "and keeps nothing");
+        let inside = NodeTrivia { leading: Some(vec![entry("// a")]), trailing: None, inner: Some(vec![entry("// in")]) };
+        assert!(store.write_units(Address(5), &[(2, ItemIndex(0), inside)]).is_err(), "a unit written with an entry inside is refused");
+        assert_eq!(store.units(Address(5), &*store.built()).expect("read"), [], "before any side of it is written");
     }
 
     #[cfg(feature = "arena")]

@@ -1,10 +1,11 @@
 //! A parse places its extras and `ERROR`s: for every node of every fixture,
 //! the records the engine's side store names for a side of the node, right
 //! after an arena parse and before anything reads a side, are those of the
-//! extras and `ERROR`s the tree's placement assigns that side, in order. The
-//! parse sets apart the list items the tree's lookup does: an item with a
-//! record in its record's header, any other with a blank-line member first
-//! on the leading side it places.
+//! extras and `ERROR`s the tree's placement assigns that side, in order. A
+//! unit has no inside: what the tree's placement assigns inside one, the
+//! parse keeps nowhere. The parse sets apart the list items the tree's
+//! lookup does: an item with a record in its record's header, any other with
+//! a blank-line member first on the leading side it places.
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::source::Source;
@@ -42,9 +43,11 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
     while let Some((run, row)) = pending.pop() {
         for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
+            let inside_a_unit = side == TriviaSide::Inner && grammar.surface_kinds().units.contains(&theirs.kid(row).grammar);
             let kept: Vec<Bytes> = placement
                 .tables()
                 .flat_map(|table| table.side(row, side).iter())
+                .filter(|_| !inside_a_unit)
                 .filter_map(|entry| match *entry {
                     Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => Some(at),
                     _ => None,
