@@ -224,8 +224,8 @@ describe('the owner a side belongs to', () => {
 		if (!engine.is.letDeclaration(declaration)) throw new Error('expected a let declaration');
 		const value = declaration.value();
 		if (value === undefined || !engine.is.structExpression(value)) throw new Error('expected a struct expression');
-		const body = value.body();
-		if (!engine.isEmptyNode(body)) throw new Error('expected an empty body');
+		const body = value.$query().$descendants.ofType(engine.kinds.FieldInitializerList).at(0);
+		if (body === undefined || !engine.isEmptyNode(body)) throw new Error('expected an empty body');
 		expect(texts(body.$trivia.inner())).toEqual(['/* c */']);
 	});
 
@@ -241,7 +241,7 @@ describe('the owner a side belongs to', () => {
 		const fn = functionAt(root, 0);
 		expect(texts(fn.$trivia.leading())).toEqual(['// c']);
 		const visibility = fn.visibilityModifier();
-		if (visibility === undefined) throw new Error('expected a visibility modifier');
+		if (visibility === undefined || typeof visibility === 'number') throw new Error('expected a visibility modifier');
 		expect(texts(visibility.$trivia.leading())).toEqual([]);
 		visibility.$trivia.leading(build.lineComment(' v'));
 		expect(texts(fn.$trivia.leading())).toEqual(['// c']);
