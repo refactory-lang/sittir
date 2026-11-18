@@ -92,14 +92,14 @@
 
 ### Task 6: Factories and the loose `from`
 
-**Status:** in progress. Built object nodes read hoisted slots through the stamp (`storedAccessor`, `storedHop`); a chain slot's config input is its hoisted type (a hint on the holder's interface), the strict builders wrap it with each wrapper's own builder, the loose resolvers read the hoisted value back, and the generated tests sample and check a hoisted slot by its own type. Remaining: refine-form setter parameter types, the hop holders' own factory surfaces, and the tests and examples that read old shapes.
+**Status:** done. Built object nodes read hoisted slots through the stamp (`storedAccessor`, `storedHop`); a chain slot's config input is its hoisted type (a hint on the holder's interface) or its wrapper, and a slot that stores a list of wrappers also admits the wrapper per item (`ItemWrapperInput`, a non-empty hoisted input staying a non-empty tuple); the strict builders wrap it with each wrapper's own builder, the loose resolvers read the hoisted value back, and the generated tests sample and check a hoisted slot by its own type. The node model carries the stamp (`hoist` on a slot, read as `FactorySlotMeta.hoist`).
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/factories.ts`, `packages/codegen/src/emitters/from.ts`
 - Test: `packages/{typescript,python,rust}/tests/hoist-build.test.ts`
 
-- [ ] **Step 1: The failing tests.** A factory and a loose `from` input take the hoisted type and wrap it with each wrapper's own builder. A new build's options decide an optional trailing separator.
-- [ ] **Step 2: The emitters** read the stamp.
+- [x] **Step 1: The failing tests.** A factory and a loose `from` input take the hoisted type and wrap it with each wrapper's own builder. A new build's options decide an optional trailing separator.
+- [x] **Step 2: The emitters** read the stamp.
 
 ### Task 7: Validators and `is` guards
 
