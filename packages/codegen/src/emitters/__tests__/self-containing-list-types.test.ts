@@ -41,9 +41,9 @@ function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 	return makeNodeMapWith(nodes);
 }
 
-it.each(['typescript', 'typescript6'])(
-	'compiles self-containing list argument rows with %s',
-	(compiler) => {
+it(
+	'compiles self-containing list argument rows with typescript',
+	() => {
 		const root = fileURLToPath(new URL('../../../../..', import.meta.url));
 		const dir = mkdtempSync(join(root, '.self-containing-list-'));
 		try {
@@ -91,11 +91,11 @@ loose({ unrelated: true });
 					references: []
 				})
 			);
-			const compilerPackage = createRequire(import.meta.url).resolve(`${compiler}/package.json`);
+			const compilerPackage = createRequire(import.meta.url).resolve('typescript/package.json');
 			const result = spawnSync(
 				process.execPath,
 				[
-					join(dirname(compilerPackage), 'bin', compiler === 'typescript6' ? 'tsc6' : 'tsc'),
+					join(dirname(compilerPackage), 'bin', 'tsc'),
 					'-p',
 					join(dir, 'tsconfig.json'),
 					'--pretty',

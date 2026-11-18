@@ -2019,6 +2019,10 @@ The grammars to check. When absent, every grammar that has bindings is checked.
 
 Runs the conformance check for each grammar and prints each report. A grammar with no typed module prints a line saying so. Returns 0.
 
+### `packages/tools/src/portable/conformance.ts::portableTypeTests`
+
+A grammar's portable type tests: the files in its tests directory that match the portable type-test glob, sorted.
+
 ### `packages/tools/src/portable/admission.ts::portableAdmission`
 
 Runs the admission check over the given grammars, all binding grammars by default. It types each grammar's portable module, reads every view's yields, and compares the kinds each read site admits with the kinds its reads give. It returns the resulting `AdmissionReport`.
