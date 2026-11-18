@@ -31,6 +31,8 @@ export interface EngineHandle {
 	readonly admit: (kindId: unknown, args: readonly unknown[], declared?: readonly string[]) => void;
 	/** Checks the values a builder of `kind` stores before it writes them as a record, for an engine verifying structure at run time. */
 	readonly verifyStored?: (kind: number, stored: Readonly<Record<string, unknown>>) => void;
+	/** Checks the values a `$with` setter of hoisted slot `property` takes against the row of `kind`, for an engine verifying structure at run time. */
+	readonly admitHoisted?: (kind: number, property: string, values: readonly unknown[]) => void;
 }
 
 export interface TreeEngineHandle extends EngineHandle {

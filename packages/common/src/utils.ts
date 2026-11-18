@@ -967,6 +967,7 @@ function hoistedWithUnchecked(
 	inner: ((args: readonly never[]) => readonly unknown[]) | undefined
 ): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
+	if (!clears) handle?.admitHoisted?.((node as { readonly $type: number }).$type, accessor, args);
 	if (!clears && args.length === 1 && kind !== undefined && isKindNode(args[0], kind)) return (place ?? ((placed: unknown) => apply([placed])))(args[0]);
 	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;

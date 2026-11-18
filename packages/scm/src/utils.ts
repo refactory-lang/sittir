@@ -123,12 +123,14 @@ export const structure: StructureTable = Object.freeze({
 	40: {
 		kind: 'string',
 		single: [['_string_content', 'String.stringContent']],
-		nodeOnly: [['_string_content', 'String.stringContent', 'a built StringContent', [42]]]
+		nodeOnly: [['_string_content', 'String.stringContent', 'a built StringContent', [42]]],
+		hoisted: [['stringContent', 'String.stringContent', 'a built StringContent', [1, 23, 42]]]
 	},
 	41: {
 		kind: 'immediate_string',
 		single: [['_string_content', 'ImmediateString.stringContent']],
-		nodeOnly: [['_string_content', 'ImmediateString.stringContent', 'a built StringContent', [42]]]
+		nodeOnly: [['_string_content', 'ImmediateString.stringContent', 'a built StringContent', [42]]],
+		hoisted: [['stringContent', 'ImmediateString.stringContent', 'a built StringContent', [1, 23, 42]]]
 	},
 	42: {
 		kind: 'string_content',
@@ -230,6 +232,7 @@ export const structure: StructureTable = Object.freeze({
 			['_prefix', 'Predicate.prefix', [19, 20]],
 			['_type', 'Predicate.type', [4, 18]]
 		],
+		hoisted: [['parameters', 'Predicate.parameters', 'a built Parameters', [5, 39, 40, 43]]],
 		config: ['prefix', 'name', 'type', 'parameters']
 	},
 	54: {

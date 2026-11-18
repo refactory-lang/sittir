@@ -1854,7 +1854,39 @@ export function compoundStructureRow(
 		const label = `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`;
 		return [[f.storageKey, label, slotNodeKindIds(seat.rest, nodeMap) ?? [], slotNodeKindIds(seat.last, nodeMap) ?? []] as const];
 	});
-	return structureRow(node.kind, { required, single, nonEmpty, final, ...checks, config: configFirst ? configKeysOf(node) : [], lists, options });
+	const hoisted = stored.flatMap((f) => {
+		const chain = wrapperChainFor(nodeMap, node.kind, f.name);
+		const kinds = chain === undefined ? undefined : hoistedKindIds(chain, nodeMap);
+		return kinds === undefined ? [] : [[f.propertyName, bareTextLabel(f, node.typeName), bareTextExpectation(f, nodeMap) ?? 'a built node', kinds] as const];
+	});
+	return structureRow(node.kind, { required, single, nonEmpty, final, ...checks, hoisted, config: configFirst ? configKeysOf(node) : [], lists, options });
+}
+
+function hoistedKindIds(chain: WrapperChain, nodeMap: NodeMap): number[] | undefined {
+	const ids = new Set<number>();
+	let complete = true;
+	const visited = new Set<AssembledNode>();
+	const add = (kind: string): void => {
+		const node = nodeMap.nodes.get(kind);
+		if (node === undefined || visited.has(node)) return;
+		visited.add(node);
+		if (node.kindId !== undefined) ids.add(node.kindId);
+		else complete = false;
+		if (node instanceof AssembledList) visitSlot(canonicalSeparatedListField(node));
+		else if (node instanceof AssembledAlias) for (const slot of node.slots) visitSlot(slot);
+	};
+	const visitSlot = (slot: AssembledNonterminal): void => {
+		for (const value of slot.values) {
+			const storage = valueStorageOf(value, nodeMap);
+			if (storage?.via === 'node') add(storage.kind);
+		}
+	};
+	for (const kind of chain.storage) {
+		const node = nodeMap.nodes.get(kind);
+		if (node?.kindId !== undefined) ids.add(node.kindId);
+	}
+	visitSlot(chain.slots[chain.slots.length - 1]!);
+	return complete ? [...ids].sort((a, b) => a - b) : undefined;
 }
 
 function slotStorageChecks(

@@ -242,6 +242,8 @@ export interface StructureRow {
 	readonly kindIds?: readonly (readonly [storageKey: string, label: string, kinds: readonly number[]])[];
 	/** `[storageKey, label, texts]`: the slot holds one of `texts`, or nothing. */
 	readonly texts?: readonly (readonly [storageKey: string, label: string, texts: readonly string[]])[];
+	/** `[propertyName, label, expected, kinds]`: a value a hoisted slot's setter or builder takes, when it is a node, is one of `kinds` (membership): the hoisted content and each wrapper on the slot's chain. */
+	readonly hoisted?: readonly (readonly [propertyName: string, label: string, expected: string, kinds: readonly number[]])[];
 	/** The config keys the kind declares; only a kind whose builder takes a config first has it. */
 	readonly config?: readonly string[];
 	/** `[propertyName, holes, arrival]`: a list the builder takes as input. `holes` lists admit absent items; `arrival` is `'key'` for a config key, or the index the items start at in the builder's arguments (1 after a leading options argument). */
