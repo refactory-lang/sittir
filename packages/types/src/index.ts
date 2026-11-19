@@ -460,6 +460,7 @@ type WidenLooseFieldValue<
 	Visited extends number[]
 > =
 	| WrapperInput<T, K>
+	| (K extends keyof WrapperHintsOf<T> ? Exclude<WidenSlotValue<WrapperHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]> : never)
 	| (K extends keyof LooseHintsOf<T>
 			?
 					| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
