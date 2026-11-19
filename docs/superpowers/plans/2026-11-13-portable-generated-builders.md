@@ -146,9 +146,13 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - number spelling in decimal parts (exponent forms included) through `decimalSpelling`, with a part the builder takes as an option passed in the call's options;
   - strict calls for what the loose builders coerced: a token's kind id in its seat's containers, a text through the one path that takes it as its only required slot (else `untexted`), an integer passed to a direct builder once per scalar type;
   - the module's own `isNode` guard, typed by the grammar's node union;
-  - token-only slots typed as their token texts, read and build (python 16, rust 5, typescript 9), the generated slot function taking its text type from the map.
-- Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 828, rust 1335, typescript 1315.
-- A path the emitter can't compile whole is left out with `portable-emit-unfit-slot` and counted by the corpus test's not-generated ceiling. That covers holders, owners, mounts and options.
+  - token-only slots typed as their token texts, read and build (python 16, rust 5, typescript 9), the generated slot function taking its text type from the map;
+  - a generated arm refuses a slot its path admits that the arm has no route for, as the interpreter does (`<path> has no slot <x>`);
+  - a path no build takes leaves the exact sets, and read types narrow with it: codegen stamps, per kind that reads as such a family path, whether its refinements cover every case (all 13 are covered, across 16 kinds), and refuses an uncovered one (`portable-family-uncovered`);
+  - arms with several forms, each form tried under the test that the slots outside it are absent, and slots reached in several steps, each step's builder a container of the slot's seats;
+  - each container fact's spelling with no holes carries its text, derived from the render bodies in the same run.
+- Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 827, rust 1297, typescript 1315.
+- A path the emitter can't compile whole is left out with `portable-emit-unfit-slot` and counted by the corpus test's not-generated ceiling. That covers holders, mounts, options, and an arm whose forms build one slot through different routes.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
 - A number path is its path, its `$value` and its other slots. Two kinds of slot leave it: the slots its value is written from (`valueSource` on the model), and its options, the slots a preference binds (the model's `registered`). The low-level builder writes an option from its preference default. Python loses 32 fields, rust 4 and typescript 24. Two kinds one path claims stay apart when their options differ.
