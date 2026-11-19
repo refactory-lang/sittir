@@ -39,6 +39,18 @@ const outcomeOf = (run: () => string): Outcome => {
 	}
 };
 
+const functionAt = (generated: object, path: string): unknown =>
+	path
+		.split('.')
+		.reduce<unknown>((at, segment) => ((typeof at === 'object' || typeof at === 'function') && at !== null && Object.hasOwn(at, segment) ? (at as Record<string, unknown>)[segment] : undefined), generated);
+
+const textOrRefused = (render: (node: never) => { toString(): string }, run: () => unknown): string => {
+	const result = outcomeOf(() => render(run() as never).toString());
+	return 'text' in result ? result.text : 'refused';
+};
+
+type RootTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly root: boolean; readonly arms: readonly { readonly scalar?: string }[] }>> } };
+
 const EDGE_SCALARS: readonly (number | bigint)[] = [-0, -1, -1.5, Number.NaN, Number.POSITIVE_INFINITY, 1.5, 2, 2n, -2n, 2 ** 60];
 
 describe.each(GRAMMARS)('the generated portable build of %s, on a number path', (grammar) => {
@@ -46,15 +58,12 @@ describe.each(GRAMMARS)('the generated portable build of %s, on a number path', 
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
 		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
-		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as { readonly build: { readonly paths: Readonly<Record<string, { readonly root: boolean; readonly arms: readonly { readonly scalar?: string }[] }>> } };
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as RootTable;
 		const generated = scopeBuilders(engine, portableBuild);
-		const outcome = (run: () => unknown): string => {
-			const result = outcomeOf(() => engine.render(run() as never).toString());
-			return 'text' in result ? result.text : 'refused';
-		};
+		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
 		const numberPaths = Object.entries(table.paths).filter(([, row]) => row.root && row.arms.some((arm) => arm.scalar !== undefined)).map(([path]) => path);
 		const differences = numberPaths.flatMap((path) => {
-			const run = path.split('.').reduce<unknown>((at, segment) => ((typeof at === 'object' || typeof at === 'function') && at !== null ? (at as Record<string, unknown>)[segment] : undefined), generated);
+			const run = functionAt(generated, path);
 			if (typeof run !== 'function') return [];
 			return EDGE_SCALARS.flatMap((value) => {
 				const structure = { $path: path, $value: value };
@@ -66,6 +75,25 @@ describe.each(GRAMMARS)('the generated portable build of %s, on a number path', 
 	});
 });
 
+describe.each(GRAMMARS)('the generated portable build of %s, given a key no arm routes', (grammar) => {
+	it('refuses it on every root path as the interpreter does, a text input in its object form included', async () => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as RootTable;
+		const generated = scopeBuilders(engine, portableBuild);
+		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
+		const compared = Object.entries(table.paths).filter(([path, row]) => row.root && typeof functionAt(generated, path) === 'function');
+		const differences = compared.flatMap(([path]) => {
+			const structure = { $path: path, $value: 'x', unexpected: 'y' };
+			const [built, interpreted] = [outcome(() => (functionAt(generated, path) as PathFunction)(structure)), outcome(() => runtime.build(structure))];
+			return built === interpreted ? [] : [`${path}: generated ${JSON.stringify(built)}, interpreter ${JSON.stringify(interpreted)}`];
+		});
+		expect(compared.length).toBeGreaterThan(0);
+		expect(differences).toEqual([]);
+	});
+});
+
 describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 	it.each(STORAGES)('builds every corpus structure as the interpreter does, in %s storage', async (nodeStorage) => {
 		const language = await languageByName(grammar);
@@ -73,7 +101,7 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 		const runtime = await portableRuntime(engine);
 		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
 		const generated = scopeBuilders(engine, portableBuild);
-		const functionOf = (path: string) => path.split('.').reduce<unknown>((at, segment) => (typeof at === 'object' && at !== null && Object.hasOwn(at, segment) ? (at as Record<string, unknown>)[segment] : typeof at === 'function' && Object.hasOwn(at, segment) ? (at as unknown as Record<string, unknown>)[segment] : undefined), generated) as PathFunction | undefined;
+		const functionOf = (path: string) => functionAt(generated, path) as PathFunction | undefined;
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const differences: string[] = [];
 		const rows: string[] = [];
@@ -123,6 +151,18 @@ describe('the generated portable build, by the engine that scopes it', () => {
 		const stated = { ...read, type: 'Point' };
 		expect(() => runtime.build(stated)).toThrow(/has no slot type/);
 		expect(() => field(stated)).toThrow('pattern.struct.field has no slot type');
+	});
+
+	it('refuses a key no arm routes on a nested text item, as the interpreter does', async () => {
+		using engine = await createEngine(await languageByName('typescript'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const { portableBuild } = (await import('../../../typescript/src/portable/build.ts')) as unknown as { readonly portableBuild: { readonly literal: { readonly string: PathFunction } } };
+		const string = scopeBuilders(engine, portableBuild).literal.string;
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		const fragment = (extra: object): PortableStructure => ({ $path: 'literal.string', elements: [{ $path: 'literal.string.text', $value: 'ab', ...extra }] });
+		expect(render(string(fragment({})))).toBe(render(runtime.build(fragment({}))));
+		expect(() => runtime.build(fragment({ unexpected: 'y' }))).toThrow(/has no slot unexpected/);
+		expect(() => string(fragment({ unexpected: 'y' }))).toThrow('literal.string.text has no slot unexpected');
 	});
 
 	it('refuses an attributed type parameter, whose arm has no route for its attributes, as the interpreter does', async () => {

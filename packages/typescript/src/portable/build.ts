@@ -2691,6 +2691,8 @@ const clause_import_specifier$415 = (
 	});
 };
 const comment_html$178 = (input: PathInput<TypeScriptMap, 'comment.html'>): ReturnType<typeof b.htmlComment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.html', unroutedSlot);
 	return b.htmlComment(typeof input === 'string' ? input : input.$value);
 };
 const declaration_ambient$313 = (
@@ -2839,6 +2841,8 @@ const expression_collection_object$238 = (
 	return b.object(...(input.properties ?? []).map(expression_collection_object$238_properties));
 };
 const identifier$1 = (input: PathInput<TypeScriptMap, 'identifier'>): ReturnType<typeof b.identifier> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
 	return b.identifier(typeof input === 'string' ? input : input.$value);
 };
 const identifier_qualified$244 = (
@@ -3047,11 +3051,15 @@ const literal_regex$276 = (input: PathInput<TypeScriptMap, 'literal.regex'>): Re
 const literal_regex_flags$127 = (
 	input: PathInput<TypeScriptMap, 'literal.regex.flags'>
 ): ReturnType<typeof b.regexFlags> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.regex.flags', unroutedSlot);
 	return b.regexFlags(typeof input === 'string' ? input : input.$value);
 };
 const literal_regex_pattern$126 = (
 	input: PathInput<TypeScriptMap, 'literal.regex.pattern'>
 ): ReturnType<typeof b.regexPattern> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.regex.pattern', unroutedSlot);
 	return b.regexPattern(typeof input === 'string' ? input : input.$value);
 };
 const literal_string$424 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringDouble> => {
@@ -3074,16 +3082,22 @@ const literal_string_interpolated$274 = (
 const literal_string_text$119 = (
 	input: PathInput<TypeScriptMap, 'literal.string.text'>
 ): ReturnType<typeof b.unescapedDoubleStringFragment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
 	return b.unescapedDoubleStringFragment(typeof input === 'string' ? input : input.$value);
 };
 const literal_string_text$120 = (
 	input: PathInput<TypeScriptMap, 'literal.string.text'>
 ): ReturnType<typeof b.unescapedSingleStringFragment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
 	return b.unescapedSingleStringFragment(typeof input === 'string' ? input : input.$value);
 };
 const literal_string_text$176 = (
 	input: PathInput<TypeScriptMap, 'literal.string.text'>
 ): ReturnType<typeof b.templateChars> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
 	return b.templateChars(typeof input === 'string' ? input : input.$value);
 };
 const pattern_list$243 = (input: PathInput<TypeScriptMap, 'pattern.list'>): ReturnType<typeof b.arrayPattern> => {

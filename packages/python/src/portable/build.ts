@@ -45154,6 +45154,8 @@ const clause_import_relative$138 = (
 const clause_import_relative_prefix$137 = (
 	input: PathInput<PythonMap, 'clause.import.relative.prefix'>
 ): ReturnType<typeof b.importPrefix> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.relative.prefix', unroutedSlot);
 	return b.importPrefix(typeof input === 'string' ? input : input.$value);
 };
 const declaration_class$179 = (
@@ -46124,6 +46126,8 @@ const expression_interpolation$360 = (
 const expression_interpolation_conversion$65 = (
 	input: PathInput<PythonMap, 'expression.interpolation.conversion'>
 ): ReturnType<typeof b.typeConversion> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('expression.interpolation.conversion', unroutedSlot);
 	return b.typeConversion(typeof input === 'string' ? input : input.$value);
 };
 const expression_interpolation_format$259 = (
@@ -46200,6 +46204,8 @@ const file$133 = (input: PathInput<PythonMap, 'file'>): ReturnType<typeof b.modu
 	return b.module(...(input.statements ?? []).map(file$133_statements));
 };
 const identifier$1 = (input: PathInput<PythonMap, 'identifier'>): ReturnType<typeof b.identifier> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
 	return b.identifier(typeof input === 'string' ? input : input.$value);
 };
 const identifier_qualified$187 = (
@@ -46364,6 +46370,8 @@ const literal_number_integer_octal$97 = (
 const literal_string_text$125 = (
 	input: PathInput<PythonMap, 'literal.string.text'>
 ): ReturnType<typeof b.stringFragment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
 	return b.stringFragment(typeof input === 'string' ? input : input.$value);
 };
 const pattern_as$190 = (input: PathInput<PythonMap, 'pattern.as'>): ReturnType<typeof b.caseAsPattern> => {

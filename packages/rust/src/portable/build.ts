@@ -13587,6 +13587,8 @@ const expression_collection_struct$282 = (
 	});
 };
 const identifier$1 = (input: PathInput<RustMap, 'identifier'>): ReturnType<typeof b.identifier> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
 	return b.identifier(typeof input === 'string' ? input : input.$value);
 };
 const identifier_label$303 = (input: PathInput<RustMap, 'identifier.label'>): ReturnType<typeof b.label> => {

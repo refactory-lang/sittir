@@ -844,7 +844,6 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	};
 
 	const unroutedGuards = (path: string, arm: PortableBuildArm): Statement[] => {
-		if (textValues.has(path)) return [];
 		const routed = new Set([...arm.slots.map((slot) => slot.name), ...arm.when.flatMap((test) => ('empty' in test ? test.empty : [])), ...ownedNames(path, arm)]);
 		const placed = new Set([...Object.keys(arm.flags), ...arm.when.flatMap((test) => ('flag' in test && test.set ? [test.flag] : [])), ...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])]);
 		return [
@@ -899,9 +898,9 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		];
 	};
 
-	let pathFunctions: Statement[] = [];
-	let roots: string[] = [];
-	let root: Trie = { children: new Map() };
+	let pathFunctions: Statement[];
+	let roots: string[];
+	let root: Trie;
 	do {
 		grew = false;
 		found.length = 0;
