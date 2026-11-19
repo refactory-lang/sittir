@@ -445,6 +445,10 @@ Approved by the user, 2026-11-14.
 | `@sittir/types/vocabulary` | `Read<G, P>`, `InputOf<R, G>`, `BuildInput<G, P>`, `Slot` | changed: a path that declares a text `$value` also reads and builds from its bare text (decision 8, approved 2026-11-15) |
 | `@sittir/types/vocabulary` | `Unmapped` | changed: in an input, a slot's node arm is `G['nodes'][P]` |
 | `@sittir/common/portable/utils` | `entriesHolding`, `PlanItems` | added (the maintainer, 2026-11-18): the classifier's selection of the entries a node holds, shared with codegen's coverage stamp so the two cannot disagree |
+| `@sittir/types/vocabulary` | `GrammarMap`, `Contract` | changed (the maintainer, 2026-11-19: "Approve"): gain `facts`, each path's facts and the union of their stamped spelling texts, which type `$at?` on that path's inputs, reads and slot items |
+| `@sittir/codegen` | `mapFactsOf`, `MapFacts` | added (the maintainer, 2026-11-19: "Approve"): the one derivation of a path's facts that the map, the types and the generated build read |
+| `@sittir/common` (internal) | `spellingOf`, `PortableBuildContext.spellingOf` | removed (the maintainer, 2026-11-19: "Ride this PR"): the interpreter reads a spelling's text from the stamp on the table |
+| generated `<lang>/src/portable/build.ts` | `placeOf` removed; refusal `unset` added | changed (the maintainer, 2026-11-19: "Approve"): an `$at` naming a fact its arm doesn't set refuses, as the interpreter does |
 | generated `<lang>/src/portable/build.ts` | `build` (the table) | replaced: `portableBuild(engine)` |
 | generated `<lang>/src/portable/project.ts` | `project` | added |
 | generated `<lang>/src/portable/index.ts` | `rows` | removed |
