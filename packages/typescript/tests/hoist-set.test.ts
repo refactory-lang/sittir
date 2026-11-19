@@ -17,7 +17,7 @@ describe.each(['arena', 'object'] as const)('the typescript hoist sets through i
 			return expression as unknown as { $with: { arguments(...parts: unknown[]): unknown }; arguments(): readonly unknown[] };
 		};
 		const edited = call(first).$with.arguments(...call(second).arguments());
-		expect(String(e.render(edited as never))).toBe('tag `x`');
+		expect(String(e.render(edited as never))).toBe('tag`x`');
 		e[Symbol.dispose]();
 	});
 

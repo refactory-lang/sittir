@@ -157,6 +157,7 @@ export default grammar(enrich(base), wire({
 			'decorator:/(_)/after': preference('newline'),
 			'decorator:/end': preference('newline'),
 			'"("/before': preference('tight'),
+			'"`"/before': preference('tight'),
 			'"("/after': preference('tight'),
 			'")"/before': preference('tight'),
 			'"["/before': preference('tight'),
