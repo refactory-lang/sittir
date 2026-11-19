@@ -29,6 +29,8 @@ Gluing by default has a failure class that spacing does not: two tokens written 
 
 A `_`-scope `tight` belongs only on a face that is tight in every context — the opener's after, the closer's before, `.`, the list punctuation's before, the unary operators' after. `(`'s before and `[`'s before belong at `_` as well, though they vary (`f(x)` beside `if (x)`): the cascaded tight is the middle strength, so it loses to any declared left face (`= (x)`, `return (x)`, `[(2)]`) and to a keyword's word-default, and wins only against a fallback left neighbour (`f(x)`, `Foo(x)`, `#[derive(`). A kind that opens with `(` and still wants a space after a face-less neighbour takes a kind row; none has been needed.
 
+**A template follows its tag directly** (the maintainer, 2026-11-19: "No space, own commit"). Typescript's backtick takes a `_`-scope `tight` before-face, at the middle strength `(`'s before has, so a built or rebuilt tagged template writes `` tag`x` ``, and a declared left face keeps its space: `` = `x` ``, `` return `x` ``. An untouched tree still renders its source bytes.
+
 **Two faces on one boundary combine by rank.** Between two tokens the seam pass emits two sites, the left token's `after` and the right token's `before`, and each resolves on its own. Where they disagree, the writer takes the higher rank:
 
 ```
