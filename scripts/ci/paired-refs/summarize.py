@@ -15,7 +15,8 @@
 # base. Those entries are listed by grammar, entry and key without failing,
 # with how many of them each version holds at the identity tree and at base.
 # A tree read in arena storage must equal the same tree in object storage on
-# every entry.
+# every entry, and every round of a version must hold its round 0's hashes,
+# so round 0's counts stand for every round.
 # Writes summary.json and summary.md into <out-dir>, appends the Markdown to
 # $GITHUB_STEP_SUMMARY when it is set, and exits 1 when any version holds
 # another value, naming its entries and keys.
@@ -157,6 +158,8 @@ for v in VERSIONS:
     memory[v] = {'medianDeltaHeapPlusExternalBytes': median(d['samples'][0]['delta']['heapUsed'] + d['samples'][0]['delta']['external'] for d in ds),
                  'medianDeltaBytes': {k: median(d['samples'][0]['delta'][k] for d in ds) for k in ['heapUsed', 'external', 'arrayBuffers', 'rss']},
                  'builtMemory': [d.get('builtMemory') for d in ds]}
+apartFromRoundZero = [(v, r, sorted(k for k in held.keys() | hashes[v][0].keys() if held.get(k) != hashes[v][0].get(k))) for v in VERSIONS for r, held in enumerate(hashes[v]) if r > 0]
+mismatches += apartLines([x for x in apartFromRoundZero if x[2]], lambda v: 'its round 0')
 identity, base = hashes[IDENTITY][0], hashes['base'][0]
 everyKey = identity.keys() | base.keys()
 fromBase = sorted(k for k in everyKey if identity.get(k) != base.get(k))

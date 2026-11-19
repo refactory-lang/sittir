@@ -28,8 +28,8 @@ function measured(dir, held) {
 			for (const grammar of GRAMMARS) {
 				const byEntry = [0, 1, 2, 3].map((at) => ({
 					name: `${grammar} entry ${at}`,
-					rendered: held(version, grammar, at, 'render'),
-					edits: Object.fromEntries(['body', 'items'].map((key) => [key, held(version, grammar, at, key)]))
+					rendered: held(version, grammar, at, 'render', round),
+					edits: Object.fromEntries(['body', 'items'].map((key) => [key, held(version, grammar, at, key, round)]))
 				}));
 				json(`runs/corpus-${grammar}-${version}-${round}.json`, {
 					signature: { entries: 4 },
@@ -42,7 +42,7 @@ function measured(dir, held) {
 			}
 			const samples = [2000, 8000].flatMap((n) =>
 				[false, true].flatMap((reuse) => {
-					const edited = held(version, 'construction', n, reuse ? 'reused' : 'distinct');
+					const edited = held(version, 'construction', n, reuse ? 'reused' : 'distinct', round);
 					return Array.from({ length: 7 }, () => ({
 						n,
 						reuse,
@@ -173,6 +173,26 @@ test('an arena read apart from the same tree read in object storage fails, even 
 		summary.mismatches.join('\n')
 	);
 });
+
+for (const [what, at] of [
+	['corpus edit', ['python', 0, 'body']],
+	['construction case', ['construction', 8000, 'reused']]
+]) {
+	test(`a version whose ${what} holds the identity output in round 0 and base output after fails, in both storages`, () => {
+		const held = (version, grammar, entry, key, round) =>
+			version.startsWith('prefold') && round > 0 && `${grammar} ${entry} ${key}` === at.join(' ')
+				? outputOf('base', grammar, entry, key)
+				: outputOf(version, grammar, entry, key);
+		const { status, summary } = summarize(held, 'feature');
+		assert.equal(status, 1);
+		const named =
+			what === 'corpus edit' ? 'python #0 python entry 0: edit body' : 'construction, 8000 function roots, reused name';
+		assert.deepEqual(summary.mismatches, [
+			`prefold rounds 1, 2, 3, 4: 1 apart from its round 0: ${named}`,
+			`prefold-arena rounds 1, 2, 3, 4: 1 apart from its round 0: ${named}`
+		]);
+	});
+}
 
 test('an identity that names no tree is refused', () => {
 	const { status, stderr } = summarize(outputOf, 'nightly');
