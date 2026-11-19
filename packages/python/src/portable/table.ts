@@ -2798,7 +2798,8 @@ export const build: PortableBuildTable = {
 									item: {
 										$path: 'identifier',
 										$value: 'staticmethod'
-									}
+									},
+									text: 'staticmethod'
 								}
 							]
 						},
@@ -2811,14 +2812,16 @@ export const build: PortableBuildTable = {
 									item: {
 										$path: 'identifier',
 										$value: 'override'
-									}
+									},
+									text: 'override'
 								},
 								{
 									item: {
 										$path: 'expression.member',
 										object: 'typing',
 										property: 'override'
-									}
+									},
+									text: 'typing.override'
 								}
 							]
 						}
@@ -3096,7 +3099,8 @@ export const build: PortableBuildTable = {
 									item: {
 										$path: 'identifier',
 										$value: 'staticmethod'
-									}
+									},
+									text: 'staticmethod'
 								}
 							]
 						},
@@ -3109,14 +3113,16 @@ export const build: PortableBuildTable = {
 									item: {
 										$path: 'identifier',
 										$value: 'override'
-									}
+									},
+									text: 'override'
 								},
 								{
 									item: {
 										$path: 'expression.member',
 										object: 'typing',
 										property: 'override'
-									}
+									},
+									text: 'typing.override'
 								}
 							]
 						}
@@ -3655,7 +3661,8 @@ export const build: PortableBuildTable = {
 									item: {
 										$path: 'identifier',
 										$value: 'property'
-									}
+									},
+									text: 'property'
 								}
 							]
 						},
@@ -3668,14 +3675,16 @@ export const build: PortableBuildTable = {
 									item: {
 										$path: 'identifier',
 										$value: 'override'
-									}
+									},
+									text: 'override'
 								},
 								{
 									item: {
 										$path: 'expression.member',
 										object: 'typing',
 										property: 'override'
-									}
+									},
+									text: 'typing.override'
 								}
 							]
 						}
@@ -3963,14 +3972,16 @@ export const build: PortableBuildTable = {
 									item: {
 										$path: 'identifier',
 										$value: 'override'
-									}
+									},
+									text: 'override'
 								},
 								{
 									item: {
 										$path: 'expression.member',
 										object: 'typing',
 										property: 'override'
-									}
+									},
+									text: 'typing.override'
 								}
 							]
 						}

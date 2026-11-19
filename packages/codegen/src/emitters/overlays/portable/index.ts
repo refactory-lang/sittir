@@ -11,6 +11,7 @@ import { emitPortableBuild, type PickDiagnostic } from './build.ts';
 import { flagPlansOf, slotFlagsOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
 import { familyCoverageOf } from './covered.ts';
+import type { Body } from '../../render-body.ts';
 import { portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
@@ -28,7 +29,7 @@ export interface PortableOutputs {
 	readonly pickDiagnostics: readonly PickDiagnostic[];
 }
 
-export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): PortableOutputs {
+export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], bodies: ReadonlyMap<string, Body>): PortableOutputs {
 	const routes = resolveRoutes(input);
 	const typeOf = (kind: string) => findKindEntry(kindEntries, kind)?.id;
 	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotSubjectOf(nodeMap), presenceKeywordOf(nodeMap), typeOf);
@@ -75,7 +76,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		});
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];
 	});
-	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, readTest, flagsOf: (path) => declaredFlags(input.vocabulary, path), valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.slots(path).get('$value')?.scalar : undefined) });
+	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, readTest, flagsOf: (path) => declaredFlags(input.vocabulary, path), valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.slots(path).get('$value')?.scalar : undefined), bodies });
 	const coverage = familyCoverageOf({ routes, nodeMap, table: build.table, readTest });
 	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, covered: new Set(coverage.map(({ entry }) => entry)), totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
 	return {

@@ -3,9 +3,41 @@ import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics
 import type { SlotModel } from '../../../bindings/facts.ts';
 import { camel } from '../../../bindings/names.ts';
 import { shownSlots, slotFor, type GrammarRoutes, type ReadEntry } from '../../../bindings/routes.ts';
+import type { Body } from '../../render-body.ts';
 import type { PortableFactRecord } from './read-tests.ts';
 
-export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: GrammarRoutes): PortableSpelling {
+interface Spelled {
+	readonly kind: string;
+	readonly slots: Map<string, string | Spelled>;
+	value?: string;
+}
+
+const WORD = /[\p{L}\p{N}_]/u;
+
+function spelledText(spelled: Spelled, bodies: ReadonlyMap<string, Body>, refuse: (why: string) => never): string {
+	if (spelled.slots.size === 0) return spelled.value ?? refuse(`its item ${spelled.kind} states neither a text nor a slot`);
+	const body = bodies.get(spelled.kind) ?? refuse(`${spelled.kind}, a kind its item holds, has no render body`);
+	const parts: string[] = [];
+	const placed = new Set<string>();
+	for (const part of body) {
+		if (part.kind === 'seam') continue;
+		if (part.kind === 'text') parts.push(part.text);
+		else if (part.kind === 'slot') {
+			const value = spelled.slots.get(part.name);
+			if (value === undefined) continue;
+			placed.add(part.name);
+			parts.push(typeof value === 'string' ? value : spelledText(value, bodies, refuse));
+		} else refuse(`${spelled.kind}'s render body has a ${part.kind} part, which spells no one text`);
+	}
+	const unplaced = [...spelled.slots.keys()].filter((name) => !placed.has(name));
+	if (unplaced.length > 0) refuse(`${spelled.kind}'s render body places no ${unplaced.join(', ')}`);
+	const written = parts.filter((part) => part !== '');
+	for (let i = 1; i < written.length; i++)
+		if (WORD.test(written[i - 1]!.at(-1)!) && WORD.test(written[i]![0]!)) refuse(`${spelled.kind} spells ${JSON.stringify(written[i - 1])} and ${JSON.stringify(written[i])} with no gap between them`);
+	return written.join('');
+}
+
+export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: GrammarRoutes, bodies: ReadonlyMap<string, Body>): PortableSpelling {
 	const refuse = (why: string): never => {
 		throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', ownerKind: entry.kind, message: `${entry.kind} as ${entry.vocab} is a fact its container spells, but ${why}`, details: { vocab: entry.vocab } });
 	};
@@ -22,6 +54,7 @@ export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: G
 	const itemKind = through ? element!.kind! : wrapper;
 	const reached = through ? 2 : 1;
 	const item: Record<string, unknown> = { $path: vocabOf(itemKind) };
+	const spelled: Spelled = { kind: itemKind, slots: new Map() };
 	const holes: Record<string, string[]> = {};
 	for (const predicate of placed) {
 		const steps = predicate.subject!.down;
@@ -30,10 +63,13 @@ export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: G
 		const [argument] = predicate.arguments;
 		if (predicate.operator !== 'eq' || argument === undefined || predicate.arguments.length > 1) refuse(`#${predicate.operator}? spells no text`);
 		if (down.length === 0) {
-			item.$value = 'text' in argument! ? argument.text : refuse("its item's own text is a capture");
+			const text = 'text' in argument! ? argument.text : refuse("its item's own text is a capture");
+			item.$value = text;
+			spelled.value = text;
 			continue;
 		}
 		let into = item;
+		let at = spelled;
 		let holder = itemKind;
 		const keys: string[] = [];
 		down.forEach((selector, i) => {
@@ -43,14 +79,20 @@ export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: G
 			if (i < down.length - 1) {
 				const next = selector.kind ?? (slot.kinds.length === 1 ? slot.kinds[0]! : refuse(`${holder}'s ${slot.name} holds more than one kind`));
 				into = (into[key] ??= { $path: vocabOf(next) }) as Record<string, unknown>;
+				const held = at.slots.get(slot.name);
+				const nested: Spelled = typeof held === 'object' ? held : { kind: next, slots: new Map() };
+				at.slots.set(slot.name, nested);
+				at = nested;
 				holder = next;
-			} else if ('text' in argument!) into[key] = argument.text;
-			else holes[camel(argument!.capture)] = keys;
+			} else if ('text' in argument!) {
+				into[key] = argument.text;
+				at.slots.set(slot.name, argument.text);
+			} else holes[camel(argument!.capture)] = keys;
 		});
 	}
-	return Object.keys(holes).length === 0 ? { item: item as PortableSpelling['item'] } : { item: item as PortableSpelling['item'], holes };
+	return Object.keys(holes).length === 0 ? { item: item as PortableSpelling['item'], text: spelledText(spelled, bodies, refuse) } : { item: item as PortableSpelling['item'], holes };
 }
 
-export function portableSpelledFactOf(fact: PortableFactRecord, entries: readonly ReadEntry[], model: SlotModel, routes: GrammarRoutes): PortableSpelledFact {
-	return { name: fact.name, ...(fact.flag === undefined ? {} : { flag: fact.flag }), slot: fact.slot, spellings: entries.map((entry) => portableSpellingOf(entry, model, routes)) };
+export function portableSpelledFactOf(fact: PortableFactRecord, entries: readonly ReadEntry[], model: SlotModel, routes: GrammarRoutes, bodies: ReadonlyMap<string, Body>): PortableSpelledFact {
+	return { name: fact.name, ...(fact.flag === undefined ? {} : { flag: fact.flag }), slot: fact.slot, spellings: entries.map((entry) => portableSpellingOf(entry, model, routes, bodies)) };
 }

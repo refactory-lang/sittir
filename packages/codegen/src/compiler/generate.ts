@@ -172,7 +172,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const nodeModel = printNodeModel(nodeModelData);
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir), vocabulary);
-		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
+		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries, emitted.templates.bodies);
 		const portableModule = portable === undefined ? undefined : await runPinned('portableBuild', portable.emit);
 		const emitDiagnostics = (portableModule?.diagnostics ?? []).map(
 			({ code, path, slot, message }): GrammarDiagnostic => ({ scope: 'grammar', grammar: cfg.grammar, code, severity: 'warning', canProceed: true, message: `${path}${slot === undefined ? '' : `.${slot}`}: ${message}` })

@@ -152,10 +152,14 @@ export interface PortableSpelledFact {
 	readonly spellings: readonly PortableSpelling[];
 }
 
-/** One spelling of a fact a container spells: the item it builds, and the slots of the built structure it fills in. */
+/**
+ * One spelling of a fact a container spells: the item it builds, the slots of the built structure it fills in, and, for a spelling
+ * with no slots to fill in, its text, the spelling the reader records at the fact.
+ */
 export interface PortableSpelling {
 	readonly item: PortableStructure;
 	readonly holes?: Readonly<Record<string, readonly string[]>>;
+	readonly text?: string;
 }
 
 /**
