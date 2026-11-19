@@ -18,6 +18,7 @@ export interface PortableTypedInput {
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly table: PortableBuildTable;
 	readonly presetCarried: ReadonlySet<ReadEntry>;
+	readonly covered: ReadonlySet<ReadEntry>;
 	readonly totalIntegerReads: ReadonlySet<number>;
 	readonly freeTextClosedBy: ReadonlyMap<ReadEntry, readonly string[]>;
 	readonly flags: ReadonlyMap<string, readonly string[]>;

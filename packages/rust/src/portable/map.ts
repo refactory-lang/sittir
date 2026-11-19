@@ -12,7 +12,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24,7 +23,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -68,7 +66,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -155,7 +152,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.bracket'>
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.paren'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -167,7 +163,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -211,7 +206,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -434,7 +428,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -446,7 +439,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -490,7 +482,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -573,7 +564,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.let'>
 				| V.Read<RustMap, 'clause.let.chain'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -585,7 +575,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -629,7 +618,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -736,7 +724,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -1015,7 +1002,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -1052,7 +1038,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.StringLiteral.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -1064,7 +1049,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -1108,7 +1092,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -1194,7 +1177,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.let'>
 				| V.Read<RustMap, 'clause.let.chain'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -1206,7 +1188,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -1250,7 +1231,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -1335,7 +1315,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly rights:
 				| V.Read<RustMap, 'clause.let'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -1347,7 +1326,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -1391,7 +1369,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -1680,7 +1657,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -1692,7 +1668,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -1736,7 +1711,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -1877,7 +1851,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -1889,7 +1862,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -1933,7 +1905,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -2074,7 +2045,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -2086,7 +2056,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -2130,7 +2099,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -2271,7 +2239,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -2283,7 +2250,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -2327,7 +2293,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -2468,7 +2433,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -2480,7 +2444,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -2524,7 +2487,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -2674,7 +2636,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -2686,7 +2647,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -2730,7 +2690,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -3006,7 +2965,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -3018,7 +2976,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -3062,7 +3019,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -3155,7 +3111,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -3167,7 +3122,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -3211,7 +3165,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -3304,7 +3257,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -3316,7 +3268,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -3360,7 +3311,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -3453,7 +3403,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -3465,7 +3414,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -3509,7 +3457,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -3602,7 +3549,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -3614,7 +3560,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -3658,7 +3603,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -3760,7 +3704,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -3772,7 +3715,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -3816,7 +3758,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -3909,7 +3850,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -3921,7 +3861,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -3965,7 +3904,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -4058,7 +3996,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -4070,7 +4007,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -4114,7 +4050,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -4207,7 +4142,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -4219,7 +4153,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -4263,7 +4196,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -4356,7 +4288,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -4368,7 +4299,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -4412,7 +4342,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -4505,7 +4434,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -4517,7 +4445,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -4561,7 +4488,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -4663,7 +4589,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -4675,7 +4600,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -4719,7 +4643,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -4812,7 +4735,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -4824,7 +4746,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -4868,7 +4789,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -4961,7 +4881,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -4973,7 +4892,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -5017,7 +4935,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -5110,7 +5027,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -5122,7 +5038,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -5166,7 +5081,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -5259,7 +5173,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -5271,7 +5184,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -5315,7 +5227,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -5408,7 +5319,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -5420,7 +5330,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -5464,7 +5373,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -5566,7 +5474,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -5578,7 +5485,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -5622,7 +5528,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -11177,7 +11082,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -11360,7 +11264,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -12609,7 +12512,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -12702,7 +12604,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -12714,7 +12615,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -12758,7 +12658,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -12900,7 +12799,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -12912,7 +12810,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -12956,7 +12853,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -13098,7 +12994,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -13110,7 +13005,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -13154,7 +13048,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -13296,7 +13189,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -13308,7 +13200,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -13352,7 +13243,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -13494,7 +13384,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -13506,7 +13395,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -13550,7 +13438,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -13701,7 +13588,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -13713,7 +13599,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -13757,7 +13642,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -13842,7 +13726,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -13854,7 +13737,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -13898,7 +13780,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -15907,7 +15788,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'element.struct.base': {
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -15919,7 +15799,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -15963,7 +15842,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -16058,7 +15936,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -16070,7 +15947,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -16114,7 +15990,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -16409,7 +16284,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -16421,7 +16295,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -16465,7 +16338,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -16546,7 +16418,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -16558,7 +16429,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -16602,7 +16472,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -16686,7 +16555,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -16698,7 +16566,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -16742,7 +16609,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -16823,7 +16689,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -16835,7 +16700,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -16879,7 +16743,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -16962,7 +16825,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.add': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -16974,7 +16836,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17018,7 +16879,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -17099,7 +16959,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -17111,7 +16970,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17155,7 +17013,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -17239,7 +17096,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.bitwise_and': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -17251,7 +17107,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17295,7 +17150,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -17376,7 +17230,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -17388,7 +17241,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17432,7 +17284,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -17516,7 +17367,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.bitwise_or': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -17528,7 +17378,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17572,7 +17421,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -17653,7 +17501,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -17665,7 +17512,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17709,7 +17555,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -17793,7 +17638,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.bitwise_xor': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -17805,7 +17649,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17849,7 +17692,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -17930,7 +17772,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -17942,7 +17783,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -17986,7 +17826,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -18070,7 +17909,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.divide': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -18082,7 +17920,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -18126,7 +17963,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -18207,7 +18043,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -18219,7 +18054,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -18263,7 +18097,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -18347,7 +18180,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.modulo': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -18359,7 +18191,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -18403,7 +18234,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -18484,7 +18314,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -18496,7 +18325,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -18540,7 +18368,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -18624,7 +18451,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.multiply': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -18636,7 +18462,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -18680,7 +18505,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -18761,7 +18585,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -18773,7 +18596,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -18817,7 +18639,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -18901,7 +18722,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.shift_left': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -18913,7 +18733,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -18957,7 +18776,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -19038,7 +18856,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -19050,7 +18867,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -19094,7 +18910,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -19178,7 +18993,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.shift_right': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -19190,7 +19004,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -19234,7 +19047,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -19315,7 +19127,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -19327,7 +19138,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -19371,7 +19181,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -19455,7 +19264,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.assignment.compound.subtract': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -19467,7 +19275,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -19511,7 +19318,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -19592,7 +19398,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -19604,7 +19409,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -19648,7 +19452,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -19732,7 +19535,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.await': {
 			readonly expression:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -19744,7 +19546,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -19788,7 +19589,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -19872,7 +19672,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -19884,7 +19683,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -19928,7 +19726,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20009,7 +19806,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20021,7 +19817,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -20065,7 +19860,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20148,7 +19942,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.add': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20160,7 +19953,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -20204,7 +19996,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20285,7 +20076,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20297,7 +20087,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -20341,7 +20130,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20425,7 +20213,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.divide': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20437,7 +20224,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -20481,7 +20267,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20562,7 +20347,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20574,7 +20358,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -20618,7 +20401,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20702,7 +20484,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.modulo': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20714,7 +20495,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -20758,7 +20538,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20839,7 +20618,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20851,7 +20629,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -20895,7 +20672,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -20979,7 +20755,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.multiply': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -20991,7 +20766,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -21035,7 +20809,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -21116,7 +20889,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -21128,7 +20900,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -21172,7 +20943,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -21256,7 +21026,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.subtract': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -21268,7 +21037,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -21312,7 +21080,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -21393,7 +21160,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -21405,7 +21171,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -21449,7 +21214,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -21533,7 +21297,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.bitwise.and': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -21545,7 +21308,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -21589,7 +21351,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -21670,7 +21431,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -21682,7 +21442,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -21726,7 +21485,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -21810,7 +21568,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.bitwise.or': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -21822,7 +21579,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -21866,7 +21622,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -21947,7 +21702,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -21959,7 +21713,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22003,7 +21756,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -22087,7 +21839,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.bitwise.xor': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -22099,7 +21850,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22143,7 +21893,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -22224,7 +21973,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -22236,7 +21984,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22280,7 +22027,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -22364,7 +22110,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.equal': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -22376,7 +22121,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22420,7 +22164,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -22501,7 +22244,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -22513,7 +22255,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22557,7 +22298,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -22641,7 +22381,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.greater': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -22653,7 +22392,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22697,7 +22435,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -22778,7 +22515,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -22790,7 +22526,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22834,7 +22569,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -22918,7 +22652,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.greater_equal': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -22930,7 +22663,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -22974,7 +22706,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -23055,7 +22786,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -23067,7 +22797,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -23111,7 +22840,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -23195,7 +22923,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.less': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -23207,7 +22934,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -23251,7 +22977,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -23332,7 +23057,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -23344,7 +23068,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -23388,7 +23111,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -23472,7 +23194,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.less_equal': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -23484,7 +23205,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -23528,7 +23248,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -23609,7 +23328,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -23621,7 +23339,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -23665,7 +23382,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -23749,7 +23465,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.not_equal': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -23761,7 +23476,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -23805,7 +23519,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -23886,7 +23599,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -23898,7 +23610,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -23942,7 +23653,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24026,7 +23736,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.logical.and': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24038,7 +23747,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -24082,7 +23790,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24163,7 +23870,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24175,7 +23881,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -24219,7 +23924,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24303,7 +24007,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.logical.or': {
 			readonly left:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24315,7 +24018,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -24359,7 +24061,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24440,7 +24141,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24452,7 +24152,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -24496,7 +24195,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24580,7 +24278,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.shift.left': {
 			readonly count:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24592,7 +24289,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -24636,7 +24332,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24717,7 +24412,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly operand:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24729,7 +24423,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -24773,7 +24466,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24857,7 +24549,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.binary.shift.right': {
 			readonly count:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -24869,7 +24560,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -24913,7 +24603,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -24994,7 +24683,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly operand:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25006,7 +24694,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25050,7 +24737,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -25155,7 +24841,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly arguments:
 				| V.Read<RustMap, 'argument'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25167,7 +24852,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25211,7 +24895,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -25251,7 +24934,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'true';
 			readonly function:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25263,7 +24945,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25302,7 +24983,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.propagate'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -25398,7 +25078,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly arguments:
 				| V.Read<RustMap, 'argument'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25410,7 +25089,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25454,7 +25132,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -25506,7 +25183,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly arguments:
 				| V.Read<RustMap, 'argument'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25518,7 +25194,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25562,7 +25237,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -25613,7 +25287,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.cast.conversion': {
 			readonly expression:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25625,7 +25298,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25669,7 +25341,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -25810,7 +25481,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly elements:
 				| V.Read<RustMap, 'element.attributed'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25822,7 +25492,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25866,7 +25535,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -25908,7 +25576,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.collection.list.repeat': {
 			readonly element:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -25920,7 +25587,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -25964,7 +25630,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -26046,7 +25711,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly elements: never;
 			readonly length:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -26058,7 +25722,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -26102,7 +25765,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -26197,7 +25859,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly elements:
 				| V.Read<RustMap, 'element.attributed'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -26209,7 +25870,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -26253,7 +25913,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -26307,7 +25966,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.lambda': {
 			readonly body:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -26319,7 +25977,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -26363,7 +26020,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -26647,7 +26303,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.member': {
 			readonly object:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -26659,7 +26314,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -26703,7 +26357,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -26797,7 +26450,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.parenthesized': {
 			readonly expression:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -26809,7 +26461,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -26853,7 +26504,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -26937,7 +26587,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.propagate': {
 			readonly argument:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -26949,7 +26598,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -26993,7 +26641,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -27077,7 +26724,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.range': {
 			readonly end:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -27089,7 +26735,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -27133,7 +26778,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -27214,7 +26858,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly start:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -27226,7 +26869,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -27270,7 +26912,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -27354,7 +26995,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.range.exclusive': {
 			readonly end:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -27366,7 +27006,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -27410,7 +27049,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -27491,7 +27129,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly start:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -27503,7 +27140,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -27547,7 +27183,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -27635,7 +27270,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.range.inclusive': {
 			readonly end:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -27647,7 +27281,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -27691,7 +27324,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -27772,7 +27404,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly start:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -27784,7 +27415,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -27828,7 +27458,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -27912,7 +27541,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.range.inclusive.legacy': {
 			readonly end:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -27924,7 +27552,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -27968,7 +27595,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -28049,7 +27675,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly start:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -28061,7 +27686,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -28105,7 +27729,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -28189,7 +27812,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.reference': {
 			readonly argument:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -28201,7 +27823,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -28245,7 +27866,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -28329,7 +27949,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.subscript': {
 			readonly index:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -28341,7 +27960,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -28385,7 +28003,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -28466,7 +28083,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly object:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -28478,7 +28094,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -28522,7 +28137,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -28606,7 +28220,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.unary': {
 			readonly argument:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -28618,7 +28231,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -28662,7 +28274,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -28745,7 +28356,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.unary.deref': {
 			readonly argument:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -28757,7 +28367,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -28801,7 +28410,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -28885,7 +28493,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.unary.negation': {
 			readonly argument:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -28897,7 +28504,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -28941,7 +28547,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -29025,7 +28630,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.unary.not': {
 			readonly argument:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -29037,7 +28641,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -29081,7 +28684,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -29168,7 +28770,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.yield': {
 			readonly expression:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -29180,7 +28781,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -29224,7 +28824,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -29387,7 +28986,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.variable.public.parent'>
 				| V.Read<RustMap, 'declaration.variable.public.restricted'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -29399,7 +28997,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -29443,7 +29040,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -29763,7 +29359,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -29836,7 +29431,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -29878,7 +29472,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -29942,7 +29535,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -30003,7 +29595,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -30382,7 +29973,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -30446,7 +30036,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -30510,7 +30099,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -30586,7 +30174,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -30655,7 +30242,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -30757,7 +30343,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.variable.public.parent'>
 				| V.Read<RustMap, 'declaration.variable.public.restricted'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -30769,7 +30354,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -30813,7 +30397,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -30876,7 +30459,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.UseDeclaration.Parsed;
 			readonly trailingExpression:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -30888,7 +30470,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -30932,7 +30513,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -31015,7 +30595,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'statement.break': {
 			readonly expression:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -31027,7 +30606,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -31071,7 +30649,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -31164,7 +30741,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.let'>
 				| V.Read<RustMap, 'clause.let.chain'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -31176,7 +30752,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -31220,7 +30795,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -31500,7 +31074,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.list'>
 				| V.Read<RustMap, 'pattern.mutable'>
 				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
 				| V.Read<RustMap, 'pattern.range.exclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive'>
 				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
@@ -31537,7 +31110,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.StringLiteral.Parsed;
 			readonly right:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -31549,7 +31121,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -31593,7 +31164,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -31680,7 +31250,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.let'>
 				| V.Read<RustMap, 'clause.let.chain'>
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -31692,7 +31261,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -31736,7 +31304,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -31824,7 +31391,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly body: V.Read<RustMap, 'clause.case.match'> | T.LastMatchArm.Parsed | T.MatchArmWithComma.Parsed;
 			readonly subject:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -31836,7 +31402,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -31880,7 +31445,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -31964,7 +31528,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'statement.return': {
 			readonly expression:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -31976,7 +31539,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -32020,7 +31582,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -32180,7 +31741,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly length:
 				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
 				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
@@ -32192,7 +31752,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
 				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
 				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
@@ -32236,7 +31795,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
 				| V.Read<RustMap, 'expression.reference'>
 				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
@@ -33174,7 +32732,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'element.type_argument': TSKindId.TypeArgument;
 			readonly 'element.type_binding': TSKindId.TypeBinding;
 			readonly 'expression.assignment': TSKindId.AssignmentExpression;
-			readonly 'expression.assignment.compound': TSKindId.CompoundAssignmentExpr;
 			readonly 'expression.assignment.compound.add': TSKindId.CompoundAssignmentExpr;
 			readonly 'expression.assignment.compound.bitwise_and': TSKindId.CompoundAssignmentExpr;
 			readonly 'expression.assignment.compound.bitwise_or': TSKindId.CompoundAssignmentExpr;
@@ -33186,7 +32743,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'expression.assignment.compound.shift_right': TSKindId.CompoundAssignmentExpr;
 			readonly 'expression.assignment.compound.subtract': TSKindId.CompoundAssignmentExpr;
 			readonly 'expression.await': TSKindId.AwaitExpression;
-			readonly 'expression.binary': TSKindId.BinaryExpression;
 			readonly 'expression.binary.arithmetic.add': TSKindId.BinaryExpression;
 			readonly 'expression.binary.arithmetic.divide': TSKindId.BinaryExpression;
 			readonly 'expression.binary.arithmetic.modulo': TSKindId.BinaryExpression;
@@ -33238,7 +32794,6 @@ export interface RustMap extends V.GrammarMap {
 				| TSKindId.ReferenceExpressionRawConst
 				| TSKindId.ReferenceExpressionRawMut;
 			readonly 'expression.subscript': TSKindId.IndexExpression;
-			readonly 'expression.unary': TSKindId.UnaryExpression;
 			readonly 'expression.unary.deref': TSKindId.UnaryExpression;
 			readonly 'expression.unary.negation': TSKindId.UnaryExpression;
 			readonly 'expression.unary.not': TSKindId.UnaryExpression;
@@ -33299,7 +32854,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'pattern.list': TSKindId.SlicePattern;
 			readonly 'pattern.mutable': TSKindId.MutPattern;
 			readonly 'pattern.or': TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
-			readonly 'pattern.range': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 			readonly 'pattern.range.exclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 			readonly 'pattern.range.inclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 			readonly 'pattern.range.inclusive.legacy': TSKindId.RangePatternWithLeft;

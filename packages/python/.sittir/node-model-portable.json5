@@ -763,6 +763,27 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "expression.assignment.compound",
+          "cases": 13,
+          "refinements": [
+            "expression.assignment.compound.add",
+            "expression.assignment.compound.bitwise_and",
+            "expression.assignment.compound.bitwise_or",
+            "expression.assignment.compound.bitwise_xor",
+            "expression.assignment.compound.divide",
+            "expression.assignment.compound.exponent",
+            "expression.assignment.compound.floor_divide",
+            "expression.assignment.compound.matrix_multiply",
+            "expression.assignment.compound.modulo",
+            "expression.assignment.compound.multiply",
+            "expression.assignment.compound.shift_left",
+            "expression.assignment.compound.shift_right",
+            "expression.assignment.compound.subtract"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "left",
@@ -1157,6 +1178,27 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "expression.binary",
+          "cases": 13,
+          "refinements": [
+            "expression.binary.arithmetic.add",
+            "expression.binary.arithmetic.divide",
+            "expression.binary.arithmetic.exponent",
+            "expression.binary.arithmetic.floor_divide",
+            "expression.binary.arithmetic.modulo",
+            "expression.binary.arithmetic.multiply",
+            "expression.binary.arithmetic.subtract",
+            "expression.binary.bitwise.and",
+            "expression.binary.bitwise.or",
+            "expression.binary.bitwise.xor",
+            "expression.binary.matrix_multiply",
+            "expression.binary.shift.left",
+            "expression.binary.shift.right"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "left",
@@ -1336,6 +1378,16 @@
           "within": [],
           "pins": [],
           "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.binary.logical",
+          "cases": 2,
+          "refinements": [
+            "expression.binary.logical.and",
+            "expression.binary.logical.or"
+          ]
         }
       ],
       "slots": [
@@ -2196,6 +2248,26 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "expression.binary",
+          "cases": 132,
+          "refinements": [
+            "expression.binary.comparison.chain",
+            "expression.binary.comparison.equal",
+            "expression.binary.comparison.greater",
+            "expression.binary.comparison.greater_equal",
+            "expression.binary.comparison.less",
+            "expression.binary.comparison.less_equal",
+            "expression.binary.comparison.not_equal",
+            "expression.binary.comparison.not_equal.legacy",
+            "expression.binary.identity.is",
+            "expression.binary.identity.is_not",
+            "expression.binary.membership.in",
+            "expression.binary.membership.not_in"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "left",
@@ -2541,6 +2613,25 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "element.comparator",
+          "cases": 11,
+          "refinements": [
+            "element.comparator.comparison.equal",
+            "element.comparator.comparison.greater",
+            "element.comparator.comparison.greater_equal",
+            "element.comparator.comparison.less",
+            "element.comparator.comparison.less_equal",
+            "element.comparator.comparison.not_equal",
+            "element.comparator.comparison.not_equal.legacy",
+            "element.comparator.identity.is",
+            "element.comparator.identity.is_not",
+            "element.comparator.membership.in",
+            "element.comparator.membership.not_in"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "right",
@@ -2613,6 +2704,16 @@
                 }
               }
             }
+          ]
+        }
+      ],
+      "covered": [
+        {
+          "path": "pattern.complex",
+          "cases": 2,
+          "refinements": [
+            "pattern.complex.add",
+            "pattern.complex.subtract"
           ]
         }
       ],
@@ -7952,6 +8053,17 @@
           "within": [],
           "pins": [],
           "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.unary",
+          "cases": 3,
+          "refinements": [
+            "expression.unary.bitwise_not",
+            "expression.unary.negation",
+            "expression.unary.plus"
+          ]
         }
       ],
       "slots": [

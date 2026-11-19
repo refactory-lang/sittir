@@ -1,4 +1,4 @@
-import type { QueryPlan, QuerySubject, SlotSubject, StepAnchor } from '@sittir/types';
+import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject, StepAnchor } from '@sittir/types';
 
 export function refuse(message: string): never {
 	throw new TypeError(message);
@@ -59,4 +59,33 @@ export function holds(plan: QueryPlan<QuerySubject>, subjects: PlanSubjects): bo
 		case 'or':
 			return plan.of.some((p) => holds(p, subjects));
 	}
+}
+
+export interface PlanItems<N> {
+	readonly isNode: (item: unknown) => item is N;
+	readonly itemsIn: (node: N, subject: SlotSubject) => readonly unknown[];
+	readonly textOf: (item: unknown) => string | undefined;
+	readonly typeOf: (item: unknown) => readonly number[];
+	readonly delimiterOf: (item: unknown) => readonly number[];
+}
+
+export function reachedBy<N>(from: readonly unknown[], steps: readonly PortableStep[], { isNode, itemsIn }: PlanItems<N>): readonly unknown[] {
+	return steps.reduce<readonly unknown[]>((reached, step) => reached.filter(isNode).flatMap((node) => anchored(itemsIn(node, step), step.anchor)), from);
+}
+
+export function planSubjects<N>(reached: readonly unknown[], items: PlanItems<N>): PlanSubjects {
+	const { isNode, itemsIn, textOf, typeOf, delimiterOf } = items;
+	const subjects = (subject: QuerySubject): readonly unknown[] =>
+		reached.flatMap((item) => ('self' in subject ? [item] : isNode(item) ? itemsIn(item, subject) : []));
+	return {
+		texts: (subject) => subjects(subject).flatMap((item) => textOf(item) ?? []),
+		types: (subject) => subjects(subject).flatMap(typeOf),
+		children: (subject) => subjects(subject).filter(isNode).map((child) => planSubjects([child], items)),
+		count: (subject) => subjects(subject).length,
+		delimiters: () => reached.flatMap(delimiterOf)
+	};
+}
+
+export function conditionHolds<N>(condition: PortableCondition, value: unknown, items: PlanItems<N>): boolean {
+	return holds(condition.plan, planSubjects(reachedBy([value], condition.via, items), items));
 }

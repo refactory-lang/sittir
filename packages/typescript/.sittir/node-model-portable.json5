@@ -1945,6 +1945,29 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "expression.assignment.compound",
+          "cases": 15,
+          "refinements": [
+            "expression.assignment.compound.add",
+            "expression.assignment.compound.and",
+            "expression.assignment.compound.bitwise_and",
+            "expression.assignment.compound.bitwise_or",
+            "expression.assignment.compound.bitwise_xor",
+            "expression.assignment.compound.coalesce",
+            "expression.assignment.compound.divide",
+            "expression.assignment.compound.exponent",
+            "expression.assignment.compound.modulo",
+            "expression.assignment.compound.multiply",
+            "expression.assignment.compound.or",
+            "expression.assignment.compound.shift_left",
+            "expression.assignment.compound.shift_right",
+            "expression.assignment.compound.shift_right_unsigned",
+            "expression.assignment.compound.subtract"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "left",
@@ -14239,6 +14262,21 @@
           ]
         }
       ],
+      "covered": [
+        {
+          "path": "expression.unary",
+          "cases": 7,
+          "refinements": [
+            "expression.unary.bitwise_not",
+            "expression.unary.delete",
+            "expression.unary.negation",
+            "expression.unary.not",
+            "expression.unary.plus",
+            "expression.unary.typeof",
+            "expression.unary.void"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "argument",
@@ -14429,6 +14467,16 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "expression.update",
+          "cases": 2,
+          "refinements": [
+            "expression.update.decrement",
+            "expression.update.increment"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "argument",
@@ -14502,6 +14550,16 @@
           "within": [],
           "pins": [],
           "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.update",
+          "cases": 2,
+          "refinements": [
+            "expression.update.decrement",
+            "expression.update.increment"
+          ]
         }
       ],
       "slots": [

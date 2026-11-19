@@ -338,6 +338,22 @@ The number of subjects a query plan counts.
 
 The delimiter subjects a query plan reads through.
 
+### `packages/common/src/query-holds.ts::PlanItems`
+
+How a caller of `planSubjects` reads the items a plan reaches: which items are nodes, a node's items in the slot a subject numbers for its kind, an item's text, its node types, and its delimiter flags. The portable classifier reads live nodes through it. Codegen's family coverage check (`covered.ts::familyCoverageOf`) reads the cases a kind's slots allow through it, and its readers throw for a text, a type or a delimiter the grammar does not fix, so such a case is never taken as decided.
+
+### `packages/common/src/query-holds.ts::reachedBy`
+
+The items a condition's `via` steps reach from the given items: each step keeps the nodes among them (`PlanItems.isNode`) and reads each one's items in the slot the step numbers, narrowed by the step's anchor (`anchored`). A condition (`conditionHolds`) and the classifier's fact texts (`textsAt`) walk through it.
+
+### `packages/common/src/query-holds.ts::planSubjects`
+
+The `PlanSubjects` of reached items, read through `PlanItems`: a subject reads the items themselves (`self`) or the items of the slot it numbers on each reached node, and from those their texts, their node types, the subjects of each node a `child` step holds, and how many there are; the delimiter flags are the reached items' own.
+
+### `packages/common/src/query-holds.ts::conditionHolds`
+
+Whether a portable read entry's condition holds for a value: its plan, run by `holds` over the subjects (`planSubjects`) of everything its `via` steps reach from the value (`reachedBy`). An empty reach leaves every subject empty, so a negated plan over it holds.
+
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
 Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child hydrated long after the parse returned, outside any engine call, is stamped with the reading engine.
@@ -781,6 +797,10 @@ Whether a build arm builds its kind as text, given the portable build table.
 ### `packages/common/src/portable/facts.ts::takesTextValue`
 
 Whether a build arm accepts a text value: the arm carries `content`, or the arm is text-built.
+
+### `packages/common/src/portable/facts.ts::entriesHolding`
+
+The read entries that hold for a value, every condition of each (`conditionHolds`), less those another holding entry refines (`portablePathHasFacts`), in entry order. The classifier reads a value as the first one's path. Codegen's family coverage check (`covered.ts::familyCoverageOf`) runs it over each case a kind's slots allow, so a family path it finds covered is one the classifier never returns.
 
 ### `packages/common/src/portable/classify.ts::classifierOf`
 

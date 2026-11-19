@@ -60,13 +60,15 @@ export type ViewClass = 'text' | 'claimed' | 'refined' | 'never' | 'token' | 'va
 
 export type ValueRead = 'text' | 'true' | 'false' | 'float' | 'integer' | 'bigint';
 
-export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, table }: PortableTypedInput): ExactReads {
+export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, table, covered }: PortableTypedInput): ExactReads {
 	const typed = (kind: string): boolean => findKindEntry(kindEntries, kind) !== undefined;
 	const { model } = input;
 	const own = derive([input]);
 	const nodeOf = (kind: string): ModelNode | undefined => modelNode(model, kind);
 	const entries = [...routes.readEntries].filter(([, list]) => list.length > 0).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-	const readPathsOf = (list: readonly ReadEntry[]): string[] => [...new Set(readableEntries(list.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => path))];
+	const readPathsOf = (list: readonly ReadEntry[]): string[] => [
+		...new Set(readableEntries(list.map((entry) => ({ entry, path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).flatMap(({ entry, path }) => (covered.has(entry) ? [] : [path])))
+	];
 	const readable = entries.filter(([kind]) => (nodeOf(kind)?.subtypes.length ?? 0) === 0);
 	const readPaths = new Set(readable.flatMap(([, list]) => readPathsOf(list)));
 	const supertypesOf = new Map<string, string[]>();

@@ -14601,6 +14601,14 @@ The field name a verbatim value is stored under in a record.
 
 The render seam a fixed text writes. An indent or dedent depth text gives the kinds its depth break breaks at; a whitespace-only text gives the layout kinds it names; any other text gives `undefined` and is written as text.
 
+### `packages/codegen/src/emitters/render-module.ts::numberedSlotsOf`
+
+A kind's native node slots in number order, the list `nodeSlotNumbers` numbers (`structSlotsOf`): its named and unnamed slots in model order, then the named slots of a hidden helper that an unnamed single slot stands for, each forced optional. A node that is not compound has none. Codegen's family coverage check (`overlays/portable/covered.ts::familyCoverageOf`) fills a kind's tested slots from it, so the slot a case holds under a number is the one a plan names by it.
+
+### `packages/codegen/src/emitters/render-module.ts::StructSlot`
+
+A slot of a kind's native node struct: the model slot, the node that owns it (the kind itself, or the hidden helper its slot comes from), and whether the struct holds it optional although its model slot may be required, as it does a helper's slot.
+
 ### `packages/codegen/src/emitters/shared.ts::EnumArm`
 
 One arm of an enum: its kind and its name.

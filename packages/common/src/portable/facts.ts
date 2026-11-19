@@ -1,4 +1,5 @@
 import type { PortableBuildArm, PortableBuildTable, PortableCondition, PortableContainer, PortableSlotRoute, PortableReadEntry, PortableSeat } from '@sittir/types';
+import { conditionHolds, type PlanItems } from '../query-holds.ts';
 
 export function portablePathHasFacts(path: string, read: string | undefined): boolean {
 	if (read === undefined) return false;
@@ -26,6 +27,11 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 		if (always(entry) && !candidates.some((other) => refines(other, entry))) break;
 	}
 	return readable;
+}
+
+export function entriesHolding<E extends Pick<PortableReadEntry, 'path' | 'test'>, N>(entries: readonly E[], value: unknown, items: PlanItems<N>): readonly E[] {
+	const holding = entries.filter((entry) => entry.test.every((condition) => conditionHolds(condition, value, items)));
+	return holding.filter((entry) => !holding.some((other) => other.path !== entry.path && portablePathHasFacts(entry.path, other.path)));
 }
 
 export const textBuilt = (table: Pick<PortableBuildTable, 'builders'>, arm: Pick<PortableBuildArm, 'slots' | 'builder'>): boolean =>

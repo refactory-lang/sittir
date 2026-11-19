@@ -10,6 +10,7 @@ import { membershipKindsOf } from '../../membership.ts';
 import { emitPortableBuild, type PickDiagnostic } from './build.ts';
 import { flagPlansOf, slotFlagsOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
+import { familyCoverageOf } from './covered.ts';
 import { portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
@@ -75,7 +76,8 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];
 	});
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, readTest, flagsOf: (path) => declaredFlags(input.vocabulary, path), valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.slots(path).get('$value')?.scalar : undefined) });
-	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
+	const coverage = familyCoverageOf({ routes, nodeMap, table: build.table, readTest });
+	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, covered: new Set(coverage.map(({ entry }) => entry)), totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
 	return {
 		build: build.source,
 		emit: {
@@ -99,7 +101,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 				(claim): PickDiagnostic => ({ code: 'portable-claim-unplaced', path: claim.vocab, kinds: [claim.kind ?? (claim.token === undefined ? '(_)' : `"${claim.token}"`)] })
 			)
 		],
-		nodeModel: emitPortableNodeModel(routes, readTest),
+		nodeModel: emitPortableNodeModel(routes, readTest, coverage),
 		surface: emitPortableSurface({
 			nodeType: grammarNodeTypeName(nodeMap.name),
 			routes,

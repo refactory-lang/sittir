@@ -1766,6 +1766,32 @@
           ]
         }
       ],
+      "covered": [
+        {
+          "path": "expression.binary",
+          "cases": 18,
+          "refinements": [
+            "expression.binary.arithmetic.add",
+            "expression.binary.arithmetic.divide",
+            "expression.binary.arithmetic.modulo",
+            "expression.binary.arithmetic.multiply",
+            "expression.binary.arithmetic.subtract",
+            "expression.binary.bitwise.and",
+            "expression.binary.bitwise.or",
+            "expression.binary.bitwise.xor",
+            "expression.binary.comparison.equal",
+            "expression.binary.comparison.greater",
+            "expression.binary.comparison.greater_equal",
+            "expression.binary.comparison.less",
+            "expression.binary.comparison.less_equal",
+            "expression.binary.comparison.not_equal",
+            "expression.binary.logical.and",
+            "expression.binary.logical.or",
+            "expression.binary.shift.left",
+            "expression.binary.shift.right"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "operand",
@@ -3022,6 +3048,24 @@
           "within": [],
           "pins": [],
           "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.assignment.compound",
+          "cases": 10,
+          "refinements": [
+            "expression.assignment.compound.add",
+            "expression.assignment.compound.bitwise_and",
+            "expression.assignment.compound.bitwise_or",
+            "expression.assignment.compound.bitwise_xor",
+            "expression.assignment.compound.divide",
+            "expression.assignment.compound.modulo",
+            "expression.assignment.compound.multiply",
+            "expression.assignment.compound.shift_left",
+            "expression.assignment.compound.shift_right",
+            "expression.assignment.compound.subtract"
+          ]
         }
       ],
       "slots": [
@@ -14286,6 +14330,16 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "pattern.range",
+          "cases": 2,
+          "refinements": [
+            "pattern.range.exclusive",
+            "pattern.range.inclusive"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "right",
@@ -14444,6 +14498,17 @@
           "within": [],
           "pins": [],
           "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "pattern.range",
+          "cases": 4,
+          "refinements": [
+            "pattern.range.exclusive",
+            "pattern.range.inclusive",
+            "pattern.range.inclusive.legacy"
+          ]
         }
       ],
       "slots": [
@@ -20982,6 +21047,17 @@
                 }
               }
             }
+          ]
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.unary",
+          "cases": 3,
+          "refinements": [
+            "expression.unary.deref",
+            "expression.unary.negation",
+            "expression.unary.not"
           ]
         }
       ],

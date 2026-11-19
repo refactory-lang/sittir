@@ -99,8 +99,6 @@ type argument_named$237_value$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -141,8 +139,6 @@ type argument_named$237_value$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -187,8 +183,6 @@ type argument_named$237_value$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -303,8 +297,6 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('argument.named.value', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -344,8 +336,6 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 		case 'expression.binary.identity.is':
 			return unbuilt('argument.named.value', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('argument.named.value', value);
-		case 'expression.binary.logical':
 			return unbuilt('argument.named.value', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -390,8 +380,6 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('argument.named.value', value);
-		case 'expression.unary':
 			return unbuilt('argument.named.value', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -489,8 +477,6 @@ type clause_comprehension_if$250_condition$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -531,8 +517,6 @@ type clause_comprehension_if$250_condition$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -577,8 +561,6 @@ type clause_comprehension_if$250_condition$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -693,8 +675,6 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('clause.comprehension.if.condition', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -734,8 +714,6 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 		case 'expression.binary.identity.is':
 			return unbuilt('clause.comprehension.if.condition', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('clause.comprehension.if.condition', value);
-		case 'expression.binary.logical':
 			return unbuilt('clause.comprehension.if.condition', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -780,8 +758,6 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('clause.comprehension.if.condition', value);
-		case 'expression.unary':
 			return unbuilt('clause.comprehension.if.condition', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -955,8 +931,6 @@ type declaration_parameter_defaulted$204_default$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -997,8 +971,6 @@ type declaration_parameter_defaulted$204_default$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -1043,8 +1015,6 @@ type declaration_parameter_defaulted$204_default$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -1159,8 +1129,6 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('declaration.parameter.defaulted.default', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -1200,8 +1168,6 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.parameter.defaulted.default', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.parameter.defaulted.default', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.parameter.defaulted.default', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -1246,8 +1212,6 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.defaulted.default', value);
-		case 'expression.unary':
 			return unbuilt('declaration.parameter.defaulted.default', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -1406,8 +1370,6 @@ type declaration_parameter_typed$230_type$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -1448,8 +1410,6 @@ type declaration_parameter_typed$230_type$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -1494,8 +1454,6 @@ type declaration_parameter_typed$230_type$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -1622,8 +1580,6 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('declaration.parameter.typed.type', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -1663,8 +1619,6 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.parameter.typed.type', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.parameter.typed.type', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.parameter.typed.type', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -1709,8 +1663,6 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.typed.type', value);
-		case 'expression.unary':
 			return unbuilt('declaration.parameter.typed.type', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -1820,8 +1772,6 @@ type declaration_parameter_typed_default$205_default$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -1862,8 +1812,6 @@ type declaration_parameter_typed_default$205_default$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -1908,8 +1856,6 @@ type declaration_parameter_typed_default$205_default$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -2026,8 +1972,6 @@ const declaration_parameter_typed_default$205_default = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('declaration.parameter.typed_default.default', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -2067,8 +2011,6 @@ const declaration_parameter_typed_default$205_default = (
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.parameter.typed_default.default', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.parameter.typed_default.default', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.parameter.typed_default.default', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -2113,8 +2055,6 @@ const declaration_parameter_typed_default$205_default = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.typed_default.default', value);
-		case 'expression.unary':
 			return unbuilt('declaration.parameter.typed_default.default', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -2236,8 +2176,6 @@ type declaration_parameter_typed_default$205_type$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -2278,8 +2216,6 @@ type declaration_parameter_typed_default$205_type$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -2324,8 +2260,6 @@ type declaration_parameter_typed_default$205_type$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -2452,8 +2386,6 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('declaration.parameter.typed_default.type', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -2493,8 +2425,6 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.parameter.typed_default.type', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.parameter.typed_default.type', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.parameter.typed_default.type', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -2539,8 +2469,6 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.typed_default.type', value);
-		case 'expression.unary':
 			return unbuilt('declaration.parameter.typed_default.type', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -2750,8 +2678,6 @@ type declaration_variable$302_value$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -2792,8 +2718,6 @@ type declaration_variable$302_value$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -2840,8 +2764,6 @@ type declaration_variable$302_value$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -2970,8 +2892,6 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('declaration.variable.value', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -3011,8 +2931,6 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.variable.value', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.variable.value', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.variable.value', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -3059,8 +2977,6 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.value', value);
-		case 'expression.unary':
 			return unbuilt('declaration.variable.value', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -3212,8 +3128,6 @@ type declaration_variable$303_type$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -3254,8 +3168,6 @@ type declaration_variable$303_type$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -3300,8 +3212,6 @@ type declaration_variable$303_type$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -3428,8 +3338,6 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('declaration.variable.type', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -3469,8 +3377,6 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.variable.type', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.variable.type', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.variable.type', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -3515,8 +3421,6 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.type', value);
-		case 'expression.unary':
 			return unbuilt('declaration.variable.type', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -3674,8 +3578,6 @@ type declaration_variable$304_type$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -3716,8 +3618,6 @@ type declaration_variable$304_type$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -3762,8 +3662,6 @@ type declaration_variable$304_type$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -3890,8 +3788,6 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('declaration.variable.type', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -3931,8 +3827,6 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.variable.type', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.variable.type', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.variable.type', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -3977,8 +3871,6 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.type', value);
-		case 'expression.unary':
 			return unbuilt('declaration.variable.type', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -4092,8 +3984,6 @@ type declaration_variable$304_value$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -4134,8 +4024,6 @@ type declaration_variable$304_value$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -4182,8 +4070,6 @@ type declaration_variable$304_value$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -4308,8 +4194,6 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('declaration.variable.value', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -4349,8 +4233,6 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'expression.binary.identity.is':
 			return unbuilt('declaration.variable.value', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.variable.value', value);
-		case 'expression.binary.logical':
 			return unbuilt('declaration.variable.value', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -4397,8 +4279,6 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.value', value);
-		case 'expression.unary':
 			return unbuilt('declaration.variable.value', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -4502,8 +4382,6 @@ type element_pair$242_key$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -4544,8 +4422,6 @@ type element_pair$242_key$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -4590,8 +4466,6 @@ type element_pair$242_key$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -4706,8 +4580,6 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('element.pair.key', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -4747,8 +4619,6 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 		case 'expression.binary.identity.is':
 			return unbuilt('element.pair.key', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('element.pair.key', value);
-		case 'expression.binary.logical':
 			return unbuilt('element.pair.key', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -4793,8 +4663,6 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.pair.key', value);
-		case 'expression.unary':
 			return unbuilt('element.pair.key', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -4892,8 +4760,6 @@ type element_pair$242_value$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -4934,8 +4800,6 @@ type element_pair$242_value$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -4980,8 +4844,6 @@ type element_pair$242_value$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -5096,8 +4958,6 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('element.pair.value', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -5137,8 +4997,6 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 		case 'expression.binary.identity.is':
 			return unbuilt('element.pair.value', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('element.pair.value', value);
-		case 'expression.binary.logical':
 			return unbuilt('element.pair.value', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -5183,8 +5041,6 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.pair.value', value);
-		case 'expression.unary':
 			return unbuilt('element.pair.value', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -5282,8 +5138,6 @@ type element_spread$173_expression$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -5324,8 +5178,6 @@ type element_spread$173_expression$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -5370,8 +5222,6 @@ type element_spread$173_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -5486,8 +5336,6 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('element.spread.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -5527,8 +5375,6 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 		case 'expression.binary.identity.is':
 			return unbuilt('element.spread.expression', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('element.spread.expression', value);
-		case 'expression.binary.logical':
 			return unbuilt('element.spread.expression', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -5573,8 +5419,6 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.spread.expression', value);
-		case 'expression.unary':
 			return unbuilt('element.spread.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -5672,8 +5516,6 @@ type element_spread_map$174_expression$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -5714,8 +5556,6 @@ type element_spread_map$174_expression$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -5760,8 +5600,6 @@ type element_spread_map$174_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -5876,8 +5714,6 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('element.spread.map.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -5917,8 +5753,6 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 		case 'expression.binary.identity.is':
 			return unbuilt('element.spread.map.expression', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('element.spread.map.expression', value);
-		case 'expression.binary.logical':
 			return unbuilt('element.spread.map.expression', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -5963,8 +5797,6 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.spread.map.expression', value);
-		case 'expression.unary':
 			return unbuilt('element.spread.map.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -6109,8 +5941,6 @@ type expression_assignment$148_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -6151,8 +5981,6 @@ type expression_assignment$148_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -6197,8 +6025,6 @@ type expression_assignment$148_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -6313,8 +6139,6 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -6354,8 +6178,6 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -6400,8 +6222,6 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -6547,8 +6367,6 @@ type expression_assignment_compound_add$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -6589,8 +6407,6 @@ type expression_assignment_compound_add$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -6637,8 +6453,6 @@ type expression_assignment_compound_add$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -6759,8 +6573,6 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -6800,8 +6612,6 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.add.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -6848,8 +6658,6 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.add.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -7003,8 +6811,6 @@ type expression_assignment_compound_bitwise_and$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -7045,8 +6851,6 @@ type expression_assignment_compound_bitwise_and$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -7093,8 +6897,6 @@ type expression_assignment_compound_bitwise_and$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -7217,8 +7019,6 @@ const expression_assignment_compound_bitwise_and$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -7258,8 +7058,6 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -7306,8 +7104,6 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -7461,8 +7257,6 @@ type expression_assignment_compound_bitwise_or$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -7503,8 +7297,6 @@ type expression_assignment_compound_bitwise_or$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -7551,8 +7343,6 @@ type expression_assignment_compound_bitwise_or$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -7675,8 +7465,6 @@ const expression_assignment_compound_bitwise_or$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -7716,8 +7504,6 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -7764,8 +7550,6 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -7919,8 +7703,6 @@ type expression_assignment_compound_bitwise_xor$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -7961,8 +7743,6 @@ type expression_assignment_compound_bitwise_xor$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -8009,8 +7789,6 @@ type expression_assignment_compound_bitwise_xor$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -8133,8 +7911,6 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -8174,8 +7950,6 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -8222,8 +7996,6 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -8375,8 +8147,6 @@ type expression_assignment_compound_divide$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -8417,8 +8187,6 @@ type expression_assignment_compound_divide$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -8465,8 +8233,6 @@ type expression_assignment_compound_divide$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -8589,8 +8355,6 @@ const expression_assignment_compound_divide$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -8630,8 +8394,6 @@ const expression_assignment_compound_divide$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.divide.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -8678,8 +8440,6 @@ const expression_assignment_compound_divide$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.divide.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -8833,8 +8593,6 @@ type expression_assignment_compound_exponent$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -8875,8 +8633,6 @@ type expression_assignment_compound_exponent$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -8923,8 +8679,6 @@ type expression_assignment_compound_exponent$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -9047,8 +8801,6 @@ const expression_assignment_compound_exponent$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -9088,8 +8840,6 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -9136,8 +8886,6 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -9291,8 +9039,6 @@ type expression_assignment_compound_floor_divide$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -9333,8 +9079,6 @@ type expression_assignment_compound_floor_divide$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -9381,8 +9125,6 @@ type expression_assignment_compound_floor_divide$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -9505,8 +9247,6 @@ const expression_assignment_compound_floor_divide$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -9546,8 +9286,6 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -9594,8 +9332,6 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -9749,8 +9485,6 @@ type expression_assignment_compound_matrix_multiply$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -9791,8 +9525,6 @@ type expression_assignment_compound_matrix_multiply$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -9839,8 +9571,6 @@ type expression_assignment_compound_matrix_multiply$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -9963,8 +9693,6 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -10004,8 +9732,6 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -10052,8 +9778,6 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -10205,8 +9929,6 @@ type expression_assignment_compound_modulo$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -10247,8 +9969,6 @@ type expression_assignment_compound_modulo$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -10295,8 +10015,6 @@ type expression_assignment_compound_modulo$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -10419,8 +10137,6 @@ const expression_assignment_compound_modulo$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -10460,8 +10176,6 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -10508,8 +10222,6 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -10663,8 +10375,6 @@ type expression_assignment_compound_multiply$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -10705,8 +10415,6 @@ type expression_assignment_compound_multiply$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -10753,8 +10461,6 @@ type expression_assignment_compound_multiply$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -10877,8 +10583,6 @@ const expression_assignment_compound_multiply$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -10918,8 +10622,6 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -10966,8 +10668,6 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -11121,8 +10821,6 @@ type expression_assignment_compound_shift_left$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -11163,8 +10861,6 @@ type expression_assignment_compound_shift_left$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -11211,8 +10907,6 @@ type expression_assignment_compound_shift_left$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -11335,8 +11029,6 @@ const expression_assignment_compound_shift_left$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -11376,8 +11068,6 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -11424,8 +11114,6 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -11579,8 +11267,6 @@ type expression_assignment_compound_shift_right$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -11621,8 +11307,6 @@ type expression_assignment_compound_shift_right$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -11669,8 +11353,6 @@ type expression_assignment_compound_shift_right$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -11793,8 +11475,6 @@ const expression_assignment_compound_shift_right$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -11834,8 +11514,6 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -11882,8 +11560,6 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -12037,8 +11713,6 @@ type expression_assignment_compound_subtract$222_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -12079,8 +11753,6 @@ type expression_assignment_compound_subtract$222_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -12127,8 +11799,6 @@ type expression_assignment_compound_subtract$222_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -12251,8 +11921,6 @@ const expression_assignment_compound_subtract$222_right = (
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -12292,8 +11960,6 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -12340,8 +12006,6 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -12443,8 +12107,6 @@ type expression_await$262_expression$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -12497,8 +12159,6 @@ type expression_await$262_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -12607,8 +12267,6 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.await.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -12660,8 +12318,6 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.await.expression', value);
-		case 'expression.unary':
 			return unbuilt('expression.await.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -12755,8 +12411,6 @@ type expression_binary_arithmetic_add$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -12809,8 +12463,6 @@ type expression_binary_arithmetic_add$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -12919,8 +12571,6 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -12972,8 +12622,6 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -13067,8 +12715,6 @@ type expression_binary_arithmetic_add$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -13121,8 +12767,6 @@ type expression_binary_arithmetic_add$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -13231,8 +12875,6 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -13284,8 +12926,6 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -13379,8 +13019,6 @@ type expression_binary_arithmetic_divide$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -13433,8 +13071,6 @@ type expression_binary_arithmetic_divide$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -13543,8 +13179,6 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -13596,8 +13230,6 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -13691,8 +13323,6 @@ type expression_binary_arithmetic_divide$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -13745,8 +13375,6 @@ type expression_binary_arithmetic_divide$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -13855,8 +13483,6 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -13908,8 +13534,6 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -14003,8 +13627,6 @@ type expression_binary_arithmetic_exponent$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -14057,8 +13679,6 @@ type expression_binary_arithmetic_exponent$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -14167,8 +13787,6 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -14220,8 +13838,6 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.exponent.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -14315,8 +13931,6 @@ type expression_binary_arithmetic_exponent$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -14369,8 +13983,6 @@ type expression_binary_arithmetic_exponent$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -14481,8 +14093,6 @@ const expression_binary_arithmetic_exponent$214_right = (
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -14534,8 +14144,6 @@ const expression_binary_arithmetic_exponent$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.exponent.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -14629,8 +14237,6 @@ type expression_binary_arithmetic_floor_divide$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -14683,8 +14289,6 @@ type expression_binary_arithmetic_floor_divide$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -14795,8 +14399,6 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -14848,8 +14450,6 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -14943,8 +14543,6 @@ type expression_binary_arithmetic_floor_divide$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -14997,8 +14595,6 @@ type expression_binary_arithmetic_floor_divide$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -15109,8 +14705,6 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -15162,8 +14756,6 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -15257,8 +14849,6 @@ type expression_binary_arithmetic_modulo$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -15311,8 +14901,6 @@ type expression_binary_arithmetic_modulo$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -15421,8 +15009,6 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -15474,8 +15060,6 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -15569,8 +15153,6 @@ type expression_binary_arithmetic_modulo$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -15623,8 +15205,6 @@ type expression_binary_arithmetic_modulo$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -15733,8 +15313,6 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -15786,8 +15364,6 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -15881,8 +15457,6 @@ type expression_binary_arithmetic_multiply$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -15935,8 +15509,6 @@ type expression_binary_arithmetic_multiply$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -16045,8 +15617,6 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -16098,8 +15668,6 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -16193,8 +15761,6 @@ type expression_binary_arithmetic_multiply$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -16247,8 +15813,6 @@ type expression_binary_arithmetic_multiply$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -16359,8 +15923,6 @@ const expression_binary_arithmetic_multiply$214_right = (
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -16412,8 +15974,6 @@ const expression_binary_arithmetic_multiply$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -16507,8 +16067,6 @@ type expression_binary_arithmetic_subtract$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -16561,8 +16119,6 @@ type expression_binary_arithmetic_subtract$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -16671,8 +16227,6 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -16724,8 +16278,6 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -16819,8 +16371,6 @@ type expression_binary_arithmetic_subtract$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -16873,8 +16423,6 @@ type expression_binary_arithmetic_subtract$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -16985,8 +16533,6 @@ const expression_binary_arithmetic_subtract$214_right = (
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -17038,8 +16584,6 @@ const expression_binary_arithmetic_subtract$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -17133,8 +16677,6 @@ type expression_binary_bitwise_and$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -17187,8 +16729,6 @@ type expression_binary_bitwise_and$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -17297,8 +16837,6 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -17350,8 +16888,6 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.and.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -17445,8 +16981,6 @@ type expression_binary_bitwise_and$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -17499,8 +17033,6 @@ type expression_binary_bitwise_and$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -17609,8 +17141,6 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -17662,8 +17192,6 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.and.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -17757,8 +17285,6 @@ type expression_binary_bitwise_or$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -17811,8 +17337,6 @@ type expression_binary_bitwise_or$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -17921,8 +17445,6 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -17974,8 +17496,6 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.or.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -18069,8 +17589,6 @@ type expression_binary_bitwise_or$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -18123,8 +17641,6 @@ type expression_binary_bitwise_or$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -18233,8 +17749,6 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -18286,8 +17800,6 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.or.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -18381,8 +17893,6 @@ type expression_binary_bitwise_xor$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -18435,8 +17945,6 @@ type expression_binary_bitwise_xor$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -18545,8 +18053,6 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -18598,8 +18104,6 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -18693,8 +18197,6 @@ type expression_binary_bitwise_xor$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -18747,8 +18249,6 @@ type expression_binary_bitwise_xor$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -18857,8 +18357,6 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -18910,8 +18408,6 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -19007,8 +18503,6 @@ type expression_binary_logical_and$213_left$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -19049,8 +18543,6 @@ type expression_binary_logical_and$213_left$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -19095,8 +18587,6 @@ type expression_binary_logical_and$213_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -19211,8 +18701,6 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.logical.and.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -19252,8 +18740,6 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.binary.logical.and.left', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -19298,8 +18784,6 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.and.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -19397,8 +18881,6 @@ type expression_binary_logical_and$213_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -19439,8 +18921,6 @@ type expression_binary_logical_and$213_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -19485,8 +18965,6 @@ type expression_binary_logical_and$213_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -19601,8 +19079,6 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.logical.and.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -19642,8 +19118,6 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.binary.logical.and.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -19688,8 +19162,6 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.and.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -19787,8 +19259,6 @@ type expression_binary_logical_or$213_left$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -19829,8 +19299,6 @@ type expression_binary_logical_or$213_left$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -19875,8 +19343,6 @@ type expression_binary_logical_or$213_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -19991,8 +19457,6 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.logical.or.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -20032,8 +19496,6 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.binary.logical.or.left', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -20078,8 +19540,6 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.or.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -20177,8 +19637,6 @@ type expression_binary_logical_or$213_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -20219,8 +19677,6 @@ type expression_binary_logical_or$213_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -20265,8 +19721,6 @@ type expression_binary_logical_or$213_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -20381,8 +19835,6 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.logical.or.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -20422,8 +19874,6 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.binary.logical.or.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -20468,8 +19918,6 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.or.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -20565,8 +20013,6 @@ type expression_binary_matrix_multiply$214_left$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -20619,8 +20065,6 @@ type expression_binary_matrix_multiply$214_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -20729,8 +20173,6 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -20782,8 +20224,6 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.matrix_multiply.left', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -20877,8 +20317,6 @@ type expression_binary_matrix_multiply$214_right$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -20931,8 +20369,6 @@ type expression_binary_matrix_multiply$214_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -21041,8 +20477,6 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -21094,8 +20528,6 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.matrix_multiply.right', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -21189,8 +20621,6 @@ type expression_binary_shift_left$214_count$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -21243,8 +20673,6 @@ type expression_binary_shift_left$214_count$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -21353,8 +20781,6 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.shift.left.count', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -21406,8 +20832,6 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.left.count', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -21501,8 +20925,6 @@ type expression_binary_shift_left$214_operand$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -21555,8 +20977,6 @@ type expression_binary_shift_left$214_operand$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -21665,8 +21085,6 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -21718,8 +21136,6 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.left.operand', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -21813,8 +21229,6 @@ type expression_binary_shift_right$214_count$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -21867,8 +21281,6 @@ type expression_binary_shift_right$214_count$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -21977,8 +21389,6 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.shift.right.count', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -22030,8 +21440,6 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.right.count', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -22125,8 +21533,6 @@ type expression_binary_shift_right$214_operand$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -22179,8 +21585,6 @@ type expression_binary_shift_right$214_operand$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -22289,8 +21693,6 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -22342,8 +21744,6 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.right.operand', value);
-		case 'expression.unary':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -22447,8 +21847,6 @@ type expression_call$229_arguments$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -22489,8 +21887,6 @@ type expression_call$229_arguments$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -22535,8 +21931,6 @@ type expression_call$229_arguments$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -22667,8 +22061,6 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 			return b.argumentList(b.argumentListElements(expression_assignment$148(value)));
 		case 'expression.await':
 			return b.argumentList(b.argumentListElements(expression_await$262(value)));
-		case 'expression.binary':
-			return unbuilt('expression.call.arguments', value);
 		case 'expression.binary.arithmetic.add':
 			return b.argumentList(b.argumentListElements(expression_binary_arithmetic_add$214(value)));
 		case 'expression.binary.arithmetic.divide':
@@ -22708,8 +22100,6 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.call.arguments', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.binary.logical.and':
 			return b.argumentList(b.argumentListElements(expression_binary_logical_and$213(value)));
@@ -22754,8 +22144,6 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 		case 'expression.parenthesized':
 			return b.argumentList(b.argumentListElements(expression_parenthesized$247(value)));
 		case 'expression.subscript':
-			return unbuilt('expression.call.arguments', value);
-		case 'expression.unary':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.unary.bitwise_not':
 			return b.argumentList(b.argumentListElements(expression_unary_bitwise_not$215(value)));
@@ -22863,8 +22251,6 @@ type expression_call$229_arguments$item$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -22905,8 +22291,6 @@ type expression_call$229_arguments$item$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -22951,8 +22335,6 @@ type expression_call$229_arguments$item$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -23075,8 +22457,6 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.call.arguments', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -23116,8 +22496,6 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.call.arguments', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -23162,8 +22540,6 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.call.arguments', value);
-		case 'expression.unary':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -23259,8 +22635,6 @@ type expression_call$229_function$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -23313,8 +22687,6 @@ type expression_call$229_function$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -23423,8 +22795,6 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.call.function', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -23476,8 +22846,6 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.call.function', value);
-		case 'expression.unary':
 			return unbuilt('expression.call.function', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -23577,8 +22945,6 @@ type expression_collection_list$238_elements$item$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -23619,8 +22985,6 @@ type expression_collection_list$238_elements$item$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -23665,8 +23029,6 @@ type expression_collection_list$238_elements$item$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -23789,8 +23151,6 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.collection.list.elements', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -23830,8 +23190,6 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.collection.list.elements', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -23876,8 +23234,6 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.collection.list.elements', value);
-		case 'expression.unary':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -24006,8 +23362,6 @@ type expression_collection_tuple$240_elements$item$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -24048,8 +23402,6 @@ type expression_collection_tuple$240_elements$item$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -24094,8 +23446,6 @@ type expression_collection_tuple$240_elements$item$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -24218,8 +23568,6 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.collection.tuple.elements', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -24259,8 +23607,6 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.collection.tuple.elements', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -24305,8 +23651,6 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.collection.tuple.elements', value);
-		case 'expression.unary':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -24408,8 +23752,6 @@ type expression_conditional$251_alternative$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -24450,8 +23792,6 @@ type expression_conditional$251_alternative$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -24496,8 +23836,6 @@ type expression_conditional$251_alternative$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -24612,8 +23950,6 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.conditional.alternative', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -24653,8 +23989,6 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.conditional.alternative', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -24699,8 +24033,6 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.conditional.alternative', value);
-		case 'expression.unary':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -24798,8 +24130,6 @@ type expression_conditional$251_condition$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -24840,8 +24170,6 @@ type expression_conditional$251_condition$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -24886,8 +24214,6 @@ type expression_conditional$251_condition$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -25002,8 +24328,6 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.conditional.condition', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -25043,8 +24367,6 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.conditional.condition', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.conditional.condition', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.conditional.condition', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -25089,8 +24411,6 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.conditional.condition', value);
-		case 'expression.unary':
 			return unbuilt('expression.conditional.condition', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -25188,8 +24508,6 @@ type expression_conditional$251_consequence$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -25230,8 +24548,6 @@ type expression_conditional$251_consequence$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -25276,8 +24592,6 @@ type expression_conditional$251_consequence$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -25392,8 +24706,6 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.conditional.consequence', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -25433,8 +24745,6 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.conditional.consequence', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -25479,8 +24789,6 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.conditional.consequence', value);
-		case 'expression.unary':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -25578,8 +24886,6 @@ type expression_interpolation$360_expression$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -25620,8 +24926,6 @@ type expression_interpolation$360_expression$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -25668,8 +24972,6 @@ type expression_interpolation$360_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -25790,8 +25092,6 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.interpolation.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -25831,8 +25131,6 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.interpolation.expression', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -25879,8 +25177,6 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.interpolation.expression', value);
-		case 'expression.unary':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -26041,8 +25337,6 @@ type expression_lambda$219_body$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -26083,8 +25377,6 @@ type expression_lambda$219_body$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -26129,8 +25421,6 @@ type expression_lambda$219_body$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -26245,8 +25535,6 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.lambda.body', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -26286,8 +25574,6 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.lambda.body', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.lambda.body', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -26332,8 +25618,6 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.unary':
 			return unbuilt('expression.lambda.body', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -26547,8 +25831,6 @@ type expression_parenthesized$247_expression$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -26589,8 +25871,6 @@ type expression_parenthesized$247_expression$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -26635,8 +25915,6 @@ type expression_parenthesized$247_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -26755,8 +26033,6 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.parenthesized.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -26796,8 +26072,6 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -26842,8 +26116,6 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.unary':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -26943,8 +26215,6 @@ type expression_unary_bitwise_not$215_argument$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -26997,8 +26267,6 @@ type expression_unary_bitwise_not$215_argument$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -27107,8 +26375,6 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -27160,8 +26426,6 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
-		case 'expression.unary':
 			return unbuilt('expression.unary.bitwise_not.argument', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -27255,8 +26519,6 @@ type expression_unary_negation$215_argument$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -27309,8 +26571,6 @@ type expression_unary_negation$215_argument$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -27419,8 +26679,6 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.unary.negation.argument', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -27472,8 +26730,6 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.negation.argument', value);
-		case 'expression.unary':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -27569,8 +26825,6 @@ type expression_unary_not$212_argument$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -27611,8 +26865,6 @@ type expression_unary_not$212_argument$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -27657,8 +26909,6 @@ type expression_unary_not$212_argument$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -27773,8 +27023,6 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.unary.not.argument', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -27814,8 +27062,6 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.unary.not.argument', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -27860,8 +27106,6 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.not.argument', value);
-		case 'expression.unary':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -27957,8 +27201,6 @@ type expression_unary_plus$215_argument$Item =
 	| number
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -28011,8 +27253,6 @@ type expression_unary_plus$215_argument$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -28121,8 +27361,6 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 	switch (value.$path) {
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.unary.plus.argument', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -28174,8 +27412,6 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.plus.argument', value);
-		case 'expression.unary':
 			return unbuilt('expression.unary.plus.argument', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -28271,8 +27507,6 @@ type expression_yield$225_expression$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -28313,8 +27547,6 @@ type expression_yield$225_expression$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -28361,8 +27593,6 @@ type expression_yield$225_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -28477,8 +27707,6 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('expression.yield.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -28518,8 +27746,6 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 		case 'expression.binary.identity.is':
 			return unbuilt('expression.yield.expression', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('expression.yield.expression', value);
-		case 'expression.binary.logical':
 			return unbuilt('expression.yield.expression', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -28566,8 +27792,6 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.yield.expression', value);
-		case 'expression.unary':
 			return unbuilt('expression.yield.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -28689,8 +27913,6 @@ type identifier_qualified$187_qualifier$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -28731,8 +27953,6 @@ type identifier_qualified$187_qualifier$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -28777,8 +27997,6 @@ type identifier_qualified$187_qualifier$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -28892,8 +28110,6 @@ const identifier_qualified$187_qualifier = (value: identifier_qualified$187_qual
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.await':
 			return unbuilt('identifier.qualified.qualifier', value);
-		case 'expression.binary':
-			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.binary.arithmetic.add':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.binary.arithmetic.divide':
@@ -28933,8 +28149,6 @@ const identifier_qualified$187_qualifier = (value: identifier_qualified$187_qual
 		case 'expression.binary.identity.is':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('identifier.qualified.qualifier', value);
-		case 'expression.binary.logical':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.binary.logical.and':
 			return unbuilt('identifier.qualified.qualifier', value);
@@ -28979,8 +28193,6 @@ const identifier_qualified$187_qualifier = (value: identifier_qualified$187_qual
 		case 'expression.parenthesized':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.subscript':
-			return unbuilt('identifier.qualified.qualifier', value);
-		case 'expression.unary':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.unary.bitwise_not':
 			return unbuilt('identifier.qualified.qualifier', value);
@@ -29112,8 +28324,6 @@ type identifier_qualified$236_qualifier$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -29154,8 +28364,6 @@ type identifier_qualified$236_qualifier$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -29200,8 +28408,6 @@ type identifier_qualified$236_qualifier$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -29328,8 +28534,6 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -29369,8 +28573,6 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 		case 'expression.binary.identity.is':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('identifier.qualified.qualifier', value);
-		case 'expression.binary.logical':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -29415,8 +28617,6 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('identifier.qualified.qualifier', value);
-		case 'expression.unary':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -29660,8 +28860,6 @@ type pattern_as$190_pattern$Item =
 	| PythonMap['nodes']['literal.string.unicode']
 	| BuildInput<PythonMap, 'pattern.as'>
 	| PythonMap['nodes']['pattern.as']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -29793,8 +28991,6 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 			return unbuilt('pattern.as.pattern', value);
 		case 'pattern.as':
 			return b.casePattern(pattern_as$190(value));
-		case 'pattern.complex':
-			return unbuilt('pattern.as.pattern', value);
 		case 'pattern.complex.add':
 			return b.casePattern(b.simplePattern(pattern_complex_add$197(value)));
 		case 'pattern.complex.subtract':
@@ -30217,8 +29413,6 @@ type pattern_list$203_elements$item$Item =
 	| PythonMap['nodes']['literal.string.unicode']
 	| BuildInput<PythonMap, 'pattern.as'>
 	| PythonMap['nodes']['pattern.as']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -30334,8 +29528,6 @@ const pattern_list$203_elements$item = (value: pattern_list$203_elements$item$It
 			return unbuilt('pattern.list.elements', value);
 		case 'pattern.as':
 			return unbuilt('pattern.list.elements', value);
-		case 'pattern.complex':
-			return unbuilt('pattern.list.elements', value);
 		case 'pattern.complex.add':
 			return unbuilt('pattern.list.elements', value);
 		case 'pattern.complex.subtract':
@@ -30446,8 +29638,6 @@ type pattern_list$284_elements$item$Item =
 	| PythonMap['nodes']['literal.string.unicode']
 	| BuildInput<PythonMap, 'pattern.as'>
 	| PythonMap['nodes']['pattern.as']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -30585,8 +29775,6 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 			return unbuilt('pattern.list.elements', value);
 		case 'pattern.as':
 			return b.casePattern(pattern_as$190(value));
-		case 'pattern.complex':
-			return unbuilt('pattern.list.elements', value);
 		case 'pattern.complex.add':
 			return b.casePattern(b.simplePattern(pattern_complex_add$197(value)));
 		case 'pattern.complex.subtract':
@@ -30712,8 +29900,6 @@ type pattern_or$191_left$Item =
 	| PythonMap['nodes']['literal.string.raw.multiline']
 	| BuildInput<PythonMap, 'literal.string.unicode'>
 	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -30836,8 +30022,6 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string.unicode':
 			return unbuilt('pattern.or.left', value);
-		case 'pattern.complex':
-			return unbuilt('pattern.or.left', value);
 		case 'pattern.complex.add':
 			return pattern_complex_add$197(value);
 		case 'pattern.complex.subtract':
@@ -30937,8 +30121,6 @@ type pattern_or$191_right$Item =
 	| PythonMap['nodes']['literal.string.raw.multiline']
 	| BuildInput<PythonMap, 'literal.string.unicode'>
 	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -31060,8 +30242,6 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 		case 'literal.string.raw.multiline':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.unicode':
-			return unbuilt('pattern.or.right', value);
-		case 'pattern.complex':
 			return unbuilt('pattern.or.right', value);
 		case 'pattern.complex.add':
 			return pattern_complex_add$197(value);
@@ -31306,8 +30486,6 @@ type pattern_struct$196_fields$item$Item =
 	| PythonMap['nodes']['literal.string.unicode']
 	| BuildInput<PythonMap, 'pattern.as'>
 	| PythonMap['nodes']['pattern.as']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -31439,8 +30617,6 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 			return unbuilt('pattern.struct.fields', value);
 		case 'pattern.as':
 			return b.casePattern(pattern_as$190(value));
-		case 'pattern.complex':
-			return unbuilt('pattern.struct.fields', value);
 		case 'pattern.complex.add':
 			return b.casePattern(b.simplePattern(pattern_complex_add$197(value)));
 		case 'pattern.complex.subtract':
@@ -31580,8 +30756,6 @@ type pattern_struct_field$194_pattern$Item =
 	| PythonMap['nodes']['literal.string.raw.multiline']
 	| BuildInput<PythonMap, 'literal.string.unicode'>
 	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -31704,8 +30878,6 @@ const pattern_struct_field$194_pattern = (value: pattern_struct_field$194_patter
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string.unicode':
 			return unbuilt('pattern.struct.field.pattern', value);
-		case 'pattern.complex':
-			return unbuilt('pattern.struct.field.pattern', value);
 		case 'pattern.complex.add':
 			return pattern_complex_add$197(value);
 		case 'pattern.complex.subtract':
@@ -31814,8 +30986,6 @@ type pattern_tuple$202_elements$item$Item =
 	| PythonMap['nodes']['literal.string.unicode']
 	| BuildInput<PythonMap, 'pattern.as'>
 	| PythonMap['nodes']['pattern.as']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -31931,8 +31101,6 @@ const pattern_tuple$202_elements$item = (value: pattern_tuple$202_elements$item$
 			return unbuilt('pattern.tuple.elements', value);
 		case 'pattern.as':
 			return unbuilt('pattern.tuple.elements', value);
-		case 'pattern.complex':
-			return unbuilt('pattern.tuple.elements', value);
 		case 'pattern.complex.add':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'pattern.complex.subtract':
@@ -32043,8 +31211,6 @@ type pattern_tuple$283_elements$item$Item =
 	| PythonMap['nodes']['literal.string.unicode']
 	| BuildInput<PythonMap, 'pattern.as'>
 	| PythonMap['nodes']['pattern.as']
-	| BuildInput<PythonMap, 'pattern.complex'>
-	| PythonMap['nodes']['pattern.complex']
 	| BuildInput<PythonMap, 'pattern.complex.add'>
 	| PythonMap['nodes']['pattern.complex.add']
 	| BuildInput<PythonMap, 'pattern.complex.subtract'>
@@ -32182,8 +31348,6 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 			return unbuilt('pattern.tuple.elements', value);
 		case 'pattern.as':
 			return b.casePattern(pattern_as$190(value));
-		case 'pattern.complex':
-			return unbuilt('pattern.tuple.elements', value);
 		case 'pattern.complex.add':
 			return b.casePattern(b.simplePattern(pattern_complex_add$197(value)));
 		case 'pattern.complex.subtract':
@@ -32218,8 +31382,6 @@ type statement_delete$151_expressions$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -32260,8 +31422,6 @@ type statement_delete$151_expressions$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -32308,8 +31468,6 @@ type statement_delete$151_expressions$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -32424,8 +31582,6 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('statement.delete.expressions', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -32465,8 +31621,6 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 		case 'expression.binary.identity.is':
 			return unbuilt('statement.delete.expressions', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('statement.delete.expressions', value);
-		case 'expression.binary.logical':
 			return unbuilt('statement.delete.expressions', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -32513,8 +31667,6 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.delete.expressions', value);
-		case 'expression.unary':
 			return unbuilt('statement.delete.expressions', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -32704,8 +31856,6 @@ type statement_exec$177_inClauses$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -32746,8 +31896,6 @@ type statement_exec$177_inClauses$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -32792,8 +31940,6 @@ type statement_exec$177_inClauses$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -32908,8 +32054,6 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('statement.exec.inClauses', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -32949,8 +32093,6 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 		case 'expression.binary.identity.is':
 			return unbuilt('statement.exec.inClauses', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('statement.exec.inClauses', value);
-		case 'expression.binary.logical':
 			return unbuilt('statement.exec.inClauses', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -32995,8 +32137,6 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.exec.inClauses', value);
-		case 'expression.unary':
 			return unbuilt('statement.exec.inClauses', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -33094,8 +32234,6 @@ type statement_return$150_expression$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -33136,8 +32274,6 @@ type statement_return$150_expression$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -33184,8 +32320,6 @@ type statement_return$150_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -33300,8 +32434,6 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('statement.return.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -33341,8 +32473,6 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 		case 'expression.binary.identity.is':
 			return unbuilt('statement.return.expression', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('statement.return.expression', value);
-		case 'expression.binary.logical':
 			return unbuilt('statement.return.expression', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -33389,8 +32519,6 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.return.expression', value);
-		case 'expression.unary':
 			return unbuilt('statement.return.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -33488,8 +32616,6 @@ type statement_throw$152_cause$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -33530,8 +32656,6 @@ type statement_throw$152_cause$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -33576,8 +32700,6 @@ type statement_throw$152_cause$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -33692,8 +32814,6 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('statement.throw.cause', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -33733,8 +32853,6 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 		case 'expression.binary.identity.is':
 			return unbuilt('statement.throw.cause', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('statement.throw.cause', value);
-		case 'expression.binary.logical':
 			return unbuilt('statement.throw.cause', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -33779,8 +32897,6 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.throw.cause', value);
-		case 'expression.unary':
 			return unbuilt('statement.throw.cause', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -33878,8 +32994,6 @@ type statement_throw$152_expression$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -33920,8 +33034,6 @@ type statement_throw$152_expression$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -33968,8 +33080,6 @@ type statement_throw$152_expression$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -34084,8 +33194,6 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 			return expression_assignment$148(value);
 		case 'expression.await':
 			return expression_await$262(value);
-		case 'expression.binary':
-			return unbuilt('statement.throw.expression', value);
 		case 'expression.binary.arithmetic.add':
 			return expression_binary_arithmetic_add$214(value);
 		case 'expression.binary.arithmetic.divide':
@@ -34125,8 +33233,6 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 		case 'expression.binary.identity.is':
 			return unbuilt('statement.throw.expression', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('statement.throw.expression', value);
-		case 'expression.binary.logical':
 			return unbuilt('statement.throw.expression', value);
 		case 'expression.binary.logical.and':
 			return expression_binary_logical_and$213(value);
@@ -34173,8 +33279,6 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.throw.expression', value);
-		case 'expression.unary':
 			return unbuilt('statement.throw.expression', value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
@@ -34272,8 +33376,6 @@ type type_constrained$235_baseType$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -34314,8 +33416,6 @@ type type_constrained$235_baseType$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -34360,8 +33460,6 @@ type type_constrained$235_baseType$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -34488,8 +33586,6 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('type.constrained.baseType', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -34529,8 +33625,6 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 		case 'expression.binary.identity.is':
 			return unbuilt('type.constrained.baseType', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('type.constrained.baseType', value);
-		case 'expression.binary.logical':
 			return unbuilt('type.constrained.baseType', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -34575,8 +33669,6 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.constrained.baseType', value);
-		case 'expression.unary':
 			return unbuilt('type.constrained.baseType', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -34686,8 +33778,6 @@ type type_constrained$235_constraint$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -34728,8 +33818,6 @@ type type_constrained$235_constraint$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -34774,8 +33862,6 @@ type type_constrained$235_constraint$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -34902,8 +33988,6 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('type.constrained.constraint', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -34943,8 +34027,6 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 		case 'expression.binary.identity.is':
 			return unbuilt('type.constrained.constraint', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('type.constrained.constraint', value);
-		case 'expression.binary.logical':
 			return unbuilt('type.constrained.constraint', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -34989,8 +34071,6 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.constrained.constraint', value);
-		case 'expression.unary':
 			return unbuilt('type.constrained.constraint', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -35132,8 +34212,6 @@ type type_union$234_left$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -35174,8 +34252,6 @@ type type_union$234_left$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -35220,8 +34296,6 @@ type type_union$234_left$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -35348,8 +34422,6 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('type.union.left', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -35389,8 +34461,6 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 		case 'expression.binary.identity.is':
 			return unbuilt('type.union.left', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('type.union.left', value);
-		case 'expression.binary.logical':
 			return unbuilt('type.union.left', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -35435,8 +34505,6 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.union.left', value);
-		case 'expression.unary':
 			return unbuilt('type.union.left', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
@@ -35546,8 +34614,6 @@ type type_union$234_right$Item =
 	| PythonMap['nodes']['expression.assignment']
 	| BuildInput<PythonMap, 'expression.await'>
 	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary'>
-	| PythonMap['nodes']['expression.binary']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
 	| PythonMap['nodes']['expression.binary.arithmetic.add']
 	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
@@ -35588,8 +34654,6 @@ type type_union$234_right$Item =
 	| PythonMap['nodes']['expression.binary.identity.is']
 	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
 	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical'>
-	| PythonMap['nodes']['expression.binary.logical']
 	| BuildInput<PythonMap, 'expression.binary.logical.and'>
 	| PythonMap['nodes']['expression.binary.logical.and']
 	| BuildInput<PythonMap, 'expression.binary.logical.or'>
@@ -35634,8 +34698,6 @@ type type_union$234_right$Item =
 	| PythonMap['nodes']['expression.parenthesized']
 	| BuildInput<PythonMap, 'expression.subscript'>
 	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary'>
-	| PythonMap['nodes']['expression.unary']
 	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
 	| PythonMap['nodes']['expression.unary.bitwise_not']
 	| BuildInput<PythonMap, 'expression.unary.negation'>
@@ -35762,8 +34824,6 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 			return b.type(expression_assignment$148(value));
 		case 'expression.await':
 			return b.type(expression_await$262(value));
-		case 'expression.binary':
-			return unbuilt('type.union.right', value);
 		case 'expression.binary.arithmetic.add':
 			return b.type(expression_binary_arithmetic_add$214(value));
 		case 'expression.binary.arithmetic.divide':
@@ -35803,8 +34863,6 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 		case 'expression.binary.identity.is':
 			return unbuilt('type.union.right', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('type.union.right', value);
-		case 'expression.binary.logical':
 			return unbuilt('type.union.right', value);
 		case 'expression.binary.logical.and':
 			return b.type(expression_binary_logical_and$213(value));
@@ -35849,8 +34907,6 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.union.right', value);
-		case 'expression.unary':
 			return unbuilt('type.union.right', value);
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));

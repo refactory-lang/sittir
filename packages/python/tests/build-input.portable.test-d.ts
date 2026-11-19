@@ -97,3 +97,6 @@ type Returned = V.BuildInput<PythonMap, 'statement.return'>['expression'];
 export const integerReturned: Returned = 1;
 export const floatReturned: Returned = 1.5;
 export const bigintReturned: Returned = 10n;
+export const orReturned: Returned = { $path: 'expression.binary.bitwise.or', left: 'a', right: 'b' };
+// @ts-expect-error expression.binary has no arm in python's build table, so no build takes it
+export const familyReturned: Returned = { $path: 'expression.binary', left: 'a', right: 'b' };

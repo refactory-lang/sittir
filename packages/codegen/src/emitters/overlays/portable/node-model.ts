@@ -1,6 +1,7 @@
 import type { PortableCondition } from '@sittir/types';
 import type { GrammarRoutes, SlotRoute, ReadEntry } from '../../../bindings/routes.ts';
 import { namespaceSection } from './namespaces.ts';
+import type { FamilyCoverage } from './covered.ts';
 
 const readEntryRecord = (entry: ReadEntry, test: readonly PortableCondition[]) => ({
 	vocab: entry.vocab,
@@ -40,7 +41,14 @@ function routeRecord(route: SlotRoute) {
 	}
 }
 
-export function emitPortableNodeModel(routes: GrammarRoutes, readTest: (entry: ReadEntry) => readonly PortableCondition[]): string {
+const coverageRecord = ({ entry, cases, refinements, overlapping }: FamilyCoverage) => ({
+	path: entry.vocab,
+	cases,
+	refinements,
+	...(overlapping.length === 0 ? {} : { overlapping })
+});
+
+export function emitPortableNodeModel(routes: GrammarRoutes, readTest: (entry: ReadEntry) => readonly PortableCondition[], coverage: readonly FamilyCoverage[]): string {
 	const kinds = [...new Set([...routes.readEntries.keys(), ...routes.containers.keys()])].sort();
 	const record = {
 		grammar: routes.grammar,
@@ -50,11 +58,13 @@ export function emitPortableNodeModel(routes: GrammarRoutes, readTest: (entry: R
 				const read = routes.readEntries.get(kind);
 				const slots = routes.slots.get(kind);
 				const container = routes.containers.get(kind);
+				const covered = coverage.filter(({ entry }) => entry.kind === kind);
 				return [
 					kind,
 					{
 						...(vocab === undefined ? {} : { vocab }),
 						...(read === undefined ? {} : { read: read.map((entry) => readEntryRecord(entry, readTest(entry))) }),
+						...(covered.length === 0 ? {} : { covered: covered.map(coverageRecord) }),
 						...(slots === undefined ? {} : { slots: slots.map(slotRecord) }),
 						...(container === undefined ? {} : { container })
 					}

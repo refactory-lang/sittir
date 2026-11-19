@@ -1,9 +1,9 @@
-import type { PortableCondition, PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { engineOf, isLive } from '../engine-scope.ts';
-import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts';
+import { conditionHolds, holds, planSubjects, reachedBy, slotItems, type PlanItems, type PlanSubjects } from '../query-holds.ts';
 import { treeOf } from '../tree-token.ts';
 import { sourceTextOf } from '../node-data.ts';
-import { portablePathHasFacts, readableEntries, unplaced } from './facts.ts';
+import { entriesHolding, portablePathHasFacts, readableEntries, unplaced } from './facts.ts';
 
 type Node = { readonly $type: number };
 
@@ -174,37 +174,15 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	};
 	const typeOf = (item: unknown): readonly number[] =>
 		item instanceof Keyword ? (item.kind === undefined ? [] : [item.kind]) : typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];
-	const subjectsOf = (reached: readonly unknown[]): PlanSubjects => {
-		const subjects = (subject: QuerySubject): readonly unknown[] =>
-			reached.flatMap((item) => ('self' in subject ? [item] : hasKind(item) ? itemsIn(item, subject) : []));
-		return {
-			texts: (subject) => subjects(subject).flatMap((item) => textOf(item) ?? []),
-			types: (subject) => subjects(subject).flatMap(typeOf),
-			children: (subject) => subjects(subject).filter(hasKind).map((child) => subjectsOf([child])),
-			count: (subject) => subjects(subject).length,
-			delimiters: () => reached.flatMap(delimiterOf)
-		};
-	};
-	const conditionHolds = (condition: PortableCondition, value: Node | number): boolean => {
-		let reached: readonly unknown[] = [value];
-		for (const step of condition.via)
-			reached = reached.filter(hasKind).flatMap((n) => anchored(itemsIn(n, step), step.anchor));
-		return holds(condition.plan, subjectsOf(reached));
-	};
+	const items: PlanItems<Node> = { isNode: hasKind, itemsIn, textOf, typeOf, delimiterOf };
+	const subjectsOf = (reached: readonly unknown[]): PlanSubjects => planSubjects(reached, items);
 	const entriesWhere = (keep: (entry: PortableReadEntry) => boolean): ReadonlyMap<number, readonly PortableReadEntry[]> =>
 		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), readableEntries(entries).filter(keep)]));
 	const nodeEntries = entriesWhere(() => true);
 	const kindIdEntries = entriesWhere(decidesKindId);
-	const classify: PortableClassifier = (value) => {
-		const holding = ((typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type)) ?? []).filter((entry) =>
-			entry.test.every((condition) => conditionHolds(condition, value))
-		);
-		return holding.find((entry) => !holding.some((other) => other.path !== entry.path && portablePathHasFacts(entry.path, other.path)))?.path;
-	};
-	const textsAt = (node: Node, steps: readonly PortableStep[]): readonly string[] =>
-		steps
-			.reduce<readonly unknown[]>((reached, step) => reached.filter(hasKind).flatMap((n) => anchored(itemsIn(n, step), step.anchor)), [node])
-			.flatMap((item) => textOf(item) ?? []);
+	const classify: PortableClassifier = (value) =>
+		entriesHolding((typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type)) ?? [], value, items)[0]?.path;
+	const textsAt = (node: Node, steps: readonly PortableStep[]): readonly string[] => reachedBy([node], steps, items).flatMap((item) => textOf(item) ?? []);
 	const sameText = (a: readonly string[], b: readonly string[]): boolean => a.length === 1 && b.length === 1 && a[0] === b[0];
 	const factsOf = (node: Node, container: Node): readonly HoldingFact[] => {
 		const facts = (table.facts?.[node.$type] ?? []).filter((fact) => fact.container === container.$type);
@@ -280,7 +258,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const builtReadsAs = (path: string, node: Node): boolean => {
 		const entries = (table.entries[node.$type] ?? []).filter((entry) => portablePathHasFacts(path, entry.path));
 		if (entries.length === 0 || !entries.every(unplaced)) return true;
-		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node)));
+		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node, items)));
 	};
 	return { classify, factsOf, spellingOf, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
 }
