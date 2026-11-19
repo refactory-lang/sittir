@@ -21,6 +21,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 				decided: {}
 		});
@@ -59,6 +60,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 				decided: {}
 		});
@@ -110,6 +112,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: {}
 		});
@@ -132,6 +135,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 				decided: {}
 		});
@@ -159,6 +163,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes,
 			decided: {}
 		});
@@ -209,6 +214,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 				decided: {}
 		});
@@ -264,6 +270,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: {}
 		});
@@ -305,6 +312,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: ['element.macro.fragment'],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: {}
 		});
@@ -338,6 +346,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 				decided: {}
 		});
@@ -393,6 +402,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: {}
 		});
@@ -436,6 +446,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: {}
 		});
@@ -484,6 +495,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: {}
 		});
@@ -516,6 +528,7 @@ describe('the pinned child emits a portable build module', () => {
 				textPaths: [],
 				textInputs: [],
 				textValues: [],
+				flags: {},
 				holes: [],
 				decided: {}
 			});
@@ -549,6 +562,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: ['literal.string.text'],
 			textValues,
+			flags: {},
 			holes: [],
 				decided: {}
 		});
@@ -578,6 +592,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: { 'declaration.function': { body: 'statement.block' } }
 		});
@@ -611,6 +626,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: { 'declaration.function': { body: 'statement.block' } }
 		});
@@ -650,6 +666,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			flags: {},
 			holes: [],
 			decided: { 'declaration.function': { body: 'statement.block', doc: 'literal.string', typeParameters: 'declaration.type_parameter', parameters: 'declaration.parameter' } }
 		});
@@ -705,6 +722,62 @@ describe('the pinned child emits a portable build module', () => {
 		const { text, diagnostics } = await formsOf([body, { ...body, seats: [{ at: [1, 'body'], kinds: [5] }] }], [[0], [1]]);
 		expect(diagnostics.map(({ code, path, message }) => [code, path, message])).toEqual([['portable-emit-unfit-slot', 'declaration.function', 'arm 1 builds body through more than one form']]);
 		expect(text).not.toContain('declaration_function$1');
+	}, 60_000);
+
+	const imported = async (module: string): Promise<Record<string, unknown>> => {
+		const dir = mkdtempSync(join(tmpdir(), 'portable-module-'));
+		writeFileSync(join(dir, 'builders.js'), 'export const ir = new Proxy({}, { get: (_, name) => (...args) => ({ [name]: args.length === 1 ? args[0] : args }) });\n');
+		writeFileSync(join(dir, 'nodes.js'), 'export const isNode = () => false;\n');
+		writeFileSync(join(dir, 'build.ts'), module);
+		return ((await import(join(dir, 'build.ts'))) as { readonly portableBuild: Record<string, unknown> }).portableBuild;
+	};
+
+	it("picks an arm by the render options' variant as the interpreter does: by whether the texts its slots hold are ones the arm's seats spell", async () => {
+		const statements = (seats: readonly PortableSeat[]): PortableSlotRoute => ({ name: 'statements', steps: [{ key: 'statements' }], multiple: true, list: true, seats });
+		const set = (paths: readonly string[], string: boolean) => ({ paths, texts: [], unmapped: [], string, numbers: [], optional: false });
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			node: 'PythonNode',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { functionDefinition: 'config', suiteInline: 'config', block: 'config', identifier: 'text' },
+				paths: {
+					'declaration.function': {
+						root: true,
+						arms: [{ kind: 1, builder: 'functionDefinition', when: [], slots: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [308, 185] }] }], presets: [], flags: {} }]
+					},
+					'statement.block': {
+						root: false,
+						arms: [
+							{ kind: 308, builder: 'suiteInline', when: [{ variant: '_suite', value: 308 }], slots: [statements([{ at: [308, 'statements'], kinds: [5], tokens: { pass: 5 } }])], presets: [], flags: {} },
+							{
+								kind: 185,
+								builder: 'block',
+								when: [{ variant: '_suite', value: 185, default: true }],
+								slots: [statements([{ at: [185, 'statements'], kinds: [5, 6], tokens: { pass: 5 }, leaf: 'identifier', pattern: { source: '^[a-z]+$', flags: 'u' } }])],
+								presets: [],
+								flags: {}
+							}
+						]
+					}
+				}
+			},
+			slots: { 'declaration.function': { body: set(['statement.block'], false) }, 'statement.block': { statements: set([], true) } },
+			viewed: ['declaration.function', 'statement.block'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			flags: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("if ((value.statements ?? []).every((item) => typeof item !== 'string' || ['pass'].includes(item))) return statement_block$308(value);");
+		const { declaration } = (await imported(text)) as { readonly declaration: { readonly function: (input: object) => unknown } };
+		const body = (statements: readonly string[]) => declaration.function({ $path: 'declaration.function', body: { $path: 'statement.block', statements } });
+		expect(body(['pass'])).toEqual({ functionDefinition: { body: { suiteInline: { statements: [5] } } } });
+		expect(body(['pass', 'x'])).toEqual({ functionDefinition: { body: { block: { statements: [5, { identifier: 'x' }] } } } });
 	}, 60_000);
 
 	it("places facts in the container that spells them, at the index and in the spelling $at records, and builds the container at the root when a fact is set or a slot it holds is stated", async () => {
@@ -774,17 +847,15 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: ['identifier'],
+			flags: {},
 			holes: [],
 			decided: {}
 		});
 		expect(diagnostics).toEqual([]);
-		const dir = mkdtempSync(join(tmpdir(), 'portable-facts-'));
-		writeFileSync(join(dir, 'builders.js'), 'export const ir = new Proxy({}, { get: (_, name) => (...args) => ({ [name]: args.length === 1 ? args[0] : args }) });\n');
-		writeFileSync(join(dir, 'nodes.js'), 'export const isNode = () => false;\n');
-		writeFileSync(join(dir, 'build.ts'), module);
 		type Build = (input: object) => unknown;
-		const { portableBuild } = (await import(join(dir, 'build.ts'))) as {
-			readonly portableBuild: { readonly declaration: { readonly method: Build; readonly property: { readonly getter: Build; readonly setter: Build } }; readonly statement: { readonly block: Build } };
+		const portableBuild = (await imported(module)) as {
+			readonly declaration: { readonly method: Build; readonly property: { readonly getter: Build; readonly setter: Build } };
+			readonly statement: { readonly block: Build };
 		};
 		const name = (value: string) => ({ identifier: value });
 		const decorator = (expression: object) => ({ decorator: { expression } });

@@ -19,6 +19,9 @@ const missing = (owner: string): never => {
 const unrouted = (owner: string, slot: string): never => {
 	throw new Error(owner + ' has no slot ' + slot);
 };
+const unflagged = (owner: string, flag: string): never => {
+	throw new Error(owner + ' builds no flag ' + flag);
+};
 const seated = <
 	V extends
 		| number
@@ -479,11 +482,11 @@ const clause_macro_rule$181_left = (value: clause_macro_rule$181_left$Item) => {
 	}
 	switch (value.$path) {
 		case 'element.macro.token_tree.pattern.brace':
-			return unbuilt('clause.macro.rule.left', value);
+			return element_macro_token_tree_pattern_brace$407(value);
 		case 'element.macro.token_tree.pattern.bracket':
-			return unbuilt('clause.macro.rule.left', value);
+			return element_macro_token_tree_pattern_bracket$406(value);
 		case 'element.macro.token_tree.pattern.paren':
-			return unbuilt('clause.macro.rule.left', value);
+			return element_macro_token_tree_pattern_paren$405(value);
 		default:
 			return unbuilt('clause.macro.rule.left', value);
 	}
@@ -506,11 +509,11 @@ const clause_macro_rule$181_right = (value: clause_macro_rule$181_right$Item) =>
 	}
 	switch (value.$path) {
 		case 'element.macro.token_tree.brace':
-			return unbuilt('clause.macro.rule.right', value);
+			return element_macro_token_tree_brace$410(value);
 		case 'element.macro.token_tree.bracket':
-			return unbuilt('clause.macro.rule.right', value);
+			return element_macro_token_tree_bracket$409(value);
 		case 'element.macro.token_tree.paren':
-			return unbuilt('clause.macro.rule.right', value);
+			return element_macro_token_tree_paren$408(value);
 		default:
 			return unbuilt('clause.macro.rule.right', value);
 	}
@@ -528,6 +531,120 @@ const clause_where$211_wherePredicates$item = (value: clause_where$211_wherePred
 		return unseated('clause.where.wherePredicates', value);
 	}
 	return unbuilt('clause.where.wherePredicates', value);
+};
+type declaration_macro$416_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_macro$416_name = (value: declaration_macro$416_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.macro.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.macro.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.macro.name', value);
+	}
+};
+type declaration_macro$416_rules$item$Item =
+	| PathInput<RustMap, 'clause.macro.rule'>
+	| RustMap['nodes']['clause.macro.rule'];
+const declaration_macro$416_rules$item = (value: declaration_macro$416_rules$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [181])) return value;
+		return unseated('declaration.macro.rules', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [181])) return value;
+		return unseated('declaration.macro.rules', value);
+	}
+	return clause_macro_rule$181(value);
+};
+type declaration_macro$417_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_macro$417_name = (value: declaration_macro$417_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.macro.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.macro.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.macro.name', value);
+	}
+};
+type declaration_macro$417_rules$item$Item =
+	| PathInput<RustMap, 'clause.macro.rule'>
+	| RustMap['nodes']['clause.macro.rule'];
+const declaration_macro$417_rules$item = (value: declaration_macro$417_rules$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [181])) return value;
+		return unseated('declaration.macro.rules', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [181])) return value;
+		return unseated('declaration.macro.rules', value);
+	}
+	return clause_macro_rule$181(value);
+};
+type declaration_macro$418_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_macro$418_name = (value: declaration_macro$418_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.macro.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.macro.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.macro.name', value);
+	}
+};
+type declaration_macro$418_rules$item$Item =
+	| PathInput<RustMap, 'clause.macro.rule'>
+	| RustMap['nodes']['clause.macro.rule'];
+const declaration_macro$418_rules$item = (value: declaration_macro$418_rules$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [181])) return value;
+		return unseated('declaration.macro.rules', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [181])) return value;
+		return unseated('declaration.macro.rules', value);
+	}
+	return clause_macro_rule$181(value);
 };
 type declaration_macro_brace$418_name$Item =
 	| Text<RustMap, 'identifier'>
@@ -1189,6 +1306,316 @@ const declaration_type_parameter_lifetime$222_name = (value: declaration_type_pa
 	}
 	return identifier_lifetime$239(value);
 };
+type declaration_type_parameter_value$220_default$Item =
+	| 'false'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block'];
+const declaration_type_parameter_value$220_default = (value: declaration_type_parameter_value$220_default$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 313, 328, 330, 331, 332, 333, 334, 336,
+					367
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type_parameter.value.default', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.string.bytes':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.string.c':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.string.c.raw':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		case 'statement.block':
+			return unbuilt('declaration.type_parameter.value.default', value);
+		default:
+			return unbuilt('declaration.type_parameter.value.default', value);
+	}
+};
+type declaration_type_parameter_value$220_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_type_parameter_value$220_name = (value: declaration_type_parameter_value$220_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.type_parameter.value.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.type_parameter.value.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.type_parameter.value.name', value);
+	}
+};
+type declaration_type_parameter_value$220_type$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const declaration_type_parameter_value$220_type = (value: declaration_type_parameter_value$220_type$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return 254;
+			case '()':
+				return 244;
+			case 'bool':
+				return 72;
+			case 'char':
+				return 74;
+			case 'f32':
+				return 70;
+			case 'f64':
+				return 71;
+			case 'i128':
+				return 67;
+			case 'i16':
+				return 61;
+			case 'i32':
+				return 63;
+			case 'i64':
+				return 65;
+			case 'i8':
+				return 59;
+			case 'isize':
+				return 68;
+			case 'str':
+				return 73;
+			case 'u128':
+				return 66;
+			case 'u16':
+				return 60;
+			case 'u32':
+				return 62;
+			case 'u64':
+				return 64;
+			case 'u8':
+				return 58;
+			case 'usize':
+				return 69;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+			return value;
+		return unseated('declaration.type_parameter.value.type', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type_parameter.value.type', value);
+	}
+	switch (value.$path) {
+		case 'clause.bounds.removed':
+			return clause_bounds_removed$218(value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'identifier':
+			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'identifier.metavariable':
+			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		case 'type.abstract':
+			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'type.array':
+			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'type.bounded':
+			return type_bounded$248(value);
+		case 'type.dynamic':
+			return type_dynamic$256(value);
+		case 'type.function':
+			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'type.generic':
+			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'type.pointer':
+			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
+			return type_pointer$388(value);
+		case 'type.reference':
+			return type_reference$252(value);
+		case 'type.tuple':
+			return unbuilt('declaration.type_parameter.value.type', value);
+		default:
+			return unbuilt('declaration.type_parameter.value.type', value);
+	}
+};
 type element_macro_token_binding$184_fragment$Item =
 	| 'block'
 	| 'expr'
@@ -1270,6 +1697,8900 @@ const element_macro_token_binding$184_name = (value: element_macro_token_binding
 			return unbuilt('element.macro.token_binding.name', value);
 		default:
 			return unbuilt('element.macro.token_binding.name', value);
+	}
+};
+type element_macro_token_repetition$188_operator$Item = '*' | '+' | '?';
+const element_macro_token_repetition$188_operator = (value: element_macro_token_repetition$188_operator$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 9;
+			case '+':
+				return 8;
+			case '?':
+				return 10;
+			default:
+				return untexted('element.macro.token_repetition.operator', value);
+		}
+	}
+	if (typeof value === 'number') {
+		return unseated('element.macro.token_repetition.operator', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [8, 9, 10])) return value;
+		return unseated('element.macro.token_repetition.operator', value);
+	}
+	throw new Error('element.macro.token_repetition.operator takes no structure');
+};
+type element_macro_token_repetition$188_separator$Item = string;
+const element_macro_token_repetition$188_separator = (value: element_macro_token_repetition$188_separator$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^+*?]+))$/u.test(value)) return b.tokenRepetitionPatternText(value);
+		return b.tokenRepetitionPatternText(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [132])) return value;
+		return unseated('element.macro.token_repetition.separator', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [132])) return value;
+		return unseated('element.macro.token_repetition.separator', value);
+	}
+	throw new Error('element.macro.token_repetition.separator takes no structure');
+};
+type element_macro_token_repetition$188_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_repetition'>
+	| RustMap['nodes']['element.macro.token_repetition']
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_repetition$188_tokens = (value: element_macro_token_repetition$188_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_repetition.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_repetition':
+			return element_macro_token_repetition$188(value);
+		case 'element.macro.token_tree.brace':
+			return element_macro_token_tree_brace$410(value);
+		case 'element.macro.token_tree.bracket':
+			return element_macro_token_tree_bracket$409(value);
+		case 'element.macro.token_tree.paren':
+			return element_macro_token_tree_paren$408(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		default:
+			return unbuilt('element.macro.token_repetition.tokens', value);
+	}
+};
+type element_macro_token_repetition_pattern$185_operator$Item = '*' | '+' | '?';
+const element_macro_token_repetition_pattern$185_operator = (
+	value: element_macro_token_repetition_pattern$185_operator$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 9;
+			case '+':
+				return 8;
+			case '?':
+				return 10;
+			default:
+				return untexted('element.macro.token_repetition.pattern.operator', value);
+		}
+	}
+	if (typeof value === 'number') {
+		return unseated('element.macro.token_repetition.pattern.operator', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [8, 9, 10])) return value;
+		return unseated('element.macro.token_repetition.pattern.operator', value);
+	}
+	throw new Error('element.macro.token_repetition.pattern.operator takes no structure');
+};
+type element_macro_token_repetition_pattern$185_separator$Item = string;
+const element_macro_token_repetition_pattern$185_separator = (
+	value: element_macro_token_repetition_pattern$185_separator$Item
+) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^+*?]+))$/u.test(value)) return b.tokenRepetitionPatternText(value);
+		return b.tokenRepetitionPatternText(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [132])) return value;
+		return unseated('element.macro.token_repetition.pattern.separator', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [132])) return value;
+		return unseated('element.macro.token_repetition.pattern.separator', value);
+	}
+	throw new Error('element.macro.token_repetition.pattern.separator takes no structure');
+};
+type element_macro_token_repetition_pattern$185_tokenPatterns$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_binding'>
+	| RustMap['nodes']['element.macro.token_binding']
+	| BuildInput<RustMap, 'element.macro.token_repetition.pattern'>
+	| RustMap['nodes']['element.macro.token_repetition.pattern']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_repetition_pattern$185_tokenPatterns = (
+	value: element_macro_token_repetition_pattern$185_tokenPatterns$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_repetition.pattern.tokenPatterns', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_binding':
+			return element_macro_token_binding$184(value);
+		case 'element.macro.token_repetition.pattern':
+			return element_macro_token_repetition_pattern$185(value);
+		case 'element.macro.token_tree.pattern.brace':
+			return element_macro_token_tree_pattern_brace$407(value);
+		case 'element.macro.token_tree.pattern.bracket':
+			return element_macro_token_tree_pattern_bracket$406(value);
+		case 'element.macro.token_tree.pattern.paren':
+			return element_macro_token_tree_pattern_paren$405(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		default:
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+	}
+};
+type element_macro_token_tree$408_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_repetition'>
+	| RustMap['nodes']['element.macro.token_repetition']
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_repetition':
+			return element_macro_token_repetition$188(value);
+		case 'element.macro.token_tree.brace':
+			return element_macro_token_tree_brace$410(value);
+		case 'element.macro.token_tree.bracket':
+			return element_macro_token_tree_bracket$409(value);
+		case 'element.macro.token_tree.paren':
+			return element_macro_token_tree_paren$408(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.tokens', value);
+	}
+};
+type element_macro_token_tree$409_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_repetition'>
+	| RustMap['nodes']['element.macro.token_repetition']
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_repetition':
+			return element_macro_token_repetition$188(value);
+		case 'element.macro.token_tree.brace':
+			return element_macro_token_tree_brace$410(value);
+		case 'element.macro.token_tree.bracket':
+			return element_macro_token_tree_bracket$409(value);
+		case 'element.macro.token_tree.paren':
+			return element_macro_token_tree_paren$408(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.tokens', value);
+	}
+};
+type element_macro_token_tree$410_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_repetition'>
+	| RustMap['nodes']['element.macro.token_repetition']
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_repetition':
+			return element_macro_token_repetition$188(value);
+		case 'element.macro.token_tree.brace':
+			return element_macro_token_tree_brace$410(value);
+		case 'element.macro.token_tree.bracket':
+			return element_macro_token_tree_bracket$409(value);
+		case 'element.macro.token_tree.paren':
+			return element_macro_token_tree_paren$408(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.tokens', value);
+	}
+};
+type element_macro_token_tree_brace$410_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_repetition'>
+	| RustMap['nodes']['element.macro.token_repetition']
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tree_brace$410_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.brace.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_repetition':
+			return element_macro_token_repetition$188(value);
+		case 'element.macro.token_tree.brace':
+			return element_macro_token_tree_brace$410(value);
+		case 'element.macro.token_tree.bracket':
+			return element_macro_token_tree_bracket$409(value);
+		case 'element.macro.token_tree.paren':
+			return element_macro_token_tree_paren$408(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+	}
+};
+type element_macro_token_tree_bracket$409_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_repetition'>
+	| RustMap['nodes']['element.macro.token_repetition']
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_tree_bracket$409_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.bracket.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_repetition':
+			return element_macro_token_repetition$188(value);
+		case 'element.macro.token_tree.brace':
+			return element_macro_token_tree_brace$410(value);
+		case 'element.macro.token_tree.bracket':
+			return element_macro_token_tree_bracket$409(value);
+		case 'element.macro.token_tree.paren':
+			return element_macro_token_tree_paren$408(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+	}
+};
+type element_macro_token_tree_delimited$411_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '$'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_delimited$411_tokens = (value: element_macro_token_tree_delimited$411_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '$':
+				return 5;
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [5, 260, 411, 412, 413])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.delimited.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_tree.delimited.brace':
+			return element_macro_token_tree_delimited_brace$413(value);
+		case 'element.macro.token_tree.delimited.bracket':
+			return element_macro_token_tree_delimited_bracket$412(value);
+		case 'element.macro.token_tree.delimited.paren':
+			return element_macro_token_tree_delimited_paren$411(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+	}
+};
+type element_macro_token_tree_delimited$412_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '$'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_delimited$412_tokens = (value: element_macro_token_tree_delimited$412_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '$':
+				return 5;
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [5, 260, 411, 412, 413])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.delimited.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_tree.delimited.brace':
+			return element_macro_token_tree_delimited_brace$413(value);
+		case 'element.macro.token_tree.delimited.bracket':
+			return element_macro_token_tree_delimited_bracket$412(value);
+		case 'element.macro.token_tree.delimited.paren':
+			return element_macro_token_tree_delimited_paren$411(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+	}
+};
+type element_macro_token_tree_delimited$413_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '$'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_delimited$413_tokens = (value: element_macro_token_tree_delimited$413_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '$':
+				return 5;
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [5, 260, 411, 412, 413])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.delimited.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_tree.delimited.brace':
+			return element_macro_token_tree_delimited_brace$413(value);
+		case 'element.macro.token_tree.delimited.bracket':
+			return element_macro_token_tree_delimited_bracket$412(value);
+		case 'element.macro.token_tree.delimited.paren':
+			return element_macro_token_tree_delimited_paren$411(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+	}
+};
+type element_macro_token_tree_delimited_brace$413_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '$'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_delimited_brace$413_tokens = (
+	value: element_macro_token_tree_delimited_brace$413_tokens$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '$':
+				return 5;
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [5, 260, 411, 412, 413])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.delimited.brace.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_tree.delimited.brace':
+			return element_macro_token_tree_delimited_brace$413(value);
+		case 'element.macro.token_tree.delimited.bracket':
+			return element_macro_token_tree_delimited_bracket$412(value);
+		case 'element.macro.token_tree.delimited.paren':
+			return element_macro_token_tree_delimited_paren$411(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+	}
+};
+type element_macro_token_tree_delimited_bracket$412_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '$'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_delimited_bracket$412_tokens = (
+	value: element_macro_token_tree_delimited_bracket$412_tokens$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '$':
+				return 5;
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [5, 260, 411, 412, 413])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.delimited.bracket.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_tree.delimited.brace':
+			return element_macro_token_tree_delimited_brace$413(value);
+		case 'element.macro.token_tree.delimited.bracket':
+			return element_macro_token_tree_delimited_bracket$412(value);
+		case 'element.macro.token_tree.delimited.paren':
+			return element_macro_token_tree_delimited_paren$411(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+	}
+};
+type element_macro_token_tree_delimited_paren$411_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '$'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+	| RustMap['nodes']['element.macro.token_tree.delimited.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_delimited_paren$411_tokens = (
+	value: element_macro_token_tree_delimited_paren$411_tokens$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '$':
+				return 5;
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [5, 260, 411, 412, 413])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.delimited.paren.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_tree.delimited.brace':
+			return element_macro_token_tree_delimited_brace$413(value);
+		case 'element.macro.token_tree.delimited.bracket':
+			return element_macro_token_tree_delimited_bracket$412(value);
+		case 'element.macro.token_tree.delimited.paren':
+			return element_macro_token_tree_delimited_paren$411(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+	}
+};
+type element_macro_token_tree_paren$408_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_repetition'>
+	| RustMap['nodes']['element.macro.token_repetition']
+	| BuildInput<RustMap, 'element.macro.token_tree.brace'>
+	| RustMap['nodes']['element.macro.token_tree.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.paren'>
+	| RustMap['nodes']['element.macro.token_tree.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tree_paren$408_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.paren.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_repetition':
+			return element_macro_token_repetition$188(value);
+		case 'element.macro.token_tree.brace':
+			return element_macro_token_tree_brace$410(value);
+		case 'element.macro.token_tree.bracket':
+			return element_macro_token_tree_bracket$409(value);
+		case 'element.macro.token_tree.paren':
+			return element_macro_token_tree_paren$408(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+	}
+};
+type element_macro_token_tree_pattern$405_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_binding'>
+	| RustMap['nodes']['element.macro.token_binding']
+	| BuildInput<RustMap, 'element.macro.token_repetition.pattern'>
+	| RustMap['nodes']['element.macro.token_repetition.pattern']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_tree_pattern$405_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.pattern.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_binding':
+			return element_macro_token_binding$184(value);
+		case 'element.macro.token_repetition.pattern':
+			return element_macro_token_repetition_pattern$185(value);
+		case 'element.macro.token_tree.pattern.brace':
+			return element_macro_token_tree_pattern_brace$407(value);
+		case 'element.macro.token_tree.pattern.bracket':
+			return element_macro_token_tree_pattern_bracket$406(value);
+		case 'element.macro.token_tree.pattern.paren':
+			return element_macro_token_tree_pattern_paren$405(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+	}
+};
+type element_macro_token_tree_pattern$406_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_binding'>
+	| RustMap['nodes']['element.macro.token_binding']
+	| BuildInput<RustMap, 'element.macro.token_repetition.pattern'>
+	| RustMap['nodes']['element.macro.token_repetition.pattern']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_tree_pattern$406_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.pattern.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_binding':
+			return element_macro_token_binding$184(value);
+		case 'element.macro.token_repetition.pattern':
+			return element_macro_token_repetition_pattern$185(value);
+		case 'element.macro.token_tree.pattern.brace':
+			return element_macro_token_tree_pattern_brace$407(value);
+		case 'element.macro.token_tree.pattern.bracket':
+			return element_macro_token_tree_pattern_bracket$406(value);
+		case 'element.macro.token_tree.pattern.paren':
+			return element_macro_token_tree_pattern_paren$405(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+	}
+};
+type element_macro_token_tree_pattern$407_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_binding'>
+	| RustMap['nodes']['element.macro.token_binding']
+	| BuildInput<RustMap, 'element.macro.token_repetition.pattern'>
+	| RustMap['nodes']['element.macro.token_repetition.pattern']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_tree_pattern$407_tokens$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.pattern.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_binding':
+			return element_macro_token_binding$184(value);
+		case 'element.macro.token_repetition.pattern':
+			return element_macro_token_repetition_pattern$185(value);
+		case 'element.macro.token_tree.pattern.brace':
+			return element_macro_token_tree_pattern_brace$407(value);
+		case 'element.macro.token_tree.pattern.bracket':
+			return element_macro_token_tree_pattern_bracket$406(value);
+		case 'element.macro.token_tree.pattern.paren':
+			return element_macro_token_tree_pattern_paren$405(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+	}
+};
+type element_macro_token_tree_pattern_brace$407_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_binding'>
+	| RustMap['nodes']['element.macro.token_binding']
+	| BuildInput<RustMap, 'element.macro.token_repetition.pattern'>
+	| RustMap['nodes']['element.macro.token_repetition.pattern']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_pattern_brace$407_tokens = (
+	value: element_macro_token_tree_pattern_brace$407_tokens$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.pattern.brace.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_binding':
+			return element_macro_token_binding$184(value);
+		case 'element.macro.token_repetition.pattern':
+			return element_macro_token_repetition_pattern$185(value);
+		case 'element.macro.token_tree.pattern.brace':
+			return element_macro_token_tree_pattern_brace$407(value);
+		case 'element.macro.token_tree.pattern.bracket':
+			return element_macro_token_tree_pattern_bracket$406(value);
+		case 'element.macro.token_tree.pattern.paren':
+			return element_macro_token_tree_pattern_paren$405(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+	}
+};
+type element_macro_token_tree_pattern_bracket$406_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_binding'>
+	| RustMap['nodes']['element.macro.token_binding']
+	| BuildInput<RustMap, 'element.macro.token_repetition.pattern'>
+	| RustMap['nodes']['element.macro.token_repetition.pattern']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_pattern_bracket$406_tokens = (
+	value: element_macro_token_tree_pattern_bracket$406_tokens$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.pattern.bracket.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_binding':
+			return element_macro_token_binding$184(value);
+		case 'element.macro.token_repetition.pattern':
+			return element_macro_token_repetition_pattern$185(value);
+		case 'element.macro.token_tree.pattern.brace':
+			return element_macro_token_tree_pattern_brace$407(value);
+		case 'element.macro.token_tree.pattern.bracket':
+			return element_macro_token_tree_pattern_bracket$406(value);
+		case 'element.macro.token_tree.pattern.paren':
+			return element_macro_token_tree_pattern_paren$405(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+	}
+};
+type element_macro_token_tree_pattern_paren$405_tokens$Item =
+	| '!'
+	| '!='
+	| '#'
+	| '%'
+	| '%='
+	| '&'
+	| '&&'
+	| '&='
+	| "'"
+	| '*'
+	| '*='
+	| '+'
+	| '+='
+	| ','
+	| '-'
+	| '-='
+	| '->'
+	| '.'
+	| '..'
+	| '...'
+	| '..='
+	| '/'
+	| '/='
+	| ':'
+	| '::'
+	| ';'
+	| '<'
+	| '<<'
+	| '<<='
+	| '<='
+	| '='
+	| '=='
+	| '=>'
+	| '>'
+	| '>='
+	| '>>'
+	| '>>='
+	| '?'
+	| '@'
+	| '^'
+	| '^='
+	| '_'
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'bool'
+	| 'break'
+	| 'char'
+	| 'const'
+	| 'continue'
+	| 'crate'
+	| 'default'
+	| 'enum'
+	| 'f32'
+	| 'f64'
+	| 'false'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'if'
+	| 'impl'
+	| 'isize'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'mut'
+	| 'pub'
+	| 'return'
+	| 'self'
+	| 'static'
+	| 'str'
+	| 'struct'
+	| 'super'
+	| 'trait'
+	| 'true'
+	| 'type'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'usize'
+	| 'where'
+	| 'while'
+	| '|'
+	| '|='
+	| '||'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| number
+	| BuildInput<RustMap, 'element.macro.token_binding'>
+	| RustMap['nodes']['element.macro.token_binding']
+	| BuildInput<RustMap, 'element.macro.token_repetition.pattern'>
+	| RustMap['nodes']['element.macro.token_repetition.pattern']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.brace']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.bracket']
+	| BuildInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+	| RustMap['nodes']['element.macro.token_tree.pattern.paren']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const element_macro_token_tree_pattern_paren$405_tokens = (
+	value: element_macro_token_tree_pattern_paren$405_tokens$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return b.nonSpecialToken(29);
+			case '!=':
+				return b.nonSpecialToken(81);
+			case '#':
+				return b.nonSpecialToken(26);
+			case '%':
+				return b.nonSpecialToken(87);
+			case '%=':
+				return b.nonSpecialToken(92);
+			case '&':
+				return b.nonSpecialToken(54);
+			case '&&':
+				return b.nonSpecialToken(76);
+			case '&=':
+				return b.nonSpecialToken(93);
+			case "'":
+				return b.nonSpecialToken(49);
+			case '*':
+				return b.nonSpecialToken(9);
+			case '*=':
+				return b.nonSpecialToken(90);
+			case '+':
+				return b.nonSpecialToken(8);
+			case '+=':
+				return b.nonSpecialToken(88);
+			case ',':
+				return b.nonSpecialToken(130);
+			case '-':
+				return b.nonSpecialToken(75);
+			case '-=':
+				return b.nonSpecialToken(89);
+			case '->':
+				return b.nonSpecialToken(131);
+			case '.':
+				return b.nonSpecialToken(109);
+			case '..':
+				return b.nonSpecialToken(100);
+			case '...':
+				return b.nonSpecialToken(48);
+			case '..=':
+				return b.nonSpecialToken(137);
+			case '/':
+				return b.nonSpecialToken(86);
+			case '/=':
+				return b.nonSpecialToken(91);
+			case ':':
+				return b.nonSpecialToken(4);
+			case '::':
+				return b.nonSpecialToken(46);
+			case ';':
+				return b.nonSpecialToken(2);
+			case '<':
+				return b.nonSpecialToken(42);
+			case '<<':
+				return b.nonSpecialToken(84);
+			case '<<=':
+				return b.nonSpecialToken(96);
+			case '<=':
+				return b.nonSpecialToken(82);
+			case '=':
+				return b.nonSpecialToken(37);
+			case '==':
+				return b.nonSpecialToken(80);
+			case '=>':
+				return b.nonSpecialToken(3);
+			case '>':
+				return b.nonSpecialToken(43);
+			case '>=':
+				return b.nonSpecialToken(83);
+			case '>>':
+				return b.nonSpecialToken(85);
+			case '>>=':
+				return b.nonSpecialToken(97);
+			case '?':
+				return b.nonSpecialToken(10);
+			case '@':
+				return b.nonSpecialToken(115);
+			case '^':
+				return b.nonSpecialToken(79);
+			case '^=':
+				return b.nonSpecialToken(95);
+			case '_':
+				return b.nonSpecialToken(136);
+			case 'as':
+				return b.nonSpecialToken(47);
+			case 'async':
+				return b.nonSpecialToken(112);
+			case 'await':
+				return b.nonSpecialToken(110);
+			case 'bool':
+				return b.nonSpecialToken(72);
+			case 'break':
+				return b.nonSpecialToken(107);
+			case 'char':
+				return b.nonSpecialToken(74);
+			case 'const':
+				return b.nonSpecialToken(35);
+			case 'continue':
+				return b.nonSpecialToken(108);
+			case 'crate':
+				return b.nonSpecialToken(126);
+			case 'default':
+				return b.nonSpecialToken(50);
+			case 'enum':
+				return b.nonSpecialToken(33);
+			case 'f32':
+				return b.nonSpecialToken(70);
+			case 'f64':
+				return b.nonSpecialToken(71);
+			case 'fn':
+				return b.nonSpecialToken(38);
+			case 'for':
+				return b.nonSpecialToken(41);
+			case 'gen':
+				return b.nonSpecialToken(51);
+			case 'i128':
+				return b.nonSpecialToken(67);
+			case 'i16':
+				return b.nonSpecialToken(61);
+			case 'i32':
+				return b.nonSpecialToken(63);
+			case 'i64':
+				return b.nonSpecialToken(65);
+			case 'i8':
+				return b.nonSpecialToken(59);
+			case 'if':
+				return b.nonSpecialToken(101);
+			case 'impl':
+				return b.nonSpecialToken(55);
+			case 'isize':
+				return b.nonSpecialToken(68);
+			case 'let':
+				return b.nonSpecialToken(44);
+			case 'loop':
+				return b.nonSpecialToken(105);
+			case 'match':
+				return b.nonSpecialToken(103);
+			case 'mod':
+				return b.nonSpecialToken(138);
+			case 'mut':
+				return b.nonSpecialToken(57);
+			case 'pub':
+				return b.nonSpecialToken(139);
+			case 'return':
+				return b.nonSpecialToken(98);
+			case 'self':
+				return b.nonSpecialToken(124);
+			case 'static':
+				return b.nonSpecialToken(128);
+			case 'str':
+				return b.nonSpecialToken(73);
+			case 'struct':
+				return b.nonSpecialToken(140);
+			case 'super':
+				return b.nonSpecialToken(125);
+			case 'trait':
+				return b.nonSpecialToken(40);
+			case 'type':
+				return b.nonSpecialToken(36);
+			case 'u128':
+				return b.nonSpecialToken(66);
+			case 'u16':
+				return b.nonSpecialToken(60);
+			case 'u32':
+				return b.nonSpecialToken(62);
+			case 'u64':
+				return b.nonSpecialToken(64);
+			case 'u8':
+				return b.nonSpecialToken(58);
+			case 'union':
+				return b.nonSpecialToken(32);
+			case 'unsafe':
+				return b.nonSpecialToken(111);
+			case 'use':
+				return b.nonSpecialToken(45);
+			case 'usize':
+				return b.nonSpecialToken(69);
+			case 'where':
+				return b.nonSpecialToken(39);
+			case 'while':
+				return b.nonSpecialToken(104);
+			case '|':
+				return b.nonSpecialToken(78);
+			case '|=':
+				return b.nonSpecialToken(94);
+			case '||':
+				return b.nonSpecialToken(77);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.nonSpecialToken(b.identifier(value));
+				return b.nonSpecialToken(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.nonSpecialToken(literal_number_integer$141({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
+					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
+					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
+				]
+			)
+		)
+			return b.nonSpecialToken(value);
+		return unseated('element.macro.token_tree.pattern.paren.tokens', value);
+	}
+	switch (value.$path) {
+		case 'element.macro.token_binding':
+			return element_macro_token_binding$184(value);
+		case 'element.macro.token_repetition.pattern':
+			return element_macro_token_repetition_pattern$185(value);
+		case 'element.macro.token_tree.pattern.brace':
+			return element_macro_token_tree_pattern_brace$407(value);
+		case 'element.macro.token_tree.pattern.bracket':
+			return element_macro_token_tree_pattern_bracket$406(value);
+		case 'element.macro.token_tree.pattern.paren':
+			return element_macro_token_tree_pattern_paren$405(value);
+		case 'identifier':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'identifier.metavariable':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.boolean.false':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.boolean.true':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.nonSpecialToken(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.nonSpecialToken(literal_character$148(value));
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.number.float':
+			return b.nonSpecialToken(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.nonSpecialToken(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.nonSpecialToken(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.nonSpecialToken(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.nonSpecialToken(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.string.bytes':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.string.c':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.string.c.raw':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		default:
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 	}
 };
 type element_struct_field$284_attributes$Item = PathInput<RustMap, 'attribute'> | RustMap['nodes']['attribute'];
@@ -1605,11 +10926,11 @@ const expression_call_macro$259_arguments = (value: expression_call_macro$259_ar
 	}
 	switch (value.$path) {
 		case 'element.macro.token_tree.delimited.brace':
-			return unbuilt('expression.call.macro.arguments', value);
+			return element_macro_token_tree_delimited_brace$413(value);
 		case 'element.macro.token_tree.delimited.bracket':
-			return unbuilt('expression.call.macro.arguments', value);
+			return element_macro_token_tree_delimited_bracket$412(value);
 		case 'element.macro.token_tree.delimited.paren':
-			return unbuilt('expression.call.macro.arguments', value);
+			return element_macro_token_tree_delimited_paren$411(value);
 		default:
 			return unbuilt('expression.call.macro.arguments', value);
 	}
@@ -1994,6 +11315,71 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 		default:
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
+};
+type literal_character$145_content$Item = string;
+const literal_character$145_content = (value: literal_character$145_content$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.character.content', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.character.content', value);
+	}
+	throw new Error('literal.character.content takes no structure');
+};
+type literal_character$147_content$Item = string;
+const literal_character$147_content = (value: literal_character$147_content$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.character.content', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.character.content', value);
+	}
+	throw new Error('literal.character.content takes no structure');
+};
+type literal_character$148_content$Item = string;
+const literal_character$148_content = (value: literal_character$148_content$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.character.content', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.character.content', value);
+	}
+	throw new Error('literal.character.content takes no structure');
+};
+type literal_character$149_content$Item = string;
+const literal_character$149_content = (value: literal_character$149_content$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.character.content', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.character.content', value);
+	}
+	throw new Error('literal.character.content takes no structure');
+};
+type literal_character$150_content$Item = string;
+const literal_character$150_content = (value: literal_character$150_content$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.character.content', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.character.content', value);
+	}
+	throw new Error('literal.character.content takes no structure');
 };
 type literal_number_integer$141_suffix$Item =
 	| 'f32'
@@ -3757,6 +13143,54 @@ const clause_where$211 = (input: PathInput<RustMap, 'clause.where'>): ReturnType
 				)
 	);
 };
+const declaration_macro$416 = (
+	input: PathInput<RustMap, 'declaration.macro'>
+): ReturnType<typeof b.macroDefinitionParen> => {
+	const rules$first = (input.rules ?? [])[0];
+	const rules$rest = (input.rules ?? []).slice(1);
+	return b.macroDefinitionParen({
+		name: declaration_macro$416_name(input.name),
+		macroRules:
+			rules$first === undefined
+				? undefined
+				: b.macroRules(
+						declaration_macro$416_rules$item(rules$first),
+						...rules$rest.map(declaration_macro$416_rules$item)
+					)
+	});
+};
+const declaration_macro$417 = (
+	input: PathInput<RustMap, 'declaration.macro'>
+): ReturnType<typeof b.macroDefinitionBracket> => {
+	const rules$first = (input.rules ?? [])[0];
+	const rules$rest = (input.rules ?? []).slice(1);
+	return b.macroDefinitionBracket({
+		name: declaration_macro$417_name(input.name),
+		macroRules:
+			rules$first === undefined
+				? undefined
+				: b.macroRules(
+						declaration_macro$417_rules$item(rules$first),
+						...rules$rest.map(declaration_macro$417_rules$item)
+					)
+	});
+};
+const declaration_macro$418 = (
+	input: PathInput<RustMap, 'declaration.macro'>
+): ReturnType<typeof b.macroDefinitionBrace> => {
+	const rules$first = (input.rules ?? [])[0];
+	const rules$rest = (input.rules ?? []).slice(1);
+	return b.macroDefinitionBrace({
+		name: declaration_macro$418_name(input.name),
+		macroRules:
+			rules$first === undefined
+				? undefined
+				: b.macroRules(
+						declaration_macro$418_rules$item(rules$first),
+						...rules$rest.map(declaration_macro$418_rules$item)
+					)
+	});
+};
 const declaration_macro_brace$418 = (
 	input: PathInput<RustMap, 'declaration.macro.brace'>
 ): ReturnType<typeof b.macroDefinitionBrace> => {
@@ -3841,6 +13275,15 @@ const declaration_type_parameter_lifetime$222 = (
 					)
 	});
 };
+const declaration_type_parameter_value$220 = (
+	input: PathInput<RustMap, 'declaration.type_parameter.value'>
+): ReturnType<typeof b.constParameter> => {
+	return b.constParameter({
+		name: declaration_type_parameter_value$220_name(input.name),
+		type: declaration_type_parameter_value$220_type(input.type),
+		default: input.default === undefined ? undefined : declaration_type_parameter_value$220_default(input.default)
+	});
+};
 const element_macro_token_binding$184 = (
 	input: PathInput<RustMap, 'element.macro.token_binding'>
 ): ReturnType<typeof b.tokenBindingPattern> => {
@@ -3848,6 +13291,117 @@ const element_macro_token_binding$184 = (
 		name: element_macro_token_binding$184_name(input.name),
 		fragment: element_macro_token_binding$184_fragment(input.fragment)
 	});
+};
+const element_macro_token_repetition$188 = (
+	input: PathInput<RustMap, 'element.macro.token_repetition'>
+): ReturnType<typeof b.tokenRepetition> => {
+	return b.tokenRepetition({
+		tokens: (input.tokens ?? []).map(element_macro_token_repetition$188_tokens),
+		separator:
+			input.separator === undefined ? undefined : element_macro_token_repetition$188_separator(input.separator),
+		operator: element_macro_token_repetition$188_operator(input.operator)
+	});
+};
+const element_macro_token_repetition_pattern$185 = (
+	input: PathInput<RustMap, 'element.macro.token_repetition.pattern'>
+): ReturnType<typeof b.tokenRepetitionPattern> => {
+	if (input.tokens !== undefined) return unrouted('element.macro.token_repetition.pattern', 'tokens');
+	return b.tokenRepetitionPattern({
+		tokenPatterns: (input.tokenPatterns ?? []).map(element_macro_token_repetition_pattern$185_tokenPatterns),
+		separator:
+			input.separator === undefined ? undefined : element_macro_token_repetition_pattern$185_separator(input.separator),
+		operator: element_macro_token_repetition_pattern$185_operator(input.operator)
+	});
+};
+const element_macro_token_tree$408 = (
+	input: PathInput<RustMap, 'element.macro.token_tree'>
+): ReturnType<typeof b.tokenTreeParen> => {
+	return b.tokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree$408_tokens));
+};
+const element_macro_token_tree$409 = (
+	input: PathInput<RustMap, 'element.macro.token_tree'>
+): ReturnType<typeof b.tokenTreeBracket> => {
+	return b.tokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree$409_tokens));
+};
+const element_macro_token_tree$410 = (
+	input: PathInput<RustMap, 'element.macro.token_tree'>
+): ReturnType<typeof b.tokenTreeBrace> => {
+	return b.tokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree$410_tokens));
+};
+const element_macro_token_tree_brace$410 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.brace'>
+): ReturnType<typeof b.tokenTreeBrace> => {
+	return b.tokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree_brace$410_tokens));
+};
+const element_macro_token_tree_bracket$409 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.bracket'>
+): ReturnType<typeof b.tokenTreeBracket> => {
+	return b.tokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree_bracket$409_tokens));
+};
+const element_macro_token_tree_delimited$411 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited'>
+): ReturnType<typeof b.delimTokenTreeParen> => {
+	return b.delimTokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree_delimited$411_tokens));
+};
+const element_macro_token_tree_delimited$412 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited'>
+): ReturnType<typeof b.delimTokenTreeBracket> => {
+	return b.delimTokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree_delimited$412_tokens));
+};
+const element_macro_token_tree_delimited$413 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited'>
+): ReturnType<typeof b.delimTokenTreeBrace> => {
+	return b.delimTokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree_delimited$413_tokens));
+};
+const element_macro_token_tree_delimited_brace$413 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+): ReturnType<typeof b.delimTokenTreeBrace> => {
+	return b.delimTokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree_delimited_brace$413_tokens));
+};
+const element_macro_token_tree_delimited_bracket$412 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+): ReturnType<typeof b.delimTokenTreeBracket> => {
+	return b.delimTokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree_delimited_bracket$412_tokens));
+};
+const element_macro_token_tree_delimited_paren$411 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+): ReturnType<typeof b.delimTokenTreeParen> => {
+	return b.delimTokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree_delimited_paren$411_tokens));
+};
+const element_macro_token_tree_paren$408 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.paren'>
+): ReturnType<typeof b.tokenTreeParen> => {
+	return b.tokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree_paren$408_tokens));
+};
+const element_macro_token_tree_pattern$405 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern'>
+): ReturnType<typeof b.tokenTreePatternParen> => {
+	return b.tokenTreePatternParen(...(input.tokens ?? []).map(element_macro_token_tree_pattern$405_tokens));
+};
+const element_macro_token_tree_pattern$406 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern'>
+): ReturnType<typeof b.tokenTreePatternBracket> => {
+	return b.tokenTreePatternBracket(...(input.tokens ?? []).map(element_macro_token_tree_pattern$406_tokens));
+};
+const element_macro_token_tree_pattern$407 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern'>
+): ReturnType<typeof b.tokenTreePatternBrace> => {
+	return b.tokenTreePatternBrace(...(input.tokens ?? []).map(element_macro_token_tree_pattern$407_tokens));
+};
+const element_macro_token_tree_pattern_brace$407 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+): ReturnType<typeof b.tokenTreePatternBrace> => {
+	return b.tokenTreePatternBrace(...(input.tokens ?? []).map(element_macro_token_tree_pattern_brace$407_tokens));
+};
+const element_macro_token_tree_pattern_bracket$406 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+): ReturnType<typeof b.tokenTreePatternBracket> => {
+	return b.tokenTreePatternBracket(...(input.tokens ?? []).map(element_macro_token_tree_pattern_bracket$406_tokens));
+};
+const element_macro_token_tree_pattern_paren$405 = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+): ReturnType<typeof b.tokenTreePatternParen> => {
+	return b.tokenTreePatternParen(...(input.tokens ?? []).map(element_macro_token_tree_pattern_paren$405_tokens));
 };
 const element_struct_field$284 = (
 	input: PathInput<RustMap, 'element.struct.field'>
@@ -3910,6 +13464,7 @@ const expression_call_macro$259 = (
 	input: PathInput<RustMap, 'expression.call.macro'>
 ): ReturnType<typeof b.macroInvocation> => {
 	if (input.typeArguments !== undefined) return unrouted('expression.call.macro', 'typeArguments');
+	if ((input.$flags ?? []).includes('terminated')) return unflagged('expression.call.macro', 'terminated');
 	return b.macroInvocation({
 		function: expression_call_macro$259_function(input.function),
 		arguments: expression_call_macro$259_arguments(input.arguments)
@@ -3964,6 +13519,46 @@ const identifier_qualified$265 = (
 	return b.scopedTypeIdentifier({
 		qualifier: input.qualifier === undefined ? undefined : identifier_qualified$265_qualifier(input.qualifier),
 		name: identifier_qualified$265_name(input.name)
+	});
+};
+const literal_character$145 = (
+	input: PathInput<RustMap, 'literal.character'>
+): ReturnType<typeof b.charLiteralPlain> => {
+	return b.charLiteralPlain({
+		content:
+			input.content === undefined ? missing('literal.character.content') : literal_character$145_content(input.content)
+	});
+};
+const literal_character$147 = (
+	input: PathInput<RustMap, 'literal.character'>
+): ReturnType<typeof b.charLiteralEscapedSimple> => {
+	return b.charLiteralEscapedSimple({
+		content:
+			input.content === undefined ? missing('literal.character.content') : literal_character$147_content(input.content)
+	});
+};
+const literal_character$148 = (
+	input: PathInput<RustMap, 'literal.character'>
+): ReturnType<typeof b.charLiteralEscapedUnicodeFixed> => {
+	return b.charLiteralEscapedUnicodeFixed({
+		content:
+			input.content === undefined ? missing('literal.character.content') : literal_character$148_content(input.content)
+	});
+};
+const literal_character$149 = (
+	input: PathInput<RustMap, 'literal.character'>
+): ReturnType<typeof b.charLiteralEscapedUnicodeBraced> => {
+	return b.charLiteralEscapedUnicodeBraced({
+		content:
+			input.content === undefined ? missing('literal.character.content') : literal_character$149_content(input.content)
+	});
+};
+const literal_character$150 = (
+	input: PathInput<RustMap, 'literal.character'>
+): ReturnType<typeof b.charLiteralEscapedHex> => {
+	return b.charLiteralEscapedHex({
+		content:
+			input.content === undefined ? missing('literal.character.content') : literal_character$150_content(input.content)
 	});
 };
 const literal_number_float$162 = (
@@ -4049,6 +13644,7 @@ const type_dynamic$256 = (input: PathInput<RustMap, 'type.dynamic'>): ReturnType
 	return b.dynamicType(type_dynamic$256_trait(input.trait));
 };
 const type_pointer$388 = (input: PathInput<RustMap, 'type.pointer'>): ReturnType<typeof b.pointerTypeConst> => {
+	if ((input.$flags ?? []).includes('writable')) return unflagged('type.pointer', 'writable');
 	return b.pointerTypeConst(type_pointer$388_type(input.type));
 };
 const type_pointer$389 = (input: PathInput<RustMap, 'type.pointer'>): ReturnType<typeof b.pointerTypeMut> => {
@@ -4091,6 +13687,21 @@ const clause_macro_rule = (input: PathInput<RustMap, 'clause.macro.rule'>) => {
 const clause_where = (input: PathInput<RustMap, 'clause.where'>) => {
 	return clause_where$211(input);
 };
+const declaration_macro = (input: PathInput<RustMap, 'declaration.macro'>) => {
+	if (
+		(typeof input.name !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(input.name)) &&
+		(input.rules ?? []).every((item) => typeof item !== 'string') &&
+		input.name !== undefined
+	)
+		return declaration_macro$416(input);
+	if (
+		(typeof input.name !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(input.name)) &&
+		(input.rules ?? []).every((item) => typeof item !== 'string') &&
+		input.name !== undefined
+	)
+		return declaration_macro$418(input);
+	return declaration_macro$417(input);
+};
 const declaration_macro_brace = (input: PathInput<RustMap, 'declaration.macro.brace'>) => {
 	return declaration_macro_brace$418(input);
 };
@@ -4108,8 +13719,694 @@ const declaration_type_parameter_lifetime = (input: PathInput<RustMap, 'declarat
 	if (input.attributes !== undefined) return unrouted('declaration.type_parameter.lifetime', 'attributes');
 	return declaration_type_parameter_lifetime$222(input);
 };
+const declaration_type_parameter_value = (input: PathInput<RustMap, 'declaration.type_parameter.value'>) => {
+	if (input.attributes !== undefined) return unrouted('declaration.type_parameter.value', 'attributes');
+	return declaration_type_parameter_value$220(input);
+};
 const element_macro_token_binding = (input: PathInput<RustMap, 'element.macro.token_binding'>) => {
 	return element_macro_token_binding$184(input);
+};
+const element_macro_token_repetition = (input: PathInput<RustMap, 'element.macro.token_repetition'>) => {
+	return element_macro_token_repetition$188(input);
+};
+const element_macro_token_repetition_pattern = (
+	input: PathInput<RustMap, 'element.macro.token_repetition.pattern'>
+) => {
+	return element_macro_token_repetition_pattern$185(input);
+};
+const element_macro_token_tree = (input: PathInput<RustMap, 'element.macro.token_tree'>) => {
+	if (
+		(input.tokens ?? []).every(
+			(item) =>
+				typeof item !== 'string' ||
+				[
+					'!',
+					'!=',
+					'#',
+					'%',
+					'%=',
+					'&',
+					'&&',
+					'&=',
+					"'",
+					'*',
+					'*=',
+					'+',
+					'+=',
+					',',
+					'-',
+					'-=',
+					'->',
+					'.',
+					'..',
+					'...',
+					'..=',
+					'/',
+					'/=',
+					':',
+					'::',
+					';',
+					'<',
+					'<<',
+					'<<=',
+					'<=',
+					'=',
+					'==',
+					'=>',
+					'>',
+					'>=',
+					'>>',
+					'>>=',
+					'?',
+					'@',
+					'^',
+					'^=',
+					'_',
+					'as',
+					'async',
+					'await',
+					'bool',
+					'break',
+					'char',
+					'const',
+					'continue',
+					'crate',
+					'default',
+					'enum',
+					'f32',
+					'f64',
+					'fn',
+					'for',
+					'gen',
+					'i128',
+					'i16',
+					'i32',
+					'i64',
+					'i8',
+					'if',
+					'impl',
+					'isize',
+					'let',
+					'loop',
+					'match',
+					'mod',
+					'mut',
+					'pub',
+					'return',
+					'self',
+					'static',
+					'str',
+					'struct',
+					'super',
+					'trait',
+					'type',
+					'u128',
+					'u16',
+					'u32',
+					'u64',
+					'u8',
+					'union',
+					'unsafe',
+					'use',
+					'usize',
+					'where',
+					'while',
+					'|',
+					'|=',
+					'||'
+				].includes(item) ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+		)
+	)
+		return element_macro_token_tree$408(input);
+	if (
+		(input.tokens ?? []).every(
+			(item) =>
+				typeof item !== 'string' ||
+				[
+					'!',
+					'!=',
+					'#',
+					'%',
+					'%=',
+					'&',
+					'&&',
+					'&=',
+					"'",
+					'*',
+					'*=',
+					'+',
+					'+=',
+					',',
+					'-',
+					'-=',
+					'->',
+					'.',
+					'..',
+					'...',
+					'..=',
+					'/',
+					'/=',
+					':',
+					'::',
+					';',
+					'<',
+					'<<',
+					'<<=',
+					'<=',
+					'=',
+					'==',
+					'=>',
+					'>',
+					'>=',
+					'>>',
+					'>>=',
+					'?',
+					'@',
+					'^',
+					'^=',
+					'_',
+					'as',
+					'async',
+					'await',
+					'bool',
+					'break',
+					'char',
+					'const',
+					'continue',
+					'crate',
+					'default',
+					'enum',
+					'f32',
+					'f64',
+					'fn',
+					'for',
+					'gen',
+					'i128',
+					'i16',
+					'i32',
+					'i64',
+					'i8',
+					'if',
+					'impl',
+					'isize',
+					'let',
+					'loop',
+					'match',
+					'mod',
+					'mut',
+					'pub',
+					'return',
+					'self',
+					'static',
+					'str',
+					'struct',
+					'super',
+					'trait',
+					'type',
+					'u128',
+					'u16',
+					'u32',
+					'u64',
+					'u8',
+					'union',
+					'unsafe',
+					'use',
+					'usize',
+					'where',
+					'while',
+					'|',
+					'|=',
+					'||'
+				].includes(item) ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+		)
+	)
+		return element_macro_token_tree$410(input);
+	return element_macro_token_tree$409(input);
+};
+const element_macro_token_tree_brace = (input: PathInput<RustMap, 'element.macro.token_tree.brace'>) => {
+	return element_macro_token_tree_brace$410(input);
+};
+const element_macro_token_tree_bracket = (input: PathInput<RustMap, 'element.macro.token_tree.bracket'>) => {
+	return element_macro_token_tree_bracket$409(input);
+};
+const element_macro_token_tree_delimited = (input: PathInput<RustMap, 'element.macro.token_tree.delimited'>) => {
+	if (
+		(input.tokens ?? []).every(
+			(item) =>
+				typeof item !== 'string' ||
+				[
+					'!',
+					'!=',
+					'#',
+					'$',
+					'%',
+					'%=',
+					'&',
+					'&&',
+					'&=',
+					"'",
+					'*',
+					'*=',
+					'+',
+					'+=',
+					',',
+					'-',
+					'-=',
+					'->',
+					'.',
+					'..',
+					'...',
+					'..=',
+					'/',
+					'/=',
+					':',
+					'::',
+					';',
+					'<',
+					'<<',
+					'<<=',
+					'<=',
+					'=',
+					'==',
+					'=>',
+					'>',
+					'>=',
+					'>>',
+					'>>=',
+					'?',
+					'@',
+					'^',
+					'^=',
+					'_',
+					'as',
+					'async',
+					'await',
+					'bool',
+					'break',
+					'char',
+					'const',
+					'continue',
+					'crate',
+					'default',
+					'enum',
+					'f32',
+					'f64',
+					'fn',
+					'for',
+					'gen',
+					'i128',
+					'i16',
+					'i32',
+					'i64',
+					'i8',
+					'if',
+					'impl',
+					'isize',
+					'let',
+					'loop',
+					'match',
+					'mod',
+					'mut',
+					'pub',
+					'return',
+					'self',
+					'static',
+					'str',
+					'struct',
+					'super',
+					'trait',
+					'type',
+					'u128',
+					'u16',
+					'u32',
+					'u64',
+					'u8',
+					'union',
+					'unsafe',
+					'use',
+					'usize',
+					'where',
+					'while',
+					'|',
+					'|=',
+					'||'
+				].includes(item) ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+		)
+	)
+		return element_macro_token_tree_delimited$411(input);
+	if (
+		(input.tokens ?? []).every(
+			(item) =>
+				typeof item !== 'string' ||
+				[
+					'!',
+					'!=',
+					'#',
+					'$',
+					'%',
+					'%=',
+					'&',
+					'&&',
+					'&=',
+					"'",
+					'*',
+					'*=',
+					'+',
+					'+=',
+					',',
+					'-',
+					'-=',
+					'->',
+					'.',
+					'..',
+					'...',
+					'..=',
+					'/',
+					'/=',
+					':',
+					'::',
+					';',
+					'<',
+					'<<',
+					'<<=',
+					'<=',
+					'=',
+					'==',
+					'=>',
+					'>',
+					'>=',
+					'>>',
+					'>>=',
+					'?',
+					'@',
+					'^',
+					'^=',
+					'_',
+					'as',
+					'async',
+					'await',
+					'bool',
+					'break',
+					'char',
+					'const',
+					'continue',
+					'crate',
+					'default',
+					'enum',
+					'f32',
+					'f64',
+					'fn',
+					'for',
+					'gen',
+					'i128',
+					'i16',
+					'i32',
+					'i64',
+					'i8',
+					'if',
+					'impl',
+					'isize',
+					'let',
+					'loop',
+					'match',
+					'mod',
+					'mut',
+					'pub',
+					'return',
+					'self',
+					'static',
+					'str',
+					'struct',
+					'super',
+					'trait',
+					'type',
+					'u128',
+					'u16',
+					'u32',
+					'u64',
+					'u8',
+					'union',
+					'unsafe',
+					'use',
+					'usize',
+					'where',
+					'while',
+					'|',
+					'|=',
+					'||'
+				].includes(item) ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+		)
+	)
+		return element_macro_token_tree_delimited$413(input);
+	return element_macro_token_tree_delimited$412(input);
+};
+const element_macro_token_tree_delimited_brace = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited.brace'>
+) => {
+	return element_macro_token_tree_delimited_brace$413(input);
+};
+const element_macro_token_tree_delimited_bracket = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
+) => {
+	return element_macro_token_tree_delimited_bracket$412(input);
+};
+const element_macro_token_tree_delimited_paren = (
+	input: PathInput<RustMap, 'element.macro.token_tree.delimited.paren'>
+) => {
+	return element_macro_token_tree_delimited_paren$411(input);
+};
+const element_macro_token_tree_paren = (input: PathInput<RustMap, 'element.macro.token_tree.paren'>) => {
+	return element_macro_token_tree_paren$408(input);
+};
+const element_macro_token_tree_pattern = (input: PathInput<RustMap, 'element.macro.token_tree.pattern'>) => {
+	if (
+		(input.tokens ?? []).every(
+			(item) =>
+				typeof item !== 'string' ||
+				[
+					'!',
+					'!=',
+					'#',
+					'%',
+					'%=',
+					'&',
+					'&&',
+					'&=',
+					"'",
+					'*',
+					'*=',
+					'+',
+					'+=',
+					',',
+					'-',
+					'-=',
+					'->',
+					'.',
+					'..',
+					'...',
+					'..=',
+					'/',
+					'/=',
+					':',
+					'::',
+					';',
+					'<',
+					'<<',
+					'<<=',
+					'<=',
+					'=',
+					'==',
+					'=>',
+					'>',
+					'>=',
+					'>>',
+					'>>=',
+					'?',
+					'@',
+					'^',
+					'^=',
+					'_',
+					'as',
+					'async',
+					'await',
+					'bool',
+					'break',
+					'char',
+					'const',
+					'continue',
+					'crate',
+					'default',
+					'enum',
+					'f32',
+					'f64',
+					'fn',
+					'for',
+					'gen',
+					'i128',
+					'i16',
+					'i32',
+					'i64',
+					'i8',
+					'if',
+					'impl',
+					'isize',
+					'let',
+					'loop',
+					'match',
+					'mod',
+					'mut',
+					'pub',
+					'return',
+					'self',
+					'static',
+					'str',
+					'struct',
+					'super',
+					'trait',
+					'type',
+					'u128',
+					'u16',
+					'u32',
+					'u64',
+					'u8',
+					'union',
+					'unsafe',
+					'use',
+					'usize',
+					'where',
+					'while',
+					'|',
+					'|=',
+					'||'
+				].includes(item) ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+		)
+	)
+		return element_macro_token_tree_pattern$405(input);
+	if (
+		(input.tokens ?? []).every(
+			(item) =>
+				typeof item !== 'string' ||
+				[
+					'!',
+					'!=',
+					'#',
+					'%',
+					'%=',
+					'&',
+					'&&',
+					'&=',
+					"'",
+					'*',
+					'*=',
+					'+',
+					'+=',
+					',',
+					'-',
+					'-=',
+					'->',
+					'.',
+					'..',
+					'...',
+					'..=',
+					'/',
+					'/=',
+					':',
+					'::',
+					';',
+					'<',
+					'<<',
+					'<<=',
+					'<=',
+					'=',
+					'==',
+					'=>',
+					'>',
+					'>=',
+					'>>',
+					'>>=',
+					'?',
+					'@',
+					'^',
+					'^=',
+					'_',
+					'as',
+					'async',
+					'await',
+					'bool',
+					'break',
+					'char',
+					'const',
+					'continue',
+					'crate',
+					'default',
+					'enum',
+					'f32',
+					'f64',
+					'fn',
+					'for',
+					'gen',
+					'i128',
+					'i16',
+					'i32',
+					'i64',
+					'i8',
+					'if',
+					'impl',
+					'isize',
+					'let',
+					'loop',
+					'match',
+					'mod',
+					'mut',
+					'pub',
+					'return',
+					'self',
+					'static',
+					'str',
+					'struct',
+					'super',
+					'trait',
+					'type',
+					'u128',
+					'u16',
+					'u32',
+					'u64',
+					'u8',
+					'union',
+					'unsafe',
+					'use',
+					'usize',
+					'where',
+					'while',
+					'|',
+					'|=',
+					'||'
+				].includes(item) ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+		)
+	)
+		return element_macro_token_tree_pattern$407(input);
+	return element_macro_token_tree_pattern$406(input);
+};
+const element_macro_token_tree_pattern_brace = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern.brace'>
+) => {
+	return element_macro_token_tree_pattern_brace$407(input);
+};
+const element_macro_token_tree_pattern_bracket = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
+) => {
+	return element_macro_token_tree_pattern_bracket$406(input);
+};
+const element_macro_token_tree_pattern_paren = (
+	input: PathInput<RustMap, 'element.macro.token_tree.pattern.paren'>
+) => {
+	return element_macro_token_tree_pattern_paren$405(input);
 };
 const element_type_binding = (input: PathInput<RustMap, 'element.type_binding'>) => {
 	return element_type_binding$251(input);
@@ -4216,10 +14513,40 @@ export const portableBuild = {
 		where: clause_where
 	},
 	declaration: {
-		macro: { brace: declaration_macro_brace, bracket: declaration_macro_bracket, paren: declaration_macro_paren },
-		type_parameter: Object.assign(declaration_type_parameter, { lifetime: declaration_type_parameter_lifetime })
+		macro: Object.assign(declaration_macro, {
+			brace: declaration_macro_brace,
+			bracket: declaration_macro_bracket,
+			paren: declaration_macro_paren
+		}),
+		type_parameter: Object.assign(declaration_type_parameter, {
+			lifetime: declaration_type_parameter_lifetime,
+			value: declaration_type_parameter_value
+		})
 	},
-	element: { macro: { token_binding: element_macro_token_binding }, type_binding: element_type_binding },
+	element: {
+		macro: {
+			token_binding: element_macro_token_binding,
+			token_repetition: Object.assign(element_macro_token_repetition, {
+				pattern: element_macro_token_repetition_pattern
+			}),
+			token_tree: Object.assign(element_macro_token_tree, {
+				brace: element_macro_token_tree_brace,
+				bracket: element_macro_token_tree_bracket,
+				delimited: Object.assign(element_macro_token_tree_delimited, {
+					brace: element_macro_token_tree_delimited_brace,
+					bracket: element_macro_token_tree_delimited_bracket,
+					paren: element_macro_token_tree_delimited_paren
+				}),
+				paren: element_macro_token_tree_paren,
+				pattern: Object.assign(element_macro_token_tree_pattern, {
+					brace: element_macro_token_tree_pattern_brace,
+					bracket: element_macro_token_tree_pattern_bracket,
+					paren: element_macro_token_tree_pattern_paren
+				})
+			})
+		},
+		type_binding: element_type_binding
+	},
 	expression: {
 		block: {
 			async: expression_block_async,

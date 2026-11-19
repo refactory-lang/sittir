@@ -465,10 +465,10 @@
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.generic has no arm that fits qualifier's seats"
+    "message": "identifier.qualified.qualifier: type.generic is a path the slot's type admits that arm 263's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
@@ -476,7 +476,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.let: a pick by the render options' variant char_literal"
+    "message": "clause.let: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -948,14 +948,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.macro: a pick by the render options' variant macro_definition"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.method: arm 480 builds parameters through more than one form"
   },
   {
@@ -1108,7 +1100,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.parameter.variadic: a pick by the render options' variant char_literal"
+    "message": "declaration.parameter.variadic: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -1316,14 +1308,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter.value: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.union: a container at content with no builder of its own"
   },
   {
@@ -1436,151 +1420,39 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.macro.token_repetition: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_repetition.pattern: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.brace: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.bracket: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.delimited: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.delimited.brace: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.delimited.bracket: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.delimited.paren: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.paren: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.pattern: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.pattern.brace: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.pattern.bracket: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.macro.token_tree.pattern.paren: a pick by the render options' variant char_literal"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "element.struct.base: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.field.name: literal.number.integer has no arm that fits name's seats"
+    "message": "element.struct.field.name: literal.number.integer is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.field.name: literal.number.integer.binary has no arm that fits name's seats"
+    "message": "element.struct.field.name: literal.number.integer.binary is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.field.name: literal.number.integer.hex has no arm that fits name's seats"
+    "message": "element.struct.field.name: literal.number.integer.hex is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.struct.field.name: literal.number.integer.octal has no arm that fits name's seats"
+    "message": "element.struct.field.name: literal.number.integer.octal is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
   },
   {
     "scope": "grammar",
@@ -1889,18 +1761,18 @@
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.bracketed has no arm that fits qualifier's seats"
+    "message": "identifier.qualified.qualifier: type.bracketed is a path the slot's type admits that arm 264's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.generic has no arm that fits qualifier's seats"
+    "message": "identifier.qualified.qualifier: type.generic is a path the slot's type admits that arm 264's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
@@ -2092,7 +1964,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.character: a pick by the render options' variant char_literal"
+    "message": "literal.character: arm 146's builder takes its text"
   },
   {
     "scope": "grammar",
@@ -2196,7 +2068,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.as: a pick by the render options' variant char_literal"
+    "message": "pattern.as: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2212,7 +2084,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list: a pick by the render options' variant char_literal"
+    "message": "pattern.list: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2220,7 +2092,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.mutable: a pick by the render options' variant char_literal"
+    "message": "pattern.mutable: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2228,7 +2100,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.or: a pick by the render options' variant char_literal"
+    "message": "pattern.or: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2236,7 +2108,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.range.exclusive: a pick by the render options' variant char_literal"
+    "message": "pattern.range.exclusive: right's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -2244,7 +2116,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.range.inclusive: a pick by the render options' variant char_literal"
+    "message": "pattern.range.inclusive: right's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -2252,7 +2124,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.range.inclusive.legacy: a pick by the render options' variant char_literal"
+    "message": "pattern.range.inclusive.legacy: right's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -2260,7 +2132,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.reference: a pick by the render options' variant char_literal"
+    "message": "pattern.reference: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2268,7 +2140,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.reference.value: a pick by the render options' variant char_literal"
+    "message": "pattern.reference.value: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2284,7 +2156,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.struct.field: a pick by the render options' variant char_literal"
+    "message": "pattern.struct.field: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",
@@ -2428,7 +2300,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.for_each: a pick by the render options' variant char_literal"
+    "message": "statement.loop.for_each: a pick by the kinds type builds"
   },
   {
     "scope": "grammar",

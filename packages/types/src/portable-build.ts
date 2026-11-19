@@ -119,10 +119,11 @@ export interface PortableSlotRoute {
 	readonly takers?: Readonly<Partial<Record<NonNullable<PortableBuildArm['scalar']>, string>>>;
 }
 
-/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text (with `builder`, the leaf builder that builds that text where the slot holds a leaf node; with `among`, the canonical texts a read may hold there without contradicting it, of which `text` is the one built), or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the slot routed to those steps, or the slots routed beneath them, as its input, and no input when no slot reaches them. */
+/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id (with `presence`, a keyword alone in a presence slot, which a builder takes as `true`), a token's text (with `builder`, the leaf builder that builds that text where the slot holds a leaf node; with `among`, the canonical texts a read may hold there without contradicting it, of which `text` is the one built), or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the slot routed to those steps, or the slots routed beneath them, as its input, and no input when no slot reaches them. */
 export interface PortablePreset {
 	readonly steps: readonly PortableSlotStep[];
 	readonly kind?: number;
+	readonly presence?: true;
 	readonly text?: string;
 	readonly among?: readonly string[];
 	readonly builder?: string;

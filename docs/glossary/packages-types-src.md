@@ -1462,6 +1462,10 @@ The text of each content index of a seat that is read as text, keyed by its inde
 
 `true` on a seat that holds text rather than a node.
 
+### `packages/types/src/portable-build.ts::PortablePreset::presence`
+
+Set on a keyword preset whose slot is a presence slot: the keyword alone in that slot, which the slot's builder takes as `true`, not as the keyword's kind id.
+
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
 The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.

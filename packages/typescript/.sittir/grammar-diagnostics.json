@@ -3222,23 +3222,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.export.namespace: a pick by the render options' variant string"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.export.specifier: a pick by the render options' variant string"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.export.specifier.typeof: a pick by the render options' variant string"
+    "message": "clause.export.specifier.typeof: arm 194 fills one slot twice"
   },
   {
     "scope": "grammar",
@@ -3275,18 +3259,10 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.import.require: a pick by the render options' variant string"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.import.specifier: a pick by the render options' variant string"
+    "message": "clause.import.specifier.name: literal.string is a path the slot's type admits that arm 414's seats don't place, though another arm of clause.import.specifier does"
   },
   {
     "scope": "grammar",
@@ -3327,6 +3303,14 @@
     "severity": "warning",
     "canProceed": true,
     "message": "comment.line: arm 153 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 244's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
@@ -3535,22 +3519,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.method.signature.public: arm 456 builds parameters through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.module: a pick by the render options' variant string"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.module.external: a pick by the render options' variant string"
   },
   {
     "scope": "grammar",
@@ -3899,18 +3867,10 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.import has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.import has no arm that fits qualifier's seats"
+    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 319's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
@@ -4606,14 +4566,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string: a pick by the render options' variant string"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.string.escape: arm 121 builds its text through a content slot"
   },
   {
@@ -4911,14 +4863,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "type.intersection: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.literal: a pick by the render options' variant string"
   },
   {
     "scope": "grammar",

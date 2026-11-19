@@ -92,6 +92,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			textPaths: typed.reads.textPaths,
 			textInputs: typed.textInputs,
 			textValues: typed.textValues,
+			flags: Object.fromEntries(typed.flags),
 			holes: build.holes,
 			decided: Object.fromEntries(typed.decided.map(([path, slotKinds]) => [path, Object.fromEntries(slotKinds)]))
 		},

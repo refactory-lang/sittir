@@ -18,11 +18,12 @@ export interface PortableEmitInput<Table> {
 	readonly textPaths: readonly string[];
 	readonly textInputs: readonly string[];
 	readonly textValues: readonly string[];
+	readonly flags: Readonly<Record<string, readonly string[]>>;
 	readonly holes: readonly (readonly [holder: number, key: string])[];
 	readonly decided: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }
 
-export type PortableEmitCode = 'portable-emit-unplaced-path' | 'portable-emit-unfit-slot' | 'portable-emit-pinned-gap' | 'portable-emit-type' | 'portable-emit-tail-is-path';
+export type PortableEmitCode = 'portable-emit-unplaced-path' | 'portable-emit-unplaced-arm' | 'portable-emit-unfit-slot' | 'portable-emit-pinned-gap' | 'portable-emit-type' | 'portable-emit-tail-is-path';
 
 export interface PortableEmitDiagnostic {
 	readonly code: PortableEmitCode;

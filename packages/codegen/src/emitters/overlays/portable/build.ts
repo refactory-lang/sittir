@@ -29,6 +29,7 @@ import { concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHo
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { Body } from '../../render-body.ts';
+import { nodeSlotShapeOf } from '../../render-module.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
 import type { VocabularyScalar } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
@@ -555,7 +556,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const mount = mountAt(last.owner, last.slot, kind);
 		if (mount !== undefined) return { steps: [...steps.slice(0, -1), { ...steps.at(-1)!, builder: mount.builder, mounted: mount.mounted }] };
 		const id = typeOf(kind);
-		if (fixedText.has(kind) && id !== undefined) return { steps, kind: id };
+		const slot = lastSlot(path);
+		if (fixedText.has(kind) && id !== undefined) return { steps, kind: id, ...(slot !== undefined && nodeSlotShapeOf(slot, nodeMap).tag === 'presence' ? { presence: true } : {}) };
 		const builder = builderOf(kind);
 		return builder === undefined ? undefined : { steps, builder };
 	};

@@ -568,690 +568,690 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: identifier.qualified has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: identifier.qualified is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.boolean.false has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.boolean.false is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.boolean.true has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.boolean.true is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.null has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.null is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.float has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.float is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.float.leading_point has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.float.leading_point is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.float.scientific has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.float.scientific is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.big is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.big.binary is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.big.hex is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.big.octal is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.binary has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.binary is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.hex has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.hex is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.imaginary is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.integer.octal has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.integer.octal is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.number.negative has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.number.negative is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.bytes is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.bytes.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes.raw has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.bytes.raw is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.bytes.raw.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.concatenated has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.concatenated is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated.deferred.raw.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated.raw is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.interpolated.raw.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.raw has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.raw is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.raw.multiline is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: literal.string.unicode has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: literal.string.unicode is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.as has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.as is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.complex.add has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.complex.add is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.complex.subtract has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.complex.subtract is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: identifier.qualified has no arm that fits elements's seats"
+    "message": "pattern.list.elements: identifier.qualified is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.boolean.false has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.boolean.false is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.boolean.true has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.boolean.true is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.null has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.null is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.float has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.float is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.float.leading_point has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.float.leading_point is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.float.scientific has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.float.scientific is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.big is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big.binary has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.big.binary is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big.hex has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.big.hex is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.big.octal has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.big.octal is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.binary has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.binary is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.hex has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.hex is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.imaginary has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.imaginary is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.integer.octal has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.integer.octal is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.number.negative has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.number.negative is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.bytes is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.bytes.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes.raw has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.bytes.raw is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.bytes.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.bytes.raw.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.concatenated has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.concatenated is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated.deferred is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated.deferred.raw.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.raw has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated.raw is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.interpolated.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.interpolated.raw.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.raw has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.raw is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.raw.multiline has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.raw.multiline is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: literal.string.unicode has no arm that fits elements's seats"
+    "message": "pattern.list.elements: literal.string.unicode is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.as has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.as is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.complex.add has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.complex.add is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.complex.subtract has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.complex.subtract is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.map has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.map is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.or has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.or is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.rest.map has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.rest.map is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.struct has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.struct is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.list.elements: pattern.struct.field has no arm that fits elements's seats"
+    "message": "pattern.list.elements: pattern.struct.field is a path the slot's type admits that arm 203's seats don't place, though another arm of pattern.list does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.map has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.map is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.or has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.or is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.rest.map has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.rest.map is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.struct has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.struct is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.tuple.elements: pattern.struct.field has no arm that fits elements's seats"
+    "message": "pattern.tuple.elements: pattern.struct.field is a path the slot's type admits that arm 202's seats don't place, though another arm of pattern.tuple does"
   },
   {
     "scope": "grammar",
@@ -1264,10 +1264,858 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.case.match: a pick by the render options' variant _suite"
+    "message": "identifier.qualified.qualifier: expression.assignment is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.await is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.add is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.divide is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.exponent is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.floor_divide is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.modulo is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.multiply is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.subtract is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.bitwise.and is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.bitwise.or is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.bitwise.xor is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.chain is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.equal is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.greater is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.greater_equal is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.less is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.less_equal is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.not_equal is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.comparison.not_equal.legacy is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.identity.is is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.identity.is_not is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.logical.and is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.logical.or is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.matrix_multiply is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.membership.in is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.membership.not_in is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.shift.left is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.binary.shift.right is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.call is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.call.member is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.list is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.map is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.set is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.collection.tuple is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.generator is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.list is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.map is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.comprehension.set is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.conditional is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.lambda is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.member is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.parenthesized is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.subscript is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.bitwise_not is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.negation is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.not is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: expression.unary.plus is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: identifier is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.boolean.false is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.boolean.true is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.ellipsis is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.null is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.float is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.float.leading_point is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.float.scientific is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big.binary is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big.hex is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.big.octal is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.binary is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.hex is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.imaginary is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.number.integer.octal is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes.raw is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.bytes.raw.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.concatenated is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.raw is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.raw.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.raw is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.interpolated.raw.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.raw is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.raw.multiline is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: literal.string.unicode is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: pattern.rest is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.constrained is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.generic is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.nullable is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.rest is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.union is a path the slot's type admits that arm 187's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: expression.member is a path the slot's type admits that arm 284's seats don't place, though another arm of pattern.list does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: expression.subscript is a path the slot's type admits that arm 284's seats don't place, though another arm of pattern.list does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list.elements: identifier is a path the slot's type admits that arm 284's seats don't place, though another arm of pattern.list does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.rest.pattern: expression.member is a path the slot's type admits that arm 300's seats don't place, though another arm of pattern.rest does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.rest.pattern: expression.subscript is a path the slot's type admits that arm 300's seats don't place, though another arm of pattern.rest does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.rest.map.pattern: expression.member is a path the slot's type admits that arm 301's seats don't place, though another arm of pattern.rest.map does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.rest.map.pattern: expression.subscript is a path the slot's type admits that arm 301's seats don't place, though another arm of pattern.rest.map does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.or.left: literal.number.negative has no arm that fits left's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: expression.member is a path the slot's type admits that arm 283's seats don't place, though another arm of pattern.tuple does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: expression.subscript is a path the slot's type admits that arm 283's seats don't place, though another arm of pattern.tuple does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple.elements: identifier is a path the slot's type admits that arm 283's seats don't place, though another arm of pattern.tuple does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.or.right: literal.number.negative has no arm that fits right's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.function is a path the slot's type admits that arm 318's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: declaration.constant is a path the slot's type admits that arm 304's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: declaration.variable is a path the slot's type admits that arm 304's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.constructor is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.method is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.method.special is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -1284,742 +2132,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "clause.comprehension.for: forInClause takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.else: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.else_if: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.finally: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.assignment has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.await has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.add has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.divide has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.exponent has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.floor_divide has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.modulo has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.multiply has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.arithmetic.subtract has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.bitwise.and has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.bitwise.or has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.bitwise.xor has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.chain has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.equal has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.greater has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.greater_equal has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.less has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.less_equal has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.not_equal has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.comparison.not_equal.legacy has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.identity.is has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.identity.is_not has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.logical.and has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.logical.or has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.matrix_multiply has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.membership.in has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.membership.not_in has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.shift.left has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.binary.shift.right has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.call has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.call.member has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.collection.list has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.collection.map has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.collection.set has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.collection.tuple has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.comprehension.generator has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.comprehension.list has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.comprehension.map has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.comprehension.set has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.conditional has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.lambda has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.member has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.parenthesized has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.subscript has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.unary.bitwise_not has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.unary.negation has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.unary.not has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: expression.unary.plus has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: identifier has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.boolean.false has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.boolean.true has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.ellipsis has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.null has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.float has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.float.leading_point has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.float.scientific has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.big has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.big.binary has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.big.hex has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.big.octal has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.binary has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.hex has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.imaginary has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.number.integer.octal has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.bytes has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.bytes.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.bytes.raw has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.bytes.raw.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.concatenated has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.raw has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated.deferred.raw.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated.raw has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.interpolated.raw.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.raw has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.raw.multiline has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: literal.string.unicode has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: pattern.rest has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.constrained has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.generic has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.nullable has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.rest has no arm that fits qualifier's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.union has no arm that fits qualifier's seats"
   },
   {
     "scope": "grammar",
@@ -2059,14 +2171,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.class: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.constant: a preset at name that is not one keyword or text"
   },
   {
@@ -2075,7 +2179,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor: a pick by the render options' variant _suite"
+    "message": "declaration.constructor: name has no exact set"
   },
   {
     "scope": "grammar",
@@ -2083,15 +2187,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.method: a pick by the render options' variant _suite"
+    "message": "declaration.method: flag privateName spells text, a delimiter or an unset preset"
   },
   {
     "scope": "grammar",
@@ -2107,39 +2203,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.property.setter: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.type_parameter: bounds is a list with no list container seat"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.value: declaration.constant has no arm that fits value's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.value: declaration.variable has no arm that fits value's seats"
   },
   {
     "scope": "grammar",
@@ -2600,102 +2664,6 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: expression.member has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: expression.subscript has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.list.elements: identifier has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.rest.pattern: expression.member has no arm that fits pattern's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.rest.pattern: expression.subscript has no arm that fits pattern's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.rest.map.pattern: expression.member has no arm that fits pattern's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.rest.map.pattern: expression.subscript has no arm that fits pattern's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.or.left: literal.number.negative has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: expression.member has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: expression.subscript has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.tuple.elements: identifier has no arm that fits elements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.or.right: literal.number.negative has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
@@ -2747,14 +2715,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.if: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.import: names requires other slots or is never empty"
   },
   {
@@ -2779,22 +2739,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.for_each: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.while: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.match: a seat at subject holding refined kinds"
   },
   {
@@ -2812,22 +2756,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "statement.print: arguments requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.resource: a pick by the render options' variant _suite"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.try: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",

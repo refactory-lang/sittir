@@ -612,7 +612,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 8
+									kind: 8,
+									presence: true
 								}
 							]
 						}
@@ -702,7 +703,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						},
@@ -2001,7 +2003,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}
@@ -2260,7 +2263,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}
@@ -2517,7 +2521,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}
@@ -2774,7 +2779,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						},
@@ -3078,7 +3084,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}
@@ -3647,7 +3654,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}
@@ -3942,7 +3950,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}
@@ -10275,7 +10284,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 40
+									kind: 40,
+									presence: true
 								}
 							]
 						}
@@ -10375,7 +10385,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 40
+									kind: 40,
+									presence: true
 								}
 							]
 						}
@@ -13872,7 +13883,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 49
+									kind: 49,
+									presence: true
 								}
 							]
 						}
@@ -13957,7 +13969,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 49
+									kind: 49,
+									presence: true
 								}
 							]
 						}
@@ -16140,7 +16153,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}
@@ -16620,7 +16634,8 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									],
-									kind: 67
+									kind: 67,
+									presence: true
 								}
 							]
 						}

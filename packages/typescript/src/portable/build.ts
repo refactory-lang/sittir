@@ -176,11 +176,137 @@ const clause_export$193_exportSpecifiers$item = (value: clause_export$193_export
 	}
 	switch (value.$path) {
 		case 'clause.export.specifier':
-			return unbuilt('clause.export.exportSpecifiers', value);
+			return clause_export_specifier$194(value);
 		case 'clause.export.specifier.typeof':
 			return unbuilt('clause.export.exportSpecifiers', value);
 		default:
 			return unbuilt('clause.export.exportSpecifiers', value);
+	}
+};
+type clause_export_namespace$192_moduleExportName$Item =
+	| 'default'
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| PathInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const clause_export_namespace$192_moduleExportName = (value: clause_export_namespace$192_moduleExportName$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'default':
+				return 9;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 273, 424, 425])) return value;
+		return unseated('clause.export.namespace.moduleExportName', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		return unseated('clause.export.namespace.moduleExportName', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('clause.export.namespace.moduleExportName', value);
+		case undefined:
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		default:
+			return unbuilt('clause.export.namespace.moduleExportName', value);
+	}
+};
+type clause_export_specifier$194_alias$Item =
+	| 'default'
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| PathInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const clause_export_specifier$194_alias = (value: clause_export_specifier$194_alias$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'default':
+				return 9;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 273, 424, 425])) return value;
+		return unseated('clause.export.specifier.alias', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		return unseated('clause.export.specifier.alias', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('clause.export.specifier.alias', value);
+		case undefined:
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		default:
+			return unbuilt('clause.export.specifier.alias', value);
+	}
+};
+type clause_export_specifier$194_name$Item =
+	| 'default'
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| PathInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const clause_export_specifier$194_name = (value: clause_export_specifier$194_name$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'default':
+				return 9;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 273, 424, 425])) return value;
+		return unseated('clause.export.specifier.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		return unseated('clause.export.specifier.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('clause.export.specifier.name', value);
+		case undefined:
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		default:
+			return unbuilt('clause.export.specifier.name', value);
 	}
 };
 type clause_finally$233_body$Item =
@@ -261,6 +387,157 @@ const clause_import_namespace$201_name = (value: clause_import_namespace$201_nam
 			return unbuilt('clause.import.namespace.name', value);
 	}
 };
+type clause_import_require$309_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const clause_import_require$309_name = (value: clause_import_require$309_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('clause.import.require.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('clause.import.require.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('clause.import.require.name', value);
+	}
+};
+type clause_import_require$309_source$Item =
+	| PathInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const clause_import_require$309_source = (value: clause_import_require$309_source$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [273, 424, 425])) return value;
+		return unseated('clause.import.require.source', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [273, 424, 425])) return value;
+		return unseated('clause.import.require.source', value);
+	}
+	if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+		return literal_string$424(value);
+	return literal_string$425(value);
+};
+type clause_import_specifier$414_name$Item =
+	| 'default'
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| PathInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const clause_import_specifier$414_name = (value: clause_import_specifier$414_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('clause.import.specifier.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('clause.import.specifier.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		case undefined:
+		case 'literal.string':
+			return unbuilt('clause.import.specifier.name', value);
+		default:
+			return unbuilt('clause.import.specifier.name', value);
+	}
+};
+type clause_import_specifier$415_alias$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const clause_import_specifier$415_alias = (value: clause_import_specifier$415_alias$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('clause.import.specifier.alias', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('clause.import.specifier.alias', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('clause.import.specifier.alias', value);
+	}
+};
+type clause_import_specifier$415_name$Item =
+	| 'default'
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| PathInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const clause_import_specifier$415_name = (value: clause_import_specifier$415_name$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'default':
+				return 9;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 273, 424, 425])) return value;
+		return unseated('clause.import.specifier.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		return unseated('clause.import.specifier.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('clause.import.specifier.name', value);
+		case undefined:
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		default:
+			return unbuilt('clause.import.specifier.name', value);
+	}
+};
 type declaration_ambient$313_body$Item =
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -322,9 +599,9 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 		case 'declaration.interface':
 			return unbuilt('declaration.ambient.body', value);
 		case 'declaration.module':
-			return unbuilt('declaration.ambient.body', value);
+			return declaration_module$316(value);
 		case 'declaration.module.external':
-			return unbuilt('declaration.ambient.body', value);
+			return declaration_module_external$315(value);
 		case 'declaration.module_property':
 			return unbuilt('declaration.ambient.body', value);
 		case 'declaration.type_alias':
@@ -590,6 +867,112 @@ const declaration_enum$322_name = (value: declaration_enum$322_name$Item) => {
 			return unbuilt('declaration.enum.name', value);
 	}
 };
+type declaration_module$316_body$Item =
+	| PathInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block'];
+const declaration_module$316_body = (value: declaration_module$316_body$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.module.body', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.module.body', value);
+	}
+	return unbuilt('declaration.module.body', value);
+};
+type declaration_module$316_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const declaration_module$316_name = (value: declaration_module$316_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		return unseated('declaration.module.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		return unseated('declaration.module.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.qualified':
+			return identifier_qualified$244(value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		default:
+			return unbuilt('declaration.module.name', value);
+	}
+};
+type declaration_module_external$315_body$Item =
+	| PathInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block'];
+const declaration_module_external$315_body = (value: declaration_module_external$315_body$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.module.external.body', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.module.external.body', value);
+	}
+	return unbuilt('declaration.module.external.body', value);
+};
+type declaration_module_external$315_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const declaration_module_external$315_name = (value: declaration_module_external$315_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		return unseated('declaration.module.external.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		return unseated('declaration.module.external.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.qualified':
+			return identifier_qualified$244(value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		default:
+			return unbuilt('declaration.module.external.name', value);
+	}
+};
 type element_template_substitution$347_type$Item =
 	| '*'
 	| 'any'
@@ -722,7 +1105,7 @@ const element_template_substitution$347_type = (value: element_template_substitu
 		case 'type.intersection':
 			return unbuilt('element.template.substitution.type', value);
 		case 'type.literal':
-			return unbuilt('element.template.substitution.type', value);
+			return type_literal$362(value);
 		case 'type.lookup':
 			return unbuilt('element.template.substitution.type', value);
 		case 'type.nullable':
@@ -1042,7 +1425,7 @@ const identifier_qualified$354_qualifier = (value: identifier_qualified$354_qual
 		case 'identifier.qualified':
 			return identifier_qualified$354(value);
 		case 'type.import':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return type_import$356(value);
 		default:
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
@@ -1094,6 +1477,62 @@ const literal_regex$276_pattern = (value: literal_regex$276_pattern$Item) => {
 			return literal_regex_pattern$126(value);
 		default:
 			return unbuilt('literal.regex.pattern', value);
+	}
+};
+type literal_string$424_elements$Item =
+	| Text<TypeScriptMap, 'literal.string.text'>
+	| BuildInput<TypeScriptMap, 'literal.string.escape'>
+	| TypeScriptMap['nodes']['literal.string.escape']
+	| BuildInput<TypeScriptMap, 'literal.string.text'>
+	| TypeScriptMap['nodes']['literal.string.text'];
+const literal_string$424_elements = (value: literal_string$424_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^"\\\r\n]+))$/u.test(value)) return b.unescapedDoubleStringFragment(value);
+		return b.unescapedDoubleStringFragment(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [119, 121])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [119, 121])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			return unbuilt('literal.string.elements', value);
+		case 'literal.string.text':
+			return literal_string_text$119(value);
+		default:
+			return unbuilt('literal.string.elements', value);
+	}
+};
+type literal_string$425_elements$Item =
+	| Text<TypeScriptMap, 'literal.string.text'>
+	| BuildInput<TypeScriptMap, 'literal.string.escape'>
+	| TypeScriptMap['nodes']['literal.string.escape']
+	| BuildInput<TypeScriptMap, 'literal.string.text'>
+	| TypeScriptMap['nodes']['literal.string.text'];
+const literal_string$425_elements = (value: literal_string$425_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^'\\\r\n]+))$/u.test(value)) return b.unescapedSingleStringFragment(value);
+		return b.unescapedSingleStringFragment(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [120, 121])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [120, 121])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			return unbuilt('literal.string.elements', value);
+		case 'literal.string.text':
+			return literal_string_text$120(value);
+		default:
+			return unbuilt('literal.string.elements', value);
 	}
 };
 type literal_string_interpolated$274_elements$Item =
@@ -1416,7 +1855,7 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 		case 'type.intersection':
 			return unbuilt('type.array.type', value);
 		case 'type.literal':
-			return unbuilt('type.array.type', value);
+			return type_literal$362(value);
 		case 'type.lookup':
 			return unbuilt('type.array.type', value);
 		case 'type.nullable':
@@ -1436,6 +1875,22 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 		default:
 			return unbuilt('type.array.type', value);
 	}
+};
+type type_import$356_source$Item =
+	| PathInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string'];
+const type_import$356_source = (value: type_import$356_source$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [235, 236, 273, 424, 425])) return b.arguments(value);
+		return unseated('type.import.source', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [235, 236, 273, 424, 425])) return b.arguments(value);
+		return unseated('type.import.source', value);
+	}
+	if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+		return b.arguments(literal_string$424(value));
+	return b.arguments(literal_string$425(value));
 };
 type type_index_query$359_type$Item =
 	| '*'
@@ -1565,7 +2020,7 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 		case 'type.intersection':
 			return unbuilt('type.index_query.type', value);
 		case 'type.literal':
-			return unbuilt('type.index_query.type', value);
+			return type_literal$362(value);
 		case 'type.lookup':
 			return unbuilt('type.index_query.type', value);
 		case 'type.nullable':
@@ -1584,6 +2039,124 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 			return unbuilt('type.index_query.type', value);
 		default:
 			return unbuilt('type.index_query.type', value);
+	}
+};
+type type_literal$362_value$Item =
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.negative'>
+	| TypeScriptMap['nodes']['literal.number.negative']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const type_literal$362_value = (value: type_literal$362_value$Item) => {
+	if (typeof value === 'string') {
+		return unbuilt('type.literal.value', { $path: 'literal.number.negative' });
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$166({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$160({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$156({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 281, 282, 283, 402, 403, 424, 425]
+			)
+		)
+			return value;
+		return unseated('type.literal.value', value);
+	}
+	switch (value.$path) {
+		case 'literal.boolean.false':
+			return unbuilt('type.literal.value', value);
+		case 'literal.boolean.true':
+			return unbuilt('type.literal.value', value);
+		case 'literal.null':
+			return unbuilt('type.literal.value', value);
+		case 'literal.null.undefined':
+			return unbuilt('type.literal.value', value);
+		case 'literal.number.float':
+			return literal_number_float$156(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$157(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$158(value);
+		case 'literal.number.integer':
+			return literal_number_integer$160(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$166(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$164(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$163(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$165(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$161(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$155(value);
+		case 'literal.number.integer.octal':
+			if (value.$value !== undefined) return literal_number_integer_octal$162(value);
+			return literal_number_integer_octal$159(value);
+		case 'literal.number.negative':
+			return unbuilt('type.literal.value', value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$166({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$160({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$156({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('type.literal.value', value);
+		default:
+			return unbuilt('type.literal.value', value);
 	}
 };
 type type_nullable$365_type$Item =
@@ -1714,7 +2287,7 @@ const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 		case 'type.intersection':
 			return unbuilt('type.nullable.type', value);
 		case 'type.literal':
-			return unbuilt('type.nullable.type', value);
+			return type_literal$362(value);
 		case 'type.lookup':
 			return unbuilt('type.nullable.type', value);
 		case 'type.nullable':
@@ -1969,7 +2542,7 @@ const type_query$358_expression = (value: type_query$358_expression$Item) => {
 		case 'identifier.qualified':
 			return identifier_qualified$354(value);
 		case 'type.import':
-			return unbuilt('type.query.expression', value);
+			return type_import$356(value);
 		default:
 			return unbuilt('type.query.expression', value);
 	}
@@ -2028,6 +2601,22 @@ const clause_export$193 = (input: PathInput<TypeScriptMap, 'clause.export'>): Re
 				)
 	);
 };
+const clause_export_namespace$192 = (
+	input: PathInput<TypeScriptMap, 'clause.export.namespace'>
+): ReturnType<typeof b.namespaceExport> => {
+	if (input.exportSpecifiers !== undefined) return unrouted('clause.export.namespace', 'exportSpecifiers');
+	return b.namespaceExport(clause_export_namespace$192_moduleExportName(input.moduleExportName));
+};
+const clause_export_specifier$194 = (
+	input: PathInput<TypeScriptMap, 'clause.export.specifier'>
+): ReturnType<typeof b.exportSpecifier> => {
+	if (input.exportSpecifiers !== undefined) return unrouted('clause.export.specifier', 'exportSpecifiers');
+	return b.exportSpecifier({
+		name: clause_export_specifier$194_name(input.name),
+		alias: input.alias === undefined ? undefined : clause_export_specifier$194_alias(input.alias),
+		typeKeyword: (input.$flags ?? []).includes('typeOnly') ? 7 : undefined
+	});
+};
 const clause_finally$233 = (input: PathInput<TypeScriptMap, 'clause.finally'>): ReturnType<typeof b.finallyClause> => {
 	return b.finallyClause(clause_finally$233_body(input.body));
 };
@@ -2043,6 +2632,35 @@ const clause_import_namespace$201 = (
 	input: PathInput<TypeScriptMap, 'clause.import.namespace'>
 ): ReturnType<typeof b.namespaceImport> => {
 	return b.namespaceImport(clause_import_namespace$201_name(input.name));
+};
+const clause_import_require$309 = (
+	input: PathInput<TypeScriptMap, 'clause.import.require'>
+): ReturnType<typeof b.importRequireClause> => {
+	return b.importRequireClause({
+		name: clause_import_require$309_name(input.name),
+		source: clause_import_require$309_source(input.source)
+	});
+};
+const clause_import_specifier$414 = (
+	input: PathInput<TypeScriptMap, 'clause.import.specifier'>
+): ReturnType<typeof b.importSpecifierName> => {
+	if (input.alias !== undefined) return unrouted('clause.import.specifier', 'alias');
+	return b.importSpecifierName({
+		name: clause_import_specifier$414_name(input.name),
+		typeKeyword: (input.$flags ?? []).includes('typeOnly') ? 7 : undefined
+	});
+};
+const clause_import_specifier$415 = (
+	input: PathInput<TypeScriptMap, 'clause.import.specifier'>
+): ReturnType<typeof b.importSpecifierAs> => {
+	return b.importSpecifierAs({
+		name: clause_import_specifier$415_name(input.name),
+		alias:
+			input.alias === undefined
+				? missing('clause.import.specifier.alias')
+				: clause_import_specifier$415_alias(input.alias),
+		typeKeyword: (input.$flags ?? []).includes('typeOnly') ? 7 : undefined
+	});
 };
 const comment_html$178 = (input: PathInput<TypeScriptMap, 'comment.html'>): ReturnType<typeof b.htmlComment> => {
 	return b.htmlComment(typeof input === 'string' ? input : input.$value);
@@ -2144,6 +2762,22 @@ const declaration_enum$322 = (
 						)
 					),
 		const: (input.$flags ?? []).includes('const')
+	});
+};
+const declaration_module$316 = (
+	input: PathInput<TypeScriptMap, 'declaration.module'>
+): ReturnType<typeof b.internalModule> => {
+	return b.internalModule({
+		name: input.name === undefined ? missing('declaration.module.name') : declaration_module$316_name(input.name),
+		body: input.body === undefined ? undefined : declaration_module$316_body(input.body)
+	});
+};
+const declaration_module_external$315 = (
+	input: PathInput<TypeScriptMap, 'declaration.module.external'>
+): ReturnType<typeof b.module> => {
+	return b.module({
+		name: declaration_module_external$315_name(input.name),
+		body: input.body === undefined ? undefined : declaration_module_external$315_body(input.body)
 	});
 };
 const element_template_substitution$347 = (
@@ -2302,6 +2936,12 @@ const literal_number_integer_hex$155 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.numberHex(value) : b.numberHex(value);
 };
+const literal_number_integer_octal$159 = (
+	input: PathInput<TypeScriptMap, 'literal.number.integer.octal'>
+): ReturnType<typeof b.numberLegacyOctal> => {
+	const value = input.$value;
+	return typeof value === 'bigint' ? b.numberLegacyOctal(value) : b.numberLegacyOctal(value);
+};
 const literal_number_integer_octal$162 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.numberOctal> => {
@@ -2324,10 +2964,26 @@ const literal_regex_pattern$126 = (
 ): ReturnType<typeof b.regexPattern> => {
 	return b.regexPattern(typeof input === 'string' ? input : input.$value);
 };
+const literal_string$424 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringDouble> => {
+	return b.stringDouble(...(input.elements ?? []).map(literal_string$424_elements));
+};
+const literal_string$425 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringSingle> => {
+	return b.stringSingle(...(input.elements ?? []).map(literal_string$425_elements));
+};
 const literal_string_interpolated$274 = (
 	input: PathInput<TypeScriptMap, 'literal.string.interpolated'>
 ): ReturnType<typeof b.templateString> => {
 	return b.templateString(...(input.elements ?? []).map(literal_string_interpolated$274_elements));
+};
+const literal_string_text$119 = (
+	input: PathInput<TypeScriptMap, 'literal.string.text'>
+): ReturnType<typeof b.unescapedDoubleStringFragment> => {
+	return b.unescapedDoubleStringFragment(typeof input === 'string' ? input : input.$value);
+};
+const literal_string_text$120 = (
+	input: PathInput<TypeScriptMap, 'literal.string.text'>
+): ReturnType<typeof b.unescapedSingleStringFragment> => {
+	return b.unescapedSingleStringFragment(typeof input === 'string' ? input : input.$value);
 };
 const literal_string_text$176 = (
 	input: PathInput<TypeScriptMap, 'literal.string.text'>
@@ -2346,10 +3002,18 @@ const pattern_rest$292 = (input: PathInput<TypeScriptMap, 'pattern.rest'>): Retu
 const type_array$378 = (input: PathInput<TypeScriptMap, 'type.array'>): ReturnType<typeof b.arrayType> => {
 	return b.arrayType(input.type === undefined ? missing('type.array.type') : type_array$378_type(input.type));
 };
+const type_import$356 = (
+	input: PathInput<TypeScriptMap, 'type.import'>
+): ReturnType<typeof b.typeQueryCallExpression> => {
+	return b.typeQueryCallExpression(type_import$356_source(input.source));
+};
 const type_index_query$359 = (
 	input: PathInput<TypeScriptMap, 'type.index_query'>
 ): ReturnType<typeof b.indexTypeQuery> => {
 	return b.indexTypeQuery(type_index_query$359_type(input.type));
+};
+const type_literal$362 = (input: PathInput<TypeScriptMap, 'type.literal'>): ReturnType<typeof b.literalType> => {
+	return b.literalType(type_literal$362_value(input.value));
 };
 const type_nullable$365 = (input: PathInput<TypeScriptMap, 'type.nullable'>): ReturnType<typeof b.flowMaybeType> => {
 	return b.flowMaybeType(type_nullable$365_type(input.type));
@@ -2393,6 +3057,12 @@ const attribute_parenthesized = (input: PathInput<TypeScriptMap, 'attribute.pare
 const clause_export = (input: PathInput<TypeScriptMap, 'clause.export'>) => {
 	return clause_export$193(input);
 };
+const clause_export_namespace = (input: PathInput<TypeScriptMap, 'clause.export.namespace'>) => {
+	return clause_export_namespace$192(input);
+};
+const clause_export_specifier = (input: PathInput<TypeScriptMap, 'clause.export.specifier'>) => {
+	return clause_export_specifier$194(input);
+};
 const clause_finally = (input: PathInput<TypeScriptMap, 'clause.finally'>) => {
 	return clause_finally$233(input);
 };
@@ -2401,6 +3071,13 @@ const clause_import_attribute = (input: PathInput<TypeScriptMap, 'clause.import.
 };
 const clause_import_namespace = (input: PathInput<TypeScriptMap, 'clause.import.namespace'>) => {
 	return clause_import_namespace$201(input);
+};
+const clause_import_require = (input: PathInput<TypeScriptMap, 'clause.import.require'>) => {
+	return clause_import_require$309(input);
+};
+const clause_import_specifier = (input: PathInput<TypeScriptMap, 'clause.import.specifier'>) => {
+	if (input.name !== undefined && input.alias === undefined) return clause_import_specifier$414(input);
+	return clause_import_specifier$415(input);
 };
 const comment_html = (input: PathInput<TypeScriptMap, 'comment.html'>) => {
 	return comment_html$178(input);
@@ -2426,6 +3103,12 @@ const declaration_constructor_public = (input: PathInput<TypeScriptMap, 'declara
 };
 const declaration_enum = (input: PathInput<TypeScriptMap, 'declaration.enum'>) => {
 	return declaration_enum$322(input);
+};
+const declaration_module = (input: PathInput<TypeScriptMap, 'declaration.module'>) => {
+	return declaration_module$316(input);
+};
+const declaration_module_external = (input: PathInput<TypeScriptMap, 'declaration.module.external'>) => {
+	return declaration_module_external$315(input);
 };
 const element_template_substitution = (input: PathInput<TypeScriptMap, 'element.template.substitution'>) => {
 	return element_template_substitution$347(input);
@@ -2503,6 +3186,11 @@ const literal_regex_flags = (input: PathInput<TypeScriptMap, 'literal.regex.flag
 const literal_regex_pattern = (input: PathInput<TypeScriptMap, 'literal.regex.pattern'>) => {
 	return literal_regex_pattern$126(input);
 };
+const literal_string = (input: PathInput<TypeScriptMap, 'literal.string'>) => {
+	if ((input.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+		return literal_string$424(input);
+	return literal_string$425(input);
+};
 const literal_string_interpolated = (input: PathInput<TypeScriptMap, 'literal.string.interpolated'>) => {
 	return literal_string_interpolated$274(input);
 };
@@ -2520,6 +3208,9 @@ const type_array = (input: PathInput<TypeScriptMap, 'type.array'>) => {
 };
 const type_index_query = (input: PathInput<TypeScriptMap, 'type.index_query'>) => {
 	return type_index_query$359(input);
+};
+const type_literal = (input: PathInput<TypeScriptMap, 'type.literal'>) => {
+	return type_literal$362(input);
 };
 const type_nullable = (input: PathInput<TypeScriptMap, 'type.nullable'>) => {
 	return type_nullable$365(input);
@@ -2539,9 +3230,14 @@ const type_template = (input: PathInput<TypeScriptMap, 'type.template'>) => {
 export const portableBuild = {
 	attribute: { member: attribute_member, parenthesized: attribute_parenthesized },
 	clause: {
-		export: clause_export,
+		export: Object.assign(clause_export, { namespace: clause_export_namespace, specifier: clause_export_specifier }),
 		finally: clause_finally,
-		import: { attribute: clause_import_attribute, namespace: clause_import_namespace }
+		import: {
+			attribute: clause_import_attribute,
+			namespace: clause_import_namespace,
+			require: clause_import_require,
+			specifier: clause_import_specifier
+		}
 	},
 	comment: { html: comment_html },
 	declaration: {
@@ -2551,7 +3247,8 @@ export const portableBuild = {
 			protected: declaration_constructor_protected,
 			public: declaration_constructor_public
 		}),
-		enum: declaration_enum
+		enum: declaration_enum,
+		module: Object.assign(declaration_module, { external: declaration_module_external })
 	},
 	element: { template: { substitution: element_template_substitution } },
 	expression: { collection: { object: expression_collection_object } },
@@ -2573,12 +3270,13 @@ export const portableBuild = {
 			})
 		}),
 		regex: Object.assign(literal_regex, { flags: literal_regex_flags, pattern: literal_regex_pattern }),
-		string: { interpolated: literal_string_interpolated }
+		string: Object.assign(literal_string, { interpolated: literal_string_interpolated })
 	},
 	pattern: { list: pattern_list, object: pattern_object, rest: pattern_rest },
 	type: {
 		array: type_array,
 		index_query: type_index_query,
+		literal: type_literal,
 		nullable: type_nullable,
 		object: type_object,
 		predicate: { asserts: type_predicate_asserts },
