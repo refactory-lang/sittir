@@ -1,4 +1,7 @@
-import type { PortableContainer, PortableSeat, PortableSlotRoute } from '@sittir/types';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import type { PortableContainer, PortableSeat, PortableSlotRoute, PortableSpelledFact } from '@sittir/types';
 import { describe, expect, it } from 'vitest';
 import { runPinned } from '../read.ts';
 
@@ -702,5 +705,107 @@ describe('the pinned child emits a portable build module', () => {
 		const { text, diagnostics } = await formsOf([body, { ...body, seats: [{ at: [1, 'body'], kinds: [5] }] }], [[0], [1]]);
 		expect(diagnostics.map(({ code, path, message }) => [code, path, message])).toEqual([['portable-emit-unfit-slot', 'declaration.function', 'arm 1 builds body through more than one form']]);
 		expect(text).not.toContain('declaration_function$1');
+	}, 60_000);
+
+	it("places facts in the container that spells them, at the index and in the spelling $at records, and builds the container at the root when a fact is set or a slot it holds is stated", async () => {
+		const text = (slot: string): PortableSlotRoute => ({ name: slot, steps: [{ key: slot }], multiple: false, seats: [{ at: [2, slot], kinds: [1], leaf: 'identifier' }] });
+		const decorators: PortableSlotRoute = {
+			name: 'decorators',
+			steps: [{ key: 'decorators' }],
+			multiple: true,
+			nonEmpty: true,
+			list: true,
+			seats: [
+				{ at: [320, 'decorators'], kinds: [], many: true },
+				{ at: [184, 'expression'], kinds: [1, 2], leaf: 'identifier', within: [{ builder: 'decorator', key: 'expression' }] }
+			]
+		};
+		const decorated: PortableContainer = { builder: 'decoratedDefinition', key: 'definition', slots: [decorators] };
+		const override: PortableSpelledFact = {
+			name: 'override',
+			flag: 'override',
+			slot: 'decorators',
+			spellings: [
+				{ item: { $path: 'identifier', $value: 'override' }, text: 'override' },
+				{ item: { $path: 'expression.member', object: 'typing', property: 'override' }, text: 'typing.override' }
+			]
+		};
+		const method = (facts: readonly PortableSpelledFact[], slots: readonly PortableSlotRoute[] = []) => [{ kind: 361, builder: 'functionDefinition', when: [], slots, presets: [], flags: {}, facts }];
+		const set = (paths: readonly string[], optional = true, string = false) => ({ paths, texts: [], unmapped: [], string, numbers: [], optional });
+		const { text: module, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'python',
+			node: 'PythonNode',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { functionDefinition: 'config', decoratedDefinition: 'config', decorator: 'config', identifier: 'text', attribute: 'config', block: 'config' },
+				paths: {
+					'declaration.method': { root: true, arms: method([{ name: 'static', flag: 'static', slot: 'decorators', spellings: [{ item: { $path: 'identifier', $value: 'staticmethod' }, text: 'staticmethod' }] }, override]) },
+					'declaration.property.getter': { root: true, arms: method([{ name: 'getter', slot: 'decorators', spellings: [{ item: { $path: 'identifier', $value: 'property' }, text: 'property' }] }, override]) },
+					'declaration.property.setter': {
+						root: true,
+						arms: method([{ name: 'setter', slot: 'decorators', spellings: [{ item: { $path: 'expression.member', property: 'setter' }, holes: { name: ['object'] } }] }], [text('name')])
+					},
+					'statement.block': {
+						root: true,
+						arms: [
+							{
+								kind: 318,
+								builder: 'block',
+								when: [],
+								slots: [{ name: 'statements', steps: [{ key: 'statements' }], multiple: true, seats: [{ at: [318, 'statements'], kinds: [361] }, { at: [320, 'definition'], kinds: [361], within: [decorated] }] }],
+								presets: [],
+								flags: {}
+							}
+						]
+					},
+					identifier: { root: true, arms: [{ kind: 1, builder: 'identifier', when: [], slots: [], presets: [], flags: {} }] },
+					'expression.member': { root: true, arms: [{ kind: 2, builder: 'attribute', when: [], slots: [text('object'), text('property')], presets: [], flags: {} }] }
+				}
+			},
+			slots: {
+				'declaration.method': { decorators: set(['expression.member', 'identifier']) },
+				'declaration.property.getter': {},
+				'declaration.property.setter': { name: set([], false, true) },
+				'statement.block': { statements: set(['declaration.method', 'declaration.property.getter'], false) },
+				'expression.member': { object: set([], false, true), property: set([], false, true) }
+			},
+			viewed: ['declaration.method', 'declaration.property.getter', 'declaration.property.setter', 'statement.block', 'expression.member', 'identifier'],
+			textPaths: [],
+			textInputs: [],
+			textValues: ['identifier'],
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		const dir = mkdtempSync(join(tmpdir(), 'portable-facts-'));
+		writeFileSync(join(dir, 'builders.js'), 'export const ir = new Proxy({}, { get: (_, name) => (...args) => ({ [name]: args.length === 1 ? args[0] : args }) });\n');
+		writeFileSync(join(dir, 'nodes.js'), 'export const isNode = () => false;\n');
+		writeFileSync(join(dir, 'build.ts'), module);
+		type Build = (input: object) => unknown;
+		const { portableBuild } = (await import(join(dir, 'build.ts'))) as {
+			readonly portableBuild: { readonly declaration: { readonly method: Build; readonly property: { readonly getter: Build; readonly setter: Build } }; readonly statement: { readonly block: Build } };
+		};
+		const name = (value: string) => ({ identifier: value });
+		const decorator = (expression: object) => ({ decorator: { expression } });
+		const bare = { functionDefinition: {} };
+		const { method: built, property } = portableBuild.declaration;
+		expect(built({ $path: 'declaration.method' })).toEqual(bare);
+		expect(built({ $path: 'declaration.method', $flags: ['static'] })).toEqual({ decoratedDefinition: { definition: bare, decorators: [decorator(name('staticmethod'))] } });
+		expect(built({ $path: 'declaration.method', decorators: ['cache'] })).toEqual({ decoratedDefinition: { definition: bare, decorators: [decorator(name('cache'))] } });
+		expect(property.getter({ $path: 'declaration.property.getter' })).toEqual({ decoratedDefinition: { definition: bare, decorators: [decorator(name('property'))] } });
+		expect(
+			property.getter({ $path: 'declaration.property.getter', $flags: ['override'], $at: { getter: { index: 1 }, override: { index: 0, spelling: 'typing.override' } } })
+		).toEqual({ decoratedDefinition: { definition: bare, decorators: [decorator({ attribute: { object: name('typing'), property: name('override') } }), decorator(name('property'))] } });
+		expect(
+			built({ $path: 'declaration.method', $flags: ['override', 'static'], decorators: ['cache'], $at: { static: { index: 2 }, override: { index: 0, spelling: 'override' } } })
+		).toEqual({ decoratedDefinition: { definition: bare, decorators: [decorator(name('override')), decorator(name('cache')), decorator(name('staticmethod'))] } });
+		expect(property.setter({ $path: 'declaration.property.setter', name: 'x' })).toEqual({
+			decoratedDefinition: { definition: { functionDefinition: { name: name('x') } }, decorators: [decorator({ attribute: { object: name('x'), property: name('setter') } })] }
+		});
+		expect(() => built({ $path: 'declaration.method', $flags: ['override'], $at: { override: { index: 0, spelling: 'overrides' } } })).toThrow('declaration.method.override has no spelling "overrides"');
+		expect(portableBuild.statement.block({ $path: 'statement.block', statements: [{ $path: 'declaration.property.getter' }, { $path: 'declaration.method' }] })).toEqual({
+			block: { statements: [{ decoratedDefinition: { definition: bare, decorators: [decorator(name('property'))] } }, bare] }
+		});
 	}, 60_000);
 });

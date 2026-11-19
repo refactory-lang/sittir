@@ -2055,7 +2055,6 @@ const declaration_ambient$313 = (
 const declaration_constructor$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor'>
 ): ReturnType<typeof b.constructorDeclaration> => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor', 'decorators');
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2074,7 +2073,6 @@ const declaration_constructor$464 = (
 const declaration_constructor_private$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.private'>
 ): ReturnType<typeof b.constructorDeclaration> => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor.private', 'decorators');
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2094,7 +2092,6 @@ const declaration_constructor_private$464 = (
 const declaration_constructor_protected$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>
 ): ReturnType<typeof b.constructorDeclaration> => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor.protected', 'decorators');
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2114,7 +2111,6 @@ const declaration_constructor_protected$464 = (
 const declaration_constructor_public$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.public'>
 ): ReturnType<typeof b.constructorDeclaration> => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor.public', 'decorators');
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2413,15 +2409,19 @@ const declaration_ambient = (input: PathInput<TypeScriptMap, 'declaration.ambien
 	return declaration_ambient$313(input);
 };
 const declaration_constructor = (input: PathInput<TypeScriptMap, 'declaration.constructor'>) => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor', 'decorators');
 	return declaration_constructor$464(input);
 };
 const declaration_constructor_private = (input: PathInput<TypeScriptMap, 'declaration.constructor.private'>) => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor.private', 'decorators');
 	return declaration_constructor_private$464(input);
 };
 const declaration_constructor_protected = (input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>) => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor.protected', 'decorators');
 	return declaration_constructor_protected$464(input);
 };
 const declaration_constructor_public = (input: PathInput<TypeScriptMap, 'declaration.constructor.public'>) => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor.public', 'decorators');
 	return declaration_constructor_public$464(input);
 };
 const declaration_enum = (input: PathInput<TypeScriptMap, 'declaration.enum'>) => {

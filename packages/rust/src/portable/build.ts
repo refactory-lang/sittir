@@ -3808,7 +3808,6 @@ const declaration_macro_paren$416 = (
 const declaration_type_parameter$221 = (
 	input: PathInput<RustMap, 'declaration.type_parameter'>
 ): ReturnType<typeof b.typeParameter> => {
-	if (input.attributes !== undefined) return unrouted('declaration.type_parameter', 'attributes');
 	const bounds$first = (input.bounds ?? [])[0];
 	const bounds$rest = (input.bounds ?? []).slice(1);
 	return b.typeParameter({
@@ -3829,7 +3828,6 @@ const declaration_type_parameter$221 = (
 const declaration_type_parameter_lifetime$222 = (
 	input: PathInput<RustMap, 'declaration.type_parameter.lifetime'>
 ): ReturnType<typeof b.lifetimeParameter> => {
-	if (input.attributes !== undefined) return unrouted('declaration.type_parameter.lifetime', 'attributes');
 	const bounds$first = (input.bounds ?? [])[0];
 	const bounds$rest = (input.bounds ?? []).slice(1);
 	return b.lifetimeParameter({
@@ -4103,9 +4101,11 @@ const declaration_macro_paren = (input: PathInput<RustMap, 'declaration.macro.pa
 	return declaration_macro_paren$416(input);
 };
 const declaration_type_parameter = (input: PathInput<RustMap, 'declaration.type_parameter'>) => {
+	if (input.attributes !== undefined) return unrouted('declaration.type_parameter', 'attributes');
 	return declaration_type_parameter$221(input);
 };
 const declaration_type_parameter_lifetime = (input: PathInput<RustMap, 'declaration.type_parameter.lifetime'>) => {
+	if (input.attributes !== undefined) return unrouted('declaration.type_parameter.lifetime', 'attributes');
 	return declaration_type_parameter_lifetime$222(input);
 };
 const element_macro_token_binding = (input: PathInput<RustMap, 'element.macro.token_binding'>) => {

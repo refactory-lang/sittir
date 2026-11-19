@@ -2091,7 +2091,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 361 spells facts in its container"
+    "message": "declaration.method: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -2107,7 +2107,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter: arm 361 spells facts in its container"
+    "message": "declaration.property.getter: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -2115,7 +2115,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.setter: arm 361 spells facts in its container"
+    "message": "declaration.property.setter: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -2404,14 +2404,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.yield.delegate: expression's step at content is not a plain slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "file: a container at definition that holds slots of its own"
   },
   {
     "scope": "grammar",
