@@ -627,6 +627,10 @@ pub struct BuiltChunks {
     sources: Option<(u32, u32)>,
     /// The words chunk open for reads' records, and its words used.
     reads: Option<(u32, u32)>,
+    /// The bytes the chunks take, their counts included: what `put` adds,
+    /// less what sealing a words chunk saves (`alloc_words`) and what
+    /// `drop_chunk` takes off (`allocated_bytes`).
+    bytes: usize,
 }
 
 impl BuiltChunks {
@@ -634,7 +638,7 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default(), sources: None, reads: None }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default(), sources: None, reads: None, bytes: 0 }
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and
@@ -650,10 +654,13 @@ impl BuiltChunks {
         let mem = ChunkMem::zeroed(len as usize);
         let counts = count::CountTable::new(len);
         let meta = Arc::clone(counts.meta());
-        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts, read: false });
-        let sealed = self.opened(0, chunk, len <= CHUNK_WORDS).and_then(|sealed| match self.chunks.get_mut(sealed as usize) {
-            Some(Some(BuiltChunk::Words { counts, .. })) => counts.seal().map(|meta| (sealed, meta)),
-            _ => None,
+        self.put(chunk, BuiltChunk::Words { mem: Arc::clone(&mem), counts, read: false });
+        let sealed = self.opened(0, chunk, len <= CHUNK_WORDS).and_then(|sealed| {
+            let Some(Some(BuiltChunk::Words { counts, .. })) = self.chunks.get_mut(sealed as usize) else { return None };
+            let unsealed = counts.byte_len();
+            let meta = counts.seal()?;
+            self.bytes -= unsealed - counts.byte_len();
+            Some((sealed, meta))
         });
         Ok(NewChunk { chunk, mem, meta, sealed })
     }
@@ -666,8 +673,21 @@ impl BuiltChunks {
     /// As `alloc_words`.
     pub fn alloc_read_words(&mut self, len: u32) -> Result<u32, ArenaError> {
         let chunk = self.number(len)?;
-        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: ChunkMem::zeroed(len as usize), counts: count::CountTable::new(len), read: true });
+        self.put(chunk, BuiltChunk::Words { mem: ChunkMem::zeroed(len as usize), counts: count::CountTable::new(len), read: true });
         Ok(chunk)
+    }
+
+    /// Takes chunk `chunk` into the arena, counting its bytes.
+    fn put(&mut self, chunk: u32, built: BuiltChunk) {
+        self.bytes += built.byte_len();
+        self.chunks[chunk as usize] = Some(built);
+    }
+
+    /// Lets go of chunk `chunk`, no longer counting its bytes.
+    fn drop_chunk(&mut self, chunk: u32) {
+        if let Some(built) = self.chunks.get_mut(chunk as usize).and_then(Option::take) {
+            self.bytes -= built.byte_len();
+        }
     }
 
     /// The memory of the words chunk `chunk`.
@@ -711,7 +731,7 @@ impl BuiltChunks {
     /// it.
     fn alloc_bytes(&mut self, len: u32) -> Result<NewChunk<u8>, ArenaError> {
         let chunk = self.number(len)?;
-        self.chunks[chunk as usize] = Some(BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(count::CELLS_META_BYTES) });
+        self.put(chunk, BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(count::CELLS_META_BYTES) });
         self.opened(1, chunk, len <= STRING_CHUNK_BYTES);
         self.strings_chunk(chunk).ok_or(ArenaError::OutOfBounds { chunk, word: 0, len })
     }
@@ -785,16 +805,15 @@ impl BuiltChunks {
     /// until it is collected.
     pub fn release_all(&mut self) -> usize {
         self.released = true;
-        let bytes = self.allocated_bytes();
         self.chunks.clear();
         self.overflow.clear();
-        bytes
+        std::mem::take(&mut self.bytes)
     }
 
     /// The bytes every chunk takes, its counts included.
     #[must_use]
     pub fn allocated_bytes(&self) -> usize {
-        self.chunks.iter().flatten().map(BuiltChunk::byte_len).sum()
+        self.bytes
     }
 
     /// The entries builders wrote into the word chunks that are not yet

@@ -591,7 +591,7 @@ impl BuiltChunks {
             _ => false,
         };
         if dead {
-            self.chunks[chunk as usize] = None;
+            self.drop_chunk(chunk);
             if self.sources.is_some_and(|(open, _)| open == chunk) {
                 self.sources = None;
             }
@@ -814,6 +814,39 @@ mod tests {
         assert_eq!(built.arena.take_freed(), vec![first]);
         assert!(built.arena.chunk(first).is_none());
         assert_eq!(built.arena.free.front(), Some(&first));
+    }
+
+    #[test]
+    fn the_bytes_the_chunks_take_are_kept_as_reads_and_builds_take_seal_and_free_them() {
+        use crate::arena::source::Source;
+        use crate::arena::{ReadWriter, RecordSpace, CHUNK_WORDS, STRING_CHUNK_BYTES};
+        fn kept(arena: &BuiltChunks, after: &str) {
+            assert_eq!(arena.allocated_bytes(), arena.chunks.iter().flatten().map(BuiltChunk::byte_len).sum::<usize>(), "after {after}");
+        }
+        let mut built = Builder::new();
+        let first = built.chunk;
+        let leaf = built.leaf();
+        kept(&built.arena, "a build's chunk");
+        ReadWriter::new(&mut built.arena).alloc(6).expect("a read's record");
+        kept(&built.arena, "a read's record");
+        ReadWriter::new(&mut built.arena).alloc(CHUNK_WORDS + 1).expect("a read's record wider than a chunk");
+        kept(&built.arena, "a read's record wider than a chunk");
+        built.arena.write_source(&Source { text: "fn f() {}\n", breaks_lf: true }).expect("a read's source");
+        kept(&built.arena, "a read's source");
+        built.arena.write_source(&Source { text: &"x".repeat(STRING_CHUNK_BYTES as usize), breaks_lf: true }).expect("a source wider than a chunk");
+        kept(&built.arena, "a source wider than a chunk");
+        let unsealed = built.arena.chunks[first as usize].as_ref().map(BuiltChunk::byte_len);
+        built.arena.alloc_words(1024).expect("a second chunk seals the first");
+        assert!(built.arena.chunks[first as usize].as_ref().map(BuiltChunk::byte_len) < unsealed, "the seal sizes the first chunk's meta for its one entry");
+        kept(&built.arena, "a seal");
+        built.release(leaf, true).expect("released");
+        assert_eq!(built.arena.take_freed(), vec![first]);
+        kept(&built.arena, "a chunk freed");
+        built.arena.open_strings(8).expect("a builder's string chunk");
+        kept(&built.arena, "a builder's string chunk");
+        let total = built.arena.allocated_bytes();
+        assert_eq!(built.arena.release_all(), total);
+        assert_eq!(built.arena.allocated_bytes(), 0);
     }
 
     #[test]

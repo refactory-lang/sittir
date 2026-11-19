@@ -113,7 +113,7 @@ impl BuiltChunks {
 
     fn alloc_read_bytes(&mut self, len: u32) -> Result<u32, ArenaError> {
         let chunk = self.number(len)?;
-        self.chunks[chunk as usize] = Some(BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(super::count::CELLS_META_BYTES) });
+        self.put(chunk, BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(super::count::CELLS_META_BYTES) });
         Ok(chunk)
     }
 }
