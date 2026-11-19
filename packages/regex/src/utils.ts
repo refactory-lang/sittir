@@ -117,7 +117,14 @@ export const structure: StructureTable = Object.freeze({
 	53: {
 		kind: 'term',
 		nonEmpty: [['_term_group', 'term.children']],
-		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup', [78]]],
+		nodeOnly: [
+			[
+				'_term_group',
+				'Term.termGroups',
+				'a built TermGroup',
+				[2, 4, 5, 6, 12, 34, 36, 37, 54, 55, 58, 59, 62, 63, 64, 65, 71, 72, 73, 76, 78]
+			]
+		],
 		lists: [['termGroups', false, 0]]
 	},
 	55: {
@@ -348,7 +355,7 @@ export const structure: StructureTable = Object.freeze({
 				'_unicode_property_value_expression',
 				'CharacterClassEscapeArm.unicodePropertyValueExpression',
 				'a built UnicodePropertyValueExpression',
-				[75]
+				[35, 75]
 			]
 		],
 		config: ['characterClassEscapeText2', 'unicodePropertyValueExpression']

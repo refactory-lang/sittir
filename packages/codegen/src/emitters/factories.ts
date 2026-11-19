@@ -103,6 +103,7 @@ import {
 	resolvesLooseInput,
 	looseElementType,
 	pruneUnusedImports,
+	transparentContentKindNames,
 	blankFromInput,
 	blankArmImports,
 	blankForRead,
@@ -408,11 +409,11 @@ function storedKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] {
 }
 
 function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | undefined {
+	const stored = f.values.map((value) => valueStorageOf(value, nodeMap));
+	if (stored.some((storage) => storage === undefined || storage.via !== 'node')) return undefined;
 	const ids = new Set<number>();
-	for (const value of f.values) {
-		const storage = valueStorageOf(value, nodeMap);
-		if (storage === undefined || storage.via !== 'node') return undefined;
-		const id = nodeMap.nodes.get(storage.kind)?.kindId;
+	for (const kind of transparentContentKindNames(slotKindNames(f), nodeMap)) {
+		const id = nodeMap.nodes.get(kind)?.kindId;
 		if (id === undefined) return undefined;
 		ids.add(id);
 	}
@@ -1872,11 +1873,9 @@ function hoistedKindIds(chain: WrapperChain, nodeMap: NodeMap): number[] | undef
 		visited.add(node);
 		if (node.kindId !== undefined) ids.add(node.kindId);
 		else complete = false;
-		if (node instanceof AssembledList) {
-			visitSlot(canonicalSeparatedListField(node));
-			for (const seat of elementsSeatOf(node, nodeMap)) for (const slot of seat.group.slots) if (isRequired(slot)) visitSlot(slot);
-		}
+		if (node instanceof AssembledList) visitSlot(canonicalSeparatedListField(node));
 		else if (node instanceof AssembledAlias) for (const slot of node.slots) visitSlot(slot);
+		for (const name of transparentContentKindNames([kind], nodeMap)) if (name !== kind) add(name);
 	};
 	const visitSlot = (slot: AssembledNonterminal): void => {
 		for (const value of slot.values) {
