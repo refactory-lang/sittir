@@ -975,7 +975,7 @@ type WidenArrayMembers<
 	Visited extends number[]
 > = T extends readonly (infer E)[]
 	? [readonly []] extends [T]
-		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
+		? readonly WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
 		:
 				| { readonly [I in keyof T]: WidenValue<T[I], Scalars, Strings, Depth, NsMap, Visited> }
 				| Exclude<WidenValue<LastElement<T>, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>

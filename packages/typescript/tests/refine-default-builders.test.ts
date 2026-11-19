@@ -79,7 +79,7 @@ describe.each(STORAGES)('a refine site builds its default form bare and each nam
 		});
 	});
 
-	const members = [...(build.objectType({ members: [build.propertySignature({ name: build.identifier('x') })] }).members() ?? [])];
+	const members = build.objectType({ members: [build.propertySignature({ name: build.identifier('x') })] }).members();
 	const bodies = [
 		{
 			name: 'object_type',

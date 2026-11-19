@@ -20,7 +20,7 @@ export function draftsIntoBuilders(): string[] {
 	if (body.$type !== py.kinds.SuiteBlock) return [];
 	const statements = body.block();
 	const draftBody = body.$with.block(py.build.block(...statements));
-	const draftParams = [...fn.parameters()];
+	const draftParams = fn.parameters();
 	return [
 		py.build.functionDefinition({ name: 'g', parameters: py.build.parameters(), body: draftBody }).$render(),
 		py.build.functionDefinition({ name: 'g', parameters: draftParams, body: py.build.block(py.build.passStatement) }).$render(),
