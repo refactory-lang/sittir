@@ -287,7 +287,8 @@ pub struct SideRecord {
     pub run: Vec<RunEntry>,
     /// A read's root: the addresses the read's records lie in, one range
     /// for each run of chunks its writer wrote in turn
-    /// (`ReadWriter::spans`).
+    /// (`ReadWriter::spans`). Only `SideRecord::spans_at` reads them back;
+    /// every other read leaves them where they lie.
     pub spans: Vec<std::ops::Range<Address>>,
 }
 
@@ -515,16 +516,17 @@ impl SideRecord {
         Ok(flags)
     }
 
-    /// The side record at `at`; an empty one at `Address::NONE`.
+    /// The side record at `at`, its spans left empty; an empty one at
+    /// `Address::NONE`.
     pub fn read(arena: &dyn ArenaRead, at: Address) -> Result<SideRecord, ArenaError> {
         Self::read_parts(arena, at, true, None).map(|(record, _)| record)
     }
 
-    /// The side record at `at` without its lists, its slots and its run
-    /// left empty, and where its run lies: what naming a node and finding
-    /// its parent read.
+    /// The side record at `at` without its lists, its slots, its run and its
+    /// spans left empty, and where its run lies: what naming a node and
+    /// finding its parent read.
     pub(super) fn read_facts(arena: &dyn ArenaRead, at: Address) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
-        Self::read_parts(arena, at, false, None)
+        Self::read_parts(arena, at, false, None).map(|(record, found)| (record, found.run))
     }
 
     /// The side record at `at` as `read_facts` reads it, and the entries it
@@ -535,9 +537,15 @@ impl SideRecord {
         Ok((record, held))
     }
 
-    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool, held: Option<&mut Vec<Address>>) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
+    /// The spans the side record at `at` holds (`SideRecord::spans`); none
+    /// at `Address::NONE`.
+    pub(super) fn spans_at(arena: &dyn ArenaRead, at: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
+        Self::read_parts(arena, at, false, None)?.1.spans.map_or(Ok(Vec::new()), |spans| spans.spans(arena))
+    }
+
+    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool, held: Option<&mut Vec<Address>>) -> Result<(SideRecord, ListsAt), ArenaError> {
         if at == Address::NONE {
-            return Ok((SideRecord::default(), None));
+            return Ok((SideRecord::default(), ListsAt::default()));
         }
         let mut fields = Fields { arena, at, offset: 0 };
         let [flags] = fields.array()?;
@@ -642,32 +650,61 @@ impl SideRecord {
             }
             record.depth = depth.cast_signed();
         }
-        let mut run = None;
+        let mut found = ListsAt::default();
         if has(mask::RUN) {
             let [len] = fields.array()?;
-            let found = RunAt { at: at.offset(fields.offset).ok_or(malformed("side record run", len))?, len };
+            let run = RunAt { at: at.offset(fields.offset).ok_or(malformed("side record run", len))?, len };
             if fields.take(len)?.is_empty() {
                 return Err(malformed("side record run", len));
             }
             if lists {
-                record.run = found.entries(arena)?;
+                record.run = run.entries(arena)?;
             }
-            run = Some(found);
+            found.run = Some(run);
         }
         if has(mask::SPANS) {
             let [len] = fields.array()?;
-            if len == 0 {
-                return Err(malformed("side record spans", len));
-            }
-            for _ in 0..len {
-                let [start, end] = fields.array()?;
+            let words = len.checked_mul(2).filter(|&words| words != 0).ok_or(malformed("side record spans", len))?;
+            let start = fields.offset;
+            fields.take(words)?;
+            found.spans = Some(SpansAt { record: at, start, end: fields.offset });
+        }
+        Ok((record, found))
+    }
+}
+
+/// Where a side record's lists lie, as a read of its facts finds them.
+#[derive(Default)]
+struct ListsAt {
+    run: Option<RunAt>,
+    spans: Option<SpansAt>,
+}
+
+/// Where a side record's spans lie: the record, and the words of it they
+/// take, two for each span. They follow the record's run, which can take a
+/// chunk of its own, so they are named from the record's first word.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct SpansAt {
+    record: Address,
+    start: u32,
+    end: u32,
+}
+
+impl SpansAt {
+    /// The spans, each refused unless both its words carry the span bit and
+    /// it starts before it ends.
+    fn spans(self, arena: &dyn ArenaRead) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
+        let words = arena.words(self.record, self.end)?.get(self.start as usize..).ok_or(ArenaError::OutOfBounds { chunk: self.record.chunk(), word: self.record.word(), len: self.end })?;
+        let (spans, _) = words.as_chunks::<2>();
+        spans
+            .iter()
+            .map(|&[start, end]| {
                 if start & end & SPAN_WORD == 0 || start >= end {
                     return Err(malformed("side record span", end));
                 }
-                record.spans.push(Address(start & !SPAN_WORD)..Address(end & !SPAN_WORD));
-            }
-        }
-        Ok((record, run))
+                Ok(Address(start & !SPAN_WORD)..Address(end & !SPAN_WORD))
+            })
+            .collect()
     }
 }
 
@@ -678,7 +715,7 @@ impl SideRecord {
 ///
 /// What reading the root's header and its side record refuses.
 pub fn read_spans(arena: &dyn ArenaRead, root: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
-    SideRecord::read_facts(arena, super::borrowed::side_of(arena, root)?).map(|(record, _)| record.spans)
+    SideRecord::spans_at(arena, super::borrowed::side_of(arena, root)?)
 }
 
 /// Where a side record's run lies: its first word and its words.
@@ -763,7 +800,8 @@ mod tests {
         let mut arena = Arena::new();
         let record = full();
         let at = record.write(&mut |words| arena.push(words)).expect("room");
-        assert_eq!(SideRecord::read(&arena, at), Ok(record));
+        assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { spans: Vec::new(), ..record.clone() }), "a read leaves the spans where they lie");
+        assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
     }
 
     #[test]
@@ -783,7 +821,7 @@ mod tests {
         let at = record.write(&mut |words| arena.push(words)).expect("room");
         let (facts, run) = SideRecord::read_facts(&arena, at).expect("its facts");
         let entries = record.run.clone();
-        assert_eq!(facts, SideRecord { slots: Vec::new(), run: Vec::new(), ..record });
+        assert_eq!(facts, SideRecord { slots: Vec::new(), run: Vec::new(), spans: Vec::new(), ..record });
         let run = run.expect("a run");
         assert_eq!(run.first(&arena), Ok(entries[0]));
         assert_eq!(run.entries(&arena), Ok(entries));
@@ -829,7 +867,8 @@ mod tests {
         for record in alone {
             let at = record.write(&mut |words| arena.push(words)).expect("room");
             assert_ne!(at, Address::NONE);
-            assert_eq!(SideRecord::read(&arena, at), Ok(record));
+            assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { spans: Vec::new(), ..record.clone() }));
+            assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
         }
     }
 
@@ -870,7 +909,44 @@ mod tests {
         let words = arena.words(at, 4).expect("its words");
         assert_eq!(words[1], 1, "one span");
         assert!(words[2..].iter().all(|&word| Address(word).chunk() >= crate::arena::MAX_BUILT_CHUNKS), "{words:?}: a span's address word names no record a header could be read at");
-        assert_eq!(SideRecord::read(&arena, at), Ok(record));
+        assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
+    }
+
+    #[test]
+    fn the_spans_after_a_run_wider_than_a_chunk_read_back() {
+        let record = SideRecord {
+            run: (1..=crate::arena::CHUNK_WORDS).map(|word| RunEntry::Record { at: Address(word), shared: false }).collect(),
+            spans: vec![Address(5)..Address(40)],
+            ..SideRecord::default()
+        };
+        let mut arena = Arena::new();
+        let at = record.write(&mut |words| arena.push(words)).expect("room");
+        assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { spans: Vec::new(), ..record.clone() }));
+        assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
+    }
+
+    #[test]
+    fn only_spans_at_reads_a_span_and_refuses_a_malformed_one() {
+        let mut arena = Arena::new();
+        for words in [vec![mask::SPANS, 1, 5, 9], vec![mask::SPANS, 1, SPAN_WORD | 9, 4], vec![mask::SPANS, 1, SPAN_WORD | 9, SPAN_WORD | 4], vec![mask::SPANS, 1, SPAN_WORD | 9, SPAN_WORD | 9]] {
+            let at = arena.push(&words).expect("room");
+            assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord::default()), "{words:?}: a read steps over the spans");
+            assert!(SideRecord::read_facts(&arena, at).is_ok(), "{words:?}");
+            assert!(SideRecord::read_held(&arena, at).is_ok(), "{words:?}");
+            assert!(SideRecord::spans_at(&arena, at).is_err(), "{words:?}");
+        }
+    }
+
+    #[test]
+    fn a_span_count_past_the_record_s_words_is_refused_by_every_read() {
+        let mut arena = Arena::new();
+        for words in [vec![mask::SPANS, 2, SPAN_WORD | 1, SPAN_WORD | 2], vec![mask::SPANS, 1_000], vec![mask::SPANS, u32::MAX]] {
+            let at = arena.push(&words).expect("room");
+            assert!(SideRecord::read(&arena, at).is_err(), "{words:?}");
+            assert!(SideRecord::read_facts(&arena, at).is_err(), "{words:?}");
+            assert!(SideRecord::read_held(&arena, at).is_err(), "{words:?}");
+            assert!(SideRecord::spans_at(&arena, at).is_err(), "{words:?}");
+        }
     }
 
     #[test]
@@ -904,6 +980,8 @@ mod tests {
             vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 0, 0, 3],
             vec![mask::SLOTS, 1, 2, 70_002, 0, 0, 0, 0, 0, 0],
             vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 70_002, 0, 0],
+            vec![mask::SPANS],
+            vec![mask::SPANS, 0],
         ] {
             let at = arena.push(&words).expect("room");
             assert!(SideRecord::read(&arena, at).is_err(), "{words:?}");
