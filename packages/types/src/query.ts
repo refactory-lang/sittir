@@ -37,6 +37,10 @@ export type QuerySlotEntry = readonly [
 /** Each kind's slots, by kind id. */
 export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
 
+export type NativeSlotReader = (this: object) => unknown;
+
+export type NativeSlots = Readonly<Record<number, Readonly<Record<string, NativeSlotReader>>>>;
+
 /** The node itself as a condition's subject, in place of a slot: its own text, or its own kind for an `is` leaf. */
 export interface SelfText {
 	readonly self: true;

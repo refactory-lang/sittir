@@ -21,7 +21,7 @@ describe("a closure's untyped parameter is the closure_parameter envelope", () =
 			body: 'a'
 		});
 		expect(closure.$render()).toBe('|a, mut b, _| a');
-		expect(closure.parameters().parameters().map((parameter) => parameter.$type)).toEqual([
+		expect(closure.parameters().map((parameter) => parameter.$type)).toEqual([
 			rust.kinds.ClosureParameter,
 			rust.kinds.ClosureParameter,
 			rust.kinds.ClosureParameter

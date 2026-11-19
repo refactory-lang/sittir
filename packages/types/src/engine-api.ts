@@ -2,7 +2,7 @@ import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, Trivia
 import type { IndentOption } from './options.ts';
 import type { Admit, HoldsSource, HoldsTree, Snapshot } from './node-surface.ts';
 import type { IsExactly } from './type-utils.ts';
-import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
+import type { KindMembership, QueryFacet, QueryFlags, NativeSlots, QuerySlotFlags, QuerySlots } from './query.ts';
 import type { PortableBuildTable, PortableRows, PortableSurface } from './portable.ts';
 
 export interface TriviaFacts<Kind extends number = number> {
@@ -242,6 +242,8 @@ export interface StructureRow {
 	readonly kindIds?: readonly (readonly [storageKey: string, label: string, kinds: readonly number[]])[];
 	/** `[storageKey, label, texts]`: the slot holds one of `texts`, or nothing. */
 	readonly texts?: readonly (readonly [storageKey: string, label: string, texts: readonly string[]])[];
+	/** `[propertyName, label, expected, kinds]`: a value a hoisted slot's setter or builder takes, when it is a node, is one of `kinds` (membership): the hoisted content and each wrapper on the slot's chain. */
+	readonly hoisted?: readonly (readonly [propertyName: string, label: string, expected: string, kinds: readonly number[]])[];
 	/** The config keys the kind declares; only a kind whose builder takes a config first has it. */
 	readonly config?: readonly string[];
 	/** `[propertyName, holes, arrival]`: a list the builder takes as input. `holes` lists admit absent items; `arrival` is `'key'` for a config key, or the index the items start at in the builder's arguments (1 after a leading options argument). */
@@ -264,6 +266,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	/** The kinds of the grammar's root, stamped at generation. */
 	readonly rootKinds: readonly number[];
 	readonly querySlots: QuerySlots;
+	readonly nativeSlots?: NativeSlots;
 	readonly queryFlags?: QueryFlags;
 	readonly querySlotFlags?: QuerySlotFlags;
 	readonly structure: StructureTable;

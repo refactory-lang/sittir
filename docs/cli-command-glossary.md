@@ -531,6 +531,20 @@ Run pre-codegen grammar diagnostics
 pnpm exec tsx packages/cli/src/cli.ts tool grammar-diagnostics [options]
 ```
 
+### `tool hoist-census`
+
+List every holder slot that reads through a wrapper, grouped by wrapper chain
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool hoist-census [options]
+```
+
 ### `tool hoisted-census`
 
 Count hoisted kinds and list the ones no parent slot seats

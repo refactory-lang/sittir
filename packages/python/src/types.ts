@@ -2124,7 +2124,7 @@ export interface SimpleStatements {
 		readonly _statements: 'statements';
 	};
 	readonly __looseHints__?: {
-		readonly statements: readonly SimpleStatement[];
+		readonly statements: NonEmptyArray<SimpleStatement>;
 	};
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<T.SimpleStatementsElements>;
@@ -2142,11 +2142,17 @@ export interface ImportStatement {
 	readonly __slotNames__?: {
 		readonly _names: 'names';
 	};
+	readonly __inputHints__?: {
+		readonly names: NonEmptyArray<DottedName | AliasedImport>;
+	};
+	readonly __wrapperHints__?: {
+		readonly names: Names;
+	};
 	readonly __looseHints__?: {
-		readonly names: readonly (DottedName | AliasedImport)[];
+		readonly names: NonEmptyArray<DottedName | AliasedImport> | Names;
 	};
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Names>;
+		readonly names: SlotHint<NonNullable<T.Names>>;
 		readonly $listView: ListViewHint<
 			T.DottedName | T.AliasedImport,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -2155,7 +2161,7 @@ export interface ImportStatement {
 			readonly names: ListSlotHint<T.DottedName | T.AliasedImport, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly names: () => Names;
+	readonly names: () => NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface RelativeImport {
@@ -2469,19 +2475,27 @@ export interface MatchStatement {
 		readonly _subject: 'subject';
 		readonly _body: 'body';
 	};
+	readonly __inputHints__?: {
+		readonly subject: NonEmptyArray<Expression>;
+		readonly body: readonly CaseClause[];
+	};
+	readonly __wrapperHints__?: {
+		readonly subject: Subjects;
+		readonly body: MatchBlock;
+	};
 	readonly __looseHints__?: {
-		readonly subject: readonly Expression[];
+		readonly subject: NonEmptyArray<Expression> | Subjects;
 		readonly body: readonly CaseClause[];
 	};
 	readonly __slotHints__?: {
-		readonly subject: SlotHint<T.Subjects>;
-		readonly body: SlotHint<T.MatchBlock>;
+		readonly subject: SlotHint<NonNullable<T.MatchStatement.Config>['subject']>;
+		readonly body: SlotHint<NonNullable<T.MatchStatement.Config>['body']>;
 		readonly $listSlots: {
 			readonly subject: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly subject: () => Subjects;
-	readonly body: () => MatchBlock;
+	readonly subject: () => NonEmptyArray<Expression>;
+	readonly body: () => readonly CaseClause[];
 }
 
 export interface MatchBlock {
@@ -2506,16 +2520,22 @@ export interface CaseClause {
 		readonly _guard: 'guard';
 		readonly _body: 'body';
 	};
+	readonly __inputHints__?: {
+		readonly guard?: Expression | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly guard: IfClause;
+	};
 	readonly __looseHints__?: {
 		readonly guard?: readonly Expression[];
 	};
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.CasePattern | T.CasePatternList>;
-		readonly guard: SlotHint<T.IfClause, true>;
+		readonly guard: SlotHint<NonNullable<T.CaseClause.Config>['guard'], true>;
 		readonly body: SlotHint<T.Suite>;
 	};
 	readonly pattern: () => CasePattern | CasePatternList;
-	readonly guard: () => IfClause | undefined;
+	readonly guard: () => Expression | undefined;
 	readonly body: () => Suite;
 }
 
@@ -2539,6 +2559,10 @@ export interface ForStatement {
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| ExpressionList;
+		readonly alternative?: Suite | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly alternative: ElseClause;
 	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Suite[];
@@ -2548,13 +2572,13 @@ export interface ForStatement {
 		readonly left: SlotHint<T.Pattern | T.PatternList>;
 		readonly right: SlotHint<NonNullable<T.ForStatement.Config>['right']>;
 		readonly body: SlotHint<T.Suite>;
-		readonly alternative: SlotHint<T.ElseClause, true>;
+		readonly alternative: SlotHint<NonNullable<T.ForStatement.Config>['alternative'], true>;
 	};
 	readonly async: () => boolean;
 	readonly left: () => Pattern | PatternList;
 	readonly right: () => Expression | ExpressionList;
 	readonly body: () => Suite;
-	readonly alternative: () => ElseClause | undefined;
+	readonly alternative: () => Suite | undefined;
 }
 
 export interface WhileStatement {
@@ -2571,6 +2595,10 @@ export interface WhileStatement {
 		readonly condition:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
+		readonly alternative?: Suite | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly alternative: ElseClause;
 	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Suite[];
@@ -2578,11 +2606,11 @@ export interface WhileStatement {
 	readonly __slotHints__?: {
 		readonly condition: SlotHint<NonNullable<T.WhileStatement.Config>['condition']>;
 		readonly body: SlotHint<T.Suite>;
-		readonly alternative: SlotHint<T.ElseClause, true>;
+		readonly alternative: SlotHint<NonNullable<T.WhileStatement.Config>['alternative'], true>;
 	};
 	readonly condition: () => Expression;
 	readonly body: () => Suite;
-	readonly alternative: () => ElseClause | undefined;
+	readonly alternative: () => Suite | undefined;
 }
 
 export interface TryStatement {
@@ -2597,6 +2625,14 @@ export interface TryStatement {
 		readonly _alternative: 'alternative';
 		readonly _finalizer: 'finalizer';
 	};
+	readonly __inputHints__?: {
+		readonly alternative?: Suite | undefined;
+		readonly finalizer?: Suite | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly alternative: ElseClause;
+		readonly finalizer: FinallyClause;
+	};
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Suite[];
 		readonly finalizer?: readonly Suite[];
@@ -2604,13 +2640,13 @@ export interface TryStatement {
 	readonly __slotHints__?: {
 		readonly body: SlotHint<T.Suite>;
 		readonly handlers: SlotHint<T.ExceptClause[], true, true>;
-		readonly alternative: SlotHint<T.ElseClause, true>;
-		readonly finalizer: SlotHint<T.FinallyClause, true>;
+		readonly alternative: SlotHint<NonNullable<T.TryStatement.Config>['alternative'], true>;
+		readonly finalizer: SlotHint<NonNullable<T.TryStatement.Config>['finalizer'], true>;
 	};
 	readonly body: () => Suite;
 	readonly handlers: () => readonly ExceptClause[];
-	readonly alternative: () => ElseClause | undefined;
-	readonly finalizer: () => FinallyClause | undefined;
+	readonly alternative: () => Suite | undefined;
+	readonly finalizer: () => Suite | undefined;
 }
 
 export interface ExceptClause {
@@ -2625,17 +2661,21 @@ export interface ExceptClause {
 	};
 	readonly __inputHints__?: {
 		readonly group?: BaseBooleanKeyword<'*'>;
+		readonly exception?: ExceptClauseExceptionAs | ExceptClauseExceptionList | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly exception: ExceptClauseException;
 	};
 	readonly __looseHints__?: {
 		readonly exception?: readonly (ExceptClauseExceptionAs | ExceptClauseExceptionList)[];
 	};
 	readonly __slotHints__?: {
 		readonly group: SlotHint<NonNullable<T.ExceptClause.Config>['group'], true>;
-		readonly exception: SlotHint<T.ExceptClauseException, true>;
+		readonly exception: SlotHint<NonNullable<T.ExceptClause.Config>['exception'], true>;
 		readonly body: SlotHint<T.Suite>;
 	};
 	readonly group: () => boolean;
-	readonly exception: () => ExceptClauseException | undefined;
+	readonly exception: () => ExceptClauseExceptionAs | ExceptClauseExceptionList | undefined;
 	readonly body: () => Suite;
 }
 
@@ -2709,18 +2749,26 @@ export interface FunctionDefinition {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParam[] | undefined;
+		readonly parameters: readonly Parameter[];
+		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly parameters: Parameters;
+		readonly return_type: Type;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
-		readonly parameters: readonly Parameter[];
+		readonly type_parameters?: NonEmptyArray<TypeParam> | TypeParamsItems;
+		readonly parameters: NonEmptyArray<Parameter> | ParametersElements;
 		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly async: SlotHint<NonNullable<T.FunctionDefinition.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier>;
-		readonly typeParameters: SlotHint<T.TypeParams, true>;
-		readonly parameters: SlotHint<T.Parameters>;
-		readonly returnType: SlotHint<T.Type, true>;
+		readonly typeParameters: SlotHint<NonNullable<T.FunctionDefinition.Config>['typeParameters'], true>;
+		readonly parameters: SlotHint<NonNullable<T.FunctionDefinition.Config>['parameters']>;
+		readonly returnType: SlotHint<NonNullable<T.FunctionDefinition.Config>['returnType'], true>;
 		readonly body: SlotHint<T.Suite>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<T.TypeParam, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
@@ -2729,9 +2777,16 @@ export interface FunctionDefinition {
 	};
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly parameters: () => Parameters;
-	readonly returnType: () => Type | undefined;
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
+	readonly parameters: () => readonly Parameter[];
+	readonly returnType: () =>
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+		| undefined;
 	readonly body: () => Suite;
 }
 
@@ -2741,17 +2796,23 @@ export interface Parameters {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly Parameter[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: ParametersElements;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly Parameter[];
+		readonly elements?: NonEmptyArray<Parameter> | ParametersElements;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.ParametersElements, true>;
+		readonly elements: SlotHint<NonNullable<T.ParametersElements>, true>;
 		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly elements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => ParametersElements | undefined;
+	readonly elements: () => readonly Parameter[] | undefined;
 }
 
 export interface LambdaParameters {
@@ -2760,17 +2821,23 @@ export interface LambdaParameters {
 	readonly __slotNames__?: {
 		readonly _parameters_elements: 'parametersElements';
 	};
+	readonly __inputHints__?: {
+		readonly parameters_elements: NonEmptyArray<Parameter>;
+	};
+	readonly __wrapperHints__?: {
+		readonly parameters_elements: ParametersElements;
+	};
 	readonly __looseHints__?: {
-		readonly parameters_elements: readonly Parameter[];
+		readonly parameters_elements: NonEmptyArray<Parameter> | ParametersElements;
 	};
 	readonly __slotHints__?: {
-		readonly parametersElements: SlotHint<T.ParametersElements>;
+		readonly parametersElements: SlotHint<NonNullable<T.ParametersElements>>;
 		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly parametersElements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parametersElements: () => ParametersElements;
+	readonly parametersElements: () => NonEmptyArray<Parameter>;
 }
 
 export interface ListSplat {
@@ -2847,7 +2914,11 @@ export interface ExecStatement {
 	};
 	readonly __slotHints__?: {
 		readonly code: SlotHint<T.String | T.Identifier>;
-		readonly inClauses: SlotHint<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>[number][], true, true>;
+		readonly inClauses: SlotHint<
+			Extract<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>, readonly unknown[]>[number][],
+			true,
+			true
+		>;
 	};
 	readonly code: () => String | Identifier;
 	readonly inClauses: () => readonly Expression[];
@@ -2863,21 +2934,29 @@ export interface TypeAliasStatement {
 		readonly _type_parameters: 'typeParameters';
 		readonly _value: 'value';
 	};
+	readonly __inputHints__?: {
+		readonly type_parameters?: readonly TypeParam[] | undefined;
+		readonly value: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly value: Type;
+	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
+		readonly type_parameters?: NonEmptyArray<TypeParam> | TypeParamsItems;
 		readonly value: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
-		readonly typeParameters: SlotHint<T.TypeParams, true>;
-		readonly value: SlotHint<T.Type>;
+		readonly typeParameters: SlotHint<NonNullable<T.TypeAliasStatement.Config>['typeParameters'], true>;
+		readonly value: SlotHint<NonNullable<T.TypeAliasStatement.Config>['value']>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<T.TypeParam, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly value: () => Type;
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
+	readonly value: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface ClassDefinition {
@@ -2892,13 +2971,19 @@ export interface ClassDefinition {
 		readonly _bases: 'bases';
 		readonly _body: 'body';
 	};
+	readonly __inputHints__?: {
+		readonly type_parameters?: readonly TypeParam[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
-		readonly bases?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
+		readonly type_parameters?: NonEmptyArray<TypeParam> | TypeParamsItems;
+		readonly bases?: NonEmptyArray<Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument>;
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
-		readonly typeParameters: SlotHint<T.TypeParams, true>;
+		readonly typeParameters: SlotHint<NonNullable<T.ClassDefinition.Config>['typeParameters'], true>;
 		readonly bases: SlotHint<T.ArgumentList, true>;
 		readonly body: SlotHint<T.SuiteClassDefinition>;
 		readonly $listSlots: {
@@ -2910,7 +2995,7 @@ export interface ClassDefinition {
 		};
 	};
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
 	readonly bases: () => ArgumentList | undefined;
 	readonly body: () => SuiteClassDefinition;
 }
@@ -2921,17 +3006,20 @@ export interface TypeParameter {
 	readonly __slotNames__?: {
 		readonly _types: 'types';
 	};
+	readonly __inputHints__?: {
+		readonly types: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly types: Types;
+	};
 	readonly __looseHints__?: {
-		readonly types: readonly Type[];
+		readonly types: NonEmptyArray<Type> | Types;
 	};
 	readonly __slotHints__?: {
-		readonly types: SlotHint<T.Types>;
+		readonly types: SlotHint<NonNullable<T.Types>>;
 		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly types: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
-	readonly types: () => Types;
+	readonly types: () => readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 }
 
 export interface ParenthesizedListSplat {
@@ -2952,17 +3040,21 @@ export interface ArgumentList {
 	readonly __slotNames__?: {
 		readonly _arguments: 'arguments';
 	};
+	readonly __inputHints__?: {
+		readonly arguments?:
+			| readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[]
+			| undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly arguments: ArgumentListElements;
+	};
 	readonly __looseHints__?: {
-		readonly arguments?: readonly (
-			| Expression
-			| ListSplat
-			| DictionarySplat
-			| ParenthesizedListSplat
-			| KeywordArgument
-		)[];
+		readonly arguments?:
+			| NonEmptyArray<Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument>
+			| ArgumentListElements;
 	};
 	readonly __slotHints__?: {
-		readonly arguments: SlotHint<T.ArgumentListElements, true>;
+		readonly arguments: SlotHint<NonNullable<T.ArgumentListElements>, true>;
 		readonly $listView: ListViewHint<
 			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -2974,7 +3066,9 @@ export interface ArgumentList {
 			>;
 		};
 	};
-	readonly arguments: () => ArgumentListElements | undefined;
+	readonly arguments: () =>
+		| readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[]
+		| undefined;
 }
 
 export interface DecoratedDefinition {
@@ -2985,11 +3079,23 @@ export interface DecoratedDefinition {
 		readonly _decorator: 'decorators';
 		readonly _definition: 'definition';
 	};
+	readonly __inputHints__?: {
+		readonly decorator: NonEmptyArray<Expression>;
+	};
+	readonly __wrapperHints__?: {
+		readonly decorator: Decorator;
+	};
 	readonly __slotHints__?: {
-		readonly decorators: SlotHint<NonEmptyArray<T.Decorator>, false, true>;
+		readonly decorators: SlotHint<
+			NonEmptyArray<
+				Extract<NonNullable<NonNullable<T.DecoratedDefinition.Config>['decorators']>, readonly unknown[]>[number]
+			>,
+			false,
+			true
+		>;
 		readonly definition: SlotHint<T.ClassDefinition | T.FunctionDefinition>;
 	};
-	readonly decorators: () => NonEmptyArray<Decorator>;
+	readonly decorators: () => NonEmptyArray<Expression>;
 	readonly definition: () => ClassDefinition | FunctionDefinition;
 }
 
@@ -3159,14 +3265,20 @@ export interface CaseAsPattern {
 		readonly _case_pattern: 'casePattern';
 		readonly _identifier: 'identifier';
 	};
+	readonly __inputHints__?: {
+		readonly case_pattern: CaseAsPattern | KeywordPattern | SimplePattern;
+	};
+	readonly __wrapperHints__?: {
+		readonly case_pattern: CasePattern;
+	};
 	readonly __looseHints__?: {
 		readonly case_pattern: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 	};
 	readonly __slotHints__?: {
-		readonly casePattern: SlotHint<T.CasePattern>;
+		readonly casePattern: SlotHint<NonNullable<T.CaseAsPattern.Config>['casePattern']>;
 		readonly identifier: SlotHint<T.Identifier>;
 	};
-	readonly casePattern: () => CasePattern;
+	readonly casePattern: () => CaseAsPattern | KeywordPattern | SimplePattern;
 	readonly identifier: () => Identifier;
 }
 
@@ -3298,11 +3410,17 @@ export interface DictPattern {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly (KeyValuePattern | SplatPattern)[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: DictPatternElements;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (KeyValuePattern | SplatPattern)[];
+		readonly elements?: NonEmptyArray<KeyValuePattern | SplatPattern> | DictPatternElements;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.DictPatternElements, true>;
+		readonly elements: SlotHint<NonNullable<T.DictPatternElements>, true>;
 		readonly $listView: ListViewHint<
 			T.KeyValuePattern | T.SplatPattern,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -3314,7 +3432,7 @@ export interface DictPattern {
 			>;
 		};
 	};
-	readonly elements: () => DictPatternElements | undefined;
+	readonly elements: () => readonly (KeyValuePattern | SplatPattern)[] | undefined;
 }
 
 export interface KeyValuePattern {
@@ -3361,13 +3479,17 @@ export interface KeyValuePattern {
 			| SimplePatternNegative
 			| ComplexPattern
 			| DottedName;
+		readonly value: CaseAsPattern | KeywordPattern | SimplePattern;
+	};
+	readonly __wrapperHints__?: {
+		readonly value: CasePattern;
 	};
 	readonly __looseHints__?: {
 		readonly value: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 	};
 	readonly __slotHints__?: {
 		readonly key: SlotHint<NonNullable<T.KeyValuePattern.Config>['key']>;
-		readonly value: SlotHint<T.CasePattern>;
+		readonly value: SlotHint<NonNullable<T.KeyValuePattern.Config>['value']>;
 	};
 	readonly key: () =>
 		| ClassPattern
@@ -3387,7 +3509,7 @@ export interface KeyValuePattern {
 		| ComplexPattern
 		| DottedName
 		| TSKindId.WildcardPattern;
-	readonly value: () => CasePattern;
+	readonly value: () => CaseAsPattern | KeywordPattern | SimplePattern;
 }
 
 export interface KeywordPattern {
@@ -3468,18 +3590,21 @@ export interface ClassPattern {
 		readonly _type: 'type';
 		readonly _fields: 'fields';
 	};
+	readonly __inputHints__?: {
+		readonly fields?: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly fields: ListPatternCasePatterns;
+	};
 	readonly __looseHints__?: {
-		readonly fields?: readonly CasePattern[];
+		readonly fields?: NonEmptyArray<CasePattern> | ListPatternCasePatterns;
 	};
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.DottedName>;
-		readonly fields: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listSlots: {
-			readonly fields: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
+		readonly fields: SlotHint<NonNullable<T.ClassPattern.Config>['fields'], true>;
 	};
 	readonly type: () => DottedName;
-	readonly fields: () => ListPatternCasePatterns | undefined;
+	readonly fields: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface ComplexPattern {
@@ -3546,17 +3671,23 @@ export interface TuplePattern {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly Pattern[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: TuplePatternElements;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly Pattern[];
+		readonly elements?: NonEmptyArray<Pattern> | TuplePatternElements;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.TuplePatternElements, true>;
+		readonly elements: SlotHint<NonNullable<T.TuplePatternElements>, true>;
 		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly elements: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => TuplePatternElements | undefined;
+	readonly elements: () => readonly Pattern[] | undefined;
 }
 
 export interface ListPattern {
@@ -3565,17 +3696,23 @@ export interface ListPattern {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly Pattern[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: Patterns;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly Pattern[];
+		readonly elements?: NonEmptyArray<Pattern> | Patterns;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.Patterns, true>;
+		readonly elements: SlotHint<NonNullable<T.Patterns>, true>;
 		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly elements: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => Patterns | undefined;
+	readonly elements: () => readonly Pattern[] | undefined;
 }
 
 export interface DefaultParameter {
@@ -3610,20 +3747,24 @@ export interface TypedDefaultParameter {
 		readonly _default: 'default';
 	};
 	readonly __inputHints__?: {
+		readonly type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 		readonly default:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
+	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
 	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
-		readonly type: SlotHint<T.Type>;
+		readonly type: SlotHint<NonNullable<T.TypedDefaultParameter.Config>['type']>;
 		readonly default: SlotHint<NonNullable<T.TypedDefaultParameter.Config>['default']>;
 	};
 	readonly name: () => Identifier;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	readonly default: () => Expression;
 }
 
@@ -3848,21 +3989,25 @@ export interface Lambda {
 		readonly _body: 'body';
 	};
 	readonly __inputHints__?: {
+		readonly parameters?: readonly Parameter[] | undefined;
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
+	readonly __wrapperHints__?: {
+		readonly parameters: LambdaParameters;
+	};
 	readonly __looseHints__?: {
-		readonly parameters?: readonly Parameter[];
+		readonly parameters?: NonEmptyArray<Parameter> | ParametersElements;
 	};
 	readonly __slotHints__?: {
-		readonly parameters: SlotHint<T.LambdaParameters, true>;
+		readonly parameters: SlotHint<NonNullable<T.Lambda.Config>['parameters'], true>;
 		readonly body: SlotHint<NonNullable<T.Lambda.Config>['body']>;
 		readonly $listSlots: {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parameters: () => LambdaParameters | undefined;
+	readonly parameters: () => readonly Parameter[] | undefined;
 	readonly body: () => Expression;
 }
 
@@ -3875,22 +4020,26 @@ export interface LambdaWithinForInClause {
 		readonly _body: 'body';
 	};
 	readonly __inputHints__?: {
+		readonly parameters?: readonly Parameter[] | undefined;
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| LambdaWithinForInClause;
 	};
+	readonly __wrapperHints__?: {
+		readonly parameters: LambdaParameters;
+	};
 	readonly __looseHints__?: {
-		readonly parameters?: readonly Parameter[];
+		readonly parameters?: NonEmptyArray<Parameter> | ParametersElements;
 	};
 	readonly __slotHints__?: {
-		readonly parameters: SlotHint<T.LambdaParameters, true>;
+		readonly parameters: SlotHint<NonNullable<T.LambdaWithinForInClause.Config>['parameters'], true>;
 		readonly body: SlotHint<NonNullable<T.LambdaWithinForInClause.Config>['body']>;
 		readonly $listSlots: {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly parameters: () => LambdaParameters | undefined;
+	readonly parameters: () => readonly Parameter[] | undefined;
 	readonly body: () => Expression | LambdaWithinForInClause;
 }
 
@@ -4031,19 +4180,23 @@ export interface Subscript {
 		readonly object:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| PrimaryExpression;
+		readonly index: NonEmptyArray<Expression | Slice>;
+	};
+	readonly __wrapperHints__?: {
+		readonly index: Subscripts;
 	};
 	readonly __looseHints__?: {
-		readonly index: readonly (Expression | Slice)[];
+		readonly index: NonEmptyArray<Expression | Slice> | Subscripts;
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.Subscript.Config>['object']>;
-		readonly index: SlotHint<T.Subscripts>;
+		readonly index: SlotHint<NonNullable<T.Subscript.Config>['index']>;
 		readonly $listSlots: {
 			readonly index: ListSlotHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	readonly object: () => PrimaryExpression;
-	readonly index: () => Subscripts;
+	readonly index: () => NonEmptyArray<Expression | Slice>;
 }
 
 export interface Slice {
@@ -4107,15 +4260,21 @@ export interface TypedParameter {
 		readonly _name: 'name';
 		readonly _type: 'type';
 	};
+	readonly __inputHints__?: {
+		readonly type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>;
-		readonly type: SlotHint<T.Type>;
+		readonly type: SlotHint<NonNullable<T.TypedParameter.Config>['type']>;
 	};
 	readonly name: () => Identifier | ListSplatPattern | DictionarySplatPattern;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface Type {
@@ -4162,18 +4321,35 @@ export interface GenericType {
 		readonly _name: 'name';
 		readonly _type_parameter: 'typeParameter';
 	};
+	readonly __inputHints__?: {
+		readonly type_parameter: readonly (
+			| Expression
+			| SplatType
+			| GenericType
+			| UnionType
+			| ConstrainedType
+			| MemberType
+		)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameter: TypeParameter;
+	};
 	readonly __looseHints__?: {
-		readonly type_parameter: readonly Type[];
+		readonly type_parameter: NonEmptyArray<Type> | Types;
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
-		readonly typeParameter: SlotHint<T.TypeParameter>;
-		readonly $listSlots: {
-			readonly typeParameter: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
+		readonly typeParameter: SlotHint<NonNullable<T.GenericType.Config>['typeParameter']>;
 	};
 	readonly name: () => Identifier;
-	readonly typeParameter: () => TypeParameter;
+	readonly typeParameter: () => readonly (
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+	)[];
 }
 
 export interface UnionType {
@@ -4184,16 +4360,24 @@ export interface UnionType {
 		readonly _left: 'left';
 		readonly _right: 'right';
 	};
+	readonly __inputHints__?: {
+		readonly left: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+		readonly right: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly left: Type;
+		readonly right: Type;
+	};
 	readonly __looseHints__?: {
 		readonly left: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 		readonly right: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
-		readonly left: SlotHint<T.Type>;
-		readonly right: SlotHint<T.Type>;
+		readonly left: SlotHint<NonNullable<T.UnionType.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.UnionType.Config>['right']>;
 	};
-	readonly left: () => Type;
-	readonly right: () => Type;
+	readonly left: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	readonly right: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface ConstrainedType {
@@ -4204,16 +4388,24 @@ export interface ConstrainedType {
 		readonly _base_type: 'baseType';
 		readonly _constraint: 'constraint';
 	};
+	readonly __inputHints__?: {
+		readonly base_type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+		readonly constraint: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly base_type: Type;
+		readonly constraint: Type;
+	};
 	readonly __looseHints__?: {
 		readonly base_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 		readonly constraint: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
-		readonly baseType: SlotHint<T.Type>;
-		readonly constraint: SlotHint<T.Type>;
+		readonly baseType: SlotHint<NonNullable<T.ConstrainedType.Config>['baseType']>;
+		readonly constraint: SlotHint<NonNullable<T.ConstrainedType.Config>['constraint']>;
 	};
-	readonly baseType: () => Type;
-	readonly constraint: () => Type;
+	readonly baseType: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	readonly constraint: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface MemberType {
@@ -4224,14 +4416,20 @@ export interface MemberType {
 		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
+	readonly __inputHints__?: {
+		readonly qualifier: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly qualifier: Type;
+	};
 	readonly __looseHints__?: {
 		readonly qualifier: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
-		readonly qualifier: SlotHint<T.Type>;
+		readonly qualifier: SlotHint<NonNullable<T.MemberType.Config>['qualifier']>;
 		readonly name: SlotHint<T.Identifier>;
 	};
-	readonly qualifier: () => Type;
+	readonly qualifier: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	readonly name: () => Identifier;
 }
 
@@ -4262,11 +4460,17 @@ export interface List {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: CollectionElements;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements?: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat> | CollectionElements;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.CollectionElements, true>;
+		readonly elements: SlotHint<NonNullable<T.CollectionElements>, true>;
 		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -4278,7 +4482,7 @@ export interface List {
 			>;
 		};
 	};
-	readonly elements: () => CollectionElements | undefined;
+	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
 }
 
 export interface Set {
@@ -4287,11 +4491,17 @@ export interface Set {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: CollectionElements;
+	};
 	readonly __looseHints__?: {
-		readonly elements: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat> | CollectionElements;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.CollectionElements>;
+		readonly elements: SlotHint<NonNullable<T.CollectionElements>>;
 		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -4303,7 +4513,7 @@ export interface Set {
 			>;
 		};
 	};
-	readonly elements: () => CollectionElements;
+	readonly elements: () => NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
 
 export interface Tuple {
@@ -4312,11 +4522,17 @@ export interface Tuple {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: TupleElements;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements?: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat> | TupleElements;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.TupleElements, true>;
+		readonly elements: SlotHint<NonNullable<T.TupleElements>, true>;
 		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -4328,7 +4544,7 @@ export interface Tuple {
 			>;
 		};
 	};
-	readonly elements: () => TupleElements | undefined;
+	readonly elements: () => readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[] | undefined;
 }
 
 export interface Dictionary {
@@ -4337,17 +4553,23 @@ export interface Dictionary {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly (Pair | DictionarySplat)[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: DictionaryElements;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly (Pair | DictionarySplat)[];
+		readonly elements?: NonEmptyArray<Pair | DictionarySplat> | DictionaryElements;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.DictionaryElements, true>;
+		readonly elements: SlotHint<NonNullable<T.DictionaryElements>, true>;
 		readonly $listView: ListViewHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly elements: ListSlotHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly elements: () => DictionaryElements | undefined;
+	readonly elements: () => readonly (Pair | DictionarySplat)[] | undefined;
 }
 
 export interface Pair {
@@ -4386,16 +4608,20 @@ export interface ListComprehension {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
+	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
 	};
 	readonly __looseHints__?: {
-		readonly clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.ListComprehension.Config>['body']>;
-		readonly clauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<NonNullable<T.ListComprehension.Config>['clauses']>;
 	};
 	readonly body: () => Expression;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface DictionaryComprehension {
@@ -4406,15 +4632,21 @@ export interface DictionaryComprehension {
 		readonly _body: 'body';
 		readonly _clauses: 'clauses';
 	};
+	readonly __inputHints__?: {
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
+	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
+	};
 	readonly __looseHints__?: {
-		readonly clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<T.Pair>;
-		readonly clauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<NonNullable<T.DictionaryComprehension.Config>['clauses']>;
 	};
 	readonly body: () => Pair;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface SetComprehension {
@@ -4429,16 +4661,20 @@ export interface SetComprehension {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
+	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
 	};
 	readonly __looseHints__?: {
-		readonly clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.SetComprehension.Config>['body']>;
-		readonly clauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<NonNullable<T.SetComprehension.Config>['clauses']>;
 	};
 	readonly body: () => Expression;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface GeneratorExpression {
@@ -4453,16 +4689,20 @@ export interface GeneratorExpression {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
+	};
+	readonly __wrapperHints__?: {
+		readonly clauses: ComprehensionClauses;
 	};
 	readonly __looseHints__?: {
-		readonly clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: NonEmptyArray<ForInClause | IfClause>;
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.GeneratorExpression.Config>['body']>;
-		readonly clauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<NonNullable<T.GeneratorExpression.Config>['clauses']>;
 	};
 	readonly body: () => Expression;
-	readonly clauses: () => ComprehensionClauses;
+	readonly clauses: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
 export interface ParenthesizedExpression {
@@ -4530,7 +4770,7 @@ export interface ForInClause {
 		readonly async: SlotHint<NonNullable<T.ForInClause.Config>['async'], true>;
 		readonly left: SlotHint<T.Pattern | T.PatternList>;
 		readonly rights: SlotHint<
-			NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['rights']>[number]>,
+			NonEmptyArray<Extract<NonNullable<NonNullable<T.ForInClause.Config>['rights']>, readonly unknown[]>[number]>,
 			false,
 			true
 		>;
@@ -4765,12 +5005,18 @@ export interface WithClauseWithItems {
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
+	readonly __inputHints__?: {
+		readonly item: NonEmptyArray<Expression>;
+	};
+	readonly __wrapperHints__?: {
+		readonly item: WithItem;
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<WithItem>;
+	readonly items: () => NonEmptyArray<Expression>;
 }
 
 export interface Types {
@@ -4780,12 +5026,18 @@ export interface Types {
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
+	readonly __inputHints__?: {
+		readonly item: NonEmptyArray<Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType>;
+	};
+	readonly __wrapperHints__?: {
+		readonly item: Type;
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Type>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<Type>;
+	readonly items: () => NonEmptyArray<Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType>;
 }
 
 export interface ArgumentListElements {
@@ -4819,12 +5071,18 @@ export interface ListPatternCasePatterns {
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
+	readonly __inputHints__?: {
+		readonly item: NonEmptyArray<CaseAsPattern | KeywordPattern | SimplePattern>;
+	};
+	readonly __wrapperHints__?: {
+		readonly item: CasePattern;
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<CasePattern>;
+	readonly items: () => NonEmptyArray<CaseAsPattern | KeywordPattern | SimplePattern>;
 }
 
 export interface DictPatternElements {
@@ -4898,17 +5156,23 @@ export interface TypeParams {
 	readonly __slotNames__?: {
 		readonly _items: 'items';
 	};
+	readonly __inputHints__?: {
+		readonly items: NonEmptyArray<TypeParam>;
+	};
+	readonly __wrapperHints__?: {
+		readonly items: TypeParamsItems;
+	};
 	readonly __looseHints__?: {
-		readonly items: readonly TypeParam[];
+		readonly items: NonEmptyArray<TypeParam> | TypeParamsItems;
 	};
 	readonly __slotHints__?: {
-		readonly items: SlotHint<T.TypeParamsItems>;
+		readonly items: SlotHint<NonNullable<T.TypeParamsItems>>;
 		readonly $listView: ListViewHint<T.TypeParam, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly items: ListSlotHint<T.TypeParam, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly items: () => TypeParamsItems;
+	readonly items: () => NonEmptyArray<TypeParam>;
 }
 
 export interface TypeParamsItems {
@@ -4948,12 +5212,18 @@ export interface CasePatternList {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements: NonEmptyArray<CaseAsPattern | KeywordPattern | SimplePattern>;
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: CasePattern;
+	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly elements: () => NonEmptyArray<CasePattern>;
+	readonly elements: () => NonEmptyArray<CaseAsPattern | KeywordPattern | SimplePattern>;
 }
 
 export interface TupleElements {
@@ -5008,17 +5278,20 @@ export interface CaseTuplePattern {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: ListPatternCasePatterns;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly CasePattern[];
+		readonly elements?: NonEmptyArray<CasePattern> | ListPatternCasePatterns;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly elements: SlotHint<NonNullable<T.ListPatternCasePatterns>, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
-	readonly elements: () => ListPatternCasePatterns | undefined;
+	readonly elements: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface CaseListPattern {
@@ -5027,17 +5300,20 @@ export interface CaseListPattern {
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
+	readonly __inputHints__?: {
+		readonly elements?: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
+	};
+	readonly __wrapperHints__?: {
+		readonly elements: ListPatternCasePatterns;
+	};
 	readonly __looseHints__?: {
-		readonly elements?: readonly CasePattern[];
+		readonly elements?: NonEmptyArray<CasePattern> | ListPatternCasePatterns;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly elements: SlotHint<NonNullable<T.ListPatternCasePatterns>, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
-	readonly elements: () => ListPatternCasePatterns | undefined;
+	readonly elements: () => readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 }
 
 export interface PrintArguments {
@@ -5078,19 +5354,27 @@ export interface PrintStatementChevron {
 		readonly _chevron: 'chevron';
 		readonly _arguments: 'arguments';
 	};
+	readonly __inputHints__?: {
+		readonly chevron: Expression;
+		readonly arguments?: readonly Expression[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly chevron: Chevron;
+		readonly arguments: PrintChevronArguments;
+	};
 	readonly __looseHints__?: {
 		readonly chevron: readonly Expression[];
-		readonly arguments?: readonly Expression[];
+		readonly arguments?: NonEmptyArray<Expression> | PrintChevronArguments;
 	};
 	readonly __slotHints__?: {
-		readonly chevron: SlotHint<T.Chevron>;
-		readonly arguments: SlotHint<T.PrintChevronArguments, true>;
+		readonly chevron: SlotHint<NonNullable<T.PrintStatementChevron.Config>['chevron']>;
+		readonly arguments: SlotHint<NonNullable<T.PrintStatementChevron.Config>['arguments'], true>;
 		readonly $listSlots: {
 			readonly arguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly chevron: () => Chevron;
-	readonly arguments: () => PrintChevronArguments | undefined;
+	readonly chevron: () => Expression;
+	readonly arguments: () => readonly Expression[] | undefined;
 }
 
 export interface PrintStatementPlain {
@@ -5099,17 +5383,23 @@ export interface PrintStatementPlain {
 	readonly __slotNames__?: {
 		readonly _arguments: 'arguments';
 	};
+	readonly __inputHints__?: {
+		readonly arguments: NonEmptyArray<Expression>;
+	};
+	readonly __wrapperHints__?: {
+		readonly arguments: PrintArguments;
+	};
 	readonly __looseHints__?: {
-		readonly arguments: readonly Expression[];
+		readonly arguments: NonEmptyArray<Expression> | PrintArguments;
 	};
 	readonly __slotHints__?: {
-		readonly arguments: SlotHint<T.PrintArguments>;
+		readonly arguments: SlotHint<NonNullable<T.PrintArguments>>;
 		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly arguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly arguments: () => PrintArguments;
+	readonly arguments: () => NonEmptyArray<Expression>;
 }
 
 export interface ComprehensionClauses {
@@ -5500,11 +5790,17 @@ export interface ParenthesizedImportList {
 	readonly __slotNames__?: {
 		readonly _import_list: 'importList';
 	};
+	readonly __inputHints__?: {
+		readonly import_list: NonEmptyArray<DottedName | AliasedImport>;
+	};
+	readonly __wrapperHints__?: {
+		readonly import_list: ImportList;
+	};
 	readonly __looseHints__?: {
-		readonly import_list: readonly (DottedName | AliasedImport)[];
+		readonly import_list: NonEmptyArray<DottedName | AliasedImport> | ImportList;
 	};
 	readonly __slotHints__?: {
-		readonly importList: SlotHint<T.ImportList>;
+		readonly importList: SlotHint<NonNullable<T.ImportList>>;
 		readonly $listView: ListViewHint<
 			T.DottedName | T.AliasedImport,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -5516,7 +5812,7 @@ export interface ParenthesizedImportList {
 			>;
 		};
 	};
-	readonly importList: () => ImportList;
+	readonly importList: () => NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface SplatPatternList {
@@ -5582,15 +5878,21 @@ export interface AssignmentType {
 		readonly _name: 'name';
 		readonly _type: 'type';
 	};
+	readonly __inputHints__?: {
+		readonly type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Pattern | T.PatternList>;
-		readonly type: SlotHint<T.Type>;
+		readonly type: SlotHint<NonNullable<T.AssignmentType.Config>['type']>;
 	};
 	readonly name: () => Pattern | PatternList;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface AssignmentTyped {
@@ -5604,6 +5906,7 @@ export interface AssignmentTyped {
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
+		readonly type: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
@@ -5611,16 +5914,19 @@ export interface AssignmentTyped {
 			| PatternList
 			| Yield;
 	};
+	readonly __wrapperHints__?: {
+		readonly type: Type;
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Pattern | T.PatternList>;
-		readonly type: SlotHint<T.Type>;
+		readonly type: SlotHint<NonNullable<T.AssignmentTyped.Config>['type']>;
 		readonly value: SlotHint<NonNullable<T.AssignmentTyped.Config>['value']>;
 	};
 	readonly name: () => Pattern | PatternList;
-	readonly type: () => Type;
+	readonly type: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 	readonly value: () => Expression | ExpressionList | PatternList | Yield;
 }
 
@@ -5646,12 +5952,18 @@ export interface WithClauseBare {
 	readonly __slotNames__?: {
 		readonly _items: 'items';
 	};
+	readonly __inputHints__?: {
+		readonly items: NonEmptyArray<Expression>;
+	};
+	readonly __wrapperHints__?: {
+		readonly items: WithItem;
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	readonly items: () => NonEmptyArray<WithItem>;
+	readonly items: () => NonEmptyArray<Expression>;
 }
 
 export interface WithClauseParen {
@@ -5660,17 +5972,20 @@ export interface WithClauseParen {
 	readonly __slotNames__?: {
 		readonly _items: 'items';
 	};
+	readonly __inputHints__?: {
+		readonly items: readonly Expression[];
+	};
+	readonly __wrapperHints__?: {
+		readonly items: WithClauseWithItems;
+	};
 	readonly __looseHints__?: {
-		readonly items: readonly WithItem[];
+		readonly items: NonEmptyArray<WithItem> | WithClauseWithItems;
 	};
 	readonly __slotHints__?: {
-		readonly items: SlotHint<T.WithClauseWithItems>;
+		readonly items: SlotHint<NonNullable<T.WithClauseWithItems>>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		readonly $listSlots: {
-			readonly items: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
 	};
-	readonly items: () => WithClauseWithItems;
+	readonly items: () => readonly Expression[];
 }
 
 export interface SuiteInline {
@@ -5679,17 +5994,23 @@ export interface SuiteInline {
 	readonly __slotNames__?: {
 		readonly _statements: 'statements';
 	};
+	readonly __inputHints__?: {
+		readonly statements: NonEmptyArray<SimpleStatement>;
+	};
+	readonly __wrapperHints__?: {
+		readonly statements: SimpleStatementsElements;
+	};
 	readonly __looseHints__?: {
-		readonly statements: readonly SimpleStatement[];
+		readonly statements: NonEmptyArray<SimpleStatement> | SimpleStatementsElements;
 	};
 	readonly __slotHints__?: {
-		readonly statements: SlotHint<T.SimpleStatementsElements | Admit<T.SimpleStatements>>;
+		readonly statements: SlotHint<NonNullable<T.SimpleStatementsElements | Admit<T.SimpleStatements>>>;
 		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly statements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly statements: () => SimpleStatementsElements;
+	readonly statements: () => NonEmptyArray<SimpleStatement>;
 }
 
 export interface SuiteBlock {
@@ -5698,13 +6019,19 @@ export interface SuiteBlock {
 	readonly __slotNames__?: {
 		readonly _block: 'block';
 	};
+	readonly __inputHints__?: {
+		readonly block: readonly Statement[];
+	};
+	readonly __wrapperHints__?: {
+		readonly block: Block;
+	};
 	readonly __looseHints__?: {
 		readonly block: readonly Statement[];
 	};
 	readonly __slotHints__?: {
-		readonly block: SlotHint<T.Block>;
+		readonly block: SlotHint<NonNullable<T.Block>>;
 	};
-	readonly block: () => Block;
+	readonly block: () => readonly Statement[];
 }
 
 export interface SuiteEmpty {
@@ -5804,15 +6131,21 @@ export interface TypeParamTypeVar {
 		readonly _name: 'name';
 		readonly _bounds: 'bounds';
 	};
+	readonly __inputHints__?: {
+		readonly bounds?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly bounds: Type;
+	};
 	readonly __looseHints__?: {
 		readonly bounds?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
-		readonly bounds: SlotHint<T.Type, true>;
+		readonly bounds: SlotHint<NonNullable<T.TypeParamTypeVar.Config>['bounds'], true>;
 	};
 	readonly name: () => Identifier;
-	readonly bounds: () => Type | undefined;
+	readonly bounds: () => Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
 }
 
 export interface TypeParamTypeVarTuple {
@@ -5925,17 +6258,25 @@ export interface ConstructorDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParam[] | undefined;
+		readonly parameters: readonly Parameter[];
+		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly parameters: Parameters;
+		readonly return_type: Type;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
-		readonly parameters: readonly Parameter[];
+		readonly type_parameters?: NonEmptyArray<TypeParam> | TypeParamsItems;
+		readonly parameters: NonEmptyArray<Parameter> | ParametersElements;
 		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly async: SlotHint<NonNullable<T.ConstructorDeclaration.Config>['async'], true>;
-		readonly typeParameters: SlotHint<T.TypeParams, true>;
-		readonly parameters: SlotHint<T.Parameters>;
-		readonly returnType: SlotHint<T.Type, true>;
+		readonly typeParameters: SlotHint<NonNullable<T.ConstructorDeclaration.Config>['typeParameters'], true>;
+		readonly parameters: SlotHint<NonNullable<T.ConstructorDeclaration.Config>['parameters']>;
+		readonly returnType: SlotHint<NonNullable<T.ConstructorDeclaration.Config>['returnType'], true>;
 		readonly body: SlotHint<T.Suite>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<T.TypeParam, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
@@ -5943,9 +6284,16 @@ export interface ConstructorDeclaration {
 		};
 	};
 	readonly async: () => boolean;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly parameters: () => Parameters;
-	readonly returnType: () => Type | undefined;
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
+	readonly parameters: () => readonly Parameter[];
+	readonly returnType: () =>
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+		| undefined;
 	readonly body: () => Suite;
 }
 
@@ -5967,13 +6315,19 @@ export interface SuiteBlockClassDeclaration {
 	readonly __slotNames__?: {
 		readonly _block_class_declaration: 'blockClassDeclaration';
 	};
+	readonly __inputHints__?: {
+		readonly block_class_declaration: readonly StatementClassDefinition[];
+	};
+	readonly __wrapperHints__?: {
+		readonly block_class_declaration: BlockClassDeclaration;
+	};
 	readonly __looseHints__?: {
 		readonly block_class_declaration: readonly StatementClassDefinition[];
 	};
 	readonly __slotHints__?: {
-		readonly blockClassDeclaration: SlotHint<T.BlockClassDeclaration>;
+		readonly blockClassDeclaration: SlotHint<NonNullable<T.BlockClassDeclaration>>;
 	};
-	readonly blockClassDeclaration: () => BlockClassDeclaration;
+	readonly blockClassDeclaration: () => readonly StatementClassDefinition[];
 }
 
 export interface DecoratedDefinitionClassDeclaration {
@@ -5984,11 +6338,26 @@ export interface DecoratedDefinitionClassDeclaration {
 		readonly _decorator: 'decorators';
 		readonly _definition: 'definition';
 	};
+	readonly __inputHints__?: {
+		readonly decorator: NonEmptyArray<Expression>;
+	};
+	readonly __wrapperHints__?: {
+		readonly decorator: Decorator;
+	};
 	readonly __slotHints__?: {
-		readonly decorators: SlotHint<NonEmptyArray<T.Decorator>, false, true>;
+		readonly decorators: SlotHint<
+			NonEmptyArray<
+				Extract<
+					NonNullable<NonNullable<T.DecoratedDefinitionClassDeclaration.Config>['decorators']>,
+					readonly unknown[]
+				>[number]
+			>,
+			false,
+			true
+		>;
 		readonly definition: SlotHint<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>;
 	};
-	readonly decorators: () => NonEmptyArray<Decorator>;
+	readonly decorators: () => NonEmptyArray<Expression>;
 	readonly definition: () => ClassDefinition | MethodDeclaration | ConstructorDeclaration;
 }
 
@@ -6082,18 +6451,26 @@ export interface MethodDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
+		readonly type_parameters?: readonly TypeParam[] | undefined;
+		readonly parameters: readonly Parameter[];
+		readonly return_type?: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly type_parameters: TypeParams;
+		readonly parameters: Parameters;
+		readonly return_type: Type;
 	};
 	readonly __looseHints__?: {
-		readonly type_parameters?: readonly TypeParam[];
-		readonly parameters: readonly Parameter[];
+		readonly type_parameters?: NonEmptyArray<TypeParam> | TypeParamsItems;
+		readonly parameters: NonEmptyArray<Parameter> | ParametersElements;
 		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
 		readonly async: SlotHint<NonNullable<T.MethodDeclaration.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier>;
-		readonly typeParameters: SlotHint<T.TypeParams, true>;
-		readonly parameters: SlotHint<T.Parameters>;
-		readonly returnType: SlotHint<T.Type, true>;
+		readonly typeParameters: SlotHint<NonNullable<T.MethodDeclaration.Config>['typeParameters'], true>;
+		readonly parameters: SlotHint<NonNullable<T.MethodDeclaration.Config>['parameters']>;
+		readonly returnType: SlotHint<NonNullable<T.MethodDeclaration.Config>['returnType'], true>;
 		readonly body: SlotHint<T.Suite>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<T.TypeParam, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
@@ -6102,9 +6479,16 @@ export interface MethodDeclaration {
 	};
 	readonly async: () => boolean;
 	readonly name: () => Identifier;
-	readonly typeParameters: () => TypeParams | undefined;
-	readonly parameters: () => Parameters;
-	readonly returnType: () => Type | undefined;
+	readonly typeParameters: () => readonly TypeParam[] | undefined;
+	readonly parameters: () => readonly Parameter[];
+	readonly returnType: () =>
+		| Expression
+		| SplatType
+		| GenericType
+		| UnionType
+		| ConstrainedType
+		| MemberType
+		| undefined;
 	readonly body: () => Suite;
 }
 

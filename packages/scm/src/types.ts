@@ -516,13 +516,19 @@ export interface String {
 	readonly __slotNames__?: {
 		readonly _string_content: 'stringContent';
 	};
+	readonly __inputHints__?: {
+		readonly string_content?: readonly (StringContentText | EscapeSequence)[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly string_content: StringContent;
+	};
 	readonly __looseHints__?: {
-		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
+		readonly string_content?: NonEmptyArray<StringContentText | EscapeSequence>;
 	};
 	readonly __slotHints__?: {
-		readonly stringContent: SlotHint<T.StringContent, true>;
+		readonly stringContent: SlotHint<NonNullable<T.StringContent>, true>;
 	};
-	readonly stringContent: () => StringContent | undefined;
+	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[] | undefined;
 }
 
 export interface ImmediateString {
@@ -531,13 +537,19 @@ export interface ImmediateString {
 	readonly __slotNames__?: {
 		readonly _string_content: 'stringContent';
 	};
+	readonly __inputHints__?: {
+		readonly string_content?: readonly (StringContentText | EscapeSequence)[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly string_content: StringContent;
+	};
 	readonly __looseHints__?: {
-		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
+		readonly string_content?: NonEmptyArray<StringContentText | EscapeSequence>;
 	};
 	readonly __slotHints__?: {
-		readonly stringContent: SlotHint<T.StringContent, true>;
+		readonly stringContent: SlotHint<NonNullable<T.StringContent>, true>;
 	};
-	readonly stringContent: () => StringContent | undefined;
+	readonly stringContent: () => readonly (StringContentText | EscapeSequence)[] | undefined;
 }
 
 export interface StringContent {
@@ -636,7 +648,7 @@ export interface AnonymousNode {
 		readonly name: KindEnum<'_', TSKindId.Underscore> | String;
 	};
 	readonly __looseHints__?: {
-		readonly name: readonly (StringContentText | EscapeSequence)[];
+		readonly name: NonEmptyArray<StringContentText | EscapeSequence>;
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.AnonymousNode.Config>['name']>;
@@ -689,20 +701,24 @@ export interface Predicate {
 	readonly __inputHints__?: {
 		readonly prefix: KindEnum<'#' | '.', TSKindId.Pound | TSKindId.Dot>;
 		readonly type: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
+		readonly parameters?: readonly (Capture | String | Identifier)[] | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly parameters: Parameters;
 	};
 	readonly __looseHints__?: {
-		readonly parameters?: readonly (Capture | String | Identifier)[];
+		readonly parameters?: NonEmptyArray<Capture | String | Identifier>;
 	};
 	readonly __slotHints__?: {
 		readonly prefix: SlotHint<NonNullable<T.Predicate.Config>['prefix']>;
 		readonly name: SlotHint<T.ImmediateIdentifier>;
 		readonly type: SlotHint<NonNullable<T.Predicate.Config>['type']>;
-		readonly parameters: SlotHint<T.Parameters, true>;
+		readonly parameters: SlotHint<NonNullable<T.Predicate.Config>['parameters'], true>;
 	};
 	readonly prefix: () => TSKindId.Pound | TSKindId.Dot;
 	readonly name: () => ImmediateIdentifier;
 	readonly type: () => TSKindId.Qmark | TSKindId.Bang;
-	readonly parameters: () => Parameters | undefined;
+	readonly parameters: () => readonly (Capture | String | Identifier)[] | undefined;
 }
 
 export interface ListElementQuantifier {

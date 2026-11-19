@@ -22,7 +22,7 @@ describe('variant guards', () => {
 		expect(py.is.suite.block(block!)).toBe(true);
 		expect(py.is.suite.inline(block!)).toBe(false);
 		expect(py.is.suite.inline(inline!)).toBe(true);
-		if (py.is.suite.block(block!)) expect(block.block().statements()).toHaveLength(1);
+		if (py.is.suite.block(block!)) expect(block.block()).toHaveLength(1);
 	});
 
 	it('leave a class body to its own guard: the class-body block is a kind of its own, not a suite variant', () => {

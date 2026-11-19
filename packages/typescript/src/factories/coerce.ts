@@ -2362,8 +2362,15 @@ export const coerceToNamespaceExport: ConfigSeat<T.NamespaceExport.Loose, Return
 
 export function resolveExportClause_exportSpecifiers(
 	value: T.ExportClause.LooseConfig['exportSpecifiers']
-): Admit<T.ExportClause['_export_specifiers']> {
-	return _resolveOneBranch<T.ExportSpecifiers>(value, 'export_specifiers', undefined, true);
+): T.ExportClause.Config['exportSpecifiers'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToExportSpecifiers(...(value as unknown as Parameters<typeof coerceToExportSpecifiers>))
+		: _resolveOneBranch<T.ExportSpecifiers>(
+				value,
+				'export_specifiers',
+				undefined,
+				true
+			)) as unknown as T.ExportClause.Config['exportSpecifiers'];
 }
 
 export const coerceToExportClause: EmptyForm<
@@ -2483,7 +2490,12 @@ export function coerceToImportStatement(
 export function resolveImportClause_content(
 	value: T.ImportClause.LooseConfig['content']
 ): Admit<T.ImportClause['_content']> {
-	return _resolveOne<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(value, _K2, _K5);
+	return _resolveOne<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(
+		value,
+		_K2,
+		_K5,
+		'named_imports'
+	);
 }
 
 export const coerceToImportClause: ConfigSeat<T.ImportClause.Loose, ReturnType<typeof F.buildImportClause>> = (
@@ -2494,7 +2506,8 @@ export const coerceToImportClause: ConfigSeat<T.ImportClause.Loose, ReturnType<t
 		_resolveOne<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(
 			configFieldOr(input, 'content', () => input, TSKindId.ImportClause),
 			_K2,
-			_K5
+			_K5,
+			'named_imports'
 		)
 	);
 };
@@ -2520,8 +2533,15 @@ export const coerceToNamespaceImport: ConfigSeat<T.NamespaceImport.Loose, Return
 
 export function resolveNamedImports_importSpecifiers(
 	value: T.NamedImports.LooseConfig['importSpecifiers']
-): Admit<T.NamedImports['_import_specifiers']> {
-	return _resolveOneBranch<T.ImportSpecifiers>(value, 'import_specifiers', undefined, true);
+): T.NamedImports.Config['importSpecifiers'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToImportSpecifiers(...(value as unknown as Parameters<typeof coerceToImportSpecifiers>))
+		: _resolveOneBranch<T.ImportSpecifiers>(
+				value,
+				'import_specifiers',
+				undefined,
+				true
+			)) as unknown as T.NamedImports.Config['importSpecifiers'];
 }
 
 export const coerceToNamedImports: EmptyForm<
@@ -2555,8 +2575,8 @@ export function resolveImportAttribute_attributeKind(
 
 export function resolveImportAttribute_object(
 	value: T.ImportAttribute.LooseConfig['object']
-): Admit<T.ImportAttribute['_object']> {
-	return _resolveOneBranch<T.Object>(value, 'object');
+): T.ImportAttribute.Config['object'] {
+	return _resolveOneBranch<T.Object>(value, 'object') as unknown as T.ImportAttribute.Config['object'];
 }
 
 export const coerceToImportAttribute: ConfigSeat<T.ImportAttribute.Loose, ReturnType<typeof F.buildImportAttribute>> = (
@@ -2567,7 +2587,7 @@ export const coerceToImportAttribute: ConfigSeat<T.ImportAttribute.Loose, Return
 	currentHandle()?.admit(TSKindId.ImportAttribute, [input]);
 	return F.buildImportAttribute({
 		attributeKind: resolveImportAttribute_attributeKind(input.attributeKind),
-		object: resolveImportAttribute_object(input.object) ?? F.buildObject()
+		object: resolveImportAttribute_object(input.object)
 	});
 };
 
@@ -2791,8 +2811,13 @@ export function resolveIfStatement_consequence(
 
 export function resolveIfStatement_alternative(
 	value: T.IfStatement.LooseConfig['alternative']
-): Admit<T.IfStatement['_alternative']> {
-	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
+): T.IfStatement.Config['alternative'] {
+	return _resolveOneBranch<T.ElseClause>(
+		value,
+		'else_clause',
+		undefined,
+		true
+	) as unknown as T.IfStatement.Config['alternative'];
 }
 
 export const coerceToIfStatement: ConfigSeat<T.IfStatement.Loose, ReturnType<typeof F.buildIfStatement>> = (
@@ -2816,8 +2841,8 @@ export function resolveSwitchStatement_value(
 
 export function resolveSwitchStatement_body(
 	value: T.SwitchStatement.LooseConfig['body']
-): Admit<T.SwitchStatement['_body']> {
-	return _resolveOneBranch<T.SwitchBody>(value, 'switch_body');
+): T.SwitchStatement.Config['body'] {
+	return _resolveOneBranch<T.SwitchBody>(value, 'switch_body') as unknown as T.SwitchStatement.Config['body'];
 }
 
 export const coerceToSwitchStatement: ConfigSeat<T.SwitchStatement.Loose, ReturnType<typeof F.buildSwitchStatement>> = (
@@ -2828,7 +2853,7 @@ export const coerceToSwitchStatement: ConfigSeat<T.SwitchStatement.Loose, Return
 	currentHandle()?.admit(TSKindId.SwitchStatement, [input]);
 	return F.buildSwitchStatement({
 		value: resolveSwitchStatement_value(input.value),
-		body: resolveSwitchStatement_body(input.body) ?? F.buildSwitchBody()
+		body: resolveSwitchStatement_body(input.body)
 	});
 };
 
@@ -2994,8 +3019,13 @@ export function resolveTryStatement_handlers(
 
 export function resolveTryStatement_finalizer(
 	value: T.TryStatement.LooseConfig['finalizer']
-): Admit<T.TryStatement['_finalizer']> {
-	return _resolveOneBranch<T.FinallyClause>(value, 'finally_clause', undefined, true);
+): T.TryStatement.Config['finalizer'] {
+	return _resolveOneBranch<T.FinallyClause>(
+		value,
+		'finally_clause',
+		undefined,
+		true
+	) as unknown as T.TryStatement.Config['finalizer'];
 }
 
 export const coerceToTryStatement: OptionalConfigSeat<T.TryStatement.Loose, ReturnType<typeof F.buildTryStatement>> = (
@@ -3523,8 +3553,8 @@ export const coerceToNestedIdentifier: ConfigSeat<
 	});
 };
 
-export function resolveClass_decorators(value: T.Class.LooseConfig['decorators']): Admit<T.Class['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+export function resolveClass_decorators(value: T.Class.LooseConfig['decorators']): T.Class.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator') as unknown as T.Class.Config['decorators'];
 }
 
 export function resolveClass_name(value: T.Class.LooseConfig['name']): Admit<T.Class['_name']> {
@@ -3533,16 +3563,30 @@ export function resolveClass_name(value: T.Class.LooseConfig['name']): Admit<T.C
 
 export function resolveClass_typeParameters(
 	value: T.Class.LooseConfig['typeParameters']
-): Admit<T.Class['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.Class.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.Class.Config['typeParameters'];
 }
 
-export function resolveClass_heritage(value: T.Class.LooseConfig['heritage']): Admit<T.Class['_heritage']> {
-	return _resolveOneBranch<T.ClassHeritage>(value, 'class_heritage', undefined, true);
+export function resolveClass_heritage(value: T.Class.LooseConfig['heritage']): T.Class.Config['heritage'] {
+	return _resolveOneBranch<T.ClassHeritage>(
+		value,
+		'class_heritage',
+		undefined,
+		true
+	) as unknown as T.Class.Config['heritage'];
 }
 
-export function resolveClass_body(value: T.Class.LooseConfig['body'] | undefined): Admit<T.Class['_body']> {
-	return _resolveOneBranch<T.ClassBody>(value, 'class_body');
+export function resolveClass_body(value: T.Class.LooseConfig['body'] | undefined): T.Class.Config['body'] {
+	return _resolveOneBranch<T.ClassBody>(value, 'class_body') as unknown as T.Class.Config['body'];
 }
 
 export const coerceToClass: OptionalConfigSeat<T.Class.Loose, ReturnType<typeof F.buildClass>> = (
@@ -3556,14 +3600,14 @@ export const coerceToClass: OptionalConfigSeat<T.Class.Loose, ReturnType<typeof 
 		name: resolveClass_name(input?.name),
 		typeParameters: resolveClass_typeParameters(input?.typeParameters),
 		heritage: resolveClass_heritage(input?.heritage),
-		body: resolveClass_body(input?.body) ?? F.buildClassBody()
+		body: resolveClass_body(input?.body)
 	});
 };
 
 export function resolveClassDeclaration_decorators(
 	value: T.ClassDeclaration.LooseConfig['decorators']
-): Admit<T.ClassDeclaration['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.ClassDeclaration.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator') as unknown as T.ClassDeclaration.Config['decorators'];
 }
 
 export function resolveClassDeclaration_name(
@@ -3574,20 +3618,34 @@ export function resolveClassDeclaration_name(
 
 export function resolveClassDeclaration_typeParameters(
 	value: T.ClassDeclaration.LooseConfig['typeParameters']
-): Admit<T.ClassDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.ClassDeclaration.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.ClassDeclaration.Config['typeParameters'];
 }
 
 export function resolveClassDeclaration_heritage(
 	value: T.ClassDeclaration.LooseConfig['heritage']
-): Admit<T.ClassDeclaration['_heritage']> {
-	return _resolveOneBranch<T.ClassHeritage>(value, 'class_heritage', undefined, true);
+): T.ClassDeclaration.Config['heritage'] {
+	return _resolveOneBranch<T.ClassHeritage>(
+		value,
+		'class_heritage',
+		undefined,
+		true
+	) as unknown as T.ClassDeclaration.Config['heritage'];
 }
 
 export function resolveClassDeclaration_body(
 	value: T.ClassDeclaration.LooseConfig['body']
-): Admit<T.ClassDeclaration['_body']> {
-	return _resolveOneBranch<T.ClassBody>(value, 'class_body');
+): T.ClassDeclaration.Config['body'] {
+	return _resolveOneBranch<T.ClassBody>(value, 'class_body') as unknown as T.ClassDeclaration.Config['body'];
 }
 
 export function coerceToClassDeclaration<const I extends T.ClassDeclaration.Loose>(
@@ -3607,7 +3665,7 @@ export function coerceToClassDeclaration(
 			name: resolveClassDeclaration_name(input.name),
 			typeParameters: resolveClassDeclaration_typeParameters(input.typeParameters),
 			heritage: resolveClassDeclaration_heritage(input.heritage),
-			body: resolveClassDeclaration_body(input.body) ?? F.buildClassBody()
+			body: resolveClassDeclaration_body(input.body)
 		},
 		options
 	);
@@ -3646,14 +3704,30 @@ export function resolveFunctionExpression_name(
 
 export function resolveFunctionExpression_typeParameters(
 	value: T.FunctionExpression.LooseConfig['typeParameters']
-): Admit<T.FunctionExpression['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.FunctionExpression.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.FunctionExpression.Config['typeParameters'];
 }
 
 export function resolveFunctionExpression_parameters(
 	value: T.FunctionExpression.LooseConfig['parameters'] | undefined
-): Admit<T.FunctionExpression['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.FunctionExpression.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.FunctionExpression.Config['parameters'];
 }
 
 export function resolveFunctionExpression_returnType(
@@ -3679,7 +3753,7 @@ export const coerceToFunctionExpression: OptionalConfigSeat<
 		async: resolveFunctionExpression_async(input?.async),
 		name: resolveFunctionExpression_name(input?.name),
 		typeParameters: resolveFunctionExpression_typeParameters(input?.typeParameters),
-		parameters: resolveFunctionExpression_parameters(input?.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveFunctionExpression_parameters(input?.parameters),
 		returnType: resolveFunctionExpression_returnType(input?.returnType),
 		body: resolveFunctionExpression_body(input?.body) ?? F.buildStatementBlock()
 	});
@@ -3699,14 +3773,30 @@ export function resolveFunctionDeclaration_name(
 
 export function resolveFunctionDeclaration_typeParameters(
 	value: T.FunctionDeclaration.LooseConfig['typeParameters']
-): Admit<T.FunctionDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.FunctionDeclaration.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.FunctionDeclaration.Config['typeParameters'];
 }
 
 export function resolveFunctionDeclaration_parameters(
 	value: T.FunctionDeclaration.LooseConfig['parameters']
-): Admit<T.FunctionDeclaration['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.FunctionDeclaration.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.FunctionDeclaration.Config['parameters'];
 }
 
 export function resolveFunctionDeclaration_returnType(
@@ -3737,7 +3827,7 @@ export function coerceToFunctionDeclaration(
 			async: resolveFunctionDeclaration_async(input.async),
 			name: resolveFunctionDeclaration_name(input.name),
 			typeParameters: resolveFunctionDeclaration_typeParameters(input.typeParameters),
-			parameters: resolveFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
+			parameters: resolveFunctionDeclaration_parameters(input.parameters),
 			returnType: resolveFunctionDeclaration_returnType(input.returnType),
 			body: resolveFunctionDeclaration_body(input.body) ?? F.buildStatementBlock()
 		},
@@ -3759,14 +3849,30 @@ export function resolveGeneratorFunction_name(
 
 export function resolveGeneratorFunction_typeParameters(
 	value: T.GeneratorFunction.LooseConfig['typeParameters']
-): Admit<T.GeneratorFunction['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.GeneratorFunction.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.GeneratorFunction.Config['typeParameters'];
 }
 
 export function resolveGeneratorFunction_parameters(
 	value: T.GeneratorFunction.LooseConfig['parameters'] | undefined
-): Admit<T.GeneratorFunction['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.GeneratorFunction.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.GeneratorFunction.Config['parameters'];
 }
 
 export function resolveGeneratorFunction_returnType(
@@ -3792,7 +3898,7 @@ export const coerceToGeneratorFunction: OptionalConfigSeat<
 		async: resolveGeneratorFunction_async(input?.async),
 		name: resolveGeneratorFunction_name(input?.name),
 		typeParameters: resolveGeneratorFunction_typeParameters(input?.typeParameters),
-		parameters: resolveGeneratorFunction_parameters(input?.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveGeneratorFunction_parameters(input?.parameters),
 		returnType: resolveGeneratorFunction_returnType(input?.returnType),
 		body: resolveGeneratorFunction_body(input?.body) ?? F.buildStatementBlock()
 	});
@@ -3812,14 +3918,30 @@ export function resolveGeneratorFunctionDeclaration_name(
 
 export function resolveGeneratorFunctionDeclaration_typeParameters(
 	value: T.GeneratorFunctionDeclaration.LooseConfig['typeParameters']
-): Admit<T.GeneratorFunctionDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.GeneratorFunctionDeclaration.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.GeneratorFunctionDeclaration.Config['typeParameters'];
 }
 
 export function resolveGeneratorFunctionDeclaration_parameters(
 	value: T.GeneratorFunctionDeclaration.LooseConfig['parameters']
-): Admit<T.GeneratorFunctionDeclaration['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.GeneratorFunctionDeclaration.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.GeneratorFunctionDeclaration.Config['parameters'];
 }
 
 export function resolveGeneratorFunctionDeclaration_returnType(
@@ -3850,7 +3972,7 @@ export function coerceToGeneratorFunctionDeclaration(
 			async: resolveGeneratorFunctionDeclaration_async(input.async),
 			name: resolveGeneratorFunctionDeclaration_name(input.name),
 			typeParameters: resolveGeneratorFunctionDeclaration_typeParameters(input.typeParameters),
-			parameters: resolveGeneratorFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
+			parameters: resolveGeneratorFunctionDeclaration_parameters(input.parameters),
 			returnType: resolveGeneratorFunctionDeclaration_returnType(input.returnType),
 			body: resolveGeneratorFunctionDeclaration_body(input.body) ?? F.buildStatementBlock()
 		},
@@ -3905,8 +4027,15 @@ export function resolveNewExpression_function(
 
 export function resolveNewExpression_typeArguments(
 	value: T.NewExpression.LooseConfig['typeArguments']
-): Admit<T.NewExpression['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
+): T.NewExpression.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments',
+				undefined,
+				true
+			)) as unknown as T.NewExpression.Config['typeArguments'];
 }
 
 export function resolveNewExpression_arguments(
@@ -4699,14 +4828,21 @@ export function resolveDecoratorCallExpression_function(
 
 export function resolveDecoratorCallExpression_typeArguments(
 	value: T.DecoratorCallExpression.LooseConfig['typeArguments']
-): Admit<T.DecoratorCallExpression['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
+): T.DecoratorCallExpression.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments',
+				undefined,
+				true
+			)) as unknown as T.DecoratorCallExpression.Config['typeArguments'];
 }
 
 export function resolveDecoratorCallExpression_arguments(
 	value: T.DecoratorCallExpression.LooseConfig['arguments']
-): Admit<T.DecoratorCallExpression['_arguments']> {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+): T.DecoratorCallExpression.Config['arguments'] {
+	return _resolveOneBranch<T.Arguments>(value, 'arguments') as unknown as T.DecoratorCallExpression.Config['arguments'];
 }
 
 export const coerceToDecoratorCallExpression: ConfigSeat<
@@ -4719,7 +4855,7 @@ export const coerceToDecoratorCallExpression: ConfigSeat<
 	return F.buildDecoratorCallExpression({
 		function: resolveDecoratorCallExpression_function(input.function),
 		typeArguments: resolveDecoratorCallExpression_typeArguments(input.typeArguments),
-		arguments: resolveDecoratorCallExpression_arguments(input.arguments) ?? F.buildArguments()
+		arguments: resolveDecoratorCallExpression_arguments(input.arguments)
 	});
 };
 
@@ -4749,7 +4885,12 @@ export const coerceToClassBody: EmptyForm<
 export function resolveFormalParameters_elements(
 	value: T.FormalParameters.LooseConfig['elements']
 ): Admit<T.FormalParameters['_elements']> {
-	return _resolveOne<T.FormalParametersElements | T.FormalParametersElementsReceiver>(value, _K2, _K37);
+	return _resolveOne<T.FormalParametersElements | T.FormalParametersElementsReceiver>(
+		value,
+		_K2,
+		_K37,
+		'formal_parameters_elements'
+	);
 }
 
 export const coerceToFormalParameters: EmptyForm<
@@ -4762,7 +4903,8 @@ export const coerceToFormalParameters: EmptyForm<
 		_resolveOne<T.FormalParametersElements | T.FormalParametersElementsReceiver>(
 			configFieldOr(input, 'elements', () => input, TSKindId.FormalParameters),
 			_K2,
-			_K37
+			_K37,
+			'formal_parameters_elements'
 		)
 	);
 });
@@ -4974,14 +5116,30 @@ export function resolveFunctionSignature_name(
 
 export function resolveFunctionSignature_typeParameters(
 	value: T.FunctionSignature.LooseConfig['typeParameters']
-): Admit<T.FunctionSignature['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.FunctionSignature.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.FunctionSignature.Config['typeParameters'];
 }
 
 export function resolveFunctionSignature_parameters(
 	value: T.FunctionSignature.LooseConfig['parameters']
-): Admit<T.FunctionSignature['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.FunctionSignature.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.FunctionSignature.Config['parameters'];
 }
 
 export function resolveFunctionSignature_returnType(
@@ -5006,7 +5164,7 @@ export function coerceToFunctionSignature(
 			async: resolveFunctionSignature_async(input.async),
 			name: resolveFunctionSignature_name(input.name),
 			typeParameters: resolveFunctionSignature_typeParameters(input.typeParameters),
-			parameters: resolveFunctionSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
+			parameters: resolveFunctionSignature_parameters(input.parameters),
 			returnType: resolveFunctionSignature_returnType(input.returnType)
 		},
 		options
@@ -5036,8 +5194,13 @@ export const coerceToDecoratorParenthesizedExpression: ConfigSeat<
 
 export function resolveTypeAssertion_typeArguments(
 	value: T.TypeAssertion.LooseConfig['typeArguments']
-): Admit<T.TypeAssertion['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.TypeAssertion.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments'
+			)) as unknown as T.TypeAssertion.Config['typeArguments'];
 }
 
 export function resolveTypeAssertion_expression(
@@ -5135,8 +5298,13 @@ export function resolveInstantiationExpression_function(
 
 export function resolveInstantiationExpression_typeArguments(
 	value: T.InstantiationExpression.LooseConfig['typeArguments']
-): Admit<T.InstantiationExpression['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.InstantiationExpression.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments'
+			)) as unknown as T.InstantiationExpression.Config['typeArguments'];
 }
 
 export const coerceToInstantiationExpression: ConfigSeat<
@@ -5209,8 +5377,15 @@ export function resolveExtendsClauseSingle_value(
 
 export function resolveExtendsClauseSingle_typeArguments(
 	value: T.ExtendsClauseSingle.LooseConfig['typeArguments']
-): Admit<T.ExtendsClauseSingle['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
+): T.ExtendsClauseSingle.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments',
+				undefined,
+				true
+			)) as unknown as T.ExtendsClauseSingle.Config['typeArguments'];
 }
 
 export const coerceToExtendsClauseSingle: ConfigSeat<
@@ -5270,8 +5445,11 @@ export const coerceToAmbientDeclaration: ConfigSeat<
 
 export function resolveAbstractClassDeclaration_decorators(
 	value: T.AbstractClassDeclaration.LooseConfig['decorators']
-): Admit<T.AbstractClassDeclaration['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.AbstractClassDeclaration.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(
+		value,
+		'decorator'
+	) as unknown as T.AbstractClassDeclaration.Config['decorators'];
 }
 
 export function resolveAbstractClassDeclaration_name(
@@ -5282,20 +5460,34 @@ export function resolveAbstractClassDeclaration_name(
 
 export function resolveAbstractClassDeclaration_typeParameters(
 	value: T.AbstractClassDeclaration.LooseConfig['typeParameters']
-): Admit<T.AbstractClassDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.AbstractClassDeclaration.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.AbstractClassDeclaration.Config['typeParameters'];
 }
 
 export function resolveAbstractClassDeclaration_heritage(
 	value: T.AbstractClassDeclaration.LooseConfig['heritage']
-): Admit<T.AbstractClassDeclaration['_heritage']> {
-	return _resolveOneBranch<T.ClassHeritage>(value, 'class_heritage', undefined, true);
+): T.AbstractClassDeclaration.Config['heritage'] {
+	return _resolveOneBranch<T.ClassHeritage>(
+		value,
+		'class_heritage',
+		undefined,
+		true
+	) as unknown as T.AbstractClassDeclaration.Config['heritage'];
 }
 
 export function resolveAbstractClassDeclaration_body(
 	value: T.AbstractClassDeclaration.LooseConfig['body']
-): Admit<T.AbstractClassDeclaration['_body']> {
-	return _resolveOneBranch<T.ClassBody>(value, 'class_body');
+): T.AbstractClassDeclaration.Config['body'] {
+	return _resolveOneBranch<T.ClassBody>(value, 'class_body') as unknown as T.AbstractClassDeclaration.Config['body'];
 }
 
 export const coerceToAbstractClassDeclaration: ConfigSeat<
@@ -5310,7 +5502,7 @@ export const coerceToAbstractClassDeclaration: ConfigSeat<
 		name: resolveAbstractClassDeclaration_name(input.name),
 		typeParameters: resolveAbstractClassDeclaration_typeParameters(input.typeParameters),
 		heritage: resolveAbstractClassDeclaration_heritage(input.heritage),
-		body: resolveAbstractClassDeclaration_body(input.body) ?? F.buildClassBody()
+		body: resolveAbstractClassDeclaration_body(input.body)
 	});
 };
 
@@ -5418,14 +5610,28 @@ export function resolveInterfaceDeclaration_name(
 
 export function resolveInterfaceDeclaration_typeParameters(
 	value: T.InterfaceDeclaration.LooseConfig['typeParameters']
-): Admit<T.InterfaceDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.InterfaceDeclaration.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.InterfaceDeclaration.Config['typeParameters'];
 }
 
 export function resolveInterfaceDeclaration_extendsTypeClause(
 	value: T.InterfaceDeclaration.LooseConfig['extendsTypeClause']
-): Admit<T.InterfaceDeclaration['_extends_type_clause']> {
-	return _resolveOneBranch<T.ExtendsTypeClause>(value, 'extends_type_clause', undefined, true);
+): T.InterfaceDeclaration.Config['extendsTypeClause'] {
+	return _resolveOneBranch<T.ExtendsTypeClause>(
+		value,
+		'extends_type_clause',
+		undefined,
+		true
+	) as unknown as T.InterfaceDeclaration.Config['extendsTypeClause'];
 }
 
 export function resolveInterfaceDeclaration_body(
@@ -5487,8 +5693,10 @@ export function resolveEnumDeclaration_name(
 
 export function resolveEnumDeclaration_body(
 	value: T.EnumDeclaration.LooseConfig['body']
-): Admit<T.EnumDeclaration['_body']> {
-	return _resolveOneBranch<T.EnumBody>(value, 'enum_body');
+): T.EnumDeclaration.Config['body'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildEnumBody(coerceToEnumBodyElements(...(value as unknown as Parameters<typeof coerceToEnumBodyElements>)))
+		: _resolveOneBranch<T.EnumBody>(value, 'enum_body')) as unknown as T.EnumDeclaration.Config['body'];
 }
 
 export const coerceToEnumDeclaration: ConfigSeat<T.EnumDeclaration.Loose, ReturnType<typeof F.buildEnumDeclaration>> = (
@@ -5500,12 +5708,19 @@ export const coerceToEnumDeclaration: ConfigSeat<T.EnumDeclaration.Loose, Return
 	return F.buildEnumDeclaration({
 		const: resolveEnumDeclaration_const(input.const),
 		name: resolveEnumDeclaration_name(input.name),
-		body: resolveEnumDeclaration_body(input.body) ?? F.buildEnumBody()
+		body: resolveEnumDeclaration_body(input.body)
 	});
 };
 
-export function resolveEnumBody_elements(value: T.EnumBody.LooseConfig['elements']): Admit<T.EnumBody['_elements']> {
-	return _resolveOneBranch<T.EnumBodyElements>(value, 'enum_body_elements', undefined, true);
+export function resolveEnumBody_elements(value: T.EnumBody.LooseConfig['elements']): T.EnumBody.Config['elements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToEnumBodyElements(...(value as unknown as Parameters<typeof coerceToEnumBodyElements>))
+		: _resolveOneBranch<T.EnumBodyElements>(
+				value,
+				'enum_body_elements',
+				undefined,
+				true
+			)) as unknown as T.EnumBody.Config['elements'];
 }
 
 export const coerceToEnumBody: EmptyForm<
@@ -5568,8 +5783,17 @@ export function resolveTypeAliasDeclaration_name(
 
 export function resolveTypeAliasDeclaration_typeParameters(
 	value: T.TypeAliasDeclaration.LooseConfig['typeParameters']
-): Admit<T.TypeAliasDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.TypeAliasDeclaration.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.TypeAliasDeclaration.Config['typeParameters'];
 }
 
 export function resolveTypeAliasDeclaration_value(
@@ -5608,8 +5832,8 @@ export function coerceToOverrideModifier(_input?: T.OverrideModifier.Loose): typ
 
 export function resolveRequiredParameter_decorators(
 	value: T.RequiredParameter.LooseConfig['decorators']
-): Admit<T.RequiredParameter['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.RequiredParameter.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator') as unknown as T.RequiredParameter.Config['decorators'];
 }
 
 export function resolveRequiredParameter_accessibilityModifier(
@@ -5650,8 +5874,13 @@ export function resolveRequiredParameter_name(
 
 export function resolveRequiredParameter_type(
 	value: T.RequiredParameter.LooseConfig['type']
-): Admit<T.RequiredParameter['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.RequiredParameter.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.RequiredParameter.Config['type'];
 }
 
 export function resolveRequiredParameter_value(
@@ -5683,8 +5912,8 @@ export const coerceToRequiredParameter: ConfigSeat<
 
 export function resolveOptionalParameter_decorators(
 	value: T.OptionalParameter.LooseConfig['decorators']
-): Admit<T.OptionalParameter['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.OptionalParameter.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator') as unknown as T.OptionalParameter.Config['decorators'];
 }
 
 export function resolveOptionalParameter_accessibilityModifier(
@@ -5732,8 +5961,13 @@ export function resolveOptionalParameter_name(
 
 export function resolveOptionalParameter_type(
 	value: T.OptionalParameter.LooseConfig['type']
-): Admit<T.OptionalParameter['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.OptionalParameter.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.OptionalParameter.Config['type'];
 }
 
 export function resolveOptionalParameter_value(
@@ -5940,8 +6174,11 @@ export function resolveTypeQueryCallExpressionInTypeAnnotation_function(
 
 export function resolveTypeQueryCallExpressionInTypeAnnotation_arguments(
 	value: T.TypeQueryCallExpressionInTypeAnnotation.LooseConfig['arguments']
-): Admit<T.TypeQueryCallExpressionInTypeAnnotation['_arguments']> {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+): T.TypeQueryCallExpressionInTypeAnnotation.Config['arguments'] {
+	return _resolveOneBranch<T.Arguments>(
+		value,
+		'arguments'
+	) as unknown as T.TypeQueryCallExpressionInTypeAnnotation.Config['arguments'];
 }
 
 export const coerceToTypeQueryCallExpressionInTypeAnnotation: ConfigSeat<
@@ -5955,7 +6192,7 @@ export const coerceToTypeQueryCallExpressionInTypeAnnotation: ConfigSeat<
 	currentHandle()?.admit(TSKindId.TypeQueryCallExpressionInTypeAnnotation, [input]);
 	return F.buildTypeQueryCallExpressionInTypeAnnotation({
 		function: resolveTypeQueryCallExpressionInTypeAnnotation_function(input.function),
-		arguments: resolveTypeQueryCallExpressionInTypeAnnotation_arguments(input.arguments) ?? F.buildArguments()
+		arguments: resolveTypeQueryCallExpressionInTypeAnnotation_arguments(input.arguments)
 	});
 };
 
@@ -5998,8 +6235,8 @@ export const coerceToAsserts: ConfigSeat<T.Asserts.Loose, ReturnType<typeof F.bu
 
 export function resolveAssertsAnnotation_asserts(
 	value: T.AssertsAnnotation.LooseConfig['asserts']
-): Admit<T.AssertsAnnotation['_asserts']> {
-	return _resolveOneBranch<T.Asserts>(value, 'asserts');
+): T.AssertsAnnotation.Config['asserts'] {
+	return _resolveOneBranch<T.Asserts>(value, 'asserts') as unknown as T.AssertsAnnotation.Config['asserts'];
 }
 
 export const coerceToAssertsAnnotation: ConfigSeat<
@@ -6024,8 +6261,8 @@ export function resolveTupleParameter_name(
 
 export function resolveTupleParameter_type(
 	value: T.TupleParameter.LooseConfig['type']
-): Admit<T.TupleParameter['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
+): T.TupleParameter.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation') as unknown as T.TupleParameter.Config['type'];
 }
 
 export const coerceToTupleParameter: ConfigSeat<T.TupleParameter.Loose, ReturnType<typeof F.buildTupleParameter>> = (
@@ -6048,8 +6285,11 @@ export function resolveOptionalTupleParameter_name(
 
 export function resolveOptionalTupleParameter_type(
 	value: T.OptionalTupleParameter.LooseConfig['type']
-): Admit<T.OptionalTupleParameter['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
+): T.OptionalTupleParameter.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation'
+	) as unknown as T.OptionalTupleParameter.Config['type'];
 }
 
 export const coerceToOptionalTupleParameter: ConfigSeat<
@@ -6129,14 +6369,30 @@ export function resolveConstructorType_abstract(
 
 export function resolveConstructorType_typeParameters(
 	value: T.ConstructorType.LooseConfig['typeParameters']
-): Admit<T.ConstructorType['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.ConstructorType.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.ConstructorType.Config['typeParameters'];
 }
 
 export function resolveConstructorType_parameters(
 	value: T.ConstructorType.LooseConfig['parameters']
-): Admit<T.ConstructorType['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.ConstructorType.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.ConstructorType.Config['parameters'];
 }
 
 export function resolveConstructorType_type(
@@ -6157,7 +6413,7 @@ export const coerceToConstructorType: ConfigSeat<T.ConstructorType.Loose, Return
 	return F.buildConstructorType({
 		abstract: resolveConstructorType_abstract(input.abstract),
 		typeParameters: resolveConstructorType_typeParameters(input.typeParameters),
-		parameters: resolveConstructorType_parameters(input.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveConstructorType_parameters(input.parameters),
 		type: resolveConstructorType_type(input.type)
 	});
 };
@@ -6290,8 +6546,10 @@ export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']
 
 export function resolveGenericType_typeArguments(
 	value: T.GenericType.LooseConfig['typeArguments']
-): Admit<T.GenericType['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.GenericType.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(value, 'type_arguments')) as unknown as T.GenericType.Config['typeArguments'];
 }
 
 export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typeof F.buildGenericType>> = (
@@ -6563,8 +6821,8 @@ export const coerceToTypeQuerySubscriptExpression: ConfigSeat<
 
 export function resolveTypeQueryCallExpression_arguments(
 	value: T.TypeQueryCallExpression.LooseConfig['arguments'] | undefined
-): Admit<T.TypeQueryCallExpression['_arguments']> {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+): T.TypeQueryCallExpression.Config['arguments'] {
+	return _resolveOneBranch<T.Arguments>(value, 'arguments') as unknown as T.TypeQueryCallExpression.Config['arguments'];
 }
 
 export const coerceToTypeQueryCallExpression: Seat<
@@ -6583,7 +6841,7 @@ export const coerceToTypeQueryCallExpression: Seat<
 		_resolveOneBranch<T.Arguments>(
 			configFieldOr(input, 'arguments', () => input, TSKindId.TypeQueryCallExpression),
 			'arguments'
-		) ?? F.buildArguments()
+		)
 	);
 };
 
@@ -6606,8 +6864,13 @@ export function resolveTypeQueryInstantiationExpression_function(
 
 export function resolveTypeQueryInstantiationExpression_typeArguments(
 	value: T.TypeQueryInstantiationExpression.LooseConfig['typeArguments']
-): Admit<T.TypeQueryInstantiationExpression['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.TypeQueryInstantiationExpression.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments'
+			)) as unknown as T.TypeQueryInstantiationExpression.Config['typeArguments'];
 }
 
 export const coerceToTypeQueryInstantiationExpression: ConfigSeat<
@@ -6912,8 +7175,10 @@ export const coerceToParenthesizedType: ConfigSeat<
 
 export function resolveTypeArguments_types(
 	value: T.TypeArguments.LooseConfig['types']
-): Admit<T.TypeArguments['_types']> {
-	return _resolveOneBranch<T.Types>(value, 'types');
+): T.TypeArguments.Config['types'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>))
+		: _resolveOneBranch<T.Types>(value, 'types')) as unknown as T.TypeArguments.Config['types'];
 }
 
 export const coerceToTypeArguments: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTypeArguments>> &
@@ -6938,8 +7203,15 @@ export function resolveObjectType_opening(value: T.ObjectType.LooseConfig['openi
 	);
 }
 
-export function resolveObjectType_members(value: T.ObjectType.LooseConfig['members']): Admit<T.ObjectType['_members']> {
-	return _resolveOneBranch<T.ObjectTypeContent>(value, 'object_type_content', undefined, true);
+export function resolveObjectType_members(value: T.ObjectType.LooseConfig['members']): T.ObjectType.Config['members'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToObjectTypeContent(...(value as unknown as Parameters<typeof coerceToObjectTypeContent>))
+		: _resolveOneBranch<T.ObjectTypeContent>(
+				value,
+				'object_type_content',
+				undefined,
+				true
+			)) as unknown as T.ObjectType.Config['members'];
 }
 
 export function resolveObjectType_closing(value: T.ObjectType.LooseConfig['closing']): Admit<T.ObjectType['_closing']> {
@@ -6968,14 +7240,30 @@ export const coerceToObjectType: ConfigSeat<T.ObjectType.Loose, ReturnType<typeo
 
 export function resolveCallSignature_typeParameters(
 	value: T.CallSignature.LooseConfig['typeParameters']
-): Admit<T.CallSignature['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.CallSignature.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.CallSignature.Config['typeParameters'];
 }
 
 export function resolveCallSignature_parameters(
 	value: T.CallSignature.LooseConfig['parameters'] | undefined
-): Admit<T.CallSignature['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.CallSignature.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.CallSignature.Config['parameters'];
 }
 
 export function resolveCallSignature_returnType(
@@ -6993,7 +7281,7 @@ export const coerceToCallSignature: OptionalConfigSeat<
 	currentHandle()?.admit(TSKindId.CallSignature, [input]);
 	return F.buildCallSignature({
 		typeParameters: resolveCallSignature_typeParameters(input?.typeParameters),
-		parameters: resolveCallSignature_parameters(input?.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveCallSignature_parameters(input?.parameters),
 		returnType: resolveCallSignature_returnType(input?.returnType)
 	});
 };
@@ -7053,8 +7341,13 @@ export function resolvePropertySignature_optional(
 
 export function resolvePropertySignature_type(
 	value: T.PropertySignature.LooseConfig['type']
-): Admit<T.PropertySignature['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.PropertySignature.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.PropertySignature.Config['type'];
 }
 
 export const coerceToPropertySignature: ConfigSeat<
@@ -7077,8 +7370,13 @@ export const coerceToPropertySignature: ConfigSeat<
 
 export function resolveTypeParameters_elements(
 	value: T.TypeParameters.LooseConfig['elements']
-): Admit<T.TypeParameters['_elements']> {
-	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
+): T.TypeParameters.Config['elements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+		: _resolveOneBranch<T.TypeParametersElements>(
+				value,
+				'type_parameters_elements'
+			)) as unknown as T.TypeParameters.Config['elements'];
 }
 
 export const coerceToTypeParameters: Seat<
@@ -7120,8 +7418,13 @@ export function resolveTypeParameter_constraint(
 
 export function resolveTypeParameter_default(
 	value: T.TypeParameter.LooseConfig['default']
-): Admit<T.TypeParameter['_default']> {
-	return _resolveOneBranch<T.DefaultType>(value, 'default_type', undefined, true);
+): T.TypeParameter.Config['default'] {
+	return _resolveOneBranch<T.DefaultType>(
+		value,
+		'default_type',
+		undefined,
+		true
+	) as unknown as T.TypeParameter.Config['default'];
 }
 
 export const coerceToTypeParameter: ConfigSeat<T.TypeParameter.Loose, ReturnType<typeof F.buildTypeParameter>> = (
@@ -7208,20 +7511,41 @@ export function resolveConstructSignature_abstract(
 
 export function resolveConstructSignature_typeParameters(
 	value: T.ConstructSignature.LooseConfig['typeParameters']
-): Admit<T.ConstructSignature['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.ConstructSignature.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.ConstructSignature.Config['typeParameters'];
 }
 
 export function resolveConstructSignature_parameters(
 	value: T.ConstructSignature.LooseConfig['parameters'] | undefined
-): Admit<T.ConstructSignature['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.ConstructSignature.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.ConstructSignature.Config['parameters'];
 }
 
 export function resolveConstructSignature_type(
 	value: T.ConstructSignature.LooseConfig['type']
-): Admit<T.ConstructSignature['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.ConstructSignature.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.ConstructSignature.Config['type'];
 }
 
 export const coerceToConstructSignature: OptionalConfigSeat<
@@ -7234,7 +7558,7 @@ export const coerceToConstructSignature: OptionalConfigSeat<
 	return F.buildConstructSignature({
 		abstract: resolveConstructSignature_abstract(input?.abstract),
 		typeParameters: resolveConstructSignature_typeParameters(input?.typeParameters),
-		parameters: resolveConstructSignature_parameters(input?.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveConstructSignature_parameters(input?.parameters),
 		type: resolveConstructSignature_type(input?.type)
 	});
 };
@@ -7268,8 +7592,15 @@ export const coerceToArrayType: ConfigSeat<T.ArrayType.Loose, ReturnType<typeof 
 
 export function resolveTupleType_tupleTypeMembers(
 	value: T.TupleType.LooseConfig['tupleTypeMembers']
-): Admit<T.TupleType['_tuple_type_members']> {
-	return _resolveOneBranch<T.TupleTypeMembers>(value, 'tuple_type_members', undefined, true);
+): T.TupleType.Config['tupleTypeMembers'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToTupleTypeMembers(...(value as unknown as Parameters<typeof coerceToTupleTypeMembers>))
+		: _resolveOneBranch<T.TupleTypeMembers>(
+				value,
+				'tuple_type_members',
+				undefined,
+				true
+			)) as unknown as T.TupleType.Config['tupleTypeMembers'];
 }
 
 export const coerceToTupleType: EmptyForm<
@@ -7375,14 +7706,30 @@ export const coerceToIntersectionType: ConfigSeat<
 
 export function resolveFunctionType_typeParameters(
 	value: T.FunctionType.LooseConfig['typeParameters']
-): Admit<T.FunctionType['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.FunctionType.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.FunctionType.Config['typeParameters'];
 }
 
 export function resolveFunctionType_parameters(
 	value: T.FunctionType.LooseConfig['parameters']
-): Admit<T.FunctionType['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.FunctionType.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.FunctionType.Config['parameters'];
 }
 
 export function resolveFunctionType_returnType(
@@ -7402,7 +7749,7 @@ export const coerceToFunctionType: ConfigSeat<T.FunctionType.Loose, ReturnType<t
 	currentHandle()?.admit(TSKindId.FunctionType, [input]);
 	return F.buildFunctionType({
 		typeParameters: resolveFunctionType_typeParameters(input.typeParameters),
-		parameters: resolveFunctionType_parameters(input.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveFunctionType_parameters(input.parameters),
 		returnType: resolveFunctionType_returnType(input.returnType)
 	});
 };
@@ -7693,7 +8040,7 @@ export const coerceToTupleTypeMembers: Seat<
 export function resolveImportClauseGroup_content(
 	value: T.ImportClauseGroup.LooseConfig['content']
 ): Admit<T.ImportClauseGroup['_content']> {
-	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K68);
+	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K68, 'named_imports');
 }
 
 export const coerceToImportClauseGroup: ConfigSeat<
@@ -7706,7 +8053,8 @@ export const coerceToImportClauseGroup: ConfigSeat<
 		_resolveOne<T.NamespaceImport | T.NamedImports>(
 			configFieldOr(input, 'content', () => input, TSKindId.ImportClauseGroup),
 			_K2,
-			_K68
+			_K68,
+			'named_imports'
 		)
 	);
 };
@@ -7723,8 +8071,13 @@ export function resolveCatchClauseGroup_parameter(
 
 export function resolveCatchClauseGroup_type(
 	value: T.CatchClauseGroup.LooseConfig['type']
-): Admit<T.CatchClauseGroup['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.CatchClauseGroup.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.CatchClauseGroup.Config['type'];
 }
 
 export const coerceToCatchClauseGroup: ConfigSeat<
@@ -8500,8 +8853,8 @@ export function coerceToEmptyMember(_input?: T.EmptyMember.Loose): typeof F.buil
 
 export function resolveClassBodyMemberMethod_decorators(
 	value: T.ClassBodyMemberMethod.LooseConfig['decorators']
-): Admit<T.ClassBodyMemberMethod['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.ClassBodyMemberMethod.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator') as unknown as T.ClassBodyMemberMethod.Config['decorators'];
 }
 
 export function resolveClassBodyMemberMethod_methodDefinition(
@@ -8694,8 +9047,13 @@ export const coerceToIndexSignatureMappedTypeClause: ConfigSeat<
 
 export function resolveImportStatementClauseFrom_importClause(
 	value: T.ImportStatementClauseFrom.LooseConfig['importClause']
-): Admit<T.ImportStatementClauseFrom['_import_clause']> {
-	return _resolveOneBranch<T.ImportClause>(value, 'import_clause');
+): T.ImportStatementClauseFrom.Config['importClause'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildImportClause(coerceToNamedImports(...(value as unknown as Parameters<typeof coerceToNamedImports>)))
+		: _resolveOneBranch<T.ImportClause>(
+				value,
+				'import_clause'
+			)) as unknown as T.ImportStatementClauseFrom.Config['importClause'];
 }
 
 export function resolveImportStatementClauseFrom_source(
@@ -8834,8 +9192,13 @@ export function resolveParenthesizedExpressionTyped_expression(
 
 export function resolveParenthesizedExpressionTyped_type(
 	value: T.ParenthesizedExpressionTyped.LooseConfig['type']
-): Admit<T.ParenthesizedExpressionTyped['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.ParenthesizedExpressionTyped.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.ParenthesizedExpressionTyped.Config['type'];
 }
 
 export const coerceToParenthesizedExpressionTyped: ConfigSeat<
@@ -8853,8 +9216,11 @@ export const coerceToParenthesizedExpressionTyped: ConfigSeat<
 
 export function resolveParenthesizedExpressionSequence_sequenceExpression(
 	value: T.ParenthesizedExpressionSequence.LooseConfig['sequenceExpression']
-): Admit<T.ParenthesizedExpressionSequence['_sequence_expression']> {
-	return _resolveOneBranch<T.SequenceExpression>(value, 'sequence_expression');
+): T.ParenthesizedExpressionSequence.Config['sequenceExpression'] {
+	return _resolveOneBranch<T.SequenceExpression>(
+		value,
+		'sequence_expression'
+	) as unknown as T.ParenthesizedExpressionSequence.Config['sequenceExpression'];
 }
 
 export const coerceToParenthesizedExpressionSequence: Seat<
@@ -8952,14 +9318,21 @@ export function resolveCallExpressionCall_function(
 
 export function resolveCallExpressionCall_typeArguments(
 	value: T.CallExpressionCall.LooseConfig['typeArguments']
-): Admit<T.CallExpressionCall['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
+): T.CallExpressionCall.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments',
+				undefined,
+				true
+			)) as unknown as T.CallExpressionCall.Config['typeArguments'];
 }
 
 export function resolveCallExpressionCall_arguments(
 	value: T.CallExpressionCall.LooseConfig['arguments']
-): Admit<T.CallExpressionCall['_arguments']> {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+): T.CallExpressionCall.Config['arguments'] {
+	return _resolveOneBranch<T.Arguments>(value, 'arguments') as unknown as T.CallExpressionCall.Config['arguments'];
 }
 
 export const coerceToCallExpressionCall: ConfigSeat<
@@ -8972,7 +9345,7 @@ export const coerceToCallExpressionCall: ConfigSeat<
 	return F.buildCallExpressionCall({
 		function: resolveCallExpressionCall_function(input.function),
 		typeArguments: resolveCallExpressionCall_typeArguments(input.typeArguments),
-		arguments: resolveCallExpressionCall_arguments(input.arguments) ?? F.buildArguments()
+		arguments: resolveCallExpressionCall_arguments(input.arguments)
 	});
 };
 
@@ -8987,8 +9360,11 @@ export function resolveCallExpressionTemplateCall_function(
 
 export function resolveCallExpressionTemplateCall_arguments(
 	value: T.CallExpressionTemplateCall.LooseConfig['arguments']
-): Admit<T.CallExpressionTemplateCall['_arguments']> {
-	return _resolveOneBranch<T.TemplateString>(value, 'template_string');
+): T.CallExpressionTemplateCall.Config['arguments'] {
+	return _resolveOneBranch<T.TemplateString>(
+		value,
+		'template_string'
+	) as unknown as T.CallExpressionTemplateCall.Config['arguments'];
 }
 
 export const coerceToCallExpressionTemplateCall: ConfigSeat<
@@ -9000,7 +9376,7 @@ export const coerceToCallExpressionTemplateCall: ConfigSeat<
 	currentHandle()?.admit(TSKindId.CallExpressionTemplateCall, [input]);
 	return F.buildCallExpressionTemplateCall({
 		function: resolveCallExpressionTemplateCall_function(input.function),
-		arguments: resolveCallExpressionTemplateCall_arguments(input.arguments) ?? F.buildTemplateString()
+		arguments: resolveCallExpressionTemplateCall_arguments(input.arguments)
 	});
 };
 
@@ -9015,14 +9391,21 @@ export function resolveCallExpressionMember_function(
 
 export function resolveCallExpressionMember_typeArguments(
 	value: T.CallExpressionMember.LooseConfig['typeArguments']
-): Admit<T.CallExpressionMember['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
+): T.CallExpressionMember.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments',
+				undefined,
+				true
+			)) as unknown as T.CallExpressionMember.Config['typeArguments'];
 }
 
 export function resolveCallExpressionMember_arguments(
 	value: T.CallExpressionMember.LooseConfig['arguments']
-): Admit<T.CallExpressionMember['_arguments']> {
-	return _resolveOneBranch<T.Arguments>(value, 'arguments');
+): T.CallExpressionMember.Config['arguments'] {
+	return _resolveOneBranch<T.Arguments>(value, 'arguments') as unknown as T.CallExpressionMember.Config['arguments'];
 }
 
 export const coerceToCallExpressionMember: ConfigSeat<
@@ -9035,7 +9418,7 @@ export const coerceToCallExpressionMember: ConfigSeat<
 	return F.buildCallExpressionMember({
 		function: resolveCallExpressionMember_function(input.function),
 		typeArguments: resolveCallExpressionMember_typeArguments(input.typeArguments),
-		arguments: resolveCallExpressionMember_arguments(input.arguments) ?? F.buildArguments()
+		arguments: resolveCallExpressionMember_arguments(input.arguments)
 	});
 };
 
@@ -9165,14 +9548,22 @@ export const coerceToArrowFunctionParameter: ConfigSeat<
 
 export function resolveClassHeritageExtendsClause_extendsClause(
 	value: T.ClassHeritageExtendsClause.LooseConfig['extendsClause']
-): Admit<T.ClassHeritageExtendsClause['_extends_clause']> {
-	return _resolveOneBranch<T.ExtendsClause>(value, 'extends_clause');
+): T.ClassHeritageExtendsClause.Config['extendsClause'] {
+	return _resolveOneBranch<T.ExtendsClause>(
+		value,
+		'extends_clause'
+	) as unknown as T.ClassHeritageExtendsClause.Config['extendsClause'];
 }
 
 export function resolveClassHeritageExtendsClause_implementsClause(
 	value: T.ClassHeritageExtendsClause.LooseConfig['implementsClause']
-): Admit<T.ClassHeritageExtendsClause['_implements_clause']> {
-	return _resolveOneBranch<T.ImplementsClause>(value, 'implements_clause', undefined, true);
+): T.ClassHeritageExtendsClause.Config['implementsClause'] {
+	return _resolveOneBranch<T.ImplementsClause>(
+		value,
+		'implements_clause',
+		undefined,
+		true
+	) as unknown as T.ClassHeritageExtendsClause.Config['implementsClause'];
 }
 
 export const coerceToClassHeritageExtendsClause: ConfigSeat<
@@ -9196,8 +9587,15 @@ export function resolveImportClauseDefaultImport_identifier(
 
 export function resolveImportClauseDefaultImport_importClauseGroup(
 	value: T.ImportClauseDefaultImport.LooseConfig['importClauseGroup']
-): Admit<T.ImportClauseDefaultImport['_import_clause_group']> {
-	return _resolveOneBranch<T.ImportClauseGroup>(value, 'import_clause_group', undefined, true);
+): T.ImportClauseDefaultImport.Config['importClauseGroup'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildImportClauseGroup(coerceToNamedImports(...(value as unknown as Parameters<typeof coerceToNamedImports>)))
+		: _resolveOneBranch<T.ImportClauseGroup>(
+				value,
+				'import_clause_group',
+				undefined,
+				true
+			)) as unknown as T.ImportClauseDefaultImport.Config['importClauseGroup'];
 }
 
 export const coerceToImportClauseDefaultImport: ConfigSeat<
@@ -9249,8 +9647,11 @@ export function coerceToExportStatementDefaultFrom(
 
 export function resolveExportStatementDefaultDeclaration_decorators(
 	value: T.ExportStatementDefaultDeclaration.LooseConfig['decorators']
-): Admit<T.ExportStatementDefaultDeclaration['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.ExportStatementDefaultDeclaration.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(
+		value,
+		'decorator'
+	) as unknown as T.ExportStatementDefaultDeclaration.Config['decorators'];
 }
 
 export function resolveExportStatementDefaultDeclaration_content(
@@ -9323,8 +9724,15 @@ export const coerceToExportStatementDefaultFromNsFrom: ConfigSeat<
 
 export function resolveExportStatementDefaultFromClauseFrom_exportClause(
 	value: T.ExportStatementDefaultFromClauseFrom.LooseConfig['exportClause'] | undefined
-): Admit<T.ExportStatementDefaultFromClauseFrom['_export_clause']> {
-	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
+): T.ExportStatementDefaultFromClauseFrom.Config['exportClause'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildExportClause(
+				coerceToExportSpecifiers(...(value as unknown as Parameters<typeof coerceToExportSpecifiers>))
+			)
+		: _resolveOneBranch<T.ExportClause>(
+				value,
+				'export_clause'
+			)) as unknown as T.ExportStatementDefaultFromClauseFrom.Config['exportClause'];
 }
 
 export function resolveExportStatementDefaultFromClauseFrom_source(
@@ -9343,8 +9751,7 @@ export const coerceToExportStatementDefaultFromClauseFrom: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFromClauseFrom>;
 	currentHandle()?.admit(TSKindId.ExportStatementDefaultFromClauseFrom, [input]);
 	return F.buildExportStatementDefaultFromClauseFrom({
-		exportClause:
-			resolveExportStatementDefaultFromClauseFrom_exportClause(input?.exportClause) ?? F.buildExportClause(),
+		exportClause: resolveExportStatementDefaultFromClauseFrom_exportClause(input?.exportClause),
 		source: resolveExportStatementDefaultFromClauseFrom_source(input?.source)
 	});
 };
@@ -9419,8 +9826,13 @@ export function resolveVariableDeclaratorPlain_name(
 
 export function resolveVariableDeclaratorPlain_type(
 	value: T.VariableDeclaratorPlain.LooseConfig['type']
-): Admit<T.VariableDeclaratorPlain['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.VariableDeclaratorPlain.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.VariableDeclaratorPlain.Config['type'];
 }
 
 export function resolveVariableDeclaratorPlain_value(
@@ -9454,8 +9866,11 @@ export function resolveVariableDeclaratorDefinite_name(
 
 export function resolveVariableDeclaratorDefinite_type(
 	value: T.VariableDeclaratorDefinite.LooseConfig['type']
-): Admit<T.VariableDeclaratorDefinite['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation');
+): T.VariableDeclaratorDefinite.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation'
+	) as unknown as T.VariableDeclaratorDefinite.Config['type'];
 }
 
 export const coerceToVariableDeclaratorDefinite: ConfigSeat<
@@ -9730,8 +10145,8 @@ export const coerceToFormalParametersElementsSetAccessorSignature: ConfigSeat<
 
 export function resolveSetterParameter_decorators(
 	value: T.SetterParameter.LooseConfig['decorators']
-): Admit<T.SetterParameter['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.SetterParameter.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator') as unknown as T.SetterParameter.Config['decorators'];
 }
 
 export function resolveSetterParameter_accessibilityModifier(
@@ -9777,8 +10192,13 @@ export function resolveSetterParameter_pattern(
 
 export function resolveSetterParameter_type(
 	value: T.SetterParameter.LooseConfig['type']
-): Admit<T.SetterParameter['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.SetterParameter.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.SetterParameter.Config['type'];
 }
 
 export const coerceToSetterParameter: ConfigSeat<T.SetterParameter.Loose, ReturnType<typeof F.buildSetterParameter>> = (
@@ -9864,14 +10284,30 @@ export function resolveMethodDefinitionPlain_optional(
 
 export function resolveMethodDefinitionPlain_typeParameters(
 	value: T.MethodDefinitionPlain.LooseConfig['typeParameters']
-): Admit<T.MethodDefinitionPlain['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.MethodDefinitionPlain.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.MethodDefinitionPlain.Config['typeParameters'];
 }
 
 export function resolveMethodDefinitionPlain_parameters(
 	value: T.MethodDefinitionPlain.LooseConfig['parameters']
-): Admit<T.MethodDefinitionPlain['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.MethodDefinitionPlain.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.MethodDefinitionPlain.Config['parameters'];
 }
 
 export function resolveMethodDefinitionPlain_returnType(
@@ -9903,7 +10339,7 @@ export const coerceToMethodDefinitionPlain: ConfigSeat<
 		name: resolveMethodDefinitionPlain_name(input.name),
 		optional: resolveMethodDefinitionPlain_optional(input.optional),
 		typeParameters: resolveMethodDefinitionPlain_typeParameters(input.typeParameters),
-		parameters: resolveMethodDefinitionPlain_parameters(input.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveMethodDefinitionPlain_parameters(input.parameters),
 		returnType: resolveMethodDefinitionPlain_returnType(input.returnType),
 		body: resolveMethodDefinitionPlain_body(input.body) ?? F.buildStatementBlock()
 	});
@@ -10022,8 +10458,11 @@ export function resolveMethodDefinitionSetter_name(
 
 export function resolveMethodDefinitionSetter_parameters(
 	value: T.MethodDefinitionSetter.LooseConfig['parameters']
-): Admit<T.MethodDefinitionSetter['_parameters']> {
-	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(value, '_formal_parameters_set_accessor_signature');
+): T.MethodDefinitionSetter.Config['parameters'] {
+	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(
+		value,
+		'_formal_parameters_set_accessor_signature'
+	) as unknown as T.MethodDefinitionSetter.Config['parameters'];
 }
 
 export function resolveMethodDefinitionSetter_body(
@@ -10116,14 +10555,30 @@ export function resolveMethodSignaturePlain_optional(
 
 export function resolveMethodSignaturePlain_typeParameters(
 	value: T.MethodSignaturePlain.LooseConfig['typeParameters']
-): Admit<T.MethodSignaturePlain['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.MethodSignaturePlain.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.MethodSignaturePlain.Config['typeParameters'];
 }
 
 export function resolveMethodSignaturePlain_parameters(
 	value: T.MethodSignaturePlain.LooseConfig['parameters']
-): Admit<T.MethodSignaturePlain['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.MethodSignaturePlain.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.MethodSignaturePlain.Config['parameters'];
 }
 
 export function resolveMethodSignaturePlain_returnType(
@@ -10149,7 +10604,7 @@ export const coerceToMethodSignaturePlain: ConfigSeat<
 		name: resolveMethodSignaturePlain_name(input.name),
 		optional: resolveMethodSignaturePlain_optional(input.optional),
 		typeParameters: resolveMethodSignaturePlain_typeParameters(input.typeParameters),
-		parameters: resolveMethodSignaturePlain_parameters(input.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveMethodSignaturePlain_parameters(input.parameters),
 		returnType: resolveMethodSignaturePlain_returnType(input.returnType)
 	});
 };
@@ -10260,8 +10715,11 @@ export function resolveMethodSignatureSetter_name(
 
 export function resolveMethodSignatureSetter_parameters(
 	value: T.MethodSignatureSetter.LooseConfig['parameters']
-): Admit<T.MethodSignatureSetter['_parameters']> {
-	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(value, '_formal_parameters_set_accessor_signature');
+): T.MethodSignatureSetter.Config['parameters'] {
+	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(
+		value,
+		'_formal_parameters_set_accessor_signature'
+	) as unknown as T.MethodSignatureSetter.Config['parameters'];
 }
 
 export const coerceToMethodSignatureSetter: ConfigSeat<
@@ -10329,14 +10787,30 @@ export function resolveAbstractMethodSignaturePlain_optional(
 
 export function resolveAbstractMethodSignaturePlain_typeParameters(
 	value: T.AbstractMethodSignaturePlain.LooseConfig['typeParameters']
-): Admit<T.AbstractMethodSignaturePlain['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+): T.AbstractMethodSignaturePlain.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameters(
+				coerceToTypeParametersElements(...(value as unknown as Parameters<typeof coerceToTypeParametersElements>))
+			)
+		: _resolveOneBranch<T.TypeParameters>(
+				value,
+				'type_parameters',
+				undefined,
+				true
+			)) as unknown as T.AbstractMethodSignaturePlain.Config['typeParameters'];
 }
 
 export function resolveAbstractMethodSignaturePlain_parameters(
 	value: T.AbstractMethodSignaturePlain.LooseConfig['parameters']
-): Admit<T.AbstractMethodSignaturePlain['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.AbstractMethodSignaturePlain.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.AbstractMethodSignaturePlain.Config['parameters'];
 }
 
 export function resolveAbstractMethodSignaturePlain_returnType(
@@ -10359,7 +10833,7 @@ export const coerceToAbstractMethodSignaturePlain: ConfigSeat<
 		name: resolveAbstractMethodSignaturePlain_name(input.name),
 		optional: resolveAbstractMethodSignaturePlain_optional(input.optional),
 		typeParameters: resolveAbstractMethodSignaturePlain_typeParameters(input.typeParameters),
-		parameters: resolveAbstractMethodSignaturePlain_parameters(input.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveAbstractMethodSignaturePlain_parameters(input.parameters),
 		returnType: resolveAbstractMethodSignaturePlain_returnType(input.returnType)
 	});
 };
@@ -10457,8 +10931,11 @@ export function resolveAbstractMethodSignatureSetter_name(
 
 export function resolveAbstractMethodSignatureSetter_parameters(
 	value: T.AbstractMethodSignatureSetter.LooseConfig['parameters']
-): Admit<T.AbstractMethodSignatureSetter['_parameters']> {
-	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(value, '_formal_parameters_set_accessor_signature');
+): T.AbstractMethodSignatureSetter.Config['parameters'] {
+	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(
+		value,
+		'_formal_parameters_set_accessor_signature'
+	) as unknown as T.AbstractMethodSignatureSetter.Config['parameters'];
 }
 
 export const coerceToAbstractMethodSignatureSetter: ConfigSeat<
@@ -10478,8 +10955,11 @@ export const coerceToAbstractMethodSignatureSetter: ConfigSeat<
 
 export function resolvePublicFieldDefinitionPlain_decorators(
 	value: T.PublicFieldDefinitionPlain.LooseConfig['decorators']
-): Admit<T.PublicFieldDefinitionPlain['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.PublicFieldDefinitionPlain.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(
+		value,
+		'decorator'
+	) as unknown as T.PublicFieldDefinitionPlain.Config['decorators'];
 }
 
 export function resolvePublicFieldDefinitionPlain_declare(
@@ -10552,8 +11032,13 @@ export function resolvePublicFieldDefinitionPlain_optionality(
 
 export function resolvePublicFieldDefinitionPlain_type(
 	value: T.PublicFieldDefinitionPlain.LooseConfig['type']
-): Admit<T.PublicFieldDefinitionPlain['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.PublicFieldDefinitionPlain.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.PublicFieldDefinitionPlain.Config['type'];
 }
 
 export function resolvePublicFieldDefinitionPlain_value(
@@ -10589,8 +11074,11 @@ export const coerceToPublicFieldDefinitionPlain: ConfigSeat<
 
 export function resolvePublicFieldDefinitionAccessor_decorators(
 	value: T.PublicFieldDefinitionAccessor.LooseConfig['decorators']
-): Admit<T.PublicFieldDefinitionAccessor['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.PublicFieldDefinitionAccessor.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(
+		value,
+		'decorator'
+	) as unknown as T.PublicFieldDefinitionAccessor.Config['decorators'];
 }
 
 export function resolvePublicFieldDefinitionAccessor_accessibilityModifier(
@@ -10642,8 +11130,13 @@ export function resolvePublicFieldDefinitionAccessor_name(
 
 export function resolvePublicFieldDefinitionAccessor_type(
 	value: T.PublicFieldDefinitionAccessor.LooseConfig['type']
-): Admit<T.PublicFieldDefinitionAccessor['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.PublicFieldDefinitionAccessor.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.PublicFieldDefinitionAccessor.Config['type'];
 }
 
 export function resolvePublicFieldDefinitionAccessor_value(
@@ -10757,8 +11250,15 @@ export function resolveConstructorDeclaration_accessibilityModifier(
 
 export function resolveConstructorDeclaration_parameters(
 	value: T.ConstructorDeclaration.LooseConfig['parameters'] | undefined
-): Admit<T.ConstructorDeclaration['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+): T.ConstructorDeclaration.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildFormalParameters(
+				coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+			)
+		: _resolveOneBranch<T.FormalParameters>(
+				value,
+				'formal_parameters'
+			)) as unknown as T.ConstructorDeclaration.Config['parameters'];
 }
 
 export function resolveConstructorDeclaration_body(
@@ -10776,15 +11276,18 @@ export const coerceToConstructorDeclaration: OptionalConfigSeat<
 	currentHandle()?.admit(TSKindId.ConstructorDeclaration, [input]);
 	return F.buildConstructorDeclaration({
 		accessibilityModifier: resolveConstructorDeclaration_accessibilityModifier(input?.accessibilityModifier),
-		parameters: resolveConstructorDeclaration_parameters(input?.parameters) ?? F.buildFormalParameters(),
+		parameters: resolveConstructorDeclaration_parameters(input?.parameters),
 		body: resolveConstructorDeclaration_body(input?.body) ?? F.buildStatementBlock()
 	});
 };
 
 export function resolveReceiverParameterDeclaration_decorators(
 	value: T.ReceiverParameterDeclaration.LooseConfig['decorators']
-): Admit<T.ReceiverParameterDeclaration['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+): T.ReceiverParameterDeclaration.Config['decorators'] {
+	return _resolveManyBranch<T.Decorator>(
+		value,
+		'decorator'
+	) as unknown as T.ReceiverParameterDeclaration.Config['decorators'];
 }
 
 export function resolveReceiverParameterDeclaration_accessibilityModifier(
@@ -10819,8 +11322,13 @@ export function resolveReceiverParameterDeclaration_readonly(
 
 export function resolveReceiverParameterDeclaration_type(
 	value: T.ReceiverParameterDeclaration.LooseConfig['type']
-): Admit<T.ReceiverParameterDeclaration['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+): T.ReceiverParameterDeclaration.Config['type'] {
+	return _resolveOneBranch<T.TypeAnnotation>(
+		value,
+		'type_annotation',
+		undefined,
+		true
+	) as unknown as T.ReceiverParameterDeclaration.Config['type'];
 }
 
 export function resolveReceiverParameterDeclaration_value(
@@ -10885,8 +11393,15 @@ export const coerceToFormalParametersElementsReceiver: OptionalConfigSeat<
 
 export function resolveFormalParametersElementsReceiverGroup_elements(
 	value: T.FormalParametersElementsReceiverGroup.LooseConfig['elements']
-): Admit<T.FormalParametersElementsReceiverGroup['_elements']> {
-	return _resolveOneBranch<T.FormalParametersElements>(value, 'formal_parameters_elements', undefined, true);
+): T.FormalParametersElementsReceiverGroup.Config['elements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToFormalParametersElements(...(value as unknown as Parameters<typeof coerceToFormalParametersElements>))
+		: _resolveOneBranch<T.FormalParametersElements>(
+				value,
+				'formal_parameters_elements',
+				undefined,
+				true
+			)) as unknown as T.FormalParametersElementsReceiverGroup.Config['elements'];
 }
 
 export const coerceToFormalParametersElementsReceiverGroup: Seat<
@@ -11025,8 +11540,15 @@ export function resolveInterfaceBody_opening(
 
 export function resolveInterfaceBody_members(
 	value: T.InterfaceBody.LooseConfig['members']
-): Admit<T.InterfaceBody['_members']> {
-	return _resolveOneBranch<T.ObjectTypeContent>(value, 'object_type_content', undefined, true);
+): T.InterfaceBody.Config['members'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToObjectTypeContent(...(value as unknown as Parameters<typeof coerceToObjectTypeContent>))
+		: _resolveOneBranch<T.ObjectTypeContent>(
+				value,
+				'object_type_content',
+				undefined,
+				true
+			)) as unknown as T.InterfaceBody.Config['members'];
 }
 
 export function resolveInterfaceBody_closing(

@@ -137,6 +137,7 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_pattern', 'LookaheadAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookaheadAssertion.pattern', 'a built Pattern', [51]]],
 		kindIds: [['_operator', 'LookaheadAssertion.operator', [8, 9]]],
+		hoisted: [['pattern', 'LookaheadAssertion.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['operator', 'pattern']
 	},
 	57: {
@@ -148,6 +149,7 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_pattern', 'LookbehindAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookbehindAssertion.pattern', 'a built Pattern', [51]]],
 		kindIds: [['_operator', 'LookbehindAssertion.operator', [8, 9]]],
+		hoisted: [['pattern', 'LookbehindAssertion.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['operator', 'pattern']
 	},
 	58: {
@@ -194,7 +196,8 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'anonymous_capturing_group',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'AnonymousCapturingGroup.pattern']],
-		nodeOnly: [['_pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51]]]
+		nodeOnly: [['_pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51]]],
+		hoisted: [['pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51, 52, 53]]]
 	},
 	63: {
 		kind: 'named_capturing_group',
@@ -212,13 +215,15 @@ export const structure: StructureTable = Object.freeze({
 			['_pattern', 'NamedCapturingGroup.pattern', 'a built Pattern', [51]]
 		],
 		kindIds: [['_operator', 'NamedCapturingGroup.operator', [11, 22]]],
+		hoisted: [['pattern', 'NamedCapturingGroup.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['operator', 'groupName', 'pattern']
 	},
 	64: {
 		kind: 'non_capturing_group',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'NonCapturingGroup.pattern']],
-		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51]]]
+		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51]]],
+		hoisted: [['pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51, 52, 53]]]
 	},
 	67: { kind: 'zero_or_more', booleans: [['_lazy', 'ZeroOrMore.lazy']], config: ['lazy'] },
 	68: { kind: 'one_or_more', booleans: [['_lazy', 'OneOrMore.lazy']], config: ['lazy'] },
@@ -372,6 +377,7 @@ export const structure: StructureTable = Object.freeze({
 			['_enabled', 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern', [51]]
 		],
+		hoisted: [['pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['enabled', 'pattern']
 	},
 	85: {
@@ -390,6 +396,7 @@ export const structure: StructureTable = Object.freeze({
 			['_disabled', 'InlineFlagsGroupToggle.disabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupToggle.pattern', 'a built Pattern', [51]]
 		],
+		hoisted: [['pattern', 'InlineFlagsGroupToggle.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['enabled', 'disabled', 'pattern']
 	},
 	86: {
@@ -403,6 +410,7 @@ export const structure: StructureTable = Object.freeze({
 			['_disabled', 'InlineFlagsGroupDisable.disabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern', [51]]
 		],
+		hoisted: [['pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['disabled', 'pattern']
 	}
 });

@@ -23,6 +23,7 @@ import type {
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
 import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
+import { endsAChain, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import {
 	finalSeatOf,
 	DELIMITER_IMPORT,
@@ -84,7 +85,9 @@ import {
 	leadingOptionsSplit,
 	slotStorageCoercion,
 	splicedEnvelopeKindExprs,
-	storageCallExpr
+	storageCallExpr,
+	hoistedListKind,
+	isListKind
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refineDefaultOf } from './refine-emit.ts';
@@ -346,6 +349,10 @@ function siblingLeadRefusalType(fullForm: FullForm, siblings: readonly TriviaSib
 	return `SiblingLeadRefusal<I, ${JSON.stringify(open)}, ${JSON.stringify(close)}, [${leads.join(', ')}]>`;
 }
 
+function hoistedSlotDefault(slot: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | null {
+	return wrapperChainOfSlot(nodeMap, slot) === undefined ? emptyDefaultOf(slot, nodeMap, kindEntries, 'F.') : null;
+}
+
 function emitBranchFrom(
 	node: FormChildForFrom,
 	nodeMap: NodeMap,
@@ -396,6 +403,20 @@ function emitBranchFrom(
 		// accept the `undefined` that reaches it too, even though the field
 		// itself is required within a config that IS provided.
 		const valueType = `T.${typeName}.LooseConfig[${key}]${inputOptional && isRequired(f) ? ' | undefined' : ''}`;
+		if (wrapperChainOfSlot(nodeMap, f) !== undefined) {
+			const listed = hoistedListKind(node, f, nodeMap);
+			const items =
+				listed === undefined
+					? undefined
+					: listed.wrappers.reduceRight((inner, wrapper) => `F.${wrapper.rawFactoryName}(${inner})`, `${listed.kind.fromFunctionName}(...(value as unknown as Parameters<typeof ${listed.kind.fromFunctionName}>))`);
+			lines.push(
+				`export function ${fieldResolverName(typeName, f)}(value: ${valueType}): T.${typeName}.Config[${key}] {`,
+				`  return ${items === undefined ? body : `(Array.isArray(value) && value.length > 0 ? ${items} : ${body})`} as unknown as T.${typeName}.Config[${key}];`,
+				'}',
+				''
+			);
+			continue;
+		}
 		const signature = `export function ${fieldResolverName(typeName, f)}(value: ${valueType}): Admit<T.${typeName}[${JSON.stringify(f.storageKey)}]> {`;
 		if (needsNonEmptyHoist(f, nodeMap)) {
 			const storageKeyExpr = JSON.stringify(f.storageKey);
@@ -565,7 +586,7 @@ function emitBranchFrom(
 				kindEntries
 			);
 			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
-			const directDefault = emptyDefaultOf(soleField, nodeMap, kindEntries, 'F.');
+			const directDefault = hoistedSlotDefault(soleField, nodeMap, kindEntries);
 			const guardedCall = directDefault ? `${call} ?? ${directDefault}` : call;
 			body.push(`  return ${factory}(${guardedCall}${callOptions})${spelledType === undefined ? '' : ` as ${spelledType}`};`);
 		} else {
@@ -573,7 +594,7 @@ function emitBranchFrom(
 			const entryOf = (f: AssembledNonterminal): string => {
 				const access = `${cfg}${inputOptional ? '?' : ''}.${f.propertyName}`;
 				const call = fieldValue(f, access);
-				const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
+				const emptyDefault = hoistedSlotDefault(f, nodeMap, kindEntries);
 				return `${f.propertyName}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call}`;
 			};
 			if (pinnedByDefault.size === 0) {
@@ -979,7 +1000,10 @@ function defaultArmKindOf(
 		});
 	}
 	const first = flagged[0];
-	return first === undefined || !isNodeRef(first) ? undefined : storageKindOfRef(first.node);
+	if (first !== undefined && isNodeRef(first)) return storageKindOfRef(first.node);
+	const lists = field.values.filter((v) => isNodeRef(v) && isListKind(nodeMap.nodes.get(storageKindOfRef(v.node))!, nodeMap));
+	const primary = lists[0];
+	return field.values.length > 1 && primary !== undefined && isNodeRef(primary) && endsAChain(nodeMap, field) ? storageKindOfRef(primary.node) : undefined;
 }
 
 function buildInternedArrayResolverCall(

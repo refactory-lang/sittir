@@ -40,7 +40,7 @@ Condition 2 accepts these tokens:
 - **A zero-width token the parser always produces**, such as python's `_indent` and `_dedent`, which open and close a block.
 - **The tokens around a polymorph's forms.** A polymorph whose forms sit between tokens it always spells is an ordinary wrapper, and conditions 1–3 decide it. An example is rust's `visibility_modifier_pub_scope`, `(` … `)`.
 
-The rule composes. When the wrapper's own slot admits only another wrapper that meets the rule, the holder reads through both (§6). A chain stops at a slot that admits more than one kind, so the read there is that slot's node.
+The rule composes. When the wrapper's own slot admits only another wrapper that meets the rule, the holder reads through both (§6). A chain stops at a slot that admits more than one kind, so the read there is that slot's node. It also stops where a list of wrappers meets a wrapper that holds a list, since reading through would flatten the arms: regex's `alternation.terms` holds `term` wrappers that are each a list of `term_group`, and `a|b` and `ab` would read the same.
 
 A wrapper reached under an alias meets the rule as the kind its alias site names in the holder's rule, a hidden rule the holder inlines included. Python's `block_statement` is `block` under `suite_block` and `suite_inline` elsewhere. Typescript's setter signatures reach `formal_parameters` as the hidden `_formal_parameters_set_accessor_signature`, whose one slot admits only a one-parameter envelope (§7).
 
@@ -78,7 +78,7 @@ The two layers apply the same idea on their own terms. The portable layer flatte
 
 ## 5. Hoisted wrappers
 
-Master's models. The holder slots are named `Type.getter`. The rule holds at 276 slots: python 71, rust 103 and typescript 102.
+Master's models. The holder slots are named `Type.getter`. The rule holds at 287 slots: python 71, rust 103, typescript 102, regex 8 and scm 3 (the 276 of the three first grammars, and regex's eight `pattern` slots and scm's three).
 
 - **221 are outermost holder slots listed by wrapper.** Python 44 go through 17 wrappers, rust 85 through 23, and typescript 92 through 22. This section lists their single wrappers, §6 their chains, and rows marked §7 have their exact reads and setters there.
 - **37 are listed by holder slot** at the end of this section, most of them the slot of a wrapper that hoists nowhere itself.

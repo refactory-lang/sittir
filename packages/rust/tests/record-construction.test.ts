@@ -94,19 +94,18 @@ describe('record construction', () => {
 		['records', records]
 	])('returns the node a bounded slot was given, under every parent that holds it: %s', (_, engine) => {
 		const b = engine.build;
-		const args = b.arguments(b.identifier('input'));
-		const run = b.callExpression({ function: b.identifier('run'), arguments: args }) as unknown as Built;
-		const go = b.callExpression({ function: b.identifier('go'), arguments: args }) as unknown as Built;
-		expectGiven((run.arguments as () => unknown)(), args);
-		expectGiven((go.arguments as () => unknown)(), args);
+		const callee = b.identifier('run');
+		const run = b.callExpression({ function: callee, arguments: [b.identifier('input')] }) as unknown as Built;
+		const go = b.callExpression({ function: callee, arguments: [b.identifier('other')] }) as unknown as Built;
+		expectGiven((run.function as () => unknown)(), callee);
+		expectGiven((go.function as () => unknown)(), callee);
 	});
 
 	it('rebuilds a bounded child through $with as the object builders do', () => {
 		const rebuilt = (engine: typeof objects): unknown => {
 			const b = engine.build;
-			const call = b.callExpression({ function: b.identifier('run'), arguments: b.arguments(b.identifier('input')) }) as unknown as Built;
-			const args = (call.arguments as () => Built)();
-			return readBack((args.$with as { elements(...items: unknown[]): unknown }).elements(b.identifier('x'), b.identifier('y')));
+			const call = b.callExpression({ function: b.identifier('run'), arguments: [b.identifier('input')] }) as unknown as Built;
+			return readBack((call.$with as { arguments(...items: unknown[]): unknown }).arguments(b.identifier('x'), b.identifier('y')));
 		};
 		expect(rebuilt(records)).toEqual(rebuilt(objects));
 	});

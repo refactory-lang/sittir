@@ -2,7 +2,7 @@ import { builtFlags, nullaryBuilt, readableEntries, textBuilt, type PortableCarr
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { derive, levelMembers, type Derivation, type Scalar } from '../../../bindings/derive.ts';
-import { concreteKinds, entryRoutes, guaranteedBy, modelNode, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
+import { concreteKinds, entryRoutes, guaranteedBy, modelNode, readEntriesLookup, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { findKindEntry, fixedTextKinds } from '../../kind-discriminant.ts';
 import type { PortableTypedInput } from './typed.ts';
@@ -69,19 +69,7 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, ta
 	const readPathsOf = (list: readonly ReadEntry[]): string[] => [...new Set(readableEntries(list.map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry) }))).map(({ path }) => path))];
 	const readable = entries.filter(([kind]) => (nodeOf(kind)?.subtypes.length ?? 0) === 0);
 	const readPaths = new Set(readable.flatMap(([, list]) => readPathsOf(list)));
-	const supertypesOf = new Map<string, string[]>();
-	for (const n of model.values()) for (const s of n.subtypes) (supertypesOf.get(s) ?? supertypesOf.set(s, []).get(s)!).push(n.kind);
-	const entriesFor = (kind: string, seen = new Set<string>()): readonly ReadEntry[] | undefined => {
-		const found = routes.readEntries.get(kind);
-		if (found !== undefined && found.length > 0) return found;
-		for (const s of supertypesOf.get(kind) ?? []) {
-			if (seen.has(s)) continue;
-			seen.add(s);
-			const up = entriesFor(s, seen);
-			if (up !== undefined) return up;
-		}
-		return undefined;
-	};
+	const entriesFor = readEntriesLookup(routes, model);
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
 	const literalTextsOf = (kind: string): readonly string[] | undefined => {
 		const node = nodeOf(kind);

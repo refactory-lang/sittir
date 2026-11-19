@@ -18,6 +18,8 @@ export type {
 	FlagOf,
 	QueryPlan,
 	QuerySlotEntry,
+	NativeSlotReader,
+	NativeSlots,
 	QuerySlots,
 	QuerySubject,
 	Recorder,
@@ -420,6 +422,12 @@ type FieldsOf<T> = T extends { readonly $fields: infer F }
 /** @internal — optional generator-emitted config/from widening hints keyed by raw field name. */
 type InputHintsOf<T> = T extends { readonly __inputHints__?: infer H } ? H : {};
 
+/** @internal — generator-emitted wrapper nodes a hoisted slot also admits as input, keyed by raw field name. */
+type WrapperHintsOf<T> = T extends { readonly __wrapperHints__?: infer H } ? H : {};
+
+/** @internal — the wrapper node a hoisted slot `K` admits beside its hoisted input, never widened into loose forms. */
+type WrapperInput<T, K extends keyof FieldsOf<T>> = K extends keyof WrapperHintsOf<T> ? Admit<WrapperHintsOf<T>[K]> : never;
+
 /** @internal — field input type prefers generator hints over storage type. */
 type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHintsOf<T>
 	? InputHintsOf<T>[K]
@@ -450,11 +458,14 @@ type WidenLooseFieldValue<
 	Depth extends number[],
 	NsMap,
 	Visited extends number[]
-> = K extends keyof LooseHintsOf<T>
-	?
-			| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
-			| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
-	: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>;
+> =
+	| WrapperInput<T, K>
+	| (K extends keyof WrapperHintsOf<T> ? Exclude<WidenSlotValue<WrapperHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]> : never)
+	| (K extends keyof LooseHintsOf<T>
+			?
+					| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
+					| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
+			: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>);
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
@@ -789,7 +800,20 @@ type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited 
 				: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 /** @internal — the Config value of field `K` of T: a keyword-presence slot as a boolean, a bitflag slot as its enum, a kind-enum slot as its kinds, any other as the node it admits; `undefined` too when an input may omit it. */
-type ConfigFieldValue<T, K extends keyof FieldsOf<T>> =
+type ConfigFieldValue<T, K extends keyof FieldsOf<T>> = WrapperInput<T, K> | ConfigHoistedValue<T, K> | ItemWrapperInput<T, K>;
+
+type WithItemWrapper<H extends readonly unknown[], W> = [] extends H ? readonly (H[number] | W)[] : readonly [H[number] | W, ...(H[number] | W)[]];
+
+type ItemWrapperInput<T, K extends keyof FieldsOf<T>> = K extends keyof WrapperHintsOf<T>
+	? NonNullable<FieldsOf<T>[K]> extends readonly unknown[]
+		? NonNullable<FieldInputType<T, K>> extends infer H extends readonly unknown[]
+			? Admit<AdmitSlotInput<WithItemWrapper<H, WrapperHintsOf<T>[K]>>> | UndefinedIfOptional<FieldsOf<T>, K>
+			: never
+		: never
+	: never;
+
+/** @internal — `ConfigFieldValue` without the wrapper a hoisted slot also admits. */
+type ConfigHoistedValue<T, K extends keyof FieldsOf<T>> =
 	IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
 		? boolean | UndefinedIfOptional<FieldsOf<T>, K>
 		: IsBitflagSlot<FieldInputType<T, K>> extends true
@@ -952,7 +976,7 @@ type WidenArrayMembers<
 	Visited extends number[]
 > = T extends readonly (infer E)[]
 	? [readonly []] extends [T]
-		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
+		? readonly WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
 		:
 				| { readonly [I in keyof T]: WidenValue<T[I], Scalars, Strings, Depth, NsMap, Visited> }
 				| Exclude<WidenValue<LastElement<T>, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>

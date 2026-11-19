@@ -7,6 +7,8 @@ import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
 import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, numberMembers, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
+import { slotReader } from '../record-view.ts';
+import { storedSlotRead } from '../stored-slot.ts';
 
 type Node = { readonly $type: number };
 
@@ -66,10 +68,11 @@ const present = (value: unknown): boolean => value !== undefined && value !== nu
 
 interface Hop {
 	readonly key: string;
+	readonly stored: string | undefined;
 	readonly builds: string | undefined;
 }
 
-const stepHops = (steps: readonly PortableSlotStep[]): readonly Hop[] => steps.map((step) => ({ key: step.key, builds: step.builder }));
+const stepHops = (steps: readonly PortableSlotStep[]): readonly Hop[] => steps.map((step) => ({ key: step.key, stored: step.stored, builds: step.builder }));
 
 
 const kindOfValue = (value: unknown): number | undefined => (typeof value === 'number' ? value : hasKind(value) ? value.$type : undefined);
@@ -105,10 +108,11 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const frame = frames.at(-1)!;
 		return frame.get(node) ?? frame.set(node, { keys: new Set() }).get(node)!;
 	};
-	const accessed = (node: object, key: string): unknown => {
+	const accessed = (node: object, key: string, stored?: string): unknown => {
 		if (frames.length > 0) touch(node).keys.add(key);
 		(touched.get(node) ?? touched.set(node, new Set()).get(node)!).add(key);
-		const read = (node as Record<string, unknown>)[key];
+		if (stored !== undefined) return storedSlotRead(node, key, stored);
+		const read = slotReader(node, key);
 		return typeof read === 'function' ? (read as () => unknown).call(node) : read;
 	};
 	const walk = (value: unknown, hops: readonly Hop[]): unknown => {
@@ -117,7 +121,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		for (let i = 0; i < hops.length; i++) {
 			if (Array.isArray(at)) return walk(at, hops.slice(i));
 			if (!hasKind(at)) return undefined;
-			const next = accessed(at, hops[i]!.key);
+			const next = accessed(at, hops[i]!.key, hops[i]!.stored);
 			if (next === undefined || next === null) return undefined;
 			if (Array.isArray(next) && hops[i]!.builds !== undefined) i++;
 			at = next;

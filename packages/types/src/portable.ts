@@ -103,11 +103,13 @@ export type PortableMount =
  * first optional slot on its way, through the steps and then the containers. A `mounted` step's builder is a mount: it builds the holder itself
  * with the kind at the key seated in it, taking its input as the mount says, and a deeper mount on the same holder replaces it. A `flatten`
  * step's kind has no builder: its holder takes the next step's key in its own input, in place of this one. A `seated` step's kind has no
- * builder either: its holder takes, at the key, the arguments that kind's call shape gives its input. A `many` step's slot holds a list, so
+ * builder either: its holder takes, at the key, the arguments that kind's call shape gives its input. A `stored` step's next kind is a wrapper the
+ * holder's accessor reads through: the node's own slot, under that storage key, holds the wrapper, and a read goes there. A `many` step's slot holds a list, so
  * the kind built for the next step is the one element of it.
  */
 export interface PortableSlotStep {
 	readonly key: string;
+	readonly stored?: string;
 	readonly builder?: string;
 	readonly optional?: true;
 	readonly flatten?: true;

@@ -122,7 +122,7 @@ describe('an elements seat sets the element config objects its config surface ta
 			const stamped = [...types.matchAll(/ListSlotHint<[^;]*?,(T\.\w+\.Config)>;/g)];
 			expect(stamped).toHaveLength(carried.length);
 			for (const file of ['wrap.ts', 'factories/objects.ts']) {
-				const specs = [...read(grammar, file).matchAll(/element: \{ keys:/g)];
+				const specs = [...read(grammar, file).matchAll(/element:\s*\{\s*keys:/g)];
 				expect(specs).toHaveLength(carried.length);
 			}
 		});
