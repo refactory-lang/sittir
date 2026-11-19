@@ -194,8 +194,8 @@ export const structure: StructureTable = Object.freeze({
 			['_end', 'ClassRange.end']
 		],
 		nodeOnly: [
-			['_start', 'ClassRange.start', 'buildClassCharacter(…) / buildControlEscape(…)'],
-			['_end', 'ClassRange.end', 'buildClassCharacter(…) / buildControlEscape(…)']
+			['_start', 'ClassRange.start', 'buildClassCharacter(…) / buildControlEscape(…)', [20, 73, 76]],
+			['_end', 'ClassRange.end', 'buildClassCharacter(…) / buildControlEscape(…)', [20, 73, 76]]
 		],
 		config: ['start', 'end']
 	},
@@ -305,7 +305,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_content',
 				'TermGroup.content',
-				'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
+				'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)',
+				[2, 4, 5, 6, 12, 34, 36, 37, 54, 55, 58, 59, 62, 63, 64, 65, 71, 72, 73, 76]
 			],
 			[
 				'_quantifier',

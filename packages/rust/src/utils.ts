@@ -990,7 +990,9 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'non_special_token',
 		required: [['_content', 'content']],
 		single: [['_content', 'NonSpecialToken.content']],
-		nodeOnly: [['_content', 'NonSpecialToken.content', 'buildIdentifier(…)']]
+		nodeOnly: [
+			['_content', 'NonSpecialToken.content', 'buildIdentifier(…)', [1, 57, 124, 125, 126, 328, 341, 360, 361]]
+		]
 	},
 	190: {
 		kind: 'attribute_item',
@@ -1012,14 +1014,24 @@ export const structure: StructureTable = Object.freeze({
 			['_input', 'Attribute.input']
 		],
 		nodeOnly: [
-			['_path', 'Attribute.path', 'buildIdentifier(…)'],
+			['_path', 'Attribute.path', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 481]],
 			['_input', 'Attribute.input', 'a built AttributeInput', [368]]
 		],
 		config: ['path', 'input']
 	},
 	195: {
 		kind: 'declaration_list',
-		nodeOnly: [['_declarations', 'DeclarationList.declarations', 'a built DeclarationStatement']],
+		nodeOnly: [
+			[
+				'_declarations',
+				'DeclarationList.declarations',
+				'a built DeclarationStatement',
+				[
+					178, 190, 191, 197, 198, 204, 205, 206, 207, 208, 209, 214, 215, 223, 224, 259, 377, 378, 384, 385, 395, 396,
+					416, 417, 418, 423, 424, 425
+				]
+			]
+		],
 		lists: [['declarations', false, 0]]
 	},
 	197: {
@@ -1352,7 +1364,7 @@ export const structure: StructureTable = Object.freeze({
 	210: {
 		kind: 'function_modifiers',
 		nonEmpty: [['_modifier', 'function_modifiers.children']],
-		nodeOnly: [['_modifier', 'FunctionModifiers.modifiers', 'a built ExternModifier']],
+		nodeOnly: [['_modifier', 'FunctionModifiers.modifiers', 'a built ExternModifier', [234]]],
 		lists: [['modifiers', false, 0]]
 	},
 	211: {
@@ -1375,7 +1387,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_left',
 				'WherePredicate.left',
-				'a built Lifetime / TypeIdentifier / ScopedTypeIdentifier / GenericType / ReferenceType / PointerType / TupleType / ArrayType / HigherRankedTraitBound'
+				'a built Lifetime / TypeIdentifier / ScopedTypeIdentifier / GenericType / ReferenceType / PointerType / TupleType / ArrayType / HigherRankedTraitBound',
+				[217, 239, 240, 243, 246, 252, 253, 265, 341, 484]
 			],
 			['_bounds', 'WherePredicate.bounds', 'a built TraitBounds', [216]]
 		],
@@ -1568,7 +1581,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'UseDeclaration.visibilityModifier', 'a built VisibilityModifier', [235]],
-			['_argument', 'UseDeclaration.argument', 'buildIdentifier(…)']
+			['_argument', 'UseDeclaration.argument', 'buildIdentifier(…)', [1, 125, 126, 127, 226, 227, 228, 229, 263, 481]]
 		],
 		hoisted: [['visibilityModifier', 'UseDeclaration.visibilityModifier', 'a built VisibilityModifier', [235, 381]]],
 		config: ['visibilityModifier', 'argument']
@@ -1581,7 +1594,7 @@ export const structure: StructureTable = Object.freeze({
 			['_list', 'ScopedUseList.list']
 		],
 		nodeOnly: [
-			['_path', 'ScopedUseList.path', 'buildIdentifier(…)'],
+			['_path', 'ScopedUseList.path', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 481]],
 			['_list', 'ScopedUseList.list', 'a built UseList', [227]]
 		],
 		hoisted: [['list', 'ScopedUseList.list', 'a built UseList', [1, 125, 127, 226, 227, 228, 229, 263, 348]]],
@@ -1604,7 +1617,7 @@ export const structure: StructureTable = Object.freeze({
 			['_rename', 'UseAsClause.rename']
 		],
 		nodeOnly: [
-			['_name', 'UseAsClause.name', 'buildIdentifier(…)'],
+			['_name', 'UseAsClause.name', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 481]],
 			['_rename', 'UseAsClause.rename', 'buildIdentifier(…)', [1]]
 		],
 		config: ['name', 'rename']
@@ -1664,7 +1677,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'visibility_modifier',
 		required: [['_content', 'content']],
 		single: [['_content', 'VisibilityModifier.content']],
-		nodeOnly: [['_content', 'VisibilityModifier.content', 'a built VisibilityModifierPub']]
+		nodeOnly: [['_content', 'VisibilityModifier.content', 'a built VisibilityModifierPub', [381, 477]]]
 	},
 	237: {
 		kind: 'bracketed_type',
@@ -1946,8 +1959,8 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ScopedIdentifier.name']
 		],
 		nodeOnly: [
-			['_qualifier', 'ScopedIdentifier.qualifier', 'buildIdentifier(…)'],
-			['_name', 'ScopedIdentifier.name', 'buildIdentifier(…)']
+			['_qualifier', 'ScopedIdentifier.qualifier', 'buildIdentifier(…)', [1, 125, 126, 127, 237, 247, 263, 481]],
+			['_name', 'ScopedIdentifier.name', 'buildIdentifier(…)', [1, 125]]
 		],
 		config: ['qualifier', 'name']
 	},
@@ -1959,7 +1972,12 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ScopedTypeIdentifierInExpressionPosition.name']
 		],
 		nodeOnly: [
-			['_qualifier', 'ScopedTypeIdentifierInExpressionPosition.qualifier', 'buildIdentifier(…)'],
+			[
+				'_qualifier',
+				'ScopedTypeIdentifierInExpressionPosition.qualifier',
+				'buildIdentifier(…)',
+				[1, 125, 126, 127, 247, 263, 481]
+			],
 			['_name', 'ScopedTypeIdentifierInExpressionPosition.name', 'a built TypeIdentifier', [484]]
 		],
 		config: ['qualifier', 'name']
@@ -1972,7 +1990,12 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ScopedTypeIdentifier.name']
 		],
 		nodeOnly: [
-			['_qualifier', 'ScopedTypeIdentifier.qualifier', 'buildIdentifier(…)'],
+			[
+				'_qualifier',
+				'ScopedTypeIdentifier.qualifier',
+				'buildIdentifier(…)',
+				[1, 125, 126, 127, 237, 246, 247, 263, 481]
+			],
 			['_name', 'ScopedTypeIdentifier.name', 'a built TypeIdentifier', [484]]
 		],
 		config: ['qualifier', 'name']
@@ -2085,7 +2108,15 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'CallExpression.arguments']
 		],
 		nodeOnly: [
-			['_function', 'CallExpression.function', 'buildIdentifier(…)'],
+			[
+				'_function',
+				'CallExpression.function',
+				'buildIdentifier(…)',
+				[
+					1, 124, 127, 245, 259, 263, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287,
+					292, 297, 298, 299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328
+				]
+			],
 			['_arguments', 'CallExpression.arguments', 'a built Arguments', [277]]
 		],
 		hoisted: [['arguments', 'CallExpression.arguments', 'a built Arguments', [258, 277, 354, 431]]],
@@ -2657,7 +2688,7 @@ export const structure: StructureTable = Object.freeze({
 	348: {
 		kind: 'use_clauses',
 		nonEmpty: [['_item', 'use_clauses.elements']],
-		nodeOnly: [['_item', 'UseClauses.items', 'buildIdentifier(…)']],
+		nodeOnly: [['_item', 'UseClauses.items', 'buildIdentifier(…)', [1, 125, 126, 127, 226, 227, 228, 229, 263, 481]]],
 		lists: [['items', false, 0]]
 	},
 	349: {
@@ -2724,13 +2755,13 @@ export const structure: StructureTable = Object.freeze({
 	358: {
 		kind: 'struct_pattern_elements',
 		nonEmpty: [['_item', 'struct_pattern_elements.elements']],
-		nodeOnly: [['_item', 'StructPatternElements.items', 'a built FieldPattern']],
+		nodeOnly: [['_item', 'StructPatternElements.items', 'a built FieldPattern', [320, 321]]],
 		lists: [['items', false, 0]]
 	},
 	359: {
 		kind: 'use_wildcard_group',
 		single: [['_path', 'UseWildcardGroup.path']],
-		nodeOnly: [['_path', 'UseWildcardGroup.path', 'buildIdentifier(…)']]
+		nodeOnly: [['_path', 'UseWildcardGroup.path', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 481]]]
 	},
 	363: {
 		kind: 'attributed_element',
@@ -2807,7 +2838,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_parameters', 'ClosureExpressionExpr.parameters', 'a built ClosureParameters', [302]],
-			['_body', 'ClosureExpressionExpr.body', 'a built Expression']
+			['_body', 'ClosureExpressionExpr.body', 'a built Expression', [258]]
 		],
 		booleans: [
 			['_static', 'ClosureExpressionExpr.static'],
@@ -2938,13 +2969,20 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'visibility_modifier_pub_scope_in_path',
 		required: [['_path', 'path']],
 		single: [['_path', 'VisibilityModifierPubScopeInPath.path']],
-		nodeOnly: [['_path', 'VisibilityModifierPubScopeInPath.path', 'buildIdentifier(…)']]
+		nodeOnly: [['_path', 'VisibilityModifierPubScopeInPath.path', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 481]]]
 	},
 	380: {
 		kind: 'visibility_modifier_pub_scope',
 		required: [['_content', 'content']],
 		single: [['_content', 'VisibilityModifierPubScope.content']],
-		nodeOnly: [['_content', 'VisibilityModifierPubScope.content', 'a built VisibilityModifierPubScopeInPath']]
+		nodeOnly: [
+			[
+				'_content',
+				'VisibilityModifierPubScope.content',
+				'a built VisibilityModifierPubScopeInPath',
+				[125, 126, 379, 481]
+			]
+		]
 	},
 	381: {
 		kind: 'visibility_modifier_pub',
@@ -3244,17 +3282,23 @@ export const structure: StructureTable = Object.freeze({
 	},
 	411: {
 		kind: 'delim_token_tree_paren',
-		nodeOnly: [['_delim_tokens', 'DelimTokenTreeParen.delimTokens', 'a built NonSpecialToken / DelimTokenTree']],
+		nodeOnly: [
+			['_delim_tokens', 'DelimTokenTreeParen.delimTokens', 'a built NonSpecialToken / DelimTokenTree', [189, 260]]
+		],
 		lists: [['delimTokens', false, 0]]
 	},
 	412: {
 		kind: 'delim_token_tree_bracket',
-		nodeOnly: [['_delim_tokens', 'DelimTokenTreeBracket.delimTokens', 'a built NonSpecialToken / DelimTokenTree']],
+		nodeOnly: [
+			['_delim_tokens', 'DelimTokenTreeBracket.delimTokens', 'a built NonSpecialToken / DelimTokenTree', [189, 260]]
+		],
 		lists: [['delimTokens', false, 0]]
 	},
 	413: {
 		kind: 'delim_token_tree_brace',
-		nodeOnly: [['_delim_tokens', 'DelimTokenTreeBrace.delimTokens', 'a built NonSpecialToken / DelimTokenTree']],
+		nodeOnly: [
+			['_delim_tokens', 'DelimTokenTreeBrace.delimTokens', 'a built NonSpecialToken / DelimTokenTree', [189, 260]]
+		],
 		lists: [['delimTokens', false, 0]]
 	},
 	414: {
@@ -3337,7 +3381,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'right']
 		],
 		single: [['_right', 'RangePatternPrefix.right']],
-		nodeOnly: [['_right', 'RangePatternPrefix.right', 'buildIdentifier(…)']],
+		nodeOnly: [['_right', 'RangePatternPrefix.right', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]]],
 		kindIds: [['_operator', 'RangePatternPrefix.operator', [100, 137]]],
 		config: ['operator', 'right']
 	},
@@ -3348,7 +3392,9 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'right']
 		],
 		single: [['_right', 'RangePatternWithLeftWithRight.right']],
-		nodeOnly: [['_right', 'RangePatternWithLeftWithRight.right', 'buildIdentifier(…)']],
+		nodeOnly: [
+			['_right', 'RangePatternWithLeftWithRight.right', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]]
+		],
 		kindIds: [['_operator', 'RangePatternWithLeftWithRight.operator', [48, 100, 137]]],
 		config: ['operator', 'right']
 	},
@@ -3363,8 +3409,8 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'RangePatternWithLeft.content']
 		],
 		nodeOnly: [
-			['_left', 'RangePatternWithLeft.left', 'buildIdentifier(…)'],
-			['_content', 'RangePatternWithLeft.content', 'a built RangePatternWithLeftWithRight']
+			['_left', 'RangePatternWithLeft.left', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]],
+			['_content', 'RangePatternWithLeft.content', 'a built RangePatternWithLeftWithRight', [420, 421]]
 		],
 		config: ['left', 'content']
 	},
@@ -3503,7 +3549,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_attribute_item', 'AttributedParameter.attributeItem', 'a built AttributeItem', [190]],
-			['_content', 'AttributedParameter.content', 'a built Parameter / VariadicParameter / Type']
+			['_content', 'AttributedParameter.content', 'a built Parameter / VariadicParameter / Type', [232, 233, 236]]
 		],
 		hoisted: [
 			[
@@ -3627,13 +3673,31 @@ export const structure: StructureTable = Object.freeze({
 	437: {
 		kind: 'trait_interface_declaration_body',
 		nodeOnly: [
-			['_declarations', 'TraitInterfaceDeclarationBody.declarations', 'a built DeclarationStatementTraitItem']
+			[
+				'_declarations',
+				'TraitInterfaceDeclarationBody.declarations',
+				'a built DeclarationStatementTraitItem',
+				[
+					178, 190, 191, 197, 198, 204, 205, 206, 207, 214, 215, 223, 224, 259, 377, 378, 384, 385, 395, 396, 416, 417,
+					418, 423, 424, 425, 480, 483
+				]
+			]
 		],
 		lists: [['declarations', false, 0]]
 	},
 	438: {
 		kind: 'extension_declaration_body',
-		nodeOnly: [['_declarations', 'ExtensionDeclarationBody.declarations', 'a built DeclarationStatementImplItemBody']],
+		nodeOnly: [
+			[
+				'_declarations',
+				'ExtensionDeclarationBody.declarations',
+				'a built DeclarationStatementImplItemBody',
+				[
+					178, 190, 191, 197, 198, 204, 205, 206, 207, 209, 214, 215, 223, 224, 259, 377, 378, 384, 385, 395, 396, 416,
+					417, 418, 423, 424, 425, 480
+				]
+			]
+		],
 		lists: [['declarations', false, 0]]
 	},
 	439: {

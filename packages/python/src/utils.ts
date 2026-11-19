@@ -833,7 +833,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_module_name', 'ImportFromStatement.moduleName', 'a built RelativeImport / DottedName', [138, 187]],
-			['_content', 'ImportFromStatement.content', 'a built ImportList / ParenthesizedImportList']
+			['_content', 'ImportFromStatement.content', 'a built ImportList / ParenthesizedImportList', [141, 143, 299]]
 		],
 		config: ['moduleName', 'content']
 	},
@@ -1323,7 +1323,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_content',
 				'SimplePattern.content',
-				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName'
+				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName',
+				[69, 70, 71, 187, 191, 192, 195, 196, 197, 252, 253, 260, 261, 283, 284, 289, 296]
 			]
 		]
 	},
@@ -1358,12 +1359,14 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_left',
 				'UnionPattern.left',
-				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName'
+				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName',
+				[69, 70, 71, 187, 191, 192, 195, 196, 197, 252, 253, 260, 261, 283, 284, 289, 296]
 			],
 			[
 				'_right',
 				'UnionPattern.right',
-				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName'
+				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName',
+				[69, 70, 71, 187, 191, 192, 195, 196, 197, 252, 253, 260, 261, 283, 284, 289, 296]
 			]
 		],
 		config: ['left', 'right']
@@ -1388,7 +1391,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_key',
 				'KeyValuePattern.key',
-				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName'
+				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName',
+				[69, 70, 71, 187, 191, 192, 195, 196, 197, 252, 253, 260, 261, 283, 284, 289, 296]
 			],
 			['_value', 'KeyValuePattern.value', 'a built CasePattern', [188]]
 		],
@@ -1410,7 +1414,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_pattern',
 				'KeywordPattern.pattern',
-				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName'
+				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName',
+				[69, 70, 71, 187, 191, 192, 195, 196, 197, 252, 253, 260, 261, 283, 284, 289, 296]
 			]
 		],
 		config: ['name', 'pattern']
@@ -2054,7 +2059,14 @@ export const structure: StructureTable = Object.freeze({
 	254: {
 		kind: 'string_content',
 		nonEmpty: [['_elements', 'string_content.children']],
-		nodeOnly: [['_elements', 'StringContent.elements', 'buildEscapeInterpolation(…) / buildStringFragment(…)']],
+		nodeOnly: [
+			[
+				'_elements',
+				'StringContent.elements',
+				'buildEscapeInterpolation(…) / buildStringFragment(…)',
+				[125, 126, 257, 258]
+			]
+		],
 		lists: [['elements', false, 0]]
 	},
 	255: {
@@ -2092,7 +2104,14 @@ export const structure: StructureTable = Object.freeze({
 	265: {
 		kind: 'simple_statements_elements',
 		nonEmpty: [['_item', 'simple_statements_elements.elements']],
-		nodeOnly: [['_item', 'SimpleStatementsElements.items', 'a built SimpleStatement']],
+		nodeOnly: [
+			[
+				'_item',
+				'SimpleStatementsElements.items',
+				'a built SimpleStatement',
+				[136, 139, 140, 144, 146, 147, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]
+			]
+		],
 		lists: [['items', false, 0]]
 	},
 	266: {
@@ -2296,13 +2315,13 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'splat_pattern_list',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'SplatPatternList.pattern']],
-		nodeOnly: [['_pattern', 'SplatPatternList.pattern', 'buildIdentifier(…)']]
+		nodeOnly: [['_pattern', 'SplatPatternList.pattern', 'buildIdentifier(…)', [1]]]
 	},
 	301: {
 		kind: 'splat_pattern_dictionary',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'SplatPatternDictionary.pattern']],
-		nodeOnly: [['_pattern', 'SplatPatternDictionary.pattern', 'buildIdentifier(…)']]
+		nodeOnly: [['_pattern', 'SplatPatternDictionary.pattern', 'buildIdentifier(…)', [1]]]
 	},
 	302: {
 		kind: 'assignment_eq',
