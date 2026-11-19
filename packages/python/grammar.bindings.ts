@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "c739b812482254837be8a4707d376ce8a26ebd4f4ef679f1ae7bcbe24ae8e98f";
+export const hash = "44d5224debd0983a0177853bd27e2955b120c96b8343a0a1085c32569e69a141";
 
 export const renames = {
 	module: "file",

@@ -18818,6 +18818,24 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'type.rest': never;
 		readonly 'type.union': never;
 	};
+	readonly facts: {
+		readonly 'declaration.method': {
+			readonly override: 'override' | 'typing.override';
+			readonly static: 'staticmethod';
+		};
+		readonly 'declaration.method.special': {
+			readonly override: 'override' | 'typing.override';
+			readonly static: 'staticmethod';
+		};
+		readonly 'declaration.property.getter': {
+			readonly getter: 'property';
+			readonly override: 'override' | 'typing.override';
+		};
+		readonly 'declaration.property.setter': {
+			readonly override: 'override' | 'typing.override';
+			readonly setter: `${string}.setter`;
+		};
+	};
 	readonly decided: {
 		readonly 'clause.case.match': { readonly body: 'statement.block' };
 		readonly 'clause.catch': { readonly body: 'statement.block' };

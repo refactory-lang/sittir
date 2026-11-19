@@ -287,7 +287,6 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				.flatMap((container) => container.slots ?? [])
 				.find((slot) => slot.name === name);
 		const spellingText = (fact: PortableSpelledFact, spelling: PortableSpelling, kind: number, seat: PortableSeat): string | undefined => {
-			if (spelling.holes !== undefined) return undefined;
 			if (!spellingTexts.has(spelling)) {
 				const slot = slotAt(seat, fact.slot);
 				spellingTexts.set(spelling, slot === undefined ? undefined : spellingOf(kind, fact.name, element(spelling.item, slot, slot.seats, 0).value));
@@ -296,9 +295,22 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 		};
 		const filledAt = (item: PortableStructure, [key, ...rest]: readonly string[], text: string): PortableStructure =>
 			({ ...item, [key!]: rest.length === 0 ? text : filledAt((item[key!] ?? {}) as PortableStructure, rest, text) }) as PortableStructure;
+		const spelledAs = ([first, ...rest]: readonly string[], text: string): boolean => {
+			if (!text.startsWith(first!)) return false;
+			let at = first!.length;
+			for (const [i, part] of rest.entries()) {
+				const found = i === rest.length - 1 ? (text.endsWith(part) && text.length - part.length >= at ? text.length - part.length : -1) : text.indexOf(part, at);
+				if (found < 0) return false;
+				at = found + part.length;
+			}
+			return at === text.length;
+		};
 		const spelledItem = (fact: PortableSpelledFact, structure: PortableStructure, kind: number, seat: PortableSeat): PortableStructure => {
 			const spelling = structure.$at?.[fact.name]?.spelling;
-			const chosen = spelling === undefined ? fact.spellings[0]! : fact.spellings.find((candidate) => spellingText(fact, candidate, kind, seat) === spelling);
+			const chosen =
+				spelling === undefined
+					? fact.spellings[0]!
+					: fact.spellings.find((candidate) => (candidate.holes === undefined ? spellingText(fact, candidate, kind, seat) === spelling : spelledAs(candidate.text, spelling)));
 			if (chosen === undefined) throw new Error(`portable build: ${structure.$path}'s ${fact.name} has no ${language} spelling ${JSON.stringify(spelling)}`);
 			return Object.entries(chosen.holes ?? {}).reduce((item, [hole, keys]) => {
 				const text = structure[hole];

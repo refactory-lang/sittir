@@ -20,6 +20,9 @@ const missing = (owner: string): never => {
 const unrouted = (owner: string, slot: string): never => {
 	throw new Error(owner + ' has no slot ' + slot);
 };
+const unset = (owner: string, fact: string): never => {
+	throw new Error(owner + ': $at names ' + fact + ', which it does not set');
+};
 const seated = <
 	V extends
 		| number
@@ -65,21 +68,6 @@ const unnumbered = (owner: string, scalar: string): never => {
 const unspelled = (owner: string, value: number | bigint): never => {
 	throw new Error(owner + ' cannot spell ' + value);
 };
-const placeOf = (
-	value: {
-		readonly $path?: string;
-		readonly $at?: Readonly<
-			Record<
-				string,
-				{
-					readonly index: number;
-					readonly spelling?: string;
-				}
-			>
-		>;
-	},
-	fact: string
-) => value.$at?.[fact];
 const withSpelled = <T>(
 	held: ReadonlyArray<T>,
 	spelled: ReadonlyArray<{
@@ -45334,6 +45322,8 @@ const declaration_parameter_typed_default$205 = (
 const declaration_property_getter$361 = (
 	input: PathInput<PythonMap, 'declaration.property.getter'>
 ): ReturnType<typeof b.methodDeclaration> => {
+	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
+		return unset('declaration.property.getter', 'override');
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	const typeParameters$first = (input.typeParameters ?? [])[0];
@@ -45396,6 +45386,8 @@ const declaration_property_getter$361 = (
 const declaration_property_setter$361 = (
 	input: PathInput<PythonMap, 'declaration.property.setter'>
 ): ReturnType<typeof b.methodDeclaration> => {
+	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
+		return unset('declaration.property.setter', 'override');
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	const typeParameters$first = (input.typeParameters ?? [])[0];
@@ -46468,27 +46460,27 @@ const declaration_property_getter = (input: PathInput<PythonMap, 'declaration.pr
 				[],
 				[
 					{
-						index: placeOf(input, 'getter')?.index,
+						index: input.$at?.getter?.index,
 						item: declaration_property_getter$361_decorators(
-							placeOf(input, 'getter')?.spelling === undefined
+							input.$at?.getter?.spelling === undefined
 								? { $path: 'identifier', $value: 'property' }
-								: placeOf(input, 'getter')?.spelling === 'property'
+								: input.$at?.getter?.spelling === 'property'
 									? { $path: 'identifier', $value: 'property' }
-									: noSpelling('declaration.property.getter.getter', placeOf(input, 'getter')?.spelling)
+									: noSpelling('declaration.property.getter.getter', input.$at?.getter?.spelling)
 						)
 					},
 					...((input.$flags ?? []).includes('override')
 						? [
 								{
-									index: placeOf(input, 'override')?.index,
+									index: input.$at?.override?.index,
 									item: declaration_property_getter$361_decorators(
-										placeOf(input, 'override')?.spelling === undefined
+										input.$at?.override?.spelling === undefined
 											? { $path: 'identifier', $value: 'override' }
-											: placeOf(input, 'override')?.spelling === 'override'
+											: input.$at?.override?.spelling === 'override'
 												? { $path: 'identifier', $value: 'override' }
-												: placeOf(input, 'override')?.spelling === 'typing.override'
+												: input.$at?.override?.spelling === 'typing.override'
 													? { $path: 'expression.member', object: 'typing', property: 'override' }
-													: noSpelling('declaration.property.getter.override', placeOf(input, 'override')?.spelling)
+													: noSpelling('declaration.property.getter.override', input.$at?.override?.spelling)
 									)
 								}
 							]
@@ -46507,29 +46499,35 @@ const declaration_property_setter = (input: PathInput<PythonMap, 'declaration.pr
 				[],
 				[
 					{
-						index: placeOf(input, 'setter')?.index,
+						index: input.$at?.setter?.index,
 						item: declaration_property_setter$361_decorators(
-							placeOf(input, 'setter')?.spelling === undefined
+							input.$at?.setter?.spelling === undefined
 								? {
 										$path: 'expression.member',
 										property: 'setter',
 										object: typeof input.name === 'string' ? input.name : missing('declaration.property.setter.name')
 									}
-								: noSpelling('declaration.property.setter.setter', placeOf(input, 'setter')?.spelling)
+								: input.$at?.setter?.spelling.endsWith('.setter')
+									? {
+											$path: 'expression.member',
+											property: 'setter',
+											object: typeof input.name === 'string' ? input.name : missing('declaration.property.setter.name')
+										}
+									: noSpelling('declaration.property.setter.setter', input.$at?.setter?.spelling)
 						)
 					},
 					...((input.$flags ?? []).includes('override')
 						? [
 								{
-									index: placeOf(input, 'override')?.index,
+									index: input.$at?.override?.index,
 									item: declaration_property_setter$361_decorators(
-										placeOf(input, 'override')?.spelling === undefined
+										input.$at?.override?.spelling === undefined
 											? { $path: 'identifier', $value: 'override' }
-											: placeOf(input, 'override')?.spelling === 'override'
+											: input.$at?.override?.spelling === 'override'
 												? { $path: 'identifier', $value: 'override' }
-												: placeOf(input, 'override')?.spelling === 'typing.override'
+												: input.$at?.override?.spelling === 'typing.override'
 													? { $path: 'expression.member', object: 'typing', property: 'override' }
-													: noSpelling('declaration.property.setter.override', placeOf(input, 'override')?.spelling)
+													: noSpelling('declaration.property.setter.override', input.$at?.override?.spelling)
 									)
 								}
 							]

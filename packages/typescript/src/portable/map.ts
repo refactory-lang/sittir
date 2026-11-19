@@ -32581,6 +32581,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'type.tuple': never;
 		readonly 'type.union': never;
 	};
+	readonly facts: {};
 	readonly decided: {
 		readonly 'attribute.call': { readonly function: 'attribute.member' };
 		readonly 'attribute.member': { readonly object: 'attribute.member' };

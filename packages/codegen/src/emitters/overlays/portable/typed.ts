@@ -44,6 +44,7 @@ export interface PortableTypedOutput {
 	readonly textInputs: readonly string[];
 	readonly textValues: readonly string[];
 	readonly flags: readonly (readonly [path: string, flags: readonly string[]])[];
+	readonly facts: readonly (readonly [path: string, facts: readonly string[]])[];
 	readonly decided: MapDecided;
 }
 
@@ -454,5 +455,5 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	}
 	emit('', ...unmappedKindsBlock(VOCABULARY_INDEX, input.grammar, nodeMap, unmappedViews));
 	const grammarMap = emitGrammarMap(typedInput, exact);
-	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues, flags: grammarMap.flags, decided: grammarMap.decided };
+	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues, flags: grammarMap.flags, facts: grammarMap.facts, decided: grammarMap.decided };
 }

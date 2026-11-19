@@ -22,6 +22,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 				decided: {}
 		});
@@ -61,6 +62,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 				decided: {}
 		});
@@ -113,6 +115,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: {}
 		});
@@ -136,6 +139,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 				decided: {}
 		});
@@ -164,6 +168,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes,
 			decided: {}
 		});
@@ -215,6 +220,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 				decided: {}
 		});
@@ -271,6 +277,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: {}
 		});
@@ -313,6 +320,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: {}
 		});
@@ -347,6 +355,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 				decided: {}
 		});
@@ -403,6 +412,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: {}
 		});
@@ -447,6 +457,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: {}
 		});
@@ -496,6 +507,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: {}
 		});
@@ -529,6 +541,7 @@ describe('the pinned child emits a portable build module', () => {
 				textInputs: [],
 				textValues: [],
 				flags: {},
+				facts: {},
 				holes: [],
 				decided: {}
 			});
@@ -563,6 +576,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: ['literal.string.text'],
 			textValues,
 			flags: {},
+			facts: {},
 			holes: [],
 				decided: {}
 		});
@@ -593,6 +607,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: { 'declaration.function': { body: 'statement.block' } }
 		});
@@ -627,6 +642,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: { 'declaration.function': { body: 'statement.block' } }
 		});
@@ -667,6 +683,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: { 'declaration.function': { body: 'statement.block', doc: 'literal.string', typeParameters: 'declaration.type_parameter', parameters: 'declaration.parameter' } }
 		});
@@ -769,6 +786,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: [],
 			flags: {},
+			facts: {},
 			holes: [],
 			decided: {}
 		});
@@ -799,8 +817,8 @@ describe('the pinned child emits a portable build module', () => {
 			flag: 'override',
 			slot: 'decorators',
 			spellings: [
-				{ item: { $path: 'identifier', $value: 'override' }, text: 'override' },
-				{ item: { $path: 'expression.member', object: 'typing', property: 'override' }, text: 'typing.override' }
+				{ item: { $path: 'identifier', $value: 'override' }, text: ['override'] },
+				{ item: { $path: 'expression.member', object: 'typing', property: 'override' }, text: ['typing.override'] }
 			]
 		};
 		const method = (facts: readonly PortableSpelledFact[], slots: readonly PortableSlotRoute[] = []) => [{ kind: 361, builder: 'functionDefinition', when: [], slots, presets: [], flags: {}, facts }];
@@ -813,11 +831,11 @@ describe('the pinned child emits a portable build module', () => {
 			table: {
 				builders: { functionDefinition: 'config', decoratedDefinition: 'config', decorator: 'config', identifier: 'text', attribute: 'config', block: 'config' },
 				paths: {
-					'declaration.method': { root: true, arms: method([{ name: 'static', flag: 'static', slot: 'decorators', spellings: [{ item: { $path: 'identifier', $value: 'staticmethod' }, text: 'staticmethod' }] }, override]) },
-					'declaration.property.getter': { root: true, arms: method([{ name: 'getter', slot: 'decorators', spellings: [{ item: { $path: 'identifier', $value: 'property' }, text: 'property' }] }, override]) },
+					'declaration.method': { root: true, arms: method([{ name: 'static', flag: 'static', slot: 'decorators', spellings: [{ item: { $path: 'identifier', $value: 'staticmethod' }, text: ['staticmethod'] }] }, override]) },
+					'declaration.property.getter': { root: true, arms: method([{ name: 'getter', slot: 'decorators', spellings: [{ item: { $path: 'identifier', $value: 'property' }, text: ['property'] }] }, override]) },
 					'declaration.property.setter': {
 						root: true,
-						arms: method([{ name: 'setter', slot: 'decorators', spellings: [{ item: { $path: 'expression.member', property: 'setter' }, holes: { name: ['object'] } }] }], [text('name')])
+						arms: method([{ name: 'setter', slot: 'decorators', spellings: [{ item: { $path: 'expression.member', property: 'setter' }, holes: { name: ['object'] }, text: ['', '.setter'] }] }], [text('name')])
 					},
 					'statement.block': {
 						root: true,
@@ -848,6 +866,7 @@ describe('the pinned child emits a portable build module', () => {
 			textInputs: [],
 			textValues: ['identifier'],
 			flags: {},
+			facts: { 'declaration.method': ['override', 'static'], 'declaration.property.getter': ['getter', 'override'], 'declaration.property.setter': ['setter'] },
 			holes: [],
 			decided: {}
 		});
@@ -875,6 +894,10 @@ describe('the pinned child emits a portable build module', () => {
 			decoratedDefinition: { definition: { functionDefinition: { name: name('x') } }, decorators: [decorator({ attribute: { object: name('x'), property: name('setter') } })] }
 		});
 		expect(() => built({ $path: 'declaration.method', $flags: ['override'], $at: { override: { index: 0, spelling: 'overrides' } } })).toThrow('declaration.method.override has no spelling "overrides"');
+		expect(property.setter({ $path: 'declaration.property.setter', name: 'x', $at: { setter: { index: 0, spelling: 'x.setter' } } })).toEqual(property.setter({ $path: 'declaration.property.setter', name: 'x' }));
+		expect(() => property.setter({ $path: 'declaration.property.setter', name: 'x', $at: { setter: { index: 0, spelling: 'x.getter' } } })).toThrow('declaration.property.setter.setter has no spelling "x.getter"');
+		expect(() => built({ $path: 'declaration.method', $at: { override: { index: 0 } } })).toThrow('declaration.method: $at names override, which it does not set');
+		expect(module).not.toContain('placeOf');
 		expect(portableBuild.statement.block({ $path: 'statement.block', statements: [{ $path: 'declaration.property.getter' }, { $path: 'declaration.method' }] })).toEqual({
 			block: { statements: [{ decoratedDefinition: { definition: bare, decorators: [decorator(name('property'))] } }, bare] }
 		});

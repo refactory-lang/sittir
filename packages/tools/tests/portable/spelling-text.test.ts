@@ -23,7 +23,7 @@ const spellingsOf = (table: PortableBuildTable): readonly Spelled[] =>
 	Object.entries(table.paths).flatMap(([path, row]) => row.arms.flatMap((arm) => (arm.facts ?? []).flatMap((fact) => fact.spellings.map((spelling) => ({ path, fact: fact.name, spelling })))));
 
 describe("a spelled fact's stamped text", () => {
-	it('is the spelling the reader records at the fact, for every python spelling without holes', async () => {
+	it('is the spelling the reader records at the fact, split where its holes sit, for every python spelling', async () => {
 		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
 		const readAt = (path: string, fact: string, text: string): unknown => {
@@ -32,8 +32,9 @@ describe("a spelled fact's stamped text", () => {
 			return read.statements[0]!.body.statements[0]!.$at?.[fact]?.spelling;
 		};
 		const spelled = spellingsOf(pythonTable);
-		expect(spelled.filter(({ spelling }) => (spelling.text === undefined) === (spelling.holes === undefined)).map(({ path, fact }) => `${path} ${fact}`)).toEqual([]);
-		const texts = spelled.flatMap(({ path, fact, spelling }) => (spelling.text === undefined ? [] : [[path, fact, spelling.text] as const]));
+		expect(spelled.filter(({ spelling }) => spelling.text.length !== 1 + Object.keys(spelling.holes ?? {}).length).map(({ path, fact }) => `${path} ${fact}`)).toEqual([]);
+		expect(spelled.filter(({ spelling }) => spelling.holes !== undefined).map(({ path, fact, spelling }) => [path, fact, spelling.text])).toEqual([['declaration.property.setter', 'setter', ['', '.setter']]]);
+		const texts = spelled.flatMap(({ path, fact, spelling }) => (spelling.holes === undefined ? [[path, fact, spelling.text[0]!] as const] : []));
 		expect(texts.map(([path, fact, text]) => [path, fact, text, readAt(path, fact, text)]).filter(([, , text, read]) => read !== text)).toEqual([]);
 		expect(texts.map(([, fact, text]) => `${fact} ${text}`)).toEqual([
 			'static staticmethod',
@@ -61,7 +62,7 @@ describe("a spelled fact's stamped text", () => {
 			const bodies = loadRenderBodies('python');
 			const attribute = bodies.get('attribute')!;
 			const spell = (body: Body) => portableSpellingOf(entry, input!.model, routes, new Map([...bodies, ['attribute', body]]));
-			expect(spell(attribute).text).toBe('typing.override');
+			expect(spell(attribute).text).toEqual(['typing.override']);
 			expect(() => spell(attribute.filter((part) => part.kind !== 'text'))).toThrow('attribute spells "typing" and "override" with no gap between them');
 			expect(() => spell(attribute.filter((part) => part.kind !== 'slot' || part.name !== 'property'))).toThrow("attribute's render body places no property");
 		},

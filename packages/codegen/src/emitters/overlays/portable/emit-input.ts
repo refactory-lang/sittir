@@ -19,6 +19,7 @@ export interface PortableEmitInput<Table> {
 	readonly textInputs: readonly string[];
 	readonly textValues: readonly string[];
 	readonly flags: Readonly<Record<string, readonly string[]>>;
+	readonly facts: Readonly<Record<string, readonly string[]>>;
 	readonly holes: readonly (readonly [holder: number, key: string])[];
 	readonly decided: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }

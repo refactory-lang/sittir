@@ -33241,6 +33241,7 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'type.tuple': never;
 		readonly 'type.unit': never;
 	};
+	readonly facts: {};
 	readonly decided: {
 		readonly argument: { readonly attributes: 'attribute' };
 		readonly attribute: { readonly path: 'identifier.qualified' };

@@ -8,33 +8,39 @@ import type { PortableFactRecord } from './read-tests.ts';
 
 interface Spelled {
 	readonly kind: string;
-	readonly slots: Map<string, string | Spelled>;
+	readonly slots: Map<string, string | Spelled | null>;
 	value?: string;
 }
 
 const WORD = /[\p{L}\p{N}_]/u;
 
-function spelledText(spelled: Spelled, bodies: ReadonlyMap<string, Body>, refuse: (why: string) => never): string {
-	if (spelled.slots.size === 0) return spelled.value ?? refuse(`its item ${spelled.kind} states neither a text nor a slot`);
+function spelledPieces(spelled: Spelled, bodies: ReadonlyMap<string, Body>, refuse: (why: string) => never): readonly (string | null)[] {
+	if (spelled.slots.size === 0) return [spelled.value ?? refuse(`its item ${spelled.kind} states neither a text nor a slot`)];
 	const body = bodies.get(spelled.kind) ?? refuse(`${spelled.kind}, a kind its item holds, has no render body`);
-	const parts: string[] = [];
+	const pieces: (string | null)[] = [];
 	const placed = new Set<string>();
 	for (const part of body) {
 		if (part.kind === 'seam') continue;
-		if (part.kind === 'text') parts.push(part.text);
+		if (part.kind === 'text') pieces.push(part.text);
 		else if (part.kind === 'slot') {
 			const value = spelled.slots.get(part.name);
 			if (value === undefined) continue;
 			placed.add(part.name);
-			parts.push(typeof value === 'string' ? value : spelledText(value, bodies, refuse));
+			pieces.push(...(value !== null && typeof value === 'object' ? spelledPieces(value, bodies, refuse) : [value]));
 		} else refuse(`${spelled.kind}'s render body has a ${part.kind} part, which spells no one text`);
 	}
 	const unplaced = [...spelled.slots.keys()].filter((name) => !placed.has(name));
 	if (unplaced.length > 0) refuse(`${spelled.kind}'s render body places no ${unplaced.join(', ')}`);
-	const written = parts.filter((part) => part !== '');
-	for (let i = 1; i < written.length; i++)
-		if (WORD.test(written[i - 1]!.at(-1)!) && WORD.test(written[i]![0]!)) refuse(`${spelled.kind} spells ${JSON.stringify(written[i - 1])} and ${JSON.stringify(written[i])} with no gap between them`);
-	return written.join('');
+	return pieces;
+}
+
+function spelledText(spelled: Spelled, bodies: ReadonlyMap<string, Body>, refuse: (why: string) => never): readonly string[] {
+	const pieces = spelledPieces(spelled, bodies, refuse).filter((piece) => piece !== '');
+	for (let i = 1; i < pieces.length; i++) {
+		const [before, after] = [pieces[i - 1]!, pieces[i]!];
+		if (before !== null && after !== null && WORD.test(before.at(-1)!) && WORD.test(after[0]!)) refuse(`${spelled.kind} spells ${JSON.stringify(before)} and ${JSON.stringify(after)} with no gap between them`);
+	}
+	return pieces.reduce<string[]>((parts, piece) => (piece === null ? [...parts, ''] : [...parts.slice(0, -1), parts.at(-1)! + piece]), ['']);
 }
 
 export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: GrammarRoutes, bodies: ReadonlyMap<string, Body>): PortableSpelling {
@@ -80,17 +86,21 @@ export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: G
 				const next = selector.kind ?? (slot.kinds.length === 1 ? slot.kinds[0]! : refuse(`${holder}'s ${slot.name} holds more than one kind`));
 				into = (into[key] ??= { $path: vocabOf(next) }) as Record<string, unknown>;
 				const held = at.slots.get(slot.name);
-				const nested: Spelled = typeof held === 'object' ? held : { kind: next, slots: new Map() };
+				const nested: Spelled = held !== null && typeof held === 'object' ? held : { kind: next, slots: new Map() };
 				at.slots.set(slot.name, nested);
 				at = nested;
 				holder = next;
 			} else if ('text' in argument!) {
 				into[key] = argument.text;
 				at.slots.set(slot.name, argument.text);
-			} else holes[camel(argument!.capture)] = keys;
+			} else {
+				holes[camel(argument!.capture)] = keys;
+				at.slots.set(slot.name, null);
+			}
 		});
 	}
-	return Object.keys(holes).length === 0 ? { item: item as PortableSpelling['item'], text: spelledText(spelled, bodies, refuse) } : { item: item as PortableSpelling['item'], holes };
+	const text = spelledText(spelled, bodies, refuse);
+	return { item: item as PortableSpelling['item'], ...(Object.keys(holes).length === 0 ? {} : { holes }), text };
 }
 
 export function portableSpelledFactOf(fact: PortableFactRecord, entries: readonly ReadEntry[], model: SlotModel, routes: GrammarRoutes, bodies: ReadonlyMap<string, Body>): PortableSpelledFact {

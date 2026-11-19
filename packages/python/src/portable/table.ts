@@ -2834,7 +2834,7 @@ export const build: PortableBuildTable = {
 										$path: 'identifier',
 										$value: 'staticmethod'
 									},
-									text: 'staticmethod'
+									text: ['staticmethod']
 								}
 							]
 						},
@@ -2848,7 +2848,7 @@ export const build: PortableBuildTable = {
 										$path: 'identifier',
 										$value: 'override'
 									},
-									text: 'override'
+									text: ['override']
 								},
 								{
 									item: {
@@ -2856,7 +2856,7 @@ export const build: PortableBuildTable = {
 										object: 'typing',
 										property: 'override'
 									},
-									text: 'typing.override'
+									text: ['typing.override']
 								}
 							]
 						}
@@ -3141,7 +3141,7 @@ export const build: PortableBuildTable = {
 										$path: 'identifier',
 										$value: 'staticmethod'
 									},
-									text: 'staticmethod'
+									text: ['staticmethod']
 								}
 							]
 						},
@@ -3155,7 +3155,7 @@ export const build: PortableBuildTable = {
 										$path: 'identifier',
 										$value: 'override'
 									},
-									text: 'override'
+									text: ['override']
 								},
 								{
 									item: {
@@ -3163,7 +3163,7 @@ export const build: PortableBuildTable = {
 										object: 'typing',
 										property: 'override'
 									},
-									text: 'typing.override'
+									text: ['typing.override']
 								}
 							]
 						}
@@ -3711,7 +3711,7 @@ export const build: PortableBuildTable = {
 										$path: 'identifier',
 										$value: 'property'
 									},
-									text: 'property'
+									text: ['property']
 								}
 							]
 						},
@@ -3725,7 +3725,7 @@ export const build: PortableBuildTable = {
 										$path: 'identifier',
 										$value: 'override'
 									},
-									text: 'override'
+									text: ['override']
 								},
 								{
 									item: {
@@ -3733,7 +3733,7 @@ export const build: PortableBuildTable = {
 										object: 'typing',
 										property: 'override'
 									},
-									text: 'typing.override'
+									text: ['typing.override']
 								}
 							]
 						}
@@ -4014,7 +4014,8 @@ export const build: PortableBuildTable = {
 									},
 									holes: {
 										name: ['object']
-									}
+									},
+									text: ['', '.setter']
 								}
 							]
 						},
@@ -4028,7 +4029,7 @@ export const build: PortableBuildTable = {
 										$path: 'identifier',
 										$value: 'override'
 									},
-									text: 'override'
+									text: ['override']
 								},
 								{
 									item: {
@@ -4036,7 +4037,7 @@ export const build: PortableBuildTable = {
 										object: 'typing',
 										property: 'override'
 									},
-									text: 'typing.override'
+									text: ['typing.override']
 								}
 							]
 						}

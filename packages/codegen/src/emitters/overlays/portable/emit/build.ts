@@ -172,14 +172,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const unseatedHelper = constant('unseated', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' has no seat for kind ')), '+', paren(kindOf(id('value')))))), 'never', [['value', kinded]]));
 	const objectTypeOf = (members: readonly (readonly [name: string, type: TypeNode, optional?: true])[]) =>
 		t.objectType({ opening: '{', members: members.map(([name, type, optional]) => t.propertySignature({ readonly: true, name, ...(optional === undefined ? {} : { optional }), type: t.typeAnnotation(type) })), closing: '}' });
-	const placed = objectTypeOf([['$path', 'string', true], ['$at', typeRef('Readonly', typeRef('Record', 'string', objectTypeOf([['index', 'number'], ['spelling', 'string', true]]))), true]]);
-	const placeOfHelper = constant(
-		'placeOf',
-		t.arrowFunction.callSignature({
-			parameters: t.formalParameters(t.formalParametersElements(t.requiredParameter({ name: 'value', type: t.typeAnnotation(placed) }), t.requiredParameter({ name: 'fact', type: t.typeAnnotation('string') }))),
-			body: t.subscriptExpression({ object: dot(id('value'), '$at'), optionalChain: '?.', index: id('fact') })
-		})
-	);
+	const unsetHelper = constant('unset', arrow('owner', 'string', block(raise(binary(binary(binary(id('owner'), '+', str(': $at names ')), '+', id('fact')), '+', str(', which it does not set')))), 'never', [['fact', 'string']]));
 	type Named = string | readonly [string, TypeNode];
 	const parameterOf = (name: Named) => (typeof name === 'string' ? t.requiredParameter({ name }) : t.requiredParameter({ name: name[0], type: t.typeAnnotation(name[1]) }));
 	const lambda = (body: Expression, first: Named, ...rest: readonly Named[]) =>
@@ -392,7 +385,19 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const added = [...holes.keys()].map((at) => at.split('.')).filter((at) => at.length > keys.length && keys.every((key, i) => at[i] === key) && !named.has(at[keys.length]!)).map((at) => at[keys.length]!);
 		return obj([...entries, ...[...new Set(added)].map((key) => [key, undefined] as const)].map(([key, held]) => [key, spelledLiteral(held, holes, [...keys, key])] as const));
 	};
-	const placeOf = (value: Primary, fact: string, property: 'index' | 'spelling') => t.memberExpression({ object: call(id(uses('placeOf')), value, str(fact)), operator: '?.', property });
+	const atOf = (value: Primary, fact: string) => t.memberExpression({ object: dot(value, '$at'), operator: '?.', property: fact });
+	const placeOf = (value: Primary, fact: string, property: 'index' | 'spelling') => t.memberExpression({ object: atOf(value, fact), operator: '?.', property });
+	const length = (operand: Primary) => dot(operand, 'length');
+	const spelledAs = (spelling: Primary, text: readonly string[]): Operand => {
+		if (text.length === 1) return binary(spelling, '===', str(text[0]!));
+		if (text.length !== 2) return fail(`a spelling with ${text.length - 1} holes`);
+		const [first, last] = text as readonly [string, string];
+		return and([
+			...(first === '' ? [] : [call(dot(spelling, 'startsWith'), str(first))]),
+			...(last === '' ? [] : [call(dot(spelling, 'endsWith'), str(last))]),
+			...(first === '' || last === '' ? [] : [binary(length(spelling), '>=', num(first.length + last.length))])
+		]) ?? t.true;
+	};
 	const spelledItemOf = (owner: string, fact: PortableSpelledFact, value: Primary): Expression => {
 		const items = fact.spellings.map((spelling) =>
 			spelledLiteral(
@@ -403,7 +408,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		);
 		const spelling = placeOf(value, fact.name, 'spelling');
 		const named = fact.spellings.reduceRight<Expression>(
-			(otherwise, { text }, i) => (text === undefined ? otherwise : ternary(binary(spelling, '===', str(text)), items[i]!, otherwise)),
+			(otherwise, { text }, i) => ternary(spelledAs(spelling, text), items[i]!, otherwise),
 			call(id(uses('noSpelling')), str(`${owner}.${fact.name}`), spelling)
 		);
 		return ternary(binary(spelling, '===', id('undefined')), items[0]!, named);
@@ -822,7 +827,13 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			...[...(input.flags[path] ?? [])]
 				.filter((flag) => !placed.has(flag))
 				.sort()
-				.map((flag) => when(flagged(id(uses('input')), flag), ret(call(id(uses('unflagged')), str(path), str(flag)))))
+				.map((flag) => when(flagged(id(uses('input')), flag), ret(call(id(uses('unflagged')), str(path), str(flag))))),
+			...[...(input.facts[path] ?? [])].sort().flatMap((name) => {
+				const fact = (arm.facts ?? []).find((candidate) => candidate.name === name);
+				if (fact !== undefined && fact.flag === undefined) return [];
+				const stated = binary(atOf(id(uses('input')), name), '!==', id('undefined'));
+				return [when(fact === undefined ? stated : and([stated, not(flagged(id(uses('input')), fact.flag!))])!, ret(call(id(uses('unset')), str(path), str(name))))];
+			})
 		];
 	};
 
@@ -938,13 +949,13 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		['missing', missingHelper],
 		['unrouted', unroutedHelper],
 		['unflagged', unflaggedHelper],
+		['unset', unsetHelper],
 		['seated', seatedHelper],
 		['listed', listedHelper],
 		['unseated', unseatedHelper],
 		['untexted', untextedHelper],
 		['unnumbered', unnumberedHelper],
 		['unspelled', unspelledHelper],
-		['placeOf', placeOfHelper],
 		['withSpelled', withSpelledHelper],
 		['nonEmpty', nonEmptyHelper],
 		['noSpelling', noSpellingHelper]

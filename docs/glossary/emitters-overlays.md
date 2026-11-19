@@ -365,6 +365,14 @@ Derives `MapDecided` once, from the exact sets: for each path and slot, the slot
 
 Per path the build table builds from a scalar (`builds`), the sorted TypeScript types of those scalars (`ScalarInput`). The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number, and the generated slot function's parameter takes the same types.
 
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFactsOf`
+
+The facts each path's `$at` can name, from the build table: per path whose arms spell facts, each fact and its spellings' texts, deduplicated, both in codepoint order. The grammar map's `facts` types each spelling from its text: one part as its literal, a text split at holes as a template literal with `${string}` where each hole sits (the setter's `` `${string}.setter` ``). The fact names alone travel on through the typed output to the emit input, where the generated build refuses an `$at` that names a fact its arm doesn't set.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::MapFacts`
+
+What `mapFactsOf` returns: per path, each fact the path's arms spell and the texts of its spellings, each text in the parts around its holes.
+
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitCode`
 
 The portable module emitter's diagnostic codes: a path in a slot's type with no arm that fits the slot's seats in any arm of the slot's owner (`portable-emit-unplaced-path`); a path the slot's type admits that one arm's seats don't place, though another arm of the owner does (`portable-emit-unplaced-arm`); a path the emitter can't compile whole, which the module leaves out (`portable-emit-unfit-slot`); a construct the pinned builders can't express (`portable-emit-pinned-gap`); a generated module that fails its type-check (`portable-emit-type`); and a slot's tail that is the full name of another path (`portable-emit-tail-is-path`).
@@ -375,7 +383,7 @@ One portable emit diagnostic: its code, the path it is about, the slot when it i
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitInput`
 
-What codegen hands the pinned child to emit a grammar's portable build module: the grammar, the map and node type names, the import specifiers, the build table, each path's slots as the slot functions type them (`PortableEmitSlot`), the paths the read views, the text paths, text inputs and text values, each path's flags as the grammar map types them (the flags its input can state), the holder and key of each strict list argument that takes a hole, and each path's decided slots (`MapDecided`). It is generic over the table type and imports nothing: codegen instantiates it with `@sittir/types`' `PortableBuildTable`, and the emitter with the same declarations through the one workspace file its program admits.
+What codegen hands the pinned child to emit a grammar's portable build module: the grammar, the map and node type names, the import specifiers, the build table, each path's slots as the slot functions type them (`PortableEmitSlot`), the paths the read views, the text paths, text inputs and text values, each path's flags as the grammar map types them (the flags its input can state), each path's facts as the grammar map types them (the facts its `$at` can name), the holder and key of each strict list argument that takes a hole, and each path's decided slots (`MapDecided`). It is generic over the table type and imports nothing: codegen instantiates it with `@sittir/types`' `PortableBuildTable`, and the emitter with the same declarations through the one workspace file its program admits.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitOutput`
 
@@ -405,4 +413,4 @@ Each kind whose readable entries hold a test-less one whose path has no arms in 
 
 ### `packages/codegen/src/emitters/overlays/portable/spelled-facts.ts::portableSpellingOf`
 
-One spelling of a fact a container spells, from the read entry whose tests on the container name it: the item those tests reach (its own text, or the slots they test, each a text or a nested item), and a hole for each slot a capture fills. A spelling with no holes also carries its text, rendered in the same codegen run from the render bodies of the item's kinds (`EmittedTemplates.bodies`): each body's text parts and placed slots in order, its seams written as nothing. That text is the spelling the reader records at the fact, so a build can tell `@override` from `@typing.override`. A slot the item states that its kind's body never places, a body part that spells no one text (a gate, a space, a token seam), or two parts whose word characters would meet once its seams are written as nothing refuses the spelling, naming the kind.
+One spelling of a fact a container spells, from the read entry whose tests on the container name it: the item those tests reach (its own text, or the slots they test, each a text or a nested item), and a hole for each slot a capture fills. Every spelling also carries its text, rendered in the same codegen run from the render bodies of the item's kinds (`EmittedTemplates.bodies`): each body's text parts and placed slots in order, its seams written as nothing, and split where a hole's slot sits (`['', '.setter']` for `@x.setter`; one part for a spelling with no holes). That text is the spelling the reader records at the fact, so a build can tell `@override` from `@typing.override`, and the grammar map types `$at` from it. Word characters are checked for meeting only between parts no hole separates. A slot the item states that its kind's body never places, a body part that spells no one text (a gate, a space, a token seam), or two parts whose word characters would meet once its seams are written as nothing refuses the spelling, naming the kind.
