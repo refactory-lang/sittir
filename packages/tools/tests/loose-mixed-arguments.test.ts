@@ -10,7 +10,7 @@ const rustParameters = () => {
 	const fn = rust.parse('fn process(input: &str, b: u8) {}\n').statements()[0]!;
 	if (!rust.is.functionItem(fn)) throw new Error('expected a function item');
 	const list = fn.parameters();
-	if (list === undefined || !rust.is.parametersElements(list)) throw new Error('not an ordinary list');
+	if (list === undefined || !('$type' in list) || !rust.is.parametersElements(list)) throw new Error('not an ordinary list');
 	return list.items();
 };
 

@@ -46,7 +46,7 @@ describe('a python constructor declaration', () => {
 
 	it('builds from its parameters and body with the name stamped, and reads back as itself', () => {
 		const [parsed] = constructorsIn('class A:\n    def __init__(self, x):\n        self.x = x\n');
-		const built = py.build.constructorDeclaration({ parameters: parsed!.parameters(), body: parsed!.body() });
+		const built = py.build.constructorDeclaration({ parameters: [...parsed!.parameters()], body: parsed!.body() });
 		const text = built.$render().toString();
 		expect(text).toBe('def __init__(self, x):\n    self.x = x');
 		const [reread] = constructorsIn(`class A:\n    ${text.replaceAll('\n', '\n    ')}\n`);

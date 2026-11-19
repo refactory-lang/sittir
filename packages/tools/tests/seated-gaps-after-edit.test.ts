@@ -192,7 +192,7 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 		const items = args.elements();
 		if (items === undefined) throw new Error('expected arguments');
 		const appended = firstWhere(rust.parse('add(3i32);\n'), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never))
-			.elements()[0];
+			.elements()?.[0];
 		if (appended === undefined) throw new Error('expected an argument');
 		expect(args.$with.elements(...items, appended).$render()).toBe('(\n    1i32,\n    2i32,\n    3i32,\n)');
 	});

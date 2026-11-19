@@ -11,7 +11,7 @@ import { createEngine } from '@sittir/common';
 const loose = await createEngine(typescript);
 const strict = await createEngine(typescript, { api: 'strict' });
 
-const members = loose.build.objectType({ members: [loose.build.propertySignature({ name: 'x' })] }).members();
+const members = [...(loose.build.objectType({ members: [loose.build.propertySignature({ name: 'x' })] }).members() ?? [])];
 
 export function bothOrNeitherLoose(): unknown[] {
 	return [

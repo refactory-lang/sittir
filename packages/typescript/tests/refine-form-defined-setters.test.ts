@@ -27,7 +27,7 @@ describe.each(STORAGES)('a field a refine form pins has no $with setter, in %s',
 	const property = build.identifier('b');
 	const declarators = [build.variableDeclaratorPlain({ name: build.identifier('x'), value: build.identifier('y') })] as const;
 	const member = () => build.propertySignature({ name: 'x' });
-	const content = () => build.objectType({ members: [member()] as any }).members();
+	const content = () => [...(build.objectType({ members: [member()] as any }).members() ?? [])];
 
 	const built: Record<string, () => { readonly $with: Record<string, unknown> }> = {
 		memberExpression: () => build.memberExpression({ object, property }),
