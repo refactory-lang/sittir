@@ -17,6 +17,7 @@ import {
 	listSlotWith,
 	hoistedWith,
 	listElementsHop,
+	wrapHoisted,
 	elementsWith,
 	seatWith,
 	groupField,
@@ -1603,7 +1604,8 @@ function wrapCaseClause$with(node: Held, setter: string, args: readonly unknown[
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildIfClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildIfClause(v), TSKindId.IfClause)),
 				TSKindId.IfClause
 			);
 		case 'body':
@@ -1733,7 +1735,8 @@ function wrapForStatement$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -1846,7 +1849,8 @@ function wrapWhileStatement$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -1965,7 +1969,8 @@ function wrapTryStatement$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 		case 'finalizer':
@@ -1988,7 +1993,8 @@ function wrapTryStatement$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildFinallyClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildFinallyClause(v), TSKindId.FinallyClause)),
 				TSKindId.FinallyClause
 			);
 	}
@@ -2094,7 +2100,10 @@ function wrapExceptClause$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildExceptClauseException(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) =>
+						wrapHoisted(v, (v: never) => RAW.buildExceptClauseException(v), TSKindId.ExceptClauseException)
+					),
 				TSKindId.ExceptClauseException
 			);
 		case 'body':
@@ -2469,7 +2478,7 @@ function wrapFunctionDefinition$with(node: Held, setter: string, args: readonly 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'body':
@@ -3135,7 +3144,7 @@ function wrapTypeAliasStatement$with(node: Held, setter: string, args: readonly 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -3398,7 +3407,7 @@ function wrapTypeParameter$with(node: Held, setter: string, args: readonly unkno
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
 						(RAW.buildTypes as unknown as (...items: never[]) => never)(
-							...(v.map((item) => RAW.buildType(item as never)) as never[])
+							...(v.map((item) => wrapHoisted(item, RAW.buildType, TSKindId.Type)) as never[])
 						))(args)
 				],
 				TSKindId.Types
@@ -3659,7 +3668,8 @@ function wrapDecoratedDefinition$with(node: Held, setter: string, args: readonly
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'definition':
@@ -4108,7 +4118,8 @@ function wrapCaseAsPattern$with(node: Held, setter: string, args: readonly unkno
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 		case 'identifier':
@@ -4471,7 +4482,8 @@ function wrapKeyValuePattern$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 	}
@@ -4649,7 +4661,7 @@ function wrapClassPattern$with(node: Held, setter: string, args: readonly unknow
 						v.length === 0
 							? undefined
 							: (RAW.buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
-									...(v.map((item) => RAW.buildCasePattern(item as never)) as never[])
+									...(v.map((item) => wrapHoisted(item, RAW.buildCasePattern, TSKindId.CasePattern)) as never[])
 								))(args)
 				],
 				TSKindId.ListPatternCasePatterns
@@ -5337,7 +5349,7 @@ function wrapTypedDefaultParameter$with(node: Held, setter: string, args: readon
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'default':
@@ -6635,7 +6647,7 @@ function wrapTypedParameter$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -6828,7 +6840,7 @@ function wrapGenericType$with(node: Held, setter: string, args: readonly unknown
 					((v: readonly never[]) =>
 						RAW.buildTypeParameter(
 							(RAW.buildTypes as unknown as (...items: never[]) => never)(
-								...(v.map((item) => RAW.buildType(item as never)) as never[])
+								...(v.map((item) => wrapHoisted(item, RAW.buildType, TSKindId.Type)) as never[])
 							)
 						))(args)
 				],
@@ -6921,7 +6933,7 @@ function wrapUnionType$with(node: Held, setter: string, args: readonly unknown[]
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'right':
@@ -6941,7 +6953,7 @@ function wrapUnionType$with(node: Held, setter: string, args: readonly unknown[]
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -7043,7 +7055,7 @@ function wrapConstrainedType$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'constraint':
@@ -7066,7 +7078,7 @@ function wrapConstrainedType$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -7151,7 +7163,7 @@ function wrapMemberType$with(node: Held, setter: string, args: readonly unknown[
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'name':
@@ -9255,7 +9267,8 @@ function wrapWithClauseWithItems$with(node: Held, setter: string, args: readonly
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildWithItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildWithItem(v), TSKindId.WithItem)),
 				TSKindId.WithItem
 			);
 		case 'delimiter':
@@ -9374,7 +9387,7 @@ function wrapTypes$with(node: Held, setter: string, args: readonly unknown[]): u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'delimiter':
@@ -9606,7 +9619,8 @@ function wrapListPatternCasePatterns$with(node: Held, setter: string, args: read
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 		case 'delimiter':
@@ -10380,7 +10394,8 @@ function wrapCasePatternList$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 		case 'delimiter':
@@ -10675,7 +10690,7 @@ function wrapCaseTuplePattern$with(node: Held, setter: string, args: readonly un
 						v.length === 0
 							? undefined
 							: (RAW.buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
-									...(v.map((item) => RAW.buildCasePattern(item as never)) as never[])
+									...(v.map((item) => wrapHoisted(item, RAW.buildCasePattern, TSKindId.CasePattern)) as never[])
 								))(args)
 				],
 				TSKindId.ListPatternCasePatterns
@@ -10802,7 +10817,7 @@ function wrapCaseListPattern$with(node: Held, setter: string, args: readonly unk
 						v.length === 0
 							? undefined
 							: (RAW.buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
-									...(v.map((item) => RAW.buildCasePattern(item as never)) as never[])
+									...(v.map((item) => wrapHoisted(item, RAW.buildCasePattern, TSKindId.CasePattern)) as never[])
 								))(args)
 				],
 				TSKindId.ListPatternCasePatterns
@@ -11086,7 +11101,8 @@ function wrapPrintStatementChevron$with(node: Held, setter: string, args: readon
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildChevron(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildChevron(v), TSKindId.Chevron)),
 				TSKindId.Chevron
 			);
 		case 'arguments':
@@ -13161,7 +13177,7 @@ function wrapAssignmentType$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -13255,7 +13271,7 @@ function wrapAssignmentTyped$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'value':
@@ -13483,7 +13499,8 @@ function wrapWithClauseBare$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildWithItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildWithItem(v), TSKindId.WithItem)),
 				TSKindId.WithItem
 			);
 		case 'delimiter':
@@ -13613,7 +13630,7 @@ function wrapWithClauseParen$with(node: Held, setter: string, args: readonly unk
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
 						(RAW.buildWithClauseWithItems as unknown as (...items: never[]) => never)(
-							...(v.map((item) => RAW.buildWithItem(item as never)) as never[])
+							...(v.map((item) => wrapHoisted(item, RAW.buildWithItem, TSKindId.WithItem)) as never[])
 						))(args)
 				],
 				TSKindId.WithClauseWithItems
@@ -14081,7 +14098,7 @@ function wrapTypeParamTypeVar$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -14559,7 +14576,7 @@ function wrapConstructorDeclaration$with(node: Held, setter: string, args: reado
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'body':
@@ -14834,7 +14851,8 @@ function wrapDecoratedDefinitionClassDeclaration$with(node: Held, setter: string
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'definition':
@@ -15281,7 +15299,7 @@ function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => RAW.buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'body':

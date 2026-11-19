@@ -1610,7 +1610,7 @@ function buildCaseClause$with(node: Held, setter: string, args: readonly unknown
 						rebuilt(node, handle, () => buildCaseClause({ ...config, guard: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildIfClause(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildIfClause(v), TSKindId.IfClause)),
 				TSKindId.IfClause
 			);
 		case 'body':
@@ -1728,7 +1728,8 @@ function buildForStatement$with(node: Held, setter: string, args: readonly unkno
 						rebuilt(node, handle, () => buildForStatement({ ...config, alternative: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -1825,7 +1826,8 @@ function buildWhileStatement$with(node: Held, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildWhileStatement({ ...config, alternative: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -1926,7 +1928,8 @@ function buildTryStatement$with(node: Held, setter: string, args: readonly unkno
 						rebuilt(node, handle, () => buildTryStatement({ ...config, alternative: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 		case 'finalizer':
@@ -1944,7 +1947,8 @@ function buildTryStatement$with(node: Held, setter: string, args: readonly unkno
 						rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildFinallyClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildFinallyClause(v), TSKindId.FinallyClause)),
 				TSKindId.FinallyClause
 			);
 	}
@@ -2032,7 +2036,8 @@ function buildExceptClause$with(node: Held, setter: string, args: readonly unkno
 						rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildExceptClauseException(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildExceptClauseException(v), TSKindId.ExceptClauseException)),
 				TSKindId.ExceptClauseException
 			);
 		case 'body':
@@ -2386,7 +2391,7 @@ function buildFunctionDefinition$with(node: Held, setter: string, args: readonly
 						rebuilt(node, handle, () => buildFunctionDefinition({ ...config, returnType: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'body':
@@ -2998,7 +3003,7 @@ function buildTypeAliasStatement$with(node: Held, setter: string, args: readonly
 						rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, value: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -3260,7 +3265,7 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
 						(buildTypes as unknown as (...items: never[]) => never)(
-							...(v.map((item) => buildType(item as never)) as never[])
+							...(v.map((item) => wrapHoisted(item, buildType, TSKindId.Type)) as never[])
 						))(args)
 				],
 				TSKindId.Types
@@ -3520,7 +3525,8 @@ function buildDecoratedDefinition$with(node: Held, setter: string, args: readonl
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'definition':
@@ -3999,7 +4005,8 @@ function buildCaseAsPattern$with(node: Held, setter: string, args: readonly unkn
 						rebuilt(node, handle, () => buildCaseAsPattern({ ...config, casePattern: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 		case 'identifier':
@@ -4277,7 +4284,8 @@ function buildKeyValuePattern$with(node: Held, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildKeyValuePattern({ ...config, value: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 	}
@@ -4369,7 +4377,7 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 			v.length === 0
 				? undefined
 				: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
-						...(v.map((item) => buildCasePattern(item as never)) as never[])
+						...(v.map((item) => wrapHoisted(item, buildCasePattern, TSKindId.CasePattern)) as never[])
 					),
 		TSKindId.ListPatternCasePatterns
 	);
@@ -4431,7 +4439,7 @@ function buildClassPattern$with(node: Held, setter: string, args: readonly unkno
 						v.length === 0
 							? undefined
 							: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
-									...(v.map((item) => buildCasePattern(item as never)) as never[])
+									...(v.map((item) => wrapHoisted(item, buildCasePattern, TSKindId.CasePattern)) as never[])
 								))(args)
 				],
 				TSKindId.ListPatternCasePatterns
@@ -5125,7 +5133,7 @@ function buildTypedDefaultParameter$with(node: Held, setter: string, args: reado
 						rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'default':
@@ -6371,7 +6379,7 @@ function buildTypedParameter$with(node: Held, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildTypedParameter({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -6487,7 +6495,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		(v: readonly never[]) =>
 			buildTypeParameter(
 				(buildTypes as unknown as (...items: never[]) => never)(
-					...(v.map((item) => buildType(item as never)) as never[])
+					...(v.map((item) => wrapHoisted(item, buildType, TSKindId.Type)) as never[])
 				)
 			),
 		TSKindId.TypeParameter
@@ -6557,7 +6565,7 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 					((v: readonly never[]) =>
 						buildTypeParameter(
 							(buildTypes as unknown as (...items: never[]) => never)(
-								...(v.map((item) => buildType(item as never)) as never[])
+								...(v.map((item) => wrapHoisted(item, buildType, TSKindId.Type)) as never[])
 							)
 						))(args)
 				],
@@ -6625,7 +6633,7 @@ function buildUnionType$with(node: Held, setter: string, args: readonly unknown[
 						rebuilt(node, handle, () => buildUnionType({ ...config, left: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'right':
@@ -6643,7 +6651,7 @@ function buildUnionType$with(node: Held, setter: string, args: readonly unknown[
 						rebuilt(node, handle, () => buildUnionType({ ...config, right: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -6716,7 +6724,7 @@ function buildConstrainedType$with(node: Held, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildConstrainedType({ ...config, baseType: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'constraint':
@@ -6734,7 +6742,7 @@ function buildConstrainedType$with(node: Held, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildConstrainedType({ ...config, constraint: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -6799,7 +6807,7 @@ function buildMemberType$with(node: Held, setter: string, args: readonly unknown
 						rebuilt(node, handle, () => buildMemberType({ ...config, qualifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'name':
@@ -8947,7 +8955,7 @@ function buildWithClauseWithItems$with(node: Held, setter: string, args: readonl
 						rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildWithItem(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildWithItem(v), TSKindId.WithItem)),
 				TSKindId.WithItem
 			);
 		case 'delimiter':
@@ -9069,7 +9077,7 @@ function buildTypes$with(node: Held, setter: string, args: readonly unknown[]): 
 						rebuilt(node, handle, () => buildTypes(options, ...vs))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'delimiter':
@@ -9331,7 +9339,8 @@ function buildListPatternCasePatterns$with(node: Held, setter: string, args: rea
 						rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 		case 'delimiter':
@@ -10232,7 +10241,8 @@ function buildCasePatternList$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildCasePattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildCasePattern(v), TSKindId.CasePattern)),
 				TSKindId.CasePattern
 			);
 		case 'delimiter':
@@ -10553,7 +10563,7 @@ function buildCaseTuplePattern$with(node: Held, setter: string, args: readonly u
 						v.length === 0
 							? undefined
 							: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
-									...(v.map((item) => buildCasePattern(item as never)) as never[])
+									...(v.map((item) => wrapHoisted(item, buildCasePattern, TSKindId.CasePattern)) as never[])
 								))(args)
 				],
 				TSKindId.ListPatternCasePatterns
@@ -10680,7 +10690,7 @@ function buildCaseListPattern$with(node: Held, setter: string, args: readonly un
 						v.length === 0
 							? undefined
 							: (buildListPatternCasePatterns as unknown as (...items: never[]) => never)(
-									...(v.map((item) => buildCasePattern(item as never)) as never[])
+									...(v.map((item) => wrapHoisted(item, buildCasePattern, TSKindId.CasePattern)) as never[])
 								))(args)
 				],
 				TSKindId.ListPatternCasePatterns
@@ -10987,7 +10997,7 @@ function buildPrintStatementChevron$with(node: Held, setter: string, args: reado
 						rebuilt(node, handle, () => buildPrintStatementChevron({ ...config, chevron: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildChevron(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildChevron(v), TSKindId.Chevron)),
 				TSKindId.Chevron
 			);
 		case 'arguments':
@@ -13247,7 +13257,7 @@ function buildAssignmentType$with(node: Held, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildAssignmentType({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -13327,7 +13337,7 @@ function buildAssignmentTyped$with(node: Held, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildAssignmentTyped({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'value':
@@ -13572,7 +13582,7 @@ function buildWithClauseBare$with(node: Held, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildWithClauseBare(options, ...vs))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildWithItem(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildWithItem(v), TSKindId.WithItem)),
 				TSKindId.WithItem
 			);
 		case 'delimiter':
@@ -13701,7 +13711,7 @@ function buildWithClauseParen$with(node: Held, setter: string, args: readonly un
 				(args: readonly never[]) => [
 					((v: readonly never[]) =>
 						(buildWithClauseWithItems as unknown as (...items: never[]) => never)(
-							...(v.map((item) => buildWithItem(item as never)) as never[])
+							...(v.map((item) => wrapHoisted(item, buildWithItem, TSKindId.WithItem)) as never[])
 						))(args)
 				],
 				TSKindId.WithClauseWithItems
@@ -14151,7 +14161,7 @@ function buildTypeParamTypeVar$with(node: Held, setter: string, args: readonly u
 						rebuilt(node, handle, () => buildTypeParamTypeVar({ ...config, bounds: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 	}
@@ -14638,7 +14648,7 @@ function buildConstructorDeclaration$with(node: Held, setter: string, args: read
 						rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, returnType: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'body':
@@ -14886,7 +14896,8 @@ function buildDecoratedDefinitionClassDeclaration$with(node: Held, setter: strin
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'definition':
@@ -15334,7 +15345,7 @@ function buildMethodDeclaration$with(node: Held, setter: string, args: readonly 
 						rebuilt(node, handle, () => buildMethodDeclaration({ ...config, returnType: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildType(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildType(v), TSKindId.Type)),
 				TSKindId.Type
 			);
 		case 'body':
