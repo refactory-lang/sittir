@@ -960,6 +960,21 @@ Compare arena storage's record backer with the tree backer on every node of each
 pnpm exec tsx packages/cli/src/cli.ts tool backer-parity [options]
 ```
 
+### `tool storage-parity`
+
+Compare object and arena storage on every source of the validation corpus: snapshots, node renders, layout runs, list rebuilds and side write-backs; exits 1 on a difference the allow-list does not accept
+
+**Options**
+
+- `-g, --grammar <name...>` — Grammar(s) to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--json` — Print the report and its verdict as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool storage-parity [options]
+```
+
 ### `tool trivia-timing`
 
 Time reading every node's leading trivia after a deep parse of a file (one line-gap query per node)

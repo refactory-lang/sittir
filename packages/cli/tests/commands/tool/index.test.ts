@@ -50,6 +50,7 @@ const EXPECTED = [
 	'test-history',
 	'text-kind-overlap',
 	'spelled-trivia',
+	'storage-parity',
 	'trivia-placement',
 	'trivia-timing',
 	'uncovered-content',

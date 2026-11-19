@@ -48,6 +48,7 @@ export {
 	type BackerParityFile,
 	type BackerParityCensus
 } from './validate/backer-parity.ts';
+export { run as storageParity, type StorageParityOptions } from './validate/storage-parity.ts';
 export {
 	run as gapCensus,
 	computeGapCensus,
