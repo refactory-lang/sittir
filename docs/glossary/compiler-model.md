@@ -6339,3 +6339,39 @@ Derives a grammar's admitted line endings from its layout, its whitespace and it
 ### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSeam::sightings`
 
 The sightings the closure records for one concrete seam pair, as a readonly list of `ConcreteSighting` values, one per place the pair is observed.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::WrapperChain`
+
+One holder slot's wrapper chain: the holder kind, the slot, the accessor that reads it, the wrappers it passes through by display kind (`wrappers`) and by stored kind (`storage`), and each wrapper's one slot (`slots`). The single stamp every hoisted surface reads: types, getters, `$with` setters, factories, loose `from`, the validators' config reconstruction and the `is` guards.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::wrapperChainOf`
+
+The chain a holder slot hoists through, or `undefined` when the slot reads as its own wrapper: each wrapper holds one slot of nodes only and the slot holds one wrapper kind, the chain stops where a list sits in a list, and a hidden or leaf-holding wrapper is not hoisted.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::wrapperChainsOf`
+
+Every holder slot's chain in a node map, in node order: the census of the hoisted surface.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::wrapperChainFor`
+
+The chain of the slot named `slotName` of the kind `holder`, from a table built once per node map.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::wrapperChainOfSlot`
+
+The chain of a slot object, from the same per-node-map table as `wrapperChainFor`.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::chainWrapExpr`
+
+The arrow expression that wraps a hoisted value in its chain, innermost first: a list wrapper takes the items spread, a single wrapper takes the value, and a value read as a list wraps each item. When the chain can be empty, an empty value builds the emptied chain, or nothing for an optional holder. `from` starts the wrap at a later hop, for a value that is already the wrapper above it.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::hoistedCardinality`
+
+The required, multiple and non-empty facts of a hoisted slot: required when the holder slot and every wrapper slot are, multiple when the slot or any hop holds a list, non-empty by the slot itself when it is a list, else by the chain's last slot.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::chainReadsAsList`
+
+Whether a hoisted slot reads as a list: the slot is multiple, its last wrapper slot admits a list kind, or any hop is a list or holds one.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::endsAChain`
+
+Whether `slot` is the last slot of some chain: a slot the hoisted surface reads its content from, so its own accessors keep the stored shape.

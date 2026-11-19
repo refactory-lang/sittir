@@ -2117,3 +2117,11 @@ Whether the member's claim is tested, rather than left untested by the read.
 ### `packages/codegen/src/bindings/facts.ts::ContainerCapture::tested`
 
 Whether the capture is tested by the container's read.
+
+### `packages/codegen/src/bindings/routes.ts::readEntriesLookup`
+
+The read entries that claim a kind: the entries on the kind itself, else those of the nearest supertype that has any. The one lookup the typed reads, the exact slots and the build table ask, so no emitter keeps its own list of claimed kinds.
+
+### `packages/codegen/src/bindings/routes.ts::portableClaims`
+
+Whether the portable layer claims a wrapper kind: a read entry claims it, or, on a single-valued slot, a container unwrap does. A path step whose slot ends its wrapper chain on a claimed wrapper reads the holder's stored slot, so the portable read sees the wrapper the claim tests, not the content the hoisted accessor returns. A list slot is read item by item, so a container unwrap does not claim there.

@@ -13,7 +13,7 @@ import { querySlots, structure, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ModuleRoot } from './render-engine.js';
-import { wrapNode, hydrate, type ModuleTree } from './wrap.js';
+import { wrapNode, hydrate, nativeSlots, type ModuleTree } from './wrap.js';
 
 export interface PythonAPI extends LanguageAPI {
 	readonly name: 'python';
@@ -42,6 +42,7 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	rootKinds: Object.freeze([133]),
 	querySlots,
+	nativeSlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),

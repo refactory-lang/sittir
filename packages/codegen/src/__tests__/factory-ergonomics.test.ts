@@ -8,8 +8,9 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');
 			// functionItemFrom should default body to F.buildBlock()
 			expect(content).toMatch(/body:.*\?\? F\.buildBlock\(\)/);
-			// functionItemFrom should default parameters to F.buildParameters()
-			expect(content).toMatch(/parameters:.*\?\? F\.buildParameters\(\)/);
+			const rust = (await import('../../../rust/src/index.ts')).default;
+			using engine = await rust.createEngine();
+			expect(engine.build.functionItem({ name: 'f' } as never).$render()).toBe('fn f() {}');
 		});
 	});
 

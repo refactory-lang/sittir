@@ -12,7 +12,7 @@ import { querySlots, structure, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
-import { wrapNode, hydrate, type ProgramTree } from './wrap.js';
+import { wrapNode, hydrate, nativeSlots, type ProgramTree } from './wrap.js';
 
 export interface ScmAPI extends LanguageAPI {
 	readonly name: 'scm';
@@ -40,6 +40,7 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	rootKinds: Object.freeze([33]),
 	querySlots,
+	nativeSlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),

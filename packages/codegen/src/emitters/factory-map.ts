@@ -5,6 +5,7 @@ import { armIdOf } from './render-options-rs.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { numberSlotsOf } from './interior.ts';
 import { AssembledList, deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
+import { hoistedCardinality, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import {
 	classifyFactoryShape,
 	placedAlias,
@@ -86,7 +87,7 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 			slots[field.name] = {
 				...createFactorySlotMeta(
 					field.propertyName,
-					deriveSlotCardinality(field),
+					cardinalityOf(nodeMap, field),
 					registered.has(field) ? { registered: true, ...(hasBlankArm(field) ? { blank: true } : {}), ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
 				),
 				...(valueSources.has(field) ? { valueSource: true as const } : {})
@@ -134,6 +135,11 @@ function mapVariantChildKindsToNames(variantChildKinds: readonly VariantChild[])
 
 function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
 	return placedAlias(node, nodeMap) ? 'placed' : classifyFactoryShape(node, nodeMap);
+}
+
+function cardinalityOf(nodeMap: NodeMap, field: AssembledNonterminal): ReturnType<typeof deriveSlotCardinality> {
+	const chain = wrapperChainOfSlot(nodeMap, field);
+	return chain === undefined ? deriveSlotCardinality(field) : hoistedCardinality(chain, field, nodeMap);
 }
 
 function createFactorySlotMeta(

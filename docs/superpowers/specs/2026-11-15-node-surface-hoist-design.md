@@ -17,6 +17,7 @@
 - **"Hoist; separator via the tree"** (2026-11-16). A list whose trailing separator is optional still hoists, and the separator stays on the wrapper. See §1.
 - **"Input also admits the wrapper"** (2026-11-18). A hoisted slot's input, strict and loose, in a factory and in a setter, admits the hoisted type and each wrapper on its chain; a wrapper given as input passes through whole, with what it holds (a list's delimiter included). Reads stay hoisted. So the route to a hoisted list's delimiter is the tree: reach the wrapper by query, set its delimiter, and give the wrapper back to the holder's setter. A setter does not refuse a wrapper of its own chain.
 - **A hoisted list reads as an empty list when its wrapper is there and holds no items** ("An empty list", 2026-11-18). `undefined` means the wrapper is absent. `fn f() {}` reads `parameters()` as `[]`; a function with no `<…>` reads `typeParameters()` as `undefined`. This replaces, for a chain that ends in a list, §3's "absent means the wrapper is there with its slot empty".
+- **The hoist's public helpers and types are approved, each from one subpath** ("Approve, one subpath each", 2026-11-18): common's `storedSlotRead`, `hydrateStoredSlot(s)`, `hoistedWith`, `wrapHoisted(Each)` and `storedHop` from `@sittir/common/utils`; types' `ConfigHoistedValue`, `WrapperInput`, `ItemWrapperInput` and `WithItemWrapper`, with `WidenArrayMembers` yielding a readonly array; codegen's `wrapperChainFor`, `wrapperChainOf(Slot)`, `wrapperChainsOf`, `readEntriesLookup` and `portableClaims`; and the type field `PortableSlotStep.stored`. No name is exported from two subpaths. A hoisted input is the innermost slot's own input type, unchanged, so an order tuple such as rust's `readonly [...MatchArm[], LastMatchArm]` stays one.
 - **The portable layer reads a wrapper it claims as its path** ("Portable reads the path", 2026-11-18). Where a wrapper the hoist reads through is a portable path of its own, or a portable pattern matches inside it, the low-level read stays hoisted and the generated portable reader stops its chain at that wrapper, reading it by the holder's stored slot. The wrappers are python `else_clause` (`clause.else`) and `finally_clause` (`clause.finally`); rust `else_clause` (`clause.else`), `use_list` (`clause.import.list`) and `extern_modifier` (captured as `@extern`); typescript `import_clause` (`clause.import.names`), `export_clause` (`clause.export`) and the patterns inside `arguments`. The portable surface stays as on master, so python's `for x in y: pass` / `else: z` reads `for.alternative()` as `Block` and `statement.for.alternative` as `clause.else`. The hoist's counts are unchanged.
 
 ## 1. The rule
@@ -39,7 +40,7 @@ Condition 2 accepts these tokens:
 - **A zero-width token the parser always produces**, such as python's `_indent` and `_dedent`, which open and close a block.
 - **The tokens around a polymorph's forms.** A polymorph whose forms sit between tokens it always spells is an ordinary wrapper, and conditions 1–3 decide it. An example is rust's `visibility_modifier_pub_scope`, `(` … `)`.
 
-The rule composes. When the wrapper's own slot admits only another wrapper that meets the rule, the holder reads through both (§6). A chain stops at a slot that admits more than one kind, so the read there is that slot's node.
+The rule composes. When the wrapper's own slot admits only another wrapper that meets the rule, the holder reads through both (§6). A chain stops at a slot that admits more than one kind, so the read there is that slot's node. It also stops where a list of wrappers meets a wrapper that holds a list, since reading through would flatten the arms: regex's `alternation.terms` holds `term` wrappers that are each a list of `term_group`, and `a|b` and `ab` would read the same.
 
 A wrapper reached under an alias meets the rule as the kind its alias site names in the holder's rule, a hidden rule the holder inlines included. Python's `block_statement` is `block` under `suite_block` and `suite_inline` elsewhere. Typescript's setter signatures reach `formal_parameters` as the hidden `_formal_parameters_set_accessor_signature`, whose one slot admits only a one-parameter envelope (§7).
 
@@ -53,8 +54,10 @@ The hoist is a view the TypeScript wrap layer gives. Nothing below it changes.
 | the wrap getters (`emitters/wrap.ts`) | the parse tree: every wrapper is still a node in it |
 | the `$with` setters (`emitters/node-members.ts`) | the rust crates: node structs, per-slot accessors, render |
 | the factories and the loose `from` input | the native build, which receives the wrapper node |
-| the validators' reconstruction of a node's config | cursors and queries, which walk the tree |
-| the slot-descending `is` guards (`is.ts`) | |
+| the slot-descending `is` guards (`is.ts`) | cursors and queries, which walk the tree |
+| the portable reader's path steps: a step that enters a chain's wrapper, or ends on a wrapper the portable layer claims, reads the holder's stored slot | |
+| | the validators' reconstruction of a node's config, which rebuilds stored shapes through the low-level factories |
+| | the example printer, which prints a chain slot's wrappers: a wrapper is input the hoisted slot admits ("Input also admits the wrapper") |
 
 ## 3. One stamped fact, and its readers
 
@@ -75,7 +78,7 @@ The two layers apply the same idea on their own terms. The portable layer flatte
 
 ## 5. Hoisted wrappers
 
-Master's models. The holder slots are named `Type.getter`. The rule holds at 276 slots: python 71, rust 103 and typescript 102.
+Master's models. The holder slots are named `Type.getter`. The rule holds at 287 slots: python 71, rust 103, typescript 102, regex 8 and scm 3 (the 276 of the three first grammars, and regex's eight `pattern` slots and scm's three).
 
 - **221 are outermost holder slots listed by wrapper.** Python 44 go through 17 wrappers, rust 85 through 23, and typescript 92 through 22. This section lists their single wrappers, §6 their chains, and rows marked §7 have their exact reads and setters there.
 - **37 are listed by holder slot** at the end of this section, most of them the slot of a wrapper that hoists nowhere itself.

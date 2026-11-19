@@ -21,8 +21,8 @@ using py = await python.createEngine();
 
 const fn = py.build.functionDefinition({
 	name: 'greet',
-	parameters: py.build.parameters(),
-	body: py.build.block(py.build.passStatement)
+	parameters: [],
+	body: py.build.suiteBlock(py.build.passStatement)
 });
 
 fn.$render(); // "def greet():\n    pass\n"
@@ -57,8 +57,8 @@ using py = await python.createEngine();
 
 const fn = py.build.functionDefinition({
 	name: 'greet',
-	parameters: py.build.parameters(),
-	body: py.build.block(py.build.passStatement)
+	parameters: [],
+	body: py.build.suiteBlock(py.build.passStatement)
 });
 
 fn.$trivia.leading('# entry point').$render(); // "# entry point\ndef greet():\n    pass\n"
@@ -74,8 +74,8 @@ import python from '@sittir/python';
 using py = await python.createEngine();
 const built = py.build.functionDefinition({
 	name: 'greet',
-	parameters: py.build.parameters(),
-	body: py.build.block(py.build.passStatement)
+	parameters: [],
+	body: py.build.suiteBlock(py.build.passStatement)
 });
 
 py.isNode(built); // true

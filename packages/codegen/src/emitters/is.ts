@@ -1,10 +1,11 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { AssembledEnum, isFixedTextLeaf, isPatternLeaf, type AssembledNode } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, isFixedTextLeaf, isPatternLeaf, type AssembledNode } from '../compiler/model/node-map.ts';
 import { isAuthoredSupertype, isDeclaredSupertype } from './shared.ts';
 import { membershipKindsOf } from './membership.ts';
 import { collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
+import { wrapperChainFor, wrapperChainsOf } from '../compiler/model/wrapper-chain.ts';
 import { flattenedVariantParents, formRoutesOf, seatedFormKinds, type FlattenedVariantRoute, type FormRoute } from '../compiler/model/ir-surface.ts';
 
 export interface EmitIsConfig {
@@ -159,12 +160,20 @@ export function emitIs(config: EmitIsConfig): string {
 	const kindGuard = (kind: string): string => (formsOf(kind) !== undefined ? formGuard(kind) : kindTest(kind));
 	const selfTest = (kind: string): string => (seated.has(kind) ? kindTest(kind) : kindGuard(kind));
 	let seatsRead = false;
+	const chainWrappers = new Set(wrapperChainsOf(nodeMap).flatMap((chain) => chain.storage));
 	const guardTree = (kind: string, routes: readonly FormRoute[]): string => `_vg(${baseGuard(kind)}, { ${routes.map((route) => formMember(kind, route)).join(', ')} })`;
+	const storedSeatKey = (kind: string, seat: string): string | undefined => {
+		const node = nodeMap.nodes.get(kind);
+		const slot = node instanceof AbstractAssembledCompound ? node.slots.find((candidate) => candidate.propertyName === seat) : undefined;
+		return slot !== undefined && wrapperChainFor(nodeMap, kind, slot.name) !== undefined ? slot.storageKey : undefined;
+	};
 	const formMember = (kind: string, route: FormRoute): string => {
 		if (route.seat === undefined) return `${route.name}: ${kindGuard(route.child.kind)}`;
 		const child = route.forms === undefined ? kindTest(route.child.kind) : guardTree(route.child.kind, route.forms);
 		seatsRead = true;
-		return `${route.name}: _at(${kindTest(kind)}, ${JSON.stringify(route.seat)}, ${child})`;
+		const stored = storedSeatKey(kind, route.seat);
+		const tail = stored === undefined ? (chainWrappers.has(kind) ? ', true' : '') : `, ${chainWrappers.has(kind)}, ${JSON.stringify(stored)}`;
+		return `${route.name}: _at(${kindTest(kind)}, ${JSON.stringify(route.seat)}, ${child}${tail})`;
 	};
 	const formGuardNames = new Set<string>();
 	const formGuard = (kind: string): string => {
@@ -174,11 +183,13 @@ export function emitIs(config: EmitIsConfig): string {
 		formConsts.push(`    const ${name} = ${guardTree(kind, formsOf(kind)!)};`);
 		return name;
 	};
-	const seatedPredicate = (host: string): string =>
-		`<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${kindDiscriminantExpr(host, nodeMap, kindEntries)} }`;
-	const seatedMemberType = (host: string, route: FormRoute): string => {
-		if (route.forms === undefined) return `${route.name}${seatedPredicate(host)}`;
-		return `readonly ${route.name}: { ${seatedPredicate(host)}; ${route.forms.map((inner) => seatedMemberType(host, inner)).join('; ')} }`;
+	const seatedPredicate = (host: string, seat: FormRoute): string => {
+		const kinds = [host, ...(chainWrappers.has(host) ? [seat.child.kind] : [])].map((kind) => kindDiscriminantExpr(kind, nodeMap, kindEntries));
+		return `<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${kinds.join(' | ')} }`;
+	};
+	const seatedMemberType = (host: string, route: FormRoute, seat: FormRoute = route): string => {
+		if (route.forms === undefined) return `${route.name}${seatedPredicate(host, seat)}`;
+		return `readonly ${route.name}: { ${seatedPredicate(host, seat)}; ${route.forms.map((inner) => seatedMemberType(host, inner, seat)).join('; ')} }`;
 	};
 	const formMemberType = (host: string, route: FormRoute): string => {
 		if (route.seat !== undefined) return seatedMemberType(host, route);
@@ -217,6 +228,7 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('');
 	lines.push("import { TSKindId } from './kinds.js';");
 	lines.push("import { holdsKinds, type KindTest } from '@sittir/common/language';");
+	const importsEnd = lines.length;
 	lines.push("import type { NamespaceMap } from './types.js';");
 	if (supertypes.length > 0 || leafGuards.some((leaf) => leaf.shape !== 'text')) lines.push("import type { NarrowTo } from '@sittir/types';");
 	lines.push('');
@@ -312,11 +324,12 @@ export function emitIs(config: EmitIsConfig): string {
 		lines.push('');
 	}
 	if (seatsRead) {
-		lines.push('function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {');
+		lines.splice(importsEnd, 0, "import { storedSlotRead } from '@sittir/common/language';");
+		lines.push('function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G, hoisted = false, stored?: string): G {');
 		lines.push('    const inner = guard as unknown as (v: unknown) => boolean;');
 		lines.push('    const forms: Record<string, object> = {};');
-		lines.push('    for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);');
-		lines.push('    return _vg((v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()), forms) as unknown as G;');
+		lines.push('    for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted, stored);');
+		lines.push('    return _vg((v: unknown): boolean => (host(v) && (inner((v as Record<string, () => unknown>)[seat]!()) || (stored !== undefined && inner(storedSlotRead(v as object, seat, stored, false))))) || (hoisted && inner(v)), forms) as unknown as G;');
 		lines.push('}');
 		lines.push('');
 	}

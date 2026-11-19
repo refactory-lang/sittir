@@ -5,7 +5,7 @@ import { spelledMember } from './spelled.ts';
 import { builtRefOf } from './built-ref.ts';
 import { undoIfFillFails } from './list-fills.ts';
 import { treeOf } from './tree-token.ts';
-import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
+import { treeBuiltArena, treeNativeSlots, treeSlotTable, treeStructureTable } from './engine-scope.ts';
 import { decodeBuiltCell } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
@@ -309,7 +309,7 @@ export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refu
 	const members = node as Record<string, unknown>;
 	const values = rows.flatMap(([accessor, , , storageKey, , blank]): [string, unknown][] => {
 		const stored = (value: unknown): unknown => (blank === true ? blankArmStored(value) : value);
-		const read = members[accessor];
+		const read = slotReader(node, accessor);
 		if (typeof read !== 'function' || read.length !== 0) {
 			if (Object.hasOwn(node, storageKey)) throw new Error(`a node of kind ${String(members.$type)} stores ${storageKey}, but has no reader ${accessor}()`);
 			return [];
@@ -333,9 +333,8 @@ export function builtInputs(node: object): BuilderInputs {
 	if (!isRecordPosition(node)) throw new Error('a built row reads the record of a record handle');
 	const tree = node.$tree;
 	const kind = node.$type;
-	const members = node as unknown as Record<string, unknown>;
 	const inputs = builderInputs(treeSlotTable(tree)?.[kind] ?? [], treeStructureTable(tree)?.[kind], (accessor) => {
-		const read = members[accessor];
+		const read = slotReader(node, accessor);
 		return typeof read === 'function' ? listed((read as () => unknown).call(node)) : undefined;
 	});
 	const settings = listSettingsOf(node);
@@ -352,8 +351,22 @@ function listed(value: unknown): unknown {
 	return Symbol.iterator in value ? [...(value as Iterable<unknown>)] : value;
 }
 
+function treeOfNode(node: object): TreeHandle | undefined {
+	return isRecordPosition(node) ? node.$tree : (builtRefOf(node)?.arena.tree ?? treeOf(node));
+}
+
+export function nativeSlotReader(node: object, accessor: string): ((this: object) => unknown) | undefined {
+	const tree = treeOfNode(node);
+	const kind = (node as { readonly $type?: unknown }).$type;
+	return tree === undefined || typeof kind !== 'number' ? undefined : treeNativeSlots(tree)?.[kind]?.[accessor];
+}
+
+export function slotReader(node: object, accessor: string): unknown {
+	return nativeSlotReader(node, accessor) ?? (node as Record<string, unknown>)[accessor];
+}
+
 function engineSlotsOf(node: object): (kind: number) => readonly QuerySlotEntry[] {
-	const tree = isRecordPosition(node) ? node.$tree : (builtRefOf(node)?.arena.tree ?? treeOf(node));
+	const tree = treeOfNode(node);
 	const table = tree === undefined ? undefined : treeSlotTable(tree);
 	return (kind) => table?.[kind] ?? [];
 }

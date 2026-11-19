@@ -22,7 +22,7 @@ using rs = await rust.createEngine();
 const fn = rs.build.statement.function({
 	visibilityModifier: 'pub',
 	name: 'main',
-	parameters: rs.build.parameters(),
+	parameters: [],
 	body: rs.build.block()
 });
 
@@ -44,7 +44,7 @@ using strict = await rust.createEngine({ api: 'strict' });
 const fn = strict.build.statement.function({
 	visibilityModifier: strict.build.visibilityModifier.pub(),
 	name: strict.build.identifier('main'),
-	parameters: strict.build.parameters(),
+	parameters: undefined,
 	body: strict.build.block()
 });
 
@@ -82,7 +82,7 @@ using rs = await rust.createEngine();
 
 const fn = rs.build.statement.function({
 	name: 'main',
-	parameters: rs.build.parameters(),
+	parameters: [],
 	body: rs.build.block()
 });
 
@@ -100,7 +100,7 @@ using rs = await rust.createEngine();
 
 const fn = rs.build.statement.function({
 	name: 'main',
-	parameters: rs.build.parameters(),
+	parameters: [],
 	body: rs.build.block()
 });
 
@@ -118,7 +118,7 @@ using rs = await rust.createEngine({ render: { layout: { indent: '\t' } } });
 
 const fn = rs.build.statement.function({
 	name: 'f',
-	parameters: rs.build.parameters(),
+	parameters: [],
 	body: rs.build.block({
 		statements: [rs.build.expressionStatement(rs.build.identifier('a'))]
 	})

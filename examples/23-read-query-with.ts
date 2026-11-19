@@ -19,7 +19,7 @@ export function outline(source: string) {
 			if (py.is.functionDefinition(statement)) return [`def ${statement.name().$text()}`];
 			if (!py.is.classDefinition(statement)) return [];
 			const body = statement.body();
-			const members = py.is.suiteBlockClassDeclaration(body) ? body.blockClassDeclaration().statements() : [];
+			const members = py.is.suiteBlockClassDeclaration(body) ? body.blockClassDeclaration() : [];
 			const methods = members.flatMap((member) => {
 				if (py.is.methodDeclaration(member)) return [`  def ${member.name().$text()}`];
 				return py.is.constructorDeclaration(member) ? ['  def __init__'] : [];
@@ -93,7 +93,7 @@ export function parameterTexts(source: string, name: string) {
 		.$descendants.ofType(kinds.FunctionDefinition)
 		.where((candidate) => candidate.name.eq(name))
 		.find();
-	const list = fn?.$query().parameters.find()?.elements();
+	const list = fn?.$query().$descendants.ofType(kinds.ParametersElements).find();
 	if (list === undefined) return [];
 	return [...py.query(list).$children].map((parameter) => py.render(parameter).toString());
 }

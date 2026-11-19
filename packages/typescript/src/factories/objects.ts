@@ -21,6 +21,12 @@ import {
 	currentHandle,
 	admitChildren,
 	checkDelimited,
+	hoistedWith,
+	hoistRead,
+	listElementsHop,
+	storedHop,
+	wrapHoisted,
+	wrapHoistedEach,
 	listSlotWith,
 	LIST_METHODS,
 	listIterator,
@@ -204,8 +210,13 @@ function buildProgram$with(node: Held, setter: string, args: readonly unknown[])
 				rebuilt(node, handle, () => buildProgram({ ...config, shebang: value }))
 			);
 		case 'statements':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
-				rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
+			return applySetter(
+				args,
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.Program.Config>['statements']>, readonly unknown[]>[number][]
+					>
+				) => rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
 			);
 	}
 	throw new Error(`program has no $with.${setter}`);
@@ -357,7 +368,8 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		_export_specifiers,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		exportSpecifiers: () => hydrateStoredSlot(node, '_export_specifiers'),
+		exportSpecifiers: () =>
+			hoistRead(hydrateStoredSlot(node, '_export_specifiers'), [listElementsHop(undefined, 'items')], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -409,14 +421,33 @@ function buildExportClause$with(node: Held, setter: string, args: readonly unkno
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'exportSpecifiers':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
-						(value?: Admit<T.ExportSpecifiers>) => _buildExportClause(value)
-					)
-				)
+			return hoistedWith(
+				node,
+				'exportSpecifiers',
+				'_export_specifiers',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
+								(value?: Admit<NonNullable<T.ExportSpecifiers>>) => _buildExportClause(value)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ExportSpecifiers
 			);
 	}
 	throw new Error(`export_clause has no $with.${setter}`);
@@ -740,7 +771,8 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 		_import_specifiers,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		importSpecifiers: () => hydrateStoredSlot(node, '_import_specifiers'),
+		importSpecifiers: () =>
+			hoistRead(hydrateStoredSlot(node, '_import_specifiers'), [listElementsHop(undefined, 'items')], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -792,14 +824,33 @@ function buildNamedImports$with(node: Held, setter: string, args: readonly unkno
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'importSpecifiers':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
-						(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports(value)
-					)
-				)
+			return hoistedWith(
+				node,
+				'importSpecifiers',
+				'_import_specifiers',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
+								(value?: Admit<NonNullable<T.ImportSpecifiers>>) => _buildNamedImports(value)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildImportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ImportSpecifiers
 			);
 	}
 	throw new Error(`named_imports has no $with.${setter}`);
@@ -814,7 +865,15 @@ export function buildImportAttribute<ObjectSlot extends T.ImportAttribute.Config
 export function buildImportAttribute(config: T.ImportAttribute.Config): T.ImportAttribute.Bound {
 	currentHandle()?.admit(TSKindId.ImportAttribute, [config]);
 	const _attribute_kind = kindIdStorage<NonNullable<T.ImportAttribute['_attribute_kind']>>(config.attributeKind);
-	const _object = orDefault(config.object, () => buildObject());
+	const _object = orDefault(
+		wrapHoisted(
+			config.object,
+			(v: readonly never[]) =>
+				v.length === 0 ? buildObject() : (buildObject as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.Object
+		),
+		() => buildObject()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'import_attribute', { attributeKind: _attribute_kind, object: _object });
@@ -825,7 +884,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		attributeKind: () => _attribute_kind,
-		object: () => hydrateStoredSlot(node, '_object'),
+		object: () => hoistRead(hydrateStoredSlot(node, '_object'), [storedHop('properties', '_properties', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -854,8 +913,27 @@ function buildImportAttribute$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildImportAttribute({ ...config, attributeKind: value }))
 			);
 		case 'object':
-			return applySetter(args, (value: Admit<T.Object>) =>
-				rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
+			return hoistedWith(
+				node,
+				'object',
+				'_object',
+				'properties',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.ImportAttribute.Config>['object']>) =>
+						rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildObject()
+							: (buildObject as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Object
 			);
 	}
 	throw new Error(`import_attribute has no $with.${setter}`);
@@ -1485,7 +1563,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 	currentHandle()?.admit(TSKindId.IfStatement, [config]);
 	const _condition = config.condition;
 	const _consequence = kindIdStorage<NonNullable<T.IfStatement['_consequence']>>(config.consequence);
-	const _alternative = config.alternative;
+	const _alternative = wrapHoisted(config.alternative, (v: never) => buildElseClause(v), TSKindId.ElseClause);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'if_statement', {
@@ -1502,7 +1580,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		$with: undefined as unknown as object,
 		condition: () => hydrateStoredSlot(node, '_condition'),
 		consequence: () => hydrateStoredSlot(node, '_consequence'),
-		alternative: () => hydrateStoredSlot(node, '_alternative'),
+		alternative: () => hoistRead(hydrateStoredSlot(node, '_alternative'), [storedHop('body', '_body', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1536,8 +1614,22 @@ function buildIfStatement$with(node: Held, setter: string, args: readonly unknow
 				rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value }))
 			);
 		case 'alternative':
-			return applySetter(args, (value?: Admit<T.ElseClause>) =>
-				rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
+			return hoistedWith(
+				node,
+				'alternative',
+				'_alternative',
+				'body',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.IfStatement.Config>['alternative']>) =>
+						rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildElseClause(v))(v as never)),
+				TSKindId.ElseClause
 			);
 	}
 	throw new Error(`if_statement has no $with.${setter}`);
@@ -1559,7 +1651,17 @@ export function buildSwitchStatement<
 export function buildSwitchStatement(config: T.SwitchStatement.Config): T.SwitchStatement.Bound {
 	currentHandle()?.admit(TSKindId.SwitchStatement, [config]);
 	const _value = config.value;
-	const _body = orDefault(config.body, () => buildSwitchBody());
+	const _body = orDefault(
+		wrapHoisted(
+			config.body,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildSwitchBody()
+					: (buildSwitchBody as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.SwitchBody
+		),
+		() => buildSwitchBody()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'switch_statement', { value: _value, body: _body });
 	const node = {
@@ -1569,7 +1671,7 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		value: () => hydrateStoredSlot(node, '_value'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('cases', '_cases', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1594,8 +1696,27 @@ function buildSwitchStatement$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildSwitchStatement({ ...config, value: value }))
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.SwitchBody>) =>
-				rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
+			return hoistedWith(
+				node,
+				'body',
+				'_body',
+				'cases',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.SwitchStatement.Config>['body']>) =>
+						rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildSwitchBody()
+							: (buildSwitchBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.SwitchBody
 			);
 	}
 	throw new Error(`switch_statement has no $with.${setter}`);
@@ -1936,7 +2057,7 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 	currentHandle()?.admit(TSKindId.TryStatement, [config]);
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _handlers = config.handlers;
-	const _finalizer = config.finalizer;
+	const _finalizer = wrapHoisted(config.finalizer, (v: never) => buildFinallyClause(v), TSKindId.FinallyClause);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'try_statement', { body: _body, handlers: _handlers, finalizer: _finalizer });
@@ -1949,7 +2070,7 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 		$with: undefined as unknown as object,
 		body: () => hydrateStoredSlot(node, '_body'),
 		handlers: () => hydrateStoredSlot(node, '_handlers'),
-		finalizer: () => hydrateStoredSlot(node, '_finalizer'),
+		finalizer: () => hoistRead(hydrateStoredSlot(node, '_finalizer'), [storedHop('body', '_body', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1983,8 +2104,22 @@ function buildTryStatement$with(node: Held, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: value }))
 			);
 		case 'finalizer':
-			return applySetter(args, (value?: Admit<T.FinallyClause>) =>
-				rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
+			return hoistedWith(
+				node,
+				'finalizer',
+				'_finalizer',
+				'body',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.TryStatement.Config>['finalizer']>) =>
+						rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildFinallyClause(v))(v as never)),
+				TSKindId.FinallyClause
 			);
 	}
 	throw new Error(`try_statement has no $with.${setter}`);
@@ -2575,8 +2710,13 @@ function buildSwitchCase$with(node: Held, setter: string, args: readonly unknown
 				rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value }))
 			);
 		case 'bodies':
-			return applySetter(args, (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][]>) =>
-				rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
+			return applySetter(
+				args,
+				(
+					...values: Admit<
+						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][]
+					>
+				) => rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
 			);
 	}
 	throw new Error(`switch_case has no $with.${setter}`);
@@ -3332,14 +3472,35 @@ export function buildClass<
 ): T.Class.Bound;
 export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound {
 	currentHandle()?.admit(TSKindId.Class, [config]);
-	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _name = admitAliasContent<NonNullable<T.Class['_name']>>(
 		rejectReservedText(config.name, 'Class.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _type_parameters = config.typeParameters;
-	const _heritage = config.heritage;
-	const _body = orDefault(config.body, () => buildClassBody());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
+	const _body = orDefault(
+		wrapHoisted(
+			config.body,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.ClassBody
+		),
+		() => buildClassBody()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class', {
@@ -3358,11 +3519,13 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		_body,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		heritage: () => hydrateStoredSlot(node, '_heritage'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('members', '_members', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -3390,30 +3553,104 @@ function buildClass$with(node: Held, setter: string, args: readonly unknown[]): 
 	const config = node[INPUT] as T.Class.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) }))
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.Class.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) => rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (value?: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildClass({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildClass({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.Class.Config>['typeParameters']>) =>
+									buildClass({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'heritage':
-			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-				rebuilt(node, handle, () => buildClass({ ...config, heritage: value }))
+			return hoistedWith(
+				node,
+				'heritage',
+				'_heritage',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.Class.Config>['heritage']>) =>
+						rebuilt(node, handle, () => buildClass({ ...config, heritage: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
+				TSKindId.ClassHeritage
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.ClassBody>) =>
-				rebuilt(node, handle, () => buildClass({ ...config, body: value }))
+			return hoistedWith(
+				node,
+				'body',
+				'_body',
+				'members',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.Class.Config>['body']>) =>
+						rebuilt(node, handle, () => buildClass({ ...config, body: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ClassBody
 			);
 	}
 	throw new Error(`class has no $with.${setter}`);
@@ -3458,14 +3695,35 @@ export function buildClassDeclaration(
 	options?: T.ClassDeclaration.Options
 ): T.ClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ClassDeclaration, [config]);
-	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(
 		rejectReservedText(config.name, 'ClassDeclaration.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _type_parameters = config.typeParameters;
-	const _heritage = config.heritage;
-	const _body = orDefault(config.body, () => buildClassBody());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
+	const _body = orDefault(
+		wrapHoisted(
+			config.body,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.ClassBody
+		),
+		() => buildClassBody()
+	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassDeclaration['_terminator']>>(
 		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
@@ -3490,11 +3748,13 @@ export function buildClassDeclaration(
 		_terminator,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		heritage: () => hydrateStoredSlot(node, '_heritage'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('members', '_members', true)], true),
 		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3526,32 +3786,107 @@ function buildClassDeclaration$with(node: Held, setter: string, args: readonly u
 	const options = node[OPTIONS] as T.ClassDeclaration.Options;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildClassDeclaration({ ...config, decorators: restItems('decorators', values) }, options)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.ClassDeclaration.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildClassDeclaration({ ...config, decorators: restItems('decorators', values) }, options)
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value }, options)
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.ClassDeclaration.Config>['typeParameters']>) =>
+									buildClassDeclaration({ ...config, typeParameters: value }, options)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'heritage':
-			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options))
+			return hoistedWith(
+				node,
+				'heritage',
+				'_heritage',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ClassDeclaration.Config>['heritage']>) =>
+						rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
+				TSKindId.ClassHeritage
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.ClassBody>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options))
+			return hoistedWith(
+				node,
+				'body',
+				'_body',
+				'members',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.ClassDeclaration.Config>['body']>) =>
+						rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ClassBody
 			);
 		case 'terminator':
 			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
@@ -3649,8 +3984,20 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const handle = currentHandle();
@@ -3675,8 +4022,10 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -3715,18 +4064,71 @@ function buildFunctionExpression$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionExpression({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.FunctionExpression.Config>['typeParameters']>) =>
+									buildFunctionExpression({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
+										buildFunctionExpression({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.FunctionExpression.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionExpression({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -3789,8 +4191,20 @@ export function buildFunctionDeclaration(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionDeclaration['_terminator']>>(
@@ -3821,8 +4235,10 @@ export function buildFunctionDeclaration(
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		terminator: () => blankArmRead(_terminator),
@@ -3865,18 +4281,71 @@ function buildFunctionDeclaration$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionDeclaration({ ...config, typeParameters: value }, options)
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.FunctionDeclaration.Config>['typeParameters']>) =>
+									buildFunctionDeclaration({ ...config, typeParameters: value }, options)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
+										buildFunctionDeclaration({ ...config, parameters: value }, options))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.FunctionDeclaration.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, parameters: value }, options))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -3942,8 +4411,20 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const handle = currentHandle();
@@ -3968,8 +4449,10 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -4008,18 +4491,71 @@ function buildGeneratorFunction$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildGeneratorFunction({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.GeneratorFunction.Config>['typeParameters']>) =>
+									buildGeneratorFunction({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
+										buildGeneratorFunction({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.GeneratorFunction.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildGeneratorFunction({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -4082,8 +4618,20 @@ export function buildGeneratorFunctionDeclaration(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _terminator = coerceKindEnumStorage<NonNullable<T.GeneratorFunctionDeclaration['_terminator']>>(
@@ -4114,8 +4662,10 @@ export function buildGeneratorFunctionDeclaration(
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		terminator: () => blankArmRead(_terminator),
@@ -4158,19 +4708,73 @@ function buildGeneratorFunctionDeclaration$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) =>
-							buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['typeParameters']>) =>
+									buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
+								rebuilt(node, handle, () =>
+									buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options)
+								)
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
+										buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -4304,7 +4908,14 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_arguments = config.typeArguments;
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
 	const _arguments = config.arguments;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -4321,7 +4932,8 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4352,14 +4964,34 @@ function buildNewExpression$with(node: Held, setter: string, args: readonly unkn
 				rebuilt(node, handle, () => buildNewExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildNewExpression({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+								(value?: Admit<NonNullable<T.NewExpression.Config>['typeArguments']>) =>
+									buildNewExpression({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 		case 'arguments':
 			return applySetter(args, (value?: Admit<T.Arguments>) =>
@@ -5961,8 +6593,25 @@ export function buildDecoratorCallExpression(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_arguments = config.typeArguments;
-	const _arguments = orDefault(config.arguments, () => buildArguments());
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
+	const _arguments = orDefault(
+		wrapHoisted(
+			config.arguments,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.Arguments
+		),
+		() => buildArguments()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'decorator_call_expression', {
@@ -5978,8 +6627,9 @@ export function buildDecoratorCallExpression(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -6009,18 +6659,57 @@ function buildDecoratorCallExpression$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildDecoratorCallExpression({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+								(value?: Admit<NonNullable<T.DecoratorCallExpression.Config>['typeArguments']>) =>
+									buildDecoratorCallExpression({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.DecoratorCallExpression.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Arguments
 			);
 	}
 	throw new Error(`decorator_call_expression has no $with.${setter}`);
@@ -6560,8 +7249,20 @@ export function buildFunctionSignature(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionSignature['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -6590,8 +7291,10 @@ export function buildFunctionSignature(
 		$with: undefined as unknown as object,
 		async: () => _async,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
@@ -6632,18 +7335,71 @@ function buildFunctionSignature$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildFunctionSignature({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionSignature({ ...config, typeParameters: value }, options)
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.FunctionSignature.Config>['typeParameters']>) =>
+									buildFunctionSignature({ ...config, typeParameters: value }, options)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
+										buildFunctionSignature({ ...config, parameters: value }, options))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.FunctionSignature.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionSignature({ ...config, parameters: value }, options))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -6733,7 +7489,12 @@ export function buildTypeAssertion<
 ): T.TypeAssertion.Bound;
 export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssertion.Bound {
 	currentHandle()?.admit(TSKindId.TypeAssertion, [config]);
-	const _type_arguments = config.typeArguments;
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
 	const _expression = rejectReservedText(
 		kindIdStorage<NonNullable<T.TypeAssertion['_expression']>>(config.expression),
 		'TypeAssertion.expression',
@@ -6749,7 +7510,8 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 		_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6775,14 +7537,32 @@ function buildTypeAssertion$with(node: Held, setter: string, args: readonly unkn
 	const config = node[INPUT] as T.TypeAssertion.Config;
 	switch (setter) {
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) => buildTypeAssertion({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+								(value: Admit<NonNullable<T.TypeAssertion.Config>['typeArguments']>) =>
+									buildTypeAssertion({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 		case 'expression':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeAssertion.Config>['expression']>) =>
@@ -6956,7 +7736,12 @@ export function buildInstantiationExpression(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_arguments = config.typeArguments;
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'instantiation_expression', { function: _function, typeArguments: _type_arguments });
@@ -6967,7 +7752,8 @@ export function buildInstantiationExpression(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -6996,14 +7782,32 @@ function buildInstantiationExpression$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildInstantiationExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) => buildInstantiationExpression({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+								(value: Admit<NonNullable<T.InstantiationExpression.Config>['typeArguments']>) =>
+									buildInstantiationExpression({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`instantiation_expression has no $with.${setter}`);
@@ -7137,7 +7941,14 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_arguments = config.typeArguments;
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'extends_clause_single', { value: _value, typeArguments: _type_arguments });
@@ -7148,7 +7959,8 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		value: () => hydrateStoredSlot(node, '_value'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7177,14 +7989,34 @@ function buildExtendsClauseSingle$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildExtendsClauseSingle({ ...config, value: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildExtendsClauseSingle({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+								(value?: Admit<NonNullable<T.ExtendsClauseSingle.Config>['typeArguments']>) =>
+									buildExtendsClauseSingle({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`extends_clause_single has no $with.${setter}`);
@@ -7310,7 +8142,9 @@ export function buildAbstractClassDeclaration(
 	config: T.AbstractClassDeclaration.Config
 ): T.AbstractClassDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.AbstractClassDeclaration, [config]);
-	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _name = admitAliasContent<NonNullable<T.AbstractClassDeclaration['_name']>>(
 		rejectReservedText(
 			config.name,
@@ -7320,9 +8154,28 @@ export function buildAbstractClassDeclaration(
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _type_parameters = config.typeParameters;
-	const _heritage = config.heritage;
-	const _body = orDefault(config.body, () => buildClassBody());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _heritage = wrapHoisted(config.heritage, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage);
+	const _body = orDefault(
+		wrapHoisted(
+			config.body,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildClassBody()
+					: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.ClassBody
+		),
+		() => buildClassBody()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'abstract_class_declaration', {
@@ -7341,11 +8194,13 @@ export function buildAbstractClassDeclaration(
 		_body,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		heritage: () => hydrateStoredSlot(node, '_heritage'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		heritage: () => hoistRead(hydrateStoredSlot(node, '_heritage'), [storedHop('content', '_content', false)], false),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [storedHop('members', '_members', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7373,32 +8228,110 @@ function buildAbstractClassDeclaration$with(node: Held, setter: string, args: re
 	const config = node[INPUT] as T.AbstractClassDeclaration.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.AbstractClassDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.AbstractClassDeclaration.Config>['typeParameters']>) =>
+									buildAbstractClassDeclaration({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'heritage':
-			return applySetter(args, (value?: Admit<T.ClassHeritage>) =>
-				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value }))
+			return hoistedWith(
+				node,
+				'heritage',
+				'_heritage',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.AbstractClassDeclaration.Config>['heritage']>) =>
+						rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
+				TSKindId.ClassHeritage
 			);
 		case 'body':
-			return applySetter(args, (value: Admit<T.ClassBody>) =>
-				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
+			return hoistedWith(
+				node,
+				'body',
+				'_body',
+				'members',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.AbstractClassDeclaration.Config>['body']>) =>
+						rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildClassBody()
+							: (buildClassBody as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ClassBody
 			);
 	}
 	throw new Error(`abstract_class_declaration has no $with.${setter}`);
@@ -7708,8 +8641,24 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		rejectReservedText(config.name, 'InterfaceDeclaration.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _type_parameters = config.typeParameters;
-	const _extends_type_clause = config.extendsTypeClause;
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _extends_type_clause = wrapHoisted(
+		config.extendsTypeClause,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ExtendsTypeClause
+	);
 	const _body = config.body;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -7728,8 +8677,10 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		extendsTypeClause: () => hydrateStoredSlot(node, '_extends_type_clause'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		extendsTypeClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_extends_type_clause'), [storedHop('types', '_type', true)], true),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7761,18 +8712,59 @@ function buildInterfaceDeclaration$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, name: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildInterfaceDeclaration({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.InterfaceDeclaration.Config>['typeParameters']>) =>
+									buildInterfaceDeclaration({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'extendsTypeClause':
-			return applySetter(args, (value?: Admit<T.ExtendsTypeClause>) =>
-				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value }))
+			return hoistedWith(
+				node,
+				'extendsTypeClause',
+				'_extends_type_clause',
+				'types',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InterfaceDeclaration.Config>['extendsTypeClause']>) =>
+						rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildExtendsTypeClause as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ExtendsTypeClause
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.InterfaceBody>) =>
@@ -7861,7 +8853,17 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _body = orDefault(config.body, () => buildEnumBody());
+	const _body = orDefault(
+		wrapHoisted(
+			config.body,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildEnumBody()
+					: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[]))),
+			TSKindId.EnumBody
+		),
+		() => buildEnumBody()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'enum_declaration', { const: _const, name: _name, body: _body });
 	const node = {
@@ -7873,7 +8875,7 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		$with: undefined as unknown as object,
 		const: () => _const,
 		name: () => hydrateStoredSlot(node, '_name'),
-		body: () => hydrateStoredSlot(node, '_body'),
+		body: () => hoistRead(hydrateStoredSlot(node, '_body'), [listElementsHop('elements', 'items')], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7907,14 +8909,36 @@ function buildEnumDeclaration$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value }))
 			);
 		case 'body':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
-						(value: Admit<T.EnumBody>) => buildEnumDeclaration({ ...config, body: value })
+			return hoistedWith(
+				node,
+				'body',
+				'_body',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
+								(value: Admit<NonNullable<T.EnumDeclaration.Config>['body']>) =>
+									buildEnumDeclaration({ ...config, body: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildEnumBody()
+							: buildEnumBody((buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[]))))(
+						args
 					)
-				)
+				],
+				TSKindId.EnumBody
 			);
 	}
 	throw new Error(`enum_declaration has no $with.${setter}`);
@@ -7966,7 +8990,7 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [listElementsHop(undefined, 'items')], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -8018,14 +9042,33 @@ function buildEnumBody$with(node: Held, setter: string, args: readonly unknown[]
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
-						(value?: Admit<T.EnumBodyElements>) => _buildEnumBody(value)
-					)
-				)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
+								(value?: Admit<NonNullable<T.EnumBodyElements>>) => _buildEnumBody(value)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildEnumBodyElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.EnumBodyElements
 			);
 	}
 	throw new Error(`enum_body has no $with.${setter}`);
@@ -8127,7 +9170,16 @@ export function buildTypeAliasDeclaration(
 		rejectReservedText(config.name, 'TypeAliasDeclaration.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _type_parameters = config.typeParameters;
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
 	const _value = admitAliasContent<NonNullable<T.TypeAliasDeclaration['_value']>>(
 		rejectReservedText(
 			kindIdStorage<NonNullable<T.TypeAliasDeclaration['_value']>>(config.value),
@@ -8158,7 +9210,8 @@ export function buildTypeAliasDeclaration(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
 		value: () => hydrateStoredSlot(node, '_value'),
 		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
@@ -8193,15 +9246,36 @@ function buildTypeAliasDeclaration$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, name: value }, options))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) =>
-							buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.TypeAliasDeclaration.Config>['typeParameters']>) =>
+									buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'value':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeAliasDeclaration.Config>['value']>) =>
@@ -8242,14 +9316,16 @@ export function buildRequiredParameter<
 ): T.RequiredParameter.Bound;
 export function buildRequiredParameter(config: T.RequiredParameter.Config): T.RequiredParameter.Bound {
 	currentHandle()?.admit(TSKindId.RequiredParameter, [config]);
-	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.RequiredParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
 	const _override = strictBooleanStorage(config.override);
 	const _readonly = strictBooleanStorage(config.readonly);
 	const _name = config.name;
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const _value = rejectReservedText(
 		kindIdStorage<NonNullable<T.RequiredParameter['_value']>>(config.value),
 		'RequiredParameter.value',
@@ -8278,12 +9354,13 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8314,8 +9391,33 @@ function buildRequiredParameter$with(node: Held, setter: string, args: readonly 
 	const config = node[INPUT] as T.RequiredParameter.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorators: restItems('decorators', values) }))
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.RequiredParameter.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildRequiredParameter({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['accessibilityModifier']>) =>
@@ -8334,8 +9436,22 @@ function buildRequiredParameter$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.RequiredParameter.Config>['value']>) =>
@@ -8379,14 +9495,16 @@ export function buildOptionalParameter<
 ): T.OptionalParameter.Bound;
 export function buildOptionalParameter(config: T.OptionalParameter.Config): T.OptionalParameter.Bound {
 	currentHandle()?.admit(TSKindId.OptionalParameter, [config]);
-	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.OptionalParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
 	const _override = strictBooleanStorage(config.override);
 	const _readonly = strictBooleanStorage(config.readonly);
 	const _name = kindIdStorage<NonNullable<T.OptionalParameter['_name']>>(config.name);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const _value = rejectReservedText(
 		kindIdStorage<NonNullable<T.OptionalParameter['_value']>>(config.value),
 		'OptionalParameter.value',
@@ -8415,12 +9533,13 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8451,8 +9570,33 @@ function buildOptionalParameter$with(node: Held, setter: string, args: readonly 
 	const config = node[INPUT] as T.OptionalParameter.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorators: restItems('decorators', values) }))
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.OptionalParameter.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildOptionalParameter({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['accessibilityModifier']>) =>
@@ -8471,8 +9615,22 @@ function buildOptionalParameter$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.OptionalParameter.Config>['value']>) =>
@@ -8801,7 +9959,17 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 ): T.TypeQueryCallExpressionInTypeAnnotation.Bound {
 	currentHandle()?.admit(TSKindId.TypeQueryCallExpressionInTypeAnnotation, [config]);
 	const _function = kindIdStorage<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation['_function']>>(config.function);
-	const _arguments = orDefault(config.arguments, () => buildArguments());
+	const _arguments = orDefault(
+		wrapHoisted(
+			config.arguments,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.Arguments
+		),
+		() => buildArguments()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'type_query_call_expression_in_type_annotation', {
@@ -8815,7 +9983,7 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8850,8 +10018,29 @@ function buildTypeQueryCallExpressionInTypeAnnotation$with(
 					rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value }))
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value }))
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(value: Admit<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['arguments']>) =>
+							rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Arguments
 			);
 	}
 	throw new Error(`type_query_call_expression_in_type_annotation has no $with.${setter}`);
@@ -8944,7 +10133,7 @@ function _buildAssertsAnnotation(value: Admit<T.Asserts>): T.AssertsAnnotation.B
 		_asserts,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		asserts: () => hydrateStoredSlot(node, '_asserts'),
+		asserts: () => hoistRead(hydrateStoredSlot(node, '_asserts'), [storedHop('value', '_value', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8963,8 +10152,22 @@ function buildAssertsAnnotation$with(node: Held, setter: string, args: readonly 
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'asserts':
-			return applySetter(args, (value: Admit<T.Asserts>) =>
-				rebuilt(node, handle, () => _buildAssertsAnnotation(value))
+			return hoistedWith(
+				node,
+				'asserts',
+				'_asserts',
+				'value',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.Asserts>>) =>
+						rebuilt(node, handle, () => _buildAssertsAnnotation(value))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildAsserts(v))(v as never)),
+				TSKindId.Asserts
 			);
 	}
 	throw new Error(`asserts_annotation has no $with.${setter}`);
@@ -8985,7 +10188,7 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_parameter', { name: _name, type: _type });
 	const node = {
@@ -8995,7 +10198,7 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9020,8 +10223,22 @@ function buildTupleParameter$with(node: Held, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildTupleParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.TupleParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`tuple_parameter has no $with.${setter}`);
@@ -9047,7 +10264,7 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'optional_tuple_parameter', { name: _name, type: _type });
 	const node = {
@@ -9057,7 +10274,7 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9086,8 +10303,22 @@ function buildOptionalTupleParameter$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.OptionalTupleParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`optional_tuple_parameter has no $with.${setter}`);
@@ -9210,8 +10441,20 @@ export function buildConstructorType<
 export function buildConstructorType(config: T.ConstructorType.Config): T.ConstructorType.Bound {
 	currentHandle()?.admit(TSKindId.ConstructorType, [config]);
 	const _abstract = strictBooleanStorage(config.abstract);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _type = admitAliasContent<NonNullable<T.ConstructorType['_type']>>(
 		rejectReservedText(
 			kindIdStorage<NonNullable<T.ConstructorType['_type']>>(config.type),
@@ -9238,8 +10481,10 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		abstract: () => _abstract,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9271,18 +10516,71 @@ function buildConstructorType$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildConstructorType({ ...config, abstract: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildConstructorType({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.ConstructorType.Config>['typeParameters']>) =>
+									buildConstructorType({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
+										buildConstructorType({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.ConstructorType.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildConstructorType({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.ConstructorType.Config>['type']>) =>
@@ -9603,7 +10901,12 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		rejectReservedText(config.name, 'GenericType.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _type_arguments = config.typeArguments;
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'generic_type', { name: _name, typeArguments: _type_arguments });
 	const node = {
@@ -9613,7 +10916,8 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9642,14 +10946,32 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 				rebuilt(node, handle, () => buildGenericType({ ...config, name: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) => buildGenericType({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+								(value: Admit<NonNullable<T.GenericType.Config>['typeArguments']>) =>
+									buildGenericType({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`generic_type has no $with.${setter}`);
@@ -10019,7 +11341,7 @@ function _buildTypeQueryCallExpression(value: Admit<T.Arguments>): T.TypeQueryCa
 		_arguments,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10038,8 +11360,27 @@ function buildTypeQueryCallExpression$with(node: Held, setter: string, args: rea
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => _buildTypeQueryCallExpression(value))
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.Arguments>>) =>
+						rebuilt(node, handle, () => _buildTypeQueryCallExpression(value))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Arguments
 			);
 	}
 	throw new Error(`type_query_call_expression has no $with.${setter}`);
@@ -10072,7 +11413,12 @@ export function buildTypeQueryInstantiationExpression(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_arguments = config.typeArguments;
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'type_query_instantiation_expression', {
@@ -10086,7 +11432,8 @@ export function buildTypeQueryInstantiationExpression(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10115,15 +11462,32 @@ function buildTypeQueryInstantiationExpression$with(node: Held, setter: string, 
 				rebuilt(node, handle, () => buildTypeQueryInstantiationExpression({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: Admit<T.TypeArguments>) =>
-							buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+								(value: Admit<NonNullable<T.TypeQueryInstantiationExpression.Config>['typeArguments']>) =>
+									buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 	}
 	throw new Error(`type_query_instantiation_expression has no $with.${setter}`);
@@ -10634,7 +11998,7 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 		_types,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		types: () => hydrateStoredSlot(node, '_types'),
+		types: () => hoistRead(hydrateStoredSlot(node, '_types'), [listElementsHop(undefined, 'items')], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -10686,14 +12050,30 @@ function buildTypeArguments$with(node: Held, setter: string, args: readonly unkn
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'types':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
-						(value: Admit<T.Types>) => _buildTypeArguments(value)
-					)
-				)
+			return hoistedWith(
+				node,
+				'types',
+				'_types',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
+								(value: Admit<NonNullable<T.Types>>) => _buildTypeArguments(value)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (buildTypes as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Types
 			);
 	}
 	throw new Error(`type_arguments has no $with.${setter}`);
@@ -10725,7 +12105,14 @@ export function buildObjectType(
 		_pinned.opening === undefined
 			? (TSKindId.Lbrace as const)
 			: kindIdStorage<NonNullable<T.ObjectType['_opening']>>(_pinned.opening);
-	const _members = config.members;
+	const _members = wrapHoisted(
+		config.members,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ObjectTypeContent
+	);
 	const _closing =
 		_pinned.closing === undefined
 			? (TSKindId.Rbrace as const)
@@ -10741,7 +12128,7 @@ export function buildObjectType(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [listElementsHop(undefined, 'items')], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10763,14 +12150,34 @@ function buildObjectType$with(node: Held, setter: string, args: readonly unknown
 	const config = node[INPUT] as ConfigOf<T.ObjectType>;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-						(value?: Admit<T.ObjectTypeContent>) => buildObjectType({ ...config, members: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+								(value?: Admit<NonNullable<ConfigOf<T.ObjectType>>['members']>) =>
+									buildObjectType({ ...config, members: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
@@ -10785,7 +12192,14 @@ export function buildObjectTypeCurly<MembersSlot extends T.ObjectType.Curly.Conf
 export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.ObjectType.Curly.Bound {
 	currentHandle()?.admit(TSKindId.ObjectType, [config], ['members']);
 	const _opening = TSKindId.Lbrace as const;
-	const _members = config?.members;
+	const _members = wrapHoisted(
+		config?.members,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ObjectTypeContent
+	);
 	const _closing = TSKindId.Rbrace as const;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -10798,7 +12212,7 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [listElementsHop(undefined, 'items')], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10820,8 +12234,27 @@ function buildObjectTypeCurly$with(node: Held, setter: string, args: readonly un
 	const config = node[INPUT] as T.ObjectType.Curly.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
-				rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ObjectType.Curly.Config>['members']>) =>
+						rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
@@ -10836,7 +12269,14 @@ export function buildObjectTypeFlow<MembersSlot extends T.ObjectType.Flow.Config
 export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.ObjectType.Flow.Bound {
 	currentHandle()?.admit(TSKindId.ObjectType, [config], ['members']);
 	const _opening = TSKindId.LbracePipe as const;
-	const _members = config?.members;
+	const _members = wrapHoisted(
+		config?.members,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ObjectTypeContent
+	);
 	const _closing = TSKindId.PipeRbrace as const;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -10849,7 +12289,7 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [listElementsHop(undefined, 'items')], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10871,8 +12311,27 @@ function buildObjectTypeFlow$with(node: Held, setter: string, args: readonly unk
 	const config = node[INPUT] as T.ObjectType.Flow.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
-				rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ObjectType.Flow.Config>['members']>) =>
+						rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
@@ -10893,8 +12352,20 @@ export function buildCallSignature<
 ): T.CallSignature.Bound;
 export function buildCallSignature(config: Partial<T.CallSignature.Config> = {}): T.CallSignature.Bound {
 	currentHandle()?.admit(TSKindId.CallSignature, [config]);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -10910,8 +12381,10 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		_return_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10938,18 +12411,71 @@ function buildCallSignature$with(node: Held, setter: string, args: readonly unkn
 	const config = node[INPUT] as T.CallSignature.Config;
 	switch (setter) {
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildCallSignature({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.CallSignature.Config>['typeParameters']>) =>
+									buildCallSignature({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
+										buildCallSignature({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.CallSignature.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildCallSignature({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -10985,7 +12511,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const _optional = strictBooleanStorage(config.optional);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'property_signature', {
@@ -11014,7 +12540,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		readonly: () => _readonly,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11078,8 +12604,22 @@ function buildPropertySignature$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, optional: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.PropertySignature.Config>['type']>) =>
+						rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`property_signature has no $with.${setter}`);
@@ -11146,7 +12686,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [listElementsHop(undefined, 'items')], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -11198,14 +12738,31 @@ function buildTypeParameters$with(node: Held, setter: string, args: readonly unk
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
-						(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
-					)
-				)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
+								(value: Admit<NonNullable<T.TypeParametersElements>>) => _buildTypeParameters(value)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.TypeParametersElements
 			);
 	}
 	throw new Error(`type_parameters has no $with.${setter}`);
@@ -11229,7 +12786,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _constraint = config.constraint;
-	const _default = config.default;
+	const _default = wrapHoisted(config.default, (v: never) => buildDefaultType(v), TSKindId.DefaultType);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'type_parameter', { const: _const, name: _name, constraint: _constraint, default: _default });
@@ -11244,7 +12801,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		const: () => _const,
 		name: () => hydrateStoredSlot(node, '_name'),
 		constraint: () => hydrateStoredSlot(node, '_constraint'),
-		default: () => hydrateStoredSlot(node, '_default'),
+		default: () => hoistRead(hydrateStoredSlot(node, '_default'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11283,8 +12840,22 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, constraint: value }))
 			);
 		case 'default':
-			return applySetter(args, (value?: Admit<T.DefaultType>) =>
-				rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
+			return hoistedWith(
+				node,
+				'default',
+				'_default',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.TypeParameter.Config>['default']>) =>
+						rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDefaultType(v))(v as never)),
+				TSKindId.DefaultType
 			);
 	}
 	throw new Error(`type_parameter has no $with.${setter}`);
@@ -11434,9 +13005,21 @@ export function buildConstructSignature<
 export function buildConstructSignature(config: Partial<T.ConstructSignature.Config> = {}): T.ConstructSignature.Bound {
 	currentHandle()?.admit(TSKindId.ConstructSignature, [config]);
 	const _abstract = strictBooleanStorage(config.abstract);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
-	const _type = config.type;
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'construct_signature', {
@@ -11454,9 +13037,11 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		abstract: () => _abstract,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11487,22 +13072,89 @@ function buildConstructSignature$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildConstructSignature({ ...config, abstract: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildConstructSignature({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.ConstructSignature.Config>['typeParameters']>) =>
+									buildConstructSignature({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
+										buildConstructSignature({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.ConstructSignature.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildConstructSignature({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ConstructSignature.Config>['type']>) =>
+						rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`construct_signature has no $with.${setter}`);
@@ -11612,7 +13264,8 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 		_tuple_type_members,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		tupleTypeMembers: () => hydrateStoredSlot(node, '_tuple_type_members'),
+		tupleTypeMembers: () =>
+			hoistRead(hydrateStoredSlot(node, '_tuple_type_members'), [listElementsHop(undefined, 'items')], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -11664,14 +13317,33 @@ function buildTupleType$with(node: Held, setter: string, args: readonly unknown[
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'tupleTypeMembers':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
-						(value?: Admit<T.TupleTypeMembers>) => _buildTupleType(value)
-					)
-				)
+			return hoistedWith(
+				node,
+				'tupleTypeMembers',
+				'_tuple_type_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
+								(value?: Admit<NonNullable<T.TupleTypeMembers>>) => _buildTupleType(value)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildTupleTypeMembers as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.TupleTypeMembers
 			);
 	}
 	throw new Error(`tuple_type has no $with.${setter}`);
@@ -11883,8 +13555,20 @@ export function buildFunctionType<
 ): T.FunctionType.Bound;
 export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Bound {
 	currentHandle()?.admit(TSKindId.FunctionType, [config]);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = admitAliasContent<NonNullable<T.FunctionType['_return_type']>>(
 		rejectReservedText(
 			kindIdStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType),
@@ -11908,8 +13592,10 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		_return_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11936,18 +13622,71 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 	const config = node[INPUT] as T.FunctionType.Config;
 	switch (setter) {
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionType({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.FunctionType.Config>['typeParameters']>) =>
+									buildFunctionType({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+										buildFunctionType({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.FunctionType.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
@@ -11969,7 +13708,10 @@ function buildFunctionType$with$returnType(this: Received<Held>, ...args: unknow
 const buildExportSpecifiers$wrapper = {
 	kind: TSKindId.ExportSpecifier,
 	content: 'name',
-	decorations: ['typeKeyword', 'alias']
+	decorations: [
+		{ accessor: 'typeKeyword', storage: '_type_keyword', many: false },
+		{ accessor: 'alias', storage: '_alias', many: false }
+	]
 };
 export function buildExportSpecifiers<
 	A extends NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
@@ -12623,7 +14365,11 @@ function buildTypes$with$delimiter(this: Received<Held>, ...args: unknown[]): un
 const buildTypeParametersElements$wrapper = {
 	kind: TSKindId.TypeParameter,
 	content: 'name',
-	decorations: ['const', 'constraint', 'default']
+	decorations: [
+		{ accessor: 'const', storage: '_const', many: false },
+		{ accessor: 'constraint', storage: '_constraint', many: false },
+		{ accessor: 'default', storage: '_default', many: false }
+	]
 };
 export function buildTypeParametersElements<
 	A extends NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
@@ -12954,7 +14700,7 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'catch_clause_group', { parameter: _parameter, type: _type });
 	const node = {
@@ -12964,7 +14710,7 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		parameter: () => hydrateStoredSlot(node, '_parameter'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12993,8 +14739,22 @@ function buildCatchClauseGroup$with(node: Held, setter: string, args: readonly u
 				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, parameter: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.CatchClauseGroup.Config>['type']>) =>
+						rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`catch_clause_group has no $with.${setter}`);
@@ -14566,7 +16326,9 @@ export function buildClassBodyMemberMethod(
 	options?: T.ClassBodyMemberMethod.Options
 ): T.ClassBodyMemberMethod.Bound {
 	currentHandle()?.admit(TSKindId.ClassBodyMemberMethod, [config]);
-	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
 		blankArmStored(options?.terminator),
@@ -14586,7 +16348,8 @@ export function buildClassBodyMemberMethod(
 		_terminator,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		methodDefinition: () => hydrateStoredSlot(node, '_method_definition'),
 		terminator: () => blankArmRead(_terminator),
 		$render: () => renderText(handle, node),
@@ -14616,10 +16379,33 @@ function buildClassBodyMemberMethod$with(node: Held, setter: string, args: reado
 	const options = node[OPTIONS] as T.ClassBodyMemberMethod.Options;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ClassBodyMemberMethod.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'methodDefinition':
 			return applySetter(args, (value: Admit<T.MethodDefinitionClassBodyMemberMethod>) =>
@@ -15005,7 +16791,7 @@ export function buildImportStatementClauseFrom(
 	config: T.ImportStatementClauseFrom.Config
 ): T.ImportStatementClauseFrom.Bound {
 	currentHandle()?.admit(TSKindId.ImportStatementClauseFrom, [config]);
-	const _import_clause = config.importClause;
+	const _import_clause = wrapHoisted(config.importClause, (v: never) => buildImportClause(v), TSKindId.ImportClause);
 	const _source = config.source;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -15016,7 +16802,8 @@ export function buildImportStatementClauseFrom(
 		_source,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		importClause: () => hydrateStoredSlot(node, '_import_clause'),
+		importClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_import_clause'), [storedHop('content', '_content', false)], false),
 		source: () => hydrateStoredSlot(node, '_source'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -15042,8 +16829,39 @@ function buildImportStatementClauseFrom$with(node: Held, setter: string, args: r
 	const config = node[INPUT] as T.ImportStatementClauseFrom.Config;
 	switch (setter) {
 		case 'importClause':
-			return applySetter(args, (value: Admit<T.ImportClause>) =>
-				rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value }))
+			return hoistedWith(
+				node,
+				'importClause',
+				'_import_clause',
+				'content',
+				false,
+				{
+					kind: TSKindId.NamedImports as const,
+					optional: false,
+					make: buildNamedImports,
+					forms: [TSKindId.NamespaceImport, TSKindId.ImportClauseDefaultImport]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
+								rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
+										buildImportStatementClauseFrom({ ...config, importClause: value }))(
+										(list === undefined ? undefined : buildImportClause(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.ImportStatementClauseFrom.Config>['importClause']>) =>
+						rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value }))
+					),
+				undefined,
+				TSKindId.ImportClause
 			);
 		case 'source':
 			return applySetter(args, (value: Admit<T.String>) =>
@@ -15272,7 +17090,7 @@ export function buildParenthesizedExpressionTyped(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'parenthesized_expression_typed', { expression: _expression, type: _type });
@@ -15283,7 +17101,7 @@ export function buildParenthesizedExpressionTyped(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		expression: () => hydrateStoredSlot(node, '_expression'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15312,8 +17130,22 @@ function buildParenthesizedExpressionTyped$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, expression: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ParenthesizedExpressionTyped.Config>['type']>) =>
+						rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`parenthesized_expression_typed has no $with.${setter}`);
@@ -15362,7 +17194,8 @@ function _buildParenthesizedExpressionSequence(
 		_sequence_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		sequenceExpression: () => hydrateStoredSlot(node, '_sequence_expression'),
+		sequenceExpression: () =>
+			hoistRead(hydrateStoredSlot(node, '_sequence_expression'), [storedHop('expressions', '_expression', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15381,8 +17214,25 @@ function buildParenthesizedExpressionSequence$with(node: Held, setter: string, a
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'sequenceExpression':
-			return applySetter(args, (value: Admit<T.SequenceExpression>) =>
-				rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value))
+			return hoistedWith(
+				node,
+				'sequenceExpression',
+				'_sequence_expression',
+				'expressions',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.SequenceExpression>>) =>
+						rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						(buildSequenceExpression as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.SequenceExpression
 			);
 	}
 	throw new Error(`parenthesized_expression_sequence has no $with.${setter}`);
@@ -15560,8 +17410,25 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_arguments = config.typeArguments;
-	const _arguments = orDefault(config.arguments, () => buildArguments());
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
+	const _arguments = orDefault(
+		wrapHoisted(
+			config.arguments,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.Arguments
+		),
+		() => buildArguments()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'call_expression_call', {
@@ -15577,8 +17444,9 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15608,18 +17476,57 @@ function buildCallExpressionCall$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildCallExpressionCall({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+								(value?: Admit<NonNullable<T.CallExpressionCall.Config>['typeArguments']>) =>
+									buildCallExpressionCall({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.CallExpressionCall.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Arguments
 			);
 	}
 	throw new Error(`call_expression_call has no $with.${setter}`);
@@ -15650,7 +17557,17 @@ export function buildCallExpressionTemplateCall(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _arguments = orDefault(config.arguments, () => buildTemplateString());
+	const _arguments = orDefault(
+		wrapHoisted(
+			config.arguments,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildTemplateString()
+					: (buildTemplateString as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.TemplateString
+		),
+		() => buildTemplateString()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'call_expression_template_call', { function: _function, arguments: _arguments });
@@ -15661,7 +17578,7 @@ export function buildCallExpressionTemplateCall(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15690,8 +17607,27 @@ function buildCallExpressionTemplateCall$with(node: Held, setter: string, args: 
 				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, function: value }))
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.TemplateString>) =>
-				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value }))
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.CallExpressionTemplateCall.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildTemplateString()
+							: (buildTemplateString as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.TemplateString
 			);
 	}
 	throw new Error(`call_expression_template_call has no $with.${setter}`);
@@ -15721,8 +17657,25 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type_arguments = config.typeArguments;
-	const _arguments = orDefault(config.arguments, () => buildArguments());
+	const _type_arguments = wrapHoisted(
+		config.typeArguments,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))),
+		TSKindId.TypeArguments
+	);
+	const _arguments = orDefault(
+		wrapHoisted(
+			config.arguments,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildArguments()
+					: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])),
+			TSKindId.Arguments
+		),
+		() => buildArguments()
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'call_expression_member', {
@@ -15738,8 +17691,9 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		function: () => hydrateStoredSlot(node, '_function'),
-		typeArguments: () => hydrateStoredSlot(node, '_type_arguments'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		typeArguments: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_arguments'), [listElementsHop('types', 'items')], true),
+		arguments: () => hoistRead(hydrateStoredSlot(node, '_arguments'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15769,18 +17723,57 @@ function buildCallExpressionMember$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, function: value }))
 			);
 		case 'typeArguments':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: Admit<T.TypeArguments>) => buildCallExpressionMember({ ...config, typeArguments: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeArguments',
+				'_type_arguments',
+				'types',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+								(value?: Admit<NonNullable<T.CallExpressionMember.Config>['typeArguments']>) =>
+									buildCallExpressionMember({ ...config, typeArguments: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeArguments((buildTypes as unknown as (...items: never[]) => never)(...(v as never[]))))(args)
+				],
+				TSKindId.TypeArguments
 			);
 		case 'arguments':
-			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
+			return hoistedWith(
+				node,
+				'arguments',
+				'_arguments',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.CallExpressionMember.Config>['arguments']>) =>
+						rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildArguments()
+							: (buildArguments as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Arguments
 			);
 	}
 	throw new Error(`call_expression_member has no $with.${setter}`);
@@ -16072,8 +18065,19 @@ export function buildClassHeritageExtendsClause(
 	config: T.ClassHeritageExtendsClause.Config
 ): T.ClassHeritageExtendsClause.Bound {
 	currentHandle()?.admit(TSKindId.ClassHeritageExtendsClause, [config]);
-	const _extends_clause = config.extendsClause;
-	const _implements_clause = config.implementsClause;
+	const _extends_clause = wrapHoisted(
+		config.extendsClause,
+		(v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ExtendsClause
+	);
+	const _implements_clause = wrapHoisted(
+		config.implementsClause,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildImplementsClause as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ImplementsClause
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class_heritage_extends_clause', {
@@ -16086,8 +18090,10 @@ export function buildClassHeritageExtendsClause(
 		_implements_clause,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		extendsClause: () => hydrateStoredSlot(node, '_extends_clause'),
-		implementsClause: () => hydrateStoredSlot(node, '_implements_clause'),
+		extendsClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_extends_clause'), [storedHop('types', '_types', true)], true),
+		implementsClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_implements_clause'), [storedHop('types', '_type', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16112,12 +18118,49 @@ function buildClassHeritageExtendsClause$with(node: Held, setter: string, args: 
 	const config = node[INPUT] as T.ClassHeritageExtendsClause.Config;
 	switch (setter) {
 		case 'extendsClause':
-			return applySetter(args, (value: Admit<T.ExtendsClause>) =>
-				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value }))
+			return hoistedWith(
+				node,
+				'extendsClause',
+				'_extends_clause',
+				'types',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.ClassHeritageExtendsClause.Config>['extendsClause']>) =>
+						rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) => (buildExtendsClause as unknown as (...items: never[]) => never)(...(v as never[])))(
+						args
+					)
+				],
+				TSKindId.ExtendsClause
 			);
 		case 'implementsClause':
-			return applySetter(args, (value?: Admit<T.ImplementsClause>) =>
-				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value }))
+			return hoistedWith(
+				node,
+				'implementsClause',
+				'_implements_clause',
+				'types',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ClassHeritageExtendsClause.Config>['implementsClause']>) =>
+						rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildImplementsClause as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ImplementsClause
 			);
 	}
 	throw new Error(`class_heritage_extends_clause has no $with.${setter}`);
@@ -16148,7 +18191,11 @@ export function buildImportClauseDefaultImport(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _import_clause_group = config.importClauseGroup;
+	const _import_clause_group = wrapHoisted(
+		config.importClauseGroup,
+		(v: never) => buildImportClauseGroup(v),
+		TSKindId.ImportClauseGroup
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'import_clause_default_import', {
@@ -16162,7 +18209,8 @@ export function buildImportClauseDefaultImport(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		identifier: () => hydrateStoredSlot(node, '_identifier'),
-		importClauseGroup: () => hydrateStoredSlot(node, '_import_clause_group'),
+		importClauseGroup: () =>
+			hoistRead(hydrateStoredSlot(node, '_import_clause_group'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16191,8 +18239,39 @@ function buildImportClauseDefaultImport$with(node: Held, setter: string, args: r
 				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, identifier: value }))
 			);
 		case 'importClauseGroup':
-			return applySetter(args, (value?: Admit<T.ImportClauseGroup>) =>
-				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
+			return hoistedWith(
+				node,
+				'importClauseGroup',
+				'_import_clause_group',
+				'content',
+				true,
+				{
+					kind: TSKindId.NamedImports as const,
+					optional: true,
+					make: buildNamedImports,
+					forms: [TSKindId.NamespaceImport]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
+								rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
+										buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))(
+										(list === undefined ? undefined : buildImportClauseGroup(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value?: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['importClauseGroup']>) =>
+						rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
+					),
+				undefined,
+				TSKindId.ImportClauseGroup
 			);
 	}
 	throw new Error(`import_clause_default_import has no $with.${setter}`);
@@ -16308,7 +18387,7 @@ export function buildExportStatementDefaultDeclaration(
 ): T.ExportStatementDefaultDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ExportStatementDefaultDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
-		config.decorators ?? []
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
@@ -16320,7 +18399,8 @@ export function buildExportStatementDefaultDeclaration(
 		_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -16346,10 +18426,33 @@ function buildExportStatementDefaultDeclaration$with(node: Held, setter: string,
 	const config = node[INPUT] as T.ExportStatementDefaultDeclaration.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildExportStatementDefaultDeclaration({ ...config, decorators: restItems('decorators', values) })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ExportStatementDefaultDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildExportStatementDefaultDeclaration({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
@@ -16491,7 +18594,17 @@ export function buildExportStatementDefaultFromClauseFrom(
 	config: Partial<T.ExportStatementDefaultFromClauseFrom.Config> = {}
 ): T.ExportStatementDefaultFromClauseFrom.Bound {
 	currentHandle()?.admit(TSKindId.ExportStatementDefaultFromClauseFrom, [config]);
-	const _export_clause = orDefault(config.exportClause, () => buildExportClause());
+	const _export_clause = orDefault(
+		wrapHoisted(
+			config.exportClause,
+			(v: readonly never[]) =>
+				v.length === 0
+					? buildExportClause()
+					: buildExportClause((buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[]))),
+			TSKindId.ExportClause
+		),
+		() => buildExportClause()
+	);
 	const _source = config.source;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -16505,7 +18618,8 @@ export function buildExportStatementDefaultFromClauseFrom(
 		_source,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		exportClause: () => hydrateStoredSlot(node, '_export_clause'),
+		exportClause: () =>
+			hoistRead(hydrateStoredSlot(node, '_export_clause'), [listElementsHop('exportSpecifiers', 'items')], true),
 		source: () => hydrateStoredSlot(node, '_source'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -16531,15 +18645,36 @@ function buildExportStatementDefaultFromClauseFrom$with(node: Held, setter: stri
 	const config = node[INPUT] as T.ExportStatementDefaultFromClauseFrom.Config;
 	switch (setter) {
 		case 'exportClause':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
-						(value: Admit<T.ExportClause>) =>
-							buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'exportClause',
+				'_export_clause',
+				'exportSpecifiers',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
+								(value: Admit<NonNullable<T.ExportStatementDefaultFromClauseFrom.Config>['exportClause']>) =>
+									buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? buildExportClause()
+							: buildExportClause(
+									(buildExportSpecifiers as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.ExportClause
 			);
 		case 'source':
 			return applySetter(args, (value?: Admit<T.String>) =>
@@ -16716,7 +18851,7 @@ export function buildVariableDeclaratorPlain(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const _value = rejectReservedText(
 		kindIdStorage<NonNullable<T.VariableDeclaratorPlain['_value']>>(config.value),
 		'VariableDeclaratorPlain.value',
@@ -16734,7 +18869,7 @@ export function buildVariableDeclaratorPlain(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -16765,8 +18900,22 @@ function buildVariableDeclaratorPlain$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['type']>) =>
+						rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['value']>) =>
@@ -16801,7 +18950,7 @@ export function buildVariableDeclaratorDefinite(
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'variable_declarator_definite', { name: _name, type: _type });
 	const node = {
@@ -16811,7 +18960,7 @@ export function buildVariableDeclaratorDefinite(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16840,8 +18989,22 @@ function buildVariableDeclaratorDefinite$with(node: Held, setter: string, args: 
 				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.VariableDeclaratorDefinite.Config>['type']>) =>
+						rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`variable_declarator_definite has no $with.${setter}`);
@@ -17665,14 +19828,16 @@ export function buildSetterParameter<
 ): T.SetterParameter.Bound;
 export function buildSetterParameter(config: T.SetterParameter.Config): T.SetterParameter.Bound {
 	currentHandle()?.admit(TSKindId.SetterParameter, [config]);
-	const _decorator = listStorage<NonNullable<T.SetterParameter['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.SetterParameter['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.SetterParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
 	const _override = strictBooleanStorage(config.override);
 	const _readonly = strictBooleanStorage(config.readonly);
 	const _pattern = kindIdStorage<NonNullable<T.SetterParameter['_pattern']>>(config.pattern);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'setter_parameter', {
@@ -17693,12 +19858,13 @@ export function buildSetterParameter(config: T.SetterParameter.Config): T.Setter
 		_type,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -17727,8 +19893,30 @@ function buildSetterParameter$with(node: Held, setter: string, args: readonly un
 	const config = node[INPUT] as T.SetterParameter.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildSetterParameter({ ...config, decorators: restItems('decorators', values) }))
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<NonNullable<NonNullable<T.SetterParameter.Config>['decorators']>, readonly unknown[]>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildSetterParameter({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(args, (value?: Admit<NonNullable<T.SetterParameter.Config>['accessibilityModifier']>) =>
@@ -17747,8 +19935,22 @@ function buildSetterParameter$with(node: Held, setter: string, args: readonly un
 				rebuilt(node, handle, () => buildSetterParameter({ ...config, pattern: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.SetterParameter.Config>['type']>) =>
+						rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 	}
 	throw new Error(`setter_parameter has no $with.${setter}`);
@@ -17805,8 +20007,20 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const _optional = strictBooleanStorage(config.optional);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const handle = currentHandle();
@@ -17849,8 +20063,10 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		generator: () => _generator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -17929,18 +20145,71 @@ function buildMethodDefinitionPlain$with(node: Held, setter: string, args: reado
 				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, optional: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildMethodDefinitionPlain({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['typeParameters']>) =>
+									buildMethodDefinitionPlain({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
+										buildMethodDefinitionPlain({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.MethodDefinitionPlain.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -18148,7 +20417,11 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		rejectReservedText(config.name, 'MethodDefinitionSetter.name', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _parameters = config.parameters;
+	const _parameters = wrapHoisted(
+		config.parameters,
+		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		TSKindId.FormalParametersSetAccessorSignature
+	);
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -18174,7 +20447,12 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		static: () => _static,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
+				false
+			),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -18230,8 +20508,30 @@ function buildMethodDefinitionSetter$with(node: Held, setter: string, args: read
 				) => rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, name: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.MethodDefinitionSetter.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value }))
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) =>
+						((v: never) =>
+							buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)))(
+							v as never
+						)
+					),
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -18289,8 +20589,20 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const _optional = strictBooleanStorage(config.optional);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -18330,8 +20642,10 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		generator: () => _generator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -18408,18 +20722,71 @@ function buildMethodSignaturePlain$with(node: Held, setter: string, args: readon
 				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, optional: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildMethodSignaturePlain({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['typeParameters']>) =>
+									buildMethodSignaturePlain({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
+										buildMethodSignaturePlain({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.MethodSignaturePlain.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -18599,7 +20966,11 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 		rejectReservedText(config.name, 'MethodSignatureSetter.name', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _parameters = config.parameters;
+	const _parameters = wrapHoisted(
+		config.parameters,
+		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		TSKindId.FormalParametersSetAccessorSignature
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'method_signature_setter', {
@@ -18622,7 +20993,12 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 		static: () => _static,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
+				false
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18676,8 +21052,30 @@ function buildMethodSignatureSetter$with(node: Held, setter: string, args: reado
 				) => rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, name: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.MethodSignatureSetter.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) =>
+						((v: never) =>
+							buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)))(
+							v as never
+						)
+					),
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -18732,8 +21130,20 @@ export function buildAbstractMethodSignaturePlain(
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const _optional = strictBooleanStorage(config.optional);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _type_parameters = wrapHoisted(
+		config.typeParameters,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: buildTypeParameters(
+						(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+					),
+		TSKindId.TypeParameters
+	);
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _return_type = config.returnType;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -18764,8 +21174,10 @@ export function buildAbstractMethodSignaturePlain(
 		generator: () => _generator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		typeParameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_type_parameters'), [listElementsHop('elements', 'items')], true),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -18829,18 +21241,71 @@ function buildAbstractMethodSignaturePlain$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, optional: value }))
 			);
 		case 'typeParameters':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'typeParameters',
+				'_type_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								(value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['typeParameters']>) =>
+									buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: buildTypeParameters(
+									(buildTypeParametersElements as unknown as (...items: never[]) => never)(...(v as never[]))
+								))(args)
+				],
+				TSKindId.TypeParameters
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
+										buildAbstractMethodSignaturePlain({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'returnType':
 			return applySetter(args, (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
@@ -19024,7 +21489,11 @@ export function buildAbstractMethodSignatureSetter(
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _parameters = config.parameters;
+	const _parameters = wrapHoisted(
+		config.parameters,
+		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		TSKindId.FormalParametersSetAccessorSignature
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'abstract_method_signature_setter', {
@@ -19044,7 +21513,12 @@ export function buildAbstractMethodSignatureSetter(
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(
+				hydrateStoredSlot(node, '_parameters'),
+				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
+				false
+			),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -19095,8 +21569,30 @@ function buildAbstractMethodSignatureSetter$with(node: Held, setter: string, arg
 				) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, name: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParametersSetAccessorSignature>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) =>
+						((v: never) =>
+							buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)))(
+							v as never
+						)
+					),
+				TSKindId.FormalParametersSetAccessorSignature,
+				(args: readonly never[]) =>
+					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -19136,7 +21632,9 @@ export function buildPublicFieldDefinitionPlain(
 	config: T.PublicFieldDefinitionPlain.Config
 ): T.PublicFieldDefinitionPlain.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionPlain, [config]);
-	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionPlain['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionPlain['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _declare = strictBooleanStorage(config.declare);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -19155,7 +21653,7 @@ export function buildPublicFieldDefinitionPlain(
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const _optionality = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_optionality']>>(config.optionality);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const _value = rejectReservedText(
 		kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_value']>>(config.value),
 		'PublicFieldDefinitionPlain.value',
@@ -19192,7 +21690,8 @@ export function buildPublicFieldDefinitionPlain(
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		declare: () => _declare,
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
@@ -19201,7 +21700,7 @@ export function buildPublicFieldDefinitionPlain(
 		abstract: () => _abstract,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optionality: () => _optionality,
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19236,10 +21735,33 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 	const config = node[INPUT] as T.PublicFieldDefinitionPlain.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildPublicFieldDefinitionPlain({ ...config, decorators: restItems('decorators', values) })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.PublicFieldDefinitionPlain.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildPublicFieldDefinitionPlain({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'declare':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['declare']>) =>
@@ -19286,8 +21808,22 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, optionality: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['type']>) =>
+						rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['value']>) =>
@@ -19349,7 +21885,9 @@ export function buildPublicFieldDefinitionAccessor(
 	config: T.PublicFieldDefinitionAccessor.Config
 ): T.PublicFieldDefinitionAccessor.Bound {
 	currentHandle()?.admit(TSKindId.PublicFieldDefinitionAccessor, [config]);
-	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _accessibility_modifier = kindIdStorage<
 		NonNullable<T.PublicFieldDefinitionAccessor['_accessibility_modifier']>
 	>(config.accessibilityModifier);
@@ -19365,7 +21903,7 @@ export function buildPublicFieldDefinitionAccessor(
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const _value = rejectReservedText(
 		kindIdStorage<NonNullable<T.PublicFieldDefinitionAccessor['_value']>>(config.value),
 		'PublicFieldDefinitionAccessor.value',
@@ -19396,13 +21934,14 @@ export function buildPublicFieldDefinitionAccessor(
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
 		abstract: () => _abstract,
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19434,10 +21973,33 @@ function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, arg
 	const config = node[INPUT] as T.PublicFieldDefinitionAccessor.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildPublicFieldDefinitionAccessor({ ...config, decorators: restItems('decorators', values) })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.PublicFieldDefinitionAccessor.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildPublicFieldDefinitionAccessor({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(
@@ -19472,8 +22034,22 @@ function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, arg
 				) => rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, name: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['type']>) =>
+						rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['value']>) =>
@@ -19614,7 +22190,10 @@ export function buildConstructorDeclaration(
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.ConstructorDeclaration['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _parameters = orDefault(
+		wrapHoisted(config.parameters, (v: never) => buildFormalParameters(v), TSKindId.FormalParameters),
+		() => buildFormalParameters()
+	);
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -19631,7 +22210,8 @@ export function buildConstructorDeclaration(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		accessibilityModifier: () => _accessibility_modifier,
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], true),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19662,8 +22242,39 @@ function buildConstructorDeclaration$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, accessibilityModifier: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				false,
+				{
+					kind: TSKindId.FormalParametersElements as const,
+					optional: false,
+					make: buildFormalParametersElements,
+					forms: [TSKindId.FormalParametersElementsReceiver]
+				},
+				handle,
+				args,
+				(args) =>
+					args.length === 0
+						? applySetter(args, (value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
+								rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value }))
+							)
+						: applySetter(args, (list: never) =>
+								rebuilt(node, handle, () =>
+									((value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
+										buildConstructorDeclaration({ ...config, parameters: value }))(
+										(list === undefined ? undefined : buildFormalParameters(list)) as never
+									)
+								)
+							),
+				(value) =>
+					applySetter([value], (value: Admit<NonNullable<T.ConstructorDeclaration.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value }))
+					),
+				undefined,
+				TSKindId.FormalParameters
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -19700,13 +22311,15 @@ export function buildReceiverParameterDeclaration(
 	config: Partial<T.ReceiverParameterDeclaration.Config> = {}
 ): T.ReceiverParameterDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.ReceiverParameterDeclaration, [config]);
-	const _decorator = listStorage<NonNullable<T.ReceiverParameterDeclaration['_decorator']>>(config.decorators ?? []);
+	const _decorator = listStorage<NonNullable<T.ReceiverParameterDeclaration['_decorator']>>(
+		wrapHoistedEach(config.decorators, (v: never) => buildDecorator(v), TSKindId.Decorator) ?? []
+	);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
 	const _override = strictBooleanStorage(config.override);
 	const _readonly = strictBooleanStorage(config.readonly);
-	const _type = config.type;
+	const _type = wrapHoisted(config.type, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation);
 	const _value = rejectReservedText(
 		kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_value']>>(config.value),
 		'ReceiverParameterDeclaration.value',
@@ -19733,11 +22346,12 @@ export function buildReceiverParameterDeclaration(
 		_value,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		decorators: () =>
+			hoistRead(hydrateStoredSlots(node, '_decorator'), [storedHop('expression', '_expression', false)], true),
 		accessibilityModifier: () => _accessibility_modifier,
 		override: () => _override,
 		readonly: () => _readonly,
-		type: () => hydrateStoredSlot(node, '_type'),
+		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -19767,10 +22381,33 @@ function buildReceiverParameterDeclaration$with(node: Held, setter: string, args
 	const config = node[INPUT] as T.ReceiverParameterDeclaration.Config;
 	switch (setter) {
 		case 'decorators':
-			return applySetter(args, (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildReceiverParameterDeclaration({ ...config, decorators: restItems('decorators', values) })
-				)
+			return hoistedWith(
+				node,
+				'decorators',
+				'_decorator',
+				'expression',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(
+						args,
+						(
+							...values: Admit<
+								Extract<
+									NonNullable<NonNullable<T.ReceiverParameterDeclaration.Config>['decorators']>,
+									readonly unknown[]
+								>[number][]
+							>
+						) =>
+							rebuilt(node, handle, () =>
+								buildReceiverParameterDeclaration({ ...config, decorators: restItems('decorators', values) })
+							)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
 			return applySetter(
@@ -19787,8 +22424,22 @@ function buildReceiverParameterDeclaration$with(node: Held, setter: string, args
 				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, readonly: value }))
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
+			return hoistedWith(
+				node,
+				'type',
+				'_type',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['type']>) =>
+						rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				TSKindId.TypeAnnotation
 			);
 		case 'value':
 			return applySetter(args, (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['value']>) =>
@@ -19959,7 +22610,7 @@ function _buildFormalParametersElementsReceiverGroup(
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		elements: () => hoistRead(hydrateStoredSlot(node, '_elements'), [listElementsHop(undefined, 'items')], true),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -20015,14 +22666,38 @@ function buildFormalParametersElementsReceiverGroup$with(
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.FormalParametersElements as const, optional: true, make: buildFormalParametersElements },
-						(value?: Admit<T.FormalParametersElements>) => _buildFormalParametersElementsReceiverGroup(value)
-					)
-				)
+			return hoistedWith(
+				node,
+				'elements',
+				'_elements',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{
+									kind: TSKindId.FormalParametersElements as const,
+									optional: true,
+									make: buildFormalParametersElements
+								},
+								(value?: Admit<NonNullable<T.FormalParametersElements>>) =>
+									_buildFormalParametersElementsReceiverGroup(value)
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildFormalParametersElements as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.FormalParametersElements
 			);
 	}
 	throw new Error(`formal_parameters_elements_receiver_group has no $with.${setter}`);
@@ -20338,7 +23013,14 @@ export function buildInterfaceBody(
 		_pinned.opening === undefined
 			? (TSKindId.Lbrace as const)
 			: kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(_pinned.opening);
-	const _members = config.members;
+	const _members = wrapHoisted(
+		config.members,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ObjectTypeContent
+	);
 	const _closing =
 		_pinned.closing === undefined
 			? (TSKindId.Rbrace as const)
@@ -20354,7 +23036,7 @@ export function buildInterfaceBody(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [listElementsHop(undefined, 'items')], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20376,14 +23058,34 @@ function buildInterfaceBody$with(node: Held, setter: string, args: readonly unkn
 	const config = node[INPUT] as ConfigOf<T.InterfaceBody>;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-						(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody({ ...config, members: value })
-					)
-				)
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (...args: unknown[]) =>
+						rebuilt(node, handle, () =>
+							listSlotWith(
+								args,
+								{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+								(value?: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['members']>) =>
+									buildInterfaceBody({ ...config, members: value })
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);
@@ -20398,7 +23100,14 @@ export function buildInterfaceBodyCurly<MembersSlot extends T.InterfaceBody.Curl
 export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): T.InterfaceBody.Curly.Bound {
 	currentHandle()?.admit(TSKindId.InterfaceBody, [config], ['members']);
 	const _opening = TSKindId.Lbrace as const;
-	const _members = config?.members;
+	const _members = wrapHoisted(
+		config?.members,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ObjectTypeContent
+	);
 	const _closing = TSKindId.Rbrace as const;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -20411,7 +23120,7 @@ export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): 
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [listElementsHop(undefined, 'items')], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20433,8 +23142,27 @@ function buildInterfaceBodyCurly$with(node: Held, setter: string, args: readonly
 	const config = node[INPUT] as T.InterfaceBody.Curly.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
-				rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InterfaceBody.Curly.Config>['members']>) =>
+						rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);
@@ -20449,7 +23177,14 @@ export function buildInterfaceBodyFlow<MembersSlot extends T.InterfaceBody.Flow.
 export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.InterfaceBody.Flow.Bound {
 	currentHandle()?.admit(TSKindId.InterfaceBody, [config], ['members']);
 	const _opening = TSKindId.LbracePipe as const;
-	const _members = config?.members;
+	const _members = wrapHoisted(
+		config?.members,
+		(v: readonly never[]) =>
+			v.length === 0
+				? undefined
+				: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.ObjectTypeContent
+	);
 	const _closing = TSKindId.PipeRbrace as const;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -20462,7 +23197,7 @@ export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		opening: () => _opening,
-		members: () => hydrateStoredSlot(node, '_members'),
+		members: () => hoistRead(hydrateStoredSlot(node, '_members'), [listElementsHop(undefined, 'items')], true),
 		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20484,8 +23219,27 @@ function buildInterfaceBodyFlow$with(node: Held, setter: string, args: readonly 
 	const config = node[INPUT] as T.InterfaceBody.Flow.Config;
 	switch (setter) {
 		case 'members':
-			return applySetter(args, (value?: Admit<T.ObjectTypeContent>) =>
-				rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value }))
+			return hoistedWith(
+				node,
+				'members',
+				'_members',
+				'items',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InterfaceBody.Flow.Config>['members']>) =>
+						rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildObjectTypeContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.ObjectTypeContent
 			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);

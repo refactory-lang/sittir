@@ -58,7 +58,7 @@ describe('emitPortableTyped', () => {
 	it("reads a slot through each of its routes in the route table's order, and an absent list as []", () => {
 		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
 		expect(typed.source).toContain(
-			`function ${name}$parameters(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(this[low].parameters().elements(), TSKindId.ParametersElements)?.items()) ?? read(of(this[low].parameters().elements(), TSKindId.ParametersElementsReceiver)?.parametersElementsReceiverGroup()?.elements()?.items()) ?? [];\n}`
+			`function ${name}$parameters(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(stored<T.Parameters.Parsed>(this[low], "_parameters").elements(), TSKindId.ParametersElements)?.items()) ?? read(stored<T.ParametersElements.Parsed | undefined>(of(stored<T.Parameters.Parsed>(this[low], "_parameters").elements(), TSKindId.ParametersElementsReceiver)?.parametersElementsReceiverGroup(), "_elements")?.items()) ?? [];\n}`
 		);
 	});
 
@@ -79,20 +79,16 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toMatch(/return read\(this\[low\]\.attributes\(\)\);/);
 	});
 
-	it("types an entry's node by what its claim tests present, and reads through that guarantee", () => {
-		const held = /type (ConstItemAsDeclarationConstantPublicRestricted\d+)\$Held = /.exec(typed.source)?.[1];
+	it("reads an entry's node through its claim's guarantee, narrowing each wrapper it stores at the slot that holds it", () => {
+		const name = /function (ConstItemAsDeclarationConstantPublicRestricted\d+)\$scope/.exec(typed.source)?.[1];
 		expect(typed.source).toContain(
-			`type ${held}$Held = Present<T.ConstItem.Parsed, { readonly visibilityModifier: [never, { readonly content: [TSKindId.VisibilityModifierPub, { readonly visibilityModifierPubScope: [never, { readonly content: [TSKindId.VisibilityModifierPubScopeInPath, {}]; }]; }]; }]; }>;`
-		);
-		expect(typed.source).toContain(`function ${held}(n: ${held}$Held, set: readonly string[] = [])`);
-		expect(typed.source).toContain(
-			`function ${held}$scope(this: Held<${held}$Held>) {\n\treturn read(of(of(this[low].visibilityModifier().content(), TSKindId.VisibilityModifierPub).visibilityModifierPubScope().content(), TSKindId.VisibilityModifierPubScopeInPath).path());`
+			`function ${name}$scope(this: Held<T.ConstItem.Parsed>) {\n\treturn read(of(stored<Present<T.VisibilityModifierPubScope.Parsed, { readonly content: [TSKindId.VisibilityModifierPubScopeInPath, {}]; }>>(of(stored<Present<T.VisibilityModifier.Parsed, { readonly content: [TSKindId.VisibilityModifierPub, {}]; }>>(this[low], "_visibility_modifier").content(), TSKindId.VisibilityModifierPub), "_visibility_modifier_pub_scope").content(), TSKindId.VisibilityModifierPubScopeInPath).path());\n}`
 		);
 	});
 
 	it('writes no route through a kind the claim rules out: a restricted scope reads through the in-path form only', () => {
 		expect(typed.source).toMatch(
-			/function VisibilityModifierPubAsModifierVisibilityPublicRestricted(\d+)\$scope\(this: Held<VisibilityModifierPubAsModifierVisibilityPublicRestricted\1\$Held>\) \{\n\treturn read\(of\(this\[low\]\.visibilityModifierPubScope\(\)\.content\(\), TSKindId\.VisibilityModifierPubScopeInPath\)\.path\(\)\);\n\}/
+			/function VisibilityModifierPubAsModifierVisibilityPublicRestricted(\d+)\$scope\(this: Held<T\.VisibilityModifierPub\.Parsed>\) \{\n\treturn read\(of\(stored<Present<T\.VisibilityModifierPubScope\.Parsed, \{ readonly content: \[TSKindId\.VisibilityModifierPubScopeInPath, \{\}\]; \}>>\(this\[low\], "_visibility_modifier_pub_scope"\)\.content\(\), TSKindId\.VisibilityModifierPubScopeInPath\)\.path\(\)\);\n\}/
 		);
 	});
 

@@ -25,7 +25,7 @@ import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics
 import { Delimiter } from '@sittir/common/delimiter';
 import { builtSlots, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, SlotRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
-import { concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
+import { concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, portableClaims, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { Body } from '../../render-body.ts';
@@ -51,12 +51,14 @@ import {
 	isTerminalValue,
 	memberOf as canonicalMemberOf,
 	slotFilledWhenOmitted,
+	storageKeyOf,
 	storageKindOfRef,
 	valueParseKindsOf,
 	type AssembledNode,
 	type AssembledNonterminal,
 	type NodeRef
 } from '../../../compiler/model/node-map.ts';
+import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { buildFactoryMap } from '../../factory-map.ts';
 import { includesNonEmpty, patternDfa, type PatternDfa } from '../../../compiler/model/pattern-automaton.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
@@ -227,6 +229,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const builders = new Map<string, PortableCallShape>();
 	const optionKeys = new Map<string, readonly string[]>();
 	const nodeOf = (kind: string): AssembledNode | undefined => nodeMap.nodes.get(modelNode(model, kind)?.kind ?? kind);
+	const claimed = portableClaims(routes, model);
 	const slotOf = (owner: string, slot: string): AssembledNonterminal | undefined => nodeOf(owner)?.slots.find((s) => s.name === slot);
 	const storageName = (kind: string): string => modelNode(model, kind)?.kind ?? kind;
 	const flagSites = new Map<string, Set<string> | 'any'>();
@@ -528,8 +531,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const next = path[i + 1];
 			const mount = next === undefined ? undefined : mountAt(step.owner, step.slot, next.owner);
 			const builder = mount?.builder ?? (next === undefined ? undefined : builderOf(next.owner));
+			const stored = wrapperChainFor(nodeMap, step.owner, step.slot)?.storage.some((wrapper) => (next === undefined ? claimed(wrapper, isMultiple(slot)) : wrapper === next.owner)) === true;
 			steps.push({
 				key: slot.propertyName,
+				...(stored ? { stored: storageKeyOf(slot.storageName) } : {}),
 				...(builder === undefined ? {} : { builder }),
 				...(guaranteed?.present(path.slice(0, i + 1)) === undefined ? optional(step.owner, slot) : {}),
 				...(mount === undefined ? {} : { mounted: mount.mounted }),

@@ -100,19 +100,19 @@ A coordinate a built node stores, as the node every route returns: the coordinat
 
 Whether a value is a node or a coordinate (`isNode` or `isCoordinate`): the one test every coercer, `isNodeOfKind` and `configFieldOr` ask, so a coordinate a built node stores is taken as the node it names wherever a node is.
 
-### `packages/common/src/utils.ts::HydrateOne`
+### `packages/common/src/stored-slot.ts::HydrateOne`
 
 How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree and wrap, or `hydrateStored` for a built node.
 
-### `packages/common/src/utils.ts::hydratedLists`
+### `packages/common/src/stored-slot.ts::hydratedLists`
 
 The list slots `hydrateSlotsBy` has already written back: each holds the frozen items an accessor returns, so a later call returns it as it is. Membership, not `Object.isFrozen`, marks them, since a built node may store a frozen array that still holds coordinates.
 
-### `packages/common/src/utils.ts::hydrateSlotBy`
+### `packages/common/src/stored-slot.ts::hydrateSlotBy`
 
 The one write-back for a single slot: the slot's value hydrated by `hydrateOne`, written back when it changed. The parsed and built accessors both go through it.
 
-### `packages/common/src/utils.ts::hydrateSlotsBy`
+### `packages/common/src/stored-slot.ts::hydrateSlotsBy`
 
 `hydrateSlotBy` for a list slot: every item hydrated once, the slot then holding the frozen items (`hydratedLists`). A slot that holds one element rather than an array goes through `hydrateSlotBy`.
 
@@ -124,11 +124,11 @@ A wrapped node's single-slot accessor: `hydrateSlotBy` with `hydrateWith` in `ro
 
 A wrapped node's list-slot accessor: `hydrateSlotsBy` with `hydrateWith`.
 
-### `packages/common/src/utils.ts::hydrateStoredSlot`
+### `packages/common/src/stored-slot.ts::hydrateStoredSlot`
 
 A built node's single-slot accessor: `hydrateSlotBy` with `hydrateStored`, so a coordinate it stores becomes the node every route returns.
 
-### `packages/common/src/utils.ts::hydrateStoredSlots`
+### `packages/common/src/stored-slot.ts::hydrateStoredSlots`
 
 A built node's list-slot accessor: `hydrateSlotsBy` with `hydrateStored`.
 
@@ -1354,3 +1354,55 @@ The decimal parts `decimalSpelling` writes, typed from the parts object and whet
 ### `packages/common/src/number.ts::decimalSpelling`
 
 Spells a number in a builder's decimal parts, scientific or not, or returns `undefined` when the parts can't spell it; each caller throws its own message. The interpreter and the generated build module both spell a float through it.
+
+### `packages/common/src/stored-slot.ts::storedSlotRead`
+
+The slot `accessor` of a node whose own slot is stored under `storage`, as the tree stores it and not as a hoisted accessor returns it: the native read when the node's tree registered one, the record view's accessor for a record position (only hoisted slots have a native read), else what a built node stores under `storage`, hydrated, and `undefined` when it stores none. `many` picks the list read; it defaults to whether the stored value is an array. The portable reader and the classifier read claimed wrappers through it.
+
+### `packages/common/src/hoist-read.ts::HoistHop`
+
+One step of a hoisted read: a function called on the value reached so far, returning the next.
+
+### `packages/common/src/hoist-read.ts::EMPTY`
+
+The one frozen empty list a hoisted read returns for a present but empty list, so empty reads compare identical.
+
+### `packages/common/src/hoist-read.ts::hoistRead`
+
+The value of a hoisted slot: `first`, the stored wrapper, walked through `hops`. A list maps each item through the remaining hops, an absent link ends the read as absent, and a present holder whose list chain reads nothing reads as empty. The result is cached by the stored wrapper, so repeated reads return one value.
+
+### `packages/common/src/record-view.ts::nativeSlotReader`
+
+The native read of a node's slot by accessor, when the node's tree registered one: the stored read the engine gives a hoisted slot on a parsed tree or a built arena. `undefined` for a node with no tree or a slot with no registered read.
+
+### `packages/common/src/record-view.ts::slotReader`
+
+A node's slot by accessor: the native read when the tree registered one, else the node's own member (an accessor function or a stored value).
+
+### `packages/common/src/engine-scope.ts::treeNativeSlots`
+
+The native slot reads a tree registered, by kind id and accessor.
+
+### `packages/common/src/utils.ts::hoistedWith`
+
+The `$with` setter of a hoisted slot. A whole wrapper (a value of the wrapper kind) replaces what the slot holds through `place`. Any other value sets through the existing wrapper's own slot, so the wrapper's facts stay, and builds the chain only when the holder has none. The structure table admits each value first, and a refusal rethrows naming the three things the setter takes: the slot's items, its list node, or a wrapper on its chain.
+
+### `packages/common/src/utils.ts::listElementsHop`
+
+The hop that ends a hoisted read at a list view: the list's stored elements, raw, so items keep the wrappers they were built with. `owner` is the accessor of the node that holds the list when the list is not the node itself; `reader` names the list's field.
+
+### `packages/common/src/utils.ts::storedHop`
+
+A hop of a hoisted read over a built holder: the wrapper's one slot, read as `storedSlotRead` reads it.
+
+### `packages/common/src/utils.ts::wrapHoisted`
+
+`wrap(value)` for a hoisted slot's value, `undefined` when the slot was left out, and the value itself when it already is a node of the wrapper kind.
+
+### `packages/common/src/utils.ts::wrapHoistedEach`
+
+`wrapHoisted` over each item of a list slot's value; one item is a one-item list.
+
+### `packages/common/src/verify-structure.ts::checkHoisted`
+
+Checks the values given to a hoisted slot against the kinds its structure row names for that property, refusing a node of another kind with the strict factory's message.

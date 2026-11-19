@@ -1885,3 +1885,11 @@ The string input accepted for path `P`: the string members of its input type, or
 ### `packages/types/src/vocabulary/map.ts::Valued`
 
 For a type `D` shaped `{ $path; $value: string }`, the text input of that path. Any other `D` gives `never`.
+
+### `packages/types/src/query.ts::NativeSlotReader`
+
+A native slot read: called on the node, returns the slot as the tree stores it.
+
+### `packages/types/src/query.ts::NativeSlots`
+
+A tree's native slot reads, by kind id and accessor name.

@@ -307,6 +307,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									optional: true
 								}
 							],
@@ -362,7 +363,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -851,6 +853,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -1091,6 +1094,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'exportSpecifiers',
+									stored: '_export_specifiers',
 									optional: true
 								}
 							],
@@ -1561,7 +1565,8 @@ export const build: PortableBuildTable = {
 							name: 'object',
 							steps: [
 								{
-									key: 'object'
+									key: 'object',
+									stored: '_object'
 								}
 							],
 							multiple: false,
@@ -1669,6 +1674,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'importClauseGroup',
+									stored: '_import_clause_group',
 									builder: 'importClause.defaultImport.importClauseGroup',
 									optional: true,
 									mounted: {
@@ -2473,6 +2479,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -2503,7 +2510,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -2616,6 +2624,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -2628,7 +2637,8 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'extendsClause'
+									key: 'extendsClause',
+									stored: '_extends_clause'
 								}
 							],
 							multiple: false,
@@ -2645,6 +2655,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -2658,6 +2669,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'implementsClause',
+									stored: '_implements_clause',
 									builder: 'implementsClause',
 									optional: true
 								},
@@ -2705,6 +2717,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -2835,6 +2848,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -2865,7 +2879,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -2978,6 +2993,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -2990,7 +3006,8 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'extendsClause'
+									key: 'extendsClause',
+									stored: '_extends_clause'
 								}
 							],
 							multiple: false,
@@ -3007,6 +3024,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -3020,6 +3038,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'implementsClause',
+									stored: '_implements_clause',
 									builder: 'implementsClause',
 									optional: true
 								},
@@ -3067,6 +3086,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -3162,6 +3182,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -3223,6 +3244,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -3294,6 +3316,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -3365,6 +3388,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -3442,7 +3466,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -3816,6 +3841,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -4175,6 +4201,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -4544,6 +4571,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -4913,6 +4941,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -5226,6 +5255,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -5449,6 +5479,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -5682,6 +5713,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -5915,6 +5947,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -6110,6 +6143,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -6228,6 +6262,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6254,6 +6289,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6268,6 +6304,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -6291,6 +6328,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6377,6 +6415,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -6495,6 +6534,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6521,6 +6561,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6535,6 +6576,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -6558,6 +6600,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6650,6 +6693,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -6753,6 +6797,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6779,6 +6824,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6793,6 +6839,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -6816,6 +6863,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -6904,6 +6952,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -6936,6 +6985,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'extendsTypeClause',
+									stored: '_extends_type_clause',
 									builder: 'extendsTypeClause',
 									optional: true
 								},
@@ -6969,6 +7019,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'members',
+									stored: '_members',
 									builder: 'objectTypeContent',
 									optional: true
 								},
@@ -7096,6 +7147,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -7214,6 +7266,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -7240,6 +7293,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -7254,6 +7308,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -7277,6 +7332,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -7506,6 +7562,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -7624,6 +7681,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -7650,6 +7708,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -7664,6 +7723,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -7687,6 +7747,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -7926,6 +7987,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -8044,6 +8106,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8070,6 +8133,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8084,6 +8148,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -8107,6 +8172,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8346,6 +8412,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -8464,6 +8531,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8490,6 +8558,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8504,6 +8573,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -8527,6 +8597,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8766,6 +8837,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -8869,6 +8941,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8895,6 +8968,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -8909,6 +8983,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -8932,6 +9007,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9151,6 +9227,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -9254,6 +9331,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9280,6 +9358,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9294,6 +9373,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -9317,6 +9397,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9494,6 +9575,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -9597,6 +9679,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9623,6 +9706,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9637,6 +9721,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -9660,6 +9745,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9847,6 +9933,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -9950,6 +10037,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9976,6 +10064,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -9990,6 +10079,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -10013,6 +10103,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -10200,6 +10291,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -10303,6 +10395,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -10329,6 +10422,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -10343,6 +10437,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -10366,6 +10461,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -10553,6 +10649,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -10656,6 +10753,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -10682,6 +10780,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -10696,6 +10795,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -10719,6 +10819,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -10948,6 +11049,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -11051,6 +11153,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -11077,6 +11180,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -11091,6 +11195,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -11114,6 +11219,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -11343,6 +11449,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -11446,6 +11553,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -11472,6 +11580,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -11486,6 +11595,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -11509,6 +11619,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -11948,6 +12059,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -12122,6 +12234,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -12329,6 +12442,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -12539,6 +12653,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -12715,6 +12830,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -12899,6 +13015,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -13116,6 +13233,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -13336,6 +13454,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -13522,6 +13641,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -13706,6 +13826,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -13923,6 +14044,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -14143,6 +14265,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -14329,6 +14452,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -14513,6 +14637,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -14730,6 +14855,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -14950,6 +15076,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -15100,6 +15227,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -15274,6 +15402,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -15506,6 +15635,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -16680,6 +16810,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -16950,6 +17081,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -17220,6 +17352,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -17471,6 +17604,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -17650,6 +17784,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -17839,6 +17974,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -18028,6 +18164,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -18236,6 +18373,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -19266,6 +19404,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -19415,6 +19554,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -19574,6 +19714,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -19733,6 +19874,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -20742,6 +20884,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -20905,6 +21048,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -21078,6 +21222,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -21251,6 +21396,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParametersSetAccessorSignature'
 								},
 								{
@@ -21363,6 +21509,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -21466,6 +21613,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -21492,6 +21640,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -21506,6 +21655,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -21529,6 +21679,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -21572,6 +21723,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -21604,6 +21756,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -21655,6 +21808,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -22229,6 +22383,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -22344,6 +22499,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'default',
+									stored: '_default',
 									optional: true
 								}
 							],
@@ -22463,7 +22619,8 @@ export const build: PortableBuildTable = {
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									stored: '_type'
 								}
 							],
 							multiple: false,
@@ -22555,6 +22712,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -22735,6 +22893,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -23204,7 +23363,8 @@ export const build: PortableBuildTable = {
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									stored: '_type'
 								}
 							],
 							multiple: false,
@@ -23296,7 +23456,8 @@ export const build: PortableBuildTable = {
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									stored: '_type'
 								}
 							],
 							multiple: false,
@@ -27736,6 +27897,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									optional: true
 								}
 							],
@@ -27791,7 +27953,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -27899,6 +28062,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									optional: true
 								}
 							],
@@ -27954,7 +28118,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -28067,6 +28232,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									optional: true
 								}
 							],
@@ -28233,6 +28399,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									optional: true
 								}
 							],
@@ -28338,6 +28505,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									optional: true
 								}
 							],
@@ -28393,7 +28561,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -28510,7 +28679,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -28685,10 +28855,12 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									builder: 'typeArguments'
 								},
 								{
-									key: 'types'
+									key: 'types',
+									stored: '_types'
 								}
 							],
 							multiple: false,
@@ -28975,6 +29147,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -29006,7 +29179,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -29120,6 +29294,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -29132,7 +29307,8 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'extendsClause'
+									key: 'extendsClause',
+									stored: '_extends_clause'
 								}
 							],
 							multiple: false,
@@ -29149,6 +29325,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -29162,6 +29339,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'implementsClause',
+									stored: '_implements_clause',
 									builder: 'implementsClause',
 									optional: true
 								},
@@ -29209,6 +29387,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'heritage',
+									stored: '_heritage',
 									builder: 'classHeritage',
 									optional: true
 								},
@@ -29537,6 +29716,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -29656,6 +29836,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -29682,6 +29863,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -29696,6 +29878,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -29719,6 +29902,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -29805,6 +29989,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -29924,6 +30109,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -29950,6 +30136,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -29964,6 +30151,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -29987,6 +30175,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -30093,7 +30282,8 @@ export const build: PortableBuildTable = {
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -30246,7 +30436,8 @@ export const build: PortableBuildTable = {
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -30457,6 +30648,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -30486,6 +30678,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -30781,7 +30974,8 @@ export const build: PortableBuildTable = {
 							name: 'expression',
 							steps: [
 								{
-									key: 'sequenceExpression'
+									key: 'sequenceExpression',
+									stored: '_sequence_expression'
 								}
 							],
 							multiple: false,
@@ -30855,6 +31049,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'type',
+									stored: '_type',
 									optional: true
 								}
 							],
@@ -34983,7 +35178,8 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'exportClause'
+									key: 'exportClause',
+									stored: '_export_clause'
 								}
 							],
 							multiple: false,
@@ -35453,6 +35649,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'alternative',
+									stored: '_alternative',
 									optional: true
 								}
 							],
@@ -35555,7 +35752,8 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'importClause'
+									key: 'importClause',
+									stored: '_import_clause'
 								}
 							],
 							multiple: false,
@@ -35740,7 +35938,8 @@ export const build: PortableBuildTable = {
 									}
 								},
 								{
-									key: 'importClause'
+									key: 'importClause',
+									stored: '_import_clause'
 								}
 							],
 							multiple: false,
@@ -36756,7 +36955,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -36897,6 +37097,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'finalizer',
+									stored: '_finalizer',
 									optional: true
 								}
 							],
@@ -37183,6 +37384,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -37255,6 +37457,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -37281,6 +37484,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -37295,6 +37499,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -37318,6 +37523,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -37366,6 +37572,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -37438,6 +37645,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -37464,6 +37672,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -37478,6 +37687,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'formalParametersElements',
 									optional: true
 								},
@@ -37501,6 +37711,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'formalParameters'
 								},
 								{
@@ -37597,7 +37808,8 @@ export const build: PortableBuildTable = {
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -37674,6 +37886,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'arguments',
+									stored: '_arguments',
 									builder: 'arguments'
 								},
 								{
@@ -37717,6 +37930,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'arguments',
+									stored: '_arguments',
 									builder: 'arguments'
 								},
 								{
@@ -38295,6 +38509,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'members',
+									stored: '_members',
 									optional: true
 								}
 							],
@@ -39072,6 +39287,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'tupleTypeMembers',
+									stored: '_tuple_type_members',
 									optional: true
 								}
 							],

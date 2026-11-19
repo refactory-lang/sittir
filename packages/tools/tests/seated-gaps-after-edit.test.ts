@@ -148,7 +148,7 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 	it('keeps a tight same-line gap beside an edited item', () => {
 		const item = rust.parse('fn f(a: u8,b: i8) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
-		const parameters = item.parameters();
+		const parameters = item.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!;
 		const list = parameters.elements();
 		if (list === undefined || !rust.is.parametersElements(list)) throw new Error('expected parameters');
 		const [first, second] = list.items();
@@ -182,19 +182,17 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 
 	it('rebuilds a call\'s arguments with their source items in their source layout and trailing delimiter', () => {
 		const args = firstWhere(rust.parse(broken), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never));
-		const items = args.elements()?.items().map((item) => item.expression());
+		const items = args.elements();
 		if (items === undefined) throw new Error('expected arguments');
 		expect(args.$with.elements(...items).$render()).toBe('(\n    1i32,\n    2i32,\n)');
 	});
 
 	it('keeps its flanks and trailing delimiter when an item is appended, and the new gap takes its separator gaps\' class', () => {
 		const args = firstWhere(rust.parse(broken), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never));
-		const items = args.elements()?.items().map((item) => item.expression());
+		const items = args.elements();
 		if (items === undefined) throw new Error('expected arguments');
 		const appended = firstWhere(rust.parse('add(3i32);\n'), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never))
-			.elements()
-			?.items()[0]
-			?.expression();
+			.elements()?.[0];
 		if (appended === undefined) throw new Error('expected an argument');
 		expect(args.$with.elements(...items, appended).$render()).toBe('(\n    1i32,\n    2i32,\n    3i32,\n)');
 	});
@@ -202,7 +200,7 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 	it('gives an item inserted before a wrapped item the class its separator gaps take', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
-		const parameters = item.parameters();
+		const parameters = item.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!;
 		const list = parameters.elements();
 		if (list === undefined || !rust.is.parametersElements(list)) throw new Error('expected parameters');
 		const [first, second] = list.items();
@@ -212,7 +210,7 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
 		const other = rust.parse('fn g(c: u16) {}\n').statements()[0];
 		if (other === undefined || typeof other === 'number' || !rust.is.functionItem(other)) throw new Error('expected a function item');
-		const otherList = other.parameters().elements();
+		const otherList = other.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!.elements();
 		if (otherList === undefined || !rust.is.parametersElements(otherList)) throw new Error('expected parameters');
 		const c = otherList.items()[0]?.content();
 		if (c === undefined || typeof c === 'number' || !rust.is.parameter(c)) throw new Error('expected a parameter');
@@ -222,7 +220,7 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 	it('keeps both flanks beside an edited last parameter', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
-		const parameters = item.parameters();
+		const parameters = item.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!;
 		const list = parameters.elements();
 		if (list === undefined || !rust.is.parametersElements(list)) throw new Error('expected parameters');
 		const [first, second] = list.items();

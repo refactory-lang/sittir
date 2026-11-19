@@ -20,10 +20,10 @@ export function parsedSurface(): string {
 	const item = rs.parse('fn f() {}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
 	expectTrue<Equals<typeof item, T.FunctionItem.Parsed>>();
-	expectTrue<Equals<ReturnType<typeof item.parameters>, T.Parameters.Parsed>>();
+	expectTrue<Equals<ReturnType<typeof item.parameters>, T.ParametersElements.Parsed | T.ParametersElementsReceiver.Parsed | readonly never[] | undefined>>();
 	const edited = item.$with.parameters(rs.build.parameters());
 	expectTrue<Equals<ReturnType<typeof edited.$trivia.trailing>, T.FunctionItem.Bound>>();
-	expectTrue<Equals<ReturnType<typeof edited.parameters>, T.Parameters.Bound>>();
+	expectTrue<Equals<ReturnType<typeof edited.parameters>, T.Parameters.Bound | T.ParametersElements.Bound | readonly never[] | T.ParametersElementsReceiver.Bound | undefined>>();
 	expectTrue<Equals<ReturnType<typeof edited.body>, T.Block.Parsed>>();
 	return edited.$render();
 }
@@ -69,15 +69,8 @@ export function renderTakesEveryNodeAUserCanHold(): string {
 export function listsReadAsReadonlyArrays(): string {
 	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
-	const params = item.parameters();
-	expectTrue<
-		Equals<
-			ReturnType<typeof params.elements>,
-			T.ParametersElements.Parsed | T.ParametersElementsReceiver.Parsed | undefined
-		>
-	>();
-	const elements = params.elements();
-	if (elements === undefined || !rs.is.parametersElements(elements)) return '';
+	const elements = item.parameters();
+	if (elements === undefined || !('$type' in elements) || !rs.is.parametersElements(elements)) return '';
 	type Item = ItemOf<typeof elements>;
 	const owner: ReadonlyArray<Item> = elements;
 	const list: ReadonlyArray<Item> = elements;
@@ -89,27 +82,25 @@ export function listsReadAsReadonlyArrays(): string {
 export function aListSlotTakesItsBuilderArguments(): string {
 	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
-	const params = item.parameters();
-	const elements = params.elements();
-	if (elements === undefined || !rs.is.parametersElements(elements)) return '';
+	const elements = item.parameters();
+	if (elements === undefined || !('$type' in elements) || !rs.is.parametersElements(elements)) return '';
 	const [first, ...rest] = elements;
 	if (first === undefined) return '';
 	const fromItems = item.$with.parameters(rs.build.parameters(rs.build.parametersElements(first, ...rest)));
-	const fromNode = item.$with.parameters(params);
-	const inner = params.$with.elements(rs.build.parametersElements(first, ...rest));
+	const fromNode = item.$with.parameters(elements);
+	const inner = item.$with.parameters(rs.build.parametersElements(first, ...rest));
 	return fromItems.$render() + fromNode.$render() + inner.$render();
 }
 
 export function anEditedChildGoesIntoItsParentsSlot(): string {
 	const item = rs.parse('fn f(a: u8) {\n    a;\n}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
-	const parameters = item.parameters();
-	const elements = parameters.elements();
-	if (elements === undefined || !rs.is.parametersElements(elements)) return '';
+	const elements = item.parameters();
+	if (elements === undefined || !('$type' in elements) || !rs.is.parametersElements(elements)) return '';
 	const body = item.body();
 	const [first, ...rest] = elements;
 	if (first === undefined) return '';
-	const withParameters = item.$with.parameters(parameters.$with.elements(rs.build.parametersElements(first, ...rest)));
+	const withParameters = item.$with.parameters(rs.build.parametersElements(first, ...rest));
 	const withBody = item.$with.body(body.$with.statements(...body.statements()));
 	return withParameters.$render() + withBody.$render();
 }

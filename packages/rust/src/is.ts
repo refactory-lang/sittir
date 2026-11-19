@@ -4,6 +4,7 @@
 
 import { TSKindId } from './kinds.js';
 import { holdsKinds, type KindTest } from '@sittir/common/language';
+import { storedSlotRead } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
 
@@ -535,15 +536,29 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifier };
-		crate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+		crate<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.VisibilityModifier | TSKindId.CrateVisibilityModifier };
 		readonly pub: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+			<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.VisibilityModifier | TSKindId.VisibilityModifierPub };
 			readonly scope: {
-				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
-				self<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
-				super<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
-				crate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
-				inPath<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+				<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.VisibilityModifier | TSKindId.VisibilityModifierPub };
+				self<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.VisibilityModifier | TSKindId.VisibilityModifierPub };
+				super<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.VisibilityModifier | TSKindId.VisibilityModifierPub };
+				crate<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.VisibilityModifier | TSKindId.VisibilityModifierPub };
+				inPath<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.VisibilityModifier | TSKindId.VisibilityModifierPub };
 			};
 		};
 	};
@@ -1721,12 +1736,23 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+function _at<G extends object>(
+	host: (v: unknown) => boolean,
+	seat: string,
+	guard: G,
+	hoisted = false,
+	stored?: string
+): G {
 	const inner = guard as unknown as (v: unknown) => boolean;
 	const forms: Record<string, object> = {};
-	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	for (const name of Object.keys(guard))
+		forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted, stored);
 	return _vg(
-		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		(v: unknown): boolean =>
+			(host(v) &&
+				(inner((v as Record<string, () => unknown>)[seat]!()) ||
+					(stored !== undefined && inner(storedSlotRead(v as object, seat, stored, false))))) ||
+			(hoisted && inner(v)),
 		forms
 	) as unknown as G;
 }
@@ -2049,7 +2075,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		input: _at(_kind_Attribute_guard, 'input', _kind_AttributeInput_guard)
 	});
 	const _form_VisibilityModifier_guard = _vg(_g(TSKindId.VisibilityModifier), {
-		crate: _at(_kind_VisibilityModifier_guard, 'content', _kind_CrateVisibilityModifier_guard),
+		crate: _at(_kind_VisibilityModifier_guard, 'content', _kind_CrateVisibilityModifier_guard, true),
 		pub: _at(
 			_kind_VisibilityModifier_guard,
 			'content',
@@ -2058,13 +2084,21 @@ export function guardsWith(test: KindTest): IsGuards {
 					_kind_VisibilityModifierPub_guard,
 					'visibilityModifierPubScope',
 					_vg(_g(TSKindId.VisibilityModifierPubScope), {
-						self: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_SelfModule_guard),
-						super: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Super_guard),
-						crate: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Crate_guard),
-						inPath: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_VisibilityModifierPubScopeInPath_guard)
-					})
+						self: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_SelfModule_guard, true),
+						super: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Super_guard, true),
+						crate: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Crate_guard, true),
+						inPath: _at(
+							_kind_VisibilityModifierPubScope_guard,
+							'content',
+							_kind_VisibilityModifierPubScopeInPath_guard,
+							true
+						)
+					}),
+					false,
+					'_visibility_modifier_pub_scope'
 				)
-			})
+			}),
+			true
 		)
 	});
 	const _form_FunctionType_guard = _vg(_g(TSKindId.FunctionType), {

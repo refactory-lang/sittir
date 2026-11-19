@@ -1155,6 +1155,28 @@ function concreteKindsOf(model: SlotModel, kind: string, seen: Set<string>): str
 	return subtypes.length === 0 ? [kind] : subtypes.flatMap((subtype) => concreteKindsOf(model, subtype, seen));
 }
 
+export function readEntriesLookup(routes: GrammarRoutes, model: SlotModel): (kind: string, seen?: Set<string>) => readonly ReadEntry[] | undefined {
+	const supertypesOf = new Map<string, string[]>();
+	for (const n of model.values()) for (const s of n.subtypes) (supertypesOf.get(s) ?? supertypesOf.set(s, []).get(s)!).push(n.kind);
+	const entriesFor = (kind: string, seen = new Set<string>()): readonly ReadEntry[] | undefined => {
+		const found = routes.readEntries.get(kind);
+		if (found !== undefined && found.length > 0) return found;
+		for (const s of supertypesOf.get(kind) ?? []) {
+			if (seen.has(s)) continue;
+			seen.add(s);
+			const up = entriesFor(s, seen);
+			if (up !== undefined) return up;
+		}
+		return undefined;
+	};
+	return entriesFor;
+}
+
+export function portableClaims(routes: GrammarRoutes, model: SlotModel): (kind: string, listed: boolean) => boolean {
+	const entriesFor = readEntriesLookup(routes, model);
+	return (kind, listed) => entriesFor(kind) !== undefined || (!listed && routes.containers.has(kind));
+}
+
 export function concreteKinds(model: SlotModel, kinds: readonly string[]): string[] {
 	const seen = new Set<string>();
 	return [...new Set(kinds.flatMap((kind) => concreteKindsOf(model, kind, seen)))].sort();

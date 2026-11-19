@@ -62,7 +62,7 @@ describe.each(STORAGES)('a field a refine form pins has no $with setter, in %s',
 		['curly', () => build.objectType({ members: content() }), '{', '}'],
 		['flow', () => build.objectType.flow({ members: content() }), '{|', '|}']
 	])('writes no mismatched pair through any setter of a %s object type', (_, make, open, close) => {
-		const edited: any = (make().$with as any).members(content());
+		const edited: any = (make().$with as any).members(...(content() as readonly unknown[]));
 		const text: string = edited.$render();
 		expect(text.startsWith(open)).toBe(true);
 		expect(text.endsWith(close)).toBe(true);

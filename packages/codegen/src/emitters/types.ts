@@ -91,8 +91,10 @@ import {
 	isDeclaredSupertype,
 	needsNonEmptyHoist,
 	quoteKey,
-	spelledReadType
+	spelledReadType,
+	parenthesizeUnion
 } from './shared.ts';
+import { wrapperChainFor, type WrapperChain } from '../compiler/model/wrapper-chain.ts';
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
@@ -1002,6 +1004,27 @@ function aliasContentTypeExpr(node: AssembledNode, nodeMap: NodeMap, kindEntries
 	return mixedEnumStorageTypeExpr(content, nodeMap, kindEntries) ?? storage;
 }
 
+function hoistedReadType(
+	chain: WrapperChain,
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap,
+	storageElementOf: (slot: AssembledNonterminal) => string
+): string {
+	const listed = (s: AssembledNonterminal): boolean => isMultiple(s) && !resolveFieldStorageInfo(s, nodeMap).collapsesMultiplicity;
+	const last = chain.slots[chain.slots.length - 1]!;
+	if (listed(last)) {
+		if (isMultiple(slot)) return slotListTypeOf(slot, () => storageElementOf(last), 'readonly');
+		const items = hoistedListType(last, storageElementOf, isRequired(slot) && chain.slots.every(isRequired));
+		return isRequired(slot) ? items : `${items} | undefined`;
+	}
+	const element = spelledReadType(last) ?? storageElementOf(last);
+	if (listed(slot)) return slotListTypeOf(slot, () => element, 'readonly');
+	if (chain.slots.some(listed)) return `readonly ${parenthesizeUnion(element)}[]`;
+	const emptyList = chain.storage.some((kind) => nodeMap.nodes.get(kind) instanceof AssembledList) || slotKindNames(last).some((kind) => nodeMap.nodes.get(kind) instanceof AssembledList);
+	const present = emptyList ? `${element} | readonly never[]` : element;
+	return !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `${present} | undefined` : present;
+}
+
 function emitInterface(
 	lines: string[],
 	node: StructuralNode,
@@ -1044,7 +1067,10 @@ function emitInterface(
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
-			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+			const chain = wrapperChainFor(nodeMap, node.kind, f.name);
+			if (chain !== undefined) {
+				lines.push(`  readonly ${propName}: () => ${hoistedReadItemsType(chain, f, nodeMap, lookupUnion) ?? hoistedReadType(chain, f, nodeMap, storageElementOf)};`);
+			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				lines.push(`  readonly ${propName}: () => ${slotListTypeOf(f, storageElementOf, 'readonly')};`);
 			} else if (hasBlankArm(f)) {
 				lines.push(`  readonly ${propName}: () => ${slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries).input} | undefined;`);
@@ -1269,8 +1295,56 @@ function wrapChildrenListHint(
 	}
 	const elementSlot = target.slots.find((slot) => isMultiple(slot)) ?? target.slots[0];
 	if (elementSlot === undefined) return undefined;
-	if (finalSeatOf(elementSlot) === undefined) return `readonly (${fieldTypeExpr(elementSlot, nodeMap, lookupUnion)})[]`;
-	return `${slotListTypeOf(elementSlot, (slot) => fieldTypeExpr(slot, nodeMap, lookupUnion), 'readonly')} | readonly []`;
+	const list = slotListTypeOf(elementSlot, (slot) => fieldTypeExpr(slot, nodeMap, lookupUnion), 'readonly');
+	return finalSeatOf(elementSlot) === undefined ? list : `${list} | readonly []`;
+}
+
+function hoistedItemsHint(
+	field: AssembledNonterminal,
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
+	lookupUnion?: LookupUnion
+): string | undefined {
+	const chain = wrapperChainFor(nodeMap, kind, field.name);
+	if (chain === undefined) return undefined;
+	const items = hoistedItemsType(chain, field, nodeMap, lookupUnion, kindEntries);
+	if (items !== undefined) return `${items} | ${fieldTypeExpr(chain.slots[chain.slots.length - 1]!, nodeMap, lookupUnion)}`;
+	const listKind = chain.storage.map((name) => nodeMap.nodes.get(name)).find((node) => node instanceof AssembledList);
+	return listKind === undefined ? undefined : `${fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion) ?? ''}${fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion) === undefined ? '' : ' | '}${listKind.typeName}`;
+}
+
+function hoistedReadItemsType(
+	chain: WrapperChain,
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	lookupUnion?: LookupUnion
+): string | undefined {
+	const items = hoistedItemsType(chain, field, nodeMap, lookupUnion);
+	return items === undefined || isRequired(field) ? items : `${items} | undefined`;
+}
+
+function hoistedListType(itemSlot: AssembledNonterminal, element: (slot: AssembledNonterminal) => string, present: boolean): string {
+	if (present) return slotListTypeOf(itemSlot, element, 'readonly');
+	return finalSeatOf(itemSlot) === undefined ? `readonly (${element(itemSlot)})[]` : `${slotListTypeOf(itemSlot, element, 'readonly')} | readonly []`;
+}
+
+function hoistedItemsType(
+	chain: WrapperChain,
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	lookupUnion?: LookupUnion,
+	inputKinds?: readonly KindEnumEntry[]
+): string | undefined {
+	const last = chain.slots[chain.slots.length - 1];
+	if (last === undefined || isMultiple(last)) return undefined;
+	if (slotKindNames(last).length !== 1) return undefined;
+	const list = nodeMap.nodes.get(slotKindNames(last)[0] ?? '');
+	const itemSlot = list instanceof AssembledList ? list.slots.find((slot) => isMultiple(slot)) : undefined;
+	if (itemSlot === undefined) return undefined;
+	const element = (slot: AssembledNonterminal): string =>
+		(inputKinds === undefined ? undefined : fieldInputHintTypeExpr(slot, list!.kind, nodeMap, inputKinds)) ?? fieldTypeExpr(slot, nodeMap, lookupUnion);
+	return hoistedListType(itemSlot, element, isRequired(field) && chain.slots.every(isRequired));
 }
 
 function fieldLooseHintTypeExpr(
@@ -1297,8 +1371,12 @@ function emitFieldInputHints(
 	kindEntries: readonly KindEnumEntry[],
 	lookupUnion?: LookupUnion
 ): void {
+	const storageElementOf = (s: AssembledNonterminal): string =>
+		withHoles(s, storageFieldTypeExpr(s, nodeMap, fieldTypeExpr(s, nodeMap, lookupUnion), kindEntries));
 	const hintLines = slots
 		.map((field) => {
+			const chain = wrapperChainFor(nodeMap, kind, field.name);
+			if (chain !== undefined) return `    readonly ${quoteKey(field.name)}${isRequired(field) ? '' : '?'}: ${hoistedReadType(chain, field, nodeMap, storageElementOf)};`;
 			const hintType = fieldInputHintTypeExpr(field, kind, nodeMap, kindEntries);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
@@ -1315,9 +1393,17 @@ function emitFieldInputHints(
 		lines.push(...hintLines);
 		lines.push('  };');
 	}
+	const wrapperLines = slots
+		.filter((field) => wrapperChainFor(nodeMap, kind, field.name) !== undefined)
+		.map((field) => `    readonly ${quoteKey(field.name)}: ${storageElementOf(field)};`);
+	if (wrapperLines.length > 0) {
+		lines.push('  readonly __wrapperHints__?: {');
+		lines.push(...wrapperLines);
+		lines.push('  };');
+	}
 	const fromHintLines = slots
 		.map((field) => {
-			const hintType = fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
+			const hintType = hoistedItemsHint(field, kind, nodeMap, kindEntries, lookupUnion) ?? fieldLooseHintTypeExpr(field, nodeMap, kindEntries, lookupUnion);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;

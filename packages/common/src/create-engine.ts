@@ -31,7 +31,7 @@ import { bindTree, engineOf, foreignEngine, inEngine, nodeStorageOf, stampEngine
 import { keepLayout } from './exemplars.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
-import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
+import { checkHoisted, checkInput, checkRow, verifyStructure } from './verify-structure.ts';
 import { BuiltArena, type BuiltViews } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
@@ -214,11 +214,19 @@ function keepingBuilt(settle: EngineHandle['settle'], keeps: boolean): EngineHan
 	return (node) => settle(typeof node === 'object' && node !== null ? keepLayout(layouts, node) : node);
 }
 
-function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['admit'] {
+function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['admit'] {
 	if (mode !== 'runtime') return () => undefined;
 	return (kindId, args, declared) => {
 		const row = typeof kindId === 'number' ? table[kindId] : undefined;
-		if (row !== undefined) checkInput(row, args, declared);
+		if (row !== undefined) checkInput(row, args, declared, membership);
+	};
+}
+
+function hoistedAdmitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['admitHoisted'] {
+	if (mode !== 'runtime') return undefined;
+	return (kind, property, values) => {
+		const row = table[kind];
+		if (row !== undefined) checkHoisted(row, property, values, membership);
 	};
 }
 
@@ -250,10 +258,12 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		current: identity,
 		hydrate: hooks.hydrate,
 		querySlots: hooks.querySlots,
+		nativeSlots: hooks.nativeSlots,
 		structure: hooks.structure,
 		settle: keepingBuilt(settlerOf(options?.verifyStructure, hooks.structure, hooks.membership), records === undefined),
 		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
-		admit: admitterOf(options?.verifyStructure, hooks.structure)
+		admit: admitterOf(options?.verifyStructure, hooks.structure, hooks.membership),
+		admitHoisted: hoistedAdmitterOf(options?.verifyStructure, hooks.structure, hooks.membership)
 	};
 	const interceptors = options?.intercept ?? [];
 	const parseChain = interceptorChain(interceptors.map((hook) => hook.parse?.bind(hook)));

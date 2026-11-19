@@ -28,8 +28,8 @@ function holdsStubKey(value: unknown, seen = new Set<object>()): boolean {
 describe('a query from a deep node', () => {
 	it('hydrates each match to render as the node its accessor reaches', () => {
 		const inner = innerFunction();
-		const list = inner.parameters().elements();
-		if (list === undefined || !rs.is.parametersElements(list)) throw new Error('not an ordinary list');
+		const list = inner.parameters();
+		if (list === undefined || !('$type' in list) || !rs.is.parametersElements(list)) throw new Error('not an ordinary list');
 		const parameters = [...inner.$query().$descendants.ofType(rs.kinds.Parameter)];
 		expect(parameters.map((parameter) => parameter.$render().toString())).toEqual(
 			[...list].map((parameter) => rs.render(parameter).toString())

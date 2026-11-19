@@ -27,6 +27,7 @@ const EXPECTED = [
 	'gap-census',
 	'glossary-keys',
 	'grammar-diagnostics',
+	'hoist-census',
 	'hoisted-census',
 	'inspect-refs',
 	'inspect-type',

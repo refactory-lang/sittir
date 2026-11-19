@@ -463,7 +463,8 @@ export const build: PortableBuildTable = {
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									stored: '_type_parameters'
 								}
 							],
 							multiple: false,
@@ -674,6 +675,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									optional: true
 								}
 							],
@@ -1346,6 +1348,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'useClauses',
+									stored: '_use_clauses',
 									optional: true
 								}
 							],
@@ -1426,7 +1429,8 @@ export const build: PortableBuildTable = {
 							name: 'list',
 							steps: [
 								{
-									key: 'list'
+									key: 'list',
+									stored: '_list'
 								}
 							],
 							multiple: false,
@@ -1723,6 +1727,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'wherePredicates',
+									stored: '_where_predicates',
 									optional: true
 								}
 							],
@@ -1809,6 +1814,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds'
 								},
 								{
@@ -2551,6 +2557,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -2564,6 +2571,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -2705,6 +2713,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -2846,6 +2855,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -2859,6 +2869,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -3000,6 +3011,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -3013,6 +3025,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -3153,6 +3166,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -3165,6 +3179,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -3209,6 +3224,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -3222,6 +3238,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -3284,6 +3301,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -3379,7 +3397,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -3503,6 +3522,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -3598,7 +3618,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -3681,6 +3702,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -3694,6 +3716,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -3753,6 +3776,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -3848,7 +3872,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -3931,6 +3956,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -3990,6 +4016,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -4085,7 +4112,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -4168,6 +4196,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -4181,6 +4210,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -4240,6 +4270,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -4335,7 +4366,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -4418,6 +4450,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -4431,6 +4464,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -4490,6 +4524,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -4585,7 +4620,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -4666,6 +4702,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -4678,6 +4715,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -4723,6 +4761,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -4736,6 +4775,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -5027,6 +5067,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -5040,6 +5081,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -5232,6 +5274,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -5424,6 +5467,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -5437,6 +5481,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -5629,6 +5674,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -5642,6 +5688,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -5833,6 +5880,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -5845,6 +5893,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -5889,6 +5938,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -5902,6 +5952,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -6266,6 +6317,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -6279,6 +6331,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -6480,6 +6533,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -6681,6 +6735,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -6694,6 +6749,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -6895,6 +6951,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -6908,6 +6965,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -7107,6 +7165,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -7119,6 +7178,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -7164,6 +7224,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -7177,6 +7238,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -7502,6 +7564,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -7515,6 +7578,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -7716,6 +7780,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -7917,6 +7982,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -7930,6 +7996,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -8131,6 +8198,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -8144,6 +8212,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -8343,6 +8412,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -8355,6 +8425,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -8400,6 +8471,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -8413,6 +8485,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -8462,6 +8535,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -8650,6 +8724,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -8809,7 +8884,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -8914,6 +8990,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -9072,7 +9149,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -9473,6 +9551,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -9486,6 +9565,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -9593,6 +9673,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -9606,6 +9687,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -9712,6 +9794,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -9819,6 +9902,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -9925,6 +10009,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -9938,6 +10023,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -10045,6 +10131,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -10058,6 +10145,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -10164,6 +10252,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -10177,6 +10266,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -10284,6 +10374,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -10297,6 +10388,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -10402,6 +10494,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -10414,6 +10507,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -10458,6 +10552,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -10471,6 +10566,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -10581,6 +10677,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -10593,6 +10690,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -10637,6 +10735,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -10650,6 +10749,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -10713,6 +10813,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -10900,6 +11001,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -10962,6 +11064,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -10995,6 +11098,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -11009,6 +11113,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -11067,6 +11172,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -11101,6 +11207,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -11132,6 +11239,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -11280,6 +11388,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -11467,6 +11576,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -11529,6 +11639,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -11562,6 +11673,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -11576,6 +11688,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -11634,6 +11747,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -11668,6 +11782,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -11699,6 +11814,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -11737,6 +11853,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -11750,6 +11867,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -11878,6 +11996,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -12065,6 +12184,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -12127,6 +12247,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -12160,6 +12281,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -12174,6 +12296,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -12232,6 +12355,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -12266,6 +12390,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -12297,6 +12422,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -12335,6 +12461,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -12463,6 +12590,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -12650,6 +12778,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -12712,6 +12841,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -12745,6 +12875,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -12759,6 +12890,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -12817,6 +12949,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -12851,6 +12984,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -12882,6 +13016,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -12920,6 +13055,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -12933,6 +13069,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -13061,6 +13198,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -13248,6 +13386,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -13310,6 +13449,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -13343,6 +13483,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -13357,6 +13498,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -13415,6 +13557,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -13449,6 +13592,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -13480,6 +13624,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -13518,6 +13663,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -13531,6 +13677,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -13659,6 +13806,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -13846,6 +13994,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -13858,6 +14007,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -13901,6 +14051,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -13963,6 +14114,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -13996,6 +14148,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -14010,6 +14163,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -14068,6 +14222,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -14102,6 +14257,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -14133,6 +14289,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -14171,6 +14328,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -14184,6 +14342,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -14316,6 +14475,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -14488,6 +14648,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -14550,6 +14711,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -14583,6 +14745,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -14597,6 +14760,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -14655,6 +14819,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -14689,6 +14854,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -14720,6 +14886,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -14868,6 +15035,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -15040,6 +15208,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -15102,6 +15271,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -15135,6 +15305,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -15149,6 +15320,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -15207,6 +15379,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -15241,6 +15414,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -15272,6 +15446,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -15310,6 +15485,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -15323,6 +15499,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -15451,6 +15628,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -15623,6 +15801,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -15685,6 +15864,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -15718,6 +15898,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -15732,6 +15913,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -15790,6 +15972,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -15824,6 +16007,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -15855,6 +16039,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -15893,6 +16078,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -16021,6 +16207,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -16193,6 +16380,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -16255,6 +16443,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -16288,6 +16477,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -16302,6 +16492,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -16360,6 +16551,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -16394,6 +16586,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -16425,6 +16618,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -16463,6 +16657,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -16476,6 +16671,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -16604,6 +16800,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -16776,6 +16973,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -16838,6 +17036,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -16871,6 +17070,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -16885,6 +17085,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -16943,6 +17144,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -16977,6 +17179,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -17008,6 +17211,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -17046,6 +17250,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -17059,6 +17264,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -17187,6 +17393,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -17359,6 +17566,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -17371,6 +17579,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -17414,6 +17623,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -17476,6 +17686,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -17509,6 +17720,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -17523,6 +17735,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -17581,6 +17794,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -17615,6 +17829,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -17646,6 +17861,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -17684,6 +17900,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -17697,6 +17914,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -17829,6 +18047,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -17924,7 +18143,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -17993,6 +18213,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -18103,6 +18324,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -18198,7 +18420,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -18267,6 +18490,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -18321,6 +18545,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -18334,6 +18559,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -18408,6 +18634,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -18503,7 +18730,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -18572,6 +18800,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -18626,6 +18855,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -18700,6 +18930,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -18795,7 +19026,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -18864,6 +19096,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -18918,6 +19151,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -18931,6 +19165,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -19005,6 +19240,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -19100,7 +19336,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -19169,6 +19406,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -19223,6 +19461,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -19236,6 +19475,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -19310,6 +19550,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -19405,7 +19646,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -19474,6 +19716,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -19526,6 +19769,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -19538,6 +19782,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -19583,6 +19828,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -19596,6 +19842,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -19674,6 +19921,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'macroRules',
+									stored: '_macro_rules',
 									optional: true
 								}
 							],
@@ -19743,6 +19991,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'macroRules',
+									stored: '_macro_rules',
 									optional: true
 								}
 							],
@@ -19811,6 +20060,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'macroRules',
+									stored: '_macro_rules',
 									optional: true
 								}
 							],
@@ -19884,6 +20134,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'macroRules',
+									stored: '_macro_rules',
 									optional: true
 								}
 							],
@@ -19953,6 +20204,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'macroRules',
+									stored: '_macro_rules',
 									optional: true
 								}
 							],
@@ -20022,6 +20274,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'macroRules',
+									stored: '_macro_rules',
 									optional: true
 								}
 							],
@@ -20091,6 +20344,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -20278,6 +20532,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -20309,6 +20564,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -20342,6 +20598,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -20404,6 +20661,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -20437,6 +20695,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -20451,6 +20710,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -20509,6 +20769,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -20658,6 +20919,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -20845,6 +21107,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -20876,6 +21139,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -20909,6 +21173,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -20971,6 +21236,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -21004,6 +21270,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -21018,6 +21285,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -21076,6 +21344,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -21115,6 +21384,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -21128,6 +21398,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -21256,6 +21527,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -21443,6 +21715,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -21474,6 +21747,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -21507,6 +21781,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -21569,6 +21844,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -21602,6 +21878,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -21616,6 +21893,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -21674,6 +21952,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -21713,6 +21992,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -21841,6 +22121,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -22028,6 +22309,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -22059,6 +22341,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -22092,6 +22375,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -22154,6 +22438,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -22187,6 +22472,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -22201,6 +22487,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -22259,6 +22546,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -22298,6 +22586,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -22311,6 +22600,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -22439,6 +22729,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -22626,6 +22917,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -22657,6 +22949,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -22690,6 +22983,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -22752,6 +23046,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -22785,6 +23080,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -22799,6 +23095,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -22857,6 +23154,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -22896,6 +23194,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -22909,6 +23208,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -23037,6 +23337,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -23224,6 +23525,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -23255,6 +23557,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -23288,6 +23591,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -23300,6 +23604,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -23343,6 +23648,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -23405,6 +23711,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -23438,6 +23745,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -23452,6 +23760,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -23510,6 +23819,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -23549,6 +23859,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -23562,6 +23873,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -23694,6 +24006,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -23866,6 +24179,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -23928,6 +24242,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -23961,6 +24276,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -23975,6 +24291,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -24033,6 +24350,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -24067,6 +24385,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -24098,6 +24417,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -24246,6 +24566,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -24418,6 +24739,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -24480,6 +24802,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -24513,6 +24836,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -24527,6 +24851,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -24585,6 +24910,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -24619,6 +24945,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -24650,6 +24977,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -24688,6 +25016,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -24701,6 +25030,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -24829,6 +25159,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -25001,6 +25332,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -25063,6 +25395,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -25096,6 +25429,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -25110,6 +25444,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -25168,6 +25503,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -25202,6 +25538,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -25233,6 +25570,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -25271,6 +25609,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -25399,6 +25738,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -25571,6 +25911,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -25633,6 +25974,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -25666,6 +26008,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -25680,6 +26023,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -25738,6 +26082,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -25772,6 +26117,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -25803,6 +26149,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -25841,6 +26188,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -25854,6 +26202,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -25982,6 +26331,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -26154,6 +26504,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -26216,6 +26567,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -26249,6 +26601,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -26263,6 +26616,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -26321,6 +26675,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -26355,6 +26710,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -26386,6 +26742,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -26424,6 +26781,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -26437,6 +26795,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -26565,6 +26924,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -26737,6 +27097,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -26749,6 +27110,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -26792,6 +27154,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -26854,6 +27217,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -26887,6 +27251,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -26901,6 +27266,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
+									stored: '_elements',
 									builder: 'parametersElements',
 									optional: true
 								},
@@ -26959,6 +27325,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -26993,6 +27360,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -27024,6 +27392,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -27062,6 +27431,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -27075,6 +27445,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -27242,7 +27613,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -27328,7 +27700,8 @@ export const build: PortableBuildTable = {
 							name: 'extern',
 							steps: [
 								{
-									key: 'externModifier'
+									key: 'externModifier',
+									stored: '_extern_modifier'
 								}
 							],
 							multiple: false,
@@ -27383,7 +27756,8 @@ export const build: PortableBuildTable = {
 							name: 'extern',
 							steps: [
 								{
-									key: 'externModifier'
+									key: 'externModifier',
+									stored: '_extern_modifier'
 								}
 							],
 							multiple: false,
@@ -27399,7 +27773,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -27535,6 +27910,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -27548,6 +27924,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -27600,7 +27977,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -27669,6 +28047,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -27682,6 +28061,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -27741,6 +28121,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -27793,7 +28174,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -27862,6 +28244,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -27921,6 +28304,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -27934,6 +28318,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -27986,7 +28371,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -28055,6 +28441,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -28068,6 +28455,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -28127,6 +28515,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -28140,6 +28529,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -28192,7 +28582,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -28261,6 +28652,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -28274,6 +28666,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -28332,6 +28725,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -28344,6 +28738,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -28388,6 +28783,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -28401,6 +28797,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -28457,7 +28854,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -28525,6 +28923,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -28537,6 +28936,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -28581,6 +28981,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -28594,6 +28995,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -29196,6 +29598,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -29311,6 +29714,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -29406,7 +29810,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -29528,6 +29933,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -29606,7 +30012,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -29702,6 +30109,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -29797,7 +30205,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -29880,6 +30289,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -29893,6 +30303,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -29951,6 +30362,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -30046,7 +30458,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -30129,6 +30542,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -30187,6 +30601,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -30282,7 +30697,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -30365,6 +30781,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -30378,6 +30795,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -30436,6 +30854,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -30531,7 +30950,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -30614,6 +31034,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -30627,6 +31048,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -30685,6 +31107,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -30780,7 +31203,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -30861,6 +31285,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -30873,6 +31298,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -30918,6 +31344,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -30931,6 +31358,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -30993,6 +31421,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -31071,7 +31500,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -31163,6 +31593,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -31241,7 +31672,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -31293,6 +31725,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -31306,6 +31739,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -31364,6 +31798,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -31442,7 +31877,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -31494,6 +31930,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -31552,6 +31989,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -31630,7 +32068,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -31682,6 +32121,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -31695,6 +32135,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -31753,6 +32194,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -31831,7 +32273,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -31883,6 +32326,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -31896,6 +32340,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -31954,6 +32399,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -32032,7 +32478,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -32082,6 +32529,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -32094,6 +32542,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -32139,6 +32588,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -32152,6 +32602,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -32214,6 +32665,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -32334,6 +32786,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -32414,6 +32867,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -32427,6 +32881,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -32485,6 +32940,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -32565,6 +33021,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -32623,6 +33080,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -32703,6 +33161,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -32716,6 +33175,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -32774,6 +33234,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -32854,6 +33315,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -32867,6 +33329,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -32925,6 +33388,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -33004,6 +33468,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -33016,6 +33481,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -33060,6 +33526,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -33073,6 +33540,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -33135,6 +33603,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -33335,6 +33804,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -33431,6 +33901,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -33524,6 +33995,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -33684,6 +34156,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -33697,6 +34170,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -33755,6 +34229,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -33915,6 +34390,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -33973,6 +34449,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -34133,6 +34610,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -34146,6 +34624,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -34204,6 +34683,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -34364,6 +34844,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -34377,6 +34858,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -34435,6 +34917,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -34594,6 +35077,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -34606,6 +35090,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -34650,6 +35135,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -34663,6 +35149,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -34772,6 +35259,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -34860,6 +35348,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
+									stored: '_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -35070,6 +35559,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -35165,7 +35655,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -35288,6 +35779,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -35383,7 +35875,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -35466,6 +35959,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -35479,6 +35973,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -35537,6 +36032,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -35632,7 +36128,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -35715,6 +36212,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -35773,6 +36271,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -35868,7 +36367,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -35951,6 +36451,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -35964,6 +36465,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -36022,6 +36524,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -36117,7 +36620,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -36200,6 +36704,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -36213,6 +36718,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -36271,6 +36777,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -36366,7 +36873,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -36447,6 +36955,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -36459,6 +36968,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -36504,6 +37014,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -36517,6 +37028,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -36986,6 +37498,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -36999,6 +37512,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -37170,6 +37684,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -37341,6 +37856,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -37354,6 +37870,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -37525,6 +38042,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -37538,6 +38056,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -37708,6 +38227,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -37720,6 +38240,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -37764,6 +38285,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -37777,6 +38299,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -41678,6 +42201,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'traitBounds',
+									stored: '_trait_bounds',
 									builder: 'traitBounds',
 									optional: true
 								},
@@ -41771,6 +42295,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeArguments',
+									stored: '_type_arguments',
 									optional: true
 								}
 							],
@@ -45009,7 +45534,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -45109,7 +45635,8 @@ export const build: PortableBuildTable = {
 									builder: 'genericFunction'
 								},
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -45244,7 +45771,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -45338,7 +45866,8 @@ export const build: PortableBuildTable = {
 									builder: 'genericFunction'
 								},
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -45415,7 +45944,8 @@ export const build: PortableBuildTable = {
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									stored: '_arguments'
 								}
 							],
 							multiple: false,
@@ -45510,7 +46040,8 @@ export const build: PortableBuildTable = {
 									builder: 'genericFunction'
 								},
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -45668,6 +46199,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'elements',
+									stored: '_elements',
 									optional: true
 								}
 							],
@@ -45839,7 +46371,8 @@ export const build: PortableBuildTable = {
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									stored: '_body'
 								}
 							],
 							multiple: false,
@@ -45891,7 +46424,8 @@ export const build: PortableBuildTable = {
 							name: 'elements',
 							steps: [
 								{
-									key: 'elements'
+									key: 'elements',
+									stored: '_elements'
 								}
 							],
 							multiple: false,
@@ -45980,7 +46514,8 @@ export const build: PortableBuildTable = {
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -46032,7 +46567,8 @@ export const build: PortableBuildTable = {
 							name: 'parameters',
 							steps: [
 								{
-									key: 'parameters'
+									key: 'parameters',
+									stored: '_parameters'
 								}
 							],
 							multiple: false,
@@ -46189,7 +46725,8 @@ export const build: PortableBuildTable = {
 							name: 'parameters',
 							steps: [
 								{
-									key: 'parameters'
+									key: 'parameters',
+									stored: '_parameters'
 								}
 							],
 							multiple: false,
@@ -49616,6 +50153,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -49681,6 +50219,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -49717,6 +50256,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -49753,6 +50293,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -49797,6 +50338,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -49933,7 +50475,8 @@ export const build: PortableBuildTable = {
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -49986,6 +50529,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'elements',
+									stored: '_elements',
 									optional: true
 								}
 							],
@@ -50832,6 +51376,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'fields',
+									stored: '_fields',
 									optional: true
 								}
 							],
@@ -50903,6 +51448,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'fields',
+									stored: '_fields',
 									optional: true
 								}
 							],
@@ -51154,6 +51700,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'elements',
+									stored: '_elements',
 									optional: true
 								}
 							],
@@ -51547,6 +52094,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'alternative',
+									stored: '_alternative',
 									optional: true
 								}
 							],
@@ -51739,6 +52287,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -51752,6 +52301,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -51834,6 +52384,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -51916,6 +52467,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -51929,6 +52481,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -52011,6 +52564,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -52024,6 +52578,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -52105,6 +52660,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -52117,6 +52673,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -52161,6 +52718,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -52174,6 +52732,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -52242,6 +52801,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -52255,6 +52815,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -52319,6 +52880,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -52383,6 +52945,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -52396,6 +52959,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -52460,6 +53024,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -52473,6 +53038,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -52536,6 +53102,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier'
 								},
 								{
@@ -52548,6 +53115,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									mounted: {
 										call: 'child',
@@ -52592,6 +53160,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
 									builder: 'visibilityModifier',
 									optional: true
 								},
@@ -52605,6 +53174,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
 									builder: 'visibilityModifier.pub.scope',
 									optional: true,
 									mounted: {
@@ -52940,6 +53510,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
+									stored: '_body',
 									builder: 'matchBlock'
 								},
 								{
@@ -53042,6 +53613,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
@@ -53480,6 +54052,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'forLifetimes',
+									stored: '_for_lifetimes',
 									optional: true
 								}
 							],
@@ -53559,6 +54132,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -53621,6 +54195,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -53747,6 +54322,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'forLifetimes',
+									stored: '_for_lifetimes',
 									optional: true
 								}
 							],
@@ -53826,6 +54402,7 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'parameters',
+									stored: '_parameters',
 									builder: 'parameters'
 								},
 								{
@@ -53888,6 +54465,7 @@ export const build: PortableBuildTable = {
 													steps: [
 														{
 															key: 'attributeItem',
+															stored: '_attribute_item',
 															optional: true
 														}
 													],
@@ -53993,7 +54571,8 @@ export const build: PortableBuildTable = {
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -54067,7 +54646,8 @@ export const build: PortableBuildTable = {
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									stored: '_type_arguments'
 								}
 							],
 							multiple: false,
@@ -54894,7 +55474,8 @@ export const build: PortableBuildTable = {
 							name: 'types',
 							steps: [
 								{
-									key: 'types'
+									key: 'types',
+									stored: '_types'
 								}
 							],
 							multiple: false,
