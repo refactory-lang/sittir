@@ -809,7 +809,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_dots', 'RelativeImport.dots', 'buildImportPrefix(…)', [137]],
-			['_name', 'RelativeImport.name', 'a built DottedName', [1, 187]]
+			['_name', 'RelativeImport.name', 'a built DottedName', [187]]
 		],
 		config: ['dots', 'name']
 	},
@@ -854,7 +854,7 @@ export const structure: StructureTable = Object.freeze({
 			['_rename', 'AliasedImport.rename']
 		],
 		nodeOnly: [
-			['_name', 'AliasedImport.name', 'a built DottedName', [1, 187]],
+			['_name', 'AliasedImport.name', 'a built DottedName', [187]],
 			['_rename', 'AliasedImport.rename', 'buildIdentifier(…)', [1]]
 		],
 		config: ['name', 'rename']
@@ -1302,7 +1302,7 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'DottedName.name']
 		],
 		nodeOnly: [
-			['_qualifier', 'DottedName.qualifier', 'a built DottedName', [1, 187]],
+			['_qualifier', 'DottedName.qualifier', 'a built DottedName', [187]],
 			['_name', 'DottedName.name', 'buildIdentifier(…)', [1]]
 		],
 		config: ['qualifier', 'name']
@@ -1423,7 +1423,7 @@ export const structure: StructureTable = Object.freeze({
 			['_fields', 'ClassPattern.fields']
 		],
 		nodeOnly: [
-			['_type', 'ClassPattern.type', 'a built DottedName', [1, 187]],
+			['_type', 'ClassPattern.type', 'a built DottedName', [187]],
 			['_fields', 'ClassPattern.fields', 'a built ListPatternCasePatterns', [270]]
 		],
 		hoisted: [['fields', 'ClassPattern.fields', 'a built ListPatternCasePatterns', [188, 189, 190, 194, 270]]],

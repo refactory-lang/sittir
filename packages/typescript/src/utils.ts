@@ -1293,7 +1293,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_body', 'TryStatement.body', 'a built StatementBlock', [211]],
-			['_handlers', 'TryStatement.handlers', 'a built CatchClause', [211, 232]],
+			['_handlers', 'TryStatement.handlers', 'a built CatchClause', [232]],
 			['_finalizer', 'TryStatement.finalizer', 'a built FinallyClause', [233]]
 		],
 		hoisted: [['finalizer', 'TryStatement.finalizer', 'a built FinallyClause', [211, 233]]],
@@ -1395,7 +1395,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'CatchClause.body']
 		],
 		nodeOnly: [
-			['_catch_clause_group', 'CatchClause.catchClauseGroup', 'a built CatchClauseGroup', [1, 239, 243, 396]],
+			['_catch_clause_group', 'CatchClause.catchClauseGroup', 'a built CatchClauseGroup', [396]],
 			['_body', 'CatchClause.body', 'a built StatementBlock', [211]]
 		],
 		config: ['catchClauseGroup', 'body']
@@ -3776,9 +3776,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: '_formal_parameters_elements_set_accessor_signature',
 		required: [['_item', 'item']],
 		single: [['_item', 'FormalParametersElementsSetAccessorSignature.item']],
-		nodeOnly: [
-			['_item', 'FormalParametersElementsSetAccessorSignature.item', 'a built SetterParameter', [261, 279, 450]]
-		]
+		nodeOnly: [['_item', 'FormalParametersElementsSetAccessorSignature.item', 'a built SetterParameter', [450]]]
 	},
 	450: {
 		kind: 'setter_parameter',

@@ -412,7 +412,7 @@ function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | 
 	const stored = f.values.map((value) => valueStorageOf(value, nodeMap));
 	if (stored.some((storage) => storage === undefined || storage.via !== 'node')) return undefined;
 	const ids = new Set<number>();
-	for (const kind of transparentContentKindNames(slotKindNames(f), nodeMap)) {
+	for (const kind of isMultiple(f) ? transparentContentKindNames(slotKindNames(f), nodeMap) : slotKindNames(f)) {
 		const id = nodeMap.nodes.get(kind)?.kindId;
 		if (id === undefined) return undefined;
 		ids.add(id);

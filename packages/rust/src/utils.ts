@@ -996,13 +996,13 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'attribute_item',
 		required: [['_attribute', 'attribute']],
 		single: [['_attribute', 'AttributeItem.attribute']],
-		nodeOnly: [['_attribute', 'AttributeItem.attribute', 'a built Attribute', [1, 125, 126, 127, 192, 263, 481]]]
+		nodeOnly: [['_attribute', 'AttributeItem.attribute', 'a built Attribute', [192]]]
 	},
 	191: {
 		kind: 'inner_attribute_item',
 		required: [['_attribute', 'attribute']],
 		single: [['_attribute', 'InnerAttributeItem.attribute']],
-		nodeOnly: [['_attribute', 'InnerAttributeItem.attribute', 'a built Attribute', [1, 125, 126, 127, 192, 263, 481]]]
+		nodeOnly: [['_attribute', 'InnerAttributeItem.attribute', 'a built Attribute', [192]]]
 	},
 	192: {
 		kind: 'attribute',
@@ -1658,7 +1658,7 @@ export const structure: StructureTable = Object.freeze({
 	234: {
 		kind: 'extern_modifier',
 		single: [['_abi', 'ExternModifier.abi']],
-		nodeOnly: [['_abi', 'ExternModifier.abi', 'a built StringLiteral', [133, 332]]]
+		nodeOnly: [['_abi', 'ExternModifier.abi', 'a built StringLiteral', [332]]]
 	},
 	235: {
 		kind: 'visibility_modifier',
@@ -2277,7 +2277,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_attributes', 'LastMatchArm.attributes', 'a built AttributeItem / InnerAttributeItem', [190, 191]],
-			['_match', 'LastMatchArm.match', 'a built MatchPattern', [296, 314]],
+			['_match', 'LastMatchArm.match', 'a built MatchPattern', [296]],
 			['_body', 'LastMatchArm.body', 'a built Expression', [258]]
 		],
 		kindIds: [['_trailing_comma', 'LastMatchArm.trailingComma', [0, 130]]],
@@ -3119,7 +3119,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_attributes', 'MatchArmWithComma.attributes', 'a built AttributeItem / InnerAttributeItem', [190, 191]],
-			['_match', 'MatchArmWithComma.match', 'a built MatchPattern', [296, 314]],
+			['_match', 'MatchArmWithComma.match', 'a built MatchPattern', [296]],
 			['_body', 'MatchArmWithComma.body', 'a built Expression', [258]]
 		],
 		config: ['attributes', 'match', 'body'],
@@ -3137,7 +3137,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_attributes', 'MatchArmBlockEnding.attributes', 'a built AttributeItem / InnerAttributeItem', [190, 191]],
-			['_match', 'MatchArmBlockEnding.match', 'a built MatchPattern', [296, 314]],
+			['_match', 'MatchArmBlockEnding.match', 'a built MatchPattern', [296]],
 			[
 				'_body',
 				'MatchArmBlockEnding.body',
@@ -3481,7 +3481,7 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_enum_variant', 'AttributedEnumVariant.enumVariant']],
 		nodeOnly: [
 			['_attribute_item', 'AttributedEnumVariant.attributeItems', 'a built AttributeItem', [190]],
-			['_enum_variant', 'AttributedEnumVariant.enumVariant', 'a built EnumVariant', [1, 200]]
+			['_enum_variant', 'AttributedEnumVariant.enumVariant', 'a built EnumVariant', [200]]
 		],
 		hoisted: [
 			[
@@ -3678,7 +3678,7 @@ export const structure: StructureTable = Object.freeze({
 			['_parameters_elements_receiver_group', 'ParametersElementsReceiver.parametersElementsReceiverGroup']
 		],
 		nodeOnly: [
-			['_receiver', 'ParametersElementsReceiver.receiver', 'a built AttributedParameterReceiver', [231, 439, 440]],
+			['_receiver', 'ParametersElementsReceiver.receiver', 'a built AttributedParameterReceiver', [440]],
 			[
 				'_parameters_elements_receiver_group',
 				'ParametersElementsReceiver.parametersElementsReceiverGroup',

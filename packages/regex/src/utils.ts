@@ -355,7 +355,7 @@ export const structure: StructureTable = Object.freeze({
 				'_unicode_property_value_expression',
 				'CharacterClassEscapeArm.unicodePropertyValueExpression',
 				'a built UnicodePropertyValueExpression',
-				[35, 75]
+				[75]
 			]
 		],
 		config: ['characterClassEscapeText2', 'unicodePropertyValueExpression']
