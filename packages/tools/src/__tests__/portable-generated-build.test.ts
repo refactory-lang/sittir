@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 828, rust: 1335, typescript: 1315 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 827, rust: 1297, typescript: 1315 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -96,6 +96,18 @@ describe('the generated portable build, by the engine that scopes it', () => {
 		const stated = { ...read, type: 'Point' };
 		expect(() => runtime.build(stated)).toThrow(/has no slot type/);
 		expect(() => field(stated)).toThrow('pattern.struct.field has no slot type');
+	});
+
+	it('refuses an attributed type parameter, whose arm has no route for its attributes, as the interpreter does', async () => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const { portableBuild } = (await import('../../../rust/src/portable/build.ts')) as unknown as { readonly portableBuild: { readonly declaration: { readonly type_parameter: PathFunction } } };
+		const parameter = scopeBuilders(engine, portableBuild).declaration.type_parameter;
+		const [attributed, plain] = [...structuresIn(runtime.read(engine.parse('fn f<#[cfg(x)] T, U>() {}\n')))].filter((structure) => structure.$path === 'declaration.type_parameter');
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		expect(render(parameter(plain!))).toBe(render(runtime.build(plain!)));
+		expect(() => runtime.build(attributed!)).toThrow(/has no slot attributes/);
+		expect(() => parameter(attributed!)).toThrow('declaration.type_parameter has no slot attributes');
 	});
 
 	it('refuses a node another grammar built, naming both languages', async () => {

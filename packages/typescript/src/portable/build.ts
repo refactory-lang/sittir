@@ -345,6 +345,208 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 			return unbuilt('declaration.ambient.body', value);
 	}
 };
+type declaration_constructor$464_body$Item =
+	| PathInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block'];
+const declaration_constructor$464_body = (value: declaration_constructor$464_body$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.body', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.body', value);
+	}
+	return unbuilt('declaration.constructor.body', value);
+};
+type declaration_constructor$464_parameters$item$Item =
+	| BuildInput<TypeScriptMap, 'declaration.parameter'>
+	| TypeScriptMap['nodes']['declaration.parameter']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
+	| TypeScriptMap['nodes']['declaration.parameter.private']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.protected'>
+	| TypeScriptMap['nodes']['declaration.parameter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.public'>
+	| TypeScriptMap['nodes']['declaration.parameter.public']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
+	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
+const declaration_constructor$464_parameters$item = (value: declaration_constructor$464_parameters$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter':
+			return unbuilt('declaration.constructor.parameters', value);
+		case 'declaration.parameter.private':
+			return unbuilt('declaration.constructor.parameters', value);
+		case 'declaration.parameter.protected':
+			return unbuilt('declaration.constructor.parameters', value);
+		case 'declaration.parameter.public':
+			return unbuilt('declaration.constructor.parameters', value);
+		case 'declaration.parameter.receiver':
+			return unbuilt('declaration.constructor.parameters', value);
+		default:
+			return unbuilt('declaration.constructor.parameters', value);
+	}
+};
+type declaration_constructor_private$464_body$Item =
+	| PathInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block'];
+const declaration_constructor_private$464_body = (value: declaration_constructor_private$464_body$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.private.body', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.private.body', value);
+	}
+	return unbuilt('declaration.constructor.private.body', value);
+};
+type declaration_constructor_private$464_parameters$item$Item =
+	| BuildInput<TypeScriptMap, 'declaration.parameter'>
+	| TypeScriptMap['nodes']['declaration.parameter']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
+	| TypeScriptMap['nodes']['declaration.parameter.private']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.protected'>
+	| TypeScriptMap['nodes']['declaration.parameter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.public'>
+	| TypeScriptMap['nodes']['declaration.parameter.public']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
+	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
+const declaration_constructor_private$464_parameters$item = (
+	value: declaration_constructor_private$464_parameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.private.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.private.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter':
+			return unbuilt('declaration.constructor.private.parameters', value);
+		case 'declaration.parameter.private':
+			return unbuilt('declaration.constructor.private.parameters', value);
+		case 'declaration.parameter.protected':
+			return unbuilt('declaration.constructor.private.parameters', value);
+		case 'declaration.parameter.public':
+			return unbuilt('declaration.constructor.private.parameters', value);
+		case 'declaration.parameter.receiver':
+			return unbuilt('declaration.constructor.private.parameters', value);
+		default:
+			return unbuilt('declaration.constructor.private.parameters', value);
+	}
+};
+type declaration_constructor_protected$464_body$Item =
+	| PathInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block'];
+const declaration_constructor_protected$464_body = (value: declaration_constructor_protected$464_body$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.protected.body', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.protected.body', value);
+	}
+	return unbuilt('declaration.constructor.protected.body', value);
+};
+type declaration_constructor_protected$464_parameters$item$Item =
+	| BuildInput<TypeScriptMap, 'declaration.parameter'>
+	| TypeScriptMap['nodes']['declaration.parameter']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
+	| TypeScriptMap['nodes']['declaration.parameter.private']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.protected'>
+	| TypeScriptMap['nodes']['declaration.parameter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.public'>
+	| TypeScriptMap['nodes']['declaration.parameter.public']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
+	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
+const declaration_constructor_protected$464_parameters$item = (
+	value: declaration_constructor_protected$464_parameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.protected.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.protected.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter':
+			return unbuilt('declaration.constructor.protected.parameters', value);
+		case 'declaration.parameter.private':
+			return unbuilt('declaration.constructor.protected.parameters', value);
+		case 'declaration.parameter.protected':
+			return unbuilt('declaration.constructor.protected.parameters', value);
+		case 'declaration.parameter.public':
+			return unbuilt('declaration.constructor.protected.parameters', value);
+		case 'declaration.parameter.receiver':
+			return unbuilt('declaration.constructor.protected.parameters', value);
+		default:
+			return unbuilt('declaration.constructor.protected.parameters', value);
+	}
+};
+type declaration_constructor_public$464_body$Item =
+	| PathInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block'];
+const declaration_constructor_public$464_body = (value: declaration_constructor_public$464_body$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.public.body', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [211])) return value;
+		return unseated('declaration.constructor.public.body', value);
+	}
+	return unbuilt('declaration.constructor.public.body', value);
+};
+type declaration_constructor_public$464_parameters$item$Item =
+	| BuildInput<TypeScriptMap, 'declaration.parameter'>
+	| TypeScriptMap['nodes']['declaration.parameter']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
+	| TypeScriptMap['nodes']['declaration.parameter.private']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.protected'>
+	| TypeScriptMap['nodes']['declaration.parameter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.public'>
+	| TypeScriptMap['nodes']['declaration.parameter.public']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
+	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
+const declaration_constructor_public$464_parameters$item = (
+	value: declaration_constructor_public$464_parameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.public.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.constructor.public.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter':
+			return unbuilt('declaration.constructor.public.parameters', value);
+		case 'declaration.parameter.private':
+			return unbuilt('declaration.constructor.public.parameters', value);
+		case 'declaration.parameter.protected':
+			return unbuilt('declaration.constructor.public.parameters', value);
+		case 'declaration.parameter.public':
+			return unbuilt('declaration.constructor.public.parameters', value);
+		case 'declaration.parameter.receiver':
+			return unbuilt('declaration.constructor.public.parameters', value);
+		default:
+			return unbuilt('declaration.constructor.public.parameters', value);
+	}
+};
 type declaration_enum$322_body$item$Item =
 	| PathInput<TypeScriptMap, 'declaration.enum_member'>
 	| TypeScriptMap['nodes']['declaration.enum_member'];
@@ -1850,6 +2052,85 @@ const declaration_ambient$313 = (
 ): ReturnType<typeof b.ambientDeclaration> => {
 	return b.ambientDeclaration(declaration_ambient$313_body(input.body));
 };
+const declaration_constructor$464 = (
+	input: PathInput<TypeScriptMap, 'declaration.constructor'>
+): ReturnType<typeof b.constructorDeclaration> => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor', 'decorators');
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	return b.constructorDeclaration({
+		body: declaration_constructor$464_body(input.body),
+		parameters:
+			parameters$first === undefined
+				? b.formalParameters()
+				: b.formalParameters(
+						b.formalParametersElements(
+							declaration_constructor$464_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor$464_parameters$item)
+						)
+					)
+	});
+};
+const declaration_constructor_private$464 = (
+	input: PathInput<TypeScriptMap, 'declaration.constructor.private'>
+): ReturnType<typeof b.constructorDeclaration> => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor.private', 'decorators');
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	return b.constructorDeclaration({
+		body: declaration_constructor_private$464_body(input.body),
+		parameters:
+			parameters$first === undefined
+				? b.formalParameters()
+				: b.formalParameters(
+						b.formalParametersElements(
+							declaration_constructor_private$464_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor_private$464_parameters$item)
+						)
+					),
+		accessibilityModifier: 35
+	});
+};
+const declaration_constructor_protected$464 = (
+	input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>
+): ReturnType<typeof b.constructorDeclaration> => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor.protected', 'decorators');
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	return b.constructorDeclaration({
+		body: declaration_constructor_protected$464_body(input.body),
+		parameters:
+			parameters$first === undefined
+				? b.formalParameters()
+				: b.formalParameters(
+						b.formalParametersElements(
+							declaration_constructor_protected$464_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor_protected$464_parameters$item)
+						)
+					),
+		accessibilityModifier: 36
+	});
+};
+const declaration_constructor_public$464 = (
+	input: PathInput<TypeScriptMap, 'declaration.constructor.public'>
+): ReturnType<typeof b.constructorDeclaration> => {
+	if (input.decorators !== undefined) return unrouted('declaration.constructor.public', 'decorators');
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	return b.constructorDeclaration({
+		body: declaration_constructor_public$464_body(input.body),
+		parameters:
+			parameters$first === undefined
+				? b.formalParameters()
+				: b.formalParameters(
+						b.formalParametersElements(
+							declaration_constructor_public$464_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor_public$464_parameters$item)
+						)
+					),
+		accessibilityModifier: 34
+	});
+};
 const declaration_enum$322 = (
 	input: PathInput<TypeScriptMap, 'declaration.enum'>
 ): ReturnType<typeof b.enumDeclaration> => {
@@ -2131,6 +2412,18 @@ const comment_html = (input: PathInput<TypeScriptMap, 'comment.html'>) => {
 const declaration_ambient = (input: PathInput<TypeScriptMap, 'declaration.ambient'>) => {
 	return declaration_ambient$313(input);
 };
+const declaration_constructor = (input: PathInput<TypeScriptMap, 'declaration.constructor'>) => {
+	return declaration_constructor$464(input);
+};
+const declaration_constructor_private = (input: PathInput<TypeScriptMap, 'declaration.constructor.private'>) => {
+	return declaration_constructor_private$464(input);
+};
+const declaration_constructor_protected = (input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>) => {
+	return declaration_constructor_protected$464(input);
+};
+const declaration_constructor_public = (input: PathInput<TypeScriptMap, 'declaration.constructor.public'>) => {
+	return declaration_constructor_public$464(input);
+};
 const declaration_enum = (input: PathInput<TypeScriptMap, 'declaration.enum'>) => {
 	return declaration_enum$322(input);
 };
@@ -2251,7 +2544,15 @@ export const portableBuild = {
 		import: { attribute: clause_import_attribute, namespace: clause_import_namespace }
 	},
 	comment: { html: comment_html },
-	declaration: { ambient: declaration_ambient, enum: declaration_enum },
+	declaration: {
+		ambient: declaration_ambient,
+		constructor: Object.assign(declaration_constructor, {
+			private: declaration_constructor_private,
+			protected: declaration_constructor_protected,
+			public: declaration_constructor_public
+		}),
+		enum: declaration_enum
+	},
 	element: { template: { substitution: element_template_substitution } },
 	expression: { collection: { object: expression_collection_object } },
 	literal: {

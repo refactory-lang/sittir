@@ -3198,7 +3198,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.catch: name reaches its slot in 2 steps"
+    "message": "clause.catch: name's step at catchClauseGroup is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -3246,7 +3246,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.extends: types requires other slots or reads only some kinds"
+    "message": "clause.extends: types requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -3254,7 +3254,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.extends.type: types requires other slots or reads only some kinds"
+    "message": "clause.extends.type: types requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -3262,7 +3262,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.implements: types requires other slots or reads only some kinds"
+    "message": "clause.implements: types requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -3270,7 +3270,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.import.names: arm 199 builds through one of several forms"
+    "message": "clause.import.names: arm 199 builds specifiers through more than one form"
   },
   {
     "scope": "grammar",
@@ -3342,39 +3342,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.class: arm 314 builds through one of several forms"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor: parameters reaches its slot in 3 steps"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor.private: parameters reaches its slot in 3 steps"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor.protected: parameters reaches its slot in 3 steps"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor.public: parameters reaches its slot in 3 steps"
+    "message": "declaration.class: arm 314 builds implements through more than one form"
   },
   {
     "scope": "grammar",
@@ -3454,7 +3422,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function: arm 251 builds through one of several forms"
+    "message": "declaration.function: generatorFunctionDeclaration takes options"
   },
   {
     "scope": "grammar",
@@ -3462,7 +3430,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature: arm 303 builds through one of several forms"
+    "message": "declaration.function.signature: functionSignature takes options"
   },
   {
     "scope": "grammar",
@@ -3470,7 +3438,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface: extends reaches its slot in 2 steps"
+    "message": "declaration.interface: a preset at body.opening that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -3478,7 +3446,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 453 builds through one of several forms"
+    "message": "declaration.method: arm 453 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3486,7 +3454,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private: arm 453 builds through one of several forms"
+    "message": "declaration.method.private: arm 453 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3494,7 +3462,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.protected: arm 453 builds through one of several forms"
+    "message": "declaration.method.protected: arm 453 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3502,7 +3470,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public: arm 453 builds through one of several forms"
+    "message": "declaration.method.public: arm 453 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3510,7 +3478,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature: arm 456 builds through one of several forms"
+    "message": "declaration.method.signature: arm 456 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3518,7 +3486,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract: arm 459 builds through one of several forms"
+    "message": "declaration.method.signature.abstract: arm 459 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3526,7 +3494,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.private: arm 459 builds through one of several forms"
+    "message": "declaration.method.signature.abstract.private: arm 459 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3534,7 +3502,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.protected: arm 459 builds through one of several forms"
+    "message": "declaration.method.signature.abstract.protected: arm 459 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3542,7 +3510,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.public: arm 459 builds through one of several forms"
+    "message": "declaration.method.signature.abstract.public: arm 459 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3550,7 +3518,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.private: arm 456 builds through one of several forms"
+    "message": "declaration.method.signature.private: arm 456 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3558,7 +3526,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.protected: arm 456 builds through one of several forms"
+    "message": "declaration.method.signature.protected: arm 456 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3566,7 +3534,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public: arm 456 builds through one of several forms"
+    "message": "declaration.method.signature.public: arm 456 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3590,7 +3558,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module_property: a pick by the kinds qualifier builds"
+    "message": "declaration.module_property: ambientDeclarationModule takes options"
   },
   {
     "scope": "grammar",
@@ -3830,7 +3798,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.signature.call: arm 370 builds through one of several forms"
+    "message": "declaration.signature.call: arm 370 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -3862,7 +3830,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias: a pick by the kinds qualifier builds"
+    "message": "declaration.type_alias: typeAliasDeclaration takes options"
   },
   {
     "scope": "grammar",
@@ -3870,7 +3838,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_parameter: bounds reaches its slot in 2 steps"
+    "message": "declaration.type_parameter: bounds is a list with no list container seat"
   },
   {
     "scope": "grammar",
@@ -3886,7 +3854,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.constant: declarators requires other slots or reads only some kinds"
+    "message": "declaration.variable.constant: lexicalDeclaration takes options"
   },
   {
     "scope": "grammar",
@@ -3902,7 +3870,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.reassignable: declarators requires other slots or reads only some kinds"
+    "message": "declaration.variable.reassignable: lexicalDeclaration takes options"
   },
   {
     "scope": "grammar",
@@ -3910,7 +3878,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.reassignable.function_scoped: declarators requires other slots or reads only some kinds"
+    "message": "declaration.variable.reassignable.function_scoped: variableDeclaration takes options"
   },
   {
     "scope": "grammar",
@@ -4390,7 +4358,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.class: arm 245 builds through one of several forms"
+    "message": "expression.class: arm 245 builds implements through more than one form"
   },
   {
     "scope": "grammar",
@@ -4414,7 +4382,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.function: arm 250 builds through one of several forms"
+    "message": "expression.function: arm 250 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4430,7 +4398,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda: arm 252 builds through one of several forms"
+    "message": "expression.lambda: arm 252 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4462,7 +4430,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.sequence: expressions requires other slots or reads only some kinds"
+    "message": "expression.sequence: expressions requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -4558,7 +4526,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.yield.delegate: expression reaches its slot in 2 steps"
+    "message": "expression.yield.delegate: expression's step at expression is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -4566,7 +4534,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "file: shebang reaches its slot in 2 steps"
+    "message": "file: shebang has no exact set"
   },
   {
     "scope": "grammar",
@@ -4710,7 +4678,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block: a seat at statements holding refined kinds"
+    "message": "statement.block: statementBlock takes options"
   },
   {
     "scope": "grammar",
@@ -4758,7 +4726,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.export: a pick by the kinds expression builds"
+    "message": "statement.export: exportStatementEqualsExport takes options"
   },
   {
     "scope": "grammar",
@@ -4766,7 +4734,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.export.all: source reaches its slot in 2 steps"
+    "message": "statement.export.all: exportStatementDefaultFrom takes options"
   },
   {
     "scope": "grammar",
@@ -4774,7 +4742,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.export.default: arm 432 builds through one of several forms"
+    "message": "statement.export.default: declaration's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -4790,7 +4758,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import: arm 198 builds through one of several forms"
+    "message": "statement.import: importStatement takes options"
   },
   {
     "scope": "grammar",
@@ -4806,7 +4774,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.typeof: arm 198 builds through one of several forms"
+    "message": "statement.import.typeof: importStatement takes options"
   },
   {
     "scope": "grammar",
@@ -4830,7 +4798,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.do_while: a seat at body holding refined kinds"
+    "message": "statement.loop.do_while: doStatement takes options"
   },
   {
     "scope": "grammar",
@@ -4854,7 +4822,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.return: a pick by the kinds expression builds"
+    "message": "statement.return: returnStatement takes options"
   },
   {
     "scope": "grammar",
@@ -4878,7 +4846,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.throw: a pick by the kinds expression builds"
+    "message": "statement.throw: throwStatement takes options"
   },
   {
     "scope": "grammar",
@@ -4910,7 +4878,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.function: arm 383 builds through one of several forms"
+    "message": "type.function: arm 383 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4918,7 +4886,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.function.constructor: arm 345 builds through one of several forms"
+    "message": "type.function.constructor: arm 345 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4926,7 +4894,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic: typeArguments requires other slots or reads only some kinds"
+    "message": "type.generic: typeArguments requires other slots or is never empty"
   },
   {
     "scope": "grammar",

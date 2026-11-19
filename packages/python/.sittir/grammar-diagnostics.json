@@ -1275,7 +1275,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.catch: arm 165 builds through one of several forms"
+    "message": "clause.catch: arm 165 builds type through more than one form"
   },
   {
     "scope": "grammar",
@@ -1283,7 +1283,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.comprehension.for: rights requires other slots or reads only some kinds"
+    "message": "clause.comprehension.for: forInClause takes options"
   },
   {
     "scope": "grammar",
@@ -2035,7 +2035,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.resource: items requires other slots or reads only some kinds"
+    "message": "clause.resource: items requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2043,7 +2043,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.resource.item: arm 169 builds through one of several forms"
+    "message": "clause.resource.item: arm 169 builds value through more than one form"
   },
   {
     "scope": "grammar",
@@ -2059,7 +2059,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.class: arm 179 builds through one of several forms"
+    "message": "declaration.class: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -2083,7 +2083,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function: arm 170 builds through one of several forms"
+    "message": "declaration.function: a pick by the render options' variant _suite"
   },
   {
     "scope": "grammar",
@@ -2091,7 +2091,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 361 builds through one of several forms"
+    "message": "declaration.method: arm 361 spells facts in its container"
   },
   {
     "scope": "grammar",
@@ -2107,7 +2107,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter: arm 361 builds through one of several forms"
+    "message": "declaration.property.getter: arm 361 spells facts in its container"
   },
   {
     "scope": "grammar",
@@ -2115,15 +2115,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.setter: arm 361 builds through one of several forms"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.type_alias: typeParameters reaches its slot in 2 steps"
+    "message": "declaration.property.setter: arm 361 spells facts in its container"
   },
   {
     "scope": "grammar",
@@ -2243,7 +2235,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.chain: comparators requires other slots or reads only some kinds"
+    "message": "expression.binary.comparison.chain: comparators requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2251,7 +2243,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.equal: right reaches its slot in 2 steps"
+    "message": "expression.binary.comparison.equal: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2259,7 +2251,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater: right reaches its slot in 2 steps"
+    "message": "expression.binary.comparison.greater: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2267,7 +2259,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.greater_equal: right reaches its slot in 2 steps"
+    "message": "expression.binary.comparison.greater_equal: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2275,7 +2267,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less: right reaches its slot in 2 steps"
+    "message": "expression.binary.comparison.less: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2283,7 +2275,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.less_equal: right reaches its slot in 2 steps"
+    "message": "expression.binary.comparison.less_equal: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2291,7 +2283,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.not_equal: right reaches its slot in 2 steps"
+    "message": "expression.binary.comparison.not_equal: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2299,7 +2291,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.not_equal.legacy: right reaches its slot in 2 steps"
+    "message": "expression.binary.comparison.not_equal.legacy: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2307,7 +2299,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.identity.is: right reaches its slot in 2 steps"
+    "message": "expression.binary.identity.is: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2315,7 +2307,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.identity.is_not: right reaches its slot in 2 steps"
+    "message": "expression.binary.identity.is_not: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2323,7 +2315,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.membership.in: right reaches its slot in 2 steps"
+    "message": "expression.binary.membership.in: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2331,7 +2323,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.membership.not_in: right reaches its slot in 2 steps"
+    "message": "expression.binary.membership.not_in: right's step at comparators has no builder"
   },
   {
     "scope": "grammar",
@@ -2347,7 +2339,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.set: elements requires other slots or reads only some kinds"
+    "message": "expression.collection.set: elements requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2355,7 +2347,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.generator: clauses requires other slots or reads only some kinds"
+    "message": "expression.comprehension.generator: clauses requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2363,7 +2355,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.list: clauses requires other slots or reads only some kinds"
+    "message": "expression.comprehension.list: clauses requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2371,7 +2363,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.map: clauses requires other slots or reads only some kinds"
+    "message": "expression.comprehension.map: clauses requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2379,7 +2371,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.comprehension.set: clauses requires other slots or reads only some kinds"
+    "message": "expression.comprehension.set: clauses requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2411,7 +2403,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.yield.delegate: expression reaches its slot in 2 steps"
+    "message": "expression.yield.delegate: expression's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -2475,7 +2467,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.bytes: string takes options"
   },
   {
     "scope": "grammar",
@@ -2483,7 +2475,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.bytes.multiline: string takes options"
   },
   {
     "scope": "grammar",
@@ -2507,7 +2499,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.concatenated: strings requires other slots or reads only some kinds"
+    "message": "literal.string.concatenated: strings requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2523,7 +2515,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated: string takes options"
   },
   {
     "scope": "grammar",
@@ -2531,7 +2523,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred: string takes options"
   },
   {
     "scope": "grammar",
@@ -2539,7 +2531,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred.multiline: string takes options"
   },
   {
     "scope": "grammar",
@@ -2547,7 +2539,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred.raw: string takes options"
   },
   {
     "scope": "grammar",
@@ -2555,7 +2547,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred.raw.multiline: string takes options"
   },
   {
     "scope": "grammar",
@@ -2563,7 +2555,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.multiline: string takes options"
   },
   {
     "scope": "grammar",
@@ -2571,7 +2563,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.raw: string takes options"
   },
   {
     "scope": "grammar",
@@ -2579,7 +2571,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.raw.multiline: string takes options"
   },
   {
     "scope": "grammar",
@@ -2587,7 +2579,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.multiline: a preset at stringStart.quote that is not one keyword or text"
+    "message": "literal.string.multiline: string takes options"
   },
   {
     "scope": "grammar",
@@ -2611,7 +2603,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.unicode: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.unicode: string takes options"
   },
   {
     "scope": "grammar",
@@ -2723,7 +2715,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.assert: expressions requires other slots or reads only some kinds"
+    "message": "statement.assert: expressions requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2755,7 +2747,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.global: names requires other slots or reads only some kinds"
+    "message": "statement.global: names requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2771,7 +2763,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import: names requires other slots or reads only some kinds"
+    "message": "statement.import: names requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2779,7 +2771,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.from: names requires other slots or reads only some kinds"
+    "message": "statement.import.from: names requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2787,7 +2779,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.future: names requires other slots or reads only some kinds"
+    "message": "statement.import.future: names requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2819,7 +2811,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.nonlocal: names requires other slots or reads only some kinds"
+    "message": "statement.nonlocal: names requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2827,7 +2819,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.print: arguments requires other slots or reads only some kinds"
+    "message": "statement.print: arguments requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2851,7 +2843,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic: typeArguments reaches its slot in 2 steps"
+    "message": "type.generic: typeArguments requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2859,6 +2851,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.nullable: type reaches its slot in 3 steps"
+    "message": "type.nullable: a preset at typeParameter.types.items that is not one keyword or text"
   }
 ]

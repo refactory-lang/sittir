@@ -415,17 +415,40 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		return name;
 	};
 
-	const slotValue = (owner: string, arm: PortableBuildArm, slot: PortableSlotRoute, value: Expression): Expression => {
-		if (slot.steps.length !== 1) return fail(`${slot.name} reaches its slot in ${slot.steps.length} steps`);
-		const [step] = slot.steps;
-		if (step!.mounted !== undefined || step!.flatten === true || step!.seated !== undefined || step!.many === true) return fail(`${slot.name}'s step at ${step!.key} is not a plain slot`);
-		if (slot.requires !== undefined || slot.reads !== undefined || slot.nonEmpty === true) return fail(`${slot.name} requires other slots or reads only some kinds`);
+	const isListed = (slot: PortableSlotRoute): boolean => slot.multiple || slot.list === true;
+	const absent = (slot: PortableSlotRoute, value: Primary): Operand =>
+		isListed(slot) ? binary(dot(listOf(dot(value, slot.name)), 'length'), '===', num(0)) : binary(dot(value, slot.name), '===', id('undefined'));
+
+	const throughSteps = (slot: PortableSlotRoute): PortableSlotRoute => {
+		const { steps } = slot;
+		const links = steps.slice(1).map((step, i): PortableContainer => {
+			const parent = steps[i]!;
+			if (parent.builder === undefined) return fail(`${slot.name}'s step at ${parent.key} has no builder`);
+			if (step.many === true && shapeOf(parent.builder) === 'config') return fail(`${slot.name}'s step at ${step.key} is one item of ${parent.builder}'s list`);
+			return { builder: parent.builder, key: step.key, ...(step.optional === true ? { optional: true } : {}) };
+		});
+		return {
+			...slot,
+			steps: [steps[0]!],
+			multiple: false,
+			...(slot.multiple && slot.list === undefined ? { list: true } : {}),
+			seats: slot.seats.map((seat) => ({ ...seat, within: [...links, ...(seat.within ?? [])] }))
+		};
+	};
+
+	const slotValue = (owner: string, arm: PortableBuildArm, route: PortableSlotRoute, value: Primary): Expression => {
+		for (const step of route.steps) if (step.mounted !== undefined || step.flatten === true || step.seated !== undefined) return fail(`${route.name}'s step at ${step.key} is not a plain slot`);
+		const last = route.steps.at(-1)!;
+		if (last.many === true) return fail(`${route.name}'s step at ${last.key} is not a plain slot`);
+		if (route.requires !== undefined || route.nonEmpty === true) return fail(`${route.name} requires other slots or is never empty`);
+		const slot = route.steps.length === 1 ? route : throughSteps(route);
+		const step = slot.steps[0]!;
 		const given = dot(value, slot.name);
 		if (slot.multiple) return call(dot(listOf(given), 'map'), id(slotFunction(owner, arm, slot, 0)));
 		const either = slot.list !== true && slot.seats.some((seat) => seat.many === true && !(slot.list === false && (seat.within ?? []).length === 0));
 		const single = (): Expression => {
 			const built = call(id(slotFunction(owner, arm, slot, 0)), given);
-			if (step!.optional === true) return ternary(binary(given, '===', id('undefined')), id('undefined'), built);
+			if (step.optional === true) return ternary(binary(given, '===', id('undefined')), id('undefined'), built);
 			return input.slots[owner]?.[slot.name]?.optional === true ? ternary(binary(given, '===', id('undefined')), call(id(uses('missing')), str(`${owner}.${slot.name}`)), built) : built;
 		};
 		if (slot.list !== true && !either) return single();
@@ -437,7 +460,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const outer = seat.within!.slice(0, open + 1);
 		if (open >= 0 && outer.at(-1)!.builder === undefined) return fail(`${slot.name}'s optional list container has no builder`);
 		const listed = (): Expression => {
-			if (open < 0 && step!.optional !== true) return wrapList(seat.within!, { all: call(dot(either ? given : listOf(given), 'map'), id(item)) });
+			if (open < 0 && step.optional !== true) return wrapList(seat.within!, { all: call(dot(either ? given : listOf(given), 'map'), id(item)) });
 			const { empty, items } = split(slot.name, either ? paren(ternary(isList(), given, t.array())) : listOf(given), item);
 			return ternary(empty, open < 0 ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))), wrapList(seat.within!, items));
 		};
@@ -475,7 +498,6 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (arm.mounted !== undefined) return fail(`arm ${arm.kind} mounts into its holder`);
 		if (arm.template !== undefined) return fail(`a template-spelled slot (${arm.template.slot})`);
 		if (arm.sole !== undefined) return fail(`a sole-item delimiter on ${arm.sole.slot}`);
-		if (arm.owners !== undefined) return fail(`arm ${arm.kind} builds through one of several forms`);
 		if (arm.content !== undefined) return fail(`arm ${arm.kind} builds its text through a content slot`);
 		if (arm.literal !== undefined) return fail(`arm ${arm.kind} is a literal token`);
 		if ((arm.facts ?? []).length > 0) return fail(`arm ${arm.kind} spells facts in its container`);
@@ -486,10 +508,31 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			return [ret(call(builderRef(arm.builder), ternary(typeIs(given, 'string'), given, dot(given, '$value'))))];
 		}
 		if (shape === 'text' || shape === 'placed') return fail(`arm ${arm.kind}'s builder takes its text`);
+		if ((table.options?.[arm.builder] ?? []).length > 0) return fail(`${arm.builder} takes options`);
+		if (arm.owners === undefined) return [ret(formBuilt(path, arm, arm.builder, arm.slots, input))];
+		const routes = new Map<string, number>();
+		for (const i of arm.owners.flat()) {
+			const name = arm.slots[i]!.name;
+			if ((routes.get(name) ?? i) !== i) return fail(`arm ${arm.kind} builds ${name} through more than one form`);
+			routes.set(name, i);
+		}
+		const statements: Statement[] = [];
+		for (const owner of arm.owners) {
+			const held = new Set(owner.map((i) => arm.slots[i]!.name));
+			const built = ret(formBuilt(path, arm, arm.builder, owner.map((i) => arm.slots[i]!), input));
+			const condition = and(arm.slots.filter((slot, i, slots) => !held.has(slot.name) && slots.findIndex((other) => other.name === slot.name) === i).map((slot) => absent(slot, input())));
+			if (condition === undefined) return [...statements, built];
+			statements.push(when(condition, built));
+		}
+		return [...statements, raise(str(`${path}: no form of arm ${arm.kind} takes the slots it states together`))];
+	};
+
+	const formBuilt = (path: string, arm: PortableBuildArm, builder: string, slots: readonly PortableSlotRoute[], input: () => Built<B['identifier']>): Expression => {
+		const shape = shapeOf(builder);
 		const entries: [string, Expression][] = [];
 		const seen = new Set<string>();
 		const emptied = new Set(arm.when.flatMap((test) => ('empty' in test ? test.empty : [])));
-		for (const slot of arm.slots) {
+		for (const slot of slots) {
 			if (emptied.has(slot.name)) continue;
 			if (seen.has(slot.name)) return fail(`${slot.name} has more than one route`);
 			seen.add(slot.name);
@@ -510,14 +553,13 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			for (const slot of keys) entries.push([slot, flagged(input(), flag)]);
 		}
 		if (new Set(entries.map(([name]) => name)).size !== entries.length) return fail(`arm ${arm.kind} fills one slot twice`);
-		if ((table.options?.[arm.builder] ?? []).length > 0) return fail(`${arm.builder} takes options`);
-		const callee = builderRef(arm.builder);
-		if (shape === 'config') return [ret(call(callee, obj(entries)))];
-		if (shape === 'constant' || shape === 'nullary') return entries.length === 0 ? [ret(call(callee))] : fail(`${arm.builder} takes nothing but the arm fills ${entries.length} slots`);
-		if (entries.length > 1) return fail(`${arm.builder} (${shape}) takes one slot but the arm has ${entries.length}`);
-		if (shape === 'spread' || shape === 'elements') return [ret(entries.length === 0 ? call(callee) : call(callee, t.spreadElement(entries[0]![1])))];
-		if (shape === 'forwarded' || shape === 'direct') return [ret(entries.length === 0 ? call(callee) : call(callee, entries[0]![1]))];
-		return fail(`${arm.builder} takes a ${shape} input`);
+		const callee = builderRef(builder);
+		if (shape === 'config') return call(callee, obj(entries));
+		if (shape === 'constant' || shape === 'nullary') return entries.length === 0 ? call(callee) : fail(`${builder} takes nothing but the arm fills ${entries.length} slots`);
+		if (entries.length > 1) return fail(`${builder} (${shape}) takes one slot but the arm has ${entries.length}`);
+		if (shape === 'spread' || shape === 'elements') return entries.length === 0 ? call(callee) : call(callee, t.spreadElement(entries[0]![1]));
+		if (shape === 'forwarded' || shape === 'direct') return entries.length === 0 ? call(callee) : call(callee, entries[0]![1]);
+		return fail(`${builder} takes a ${shape} input`);
 	};
 
 	const unroutedGuards = (path: string, arm: PortableBuildArm): Statement[] => {

@@ -2568,6 +2568,459 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 			return unbuilt('declaration.parameter.typed_default.type', value);
 	}
 };
+type declaration_type_alias$178_name$Item =
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier'];
+const declaration_type_alias$178_name = (value: declaration_type_alias$178_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.type_alias.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.type_alias.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.type_alias.name', value);
+	}
+};
+type declaration_type_alias$178_typeParameters$item$Item =
+	| BuildInput<PythonMap, 'declaration.type_parameter'>
+	| PythonMap['nodes']['declaration.type_parameter']
+	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
+	| PythonMap['nodes']['declaration.type_parameter.parameters']
+	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
+	| PythonMap['nodes']['declaration.type_parameter.variadic'];
+const declaration_type_alias$178_typeParameters$item = (value: declaration_type_alias$178_typeParameters$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.type_alias.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.type_alias.typeParameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.type_parameter':
+			return unbuilt('declaration.type_alias.typeParameters', value);
+		case 'declaration.type_parameter.parameters':
+			return declaration_type_parameter_parameters$315(value);
+		case 'declaration.type_parameter.variadic':
+			return declaration_type_parameter_variadic$314(value);
+		default:
+			return unbuilt('declaration.type_alias.typeParameters', value);
+	}
+};
+type declaration_type_alias$178_value$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'identifier.qualified'>
+	| PythonMap['nodes']['identifier.qualified']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'type.constrained'>
+	| PythonMap['nodes']['type.constrained']
+	| BuildInput<PythonMap, 'type.generic'>
+	| PythonMap['nodes']['type.generic']
+	| BuildInput<PythonMap, 'type.nullable'>
+	| PythonMap['nodes']['type.nullable']
+	| BuildInput<PythonMap, 'type.rest'>
+	| PythonMap['nodes']['type.rest']
+	| BuildInput<PythonMap, 'type.union'>
+	| PythonMap['nodes']['type.union']
+	| Unmapped<'python:as_pattern'>;
+const declaration_type_alias$178_value = (value: declaration_type_alias$178_value$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
+		return b.type(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.type(value);
+		return unseated('declaration.type_alias.value', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.type(expression_assignment$148(value));
+		case 'expression.await':
+			return b.type(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.type(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.type(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.type(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.type(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.type(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.type(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.type(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.type(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.type(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.type(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.logical.and':
+			return b.type(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.type(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.type(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.binary.shift.left':
+			return b.type(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.type(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.type(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.collection.list':
+			return b.type(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.type(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.collection.tuple':
+			return b.type(expression_collection_tuple$240(value));
+		case 'expression.comprehension.generator':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.comprehension.list':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.comprehension.map':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.comprehension.set':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.conditional':
+			return b.type(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.type(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.parenthesized':
+			return b.type(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'expression.unary.bitwise_not':
+			return b.type(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.type(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.type(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.type(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.type(identifier$1(value));
+		case 'identifier.qualified':
+			return b.type(identifier_qualified$236(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.null':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.number.float':
+			return b.type(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.type(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.type(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.type(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.type(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.type(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.type(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
+			return b.type(literal_number_integer_big_octal$96(value));
+		case 'literal.number.integer.binary':
+			return b.type(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.type(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.number.integer.octal':
+			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
+			return b.type(literal_number_integer_octal$97(value));
+		case 'literal.string':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.bytes':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.concatenated':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'pattern.rest':
+			return b.type(pattern_rest$206(value));
+		case 'type.constrained':
+			return b.type(type_constrained$235(value));
+		case 'type.generic':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'type.nullable':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'type.rest':
+			return b.type(type_rest$232(value));
+		case 'type.union':
+			return b.type(type_union$234(value));
+		default:
+			return unbuilt('declaration.type_alias.value', value);
+	}
+};
 type declaration_type_parameter_parameters$315_name$Item =
 	| Text<PythonMap, 'identifier'>
 	| BuildInput<PythonMap, 'identifier'>
@@ -35061,6 +35514,29 @@ const declaration_parameter_typed_default$205 = (
 		default: declaration_parameter_typed_default$205_default(input.default)
 	});
 };
+const declaration_type_alias$178 = (
+	input: PathInput<PythonMap, 'declaration.type_alias'>
+): ReturnType<typeof b.typeAliasStatement> => {
+	const typeParameters$first = (input.typeParameters ?? [])[0];
+	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	return b.typeAliasStatement({
+		name:
+			input.name === undefined ? missing('declaration.type_alias.name') : declaration_type_alias$178_name(input.name),
+		value:
+			input.value === undefined
+				? missing('declaration.type_alias.value')
+				: declaration_type_alias$178_value(input.value),
+		typeParameters:
+			typeParameters$first === undefined
+				? undefined
+				: b.typeParams(
+						b.typeParamsItems(
+							declaration_type_alias$178_typeParameters$item(typeParameters$first),
+							...typeParameters$rest.map(declaration_type_alias$178_typeParameters$item)
+						)
+					)
+	});
+};
 const declaration_type_parameter_parameters$315 = (
 	input: PathInput<PythonMap, 'declaration.type_parameter.parameters'>
 ): ReturnType<typeof b.typeParamParamSpec> => {
@@ -35957,6 +36433,9 @@ const declaration_parameter_typed = (input: PathInput<PythonMap, 'declaration.pa
 const declaration_parameter_typed_default = (input: PathInput<PythonMap, 'declaration.parameter.typed_default'>) => {
 	return declaration_parameter_typed_default$205(input);
 };
+const declaration_type_alias = (input: PathInput<PythonMap, 'declaration.type_alias'>) => {
+	return declaration_type_alias$178(input);
+};
 const declaration_type_parameter_parameters = (
 	input: PathInput<PythonMap, 'declaration.type_parameter.parameters'>
 ) => {
@@ -36266,6 +36745,7 @@ export const portableBuild = {
 			typed: declaration_parameter_typed,
 			typed_default: declaration_parameter_typed_default
 		},
+		type_alias: declaration_type_alias,
 		type_parameter: {
 			parameters: declaration_type_parameter_parameters,
 			variadic: declaration_type_parameter_variadic

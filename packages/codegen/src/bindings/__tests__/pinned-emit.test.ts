@@ -1,4 +1,4 @@
-import type { PortableContainer, PortableSeat } from '@sittir/types';
+import type { PortableContainer, PortableSeat, PortableSlotRoute } from '@sittir/types';
 import { describe, expect, it } from 'vitest';
 import { runPinned } from '../read.ts';
 
@@ -617,5 +617,90 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).not.toContain("unrouted('declaration.function', 'body')");
 		expect(text).not.toContain("unrouted('declaration.function', 'decorators')");
 		expect(text).toContain('const unrouted = (owner: string, slot: string): never => {');
+	}, 60_000);
+
+	const formsOf = (slots: readonly PortableSlotRoute[], owners: readonly (readonly number[])[]) =>
+		runPinned('portableBuild', {
+			grammar: 'python',
+			node: 'PythonNode',
+			map: 'PythonMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table: {
+				builders: { functionDefinition: 'config', block: 'nullary', suiteBlock: 'forwarded', expressionStatement: 'direct', string: 'nullary', typeParams: 'forwarded', typeParamsItems: 'elements', typeVar: 'nullary', formalParameters: 'forwarded', formalParametersElements: 'elements', requiredParameter: 'nullary' },
+				paths: {
+					'declaration.function': { root: true, arms: [{ kind: 1, builder: 'functionDefinition', when: [], slots, owners, presets: [], flags: {} }] },
+					'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], slots: [], presets: [], flags: {} }] },
+					'literal.string': { root: false, arms: [{ kind: 5, builder: 'string', when: [], slots: [], presets: [], flags: {} }] },
+					'declaration.type_parameter': { root: false, arms: [{ kind: 6, builder: 'typeVar', when: [], slots: [], presets: [], flags: {} }] },
+					'declaration.parameter': { root: false, arms: [{ kind: 8, builder: 'requiredParameter', when: [], slots: [], presets: [], flags: {} }] }
+				}
+			},
+			slots: {
+				'declaration.function': {
+					body: { paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional: false },
+					doc: { paths: ['literal.string'], texts: [], unmapped: [], string: false, numbers: [], optional: true },
+					typeParameters: { paths: ['declaration.type_parameter'], texts: [], unmapped: [], string: false, numbers: [], optional: true },
+					parameters: { paths: ['declaration.parameter'], texts: [], unmapped: [], string: false, numbers: [], optional: false }
+				}
+			},
+			viewed: ['statement.block', 'literal.string', 'declaration.type_parameter', 'declaration.parameter'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			holes: [],
+			decided: { 'declaration.function': { body: 'statement.block', doc: 'literal.string', typeParameters: 'declaration.type_parameter', parameters: 'declaration.parameter' } }
+		});
+	const body: PortableSlotRoute = { name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7] }] };
+	const doc: PortableSlotRoute = {
+		name: 'doc',
+		steps: [{ key: 'body', builder: 'suiteBlock' }, { key: 'block', builder: 'expressionStatement', many: true }, { key: 'content' }],
+		multiple: false,
+		reads: [5],
+		seats: [{ at: [9, 'content'], kinds: [5] }]
+	};
+	const typeParameters: PortableSlotRoute = {
+		name: 'typeParameters',
+		steps: [{ key: 'typeParameters', builder: 'typeParams', optional: true }, { key: 'items' }],
+		multiple: false,
+		list: true,
+		seats: [
+			{ at: [2, 'items'], kinds: [] },
+			{ at: [3, 'items'], kinds: [6], within: [{ builder: 'typeParamsItems', key: 'items' }], many: true }
+		]
+	};
+
+	it('builds an arm with several forms through the form that holds every slot the input states, and refuses an input no one form holds', async () => {
+		const { text, diagnostics } = await formsOf([body, doc], [[0], [1]]);
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain('if (input.doc === undefined) return b.functionDefinition({ body: declaration_function$1_body(input.body) });');
+		expect(text).toContain("if (input.body === undefined) return b.functionDefinition({ body: input.doc === undefined ? missing('declaration.function.doc') : declaration_function$1_doc(input.doc) });");
+		expect(text).toContain('return b.suiteBlock(b.expressionStatement(literal_string$5(value)));');
+		expect(text).toContain('if (seated(value, [5])) return b.suiteBlock(b.expressionStatement(value));');
+		expect(text).toContain("throw new Error('declaration.function: no form of arm 1 takes the slots it states together');");
+	}, 60_000);
+
+	it("builds a slot reached in several steps through each step's builder as its seat's containers, and leaves out an optional first step whose list is empty", async () => {
+		const parameters: PortableSlotRoute = {
+			name: 'parameters',
+			steps: [{ key: 'parameters', builder: 'formalParameters' }, { key: 'elements', builder: 'formalParametersElements', optional: true }, { key: 'items' }],
+			multiple: true,
+			list: true,
+			seats: [{ at: [4, 'items'], kinds: [8], many: true }]
+		};
+		const { text, diagnostics } = await formsOf([body, typeParameters, parameters], [[0, 1, 2]]);
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain(
+			'parameters: parameters$first === undefined ? b.formalParameters() : b.formalParameters(b.formalParametersElements(declaration_function$1_parameters$item(parameters$first), ...parameters$rest.map(declaration_function$1_parameters$item)))'
+		);
+		expect(text).toContain('const typeParameters$first = (input.typeParameters ?? [])[0];');
+		expect(text).toContain(
+			'typeParameters: typeParameters$first === undefined ? undefined : b.typeParams(b.typeParamsItems(declaration_function$1_typeParameters$item(typeParameters$first), ...typeParameters$rest.map(declaration_function$1_typeParameters$item)))'
+		);
+	}, 60_000);
+
+	it('leaves out an arm whose forms build one slot through different routes', async () => {
+		const { text, diagnostics } = await formsOf([body, { ...body, seats: [{ at: [1, 'body'], kinds: [5] }] }], [[0], [1]]);
+		expect(diagnostics.map(({ code, path, message }) => [code, path, message])).toEqual([['portable-emit-unfit-slot', 'declaration.function', 'arm 1 builds body through more than one form']]);
+		expect(text).not.toContain('declaration_function$1');
 	}, 60_000);
 });

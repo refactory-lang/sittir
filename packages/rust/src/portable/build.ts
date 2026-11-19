@@ -643,6 +643,552 @@ const declaration_macro_paren$416_rules$item = (value: declaration_macro_paren$4
 	}
 	return clause_macro_rule$181(value);
 };
+type declaration_type_parameter$221_bounds$item$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.higher_ranked'>
+	| RustMap['nodes']['clause.bounds.higher_ranked']
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const declaration_type_parameter$221_bounds$item = (value: declaration_type_parameter$221_bounds$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return 254;
+			case '()':
+				return 244;
+			case 'bool':
+				return 72;
+			case 'char':
+				return 74;
+			case 'f32':
+				return 70;
+			case 'f64':
+				return 71;
+			case 'i128':
+				return 67;
+			case 'i16':
+				return 61;
+			case 'i32':
+				return 63;
+			case 'i64':
+				return 65;
+			case 'i8':
+				return 59;
+			case 'isize':
+				return 68;
+			case 'str':
+				return 73;
+			case 'u128':
+				return 66;
+			case 'u16':
+				return 60;
+			case 'u32':
+				return 62;
+			case 'u64':
+				return 64;
+			case 'u8':
+				return 58;
+			case 'usize':
+				return 69;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+			)
+		)
+			return value;
+		return unseated('declaration.type_parameter.bounds', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type_parameter.bounds', value);
+	}
+	switch (value.$path) {
+		case 'clause.bounds.higher_ranked':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'clause.bounds.removed':
+			return clause_bounds_removed$218(value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'identifier':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'identifier.lifetime':
+			return identifier_lifetime$239(value);
+		case 'identifier.metavariable':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		case 'type.abstract':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'type.array':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'type.bounded':
+			return type_bounded$248(value);
+		case 'type.dynamic':
+			return type_dynamic$256(value);
+		case 'type.function':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'type.generic':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'type.pointer':
+			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
+			return type_pointer$388(value);
+		case 'type.reference':
+			return type_reference$252(value);
+		case 'type.tuple':
+			return unbuilt('declaration.type_parameter.bounds', value);
+		default:
+			return unbuilt('declaration.type_parameter.bounds', value);
+	}
+};
+type declaration_type_parameter$221_default$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const declaration_type_parameter$221_default = (value: declaration_type_parameter$221_default$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return 254;
+			case '()':
+				return 244;
+			case 'bool':
+				return 72;
+			case 'char':
+				return 74;
+			case 'f32':
+				return 70;
+			case 'f64':
+				return 71;
+			case 'i128':
+				return 67;
+			case 'i16':
+				return 61;
+			case 'i32':
+				return 63;
+			case 'i64':
+				return 65;
+			case 'i8':
+				return 59;
+			case 'isize':
+				return 68;
+			case 'str':
+				return 73;
+			case 'u128':
+				return 66;
+			case 'u16':
+				return 60;
+			case 'u32':
+				return 62;
+			case 'u64':
+				return 64;
+			case 'u8':
+				return 58;
+			case 'usize':
+				return 69;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+			return value;
+		return unseated('declaration.type_parameter.default', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type_parameter.default', value);
+	}
+	switch (value.$path) {
+		case 'clause.bounds.removed':
+			return clause_bounds_removed$218(value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'identifier':
+			return unbuilt('declaration.type_parameter.default', value);
+		case 'identifier.metavariable':
+			return unbuilt('declaration.type_parameter.default', value);
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		case 'type.abstract':
+			return unbuilt('declaration.type_parameter.default', value);
+		case 'type.array':
+			return unbuilt('declaration.type_parameter.default', value);
+		case 'type.bounded':
+			return type_bounded$248(value);
+		case 'type.dynamic':
+			return type_dynamic$256(value);
+		case 'type.function':
+			return unbuilt('declaration.type_parameter.default', value);
+		case 'type.generic':
+			return unbuilt('declaration.type_parameter.default', value);
+		case 'type.pointer':
+			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
+			return type_pointer$388(value);
+		case 'type.reference':
+			return type_reference$252(value);
+		case 'type.tuple':
+			return unbuilt('declaration.type_parameter.default', value);
+		default:
+			return unbuilt('declaration.type_parameter.default', value);
+	}
+};
+type declaration_type_parameter$221_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_type_parameter$221_name = (value: declaration_type_parameter$221_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [484])) return value;
+		return unseated('declaration.type_parameter.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [484])) return value;
+		return unseated('declaration.type_parameter.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.type_parameter.name', value);
+		default:
+			return unbuilt('declaration.type_parameter.name', value);
+	}
+};
+type declaration_type_parameter_lifetime$222_bounds$item$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.higher_ranked'>
+	| RustMap['nodes']['clause.bounds.higher_ranked']
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const declaration_type_parameter_lifetime$222_bounds$item = (
+	value: declaration_type_parameter_lifetime$222_bounds$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return 254;
+			case '()':
+				return 244;
+			case 'bool':
+				return 72;
+			case 'char':
+				return 74;
+			case 'f32':
+				return 70;
+			case 'f64':
+				return 71;
+			case 'i128':
+				return 67;
+			case 'i16':
+				return 61;
+			case 'i32':
+				return 63;
+			case 'i64':
+				return 65;
+			case 'i8':
+				return 59;
+			case 'isize':
+				return 68;
+			case 'str':
+				return 73;
+			case 'u128':
+				return 66;
+			case 'u16':
+				return 60;
+			case 'u32':
+				return 62;
+			case 'u64':
+				return 64;
+			case 'u8':
+				return 58;
+			case 'usize':
+				return 69;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+			)
+		)
+			return value;
+		return unseated('declaration.type_parameter.lifetime.bounds', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type_parameter.lifetime.bounds', value);
+	}
+	switch (value.$path) {
+		case 'clause.bounds.higher_ranked':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'clause.bounds.removed':
+			return clause_bounds_removed$218(value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'identifier':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'identifier.lifetime':
+			return identifier_lifetime$239(value);
+		case 'identifier.metavariable':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		case 'type.abstract':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'type.array':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'type.bounded':
+			return type_bounded$248(value);
+		case 'type.dynamic':
+			return type_dynamic$256(value);
+		case 'type.function':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'type.generic':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'type.pointer':
+			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
+			return type_pointer$388(value);
+		case 'type.reference':
+			return type_reference$252(value);
+		case 'type.tuple':
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		default:
+			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+	}
+};
+type declaration_type_parameter_lifetime$222_name$Item =
+	| PathInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime'];
+const declaration_type_parameter_lifetime$222_name = (value: declaration_type_parameter_lifetime$222_name$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [239])) return value;
+		return unseated('declaration.type_parameter.lifetime.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [239])) return value;
+		return unseated('declaration.type_parameter.lifetime.name', value);
+	}
+	return identifier_lifetime$239(value);
+};
 type element_macro_token_binding$184_fragment$Item =
 	| 'block'
 	| 'expr'
@@ -3259,6 +3805,44 @@ const declaration_macro_paren$416 = (
 					)
 	});
 };
+const declaration_type_parameter$221 = (
+	input: PathInput<RustMap, 'declaration.type_parameter'>
+): ReturnType<typeof b.typeParameter> => {
+	if (input.attributes !== undefined) return unrouted('declaration.type_parameter', 'attributes');
+	const bounds$first = (input.bounds ?? [])[0];
+	const bounds$rest = (input.bounds ?? []).slice(1);
+	return b.typeParameter({
+		name:
+			input.name === undefined
+				? missing('declaration.type_parameter.name')
+				: declaration_type_parameter$221_name(input.name),
+		default: input.default === undefined ? undefined : declaration_type_parameter$221_default(input.default),
+		bounds:
+			bounds$first === undefined
+				? undefined
+				: b.traitBounds(
+						declaration_type_parameter$221_bounds$item(bounds$first),
+						...bounds$rest.map(declaration_type_parameter$221_bounds$item)
+					)
+	});
+};
+const declaration_type_parameter_lifetime$222 = (
+	input: PathInput<RustMap, 'declaration.type_parameter.lifetime'>
+): ReturnType<typeof b.lifetimeParameter> => {
+	if (input.attributes !== undefined) return unrouted('declaration.type_parameter.lifetime', 'attributes');
+	const bounds$first = (input.bounds ?? [])[0];
+	const bounds$rest = (input.bounds ?? []).slice(1);
+	return b.lifetimeParameter({
+		name: declaration_type_parameter_lifetime$222_name(input.name),
+		bounds:
+			bounds$first === undefined
+				? undefined
+				: b.traitBounds(
+						declaration_type_parameter_lifetime$222_bounds$item(bounds$first),
+						...bounds$rest.map(declaration_type_parameter_lifetime$222_bounds$item)
+					)
+	});
+};
 const element_macro_token_binding$184 = (
 	input: PathInput<RustMap, 'element.macro.token_binding'>
 ): ReturnType<typeof b.tokenBindingPattern> => {
@@ -3518,6 +4102,12 @@ const declaration_macro_bracket = (input: PathInput<RustMap, 'declaration.macro.
 const declaration_macro_paren = (input: PathInput<RustMap, 'declaration.macro.paren'>) => {
 	return declaration_macro_paren$416(input);
 };
+const declaration_type_parameter = (input: PathInput<RustMap, 'declaration.type_parameter'>) => {
+	return declaration_type_parameter$221(input);
+};
+const declaration_type_parameter_lifetime = (input: PathInput<RustMap, 'declaration.type_parameter.lifetime'>) => {
+	return declaration_type_parameter_lifetime$222(input);
+};
 const element_macro_token_binding = (input: PathInput<RustMap, 'element.macro.token_binding'>) => {
 	return element_macro_token_binding$184(input);
 };
@@ -3626,7 +4216,8 @@ export const portableBuild = {
 		where: clause_where
 	},
 	declaration: {
-		macro: { brace: declaration_macro_brace, bracket: declaration_macro_bracket, paren: declaration_macro_paren }
+		macro: { brace: declaration_macro_brace, bracket: declaration_macro_bracket, paren: declaration_macro_paren },
+		type_parameter: Object.assign(declaration_type_parameter, { lifetime: declaration_type_parameter_lifetime })
 	},
 	element: { macro: { token_binding: element_macro_token_binding }, type_binding: element_type_binding },
 	expression: {
