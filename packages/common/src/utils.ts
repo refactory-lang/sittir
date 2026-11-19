@@ -8,7 +8,7 @@ import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
 import { undoIfFillFails } from './list-fills.ts';
-import { hydrateSlotBy, hydrateSlotsBy, storedSlotRead, type HydrateOne } from './stored-slot.ts';
+import { hydrateSlotBy, hydrateSlotsBy, storedSlotRead } from './stored-slot.ts';
 import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';

@@ -13,7 +13,6 @@ import {
 	inTreeEngine,
 	currentHandle,
 	hoistedWith,
-	listElementsHop,
 	elementsWith,
 	rebuilt,
 	renderText,

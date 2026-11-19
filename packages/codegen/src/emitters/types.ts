@@ -111,7 +111,6 @@ import {
 	listOptionStorageMembers,
 	slotSetter,
 	withHoles,
-	isListKind,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';

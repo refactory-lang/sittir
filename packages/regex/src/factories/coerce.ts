@@ -20,11 +20,9 @@ import {
 	configFieldOr,
 	currentHandle,
 	describeValue,
-	hoistRead,
 	isNodeOfKind,
 	isNodeValue,
 	numberRefusal,
-	storedHop,
 	withEmptyForm
 } from '@sittir/common/utils';
 

@@ -922,6 +922,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'admitSlot',
 			'listSlotWith',
 			'hoistedWith',
+			'listElementsHop',
 			'elementsWith',
 			'seatWith',
 			'groupField',

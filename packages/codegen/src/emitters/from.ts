@@ -162,7 +162,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, hoistRead, isNodeOfKind, isNodeValue, listStorage, numberRefusal, storedHop, withEmptyForm, withOptions } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, numberRefusal, withEmptyForm, withOptions } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');

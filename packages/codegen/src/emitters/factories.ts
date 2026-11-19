@@ -3552,7 +3552,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		if (backend === 'records') lines.push(...this.#views.tableLines(), '');
 
 		const tailImports = backend === 'records' ? ['DelimitedSpec', ...this.#utilsImports, ...RECORD_CONSTRUCTION_IMPORTS, ...RECORD_VIEW_TYPES] : [];
-		return pruneUnusedImports(lines, ['Delimiter', 'describeValue', ...SITTIR_TYPES_IMPORT_CANDIDATES, ...OBJECT_MEMBER_VALUES, 'objectInner', ...OBJECT_MEMBER_TYPES, ...tailImports]).join('\n');
+		return pruneUnusedImports(lines, ['Delimiter', 'describeValue', 'hoistedWith', 'hoistRead', 'listElementsHop', 'storedHop', 'wrapHoisted', 'wrapHoistedEach', ...SITTIR_TYPES_IMPORT_CANDIDATES, ...OBJECT_MEMBER_VALUES, 'objectInner', ...OBJECT_MEMBER_TYPES, ...tailImports]).join('\n');
 	}
 
 }

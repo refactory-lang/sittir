@@ -9,7 +9,6 @@ const CASES = [
 	{ list: 'TypeParametersElements', wrapper: 'TypeParameter', build: 'typeParametersElements', source: 'function f<const T extends U = V, W>() {}\n' }
 ] as const;
 
-const SKIP = new Set(['toString', 'toJSON', 'separator', 'delimiter']);
 
 function find(node: unknown, kind: number): Node | undefined {
 	return (node as { $query(): { $descendants: { ofType(kind: number): { at(index: number): Node | undefined } } } }).$query().$descendants.ofType(kind).at(0);

@@ -16,7 +16,6 @@ const CASES = [
 	{ list: 'ArgumentsElements', wrapper: 'Argument', build: 'argumentsElements', source: 'fn main() { f(#[a] x, y); }\n' }
 ] as const;
 
-const SKIP = new Set(['toString', 'toJSON', 'separator', 'delimiter']);
 
 function find(node: unknown, kind: number): Node | undefined {
 	return (node as { $query(): { $descendants: { ofType(kind: number): { at(index: number): Node | undefined } } } }).$query().$descendants.ofType(kind).at(0);
