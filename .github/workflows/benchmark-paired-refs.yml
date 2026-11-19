@@ -25,6 +25,11 @@ on:
       build-path:
         type: string
         required: true
+      identity:
+        description: The tree whose corpus renders, corpus edits and construction hashes every version must hold, entry by entry; where it differs from base a version may hold base's instead, and those entries are listed
+        type: string
+        required: false
+        default: base
 
 permissions:
   contents: read
@@ -111,7 +116,9 @@ jobs:
           done
       - name: Summarize the ratios beside 2026-10-29
         shell: bash
-        run: python3 scripts/ci/paired-refs/summarize.py "$RUNNER_TEMP/paired-refs" docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-summary.json
+        env:
+          IDENTITY: ${{ inputs.identity }}
+        run: python3 scripts/ci/paired-refs/summarize.py "$RUNNER_TEMP/paired-refs" docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-summary.json --identity "$IDENTITY"
       - name: Upload raw samples, fingerprints and summary
         if: always()
         uses: actions/upload-artifact@v4
