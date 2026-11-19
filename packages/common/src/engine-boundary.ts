@@ -39,7 +39,7 @@ export type {
 	SittirEngine,
 	ParsedRoot
 } from './engine.ts';
-export { builtFlags, builtSlots, containerSetFlags, entriesHolding, nullaryBuilt, portablePathHasFacts, readableEntries, takesTextValue, textBuilt } from './portable/facts.ts';
-export { holds, type PlanItems } from './query-holds.ts';
+export { builtFlags, builtSlots, containerSetFlags, nullaryBuilt, portablePathHasFacts, readableEntries, takesTextValue, textBuilt } from './portable/facts.ts';
+export { holds } from './query-holds.ts';
 export { portableRuntime, portableRuntimeTree, type PortableRuntime } from './portable/runtime.ts';
 export type { PortableCarry, PortableCarried } from './portable/read.ts';

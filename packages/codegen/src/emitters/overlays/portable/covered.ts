@@ -1,4 +1,5 @@
-import { entriesHolding, portablePathHasFacts, readableEntries, type PlanItems } from '@sittir/common/engine';
+import { portablePathHasFacts, readableEntries } from '@sittir/common/engine';
+import { entriesHolding, type PlanItems } from '@sittir/common/portable/utils';
 import type { PortableCondition, QueryPlan, QuerySubject } from '@sittir/types';
 import type { ReadEntry } from '../../../bindings/routes.ts';
 import { emitShapeFailures, type EmitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
