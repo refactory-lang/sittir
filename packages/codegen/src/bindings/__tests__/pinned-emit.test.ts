@@ -32,7 +32,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain('export const portableBuild = { statement: { pass: statement_pass } };');
 		expect(text).not.toContain('engine');
 		expect(text).toContain('b.passStatement()');
-		expect(text).toContain('const statement_pass$1 = (_input: PathInput<');
+		expect(text).toContain('const statement_pass$1 = (input: PathInput<');
 		expect(text).toContain('pass: statement_pass');
 		expect(text).not.toContain('unbuilt');
 	}, 60_000);
@@ -619,13 +619,13 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text.includes('case undefined:')).toBe(switched);
 	}, 60_000);
 
-	it('refuses a slot the path admits that the arm has no route for, as the interpreter does', async () => {
+	it('refuses a key the arm has no route for, whether or not the path admits it, as the interpreter does', async () => {
 		const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional });
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
 			node: 'PythonNode',
 			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
 			table: {
 				builders: { functionDefinition: 'config', block: 'nullary' },
 				paths: {
@@ -647,10 +647,11 @@ describe('the pinned child emits a portable build module', () => {
 			decided: { 'declaration.function': { body: 'statement.block' } }
 		});
 		expect(diagnostics).toEqual([]);
-		expect(text).toContain("if (input.doc !== undefined) return unrouted('declaration.function', 'doc');");
-		expect(text).toContain("if (input.returnType !== undefined) return unrouted('declaration.function', 'returnType');");
-		expect(text).not.toContain("unrouted('declaration.function', 'body')");
-		expect(text).not.toContain("unrouted('declaration.function', 'decorators')");
+		const built = ((await imported(text)) as { readonly declaration: { readonly function: (input: object) => unknown } }).declaration.function;
+		const stated = { $path: 'declaration.function', body: { $path: 'statement.block' } };
+		expect(built(stated)).toEqual({ functionDefinition: { body: { block: [] } } });
+		expect(built({ ...stated, decorators: [], doc: undefined })).toEqual(built(stated));
+		for (const slot of ['doc', 'returnType', 'unexpected']) expect(() => built({ ...stated, [slot]: 'x' })).toThrow(`declaration.function has no slot ${slot}`);
 		expect(text).toContain('const unrouted = (owner: string, slot: string): never => {');
 	}, 60_000);
 

@@ -20,6 +20,12 @@ const missing = (owner: string): never => {
 const unrouted = (owner: string, slot: string): never => {
 	throw new Error(owner + ' has no slot ' + slot);
 };
+const unroutedIn = (input: unknown, routed: ReadonlyArray<string>): string | undefined =>
+	typeof input === 'object' && input !== null
+		? Object.entries(input).find(
+				(entry) => entry[1] !== undefined && !entry[0].startsWith('$') && !routed.includes(entry[0])
+			)?.[0]
+		: undefined;
 const unset = (owner: string, fact: string): never => {
 	throw new Error(owner + ': $at names ' + fact + ', which it does not set');
 };
@@ -45086,9 +45092,13 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 	}
 };
 const argument_named$237 = (input: PathInput<PythonMap, 'argument.named'>): ReturnType<typeof b.keywordArgument> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('argument.named', unroutedSlot);
 	return b.keywordArgument({ name: argument_named$237_name(input.name), value: argument_named$237_value(input.value) });
 };
 const clause_case_match$161 = (input: PathInput<PythonMap, 'clause.case.match'>): ReturnType<typeof b.caseClause> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'guard', 'pattern']);
+	if (unroutedSlot !== undefined) return unrouted('clause.case.match', unroutedSlot);
 	return b.caseClause({
 		pattern: clause_case_match$161_pattern(input.pattern),
 		body: clause_case_match$161_body(input.body),
@@ -45098,23 +45108,33 @@ const clause_case_match$161 = (input: PathInput<PythonMap, 'clause.case.match'>)
 const clause_comprehension_if$250 = (
 	input: PathInput<PythonMap, 'clause.comprehension.if'>
 ): ReturnType<typeof b.ifClause> => {
+	const unroutedSlot = unroutedIn(input, ['condition']);
+	if (unroutedSlot !== undefined) return unrouted('clause.comprehension.if', unroutedSlot);
 	return b.ifClause(clause_comprehension_if$250_condition(input.condition));
 };
 const clause_else$158 = (input: PathInput<PythonMap, 'clause.else'>): ReturnType<typeof b.elseClause> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('clause.else', unroutedSlot);
 	return b.elseClause(clause_else$158_body(input.body));
 };
 const clause_else_if$157 = (input: PathInput<PythonMap, 'clause.else_if'>): ReturnType<typeof b.elifClause> => {
+	const unroutedSlot = unroutedIn(input, ['condition', 'consequence']);
+	if (unroutedSlot !== undefined) return unrouted('clause.else_if', unroutedSlot);
 	return b.elifClause({
 		condition: clause_else_if$157_condition(input.condition),
 		consequence: clause_else_if$157_consequence(input.consequence)
 	});
 };
 const clause_finally$166 = (input: PathInput<PythonMap, 'clause.finally'>): ReturnType<typeof b.finallyClause> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('clause.finally', unroutedSlot);
 	return b.finallyClause(clause_finally$166_body(input.body));
 };
 const clause_import_alias$142 = (
 	input: PathInput<PythonMap, 'clause.import.alias'>
 ): ReturnType<typeof b.aliasedImport> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rename']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.alias', unroutedSlot);
 	return b.aliasedImport({
 		name: clause_import_alias$142_name(input.name),
 		rename: clause_import_alias$142_rename(input.rename)
@@ -45123,6 +45143,8 @@ const clause_import_alias$142 = (
 const clause_import_relative$138 = (
 	input: PathInput<PythonMap, 'clause.import.relative'>
 ): ReturnType<typeof b.relativeImport> => {
+	const unroutedSlot = unroutedIn(input, ['dots', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.relative', unroutedSlot);
 	return b.relativeImport({
 		dots:
 			input.dots === undefined ? missing('clause.import.relative.dots') : clause_import_relative$138_dots(input.dots),
@@ -45137,6 +45159,8 @@ const clause_import_relative_prefix$137 = (
 const declaration_class$179 = (
 	input: PathInput<PythonMap, 'declaration.class'>
 ): ReturnType<typeof b.classDefinition> => {
+	const unroutedSlot = unroutedIn(input, ['bases', 'body', 'decorators', 'doc', 'name', 'typeParameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.class', unroutedSlot);
 	const bases$first = (input.bases ?? [])[0];
 	const bases$rest = (input.bases ?? []).slice(1);
 	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
@@ -45198,6 +45222,8 @@ const declaration_class$179 = (
 const declaration_constructor$316 = (
 	input: PathInput<PythonMap, 'declaration.constructor'>
 ): ReturnType<typeof b.constructorDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters', 'returnType', 'typeParameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.constructor', unroutedSlot);
 	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
 	const typeParameters$rest = (listed(input.typeParameters) ? input.typeParameters : []).slice(1);
 	const parameters$first = (input.parameters ?? [])[0];
@@ -45232,6 +45258,16 @@ const declaration_constructor$316 = (
 const declaration_function$170 = (
 	input: PathInput<PythonMap, 'declaration.function'>
 ): ReturnType<typeof b.functionDefinition> => {
+	const unroutedSlot = unroutedIn(input, [
+		'body',
+		'decorators',
+		'doc',
+		'name',
+		'parameters',
+		'returnType',
+		'typeParameters'
+	]);
+	if (unroutedSlot !== undefined) return unrouted('declaration.function', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
@@ -45297,6 +45333,8 @@ const declaration_function$170 = (
 const declaration_parameter_defaulted$204 = (
 	input: PathInput<PythonMap, 'declaration.parameter.defaulted'>
 ): ReturnType<typeof b.defaultParameter> => {
+	const unroutedSlot = unroutedIn(input, ['default', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.parameter.defaulted', unroutedSlot);
 	return b.defaultParameter({
 		name: declaration_parameter_defaulted$204_name(input.name),
 		default: declaration_parameter_defaulted$204_default(input.default)
@@ -45305,6 +45343,8 @@ const declaration_parameter_defaulted$204 = (
 const declaration_parameter_typed$230 = (
 	input: PathInput<PythonMap, 'declaration.parameter.typed'>
 ): ReturnType<typeof b.typedParameter> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.parameter.typed', unroutedSlot);
 	return b.typedParameter({
 		name: declaration_parameter_typed$230_name(input.name),
 		type: declaration_parameter_typed$230_type(input.type)
@@ -45313,6 +45353,8 @@ const declaration_parameter_typed$230 = (
 const declaration_parameter_typed_default$205 = (
 	input: PathInput<PythonMap, 'declaration.parameter.typed_default'>
 ): ReturnType<typeof b.typedDefaultParameter> => {
+	const unroutedSlot = unroutedIn(input, ['default', 'name', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.parameter.typed_default', unroutedSlot);
 	return b.typedDefaultParameter({
 		name: declaration_parameter_typed_default$205_name(input.name),
 		type: declaration_parameter_typed_default$205_type(input.type),
@@ -45322,6 +45364,8 @@ const declaration_parameter_typed_default$205 = (
 const declaration_property_getter$361 = (
 	input: PathInput<PythonMap, 'declaration.property.getter'>
 ): ReturnType<typeof b.methodDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'doc', 'name', 'parameters', 'type', 'typeParameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.property.getter', unroutedSlot);
 	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
 		return unset('declaration.property.getter', 'override');
 	const parameters$first = (input.parameters ?? [])[0];
@@ -45386,6 +45430,16 @@ const declaration_property_getter$361 = (
 const declaration_property_setter$361 = (
 	input: PathInput<PythonMap, 'declaration.property.setter'>
 ): ReturnType<typeof b.methodDeclaration> => {
+	const unroutedSlot = unroutedIn(input, [
+		'body',
+		'decorators',
+		'doc',
+		'name',
+		'parameters',
+		'returnType',
+		'typeParameters'
+	]);
+	if (unroutedSlot !== undefined) return unrouted('declaration.property.setter', unroutedSlot);
 	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
 		return unset('declaration.property.setter', 'override');
 	const parameters$first = (input.parameters ?? [])[0];
@@ -45452,6 +45506,8 @@ const declaration_property_setter$361 = (
 const declaration_type_alias$178 = (
 	input: PathInput<PythonMap, 'declaration.type_alias'>
 ): ReturnType<typeof b.typeAliasStatement> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'typeParameters', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type_alias', unroutedSlot);
 	const typeParameters$first = (input.typeParameters ?? [])[0];
 	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
 	return b.typeAliasStatement({
@@ -45475,17 +45531,22 @@ const declaration_type_alias$178 = (
 const declaration_type_parameter_parameters$315 = (
 	input: PathInput<PythonMap, 'declaration.type_parameter.parameters'>
 ): ReturnType<typeof b.typeParamParamSpec> => {
+	const unroutedSlot = unroutedIn(input, ['name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type_parameter.parameters', unroutedSlot);
 	return b.typeParamParamSpec(declaration_type_parameter_parameters$315_name(input.name));
 };
 const declaration_type_parameter_variadic$314 = (
 	input: PathInput<PythonMap, 'declaration.type_parameter.variadic'>
 ): ReturnType<typeof b.typeParamTypeVarTuple> => {
+	const unroutedSlot = unroutedIn(input, ['name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type_parameter.variadic', unroutedSlot);
 	return b.typeParamTypeVarTuple(declaration_type_parameter_variadic$314_name(input.name));
 };
 const declaration_variable$302 = (
 	input: PathInput<PythonMap, 'declaration.variable'>
 ): ReturnType<typeof b.assignmentEq> => {
-	if (input.type !== undefined) return unrouted('declaration.variable', 'type');
+	const unroutedSlot = unroutedIn(input, ['name', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable', unroutedSlot);
 	return b.assignmentEq({
 		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$302_name(input.name),
 		value:
@@ -45495,7 +45556,8 @@ const declaration_variable$302 = (
 const declaration_variable$303 = (
 	input: PathInput<PythonMap, 'declaration.variable'>
 ): ReturnType<typeof b.assignmentType> => {
-	if (input.value !== undefined) return unrouted('declaration.variable', 'value');
+	const unroutedSlot = unroutedIn(input, ['name', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable', unroutedSlot);
 	return b.assignmentType({
 		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$303_name(input.name),
 		type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$303_type(input.type)
@@ -45504,6 +45566,8 @@ const declaration_variable$303 = (
 const declaration_variable$304 = (
 	input: PathInput<PythonMap, 'declaration.variable'>
 ): ReturnType<typeof b.assignmentTyped> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'type', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable', unroutedSlot);
 	return b.assignmentTyped({
 		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$304_name(input.name),
 		type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$304_type(input.type),
@@ -45512,12 +45576,16 @@ const declaration_variable$304 = (
 	});
 };
 const element_pair$242 = (input: PathInput<PythonMap, 'element.pair'>): ReturnType<typeof b.pair> => {
+	const unroutedSlot = unroutedIn(input, ['key', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('element.pair', unroutedSlot);
 	return b.pair({
 		key: element_pair$242_key(input.key),
 		value: input.value === undefined ? missing('element.pair.value') : element_pair$242_value(input.value)
 	});
 };
 const element_spread$173 = (input: PathInput<PythonMap, 'element.spread'>): ReturnType<typeof b.listSplat> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('element.spread', unroutedSlot);
 	return b.listSplat(
 		input.expression === undefined
 			? missing('element.spread.expression')
@@ -45527,16 +45595,22 @@ const element_spread$173 = (input: PathInput<PythonMap, 'element.spread'>): Retu
 const element_spread_map$174 = (
 	input: PathInput<PythonMap, 'element.spread.map'>
 ): ReturnType<typeof b.dictionarySplat> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('element.spread.map', unroutedSlot);
 	return b.dictionarySplat(element_spread_map$174_expression(input.expression));
 };
 const element_spread_parenthesized$181 = (
 	input: PathInput<PythonMap, 'element.spread.parenthesized'>
 ): ReturnType<typeof b.parenthesizedListSplat> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('element.spread.parenthesized', unroutedSlot);
 	return b.parenthesizedListSplat(element_spread_parenthesized$181_expression(input.expression));
 };
 const expression_assignment$148 = (
 	input: PathInput<PythonMap, 'expression.assignment'>
 ): ReturnType<typeof b.namedExpression> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment', unroutedSlot);
 	return b.namedExpression({
 		left: expression_assignment$148_left(input.left),
 		right: expression_assignment$148_right(input.right)
@@ -45545,6 +45619,8 @@ const expression_assignment$148 = (
 const expression_assignment_compound_add$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.add'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.add', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_add$222_left(input.left),
 		right: expression_assignment_compound_add$222_right(input.right),
@@ -45554,6 +45630,8 @@ const expression_assignment_compound_add$222 = (
 const expression_assignment_compound_bitwise_and$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.bitwise_and', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_bitwise_and$222_left(input.left),
 		right: expression_assignment_compound_bitwise_and$222_right(input.right),
@@ -45563,6 +45641,8 @@ const expression_assignment_compound_bitwise_and$222 = (
 const expression_assignment_compound_bitwise_or$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.bitwise_or', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_bitwise_or$222_left(input.left),
 		right: expression_assignment_compound_bitwise_or$222_right(input.right),
@@ -45572,6 +45652,8 @@ const expression_assignment_compound_bitwise_or$222 = (
 const expression_assignment_compound_bitwise_xor$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.bitwise_xor', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_bitwise_xor$222_left(input.left),
 		right: expression_assignment_compound_bitwise_xor$222_right(input.right),
@@ -45581,6 +45663,8 @@ const expression_assignment_compound_bitwise_xor$222 = (
 const expression_assignment_compound_divide$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.divide'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.divide', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_divide$222_left(input.left),
 		right: expression_assignment_compound_divide$222_right(input.right),
@@ -45590,6 +45674,8 @@ const expression_assignment_compound_divide$222 = (
 const expression_assignment_compound_exponent$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.exponent'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.exponent', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_exponent$222_left(input.left),
 		right: expression_assignment_compound_exponent$222_right(input.right),
@@ -45599,6 +45685,8 @@ const expression_assignment_compound_exponent$222 = (
 const expression_assignment_compound_floor_divide$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.floor_divide'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.floor_divide', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_floor_divide$222_left(input.left),
 		right: expression_assignment_compound_floor_divide$222_right(input.right),
@@ -45608,6 +45696,8 @@ const expression_assignment_compound_floor_divide$222 = (
 const expression_assignment_compound_matrix_multiply$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.matrix_multiply', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_matrix_multiply$222_left(input.left),
 		right: expression_assignment_compound_matrix_multiply$222_right(input.right),
@@ -45617,6 +45707,8 @@ const expression_assignment_compound_matrix_multiply$222 = (
 const expression_assignment_compound_modulo$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.modulo'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.modulo', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_modulo$222_left(input.left),
 		right: expression_assignment_compound_modulo$222_right(input.right),
@@ -45626,6 +45718,8 @@ const expression_assignment_compound_modulo$222 = (
 const expression_assignment_compound_multiply$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.multiply'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.multiply', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_multiply$222_left(input.left),
 		right: expression_assignment_compound_multiply$222_right(input.right),
@@ -45635,6 +45729,8 @@ const expression_assignment_compound_multiply$222 = (
 const expression_assignment_compound_shift_left$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.shift_left'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.shift_left', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_shift_left$222_left(input.left),
 		right: expression_assignment_compound_shift_left$222_right(input.right),
@@ -45644,6 +45740,8 @@ const expression_assignment_compound_shift_left$222 = (
 const expression_assignment_compound_shift_right$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.shift_right'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.shift_right', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_shift_right$222_left(input.left),
 		right: expression_assignment_compound_shift_right$222_right(input.right),
@@ -45653,6 +45751,8 @@ const expression_assignment_compound_shift_right$222 = (
 const expression_assignment_compound_subtract$222 = (
 	input: PathInput<PythonMap, 'expression.assignment.compound.subtract'>
 ): ReturnType<typeof b.augmentedAssignment> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.subtract', unroutedSlot);
 	return b.augmentedAssignment({
 		left: expression_assignment_compound_subtract$222_left(input.left),
 		right: expression_assignment_compound_subtract$222_right(input.right),
@@ -45660,11 +45760,15 @@ const expression_assignment_compound_subtract$222 = (
 	});
 };
 const expression_await$262 = (input: PathInput<PythonMap, 'expression.await'>): ReturnType<typeof b.await> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('expression.await', unroutedSlot);
 	return b.await(expression_await$262_expression(input.expression));
 };
 const expression_binary_arithmetic_add$214 = (
 	input: PathInput<PythonMap, 'expression.binary.arithmetic.add'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.arithmetic.add', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45680,6 +45784,8 @@ const expression_binary_arithmetic_add$214 = (
 const expression_binary_arithmetic_divide$214 = (
 	input: PathInput<PythonMap, 'expression.binary.arithmetic.divide'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.arithmetic.divide', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45695,6 +45801,8 @@ const expression_binary_arithmetic_divide$214 = (
 const expression_binary_arithmetic_exponent$214 = (
 	input: PathInput<PythonMap, 'expression.binary.arithmetic.exponent'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.arithmetic.exponent', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45710,6 +45818,8 @@ const expression_binary_arithmetic_exponent$214 = (
 const expression_binary_arithmetic_floor_divide$214 = (
 	input: PathInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.arithmetic.floor_divide', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45725,6 +45835,8 @@ const expression_binary_arithmetic_floor_divide$214 = (
 const expression_binary_arithmetic_modulo$214 = (
 	input: PathInput<PythonMap, 'expression.binary.arithmetic.modulo'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.arithmetic.modulo', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45740,6 +45852,8 @@ const expression_binary_arithmetic_modulo$214 = (
 const expression_binary_arithmetic_multiply$214 = (
 	input: PathInput<PythonMap, 'expression.binary.arithmetic.multiply'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.arithmetic.multiply', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45755,6 +45869,8 @@ const expression_binary_arithmetic_multiply$214 = (
 const expression_binary_arithmetic_subtract$214 = (
 	input: PathInput<PythonMap, 'expression.binary.arithmetic.subtract'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.arithmetic.subtract', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45770,6 +45886,8 @@ const expression_binary_arithmetic_subtract$214 = (
 const expression_binary_bitwise_and$214 = (
 	input: PathInput<PythonMap, 'expression.binary.bitwise.and'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.bitwise.and', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45785,6 +45903,8 @@ const expression_binary_bitwise_and$214 = (
 const expression_binary_bitwise_or$214 = (
 	input: PathInput<PythonMap, 'expression.binary.bitwise.or'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.bitwise.or', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45800,6 +45920,8 @@ const expression_binary_bitwise_or$214 = (
 const expression_binary_bitwise_xor$214 = (
 	input: PathInput<PythonMap, 'expression.binary.bitwise.xor'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.bitwise.xor', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45815,6 +45937,8 @@ const expression_binary_bitwise_xor$214 = (
 const expression_binary_logical_and$213 = (
 	input: PathInput<PythonMap, 'expression.binary.logical.and'>
 ): ReturnType<typeof b.booleanOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.logical.and', unroutedSlot);
 	return b.booleanOperator({
 		left:
 			input.left === undefined
@@ -45830,6 +45954,8 @@ const expression_binary_logical_and$213 = (
 const expression_binary_logical_or$213 = (
 	input: PathInput<PythonMap, 'expression.binary.logical.or'>
 ): ReturnType<typeof b.booleanOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.logical.or', unroutedSlot);
 	return b.booleanOperator({
 		left:
 			input.left === undefined
@@ -45845,6 +45971,8 @@ const expression_binary_logical_or$213 = (
 const expression_binary_matrix_multiply$214 = (
 	input: PathInput<PythonMap, 'expression.binary.matrix_multiply'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.matrix_multiply', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.left === undefined
@@ -45860,6 +45988,8 @@ const expression_binary_matrix_multiply$214 = (
 const expression_binary_shift_left$214 = (
 	input: PathInput<PythonMap, 'expression.binary.shift.left'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['count', 'operand']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.shift.left', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.operand === undefined
@@ -45875,6 +46005,8 @@ const expression_binary_shift_left$214 = (
 const expression_binary_shift_right$214 = (
 	input: PathInput<PythonMap, 'expression.binary.shift.right'>
 ): ReturnType<typeof b.binaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['count', 'operand']);
+	if (unroutedSlot !== undefined) return unrouted('expression.binary.shift.right', unroutedSlot);
 	return b.binaryOperator({
 		left:
 			input.operand === undefined
@@ -45888,6 +46020,8 @@ const expression_binary_shift_right$214 = (
 	});
 };
 const expression_call$229 = (input: PathInput<PythonMap, 'expression.call'>): ReturnType<typeof b.call> => {
+	const unroutedSlot = unroutedIn(input, ['arguments', 'function']);
+	if (unroutedSlot !== undefined) return unrouted('expression.call', unroutedSlot);
 	const arguments$first = (listed(input.arguments) ? input.arguments : [])[0];
 	const arguments$rest = (listed(input.arguments) ? input.arguments : []).slice(1);
 	return b.call({
@@ -45910,6 +46044,8 @@ const expression_call$229 = (input: PathInput<PythonMap, 'expression.call'>): Re
 const expression_collection_list$238 = (
 	input: PathInput<PythonMap, 'expression.collection.list'>
 ): ReturnType<typeof b.list> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('expression.collection.list', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.list(
@@ -45924,6 +46060,8 @@ const expression_collection_list$238 = (
 const expression_collection_map$241 = (
 	input: PathInput<PythonMap, 'expression.collection.map'>
 ): ReturnType<typeof b.dictionary> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('expression.collection.map', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.dictionary(
@@ -45938,6 +46076,8 @@ const expression_collection_map$241 = (
 const expression_collection_tuple$240 = (
 	input: PathInput<PythonMap, 'expression.collection.tuple'>
 ): ReturnType<typeof b.tuple> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('expression.collection.tuple', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.tuple(
@@ -45952,6 +46092,8 @@ const expression_collection_tuple$240 = (
 const expression_conditional$251 = (
 	input: PathInput<PythonMap, 'expression.conditional'>
 ): ReturnType<typeof b.conditionalExpression> => {
+	const unroutedSlot = unroutedIn(input, ['alternative', 'condition', 'consequence']);
+	if (unroutedSlot !== undefined) return unrouted('expression.conditional', unroutedSlot);
 	return b.conditionalExpression({
 		consequence: expression_conditional$251_consequence(input.consequence),
 		condition: expression_conditional$251_condition(input.condition),
@@ -45961,6 +46103,8 @@ const expression_conditional$251 = (
 const expression_interpolation$360 = (
 	input: PathInput<PythonMap, 'expression.interpolation'>
 ): ReturnType<typeof b.formatExpression> => {
+	const unroutedSlot = unroutedIn(input, ['expression', 'formatSpecifier', 'typeConversion']);
+	if (unroutedSlot !== undefined) return unrouted('expression.interpolation', unroutedSlot);
 	return b.formatExpression({
 		expression:
 			input.expression === undefined
@@ -45985,12 +46129,13 @@ const expression_interpolation_conversion$65 = (
 const expression_interpolation_format$259 = (
 	input: PathInput<PythonMap, 'expression.interpolation.format'>
 ): ReturnType<typeof b.formatSpecifier> => {
-	if (input.expression !== undefined) return unrouted('expression.interpolation.format', 'expression');
-	if (input.formatSpecifier !== undefined) return unrouted('expression.interpolation.format', 'formatSpecifier');
-	if (input.typeConversion !== undefined) return unrouted('expression.interpolation.format', 'typeConversion');
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('expression.interpolation.format', unroutedSlot);
 	return b.formatSpecifier(...(input.elements ?? []).map(expression_interpolation_format$259_elements));
 };
 const expression_lambda$219 = (input: PathInput<PythonMap, 'expression.lambda'>): ReturnType<typeof b.lambda> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'parameters']);
+	if (unroutedSlot !== undefined) return unrouted('expression.lambda', unroutedSlot);
 	const parameters$first = (listed(input.parameters) ? input.parameters : [])[0];
 	const parameters$rest = (listed(input.parameters) ? input.parameters : []).slice(1);
 	return b.lambda({
@@ -46012,32 +46157,46 @@ const expression_lambda$219 = (input: PathInput<PythonMap, 'expression.lambda'>)
 const expression_parenthesized$247 = (
 	input: PathInput<PythonMap, 'expression.parenthesized'>
 ): ReturnType<typeof b.parenthesizedExpression> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('expression.parenthesized', unroutedSlot);
 	return b.parenthesizedExpression(expression_parenthesized$247_expression(input.expression));
 };
 const expression_unary_bitwise_not$215 = (
 	input: PathInput<PythonMap, 'expression.unary.bitwise_not'>
 ): ReturnType<typeof b.unaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['argument']);
+	if (unroutedSlot !== undefined) return unrouted('expression.unary.bitwise_not', unroutedSlot);
 	return b.unaryOperator({ argument: expression_unary_bitwise_not$215_argument(input.argument), operator: 59 });
 };
 const expression_unary_negation$215 = (
 	input: PathInput<PythonMap, 'expression.unary.negation'>
 ): ReturnType<typeof b.unaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['argument']);
+	if (unroutedSlot !== undefined) return unrouted('expression.unary.negation', unroutedSlot);
 	return b.unaryOperator({ argument: expression_unary_negation$215_argument(input.argument), operator: 49 });
 };
 const expression_unary_not$212 = (
 	input: PathInput<PythonMap, 'expression.unary.not'>
 ): ReturnType<typeof b.notOperator> => {
+	const unroutedSlot = unroutedIn(input, ['argument']);
+	if (unroutedSlot !== undefined) return unrouted('expression.unary.not', unroutedSlot);
 	return b.notOperator(expression_unary_not$212_argument(input.argument));
 };
 const expression_unary_plus$215 = (
 	input: PathInput<PythonMap, 'expression.unary.plus'>
 ): ReturnType<typeof b.unaryOperator> => {
+	const unroutedSlot = unroutedIn(input, ['argument']);
+	if (unroutedSlot !== undefined) return unrouted('expression.unary.plus', unroutedSlot);
 	return b.unaryOperator({ argument: expression_unary_plus$215_argument(input.argument), operator: 48 });
 };
 const expression_yield$225 = (input: PathInput<PythonMap, 'expression.yield'>): ReturnType<typeof b.yield> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('expression.yield', unroutedSlot);
 	return b.yield(input.expression === undefined ? undefined : expression_yield$225_expression(input.expression));
 };
 const file$133 = (input: PathInput<PythonMap, 'file'>): ReturnType<typeof b.module> => {
+	const unroutedSlot = unroutedIn(input, ['statements']);
+	if (unroutedSlot !== undefined) return unrouted('file', unroutedSlot);
 	return b.module(...(input.statements ?? []).map(file$133_statements));
 };
 const identifier$1 = (input: PathInput<PythonMap, 'identifier'>): ReturnType<typeof b.identifier> => {
@@ -46046,6 +46205,8 @@ const identifier$1 = (input: PathInput<PythonMap, 'identifier'>): ReturnType<typ
 const identifier_qualified$187 = (
 	input: PathInput<PythonMap, 'identifier.qualified'>
 ): ReturnType<typeof b.dottedName> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.dottedName({
 		qualifier: input.qualifier === undefined ? undefined : identifier_qualified$187_qualifier(input.qualifier),
 		name: identifier_qualified$187_name(input.name)
@@ -46054,6 +46215,8 @@ const identifier_qualified$187 = (
 const identifier_qualified$236 = (
 	input: PathInput<PythonMap, 'identifier.qualified'>
 ): ReturnType<typeof b.memberType> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.memberType({
 		qualifier:
 			input.qualifier === undefined
@@ -46065,6 +46228,9 @@ const identifier_qualified$236 = (
 const literal_number_float$101 = (
 	input: PathInput<PythonMap, 'literal.number.float'>
 ): ReturnType<typeof b.floatPoint> => {
+	const unroutedSlot = unroutedIn(input, ['imaginary']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.float', 'bigint');
 	const parts = decimalSpelling(
 		input.$value,
 		{ integer: 'integer', fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
@@ -46082,6 +46248,9 @@ const literal_number_float$101 = (
 const literal_number_float_leading_point$102 = (
 	input: PathInput<PythonMap, 'literal.number.float.leading_point'>
 ): ReturnType<typeof b.floatLeadingPoint> => {
+	const unroutedSlot = unroutedIn(input, ['imaginary']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.float.leading_point', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.float.leading_point', 'bigint');
 	const parts = decimalSpelling(
 		input.$value,
 		{ integer: 'integer', fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
@@ -46100,6 +46269,9 @@ const literal_number_float_leading_point$102 = (
 const literal_number_float_scientific$103 = (
 	input: PathInput<PythonMap, 'literal.number.float.scientific'>
 ): ReturnType<typeof b.floatScientific> => {
+	const unroutedSlot = unroutedIn(input, ['imaginary']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.float.scientific', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.float.scientific', 'bigint');
 	const parts = decimalSpelling(
 		input.$value,
 		{ integer: 'integer', exponentSign: 'exponentSign', exponent: 'exponent' },
@@ -46117,55 +46289,75 @@ const literal_number_float_scientific$103 = (
 const literal_number_integer$100 = (
 	input: PathInput<PythonMap, 'literal.number.integer'>
 ): ReturnType<typeof b.integerDecimal.plain> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerDecimal.plain(value) : b.integerDecimal.plain(value);
 };
 const literal_number_integer_big$98 = (
 	input: PathInput<PythonMap, 'literal.number.integer.big'>
 ): ReturnType<typeof b.integerDecimalLong> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big', unroutedSlot);
 	return b.integerDecimalLong(input.$value);
 };
 const literal_number_integer_big_binary$94 = (
 	input: PathInput<PythonMap, 'literal.number.integer.big.binary'>
 ): ReturnType<typeof b.integerBinaryLong> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.binary', unroutedSlot);
 	return b.integerBinaryLong(input.$value);
 };
 const literal_number_integer_big_hex$90 = (
 	input: PathInput<PythonMap, 'literal.number.integer.big.hex'>
 ): ReturnType<typeof b.integerHexLong> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.hex', unroutedSlot);
 	return b.integerHexLong(input.$value);
 };
 const literal_number_integer_big_octal$92 = (
 	input: PathInput<PythonMap, 'literal.number.integer.big.octal'>
 ): ReturnType<typeof b.integerOctalLong> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.octal', unroutedSlot);
 	return b.integerOctalLong(input.$value);
 };
 const literal_number_integer_big_octal$96 = (
 	input: PathInput<PythonMap, 'literal.number.integer.big.octal'>
 ): ReturnType<typeof b.integerLegacyOctalLong> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.octal', unroutedSlot);
 	return b.integerLegacyOctalLong(input.$value);
 };
 const literal_number_integer_binary$95 = (
 	input: PathInput<PythonMap, 'literal.number.integer.binary'>
 ): ReturnType<typeof b.integerBinaryPlain> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.binary', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerBinaryPlain(value) : b.integerBinaryPlain(value);
 };
 const literal_number_integer_hex$91 = (
 	input: PathInput<PythonMap, 'literal.number.integer.hex'>
 ): ReturnType<typeof b.integerHexPlain> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.hex', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerHexPlain(value) : b.integerHexPlain(value);
 };
 const literal_number_integer_octal$93 = (
 	input: PathInput<PythonMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.integerOctalPlain> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerOctalPlain(value) : b.integerOctalPlain(value);
 };
 const literal_number_integer_octal$97 = (
 	input: PathInput<PythonMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.integerLegacyOctalPlain> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerLegacyOctalPlain(value) : b.integerLegacyOctalPlain(value);
 };
@@ -46175,6 +46367,8 @@ const literal_string_text$125 = (
 	return b.stringFragment(typeof input === 'string' ? input : input.$value);
 };
 const pattern_as$190 = (input: PathInput<PythonMap, 'pattern.as'>): ReturnType<typeof b.caseAsPattern> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'pattern']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.as', unroutedSlot);
 	return b.caseAsPattern({
 		casePattern: pattern_as$190_pattern(input.pattern),
 		identifier: pattern_as$190_name(input.name)
@@ -46183,6 +46377,8 @@ const pattern_as$190 = (input: PathInput<PythonMap, 'pattern.as'>): ReturnType<t
 const pattern_complex_add$197 = (
 	input: PathInput<PythonMap, 'pattern.complex.add'>
 ): ReturnType<typeof b.complexPattern> => {
+	const unroutedSlot = unroutedIn(input, ['imaginary', 'real']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.complex.add', unroutedSlot);
 	return b.complexPattern({
 		real: pattern_complex_add$197_real(input.real),
 		imaginary: pattern_complex_add$197_imaginary(input.imaginary),
@@ -46193,6 +46389,8 @@ const pattern_complex_add$197 = (
 const pattern_complex_subtract$197 = (
 	input: PathInput<PythonMap, 'pattern.complex.subtract'>
 ): ReturnType<typeof b.complexPattern> => {
+	const unroutedSlot = unroutedIn(input, ['imaginary', 'real']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.complex.subtract', unroutedSlot);
 	return b.complexPattern({
 		real: pattern_complex_subtract$197_real(input.real),
 		imaginary: pattern_complex_subtract$197_imaginary(input.imaginary),
@@ -46201,6 +46399,8 @@ const pattern_complex_subtract$197 = (
 	});
 };
 const pattern_list$203 = (input: PathInput<PythonMap, 'pattern.list'>): ReturnType<typeof b.listPattern> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.list', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.listPattern(
@@ -46210,6 +46410,8 @@ const pattern_list$203 = (input: PathInput<PythonMap, 'pattern.list'>): ReturnTy
 	);
 };
 const pattern_list$284 = (input: PathInput<PythonMap, 'pattern.list'>): ReturnType<typeof b.caseListPattern> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.list', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.caseListPattern(
@@ -46222,6 +46424,8 @@ const pattern_list$284 = (input: PathInput<PythonMap, 'pattern.list'>): ReturnTy
 	);
 };
 const pattern_map$192 = (input: PathInput<PythonMap, 'pattern.map'>): ReturnType<typeof b.dictPattern> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.map', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.dictPattern(
@@ -46234,28 +46438,40 @@ const pattern_map$192 = (input: PathInput<PythonMap, 'pattern.map'>): ReturnType
 	);
 };
 const pattern_or$191 = (input: PathInput<PythonMap, 'pattern.or'>): ReturnType<typeof b.unionPattern> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.or', unroutedSlot);
 	return b.unionPattern({
 		left: input.left === undefined ? missing('pattern.or.left') : pattern_or$191_left(input.left),
 		right: pattern_or$191_right(input.right)
 	});
 };
 const pattern_rest$206 = (input: PathInput<PythonMap, 'pattern.rest'>): ReturnType<typeof b.listSplatPattern> => {
+	const unroutedSlot = unroutedIn(input, ['pattern']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.rest', unroutedSlot);
 	return b.listSplatPattern(pattern_rest$206_pattern(input.pattern));
 };
 const pattern_rest$300 = (input: PathInput<PythonMap, 'pattern.rest'>): ReturnType<typeof b.splatPatternList> => {
+	const unroutedSlot = unroutedIn(input, ['pattern']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.rest', unroutedSlot);
 	return b.splatPatternList(pattern_rest$300_pattern(input.pattern));
 };
 const pattern_rest_map$207 = (
 	input: PathInput<PythonMap, 'pattern.rest.map'>
 ): ReturnType<typeof b.dictionarySplatPattern> => {
+	const unroutedSlot = unroutedIn(input, ['pattern']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.rest.map', unroutedSlot);
 	return b.dictionarySplatPattern(pattern_rest_map$207_pattern(input.pattern));
 };
 const pattern_rest_map$301 = (
 	input: PathInput<PythonMap, 'pattern.rest.map'>
 ): ReturnType<typeof b.splatPatternDictionary> => {
+	const unroutedSlot = unroutedIn(input, ['pattern']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.rest.map', unroutedSlot);
 	return b.splatPatternDictionary(pattern_rest_map$301_pattern(input.pattern));
 };
 const pattern_struct$196 = (input: PathInput<PythonMap, 'pattern.struct'>): ReturnType<typeof b.classPattern> => {
+	const unroutedSlot = unroutedIn(input, ['fields', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.struct', unroutedSlot);
 	const fields$first = (input.fields ?? [])[0];
 	const fields$rest = (input.fields ?? []).slice(1);
 	return b.classPattern({
@@ -46272,8 +46488,8 @@ const pattern_struct$196 = (input: PathInput<PythonMap, 'pattern.struct'>): Retu
 const pattern_struct_field$194 = (
 	input: PathInput<PythonMap, 'pattern.struct.field'>
 ): ReturnType<typeof b.keywordPattern> => {
-	if (input.fields !== undefined) return unrouted('pattern.struct.field', 'fields');
-	if (input.type !== undefined) return unrouted('pattern.struct.field', 'type');
+	const unroutedSlot = unroutedIn(input, ['name', 'pattern']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.struct.field', unroutedSlot);
 	return b.keywordPattern({
 		name: pattern_struct_field$194_name(input.name),
 		pattern:
@@ -46283,6 +46499,8 @@ const pattern_struct_field$194 = (
 	});
 };
 const pattern_tuple$202 = (input: PathInput<PythonMap, 'pattern.tuple'>): ReturnType<typeof b.tuplePattern> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.tuple', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.tuplePattern(
@@ -46295,6 +46513,8 @@ const pattern_tuple$202 = (input: PathInput<PythonMap, 'pattern.tuple'>): Return
 	);
 };
 const pattern_tuple$283 = (input: PathInput<PythonMap, 'pattern.tuple'>): ReturnType<typeof b.caseTuplePattern> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.tuple', unroutedSlot);
 	const elements$first = (input.elements ?? [])[0];
 	const elements$rest = (input.elements ?? []).slice(1);
 	return b.caseTuplePattern(
@@ -46307,28 +46527,40 @@ const pattern_tuple$283 = (input: PathInput<PythonMap, 'pattern.tuple'>): Return
 	);
 };
 const statement_block$185 = (input: PathInput<PythonMap, 'statement.block'>): ReturnType<typeof b.block> => {
+	const unroutedSlot = unroutedIn(input, ['statements']);
+	if (unroutedSlot !== undefined) return unrouted('statement.block', unroutedSlot);
 	return b.block(...(input.statements ?? []).map(statement_block$185_statements));
 };
-const statement_block$310 = (_input: PathInput<PythonMap, 'statement.block'>): ReturnType<typeof b.suiteEmpty> => {
+const statement_block$310 = (input: PathInput<PythonMap, 'statement.block'>): ReturnType<typeof b.suiteEmpty> => {
+	const unroutedSlot = unroutedIn(input, ['statements']);
+	if (unroutedSlot !== undefined) return unrouted('statement.block', unroutedSlot);
 	return b.suiteEmpty();
 };
 const statement_block$318 = (
 	input: PathInput<PythonMap, 'statement.block'>
 ): ReturnType<typeof b.blockClassDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['statements']);
+	if (unroutedSlot !== undefined) return unrouted('statement.block', unroutedSlot);
 	return b.blockClassDeclaration(...(input.statements ?? []).map(statement_block$318_statements));
 };
 const statement_delete$151 = (
 	input: PathInput<PythonMap, 'statement.delete'>
 ): ReturnType<typeof b.deleteStatement> => {
+	const unroutedSlot = unroutedIn(input, ['expressions']);
+	if (unroutedSlot !== undefined) return unrouted('statement.delete', unroutedSlot);
 	return b.deleteStatement(statement_delete$151_expressions(input.expressions));
 };
 const statement_exec$177 = (input: PathInput<PythonMap, 'statement.exec'>): ReturnType<typeof b.execStatement> => {
+	const unroutedSlot = unroutedIn(input, ['code', 'inClauses']);
+	if (unroutedSlot !== undefined) return unrouted('statement.exec', unroutedSlot);
 	return b.execStatement({
 		code: statement_exec$177_code(input.code),
 		inClauses: (input.inClauses ?? []).map(statement_exec$177_inClauses)
 	});
 };
 const statement_if$156 = (input: PathInput<PythonMap, 'statement.if'>): ReturnType<typeof b.ifStatement> => {
+	const unroutedSlot = unroutedIn(input, ['alternatives', 'condition', 'consequence']);
+	if (unroutedSlot !== undefined) return unrouted('statement.if', unroutedSlot);
 	return b.ifStatement({
 		condition: statement_if$156_condition(input.condition),
 		consequence: statement_if$156_consequence(input.consequence),
@@ -46338,6 +46570,8 @@ const statement_if$156 = (input: PathInput<PythonMap, 'statement.if'>): ReturnTy
 const statement_loop_for_each$162 = (
 	input: PathInput<PythonMap, 'statement.loop.for_each'>
 ): ReturnType<typeof b.forStatement> => {
+	const unroutedSlot = unroutedIn(input, ['alternative', 'body', 'left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('statement.loop.for_each', unroutedSlot);
 	return b.forStatement({
 		left:
 			input.left === undefined ? missing('statement.loop.for_each.left') : statement_loop_for_each$162_left(input.left),
@@ -46354,6 +46588,8 @@ const statement_loop_for_each$162 = (
 const statement_loop_while$163 = (
 	input: PathInput<PythonMap, 'statement.loop.while'>
 ): ReturnType<typeof b.whileStatement> => {
+	const unroutedSlot = unroutedIn(input, ['alternative', 'body', 'condition']);
+	if (unroutedSlot !== undefined) return unrouted('statement.loop.while', unroutedSlot);
 	return b.whileStatement({
 		condition: statement_loop_while$163_condition(input.condition),
 		body: statement_loop_while$163_body(input.body),
@@ -46363,6 +46599,8 @@ const statement_loop_while$163 = (
 const statement_resource$167 = (
 	input: PathInput<PythonMap, 'statement.resource'>
 ): ReturnType<typeof b.withStatement> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'withClause']);
+	if (unroutedSlot !== undefined) return unrouted('statement.resource', unroutedSlot);
 	return b.withStatement({
 		withClause: statement_resource$167_withClause(input.withClause),
 		body: statement_resource$167_body(input.body),
@@ -46372,17 +46610,23 @@ const statement_resource$167 = (
 const statement_return$150 = (
 	input: PathInput<PythonMap, 'statement.return'>
 ): ReturnType<typeof b.returnStatement> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('statement.return', unroutedSlot);
 	return b.returnStatement(
 		input.expression === undefined ? undefined : statement_return$150_expression(input.expression)
 	);
 };
 const statement_throw$152 = (input: PathInput<PythonMap, 'statement.throw'>): ReturnType<typeof b.raiseStatement> => {
+	const unroutedSlot = unroutedIn(input, ['cause', 'expression']);
+	if (unroutedSlot !== undefined) return unrouted('statement.throw', unroutedSlot);
 	return b.raiseStatement({
 		expressions: input.expression === undefined ? undefined : statement_throw$152_expression(input.expression),
 		cause: input.cause === undefined ? undefined : statement_throw$152_cause(input.cause)
 	});
 };
 const statement_try$164 = (input: PathInput<PythonMap, 'statement.try'>): ReturnType<typeof b.tryStatement> => {
+	const unroutedSlot = unroutedIn(input, ['alternative', 'body', 'finalizer', 'handlers']);
+	if (unroutedSlot !== undefined) return unrouted('statement.try', unroutedSlot);
 	return b.tryStatement({
 		body: statement_try$164_body(input.body),
 		handlers: (input.handlers ?? []).map(statement_try$164_handlers),
@@ -46393,15 +46637,21 @@ const statement_try$164 = (input: PathInput<PythonMap, 'statement.try'>): Return
 const type_constrained$235 = (
 	input: PathInput<PythonMap, 'type.constrained'>
 ): ReturnType<typeof b.constrainedType> => {
+	const unroutedSlot = unroutedIn(input, ['baseType', 'constraint']);
+	if (unroutedSlot !== undefined) return unrouted('type.constrained', unroutedSlot);
 	return b.constrainedType({
 		baseType: type_constrained$235_baseType(input.baseType),
 		constraint: type_constrained$235_constraint(input.constraint)
 	});
 };
 const type_rest$232 = (input: PathInput<PythonMap, 'type.rest'>): ReturnType<typeof b.splatType> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('type.rest', unroutedSlot);
 	return b.splatType(type_rest$232_type(input.type));
 };
 const type_union$234 = (input: PathInput<PythonMap, 'type.union'>): ReturnType<typeof b.unionType> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('type.union', unroutedSlot);
 	return b.unionType({
 		left: input.left === undefined ? missing('type.union.left') : type_union$234_left(input.left),
 		right: type_union$234_right(input.right)

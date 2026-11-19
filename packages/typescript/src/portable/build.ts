@@ -20,6 +20,12 @@ const missing = (owner: string): never => {
 const unrouted = (owner: string, slot: string): never => {
 	throw new Error(owner + ' has no slot ' + slot);
 };
+const unroutedIn = (input: unknown, routed: ReadonlyArray<string>): string | undefined =>
+	typeof input === 'object' && input !== null
+		? Object.entries(input).find(
+				(entry) => entry[1] !== undefined && !entry[0].startsWith('$') && !routed.includes(entry[0])
+			)?.[0]
+		: undefined;
 const seated = <
 	V extends
 		| number
@@ -49,6 +55,9 @@ const unseated = (
 };
 const untexted = (owner: string, value: string): never => {
 	throw new Error(owner + ' has no route that seats the text "' + value + '"');
+};
+const unnumbered = (owner: string, scalar: string): never => {
+	throw new Error(owner + ' builds no ' + scalar + ' number');
 };
 const unspelled = (owner: string, value: number | bigint): never => {
 	throw new Error(owner + ' cannot spell ' + value);
@@ -2579,6 +2588,8 @@ const type_template$348_elements = (value: type_template$348_elements$Item) => {
 const attribute_member$286 = (
 	input: PathInput<TypeScriptMap, 'attribute.member'>
 ): ReturnType<typeof b.decoratorMemberExpression> => {
+	const unroutedSlot = unroutedIn(input, ['object', 'property']);
+	if (unroutedSlot !== undefined) return unrouted('attribute.member', unroutedSlot);
 	return b.decoratorMemberExpression({
 		object: attribute_member$286_object(input.object),
 		property: attribute_member$286_property(input.property)
@@ -2587,9 +2598,13 @@ const attribute_member$286 = (
 const attribute_parenthesized$304 = (
 	input: PathInput<TypeScriptMap, 'attribute.parenthesized'>
 ): ReturnType<typeof b.decoratorParenthesizedExpression> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('attribute.parenthesized', unroutedSlot);
 	return b.decoratorParenthesizedExpression(attribute_parenthesized$304_expression(input.expression));
 };
 const clause_export$193 = (input: PathInput<TypeScriptMap, 'clause.export'>): ReturnType<typeof b.exportClause> => {
+	const unroutedSlot = unroutedIn(input, ['exportSpecifiers']);
+	if (unroutedSlot !== undefined) return unrouted('clause.export', unroutedSlot);
 	const exportSpecifiers$first = (input.exportSpecifiers ?? [])[0];
 	const exportSpecifiers$rest = (input.exportSpecifiers ?? []).slice(1);
 	return b.exportClause(
@@ -2604,13 +2619,15 @@ const clause_export$193 = (input: PathInput<TypeScriptMap, 'clause.export'>): Re
 const clause_export_namespace$192 = (
 	input: PathInput<TypeScriptMap, 'clause.export.namespace'>
 ): ReturnType<typeof b.namespaceExport> => {
-	if (input.exportSpecifiers !== undefined) return unrouted('clause.export.namespace', 'exportSpecifiers');
+	const unroutedSlot = unroutedIn(input, ['moduleExportName']);
+	if (unroutedSlot !== undefined) return unrouted('clause.export.namespace', unroutedSlot);
 	return b.namespaceExport(clause_export_namespace$192_moduleExportName(input.moduleExportName));
 };
 const clause_export_specifier$194 = (
 	input: PathInput<TypeScriptMap, 'clause.export.specifier'>
 ): ReturnType<typeof b.exportSpecifier> => {
-	if (input.exportSpecifiers !== undefined) return unrouted('clause.export.specifier', 'exportSpecifiers');
+	const unroutedSlot = unroutedIn(input, ['alias', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('clause.export.specifier', unroutedSlot);
 	return b.exportSpecifier({
 		name: clause_export_specifier$194_name(input.name),
 		alias: input.alias === undefined ? undefined : clause_export_specifier$194_alias(input.alias),
@@ -2618,11 +2635,15 @@ const clause_export_specifier$194 = (
 	});
 };
 const clause_finally$233 = (input: PathInput<TypeScriptMap, 'clause.finally'>): ReturnType<typeof b.finallyClause> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('clause.finally', unroutedSlot);
 	return b.finallyClause(clause_finally$233_body(input.body));
 };
 const clause_import_attribute$204 = (
 	input: PathInput<TypeScriptMap, 'clause.import.attribute'>
 ): ReturnType<typeof b.importAttribute> => {
+	const unroutedSlot = unroutedIn(input, ['attributeKind', 'object']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.attribute', unroutedSlot);
 	return b.importAttribute({
 		attributeKind: clause_import_attribute$204_attributeKind(input.attributeKind),
 		object: clause_import_attribute$204_object(input.object)
@@ -2631,11 +2652,15 @@ const clause_import_attribute$204 = (
 const clause_import_namespace$201 = (
 	input: PathInput<TypeScriptMap, 'clause.import.namespace'>
 ): ReturnType<typeof b.namespaceImport> => {
+	const unroutedSlot = unroutedIn(input, ['name']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.namespace', unroutedSlot);
 	return b.namespaceImport(clause_import_namespace$201_name(input.name));
 };
 const clause_import_require$309 = (
 	input: PathInput<TypeScriptMap, 'clause.import.require'>
 ): ReturnType<typeof b.importRequireClause> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'source']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.require', unroutedSlot);
 	return b.importRequireClause({
 		name: clause_import_require$309_name(input.name),
 		source: clause_import_require$309_source(input.source)
@@ -2644,7 +2669,8 @@ const clause_import_require$309 = (
 const clause_import_specifier$414 = (
 	input: PathInput<TypeScriptMap, 'clause.import.specifier'>
 ): ReturnType<typeof b.importSpecifierName> => {
-	if (input.alias !== undefined) return unrouted('clause.import.specifier', 'alias');
+	const unroutedSlot = unroutedIn(input, ['name']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.specifier', unroutedSlot);
 	return b.importSpecifierName({
 		name: clause_import_specifier$414_name(input.name),
 		typeKeyword: (input.$flags ?? []).includes('typeOnly') ? 7 : undefined
@@ -2653,6 +2679,8 @@ const clause_import_specifier$414 = (
 const clause_import_specifier$415 = (
 	input: PathInput<TypeScriptMap, 'clause.import.specifier'>
 ): ReturnType<typeof b.importSpecifierAs> => {
+	const unroutedSlot = unroutedIn(input, ['alias', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.specifier', unroutedSlot);
 	return b.importSpecifierAs({
 		name: clause_import_specifier$415_name(input.name),
 		alias:
@@ -2668,11 +2696,15 @@ const comment_html$178 = (input: PathInput<TypeScriptMap, 'comment.html'>): Retu
 const declaration_ambient$313 = (
 	input: PathInput<TypeScriptMap, 'declaration.ambient'>
 ): ReturnType<typeof b.ambientDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.ambient', unroutedSlot);
 	return b.ambientDeclaration(declaration_ambient$313_body(input.body));
 };
 const declaration_constructor$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor'>
 ): ReturnType<typeof b.constructorDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.constructor', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2691,6 +2723,8 @@ const declaration_constructor$464 = (
 const declaration_constructor_private$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.private'>
 ): ReturnType<typeof b.constructorDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.constructor.private', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2710,6 +2744,8 @@ const declaration_constructor_private$464 = (
 const declaration_constructor_protected$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>
 ): ReturnType<typeof b.constructorDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.constructor.protected', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2729,6 +2765,8 @@ const declaration_constructor_protected$464 = (
 const declaration_constructor_public$464 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.public'>
 ): ReturnType<typeof b.constructorDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.constructor.public', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
@@ -2748,6 +2786,8 @@ const declaration_constructor_public$464 = (
 const declaration_enum$322 = (
 	input: PathInput<TypeScriptMap, 'declaration.enum'>
 ): ReturnType<typeof b.enumDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.enum', unroutedSlot);
 	const body$first = (input.body ?? [])[0];
 	const body$rest = (input.body ?? []).slice(1);
 	return b.enumDeclaration({
@@ -2767,6 +2807,8 @@ const declaration_enum$322 = (
 const declaration_module$316 = (
 	input: PathInput<TypeScriptMap, 'declaration.module'>
 ): ReturnType<typeof b.internalModule> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.module', unroutedSlot);
 	return b.internalModule({
 		name: input.name === undefined ? missing('declaration.module.name') : declaration_module$316_name(input.name),
 		body: input.body === undefined ? undefined : declaration_module$316_body(input.body)
@@ -2775,6 +2817,8 @@ const declaration_module$316 = (
 const declaration_module_external$315 = (
 	input: PathInput<TypeScriptMap, 'declaration.module.external'>
 ): ReturnType<typeof b.module> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.module.external', unroutedSlot);
 	return b.module({
 		name: declaration_module_external$315_name(input.name),
 		body: input.body === undefined ? undefined : declaration_module_external$315_body(input.body)
@@ -2783,11 +2827,15 @@ const declaration_module_external$315 = (
 const element_template_substitution$347 = (
 	input: PathInput<TypeScriptMap, 'element.template.substitution'>
 ): ReturnType<typeof b.templateType> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('element.template.substitution', unroutedSlot);
 	return b.templateType(element_template_substitution$347_type(input.type));
 };
 const expression_collection_object$238 = (
 	input: PathInput<TypeScriptMap, 'expression.collection.object'>
 ): ReturnType<typeof b.object> => {
+	const unroutedSlot = unroutedIn(input, ['properties']);
+	if (unroutedSlot !== undefined) return unrouted('expression.collection.object', unroutedSlot);
 	return b.object(...(input.properties ?? []).map(expression_collection_object$238_properties));
 };
 const identifier$1 = (input: PathInput<TypeScriptMap, 'identifier'>): ReturnType<typeof b.identifier> => {
@@ -2796,6 +2844,8 @@ const identifier$1 = (input: PathInput<TypeScriptMap, 'identifier'>): ReturnType
 const identifier_qualified$244 = (
 	input: PathInput<TypeScriptMap, 'identifier.qualified'>
 ): ReturnType<typeof b.nestedIdentifier> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.nestedIdentifier({
 		qualifier:
 			input.qualifier === undefined
@@ -2807,6 +2857,8 @@ const identifier_qualified$244 = (
 const identifier_qualified$319 = (
 	input: PathInput<TypeScriptMap, 'identifier.qualified'>
 ): ReturnType<typeof b.nestedTypeIdentifier> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.nestedTypeIdentifier({
 		qualifier:
 			input.qualifier === undefined
@@ -2818,6 +2870,8 @@ const identifier_qualified$319 = (
 const identifier_qualified$354 = (
 	input: PathInput<TypeScriptMap, 'identifier.qualified'>
 ): ReturnType<typeof b.typeQueryMemberExpression> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.typeQueryMemberExpression({
 		object:
 			input.qualifier === undefined
@@ -2830,6 +2884,9 @@ const identifier_qualified$354 = (
 const literal_number$156 = (
 	input: PathInput<TypeScriptMap, 'literal.number'>
 ): ReturnType<typeof b.numberFloatPoint> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number', 'bigint');
 	const parts = decimalSpelling(
 		input.$value,
 		{ integer: 'integer', fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
@@ -2844,17 +2901,24 @@ const literal_number$156 = (
 	});
 };
 const literal_number$160 = (input: PathInput<TypeScriptMap, 'literal.number'>): ReturnType<typeof b.number.decimal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.number.decimal(value) : b.number.decimal(value);
 };
 const literal_number$166 = (
 	input: PathInput<TypeScriptMap, 'literal.number'>
 ): ReturnType<typeof b.numberBigintDecimal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number', unroutedSlot);
 	return b.numberBigintDecimal(input.$value);
 };
 const literal_number_float$156 = (
 	input: PathInput<TypeScriptMap, 'literal.number.float'>
 ): ReturnType<typeof b.numberFloatPoint> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.float', 'bigint');
 	const parts = decimalSpelling(
 		input.$value,
 		{ integer: 'integer', fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
@@ -2871,6 +2935,9 @@ const literal_number_float$156 = (
 const literal_number_float_leading_point$157 = (
 	input: PathInput<TypeScriptMap, 'literal.number.float.leading_point'>
 ): ReturnType<typeof b.numberFloatLeadingPoint> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.float.leading_point', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.float.leading_point', 'bigint');
 	const parts = decimalSpelling(
 		input.$value,
 		{ fraction: 'fraction', exponentSign: 'exponentSign', exponent: 'exponent' },
@@ -2886,6 +2953,9 @@ const literal_number_float_leading_point$157 = (
 const literal_number_float_scientific$158 = (
 	input: PathInput<TypeScriptMap, 'literal.number.float.scientific'>
 ): ReturnType<typeof b.numberFloatScientific> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.float.scientific', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.float.scientific', 'bigint');
 	const parts = decimalSpelling(
 		input.$value,
 		{ integer: 'integer', exponentSign: 'exponentSign', exponent: 'exponent' },
@@ -2901,54 +2971,74 @@ const literal_number_float_scientific$158 = (
 const literal_number_integer$160 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer'>
 ): ReturnType<typeof b.number.decimal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.number.decimal(value) : b.number.decimal(value);
 };
 const literal_number_integer_big$166 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.big'>
 ): ReturnType<typeof b.numberBigintDecimal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big', unroutedSlot);
 	return b.numberBigintDecimal(input.$value);
 };
 const literal_number_integer_big_binary$164 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.big.binary'>
 ): ReturnType<typeof b.numberBigintBinary> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.binary', unroutedSlot);
 	return b.numberBigintBinary(input.$value);
 };
 const literal_number_integer_big_hex$163 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.big.hex'>
 ): ReturnType<typeof b.numberBigintHex> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.hex', unroutedSlot);
 	return b.numberBigintHex(input.$value);
 };
 const literal_number_integer_big_octal$165 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.big.octal'>
 ): ReturnType<typeof b.numberBigintOctal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.octal', unroutedSlot);
 	return b.numberBigintOctal(input.$value);
 };
 const literal_number_integer_binary$161 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.binary'>
 ): ReturnType<typeof b.numberBinary> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.binary', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.numberBinary(value) : b.numberBinary(value);
 };
 const literal_number_integer_hex$155 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.hex'>
 ): ReturnType<typeof b.numberHex> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.hex', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.numberHex(value) : b.numberHex(value);
 };
 const literal_number_integer_octal$159 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.numberLegacyOctal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.numberLegacyOctal(value) : b.numberLegacyOctal(value);
 };
 const literal_number_integer_octal$162 = (
 	input: PathInput<TypeScriptMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.numberOctal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.numberOctal(value) : b.numberOctal(value);
 };
 const literal_regex$276 = (input: PathInput<TypeScriptMap, 'literal.regex'>): ReturnType<typeof b.regex> => {
+	const unroutedSlot = unroutedIn(input, ['flags', 'pattern']);
+	if (unroutedSlot !== undefined) return unrouted('literal.regex', unroutedSlot);
 	return b.regex({
 		pattern: input.pattern === undefined ? missing('literal.regex.pattern') : literal_regex$276_pattern(input.pattern),
 		flags: input.flags === undefined ? undefined : literal_regex$276_flags(input.flags)
@@ -2965,14 +3055,20 @@ const literal_regex_pattern$126 = (
 	return b.regexPattern(typeof input === 'string' ? input : input.$value);
 };
 const literal_string$424 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringDouble> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
 	return b.stringDouble(...(input.elements ?? []).map(literal_string$424_elements));
 };
 const literal_string$425 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringSingle> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
 	return b.stringSingle(...(input.elements ?? []).map(literal_string$425_elements));
 };
 const literal_string_interpolated$274 = (
 	input: PathInput<TypeScriptMap, 'literal.string.interpolated'>
 ): ReturnType<typeof b.templateString> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.interpolated', unroutedSlot);
 	return b.templateString(...(input.elements ?? []).map(literal_string_interpolated$274_elements));
 };
 const literal_string_text$119 = (
@@ -2991,34 +3087,52 @@ const literal_string_text$176 = (
 	return b.templateChars(typeof input === 'string' ? input : input.$value);
 };
 const pattern_list$243 = (input: PathInput<TypeScriptMap, 'pattern.list'>): ReturnType<typeof b.arrayPattern> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.list', unroutedSlot);
 	return b.arrayPattern(...(input.elements ?? []).map(pattern_list$243_elements));
 };
 const pattern_object$239 = (input: PathInput<TypeScriptMap, 'pattern.object'>): ReturnType<typeof b.objectPattern> => {
+	const unroutedSlot = unroutedIn(input, ['properties']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.object', unroutedSlot);
 	return b.objectPattern(...(input.properties ?? []).map(pattern_object$239_properties));
 };
 const pattern_rest$292 = (input: PathInput<TypeScriptMap, 'pattern.rest'>): ReturnType<typeof b.restPattern> => {
+	const unroutedSlot = unroutedIn(input, ['pattern']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.rest', unroutedSlot);
 	return b.restPattern(pattern_rest$292_pattern(input.pattern));
 };
 const type_array$378 = (input: PathInput<TypeScriptMap, 'type.array'>): ReturnType<typeof b.arrayType> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('type.array', unroutedSlot);
 	return b.arrayType(input.type === undefined ? missing('type.array.type') : type_array$378_type(input.type));
 };
 const type_import$356 = (
 	input: PathInput<TypeScriptMap, 'type.import'>
 ): ReturnType<typeof b.typeQueryCallExpression> => {
+	const unroutedSlot = unroutedIn(input, ['source']);
+	if (unroutedSlot !== undefined) return unrouted('type.import', unroutedSlot);
 	return b.typeQueryCallExpression(type_import$356_source(input.source));
 };
 const type_index_query$359 = (
 	input: PathInput<TypeScriptMap, 'type.index_query'>
 ): ReturnType<typeof b.indexTypeQuery> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('type.index_query', unroutedSlot);
 	return b.indexTypeQuery(type_index_query$359_type(input.type));
 };
 const type_literal$362 = (input: PathInput<TypeScriptMap, 'type.literal'>): ReturnType<typeof b.literalType> => {
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('type.literal', unroutedSlot);
 	return b.literalType(type_literal$362_value(input.value));
 };
 const type_nullable$365 = (input: PathInput<TypeScriptMap, 'type.nullable'>): ReturnType<typeof b.flowMaybeType> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('type.nullable', unroutedSlot);
 	return b.flowMaybeType(type_nullable$365_type(input.type));
 };
 const type_object$369 = (input: PathInput<TypeScriptMap, 'type.object'>): ReturnType<typeof b.objectType> => {
+	const unroutedSlot = unroutedIn(input, ['closing', 'members', 'opening']);
+	if (unroutedSlot !== undefined) return unrouted('type.object', unroutedSlot);
 	const members$first = (input.members ?? [])[0];
 	const members$rest = (input.members ?? []).slice(1);
 	return b.objectType({
@@ -3036,16 +3150,20 @@ const type_object$369 = (input: PathInput<TypeScriptMap, 'type.object'>): Return
 const type_predicate_asserts$337 = (
 	input: PathInput<TypeScriptMap, 'type.predicate.asserts'>
 ): ReturnType<typeof b.asserts> => {
-	if (input.name !== undefined) return unrouted('type.predicate.asserts', 'name');
-	if (input.type !== undefined) return unrouted('type.predicate.asserts', 'type');
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('type.predicate.asserts', unroutedSlot);
 	return b.asserts(type_predicate_asserts$337_value(input.value));
 };
 const type_query$358 = (input: PathInput<TypeScriptMap, 'type.query'>): ReturnType<typeof b.typeQuery> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('type.query', unroutedSlot);
 	return b.typeQuery(type_query$358_expression(input.expression));
 };
 const type_template$348 = (
 	input: PathInput<TypeScriptMap, 'type.template'>
 ): ReturnType<typeof b.templateLiteralType> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('type.template', unroutedSlot);
 	return b.templateLiteralType(...(input.elements ?? []).map(type_template$348_elements));
 };
 const attribute_member = (input: PathInput<TypeScriptMap, 'attribute.member'>) => {

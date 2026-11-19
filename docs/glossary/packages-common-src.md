@@ -1353,7 +1353,7 @@ The decimal parts `decimalSpelling` writes, typed from the parts object and whet
 
 ### `packages/common/src/number.ts::decimalSpelling`
 
-Spells a number in a builder's decimal parts, scientific or not, or returns `undefined` when the parts can't spell it; each caller throws its own message. The interpreter and the generated build module both spell a float through it.
+Spells a number in a builder's decimal parts, scientific or not, or returns `undefined` when the parts can't spell it; each caller throws its own message. No part spells a sign, so negative zero is one it can't spell: its digits would write it as `0` and lose the sign. The interpreter and the generated build module both spell a float through it.
 
 ### `packages/common/src/stored-slot.ts::storedSlotRead`
 

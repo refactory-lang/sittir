@@ -208,6 +208,33 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			)
 		})
 	);
+	const entryAt = (at: number) => t.subscriptExpression({ object: id('entry'), index: num(at) });
+	const unroutedInHelper = constant(
+		'unroutedIn',
+		t.arrowFunction.callSignature({
+			parameters: t.formalParameters(t.formalParametersElements(t.requiredParameter({ name: 'input', type: t.typeAnnotation('unknown') }), t.requiredParameter({ name: 'routed', type: t.typeAnnotation(typeRef('ReadonlyArray', 'string')) }))),
+			returnType: t.typeAnnotation(union(['string', 'undefined'])),
+			body: ternary(
+				and([typeIs(id('input'), 'object'), binary(id('input'), '!==', t.null)])!,
+				t.subscriptExpression({
+					object: call(
+						dot(call(dot(id('Object'), 'entries'), id('input')), 'find'),
+						lambda(
+							and([
+								binary(entryAt(1), '!==', id('undefined')),
+								t.unaryExpression({ operator: '!', argument: call(dot(entryAt(0), 'startsWith'), str('$')) }),
+								t.unaryExpression({ operator: '!', argument: call(dot(id('routed'), 'includes'), entryAt(0)) })
+							])!,
+							'entry'
+						)
+					),
+					optionalChain: '?.',
+					index: num(0)
+				}),
+				id('undefined')
+			)
+		})
+	);
 	const nonEmptyHelper = constant(
 		'nonEmpty',
 		t.arrowFunction.callSignature({
@@ -739,6 +766,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const written = slots.map((slot): [string, Expression] => [slot, dot(id('parts'), slot)]);
 		const optioned = written.filter(([slot]) => options.has(slot));
 		return [
+			...(arm.scalar === 'float' ? [when(typeIs(scalar, 'bigint'), ret(call(id(uses('unnumbered')), str(path), str('bigint'))))] : []),
 			constant('parts', call(id(uses('decimalSpelling')), scalar, obj(Object.entries(parts).map(([part, slot]) => [part, str(slot)])), arm.scientific === true ? t.true : t.false)),
 			when(binary(id('parts'), '===', id('undefined')), ret(call(id(uses('unspelled')), str(path), scalar))),
 			ret(call(callee, obj([...entries, ...written.filter(([slot]) => !options.has(slot))]), ...(optioned.length === 0 ? [] : [obj(optioned)])))
@@ -820,10 +848,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const routed = new Set([...arm.slots.map((slot) => slot.name), ...arm.when.flatMap((test) => ('empty' in test ? test.empty : [])), ...ownedNames(path, arm)]);
 		const placed = new Set([...Object.keys(arm.flags), ...arm.when.flatMap((test) => ('flag' in test && test.set ? [test.flag] : [])), ...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])]);
 		return [
-			...Object.keys(input.slots[path] ?? {})
-				.filter((name) => !routed.has(name))
-				.sort()
-				.map((name) => when(binary(dot(id(uses('input')), name), '!==', id('undefined')), ret(call(id(uses('unrouted')), str(path), str(name))))),
+			constant('unroutedSlot', call(id(uses('unroutedIn')), id(uses('input')), t.array(...[...routed].sort().map(str)))),
+			when(binary(id('unroutedSlot'), '!==', id('undefined')), ret(call(id(uses('unrouted')), str(path), id('unroutedSlot')))),
 			...[...(input.flags[path] ?? [])]
 				.filter((flag) => !placed.has(flag))
 				.sort()
@@ -948,6 +974,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		['unbuilt', unbuiltHelper],
 		['missing', missingHelper],
 		['unrouted', unroutedHelper],
+		['unroutedIn', unroutedInHelper],
 		['unflagged', unflaggedHelper],
 		['unset', unsetHelper],
 		['seated', seatedHelper],

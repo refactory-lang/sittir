@@ -98,6 +98,7 @@ const significandOf = (value: number | bigint): { readonly digits: string; reado
 const exponentSpelling = (mantissa: string, power: number): string => `${mantissa}e${power < 0 ? '-' : '+'}${Math.abs(power)}`;
 
 export function decimalSpelling<const P extends PortableDecimalParts, const S extends boolean>(value: number | bigint, parts: P, scientific: S): DecimalSpelling<P, S> | undefined {
+	if (Object.is(value, -0)) return undefined;
 	const significand = significandOf(value);
 	const spellings = scientific
 		? [significand && exponentSpelling(significand.digits, significand.power)]

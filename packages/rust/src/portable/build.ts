@@ -19,6 +19,12 @@ const missing = (owner: string): never => {
 const unrouted = (owner: string, slot: string): never => {
 	throw new Error(owner + ' has no slot ' + slot);
 };
+const unroutedIn = (input: unknown, routed: ReadonlyArray<string>): string | undefined =>
+	typeof input === 'object' && input !== null
+		? Object.entries(input).find(
+				(entry) => entry[1] !== undefined && !entry[0].startsWith('$') && !routed.includes(entry[0])
+			)?.[0]
+		: undefined;
 const unflagged = (owner: string, flag: string): never => {
 	throw new Error(owner + ' builds no flag ' + flag);
 };
@@ -13073,9 +13079,13 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 const clause_bounds_removed$218 = (
 	input: PathInput<RustMap, 'clause.bounds.removed'>
 ): ReturnType<typeof b.removedTraitBound> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('clause.bounds.removed', unroutedSlot);
 	return b.removedTraitBound(clause_bounds_removed$218_type(input.type));
 };
 const clause_bounds_use$249 = (input: PathInput<RustMap, 'clause.bounds.use'>): ReturnType<typeof b.useBounds> => {
+	const unroutedSlot = unroutedIn(input, ['bounds']);
+	if (unroutedSlot !== undefined) return unrouted('clause.bounds.use', unroutedSlot);
 	const bounds$first = (input.bounds ?? [])[0];
 	const bounds$rest = (input.bounds ?? []).slice(1);
 	return b.useBounds(
@@ -13088,17 +13098,23 @@ const clause_bounds_use$249 = (input: PathInput<RustMap, 'clause.bounds.use'>): 
 	);
 };
 const clause_else$291 = (input: PathInput<RustMap, 'clause.else'>): ReturnType<typeof b.elseClause> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('clause.else', unroutedSlot);
 	return b.elseClause(clause_else$291_body(input.body));
 };
 const clause_import_alias$228 = (
 	input: PathInput<RustMap, 'clause.import.alias'>
 ): ReturnType<typeof b.useAsClause> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rename']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.alias', unroutedSlot);
 	return b.useAsClause({
 		name: clause_import_alias$228_name(input.name),
 		rename: clause_import_alias$228_rename(input.rename)
 	});
 };
 const clause_import_list$227 = (input: PathInput<RustMap, 'clause.import.list'>): ReturnType<typeof b.useList> => {
+	const unroutedSlot = unroutedIn(input, ['useClauses']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.list', unroutedSlot);
 	const useClauses$first = (input.useClauses ?? [])[0];
 	const useClauses$rest = (input.useClauses ?? []).slice(1);
 	return b.useList(
@@ -13113,7 +13129,8 @@ const clause_import_list$227 = (input: PathInput<RustMap, 'clause.import.list'>)
 const clause_import_list_scoped$226 = (
 	input: PathInput<RustMap, 'clause.import.list.scoped'>
 ): ReturnType<typeof b.scopedUseList> => {
-	if (input.useClauses !== undefined) return unrouted('clause.import.list.scoped', 'useClauses');
+	const unroutedSlot = unroutedIn(input, ['list', 'path']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.list.scoped', unroutedSlot);
 	return b.scopedUseList({
 		path: input.path === undefined ? undefined : clause_import_list_scoped$226_path(input.path),
 		list: clause_import_list_scoped$226_list(input.list)
@@ -13122,6 +13139,8 @@ const clause_import_list_scoped$226 = (
 const clause_import_wildcard$229 = (
 	input: PathInput<RustMap, 'clause.import.wildcard'>
 ): ReturnType<typeof b.useWildcard> => {
+	const unroutedSlot = unroutedIn(input, ['useWildcardGroup']);
+	if (unroutedSlot !== undefined) return unrouted('clause.import.wildcard', unroutedSlot);
 	return b.useWildcard(
 		input.useWildcardGroup === undefined
 			? undefined
@@ -13129,9 +13148,13 @@ const clause_import_wildcard$229 = (
 	);
 };
 const clause_macro_rule$181 = (input: PathInput<RustMap, 'clause.macro.rule'>): ReturnType<typeof b.macroRule> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('clause.macro.rule', unroutedSlot);
 	return b.macroRule({ left: clause_macro_rule$181_left(input.left), right: clause_macro_rule$181_right(input.right) });
 };
 const clause_where$211 = (input: PathInput<RustMap, 'clause.where'>): ReturnType<typeof b.whereClause> => {
+	const unroutedSlot = unroutedIn(input, ['wherePredicates']);
+	if (unroutedSlot !== undefined) return unrouted('clause.where', unroutedSlot);
 	const wherePredicates$first = (input.wherePredicates ?? [])[0];
 	const wherePredicates$rest = (input.wherePredicates ?? []).slice(1);
 	return b.whereClause(
@@ -13146,6 +13169,8 @@ const clause_where$211 = (input: PathInput<RustMap, 'clause.where'>): ReturnType
 const declaration_macro$416 = (
 	input: PathInput<RustMap, 'declaration.macro'>
 ): ReturnType<typeof b.macroDefinitionParen> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rules']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.macro', unroutedSlot);
 	const rules$first = (input.rules ?? [])[0];
 	const rules$rest = (input.rules ?? []).slice(1);
 	return b.macroDefinitionParen({
@@ -13162,6 +13187,8 @@ const declaration_macro$416 = (
 const declaration_macro$417 = (
 	input: PathInput<RustMap, 'declaration.macro'>
 ): ReturnType<typeof b.macroDefinitionBracket> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rules']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.macro', unroutedSlot);
 	const rules$first = (input.rules ?? [])[0];
 	const rules$rest = (input.rules ?? []).slice(1);
 	return b.macroDefinitionBracket({
@@ -13178,6 +13205,8 @@ const declaration_macro$417 = (
 const declaration_macro$418 = (
 	input: PathInput<RustMap, 'declaration.macro'>
 ): ReturnType<typeof b.macroDefinitionBrace> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rules']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.macro', unroutedSlot);
 	const rules$first = (input.rules ?? [])[0];
 	const rules$rest = (input.rules ?? []).slice(1);
 	return b.macroDefinitionBrace({
@@ -13194,6 +13223,8 @@ const declaration_macro$418 = (
 const declaration_macro_brace$418 = (
 	input: PathInput<RustMap, 'declaration.macro.brace'>
 ): ReturnType<typeof b.macroDefinitionBrace> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rules']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.macro.brace', unroutedSlot);
 	const rules$first = (input.rules ?? [])[0];
 	const rules$rest = (input.rules ?? []).slice(1);
 	return b.macroDefinitionBrace({
@@ -13210,6 +13241,8 @@ const declaration_macro_brace$418 = (
 const declaration_macro_bracket$417 = (
 	input: PathInput<RustMap, 'declaration.macro.bracket'>
 ): ReturnType<typeof b.macroDefinitionBracket> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rules']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.macro.bracket', unroutedSlot);
 	const rules$first = (input.rules ?? [])[0];
 	const rules$rest = (input.rules ?? []).slice(1);
 	return b.macroDefinitionBracket({
@@ -13226,6 +13259,8 @@ const declaration_macro_bracket$417 = (
 const declaration_macro_paren$416 = (
 	input: PathInput<RustMap, 'declaration.macro.paren'>
 ): ReturnType<typeof b.macroDefinitionParen> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'rules']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.macro.paren', unroutedSlot);
 	const rules$first = (input.rules ?? [])[0];
 	const rules$rest = (input.rules ?? []).slice(1);
 	return b.macroDefinitionParen({
@@ -13242,6 +13277,8 @@ const declaration_macro_paren$416 = (
 const declaration_type_parameter$221 = (
 	input: PathInput<RustMap, 'declaration.type_parameter'>
 ): ReturnType<typeof b.typeParameter> => {
+	const unroutedSlot = unroutedIn(input, ['attributes', 'bounds', 'default', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type_parameter', unroutedSlot);
 	const bounds$first = (input.bounds ?? [])[0];
 	const bounds$rest = (input.bounds ?? []).slice(1);
 	return b.typeParameter({
@@ -13262,6 +13299,8 @@ const declaration_type_parameter$221 = (
 const declaration_type_parameter_lifetime$222 = (
 	input: PathInput<RustMap, 'declaration.type_parameter.lifetime'>
 ): ReturnType<typeof b.lifetimeParameter> => {
+	const unroutedSlot = unroutedIn(input, ['attributes', 'bounds', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type_parameter.lifetime', unroutedSlot);
 	const bounds$first = (input.bounds ?? [])[0];
 	const bounds$rest = (input.bounds ?? []).slice(1);
 	return b.lifetimeParameter({
@@ -13278,6 +13317,8 @@ const declaration_type_parameter_lifetime$222 = (
 const declaration_type_parameter_value$220 = (
 	input: PathInput<RustMap, 'declaration.type_parameter.value'>
 ): ReturnType<typeof b.constParameter> => {
+	const unroutedSlot = unroutedIn(input, ['attributes', 'default', 'name', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type_parameter.value', unroutedSlot);
 	return b.constParameter({
 		name: declaration_type_parameter_value$220_name(input.name),
 		type: declaration_type_parameter_value$220_type(input.type),
@@ -13287,6 +13328,8 @@ const declaration_type_parameter_value$220 = (
 const element_macro_token_binding$184 = (
 	input: PathInput<RustMap, 'element.macro.token_binding'>
 ): ReturnType<typeof b.tokenBindingPattern> => {
+	const unroutedSlot = unroutedIn(input, ['fragment', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_binding', unroutedSlot);
 	return b.tokenBindingPattern({
 		name: element_macro_token_binding$184_name(input.name),
 		fragment: element_macro_token_binding$184_fragment(input.fragment)
@@ -13295,6 +13338,8 @@ const element_macro_token_binding$184 = (
 const element_macro_token_repetition$188 = (
 	input: PathInput<RustMap, 'element.macro.token_repetition'>
 ): ReturnType<typeof b.tokenRepetition> => {
+	const unroutedSlot = unroutedIn(input, ['operator', 'separator', 'tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_repetition', unroutedSlot);
 	return b.tokenRepetition({
 		tokens: (input.tokens ?? []).map(element_macro_token_repetition$188_tokens),
 		separator:
@@ -13305,7 +13350,8 @@ const element_macro_token_repetition$188 = (
 const element_macro_token_repetition_pattern$185 = (
 	input: PathInput<RustMap, 'element.macro.token_repetition.pattern'>
 ): ReturnType<typeof b.tokenRepetitionPattern> => {
-	if (input.tokens !== undefined) return unrouted('element.macro.token_repetition.pattern', 'tokens');
+	const unroutedSlot = unroutedIn(input, ['operator', 'separator', 'tokenPatterns']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_repetition.pattern', unroutedSlot);
 	return b.tokenRepetitionPattern({
 		tokenPatterns: (input.tokenPatterns ?? []).map(element_macro_token_repetition_pattern$185_tokenPatterns),
 		separator:
@@ -13316,97 +13362,134 @@ const element_macro_token_repetition_pattern$185 = (
 const element_macro_token_tree$408 = (
 	input: PathInput<RustMap, 'element.macro.token_tree'>
 ): ReturnType<typeof b.tokenTreeParen> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree', unroutedSlot);
 	return b.tokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree$408_tokens));
 };
 const element_macro_token_tree$409 = (
 	input: PathInput<RustMap, 'element.macro.token_tree'>
 ): ReturnType<typeof b.tokenTreeBracket> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree', unroutedSlot);
 	return b.tokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree$409_tokens));
 };
 const element_macro_token_tree$410 = (
 	input: PathInput<RustMap, 'element.macro.token_tree'>
 ): ReturnType<typeof b.tokenTreeBrace> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree', unroutedSlot);
 	return b.tokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree$410_tokens));
 };
 const element_macro_token_tree_brace$410 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.brace'>
 ): ReturnType<typeof b.tokenTreeBrace> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.brace', unroutedSlot);
 	return b.tokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree_brace$410_tokens));
 };
 const element_macro_token_tree_bracket$409 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.bracket'>
 ): ReturnType<typeof b.tokenTreeBracket> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.bracket', unroutedSlot);
 	return b.tokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree_bracket$409_tokens));
 };
 const element_macro_token_tree_delimited$411 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.delimited'>
 ): ReturnType<typeof b.delimTokenTreeParen> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.delimited', unroutedSlot);
 	return b.delimTokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree_delimited$411_tokens));
 };
 const element_macro_token_tree_delimited$412 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.delimited'>
 ): ReturnType<typeof b.delimTokenTreeBracket> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.delimited', unroutedSlot);
 	return b.delimTokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree_delimited$412_tokens));
 };
 const element_macro_token_tree_delimited$413 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.delimited'>
 ): ReturnType<typeof b.delimTokenTreeBrace> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.delimited', unroutedSlot);
 	return b.delimTokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree_delimited$413_tokens));
 };
 const element_macro_token_tree_delimited_brace$413 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.delimited.brace'>
 ): ReturnType<typeof b.delimTokenTreeBrace> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.delimited.brace', unroutedSlot);
 	return b.delimTokenTreeBrace(...(input.tokens ?? []).map(element_macro_token_tree_delimited_brace$413_tokens));
 };
 const element_macro_token_tree_delimited_bracket$412 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.delimited.bracket'>
 ): ReturnType<typeof b.delimTokenTreeBracket> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.delimited.bracket', unroutedSlot);
 	return b.delimTokenTreeBracket(...(input.tokens ?? []).map(element_macro_token_tree_delimited_bracket$412_tokens));
 };
 const element_macro_token_tree_delimited_paren$411 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.delimited.paren'>
 ): ReturnType<typeof b.delimTokenTreeParen> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.delimited.paren', unroutedSlot);
 	return b.delimTokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree_delimited_paren$411_tokens));
 };
 const element_macro_token_tree_paren$408 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.paren'>
 ): ReturnType<typeof b.tokenTreeParen> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.paren', unroutedSlot);
 	return b.tokenTreeParen(...(input.tokens ?? []).map(element_macro_token_tree_paren$408_tokens));
 };
 const element_macro_token_tree_pattern$405 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.pattern'>
 ): ReturnType<typeof b.tokenTreePatternParen> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.pattern', unroutedSlot);
 	return b.tokenTreePatternParen(...(input.tokens ?? []).map(element_macro_token_tree_pattern$405_tokens));
 };
 const element_macro_token_tree_pattern$406 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.pattern'>
 ): ReturnType<typeof b.tokenTreePatternBracket> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.pattern', unroutedSlot);
 	return b.tokenTreePatternBracket(...(input.tokens ?? []).map(element_macro_token_tree_pattern$406_tokens));
 };
 const element_macro_token_tree_pattern$407 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.pattern'>
 ): ReturnType<typeof b.tokenTreePatternBrace> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.pattern', unroutedSlot);
 	return b.tokenTreePatternBrace(...(input.tokens ?? []).map(element_macro_token_tree_pattern$407_tokens));
 };
 const element_macro_token_tree_pattern_brace$407 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.pattern.brace'>
 ): ReturnType<typeof b.tokenTreePatternBrace> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.pattern.brace', unroutedSlot);
 	return b.tokenTreePatternBrace(...(input.tokens ?? []).map(element_macro_token_tree_pattern_brace$407_tokens));
 };
 const element_macro_token_tree_pattern_bracket$406 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.pattern.bracket'>
 ): ReturnType<typeof b.tokenTreePatternBracket> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.pattern.bracket', unroutedSlot);
 	return b.tokenTreePatternBracket(...(input.tokens ?? []).map(element_macro_token_tree_pattern_bracket$406_tokens));
 };
 const element_macro_token_tree_pattern_paren$405 = (
 	input: PathInput<RustMap, 'element.macro.token_tree.pattern.paren'>
 ): ReturnType<typeof b.tokenTreePatternParen> => {
+	const unroutedSlot = unroutedIn(input, ['tokens']);
+	if (unroutedSlot !== undefined) return unrouted('element.macro.token_tree.pattern.paren', unroutedSlot);
 	return b.tokenTreePatternParen(...(input.tokens ?? []).map(element_macro_token_tree_pattern_paren$405_tokens));
 };
 const element_struct_field$284 = (
 	input: PathInput<RustMap, 'element.struct.field'>
 ): ReturnType<typeof b.shorthandFieldInitializer> => {
-	if (input.value !== undefined) return unrouted('element.struct.field', 'value');
+	const unroutedSlot = unroutedIn(input, ['attributes', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('element.struct.field', unroutedSlot);
 	return b.shorthandFieldInitializer({
 		attributes: (input.attributes ?? []).map(element_struct_field$284_attributes),
 		name: element_struct_field$284_name(input.name)
@@ -13415,6 +13498,8 @@ const element_struct_field$284 = (
 const element_type_binding$251 = (
 	input: PathInput<RustMap, 'element.type_binding'>
 ): ReturnType<typeof b.typeBinding> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'type', 'typeArguments']);
+	if (unroutedSlot !== undefined) return unrouted('element.type_binding', unroutedSlot);
 	const typeArguments$first = (input.typeArguments ?? [])[0];
 	const typeArguments$rest = (input.typeArguments ?? []).slice(1);
 	return b.typeBinding({
@@ -13434,6 +13519,8 @@ const element_type_binding$251 = (
 const expression_block_async$310 = (
 	input: PathInput<RustMap, 'expression.block.async'>
 ): ReturnType<typeof b.asyncBlock> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('expression.block.async', unroutedSlot);
 	return b.asyncBlock({
 		body: expression_block_async$310_body(input.body),
 		move: (input.$flags ?? []).includes('move')
@@ -13442,28 +13529,37 @@ const expression_block_async$310 = (
 const expression_block_const$300 = (
 	input: PathInput<RustMap, 'expression.block.const'>
 ): ReturnType<typeof b.constBlock> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('expression.block.const', unroutedSlot);
 	return b.constBlock(expression_block_const$300_body(input.body));
 };
 const expression_block_generator$311 = (
 	input: PathInput<RustMap, 'expression.block.generator'>
 ): ReturnType<typeof b.genBlock> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('expression.block.generator', unroutedSlot);
 	return b.genBlock({
 		body: expression_block_generator$311_body(input.body),
 		move: (input.$flags ?? []).includes('move')
 	});
 };
 const expression_block_try$312 = (input: PathInput<RustMap, 'expression.block.try'>): ReturnType<typeof b.tryBlock> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('expression.block.try', unroutedSlot);
 	return b.tryBlock(expression_block_try$312_body(input.body));
 };
 const expression_block_unsafe$309 = (
 	input: PathInput<RustMap, 'expression.block.unsafe'>
 ): ReturnType<typeof b.unsafeBlock> => {
+	const unroutedSlot = unroutedIn(input, ['body']);
+	if (unroutedSlot !== undefined) return unrouted('expression.block.unsafe', unroutedSlot);
 	return b.unsafeBlock(expression_block_unsafe$309_body(input.body));
 };
 const expression_call_macro$259 = (
 	input: PathInput<RustMap, 'expression.call.macro'>
 ): ReturnType<typeof b.macroInvocation> => {
-	if (input.typeArguments !== undefined) return unrouted('expression.call.macro', 'typeArguments');
+	const unroutedSlot = unroutedIn(input, ['arguments', 'function']);
+	if (unroutedSlot !== undefined) return unrouted('expression.call.macro', unroutedSlot);
 	if ((input.$flags ?? []).includes('terminated')) return unflagged('expression.call.macro', 'terminated');
 	return b.macroInvocation({
 		function: expression_call_macro$259_function(input.function),
@@ -13473,6 +13569,8 @@ const expression_call_macro$259 = (
 const expression_collection_struct$282 = (
 	input: PathInput<RustMap, 'expression.collection.struct'>
 ): ReturnType<typeof b.structExpression> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('expression.collection.struct', unroutedSlot);
 	const body$first = (input.body ?? [])[0];
 	const body$rest = (input.body ?? []).slice(1);
 	return b.structExpression({
@@ -13492,14 +13590,20 @@ const identifier$1 = (input: PathInput<RustMap, 'identifier'>): ReturnType<typeo
 	return b.identifier(typeof input === 'string' ? input : input.$value);
 };
 const identifier_label$303 = (input: PathInput<RustMap, 'identifier.label'>): ReturnType<typeof b.label> => {
+	const unroutedSlot = unroutedIn(input, ['name']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.label', unroutedSlot);
 	return b.label(input.name === undefined ? missing('identifier.label.name') : identifier_label$303_name(input.name));
 };
 const identifier_lifetime$239 = (input: PathInput<RustMap, 'identifier.lifetime'>): ReturnType<typeof b.lifetime> => {
+	const unroutedSlot = unroutedIn(input, ['name']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.lifetime', unroutedSlot);
 	return b.lifetime(identifier_lifetime$239_name(input.name));
 };
 const identifier_qualified$263 = (
 	input: PathInput<RustMap, 'identifier.qualified'>
 ): ReturnType<typeof b.scopedIdentifier> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.scopedIdentifier({
 		qualifier: input.qualifier === undefined ? undefined : identifier_qualified$263_qualifier(input.qualifier),
 		name: identifier_qualified$263_name(input.name)
@@ -13508,6 +13612,8 @@ const identifier_qualified$263 = (
 const identifier_qualified$264 = (
 	input: PathInput<RustMap, 'identifier.qualified'>
 ): ReturnType<typeof b.scopedTypeIdentifierInExpressionPosition> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.scopedTypeIdentifierInExpressionPosition({
 		qualifier: input.qualifier === undefined ? undefined : identifier_qualified$264_qualifier(input.qualifier),
 		name: identifier_qualified$264_name(input.name)
@@ -13516,6 +13622,8 @@ const identifier_qualified$264 = (
 const identifier_qualified$265 = (
 	input: PathInput<RustMap, 'identifier.qualified'>
 ): ReturnType<typeof b.scopedTypeIdentifier> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'qualifier']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.qualified', unroutedSlot);
 	return b.scopedTypeIdentifier({
 		qualifier: input.qualifier === undefined ? undefined : identifier_qualified$265_qualifier(input.qualifier),
 		name: identifier_qualified$265_name(input.name)
@@ -13524,6 +13632,8 @@ const identifier_qualified$265 = (
 const literal_character$145 = (
 	input: PathInput<RustMap, 'literal.character'>
 ): ReturnType<typeof b.charLiteralPlain> => {
+	const unroutedSlot = unroutedIn(input, ['content']);
+	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.charLiteralPlain({
 		content:
 			input.content === undefined ? missing('literal.character.content') : literal_character$145_content(input.content)
@@ -13532,6 +13642,8 @@ const literal_character$145 = (
 const literal_character$147 = (
 	input: PathInput<RustMap, 'literal.character'>
 ): ReturnType<typeof b.charLiteralEscapedSimple> => {
+	const unroutedSlot = unroutedIn(input, ['content']);
+	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.charLiteralEscapedSimple({
 		content:
 			input.content === undefined ? missing('literal.character.content') : literal_character$147_content(input.content)
@@ -13540,6 +13652,8 @@ const literal_character$147 = (
 const literal_character$148 = (
 	input: PathInput<RustMap, 'literal.character'>
 ): ReturnType<typeof b.charLiteralEscapedUnicodeFixed> => {
+	const unroutedSlot = unroutedIn(input, ['content']);
+	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.charLiteralEscapedUnicodeFixed({
 		content:
 			input.content === undefined ? missing('literal.character.content') : literal_character$148_content(input.content)
@@ -13548,6 +13662,8 @@ const literal_character$148 = (
 const literal_character$149 = (
 	input: PathInput<RustMap, 'literal.character'>
 ): ReturnType<typeof b.charLiteralEscapedUnicodeBraced> => {
+	const unroutedSlot = unroutedIn(input, ['content']);
+	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.charLiteralEscapedUnicodeBraced({
 		content:
 			input.content === undefined ? missing('literal.character.content') : literal_character$149_content(input.content)
@@ -13556,6 +13672,8 @@ const literal_character$149 = (
 const literal_character$150 = (
 	input: PathInput<RustMap, 'literal.character'>
 ): ReturnType<typeof b.charLiteralEscapedHex> => {
+	const unroutedSlot = unroutedIn(input, ['content']);
+	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.charLiteralEscapedHex({
 		content:
 			input.content === undefined ? missing('literal.character.content') : literal_character$150_content(input.content)
@@ -13564,11 +13682,15 @@ const literal_character$150 = (
 const literal_number_float$162 = (
 	input: PathInput<RustMap, 'literal.number.float'>
 ): ReturnType<typeof b.floatLiteral> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
 	return b.floatLiteral(input.$value);
 };
 const literal_number_integer$141 = (
 	input: PathInput<RustMap, 'literal.number.integer'>
 ): ReturnType<typeof b.integerLiteralDecimal> => {
+	const unroutedSlot = unroutedIn(input, ['suffix']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer', unroutedSlot);
 	return b.integerLiteralDecimal({
 		suffix: input.suffix === undefined ? undefined : literal_number_integer$141_suffix(input.suffix),
 		content: input.$value
@@ -13577,6 +13699,8 @@ const literal_number_integer$141 = (
 const literal_number_integer_binary$143 = (
 	input: PathInput<RustMap, 'literal.number.integer.binary'>
 ): ReturnType<typeof b.integerLiteralBinary> => {
+	const unroutedSlot = unroutedIn(input, ['suffix']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.binary', unroutedSlot);
 	return b.integerLiteralBinary({
 		suffix: input.suffix === undefined ? undefined : literal_number_integer_binary$143_suffix(input.suffix),
 		content: input.$value
@@ -13585,6 +13709,8 @@ const literal_number_integer_binary$143 = (
 const literal_number_integer_hex$142 = (
 	input: PathInput<RustMap, 'literal.number.integer.hex'>
 ): ReturnType<typeof b.integerLiteralHex> => {
+	const unroutedSlot = unroutedIn(input, ['suffix']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.hex', unroutedSlot);
 	return b.integerLiteralHex({
 		suffix: input.suffix === undefined ? undefined : literal_number_integer_hex$142_suffix(input.suffix),
 		content: input.$value
@@ -13593,6 +13719,8 @@ const literal_number_integer_hex$142 = (
 const literal_number_integer_octal$144 = (
 	input: PathInput<RustMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.integerLiteralOctal> => {
+	const unroutedSlot = unroutedIn(input, ['suffix']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	return b.integerLiteralOctal({
 		suffix: input.suffix === undefined ? undefined : literal_number_integer_octal$144_suffix(input.suffix),
 		content: input.$value
@@ -13601,17 +13729,25 @@ const literal_number_integer_octal$144 = (
 const literal_number_negative$330 = (
 	input: PathInput<RustMap, 'literal.number.negative'>
 ): ReturnType<typeof b.negativeLiteral> => {
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
 	return b.negativeLiteral(literal_number_negative$330_value(input.value));
 };
 const modifier_extern$234 = (input: PathInput<RustMap, 'modifier.extern'>): ReturnType<typeof b.externModifier> => {
+	const unroutedSlot = unroutedIn(input, ['abi']);
+	if (unroutedSlot !== undefined) return unrouted('modifier.extern', unroutedSlot);
 	return b.externModifier(input.abi === undefined ? undefined : modifier_extern$234_abi(input.abi));
 };
 const statement_continue$305 = (
 	input: PathInput<RustMap, 'statement.continue'>
 ): ReturnType<typeof b.continueExpression> => {
+	const unroutedSlot = unroutedIn(input, ['label']);
+	if (unroutedSlot !== undefined) return unrouted('statement.continue', unroutedSlot);
 	return b.continueExpression(input.label === undefined ? undefined : statement_continue$305_label(input.label));
 };
 const statement_import$224 = (input: PathInput<RustMap, 'statement.import'>): ReturnType<typeof b.useDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['argument']);
+	if (unroutedSlot !== undefined) return unrouted('statement.import', unroutedSlot);
 	return b.useDeclaration({
 		argument:
 			input.argument === undefined
@@ -13622,38 +13758,55 @@ const statement_import$224 = (input: PathInput<RustMap, 'statement.import'>): Re
 const statement_import_package$204 = (
 	input: PathInput<RustMap, 'statement.import.package'>
 ): ReturnType<typeof b.externCrateDeclaration> => {
-	if (input.argument !== undefined) return unrouted('statement.import.package', 'argument');
+	const unroutedSlot = unroutedIn(input, ['alias', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('statement.import.package', unroutedSlot);
 	return b.externCrateDeclaration({
 		name: statement_import_package$204_name(input.name),
 		alias: input.alias === undefined ? undefined : statement_import_package$204_alias(input.alias)
 	});
 };
 const statement_loop$298 = (input: PathInput<RustMap, 'statement.loop'>): ReturnType<typeof b.loopExpression> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'label']);
+	if (unroutedSlot !== undefined) return unrouted('statement.loop', unroutedSlot);
 	return b.loopExpression({
 		label: input.label === undefined ? undefined : statement_loop$298_label(input.label),
 		body: statement_loop$298_body(input.body)
 	});
 };
 const type_bounded$248 = (input: PathInput<RustMap, 'type.bounded'>): ReturnType<typeof b.boundedType> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'right']);
+	if (unroutedSlot !== undefined) return unrouted('type.bounded', unroutedSlot);
 	return b.boundedType({ left: type_bounded$248_left(input.left), right: type_bounded$248_right(input.right) });
 };
 const type_bracketed$237 = (input: PathInput<RustMap, 'type.bracketed'>): ReturnType<typeof b.bracketedType> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('type.bracketed', unroutedSlot);
 	return b.bracketedType(type_bracketed$237_type(input.type));
 };
 const type_dynamic$256 = (input: PathInput<RustMap, 'type.dynamic'>): ReturnType<typeof b.dynamicType> => {
+	const unroutedSlot = unroutedIn(input, ['trait']);
+	if (unroutedSlot !== undefined) return unrouted('type.dynamic', unroutedSlot);
 	return b.dynamicType(type_dynamic$256_trait(input.trait));
 };
 const type_pointer$388 = (input: PathInput<RustMap, 'type.pointer'>): ReturnType<typeof b.pointerTypeConst> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('type.pointer', unroutedSlot);
 	if ((input.$flags ?? []).includes('writable')) return unflagged('type.pointer', 'writable');
 	return b.pointerTypeConst(type_pointer$388_type(input.type));
 };
 const type_pointer$389 = (input: PathInput<RustMap, 'type.pointer'>): ReturnType<typeof b.pointerTypeMut> => {
+	const unroutedSlot = unroutedIn(input, ['type']);
+	if (unroutedSlot !== undefined) return unrouted('type.pointer', unroutedSlot);
 	return b.pointerTypeMut(type_pointer$389_type(input.type));
 };
 const type_qualified$238 = (input: PathInput<RustMap, 'type.qualified'>): ReturnType<typeof b.qualifiedType> => {
+	const unroutedSlot = unroutedIn(input, ['alias', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('type.qualified', unroutedSlot);
 	return b.qualifiedType({ type: type_qualified$238_type(input.type), alias: type_qualified$238_alias(input.alias) });
 };
 const type_reference$252 = (input: PathInput<RustMap, 'type.reference'>): ReturnType<typeof b.referenceType> => {
+	const unroutedSlot = unroutedIn(input, ['lifetime', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('type.reference', unroutedSlot);
 	return b.referenceType({
 		lifetime: input.lifetime === undefined ? undefined : type_reference$252_lifetime(input.lifetime),
 		type: type_reference$252_type(input.type),

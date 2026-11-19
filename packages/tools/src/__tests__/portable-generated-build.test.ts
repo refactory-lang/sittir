@@ -39,6 +39,33 @@ const outcomeOf = (run: () => string): Outcome => {
 	}
 };
 
+const EDGE_SCALARS: readonly (number | bigint)[] = [-0, -1, -1.5, Number.NaN, Number.POSITIVE_INFINITY, 1.5, 2, 2n, -2n, 2 ** 60];
+
+describe.each(GRAMMARS)('the generated portable build of %s, on a number path', (grammar) => {
+	it('builds or refuses every edge value as the interpreter does', async () => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as { readonly build: { readonly paths: Readonly<Record<string, { readonly root: boolean; readonly arms: readonly { readonly scalar?: string }[] }>> } };
+		const generated = scopeBuilders(engine, portableBuild);
+		const outcome = (run: () => unknown): string => {
+			const result = outcomeOf(() => engine.render(run() as never).toString());
+			return 'text' in result ? result.text : 'refused';
+		};
+		const numberPaths = Object.entries(table.paths).filter(([, row]) => row.root && row.arms.some((arm) => arm.scalar !== undefined)).map(([path]) => path);
+		const differences = numberPaths.flatMap((path) => {
+			const run = path.split('.').reduce<unknown>((at, segment) => ((typeof at === 'object' || typeof at === 'function') && at !== null ? (at as Record<string, unknown>)[segment] : undefined), generated);
+			if (typeof run !== 'function') return [];
+			return EDGE_SCALARS.flatMap((value) => {
+				const structure = { $path: path, $value: value };
+				const [built, interpreted] = [outcome(() => (run as PathFunction)(structure)), outcome(() => runtime.build(structure))];
+				return built === interpreted ? [] : [`${path} ${Object.is(value, -0) ? '-0' : typeof value === 'bigint' ? `${value}n` : String(value)}: generated ${JSON.stringify(built)}, interpreter ${JSON.stringify(interpreted)}`];
+			});
+		});
+		expect(differences).toEqual([]);
+	});
+});
+
 describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 	it.each(STORAGES)('builds every corpus structure as the interpreter does, in %s storage', async (nodeStorage) => {
 		const language = await languageByName(grammar);
