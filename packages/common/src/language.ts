@@ -1,5 +1,7 @@
 import { engineOf } from './engine-scope.ts';
 
+export { storedSlotRead } from './stored-slot.ts';
+
 export type KindTest = (value: unknown, kinds: ReadonlySet<number>) => boolean;
 
 export function inLanguage(language: object): (value: unknown) => boolean {

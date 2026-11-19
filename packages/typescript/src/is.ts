@@ -4,6 +4,7 @@
 
 import { TSKindId } from './kinds.js';
 import { holdsKinds, type KindTest } from '@sittir/common/language';
+import { storedSlotRead } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
 
@@ -1705,13 +1706,23 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G, hoisted = false): G {
+function _at<G extends object>(
+	host: (v: unknown) => boolean,
+	seat: string,
+	guard: G,
+	hoisted = false,
+	stored?: string
+): G {
 	const inner = guard as unknown as (v: unknown) => boolean;
 	const forms: Record<string, object> = {};
 	for (const name of Object.keys(guard))
-		forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted);
+		forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted, stored);
 	return _vg(
-		(v: unknown): boolean => (host(v) && inner((v as Record<string, () => unknown>)[seat]!())) || (hoisted && inner(v)),
+		(v: unknown): boolean =>
+			(host(v) &&
+				(inner((v as Record<string, () => unknown>)[seat]!()) ||
+					(stored !== undefined && inner(storedSlotRead(v as object, seat, stored, false))))) ||
+			(hoisted && inner(v)),
 		forms
 	) as unknown as G;
 }
@@ -2051,7 +2062,9 @@ export function guardsWith(test: KindTest): IsGuards {
 					_vg(_g(TSKindId.ImportClauseGroup), {
 						namespaceImport: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamespaceImport_guard, true),
 						namedImports: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamedImports_guard, true)
-					})
+					}),
+					false,
+					'_import_clause_group'
 				)
 			}),
 			true

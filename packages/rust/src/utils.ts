@@ -1257,7 +1257,7 @@ export const structure: StructureTable = Object.freeze({
 		hoisted: [
 			['visibilityModifier', 'FunctionItem.visibilityModifier', 'a built VisibilityModifier', [235, 381]],
 			['typeParameters', 'FunctionItem.typeParameters', 'a built TypeParameters', [219, 347, 430]],
-			['parameters', 'FunctionItem.parameters', 'a built Parameters', [230, 349, 429, 441]]
+			['parameters', 'FunctionItem.parameters', 'a built Parameters', [230, 232, 233, 236, 349, 429, 441]]
 		],
 		config: [
 			'visibilityModifier',
@@ -1297,7 +1297,7 @@ export const structure: StructureTable = Object.freeze({
 		hoisted: [
 			['visibilityModifier', 'FunctionSignatureItem.visibilityModifier', 'a built VisibilityModifier', [235, 381]],
 			['typeParameters', 'FunctionSignatureItem.typeParameters', 'a built TypeParameters', [219, 347, 430]],
-			['parameters', 'FunctionSignatureItem.parameters', 'a built Parameters', [230, 349, 429, 441]]
+			['parameters', 'FunctionSignatureItem.parameters', 'a built Parameters', [230, 232, 233, 236, 349, 429, 441]]
 		],
 		config: [
 			'visibilityModifier',
@@ -1670,7 +1670,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		hoisted: [
 			['forLifetimes', 'FunctionType.forLifetimes', 'a built ForLifetimes', [239, 241, 350]],
-			['parameters', 'FunctionType.parameters', 'a built Parameters', [230, 349, 429, 441]]
+			['parameters', 'FunctionType.parameters', 'a built Parameters', [230, 232, 233, 236, 349, 429, 441]]
 		],
 		config: ['forLifetimes', 'content', 'parameters', 'returnType']
 	},
@@ -3551,7 +3551,7 @@ export const structure: StructureTable = Object.freeze({
 		hoisted: [
 			['visibilityModifier', 'MethodDeclaration.visibilityModifier', 'a built VisibilityModifier', [235, 381]],
 			['typeParameters', 'MethodDeclaration.typeParameters', 'a built TypeParameters', [219, 347, 430]],
-			['parameters', 'MethodDeclaration.parameters', 'a built Parameters', [230, 349, 429, 441]]
+			['parameters', 'MethodDeclaration.parameters', 'a built Parameters', [230, 232, 233, 236, 349, 429, 441]]
 		],
 		config: [
 			'visibilityModifier',
@@ -3597,7 +3597,7 @@ export const structure: StructureTable = Object.freeze({
 		hoisted: [
 			['visibilityModifier', 'SignatureMethodDeclaration.visibilityModifier', 'a built VisibilityModifier', [235, 381]],
 			['typeParameters', 'SignatureMethodDeclaration.typeParameters', 'a built TypeParameters', [219, 347, 430]],
-			['parameters', 'SignatureMethodDeclaration.parameters', 'a built Parameters', [230, 349, 429, 441]]
+			['parameters', 'SignatureMethodDeclaration.parameters', 'a built Parameters', [230, 232, 233, 236, 349, 429, 441]]
 		],
 		config: [
 			'visibilityModifier',

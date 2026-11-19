@@ -1872,7 +1872,10 @@ function hoistedKindIds(chain: WrapperChain, nodeMap: NodeMap): number[] | undef
 		visited.add(node);
 		if (node.kindId !== undefined) ids.add(node.kindId);
 		else complete = false;
-		if (node instanceof AssembledList) visitSlot(canonicalSeparatedListField(node));
+		if (node instanceof AssembledList) {
+			visitSlot(canonicalSeparatedListField(node));
+			for (const seat of elementsSeatOf(node, nodeMap)) for (const slot of seat.group.slots) if (isRequired(slot)) visitSlot(slot);
+		}
 		else if (node instanceof AssembledAlias) for (const slot of node.slots) visitSlot(slot);
 	};
 	const visitSlot = (slot: AssembledNonterminal): void => {
