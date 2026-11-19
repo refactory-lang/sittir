@@ -6,7 +6,6 @@ import type {
 	PortableContainer,
 	PortableFlagStep,
 	PortableSpelledFact,
-	PortableSpelling,
 	PortableKeyedMount,
 	PortableSlotRoute,
 	PortableMount,
@@ -29,7 +28,6 @@ export interface PortableBuildContext {
 	readonly builders: object;
 	readonly kindName: (kind: number) => string | undefined;
 	readonly readsAs: (path: string, node: { readonly $type: number }) => boolean;
-	readonly spellingOf: (kind: number, fact: string, item: unknown) => string | undefined;
 }
 
 type Builder = (...input: readonly unknown[]) => unknown;
@@ -160,7 +158,7 @@ const taken = (value: number | bigint, slot: PortableSlotRoute): PortableStructu
 const spelledValue = (value: PortableStructure['$value']): string =>
 	typeof value === 'string' ? `"${value}"` : typeof value === 'bigint' ? `${value}n` : Object.is(value, -0) ? '-0' : String(value);
 
-export function portableBuilder({ language, table, builders, kindName, readsAs, spellingOf }: PortableBuildContext): (structure: PortableStructure) => unknown {
+export function portableBuilder({ language, table, builders, kindName, readsAs }: PortableBuildContext): (structure: PortableStructure) => unknown {
 	const nameOf = (kind: number): string => kindName(kind) ?? `kind ${kind}`;
 	const builderAt = (key: string): Builder => {
 		const builder = key.split('.').reduce<unknown>((at, segment) => (at as Record<string, unknown> | undefined)?.[segment], builders);
@@ -281,18 +279,6 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 		const factsSet = (arm: PortableBuildArm, structure: PortableStructure): readonly PortableSpelledFact[] =>
 			(arm.facts ?? []).filter((fact) => fact.flag === undefined || (structure.$flags ?? []).includes(fact.flag));
 		const spelledIn = new WeakMap<object, readonly { readonly slot: string; readonly index: number | undefined; readonly item: PortableStructure }[]>();
-		const spellingTexts = new WeakMap<PortableSpelling, string | undefined>();
-		const slotAt = (seat: PortableSeat, name: string): PortableSlotRoute | undefined =>
-			within(seat)
-				.flatMap((container) => container.slots ?? [])
-				.find((slot) => slot.name === name);
-		const spellingText = (fact: PortableSpelledFact, spelling: PortableSpelling, kind: number, seat: PortableSeat): string | undefined => {
-			if (!spellingTexts.has(spelling)) {
-				const slot = slotAt(seat, fact.slot);
-				spellingTexts.set(spelling, slot === undefined ? undefined : spellingOf(kind, fact.name, element(spelling.item, slot, slot.seats, 0).value));
-			}
-			return spellingTexts.get(spelling);
-		};
 		const filledAt = (item: PortableStructure, [key, ...rest]: readonly string[], text: string): PortableStructure =>
 			({ ...item, [key!]: rest.length === 0 ? text : filledAt((item[key!] ?? {}) as PortableStructure, rest, text) }) as PortableStructure;
 		const spelledAs = ([first, ...rest]: readonly string[], text: string): boolean => {
@@ -305,12 +291,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			}
 			return at === text.length;
 		};
-		const spelledItem = (fact: PortableSpelledFact, structure: PortableStructure, kind: number, seat: PortableSeat): PortableStructure => {
+		const spelledItem = (fact: PortableSpelledFact, structure: PortableStructure): PortableStructure => {
 			const spelling = structure.$at?.[fact.name]?.spelling;
-			const chosen =
-				spelling === undefined
-					? fact.spellings[0]!
-					: fact.spellings.find((candidate) => (candidate.holes === undefined ? spellingText(fact, candidate, kind, seat) === spelling : spelledAs(candidate.text, spelling)));
+			const chosen = spelling === undefined ? fact.spellings[0]! : fact.spellings.find((candidate) => spelledAs(candidate.text, spelling));
 			if (chosen === undefined) throw new Error(`portable build: ${structure.$path}'s ${fact.name} has no ${language} spelling ${JSON.stringify(spelling)}`);
 			return Object.entries(chosen.holes ?? {}).reduce((item, [hole, keys]) => {
 				const text = structure[hole];
@@ -729,7 +712,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				const unheld = facts.find((fact) => seat === undefined || !ownedBy(seat).has(fact.slot));
 				if (unheld !== undefined)
 					throw new Error(`portable build: ${structure.$path}'s ${unheld.name} is spelled in its container's ${unheld.slot}, which ${seat === undefined ? 'a structure built on its own' : 'its seat'} has none of`);
-				spelledIn.set(structure, facts.map((fact) => ({ slot: fact.slot, index: structure.$at?.[fact.name]?.index, item: spelledItem(fact, structure, arm.kind, seat!) })));
+				spelledIn.set(structure, facts.map((fact) => ({ slot: fact.slot, index: structure.$at?.[fact.name]?.index, item: spelledItem(fact, structure) })));
 			}
 			const listed: (readonly [string, PortableFlagStep])[] = [];
 			for (const flag of structure.$flags ?? []) {

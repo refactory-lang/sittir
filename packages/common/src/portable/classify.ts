@@ -59,7 +59,6 @@ export interface HoldingFact {
 interface RowsReader {
 	readonly classify: PortableClassifier;
 	readonly factsOf: (node: Node, container: Node) => readonly HoldingFact[];
-	readonly spellingOf: (kind: number, fact: string, item: unknown) => string | undefined;
 	readonly slotsOf: (node: Node) => readonly (readonly [accessor: string, items: readonly unknown[]])[];
 	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
 	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
@@ -114,11 +113,6 @@ export function flagHolds(rows: PortableRows, value: Node | number, flag: string
  */
 export function factsOf(rows: PortableRows, node: Node, container: Node): readonly HoldingFact[] {
 	return readerOf(rows).factsOf(node, container);
-}
-
-/** The spelling of a fact a kind's container spells, read from an item of that container: the text of the item's slot the fact spells. */
-export function spellingOf(rows: PortableRows, kind: number, fact: string, item: unknown): string | undefined {
-	return readerOf(rows).spellingOf(kind, fact, item);
 }
 
 export function slotsOf(rows: PortableRows, node: Node): readonly (readonly [accessor: string, items: readonly unknown[]])[] {
@@ -212,11 +206,6 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		}
 		return holding;
 	};
-	const spellingOf = (kind: number, name: string, item: unknown): string | undefined => {
-		const spelled = (table.facts?.[kind] ?? []).find((fact) => fact.name === name && fact.spelled !== undefined)?.spelled;
-		const texts = spelled === undefined || !hasKind(item) ? [] : textsAt(item, [spelled]);
-		return texts.length === 1 ? texts[0] : undefined;
-	};
 	const flagHolds = (value: Node | number, flag: string): boolean => {
 		const plan = flags[typeof value === 'number' ? value : value.$type]?.[flag];
 		return plan !== undefined && plan !== null && holds(plan, subjectsOf([value]));
@@ -267,5 +256,5 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		if (entries.length === 0 || !entries.every(unplaced)) return true;
 		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node, items)));
 	};
-	return { classify, factsOf, spellingOf, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
+	return { classify, factsOf, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
 }
