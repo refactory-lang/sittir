@@ -97,8 +97,9 @@ jobs:
 
       - name: Benchmark reporting tests
         # The benchmark workflows run these with `node --test` before any
-        # build, so they stay outside vitest.
-        run: node --test scripts/ci/arena-benchmark-*.test.mjs
+        # build, and the paired-refs summary is Python, so they stay outside
+        # vitest.
+        run: node --test scripts/ci/arena-benchmark-*.test.mjs scripts/ci/paired-refs/summarize.test.mjs
 
       - name: Security Audit
         run: pnpm audit --audit-level moderate
