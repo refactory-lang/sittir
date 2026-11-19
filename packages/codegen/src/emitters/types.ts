@@ -1015,7 +1015,7 @@ function hoistedReadType(
 	const last = chain.slots[chain.slots.length - 1]!;
 	if (listed(last)) {
 		if (isMultiple(slot)) return slotListTypeOf(slot, () => storageElementOf(last), 'readonly');
-		const items = !isRequired(slot) || chain.slots.some((s) => !isRequired(s)) ? `readonly (${storageElementOf(last)})[]` : slotListTypeOf(last, storageElementOf, 'readonly');
+		const items = hoistedListType(last, storageElementOf, isRequired(slot) && chain.slots.every(isRequired));
 		return isRequired(slot) ? items : `${items} | undefined`;
 	}
 	const element = spelledReadType(last) ?? storageElementOf(last);
@@ -1325,6 +1325,11 @@ function hoistedReadItemsType(
 	return items === undefined || isRequired(field) ? items : `${items} | undefined`;
 }
 
+function hoistedListType(itemSlot: AssembledNonterminal, element: (slot: AssembledNonterminal) => string, present: boolean): string {
+	if (present) return slotListTypeOf(itemSlot, element, 'readonly');
+	return finalSeatOf(itemSlot) === undefined ? `readonly (${element(itemSlot)})[]` : `${slotListTypeOf(itemSlot, element, 'readonly')} | readonly []`;
+}
+
 function hoistedItemsType(
 	chain: WrapperChain,
 	field: AssembledNonterminal,
@@ -1340,7 +1345,7 @@ function hoistedItemsType(
 	if (itemSlot === undefined) return undefined;
 	const element = (slot: AssembledNonterminal): string =>
 		(inputKinds === undefined ? undefined : fieldInputHintTypeExpr(slot, list!.kind, nodeMap, inputKinds)) ?? fieldTypeExpr(slot, nodeMap, lookupUnion);
-	return !isRequired(field) || chain.slots.some((slot) => !isRequired(slot)) ? `readonly (${element(itemSlot)})[]` : slotListTypeOf(itemSlot, element, 'readonly');
+	return hoistedListType(itemSlot, element, isRequired(field) && chain.slots.every(isRequired));
 }
 
 function fieldLooseHintTypeExpr(

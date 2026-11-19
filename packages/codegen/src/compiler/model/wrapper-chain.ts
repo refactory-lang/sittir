@@ -8,7 +8,6 @@ import {
 	AssembledLexedPattern,
 	AssembledList,
 	AssembledPolymorph,
-	deriveSlotCardinality,
 	isMultiple,
 	isNodeRef,
 	isNonEmpty,

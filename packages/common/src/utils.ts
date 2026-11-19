@@ -8,7 +8,7 @@ import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
 import { undoIfFillFails } from './list-fills.ts';
-import { hydrateSlotBy, hydrateSlotsBy, hydrateStoredSlot, hydrateStoredSlots, storedSlotRead, type HydrateOne } from './stored-slot.ts';
+import { hydrateSlotBy, hydrateSlotsBy, storedSlotRead, type HydrateOne } from './stored-slot.ts';
 import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
@@ -967,7 +967,7 @@ export function storedHop(accessor: string, storage: string, many: boolean): Hoi
 	};
 }
 
-export { hydrateStoredSlot, hydrateStoredSlots, storedSlotRead } from './stored-slot.ts';
+export { hydrateStoredSlot, hydrateStoredSlots } from './stored-slot.ts';
 export { numberRefusal, numberText, type NumberBase } from './number.ts';
 export {
 	decodeIndex,

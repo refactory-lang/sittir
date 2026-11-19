@@ -7628,7 +7628,7 @@ export interface MatchExpression {
 		readonly subject:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
-		readonly body: readonly (MatchArm | LastMatchArm)[];
+		readonly body: readonly [...MatchArm[], LastMatchArm] | readonly [];
 	};
 	readonly __wrapperHints__?: {
 		readonly body: MatchBlock;
@@ -7641,7 +7641,7 @@ export interface MatchExpression {
 		readonly body: SlotHint<NonNullable<T.MatchExpression.Config>['body']>;
 	};
 	readonly subject: () => Expression;
-	readonly body: () => readonly (MatchArm | LastMatchArm)[];
+	readonly body: () => readonly [...MatchArm[], LastMatchArm] | readonly [];
 }
 
 export interface MatchBlock {
