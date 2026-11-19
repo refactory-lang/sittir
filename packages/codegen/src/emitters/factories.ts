@@ -137,6 +137,7 @@ import {
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { BuiltViewTable, leafAdoptLines, patchTwinLines, RECORD_CONSTRUCTION_IMPORTS, RECORD_VIEW_TYPES, recordParts, recordRefusalLines } from './record-construction.ts';
+import { membershipKindsOf } from './membership.ts';
 import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
 import { chainReadsAsList, chainWrapExpr, wrapperChainFor, wrapperChainOfSlot, type WrapperChain } from '../compiler/model/wrapper-chain.ts';
 import { splicedEnvelopeOf } from '../compiler/model/spliced-envelopes.ts';
@@ -410,12 +411,17 @@ function storedKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] {
 
 function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | undefined {
 	const stored = f.values.map((value) => valueStorageOf(value, nodeMap));
-	if (stored.some((storage) => storage === undefined || storage.via !== 'node')) return undefined;
+	if (stored.some((storage) => storage === undefined)) return undefined;
 	const ids = new Set<number>();
 	for (const kind of isMultiple(f) ? transparentContentKindNames(slotKindNames(f), nodeMap) : slotKindNames(f)) {
 		const id = nodeMap.nodes.get(kind)?.kindId;
-		if (id === undefined) return undefined;
-		ids.add(id);
+		if (id !== undefined) {
+			ids.add(id);
+			continue;
+		}
+		const members = membershipKindsOf([kind], nodeMap).map((member) => nodeMap.nodes.get(member)?.kindId);
+		if (members.length === 0 || members.some((member) => member === undefined)) return undefined;
+		for (const member of members) ids.add(member!);
 	}
 	return ids.size === 0 ? undefined : [...ids].sort((a, b) => a - b);
 }

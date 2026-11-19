@@ -185,7 +185,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_name', 'name']],
 		single: [['_name', 'AnonymousNode.name']],
 		nodeOnly: [
-			['_name', 'AnonymousNode.name', 'a built String'],
+			['_name', 'AnonymousNode.name', 'a built String', [40]],
 			['_elements', 'AnonymousNode.elements', 'a built ListElement', [55]]
 		],
 		config: ['name', 'elements'],
@@ -300,7 +300,7 @@ export const structure: StructureTable = Object.freeze({
 			['_named_node_group', 'NamedNodePlain.namedNodeGroup']
 		],
 		nodeOnly: [
-			['_name', 'NamedNodePlain.name', 'buildIdentifier(…)'],
+			['_name', 'NamedNodePlain.name', 'buildIdentifier(…)', [5]],
 			['_named_node_group', 'NamedNodePlain.namedNodeGroup', 'a built NamedNodeGroup', [59]],
 			['_elements', 'NamedNodePlain.elements', 'a built ListElement', [55]]
 		],
