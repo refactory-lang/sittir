@@ -1628,7 +1628,8 @@ function buildIfStatement$with(node: Held, setter: string, args: readonly unknow
 						rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -2118,7 +2119,8 @@ function buildTryStatement$with(node: Held, setter: string, args: readonly unkno
 						rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildFinallyClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildFinallyClause(v), TSKindId.FinallyClause)),
 				TSKindId.FinallyClause
 			);
 	}
@@ -3558,7 +3560,8 @@ function buildClass$with(node: Held, setter: string, args: readonly unknown[]): 
 						) => rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'name':
@@ -3612,7 +3615,8 @@ function buildClass$with(node: Held, setter: string, args: readonly unknown[]): 
 						rebuilt(node, handle, () => buildClass({ ...config, heritage: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage)),
 				TSKindId.ClassHeritage
 			);
 		case 'body':
@@ -3794,7 +3798,8 @@ function buildClassDeclaration$with(node: Held, setter: string, args: readonly u
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'name':
@@ -3848,7 +3853,8 @@ function buildClassDeclaration$with(node: Held, setter: string, args: readonly u
 						rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage)),
 				TSKindId.ClassHeritage
 			);
 		case 'body':
@@ -8239,7 +8245,8 @@ function buildAbstractClassDeclaration$with(node: Held, setter: string, args: re
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'name':
@@ -8293,7 +8300,8 @@ function buildAbstractClassDeclaration$with(node: Held, setter: string, args: re
 						rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildClassHeritage(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildClassHeritage(v), TSKindId.ClassHeritage)),
 				TSKindId.ClassHeritage
 			);
 		case 'body':
@@ -9402,7 +9410,8 @@ function buildRequiredParameter$with(node: Held, setter: string, args: readonly 
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -9436,7 +9445,8 @@ function buildRequiredParameter$with(node: Held, setter: string, args: readonly 
 						rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -9581,7 +9591,8 @@ function buildOptionalParameter$with(node: Held, setter: string, args: readonly 
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -9615,7 +9626,8 @@ function buildOptionalParameter$with(node: Held, setter: string, args: readonly 
 						rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -10152,7 +10164,7 @@ function buildAssertsAnnotation$with(node: Held, setter: string, args: readonly 
 						rebuilt(node, handle, () => _buildAssertsAnnotation(value))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAsserts(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildAsserts(v), TSKindId.Asserts)),
 				TSKindId.Asserts
 			);
 	}
@@ -10223,7 +10235,8 @@ function buildTupleParameter$with(node: Held, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -10303,7 +10316,8 @@ function buildOptionalTupleParameter$with(node: Held, setter: string, args: read
 						rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -12604,7 +12618,8 @@ function buildPropertySignature$with(node: Held, setter: string, args: readonly 
 						rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -12840,7 +12855,8 @@ function buildTypeParameter$with(node: Held, setter: string, args: readonly unkn
 						rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDefaultType(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDefaultType(v), TSKindId.DefaultType)),
 				TSKindId.DefaultType
 			);
 	}
@@ -13139,7 +13155,8 @@ function buildConstructSignature$with(node: Held, setter: string, args: readonly
 						rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -14739,7 +14756,8 @@ function buildCatchClauseGroup$with(node: Held, setter: string, args: readonly u
 						rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -16390,7 +16408,8 @@ function buildClassBodyMemberMethod$with(node: Held, setter: string, args: reado
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'methodDefinition':
@@ -17130,7 +17149,8 @@ function buildParenthesizedExpressionTyped$with(node: Held, setter: string, args
 						rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -18437,7 +18457,8 @@ function buildExportStatementDefaultDeclaration$with(node: Held, setter: string,
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'content':
@@ -18900,7 +18921,8 @@ function buildVariableDeclaratorPlain$with(node: Held, setter: string, args: rea
 						rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -18989,7 +19011,8 @@ function buildVariableDeclaratorDefinite$with(node: Held, setter: string, args: 
 						rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -19901,7 +19924,8 @@ function buildSetterParameter$with(node: Held, setter: string, args: readonly un
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -19935,7 +19959,8 @@ function buildSetterParameter$with(node: Held, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -20510,14 +20535,22 @@ function buildMethodDefinitionSetter$with(node: Held, setter: string, args: read
 				undefined,
 				(args: readonly never[]) =>
 					args.map((v) =>
-						((v: never) =>
-							buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)))(
-							v as never
+						wrapHoisted(
+							v,
+							(v: never) =>
+								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
 				TSKindId.FormalParametersSetAccessorSignature,
 				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
+					args.map((v) =>
+						wrapHoisted(
+							v,
+							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
+							TSKindId.FormalParametersElementsSetAccessorSignature
+						)
+					)
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -21054,14 +21087,22 @@ function buildMethodSignatureSetter$with(node: Held, setter: string, args: reado
 				undefined,
 				(args: readonly never[]) =>
 					args.map((v) =>
-						((v: never) =>
-							buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)))(
-							v as never
+						wrapHoisted(
+							v,
+							(v: never) =>
+								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
 				TSKindId.FormalParametersSetAccessorSignature,
 				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
+					args.map((v) =>
+						wrapHoisted(
+							v,
+							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
+							TSKindId.FormalParametersElementsSetAccessorSignature
+						)
+					)
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -21571,14 +21612,22 @@ function buildAbstractMethodSignatureSetter$with(node: Held, setter: string, arg
 				undefined,
 				(args: readonly never[]) =>
 					args.map((v) =>
-						((v: never) =>
-							buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)))(
-							v as never
+						wrapHoisted(
+							v,
+							(v: never) =>
+								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
 				TSKindId.FormalParametersSetAccessorSignature,
 				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => buildFormalParametersElementsSetAccessorSignature(v))(v as never))
+					args.map((v) =>
+						wrapHoisted(
+							v,
+							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
+							TSKindId.FormalParametersElementsSetAccessorSignature
+						)
+					)
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -21746,7 +21795,8 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'declare':
@@ -21808,7 +21858,8 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 						rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -21984,7 +22035,8 @@ function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, arg
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -22034,7 +22086,8 @@ function buildPublicFieldDefinitionAccessor$with(node: Held, setter: string, arg
 						rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -22392,7 +22445,8 @@ function buildReceiverParameterDeclaration$with(node: Held, setter: string, args
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -22424,7 +22478,8 @@ function buildReceiverParameterDeclaration$with(node: Held, setter: string, args
 						rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':

@@ -16,6 +16,7 @@ import {
 	listSlotWith,
 	hoistedWith,
 	listElementsHop,
+	wrapHoisted,
 	elementsWith,
 	seatWith,
 	groupField,
@@ -985,7 +986,8 @@ function wrapUnionItem$with(node: Held, setter: string, args: readonly unknown[]
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -1206,7 +1208,8 @@ function wrapEnumItem$with(node: Held, setter: string, args: readonly unknown[])
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -1545,7 +1548,8 @@ function wrapEnumVariant$with(node: Held, setter: string, args: readonly unknown
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -1804,7 +1808,8 @@ function wrapFieldDeclaration$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -2063,7 +2068,8 @@ function wrapExternCrateDeclaration$with(node: Held, setter: string, args: reado
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -2177,7 +2183,8 @@ function wrapConstItem$with(node: Held, setter: string, args: readonly unknown[]
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -2302,7 +2309,8 @@ function wrapStaticItem$with(node: Held, setter: string, args: readonly unknown[
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'byReference':
@@ -2449,7 +2457,8 @@ function wrapTypeItem$with(node: Held, setter: string, args: readonly unknown[])
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -2668,7 +2677,8 @@ function wrapFunctionItem$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':
@@ -2954,7 +2964,8 @@ function wrapFunctionSignatureItem$with(node: Held, setter: string, args: readon
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':
@@ -3532,7 +3543,8 @@ function wrapTraitItem$with(node: Held, setter: string, args: readonly unknown[]
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'unsafe':
@@ -4659,7 +4671,8 @@ function wrapUseDeclaration$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'argument':
@@ -8571,7 +8584,8 @@ function wrapShorthandFieldInitializer$with(node: Held, setter: string, args: re
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'name':
@@ -8672,7 +8686,8 @@ function wrapFieldInitializer$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'name':
@@ -8842,7 +8857,8 @@ function wrapIfExpression$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -13368,7 +13384,8 @@ function wrapAttributedElement$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'expression':
@@ -15696,7 +15713,10 @@ function wrapVisibilityModifierPub$with(node: Held, setter: string, args: readon
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifierPubScope(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) =>
+						wrapHoisted(v, (v: never) => RAW.buildVisibilityModifierPubScope(v), TSKindId.VisibilityModifierPubScope)
+					),
 				TSKindId.VisibilityModifierPubScope
 			);
 	}
@@ -15887,7 +15907,8 @@ function wrapModItemExternal$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -15993,7 +16014,8 @@ function wrapModItemInline$with(node: Held, setter: string, args: readonly unkno
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -16580,7 +16602,8 @@ function wrapForeignModItemSemi$with(node: Held, setter: string, args: readonly 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildExternModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildExternModifier(v), TSKindId.ExternModifier)),
 				TSKindId.ExternModifier
 			);
 	}
@@ -16686,7 +16709,8 @@ function wrapForeignModItemBody$with(node: Held, setter: string, args: readonly 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildExternModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildExternModifier(v), TSKindId.ExternModifier)),
 				TSKindId.ExternModifier
 			);
 		case 'body':
@@ -18536,7 +18560,8 @@ function wrapStructItemBrace$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -18763,7 +18788,8 @@ function wrapStructItemTuple$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -18983,7 +19009,8 @@ function wrapStructItemUnit$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -19133,7 +19160,8 @@ function wrapAttributedFieldDeclaration$with(node: Held, setter: string, args: r
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'fieldDeclaration':
@@ -19241,7 +19269,8 @@ function wrapAttributedEnumVariant$with(node: Held, setter: string, args: readon
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'enumVariant':
@@ -19335,7 +19364,8 @@ function wrapAttributedParameter$with(node: Held, setter: string, args: readonly
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'content':
@@ -19444,7 +19474,8 @@ function wrapAttributedTypeParameter$with(node: Held, setter: string, args: read
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'content':
@@ -19541,7 +19572,8 @@ function wrapArgument$with(node: Held, setter: string, args: readonly unknown[])
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'expression':
@@ -19655,7 +19687,8 @@ function wrapAttributedOrderedField$with(node: Held, setter: string, args: reado
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'visibilityModifier':
@@ -19681,7 +19714,8 @@ function wrapAttributedOrderedField$with(node: Held, setter: string, args: reado
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'type':
@@ -20435,7 +20469,8 @@ function wrapAttributedParameterReceiver$with(node: Held, setter: string, args: 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'content':
@@ -21093,7 +21128,8 @@ function wrapMethodDeclaration$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':
@@ -21382,7 +21418,8 @@ function wrapSignatureMethodDeclaration$with(node: Held, setter: string, args: r
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':

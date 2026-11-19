@@ -213,7 +213,7 @@ export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScop
 				expr = `(${make} as unknown as (...items: never[]) => never)(...(${expr} as never[]))`;
 				list = false;
 			} else {
-				expr = list ? `${expr}.map((item) => ${make}(item as never))` : `${make}(${expr})`;
+				expr = list ? `${expr}.map((item) => wrapHoisted(item, ${make}, TSKindId.${nodeMap.nodes.get(chain.storage[hop]!)!.typeName}))` : `${make}(${expr})`;
 			}
 		}
 		return expr;
