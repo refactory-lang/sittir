@@ -437,6 +437,7 @@ Approved by the user, 2026-11-14.
 | `@sittir/types/vocabulary` | `Identifier`, `Literal.String.Text`, `Comment.Text`, `Comment.Html`, `Literal.Regex.Flags`, `Literal.Regex.Pattern`, `Clause.Import.Relative.Prefix`, `Expression.Interpolation.Conversion` | changed: gain `readonly $value: string`; the structural identifier subkinds declare `$value?: never` (decision 8, approved 2026-11-15) |
 | `@sittir/types/vocabulary` | `Read<G, P>`, `InputOf<R, G>`, `BuildInput<G, P>`, `Slot` | changed: a path that declares a text `$value` also reads and builds from its bare text (decision 8, approved 2026-11-15) |
 | `@sittir/types/vocabulary` | `Unmapped` | changed: in an input, a slot's node arm is `G['nodes'][P]` |
+| `@sittir/common/portable/utils` | `entriesHolding`, `PlanItems` | added (the maintainer, 2026-11-18): the classifier's selection of the entries a node holds, shared with codegen's coverage stamp so the two cannot disagree |
 | generated `<lang>/src/portable/build.ts` | `build` (the table) | replaced: `portableBuild(engine)` |
 | generated `<lang>/src/portable/project.ts` | `project` | added |
 | generated `<lang>/src/portable/index.ts` | `rows` | removed |
