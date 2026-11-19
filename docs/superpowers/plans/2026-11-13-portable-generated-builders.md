@@ -150,8 +150,9 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - a generated arm refuses a slot its path admits that the arm has no route for, as the interpreter does (`<path> has no slot <x>`);
   - a path no build takes leaves the exact sets, and read types narrow with it: codegen stamps, per kind that reads as such a family path, whether its refinements cover every case (all 13 are covered, across 16 kinds), and refuses an uncovered one (`portable-family-uncovered`);
   - arms with several forms, each form tried under the test that the slots outside it are absent, and slots reached in several steps, each step's builder a container of the slot's seats;
-  - each container fact's spelling with no holes carries its text, derived from the render bodies in the same run.
-- Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 827, rust 1297, typescript 1315.
+  - each container fact's spelling with no holes carries its text, derived from the render bodies in the same run;
+  - containers that hold slots of their own, filled from the structure they wrap, with an arm's container facts among that slot's items at the index and in the spelling `$at` records; a seat is chosen by the slots the structure states and the facts it sets, and a root path with facts builds their container. Python's `file` builds (unfit 96 to 95).
+- Emit diagnostics count only functions the module keeps. The corpus test's not-generated ceilings are python 809, rust 1297, typescript 1315.
 - A path the emitter can't compile whole is left out with `portable-emit-unfit-slot` and counted by the corpus test's not-generated ceiling. That covers holders, mounts, options, and an arm whose forms build one slot through different routes.
 - The generated module stays out of `dist` beside the map, which `dist` already leaves out; only the corpus test loads it, from source.
 - The emit diagnostics' ceilings are recorded at their counts (`diagnostic-ceilings.json`).
@@ -160,7 +161,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 - Decision 7's bare numbers, by the outermost taker (ruled 2026-11-17). Each slot route carries `takers`: per scalar type, the path a bare number builds through there, the one inside none of the slot's other candidates. No slot has two, so none is undecided. Slots with takers: python 179 and 2 container slots, rust 178, typescript 200. In such a slot a number is a number, built by the interpreter and the generated module as `{ $path: taker, $value }`; a type the slot has no taker for is refused (`unnumbered`). The map's `inputs` admit each number path's scalars. The type can't refuse a fixed word's bare kind id there, since a numeric enum member and `number` are assignable both ways; the build reads it as a number, never a kind id.
 - Remaining:
   - decision 5;
-  - python's getter;
+  - python's getter: its facts build, but its body's block arms pick by the render options' variant (`_suite`), which the emitter refuses, as it does for 15 python paths;
   - decision 9's tails;
   - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
   - decision 7's bare booleans, once the emitter builds literal arms (`literal.boolean.*` arms are literal arms, unfit today), since a bare `true` has no generated path to go to until then;
