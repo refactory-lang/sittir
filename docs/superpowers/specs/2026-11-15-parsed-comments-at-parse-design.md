@@ -17,6 +17,7 @@
 - **Rust token trees take the options too** (2026-11-17, "Accept: token trees take the options too"). A token tree's members are slot content and the gaps between them are ordinary gaps; no fact keeps them as the source writes them. The options never merge two tokens. What can change in an edited or snapshot render is whether two adjacent punctuation tokens touch, which only a procedural macro can observe; an untouched macro call renders as its source bytes.
 - **A regex pattern's line breaks are trivia** (2026-11-17): the regex grammar declares `extras: [/\r?\n/]`, so an edited pattern takes its gaps from the options like any other.
 - **After a line-terminated extra a gap breaks the line,** whatever the options' arm for it, decided by the kind's line-terminated fact on the model and never by the comment's text (2026-11-17, brainstorm's call on a bug the stored whitespace had hidden: an entry added after `b # comment` rendered inside that comment).
+- **An empty statement stays on its predecessor's line** (2026-11-19, "Keep it on the line"). A list item whose kind spells nothing but its terminator, an empty statement, takes no line break before it, whatever the options' arm for the list's gaps. So an edited rust `const { 1 + 3 };` and typescript `declare module Foo.Bar { … };` keep the `;` where master does. The model decides which kind that is, never the kind's name or text, and the same rule holds in every grammar.
 
 ## The end state
 
