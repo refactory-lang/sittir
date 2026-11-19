@@ -8,7 +8,7 @@ type Member = { accessibilityModifier(): unknown };
 
 function firstMemberOf(source: string): Member {
 	const declaration = ts.parse(source).statements()[0] as unknown as {
-		body(): { members(): readonly { member(): Member }[] };
+		body(): readonly { member(): Member }[];
 	};
 	return declaration.body()[0]!.member();
 }

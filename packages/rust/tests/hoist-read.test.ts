@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
+const items = (read: unknown): never[] => [...(read as Iterable<never>)];
+
 describe.each(['arena', 'object'] as const)('the rust hoist reads through its wrappers, %s storage', (nodeStorage) => {
 	const firstItem = async (code: string) => {
 		const e = await createEngine(rust, { nodeStorage });
@@ -11,7 +13,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist reads through its wr
 	it('reads a generic item\'s type parameters through two wrappers', async () => {
 		const { e, item } = await firstItem('fn f<T, U>() {}\n');
 		if (!e.is.functionItem(item)) throw new Error('expected a function');
-		expect(item.typeParameters().map((parameter) => String(e.render(parameter)))).toEqual(['T', 'U']);
+		expect(items(item.typeParameters()).map((parameter) => String(e.render(parameter)))).toEqual(['T', 'U']);
 		e[Symbol.dispose]();
 	});
 
@@ -46,6 +48,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist reads through its wr
 
 	it('leaves the wrapper in the tree with its own range', async () => {
 		const { e, item } = await firstItem('fn f<T, U>() {}\n');
+		if (typeof item !== 'object') throw new Error('expected a node');
 		const wrappers = [...e.query(item).$descendants.ofType(e.kinds.TypeParameters)];
 		expect(wrappers.map((wrapper) => String(e.render(wrapper)))).toEqual(['<T, U>']);
 		e[Symbol.dispose]();

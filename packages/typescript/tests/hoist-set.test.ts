@@ -10,11 +10,11 @@ describe.each(['arena', 'object'] as const)('the typescript hoist sets through i
 
 	it('replaces the parts inside the backticks of a tagged template', async () => {
 		const { e, root } = await open('tag`a${b}c`;\ntag`x`;\n');
-		const [first, second] = root.statements();
+		const [first, second] = root.statements() as readonly unknown[];
 		const call = (statement: unknown) => {
 			const expression = (statement as { expression(): unknown }).expression();
 			if (!e.is.callExpressionTemplateCall(expression as never)) throw new Error('expected a tagged template');
-			return expression as ReturnType<typeof e.parse> & { $with: { arguments(...parts: unknown[]): unknown }; arguments(): readonly unknown[] };
+			return expression as unknown as { $with: { arguments(...parts: unknown[]): unknown }; arguments(): readonly unknown[] };
 		};
 		const edited = call(first).$with.arguments(...call(second).arguments());
 		expect(String(e.render(edited as never))).toBe('tag`x`');
@@ -52,7 +52,7 @@ describe.each(['arena', 'object'] as const)('the typescript hoist sets through i
 		const { e, root } = await open('function f(a) {}\nfunction g(b, c) {}\n');
 		const [f, g] = root.statements();
 		if (!e.is.functionDeclaration(f!) || !e.is.functionDeclaration(g!)) throw new Error('expected functions');
-		const [b, c] = g.parameters();
+		const [b, c] = g.parameters() as readonly never[];
 		expect(String(e.render(f.$with.parameters(b!, c!)))).toBe('function f(b, c) {}\n');
 		e[Symbol.dispose]();
 	});
@@ -61,7 +61,7 @@ describe.each(['arena', 'object'] as const)('the typescript hoist sets through i
 		const { e, root } = await open('function f<A>() {}\nfunction g<B, C>() {}\n');
 		const [f, g] = root.statements();
 		if (!e.is.functionDeclaration(f!) || !e.is.functionDeclaration(g!)) throw new Error('expected functions');
-		const [b, c] = g.typeParameters();
+		const [b, c] = g.typeParameters() as readonly never[];
 		expect(String(e.render(f.$with.typeParameters(b!, c!)))).toBe('function f<B, C>() {}\n');
 		e[Symbol.dispose]();
 	});

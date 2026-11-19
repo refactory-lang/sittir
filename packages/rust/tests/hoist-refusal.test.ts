@@ -10,7 +10,7 @@ describe.each(['arena', 'object'] as const)('a hoisted slot refuses a node of a 
 		expect(() => fn.$with.visibilityModifier!(block)).toThrow(/not a node of kind/);
 		expect(() => fn.$with.parameters!(block)).toThrow(/not a node of kind/);
 		expect(() => fn.$with.name!(block)).toThrow(/not a node of kind/);
-		expect(() => rs.build.functionItem({ name: 'f', visibilityModifier: block as never, body: rs.build.block() })).toThrow(/not a node of kind/);
+		expect(() => rs.build.functionItem({ name: 'f', visibilityModifier: block as never, parameters: [], body: rs.build.block() })).toThrow(/not a node of kind/);
 		expect(() => rs.build.functionItem({ name: 'f', parameters: block as never, body: rs.build.block() })).toThrow(/not a node of kind/);
 	});
 });

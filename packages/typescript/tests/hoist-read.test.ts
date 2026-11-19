@@ -11,7 +11,7 @@ describe.each(['arena', 'object'] as const)('the typescript hoist reads through 
 	it('reads a class\'s type parameters through two wrappers', async () => {
 		const { e, item } = await firstStatement('class A<T, U> {}\n');
 		if (!e.is.classDeclaration(item)) throw new Error('expected a class');
-		expect(item.typeParameters().map((parameter) => String(e.render(parameter)))).toEqual(['T', 'U']);
+		expect(item.typeParameters()!.map((parameter) => String(e.render(parameter)))).toEqual(['T', 'U']);
 		e[Symbol.dispose]();
 	});
 
@@ -42,6 +42,7 @@ describe.each(['arena', 'object'] as const)('the typescript hoist reads through 
 
 	it('leaves the wrapper in the tree with its own range', async () => {
 		const { e, item } = await firstStatement('class A<T, U> {}\n');
+		if (!e.is.classDeclaration(item)) throw new Error('expected a class');
 		const wrappers = [...e.query(item).$descendants.ofType(e.kinds.TypeParameters)];
 		expect(wrappers.map((wrapper) => String(e.render(wrapper)))).toEqual(['<T, U>']);
 		e[Symbol.dispose]();

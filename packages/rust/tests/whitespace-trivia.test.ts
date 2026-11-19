@@ -72,7 +72,7 @@ describe('a read node carries the whitespace before it that differs from the rea
 		const item = rs.parse('fn f(\n    x: Foo,\n) {}\n', { depth: Infinity }).statements()[0];
 		if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
 		const list = item.parameters();
-		if (list === undefined || !rs.is.parametersElements(list)) throw new Error('not an ordinary list');
+		if (list === undefined || !('$type' in list) || !rs.is.parametersElements(list)) throw new Error('not an ordinary list');
 		const parameter = list.items()[0]?.content();
 		if (parameter === undefined || !rs.is.parameter(parameter)) throw new Error('expected a parameter');
 		const type = parameter.type();

@@ -5,7 +5,7 @@ import typescript from '../src/index.ts';
 const ts = await createEngine(typescript);
 
 const memberOf = (source: string) => {
-	const declaration = ts.parse(source).statements()[0] as unknown as { body(): { members(): { methodDefinition(): { $type: number; $render(): { toString(): string } } }[] } };
+	const declaration = ts.parse(source).statements()[0] as unknown as { body(): readonly { methodDefinition(): { $type: number; $render(): { toString(): string } } }[] };
 	return declaration.body()[0]!.methodDefinition();
 };
 

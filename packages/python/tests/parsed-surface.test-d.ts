@@ -20,10 +20,10 @@ export function parsedSurface(): string {
 	const item = engine.parse('def f():\n    pass\n').statements()[0]!;
 	if (!engine.is.functionDefinition(item)) return '';
 	expectTrue<Equals<typeof item, T.FunctionDefinition.Parsed>>();
-	expectTrue<Equals<ReturnType<typeof item.parameters>, T.Parameters.Parsed>>();
+	expectTrue<Equals<ReturnType<typeof item.parameters>, readonly T.Parameter.Parsed[]>>();
 	const edited = item.$with.parameters(engine.build.parameters());
 	expectTrue<Equals<ReturnType<typeof edited.$trivia.trailing>, T.FunctionDefinition.Bound>>();
-	expectTrue<Equals<ReturnType<typeof edited.parameters>, T.Parameters.Bound>>();
+	expectTrue<Equals<ReturnType<typeof edited.parameters>, T.Parameters.Bound | readonly T.Parameter.Bound[]>>();
 	expectTrue<Equals<ReturnType<typeof edited.body>, T.Suite.Parsed>>();
 	return edited.$render();
 }
@@ -42,7 +42,7 @@ export function listsReadAsReadonlyArrays(): string {
 	const params = item.parameters();
 	type Item = ItemOf<typeof params>;
 	const owner: ReadonlyArray<Item> = params;
-	const list: ReadonlyArray<Item> | undefined = params.elements();
+	const list: ReadonlyArray<Item> | undefined = params;
 	const rendered = params.map((param) => (typeof param === 'number' ? '' : engine.render(param).toString()));
 	const first: Item | undefined = params[0];
 	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
@@ -54,6 +54,5 @@ export function aListSlotTakesItsBuilderArguments(): string {
 	const params = item.parameters();
 	const fromItems = item.$with.parameters(...params);
 	const fromNode = item.$with.parameters(params);
-	const inner = params.$with.elements(...params);
-	return fromItems.$render() + fromNode.$render() + inner.$render();
+	return fromItems.$render() + fromNode.$render();
 }

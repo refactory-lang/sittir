@@ -24,9 +24,11 @@ describe.each(constructions)('a built node read through its holder (%s)', (_, rs
 		const parsed = rs.parse(SOURCE, { depth: 1 });
 		const fn = parsed.statements()[1];
 		if (fn === undefined || !rs.is.functionItem(fn)) throw new Error('expected a function');
+		const held = fn.parameters();
+		if (held === undefined || !('$type' in held)) throw new Error('expected a parameter list');
 		const built = b.functionItem({
 			name: b.identifier('c'),
-			parameters: heldCoordinate(fn.parameters()) as never,
+			parameters: heldCoordinate(held) as never,
 			body: heldCoordinate(fn.body()) as never
 		});
 		expect(built.parameters()).toBe(fn.parameters());

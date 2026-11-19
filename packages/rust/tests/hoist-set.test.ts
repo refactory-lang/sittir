@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
+const items = (read: unknown): never[] => [...(read as Iterable<never>)];
+
 describe.each(['arena', 'object'] as const)('the rust hoist sets through its wrappers, %s storage', (nodeStorage) => {
 	const open = async (code: string) => {
 		const e = await createEngine(rust, { nodeStorage });
@@ -12,7 +14,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		const { e, root } = await open('fn f(a: u8, b: u8,) {}\nfn g(c: u8) {}\n');
 		const [f, g] = root.statements();
 		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
-		const edited = f.$with.parameters(...g.parameters());
+		const edited = f.$with.parameters(...items(g.parameters()));
 		expect(String(e.render(edited))).toBe('fn f(c: u8,) {}');
 		e[Symbol.dispose]();
 	});
@@ -21,7 +23,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		const { e, root } = await open('fn f(a: u8) {}\nfn g(c: u8, d: u16) {}\n');
 		const [f, g] = root.statements();
 		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
-		const [c, d] = g.parameters();
+		const [c, d] = items(g.parameters());
 		expect(String(e.render(f.$with.parameters(c!, d!)))).toBe('fn f(c: u8, d: u16) {}');
 		e[Symbol.dispose]();
 	});
@@ -32,7 +34,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
 		const emptied = f.$with.parameters();
 		expect(String(e.render(emptied))).toBe('fn f() {}');
-		expect(String(e.render((emptied as typeof f).$with.parameters(...g.parameters())))).toBe('fn f(c: u8) {}');
+		expect(String(e.render(emptied.$with.parameters(...items(g.parameters()))))).toBe('fn f(c: u8) {}');
 		e[Symbol.dispose]();
 	});
 
@@ -49,7 +51,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		const { e, root } = await open('fn f<A>(a: u8) {}\nfn g<B, C>(c: u8) {}\n');
 		const [f, g] = root.statements();
 		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
-		const [b, c] = g.typeParameters();
+		const [b, c] = items(g.typeParameters());
 		expect(String(e.render(f.$with.typeParameters(b!, c!)))).toBe('fn f<B, C>(a: u8) {}');
 		e[Symbol.dispose]();
 	});
@@ -58,7 +60,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist sets through its wra
 		const { e, root } = await open('fn f() {}\nfn g(c: u8, d: u16) {}\n');
 		const [f, g] = root.statements();
 		if (!e.is.functionItem(f!) || !e.is.functionItem(g!)) throw new Error('expected functions');
-		const [c, d] = g.parameters();
+		const [c, d] = items(g.parameters());
 		expect(String(e.render(f.$with.parameters(c!, d!)))).toBe('fn f(c: u8, d: u16) {}');
 		e[Symbol.dispose]();
 	});

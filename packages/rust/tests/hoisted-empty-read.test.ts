@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
+const items = (read: unknown): never[] => [...(read as Iterable<never>)];
+
 describe.each(['arena', 'object'] as const)('an empty hoisted list reads as the empty list, an absent wrapper as undefined, %s storage', (nodeStorage) => {
 	const open = async () => {
 		const e = await createEngine(rust, { nodeStorage });
@@ -41,14 +43,14 @@ describe.each(['arena', 'object'] as const)('an empty hoisted list reads as the 
 		using opened = await open();
 		const present = functionOf(opened.e, 'fn f(a: u8, b: u8) {}\n').parameters();
 		const empty = functionOf(opened.e, 'fn f() {}\n').parameters();
-		for (const list of [present, empty]) {
+		for (const list of [items(present), items(empty)]) {
 			expect(list.length).toBe([...list].length);
 			let count = 0;
 			for (const _ of list) count++;
 			expect(count).toBe(list.length);
-			expect(list.map((item) => item.$type)).toHaveLength(list.length);
+			expect(list.map((item: { readonly $type: number }) => item.$type)).toHaveLength(list.length);
 		}
-		expect(present.length).toBe(2);
-		expect(empty.length).toBe(0);
+		expect(items(present).length).toBe(2);
+		expect(items(empty).length).toBe(0);
 	});
 });

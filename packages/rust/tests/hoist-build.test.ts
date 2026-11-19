@@ -3,6 +3,8 @@ import { createEngine } from '@sittir/common';
 import { Delimiter } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
+const items = (read: unknown): never[] => [...(read as Iterable<never>)];
+
 describe.each(['arena', 'object'] as const)('the rust hoist builds through its wrappers, %s storage', (nodeStorage) => {
 	const source = async () => {
 		const e = await createEngine(rust, { nodeStorage });
@@ -14,7 +16,7 @@ describe.each(['arena', 'object'] as const)('the rust hoist builds through its w
 	it('builds a function from its parameters as a list', async () => {
 		using engine = await source();
 		const { e, fn } = engine;
-		const built = e.build.functionItem({ name: 'f', parameters: fn.parameters(), body: { statements: [] } });
+		const built = e.build.functionItem({ name: 'f', parameters: items(fn.parameters()), body: { statements: [] } });
 		expect(String(e.render(built))).toBe('fn f(a: u8, b: u16) {}');
 	});
 
@@ -28,13 +30,13 @@ describe.each(['arena', 'object'] as const)('the rust hoist builds through its w
 	it('builds a function from several type parameters', async () => {
 		using engine = await source();
 		const { e, fn } = engine;
-		const built = e.build.functionItem({ name: 'f', typeParameters: fn.typeParameters(), parameters: [], body: { statements: [] } });
+		const built = e.build.functionItem({ name: 'f', typeParameters: items(fn.typeParameters()), parameters: [], body: { statements: [] } });
 		expect(String(e.render(built))).toBe('fn f<A, B>() {}');
 	});
 	it('takes its items, its list node or its wrapper through the setter', async () => {
 		using engine = await source();
 		const { e, fn } = engine;
-		const [first] = fn.parameters();
+		const [first] = items(fn.parameters());
 		const text = (node: { $render(): string }) => node.$render();
 		expect(text(fn.$with.parameters(first!))).toBe('fn g<A, B>(a: u8) {}');
 		expect(text(fn.$with.parameters(e.build.parametersElements(first!)))).toBe('fn g<A, B>(a: u8) {}');

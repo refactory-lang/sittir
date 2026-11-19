@@ -13,7 +13,7 @@ function expectTrue<_T extends true>(): void {}
 
 export function chainOfTwoReadsAsItsElements(): void {
 	expectTrue<Equals<ReturnType<T.FunctionDefinition['parameters']>, readonly T.Parameter[]>>();
-	expectTrue<Equals<ReturnType<T.Parameters['elements']>, readonly T.Parameter[]>>();
+	expectTrue<Equals<ReturnType<T.Parameters['elements']>, readonly T.Parameter[] | undefined>>();
 }
 
 export function singleWrapperReadsAsWhatItHolds(): void {
@@ -22,7 +22,7 @@ export function singleWrapperReadsAsWhatItHolds(): void {
 }
 
 export function listOfWrappersReadsAsListOfWhatTheyHold(): void {
-	expectTrue<Equals<ReturnType<T.DecoratedDefinition['decorators']>, readonly T.Expression[]>>();
+	expectTrue<Equals<ReturnType<T.DecoratedDefinition['decorators']>, readonly [T.Expression, ...T.Expression[]]>>();
 	expectTrue<Equals<ReturnType<T.MatchStatement['body']>, readonly T.CaseClause[]>>();
 }
 

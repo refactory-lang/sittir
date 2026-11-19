@@ -18,7 +18,7 @@ function nodesOf(storage: (typeof storages)[number]) {
 	if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
 	const body = fn.body();
 	return [root, struct, fn, fn.parameters(), body, body.trailingExpression()].map((node) => {
-		if (typeof node !== 'object') throw new Error('expected a node');
+		if (typeof node !== 'object' || !('$type' in node)) throw new Error('expected a node');
 		return node;
 	});
 }

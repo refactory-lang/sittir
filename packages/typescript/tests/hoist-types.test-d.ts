@@ -7,14 +7,13 @@
  */
 
 import type * as T from '../src/types.ts';
-import type { NonEmptyArray } from '@sittir/types';
 
 type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
 function expectTrue<_T extends true>(): void {}
 
 export function chainOfTwoReadsAsItsElements(): void {
-	expectTrue<Equals<ReturnType<T.ClassDeclaration['typeParameters']>, readonly T.TypeParameter[]>>();
-	expectTrue<Equals<ReturnType<T.TypeParameters['elements']>, NonEmptyArray<T.TypeParameter>>>();
+	expectTrue<Equals<ReturnType<T.ClassDeclaration['typeParameters']>, readonly T.TypeParameter[] | undefined>>();
+	expectTrue<Equals<ReturnType<T.TypeParameters['elements']>, readonly [T.TypeParameter, ...T.TypeParameter[]]>>();
 }
 
 export function singleWrapperReadsAsWhatItHolds(): void {
