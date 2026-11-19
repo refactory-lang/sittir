@@ -101,14 +101,15 @@
 - [x] **Step 1: The failing tests.** A factory and a loose `from` input take the hoisted type and wrap it with each wrapper's own builder. A new build's options decide an optional trailing separator.
 - [x] **Step 2: The emitters** read the stamp.
 
-### Task 7: Validators and `is` guards
+### Task 7: `is` guards
+
+**Status:** done. The slot-descending `is` guards accept a chain wrapper's hoisted content (`_at` with the `hoisted` flag). The validators and the example printer keep stored shapes, so `nodeToConfig` is unchanged.
 
 **Files:**
-- Modify: `packages/tools/src/validate/common.ts` (`nodeToConfig`), `packages/codegen/src/emitters/is.ts`
-- Test: `packages/tools/tests/hoist-node-to-config.test.ts`
+- Modify: `packages/codegen/src/emitters/is.ts`
 
-- [ ] **Step 1: The failing tests.** `nodeToConfig` reads a hoisted slot as the hoisted value and round-trips through the factories. The slot-descending `is` guards descend through the chain.
-- [ ] **Step 2: The readers** use the stamp.
+- [x] **Step 1: The failing tests.** The slot-descending `is` guards descend through the chain.
+- [x] **Step 2: The readers** use the stamp.
 
 ### Task 8: Regenerate, measure, and the per-slot appendix
 
