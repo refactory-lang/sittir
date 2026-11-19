@@ -4,6 +4,7 @@
 
 import { TSKindId } from './kinds.js';
 import { holdsKinds, type KindTest } from '@sittir/common/language';
+import { storedSlotRead } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
 
@@ -21,8 +22,10 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Pattern };
-		alternation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-		term<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
+		alternation<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.Pattern | TSKindId.Alternation };
+		term<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern | TSKindId.Term };
 	};
 	alternation<T extends { readonly $type: number } | number>(
 		v: T
@@ -263,12 +266,23 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+function _at<G extends object>(
+	host: (v: unknown) => boolean,
+	seat: string,
+	guard: G,
+	hoisted = false,
+	stored?: string
+): G {
 	const inner = guard as unknown as (v: unknown) => boolean;
 	const forms: Record<string, object> = {};
-	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	for (const name of Object.keys(guard))
+		forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted, stored);
 	return _vg(
-		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		(v: unknown): boolean =>
+			(host(v) &&
+				(inner((v as Record<string, () => unknown>)[seat]!()) ||
+					(stored !== undefined && inner(storedSlotRead(v as object, seat, stored, false))))) ||
+			(hoisted && inner(v)),
 		forms
 	) as unknown as G;
 }
@@ -338,8 +352,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Negation_guard = _mg(TSKindId.Negation);
 	const _kind_UnicodePropertyName_guard = _g(TSKindId.UnicodePropertyName);
 	const _form_Pattern_guard = _vg(_g(TSKindId.Pattern), {
-		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard),
-		term: _at(_kind_Pattern_guard, 'content', _kind_Term_guard)
+		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard, true),
+		term: _at(_kind_Pattern_guard, 'content', _kind_Term_guard, true)
 	});
 	const _form_TermGroup_guard = _vg(_g(TSKindId.TermGroup), {
 		startAssertion: _at(_kind_TermGroup_guard, 'content', _kind_StartAssertion_guard),

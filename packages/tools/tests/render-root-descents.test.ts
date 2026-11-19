@@ -25,8 +25,8 @@ const codemodDescents = (count: number): number => {
 	if (call === undefined || !ts.is.expressionStatement(call)) throw new Error('expected a call statement');
 	const expression = call.expression();
 	if (!ts.is.callExpressionCall(expression)) throw new Error('expected a plain call');
-	const args = expression.arguments();
-	if (!ts.is.arguments(args)) throw new Error('expected arguments');
+	const args = expression.$query().$descendants.ofType(ts.kinds.Arguments).at(0);
+	if (args === undefined || !ts.is.arguments(args)) throw new Error('expected arguments');
 	const changedArguments = call.$with.expression(
 		expression.$with.arguments(args.$with.elements(ts.build.identifier('z')))
 	);

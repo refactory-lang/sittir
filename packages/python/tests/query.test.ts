@@ -41,7 +41,8 @@ describe('the query facet of a parsed node', () => {
 		const fn = descendants().ofType(K.FunctionDefinition).find()!;
 		for (const slot of ['name', 'parameters', 'body'] as const) {
 			const read: unknown = fn[slot]();
-			const view = [...(fn.$query()[slot] as Iterable<unknown>)];
+			const walked = [...(fn.$query()[slot] as Iterable<unknown>)];
+			const view = Array.isArray(read) && walked.length === 1 && typeof walked[0] === 'object' && Symbol.iterator in (walked[0] as object) ? [...(walked[0] as Iterable<unknown>)] : walked;
 			expect(view.map(occurrence)).toEqual(
 				(Array.isArray(read) ? read : read === undefined ? [] : [read]).map(occurrence)
 			);

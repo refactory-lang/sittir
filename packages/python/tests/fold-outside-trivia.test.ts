@@ -9,9 +9,9 @@ const SOURCE = 'if a:\n  b\n    # four\n  c\n';
 function blockOf(root: ReturnType<typeof engine.parse>) {
 	const statement = root.statements()[0];
 	if (statement === undefined || !engine.is.ifStatement(statement)) throw new Error('expected an if statement');
-	const suite = statement.consequence();
-	if (!engine.is.suiteBlock(suite)) throw new Error('expected an indented block');
-	return suite.block();
+	const block = statement.$query().$descendants.ofType(engine.kinds.Block).at(0);
+	if (block === undefined) throw new Error('expected an indented block');
+	return block;
 }
 
 describe("an outside write keeps the span's layout", () => {

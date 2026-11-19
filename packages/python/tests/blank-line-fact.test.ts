@@ -39,8 +39,7 @@ describe.each(['object', 'arena'] as const)('a rebuilt list writes one blank lin
 		using engine = await createEngine(python, { nodeStorage });
 		const root = engine.parse('def f():\n    a = 1\n\n\n    b = 2\n') as any;
 		const [definition] = root.statements();
-		const block = definition.body().block();
-		const body = definition.body().$with.block(block.$with.statements(...block.statements()));
+		const body = definition.body().$with.block(...definition.body().block());
 		expect(root.$with.statements(definition.$with.body(body)).$render()).toBe('def f():\n    a = 1\n\n    b = 2\n');
 	});
 });

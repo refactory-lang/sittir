@@ -12,6 +12,7 @@ import {
 	hydrateSlotsWith,
 	inTreeEngine,
 	currentHandle,
+	hoistedWith,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -46,11 +47,12 @@ import {
 	handleEngine,
 	handleDispose,
 	handleQuery,
-	handleSnapshot
+	handleSnapshot,
+	hoistRead
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NativeSlots, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
@@ -298,7 +300,15 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 			return this._operator;
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -338,13 +348,27 @@ function wrapLookaheadAssertion$with(node: Held, setter: string, args: readonly 
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapLookaheadAssertion(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'lookahead_assertion', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.LookaheadAssertion['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapLookaheadAssertion(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'lookahead_assertion', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`lookahead_assertion has no $with.${setter}`);
@@ -356,6 +380,11 @@ function wrapLookaheadAssertion$with$pattern(this: Received<Held>, ...args: unkn
 	return wrapLookaheadAssertion$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapLookaheadAssertion$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+}
+
 export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeHandle): T.LookbehindAssertion.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -365,7 +394,15 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 			return this._operator;
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -405,13 +442,27 @@ function wrapLookbehindAssertion$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapLookbehindAssertion(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'lookbehind_assertion', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.LookbehindAssertion['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapLookbehindAssertion(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'lookbehind_assertion', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`lookbehind_assertion has no $with.${setter}`);
@@ -421,6 +472,11 @@ function wrapLookbehindAssertion$with$operator(this: Received<Held>, ...args: un
 }
 function wrapLookbehindAssertion$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapLookbehindAssertion$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapLookbehindAssertion$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 }
 
 export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.CharacterClass.Parsed {
@@ -646,7 +702,15 @@ export function wrapAnonymousCapturingGroup(
 		...data,
 		$type: TSKindId.AnonymousCapturingGroup as const,
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -673,19 +737,38 @@ function wrapAnonymousCapturingGroup$with(node: Held, setter: string, args: read
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.AnonymousCapturingGroup['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapAnonymousCapturingGroup(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'anonymous_capturing_group', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.AnonymousCapturingGroup['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapAnonymousCapturingGroup(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'anonymous_capturing_group', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`anonymous_capturing_group has no $with.${setter}`);
 }
 function wrapAnonymousCapturingGroup$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAnonymousCapturingGroup$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapAnonymousCapturingGroup$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 }
 
 export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
@@ -700,7 +783,15 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 			return hydrateSlot<T.GroupName>(this, '_group_name', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -750,13 +841,27 @@ function wrapNamedCapturingGroup$with(node: Held, setter: string, args: readonly
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapNamedCapturingGroup(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'named_capturing_group', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.NamedCapturingGroup['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapNamedCapturingGroup(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'named_capturing_group', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`named_capturing_group has no $with.${setter}`);
@@ -771,13 +876,26 @@ function wrapNamedCapturingGroup$with$pattern(this: Received<Held>, ...args: unk
 	return wrapNamedCapturingGroup$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapNamedCapturingGroup$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+}
+
 export function wrapNonCapturingGroup(data: T.NonCapturingGroup, tree: TreeHandle): T.NonCapturingGroup.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
 		$type: TSKindId.NonCapturingGroup as const,
 		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -804,19 +922,38 @@ function wrapNonCapturingGroup$with(node: Held, setter: string, args: readonly u
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.NonCapturingGroup['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapNonCapturingGroup(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'non_capturing_group', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.NonCapturingGroup['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapNonCapturingGroup(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'non_capturing_group', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`non_capturing_group has no $with.${setter}`);
 }
 function wrapNonCapturingGroup$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapNonCapturingGroup$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapNonCapturingGroup$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 }
 
 export function wrapZeroOrMore(data: T.ZeroOrMore, tree: TreeHandle): T.ZeroOrMore.Parsed {
@@ -1692,7 +1829,15 @@ export function wrapInlineFlagsGroupEnable(
 			return hydrateSlot<T.Flags>(this, '_enabled', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1732,13 +1877,27 @@ function wrapInlineFlagsGroupEnable$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.InlineFlagsGroupEnable['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapInlineFlagsGroupEnable(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_enable', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.InlineFlagsGroupEnable['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapInlineFlagsGroupEnable(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_enable', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_enable has no $with.${setter}`);
@@ -1748,6 +1907,11 @@ function wrapInlineFlagsGroupEnable$with$enabled(this: Received<Held>, ...args: 
 }
 function wrapInlineFlagsGroupEnable$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapInlineFlagsGroupEnable$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapInlineFlagsGroupEnable$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
 }
 
 export function wrapInlineFlagsGroupToggle(
@@ -1765,7 +1929,15 @@ export function wrapInlineFlagsGroupToggle(
 			return hydrateSlot<T.Flags>(this, '_disabled', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1815,13 +1987,27 @@ function wrapInlineFlagsGroupToggle$with(node: Held, setter: string, args: reado
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.InlineFlagsGroupToggle['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapInlineFlagsGroupToggle(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_toggle', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.InlineFlagsGroupToggle['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapInlineFlagsGroupToggle(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_toggle', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_toggle has no $with.${setter}`);
@@ -1836,6 +2022,11 @@ function wrapInlineFlagsGroupToggle$with$pattern(this: Received<Held>, ...args: 
 	return wrapInlineFlagsGroupToggle$with(receiverOf(this, '$with.pattern'), 'pattern', args);
 }
 
+function wrapInlineFlagsGroupToggle$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+}
+
 export function wrapInlineFlagsGroupDisable(
 	data: T.InlineFlagsGroupDisable,
 	tree: TreeHandle
@@ -1848,7 +2039,15 @@ export function wrapInlineFlagsGroupDisable(
 			return hydrateSlot<T.Flags>(this, '_disabled', tree);
 		},
 		pattern() {
-			return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
+			return hoistRead(
+				hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.Alternation | T.Term>(this, '_content', tree);
+					}
+				],
+				false
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -1888,13 +2087,27 @@ function wrapInlineFlagsGroupDisable$with(node: Held, setter: string, args: read
 				)
 			);
 		case 'pattern':
-			return applySetter(args, (v: NonNullable<T.InlineFlagsGroupDisable['_pattern']>) =>
-				rebuilt(node, handle, () =>
-					wrapInlineFlagsGroupDisable(
-						{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_disable', 'pattern', v) },
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.InlineFlagsGroupDisable['_pattern']>) =>
+						rebuilt(node, handle, () =>
+							wrapInlineFlagsGroupDisable(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'inline_flags_group_disable', 'pattern', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_disable has no $with.${setter}`);
@@ -1904,6 +2117,11 @@ function wrapInlineFlagsGroupDisable$with$disabled(this: Received<Held>, ...args
 }
 function wrapInlineFlagsGroupDisable$with$pattern(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapInlineFlagsGroupDisable$with(receiverOf(this, '$with.pattern'), 'pattern', args);
+}
+
+function wrapInlineFlagsGroupDisable$pattern$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Pattern | undefined>(this, '_pattern', tree);
 }
 
 function viewPattern$content(this: RecordHandle) {
@@ -2020,6 +2238,17 @@ function viewLookaheadAssertion$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 2);
 }
 function viewLookaheadAssertion$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 3, 3, 1, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewLookaheadAssertion$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern>(this, 3, 3, 1, 3);
 }
 function viewLookaheadAssertion(data: RecordPosition, tree: TreeHandle): T.LookaheadAssertion.Parsed {
@@ -2051,6 +2280,17 @@ function viewLookbehindAssertion$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 2);
 }
 function viewLookbehindAssertion$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 3, 3, 1, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewLookbehindAssertion$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern>(this, 3, 3, 1, 3);
 }
 function viewLookbehindAssertion(data: RecordPosition, tree: TreeHandle): T.LookbehindAssertion.Parsed {
@@ -2190,6 +2430,17 @@ function viewClassRange(data: RecordPosition, tree: TreeHandle): T.ClassRange.Pa
 }
 
 function viewAnonymousCapturingGroup$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 2, 3, 1, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewAnonymousCapturingGroup$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern>(this, 2, 3, 1, 2);
 }
 function viewAnonymousCapturingGroup(data: RecordPosition, tree: TreeHandle): T.AnonymousCapturingGroup.Parsed {
@@ -2223,6 +2474,17 @@ function viewNamedCapturingGroup$groupName(this: RecordHandle) {
 	return viewSlot<T.GroupName>(this, 3, 3, 1, 3);
 }
 function viewNamedCapturingGroup$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 6, 3, 1, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewNamedCapturingGroup$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern>(this, 6, 3, 1, 4);
 }
 function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
@@ -2252,6 +2514,17 @@ function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.Name
 }
 
 function viewNonCapturingGroup$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern>(this, 2, 3, 1, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewNonCapturingGroup$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern>(this, 2, 3, 1, 2);
 }
 function viewNonCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NonCapturingGroup.Parsed {
@@ -2721,6 +2994,17 @@ function viewInlineFlagsGroupEnable$enabled(this: RecordHandle) {
 	return viewSlot<T.Flags>(this, 2, 3, 1, 2);
 }
 function viewInlineFlagsGroupEnable$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern | undefined>(this, 5, 3, 1, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewInlineFlagsGroupEnable$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern | undefined>(this, 5, 3, 1, 3);
 }
 function viewInlineFlagsGroupEnable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupEnable.Parsed {
@@ -2755,6 +3039,17 @@ function viewInlineFlagsGroupToggle$disabled(this: RecordHandle) {
 	return viewSlot<T.Flags>(this, 5, 3, 1, 3);
 }
 function viewInlineFlagsGroupToggle$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern | undefined>(this, 8, 3, 1, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewInlineFlagsGroupToggle$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern | undefined>(this, 8, 3, 1, 4);
 }
 function viewInlineFlagsGroupToggle(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupToggle.Parsed {
@@ -2787,6 +3082,17 @@ function viewInlineFlagsGroupDisable$disabled(this: RecordHandle) {
 	return viewSlot<T.Flags>(this, 2, 3, 1, 2);
 }
 function viewInlineFlagsGroupDisable$pattern(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Pattern | undefined>(this, 5, 3, 1, 3),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.Alternation | T.Term>(this, 2, 3, 1, 2);
+			}
+		],
+		false
+	);
+}
+function viewInlineFlagsGroupDisable$pattern$native(this: RecordHandle) {
 	return viewSlot<T.Pattern | undefined>(this, 5, 3, 1, 3);
 }
 function viewInlineFlagsGroupDisable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupDisable.Parsed {
@@ -3011,6 +3317,65 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.InlineFlagsGroupToggle]: viewInlineFlagsGroupToggle,
 	[TSKindId.InlineFlagsGroupDisable]: viewInlineFlagsGroupDisable
 };
+
+export const nativeSlots: NativeSlots = Object.freeze({
+	[TSKindId.LookaheadAssertion]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewLookaheadAssertion$pattern$native.call(this as unknown as RecordHandle)
+				: wrapLookaheadAssertion$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.LookbehindAssertion]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewLookbehindAssertion$pattern$native.call(this as unknown as RecordHandle)
+				: wrapLookbehindAssertion$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.AnonymousCapturingGroup]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewAnonymousCapturingGroup$pattern$native.call(this as unknown as RecordHandle)
+				: wrapAnonymousCapturingGroup$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.NamedCapturingGroup]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewNamedCapturingGroup$pattern$native.call(this as unknown as RecordHandle)
+				: wrapNamedCapturingGroup$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.NonCapturingGroup]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewNonCapturingGroup$pattern$native.call(this as unknown as RecordHandle)
+				: wrapNonCapturingGroup$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.InlineFlagsGroupEnable]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewInlineFlagsGroupEnable$pattern$native.call(this as unknown as RecordHandle)
+				: wrapInlineFlagsGroupEnable$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.InlineFlagsGroupToggle]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewInlineFlagsGroupToggle$pattern$native.call(this as unknown as RecordHandle)
+				: wrapInlineFlagsGroupToggle$pattern$native.call(this);
+		}
+	}),
+	[TSKindId.InlineFlagsGroupDisable]: Object.freeze({
+		pattern(this: object) {
+			return isRecordPosition(this)
+				? viewInlineFlagsGroupDisable$pattern$native.call(this as unknown as RecordHandle)
+				: wrapInlineFlagsGroupDisable$pattern$native.call(this);
+		}
+	})
+});
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type PatternTree = T.ParsedByKindId[TSKindId.Pattern] & ParsedRoot;

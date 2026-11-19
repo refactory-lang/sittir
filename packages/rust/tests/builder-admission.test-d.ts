@@ -19,12 +19,11 @@ export function draftsIntoBuilders(): string[] {
 	if (!rs.is.functionItem(fn)) return [];
 	const body = fn.body();
 	const draftBody = body.$with.statements(...body.statements());
-	const params = fn.parameters();
-	const elements = params.elements();
-	if (elements === undefined || !rs.is.parametersElements(elements)) return [];
+	const elements = fn.parameters();
+	if (elements === undefined || !('$type' in elements) || !rs.is.parametersElements(elements)) return [];
 	const [first, ...rest] = elements;
 	if (first === undefined) return [];
-	const draftParams = params.$with.elements(rs.build.parametersElements(first, ...rest));
+	const draftParams = rs.build.parametersElements(first, ...rest);
 	return [
 		rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: draftBody }).$render(),
 		rs.build.functionItem({ name: 'g', parameters: draftParams, body: rs.build.block() }).$render(),

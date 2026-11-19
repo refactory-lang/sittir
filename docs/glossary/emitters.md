@@ -13903,7 +13903,7 @@ The object literal a node's builder and wrap pass to `seatWith`, one per seat: t
 
 ### `packages/codegen/src/emitters/factories.ts::elementConfigsOf`
 
-The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) and the runtime spec (`element` of a list-slot spec, or an `elementsWith` call) come from this one function.
+The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) comes from this one function, and the runtime spec (`element` of a list-slot spec, or an `elementsWith` call) from it together with the wrapper a list's items are (`separatedListSurface`), the same wrapper the list factory's items are built into, so a setter builds a list's items as its factory does.
 
 ### `packages/codegen/src/emitters/templates.ts::droppedLiteralTexts`
 
@@ -15492,3 +15492,35 @@ Compiler options laid over the probe defaults, after them, so an option set here
 ### `packages/codegen/src/typecheck.ts::probeDiagnostics`
 
 Type-checks a probe with tsrs and returns its diagnostics, through `tsrsDiagnostics`. The probe's files and tsconfig go in a fresh temporary directory, which is removed afterwards. The directory is marked as an ES module package. The tsconfig sets `noEmit`, the node types from `cwd`'s `node_modules/@types`, and `.ts` imports with no rewrite, so a probe file may import any module of the repo by its absolute path. Without those type roots, tsrs stops at the missing node types and checks no file.
+
+### `packages/codegen/src/emitters/factories.ts::isListKind`
+
+Whether a kind is a list the engine reads as a list view: it has a raw factory and a list-view target.
+
+### `packages/codegen/src/emitters/factories.ts::hoistedListKind`
+
+The list kind a hoisted list slot builds through: the chain's list wrapper, the wrappers around it and, where the last slot admits several list kinds, the forms. `undefined` when the chain has no list or the items are wrapped already.
+
+### `packages/codegen/src/emitters/factories.ts::chainItemsAt`
+
+The hop of a chain where its first list kind sits, when that hop is the last, or the one before an assembled list that is last: the point a hoisted read stops walking wrappers and returns the list's stored elements.
+
+### `packages/codegen/src/emitters/factories.ts::chainItemsHop`
+
+The expression of the hop that reads a list kind's stored elements: `listElementsHop` over the list view's owner accessor and the list's canonical field.
+
+### `packages/codegen/src/emitters/factories.ts::storedHoistOf`
+
+The hops a holder's hoisted read takes over a stored (built) holder: one stored hop per wrapper up to the list-elements hop, and whether the read is a list. `undefined` for a slot with no chain.
+
+### `packages/codegen/src/emitters/node-members.ts::HoistSet`
+
+What a hoisted slot's `$with` setter takes from the emitter: the storage key, the wrapper slot it sets through, whether the holder slot is optional, the list spec, the wrap expression, the kind the value may already be, and the placed setter bodies for a whole wrapper and for a list.
+
+### `packages/codegen/src/emitters/node-members.ts::StoredHoist`
+
+A hoisted read over a built holder: the hop expressions and whether the read is a list.
+
+### `packages/codegen/src/emitters/node-members.ts::withHoists`
+
+Each setter entry of a node that reads a hoisted slot, given its hoist: `$with` on that slot sets through the existing wrapper chain instead of replacing the stored slot.

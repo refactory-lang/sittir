@@ -17,14 +17,12 @@ type ComplexPattern = {
 function readComplexPattern(pattern: string): ComplexPattern {
 	const module = py.parse(`match x:\n    case ${pattern}:\n        pass\n`) as unknown as {
 		statements(): readonly {
-			body(): {
-				alternatives(): readonly {
-					pattern(): { content(): { content(): ComplexPattern } };
-				}[];
-			};
+			body(): readonly {
+				pattern(): { content(): { content(): ComplexPattern } };
+			}[];
 		}[];
 	};
-	return module.statements()[0]!.body().alternatives()[0]!.pattern().content().content();
+	return module.statements()[0]!.body()[0]!.pattern().content().content();
 }
 
 describe('complex_pattern names its parts', () => {

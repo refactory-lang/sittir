@@ -288,7 +288,8 @@ describe('a built node over parsed storage', () => {
 		if (item === undefined || !objects.is.typeItem(item)) throw new Error('expected a type item');
 		const tuple = item.value();
 		if (!objects.is.tupleType(tuple)) throw new Error('expected a tuple type');
-		const parsed = tuple.types();
+		const parsed = tuple.$query().$descendants.ofType(objects.kinds.Types).at(0);
+		if (parsed === undefined) throw new Error('expected a types list');
 		const stored = storageOf(parsed)._item;
 		expect(stored).toBe(parsed.items());
 		const [first, ...rest] = stored;

@@ -1,5 +1,0 @@
-{
-	"extends": "../../scratchpad/pinned-types/tsconfig.json",
-	"include": ["src/emitters/overlays/portable/emit"],
-	"exclude": []
-}

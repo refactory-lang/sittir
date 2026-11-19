@@ -159,7 +159,7 @@ describe('a detached copy of a read node', () => {
 	it('renders a copied multi-line parameter list in the options\' layout', async () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i32\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
-		expect(await renderCopy(item.parameters())).toBe('(a: u8, b: i32)');
+		expect(await renderCopy(item.$query().$descendants.ofType(rust.kinds.Parameters).at(0))).toBe('(a: u8, b: i32)');
 	});
 
 	it('renders a copied function item with the block comment before it', async () => {
@@ -184,7 +184,7 @@ describe('depth is one fact per position', () => {
 		const item = firstOf(rust.parse(`${struct}\n`).statements());
 		if (typeof item === 'number' || !rust.is.structItem(item) || item.$type !== rust.kinds.StructItemBrace) throw new Error('expected a struct item with a body');
 		expect(await copy('rust', item)).toBe(struct);
-		const body = item.body();
+		const body = item.$query().$descendants.ofType(rust.kinds.FieldDeclarationList).at(0)!;
 		const edited = body.$with.elements(...body);
 		expect(item.$with.body(edited).$render()).toBe(struct);
 	});
@@ -193,7 +193,7 @@ describe('depth is one fact per position', () => {
 		const item = firstOf(rust.parse(`${enumeration}\n`).statements());
 		if (typeof item === 'number' || !rust.is.enumItem(item)) throw new Error('expected an enum item');
 		expect(await copy('rust', item)).toBe(enumeration);
-		const body = item.body();
+		const body = item.$query().$descendants.ofType(rust.kinds.EnumVariantList).at(0)!;
 		const edited = body.$with.elements(...body);
 		expect(item.$with.body(edited).$render()).toBe(enumeration);
 	});
@@ -202,7 +202,7 @@ describe('depth is one fact per position', () => {
 		const item = firstOf(rust.parse(`${union}\n`).statements());
 		if (typeof item === 'number' || !rust.is.unionItem(item)) throw new Error('expected a union item');
 		expect(await copy('rust', item)).toBe(union);
-		const body = item.body();
+		const body = item.$query().$descendants.ofType(rust.kinds.FieldDeclarationList).at(0)!;
 		const edited = body.$with.elements(...body);
 		expect(item.$with.body(edited).$render()).toBe(union);
 	});
@@ -228,7 +228,7 @@ describe('depth is one fact per position', () => {
 		if (wrapper.$type !== rust.kinds.ExpressionStatementWithSemi) throw new Error('expected an expression with its semicolon');
 		const call = wrapper.expression();
 		if (typeof call === 'number' || !rust.is.callExpression(call)) throw new Error('expected a call');
-		const args = call.arguments();
+		const args = call.$query().$descendants.ofType(rust.kinds.Arguments).at(0)!;
 		const call2 = call.$with.arguments(args.$with.elements(...args));
 		const wrapper2 = wrapper.$with.expression(call2);
 		const statement2 = statement.$with.content(wrapper2);

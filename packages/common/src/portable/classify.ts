@@ -1,6 +1,7 @@
-import type { PortableCondition, PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableCondition, PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, QueryPlan, QuerySlotEntry, QuerySubject, SlotSubject } from '@sittir/types';
 import { engineOf, isLive } from '../engine-scope.ts';
 import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts';
+import { storedSlotRead } from '../stored-slot.ts';
 import { treeOf } from '../tree-token.ts';
 import { sourceTextOf } from '../node-data.ts';
 import { portablePathHasFacts, readableEntries, unplaced } from './facts.ts';
@@ -140,13 +141,19 @@ export function portableTextOf(rows: PortableRows, value: unknown): string | und
 	return readerOf(rows).textOf(value);
 }
 
+const itemsOf = (node: object, [accessor, , keyword, storage, , blank, spellings]: QuerySlotEntry): readonly unknown[] => {
+	if (keyword !== undefined || blank !== undefined || spellings !== undefined) return slotItems(node, accessor);
+	const value = storedSlotRead(node, accessor, storage);
+	return Array.isArray(value) ? value : value === undefined ? [] : [value];
+};
+
 function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const itemsIn = (node: Node, subject: SlotSubject): readonly unknown[] => {
 		const number = subject.slots[node.$type];
 		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
 		if (slot === undefined) return [];
-		const [accessor, , keyword, , keywordKind] = slot;
-		const items = slotItems(node, accessor).filter((item) => item !== null);
+		const [, , keyword, , keywordKind] = slot;
+		const items = itemsOf(node, slot).filter((item) => item !== null);
 		if (keyword === undefined) return items;
 		const present = new Keyword(keyword, keywordKind);
 		return items.flatMap((item) => (item === true ? [present] : []));
@@ -237,7 +244,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		return plan !== undefined && plan !== null && holds(plan, subjectsOf([value]));
 	};
 	const slotsOf = (node: Node): readonly (readonly [string, readonly unknown[]])[] =>
-		(querySlots[node.$type] ?? []).map(([accessor]) => [accessor, slotItems(node, accessor)] as const);
+		(querySlots[node.$type] ?? []).map((row) => [row[0], itemsOf(node, row)] as const);
 	const numbersIn = (value: unknown, kind: number, into: Set<number>): void => {
 		if (Array.isArray(value)) for (const item of value) numbersIn(item, kind, into);
 		else if (typeof value === 'object' && value !== null)

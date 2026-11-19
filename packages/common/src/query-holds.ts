@@ -1,11 +1,12 @@
 import type { QueryPlan, QuerySubject, SlotSubject, StepAnchor } from '@sittir/types';
+import { slotReader } from './record-view.ts';
 
 export function refuse(message: string): never {
 	throw new TypeError(message);
 }
 
 export function slotItems(node: object, accessor: string): readonly unknown[] {
-	const read = (node as Record<string, unknown>)[accessor];
+	const read = slotReader(node, accessor);
 	const value = typeof read === 'function' ? (read as () => unknown).call(node) : read;
 	return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }

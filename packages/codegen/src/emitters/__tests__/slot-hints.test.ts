@@ -12,8 +12,8 @@ describe('__slotHints__', () => {
 	it('a config kind stamps each slot with the input its $with setter takes', () => {
 		const fn = interfaceBlock(rustTypes(), 'FunctionItem');
 		expect(fn).toContain('readonly __slotHints__?: {');
-		expect(fn).toContain('readonly parameters: SlotHint<T.Parameters>;');
-		expect(fn).toContain('readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;');
+		expect(fn).toContain("readonly parameters: SlotHint<NonNullable<T.FunctionItem.Config>['parameters']>;");
+		expect(fn).toContain("readonly visibilityModifier: SlotHint<NonNullable<T.FunctionItem.Config>['visibilityModifier'], true>;");
 	});
 	it('a slot set with rest arguments stamps its rest type and says so', () => {
 		expect(interfaceBlock(rustTypes(), 'Lifetimes')).toMatch(
@@ -27,7 +27,7 @@ describe('__slotHints__', () => {
 	});
 	it('a multiple slot whose storage is not verbatim is set with rest arguments too, typed off its config field', () => {
 		expect(interfaceBlock(rustTypes(), 'Block').replace(/\s+/g, ' ')).toContain(
-			"readonly statements: SlotHint<NonNullable<NonNullable<T.Block.Config>['statements']>[number][], true, true>;"
+			"readonly statements: SlotHint< Extract<NonNullable<NonNullable<T.Block.Config>['statements']>, readonly unknown[]>[number][], true, true >;"
 		);
 	});
 	it('a parameter branch stamps its plain-or-receiver choice and has no list view', () => {
@@ -43,10 +43,10 @@ describe('__slotHints__', () => {
 		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
 		expect(ps).toContain('readonly elements: () => ParametersElements | ParametersElementsReceiver | undefined;');
 	});
-	it('a list slot stamps builder arguments while a parameter branch slot takes its node', () => {
+	it('a hoisted list slot stamps the items its setter takes beside the wrapper its slot holds', () => {
 		const fn = interfaceBlock(rustTypes(), 'FunctionItem').replace(/\s+/g, ' ');
-		expect(fn).toContain('readonly parameters: SlotHint<T.Parameters>;');
-		expect(fn).not.toContain('readonly parameters: ListSlotHint<');
+		expect(fn).toContain("readonly parameters: SlotHint<NonNullable<T.FunctionItem.Config>['parameters']>;");
+		expect(fn).toContain('readonly parameters: ListSlotHint< | T.AttributedParameter');
 		expect(fn).toContain('readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;');
 	});
 	it('a kind that is not a list stamps no $listView', () => {

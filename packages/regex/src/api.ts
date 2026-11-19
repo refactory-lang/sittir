@@ -11,7 +11,7 @@ import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type PatternRoot } from './render-engine.js';
-import { wrapNode, hydrate, type PatternTree } from './wrap.js';
+import { wrapNode, hydrate, nativeSlots, type PatternTree } from './wrap.js';
 
 export interface RegexAPI extends LanguageAPI {
 	readonly name: 'regex';
@@ -39,6 +39,7 @@ export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexA
 	trivia: triviaFacts,
 	rootKinds: Object.freeze([51]),
 	querySlots,
+	nativeSlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),

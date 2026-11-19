@@ -34,7 +34,15 @@ describe('a tuple expression with one element', () => {
 		);
 	});
 
-	it('renders it when a parsed tuple of two is cut down to one', () => {
+	it('renders it when a parsed tuple of two is cut down to one, passing the item', () => {
+		const parsed = parsedTuple('(a, b)');
+		const [first] = parsed.elements();
+		const text = parsed.$with.elements(first!).$render();
+		expect(text).toBe('(a,)');
+		expect(is.tupleExpression(parsedValue(text))).toBe(true);
+	});
+
+	it('renders it when a parsed tuple of two is cut down to one, passing the list node', () => {
 		const parsed = parsedTuple('(a, b)');
 		const [first] = parsed.elements();
 		const text = parsed.$with.elements(build.tupleExpressionElements(first!)).$render();
@@ -52,5 +60,30 @@ describe('a tuple expression with more than one element', () => {
 	it('renders a trailing separator when asked', () => {
 		const two = build.tupleExpressionElements({ delimiter: Delimiter.Trailing }, build.identifier('x'), build.identifier('y'));
 		expect(tupleOf(two).$render()).toBe('(x, y,)');
+	});
+});
+
+describe('a tuple type or pattern with one element', () => {
+	const parsedType = (text: string) => {
+		const item = engine.parse(`const A: ${text} = x;\n`).statements()[0];
+		const type = item !== undefined && is.constItem(item) ? item.type() : undefined;
+		if (type === undefined || !is.tupleType(type)) throw new Error(`expected a tuple type: ${text}`);
+		return type;
+	};
+
+	it('renders the separator when the delimiter asks for it, for a type', () => {
+		const text = build.tupleType({ types: build.types({ delimiter: Delimiter.Trailing }, parsedType('(u8, u16)').types()[0]!) }).$render();
+		expect(text).toBe('(u8,)');
+		expect(is.tupleType(parsedType(text))).toBe(true);
+	});
+
+	it('renders the separator when the delimiter asks for it, for a pattern', () => {
+		const text = build.tuplePattern({ elements: build.tuplePatternElements({ delimiter: Delimiter.Trailing }, build.identifier('a')) }).$render();
+		expect(text).toBe('(a,)');
+	});
+
+	it('renders the parenthesised spelling without the delimiter', () => {
+		const parsed = parsedType('(u8, u16)');
+		expect(parsed.$with.types(parsed.types()[0]!).$render()).toBe('(u8)');
 	});
 });

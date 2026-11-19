@@ -7,6 +7,10 @@ import type { Held, Received } from '@sittir/common/utils';
 import {
 	currentHandle,
 	admitChildren,
+	hoistedWith,
+	hoistRead,
+	storedHop,
+	wrapHoisted,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -242,7 +246,8 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 		_string_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		stringContent: () => hydrateStoredSlot(node, '_string_content'),
+		stringContent: () =>
+			hoistRead(hydrateStoredSlot(node, '_string_content'), [storedHop('contents', '_content', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -261,7 +266,28 @@ function buildString$with(node: Held, setter: string, args: readonly unknown[]):
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value)));
+			return hoistedWith(
+				node,
+				'stringContent',
+				'_string_content',
+				'contents',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.StringContent>>) =>
+						rebuilt(node, handle, () => _buildString(value))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.StringContent
+			);
 	}
 	throw new Error(`string has no $with.${setter}`);
 }
@@ -299,7 +325,8 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 		_string_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		stringContent: () => hydrateStoredSlot(node, '_string_content'),
+		stringContent: () =>
+			hoistRead(hydrateStoredSlot(node, '_string_content'), [storedHop('contents', '_content', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -318,8 +345,27 @@ function buildImmediateString$with(node: Held, setter: string, args: readonly un
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'stringContent':
-			return applySetter(args, (value?: Admit<T.StringContent>) =>
-				rebuilt(node, handle, () => _buildImmediateString(value))
+			return hoistedWith(
+				node,
+				'stringContent',
+				'_string_content',
+				'contents',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.StringContent>>) =>
+						rebuilt(node, handle, () => _buildImmediateString(value))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildStringContent as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.StringContent
 			);
 	}
 	throw new Error(`immediate_string has no $with.${setter}`);
@@ -804,7 +850,12 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	const _prefix = kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix);
 	const _name = config.name;
 	const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
-	const _parameters = config.parameters;
+	const _parameters = wrapHoisted(
+		config.parameters,
+		(v: readonly never[]) =>
+			v.length === 0 ? undefined : (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])),
+		TSKindId.Parameters
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'predicate', { prefix: _prefix, name: _name, type: _type, parameters: _parameters });
@@ -819,7 +870,8 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 		prefix: () => _prefix,
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => _type,
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		parameters: () =>
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', true)], true),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -858,8 +910,27 @@ function buildPredicate$with(node: Held, setter: string, args: readonly unknown[
 				rebuilt(node, handle, () => buildPredicate({ ...config, type: value }))
 			);
 		case 'parameters':
-			return applySetter(args, (value?: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
+			return hoistedWith(
+				node,
+				'parameters',
+				'_parameters',
+				'elements',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.Predicate.Config>['parameters']>) =>
+						rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
+					),
+				undefined,
+				(args: readonly never[]) => [
+					((v: readonly never[]) =>
+						v.length === 0
+							? undefined
+							: (buildParameters as unknown as (...items: never[]) => never)(...(v as never[])))(args)
+				],
+				TSKindId.Parameters
 			);
 	}
 	throw new Error(`predicate has no $with.${setter}`);

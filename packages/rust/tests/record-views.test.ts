@@ -66,8 +66,10 @@ describe('a tree read as records', () => {
 
 	it('reads a list wrapper that carries only its content as that content, on both wires', () => {
 		for (const wire of wires) {
-			const body = structAt(wire).body();
-			expect([...(body ?? [])].map((field) => (isNode(field) ? field.$type : field))).toEqual([TSKindId.FieldDeclaration, TSKindId.FieldDeclaration, TSKindId.AttributedFieldDeclaration]);
+			const struct = structAt(wire);
+			const list = struct.$query().$descendants.ofType(engines[wire].kinds.FieldDeclarationList).at(0)!;
+			expect([...list].map((field) => (isNode(field) ? field.$type : field))).toEqual([TSKindId.FieldDeclaration, TSKindId.FieldDeclaration, TSKindId.AttributedFieldDeclaration]);
+			expect([...(struct.body() ?? [])].map((field) => (isNode(field) ? field.$type : field))).toEqual([TSKindId.AttributedFieldDeclaration, TSKindId.AttributedFieldDeclaration, TSKindId.AttributedFieldDeclaration]);
 		}
 	});
 

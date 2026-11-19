@@ -27,7 +27,7 @@ function secondTypeArgument(source: string): AnyUntypedNode {
 	if (declaration === undefined || !ts.is.typeAliasDeclaration(declaration)) throw new Error('expected a type alias');
 	const value = declaration.value();
 	if (!ts.is.genericType(value)) throw new Error('expected a generic type');
-	const second = value.typeArguments().types().items()[1];
+	const second = value.typeArguments()[1];
 	if (second === undefined) throw new Error('expected a second type argument');
 	return materializeDetached(second, accessorOf);
 }
@@ -60,10 +60,10 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		const triviaPy = (node: object) => sidesOf(node);
 		const statement = py.parse(source).statements()[0];
 		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
-		const suite = statement.consequence();
-		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
+		const found = statement.$query().$descendants.ofType(py.kinds.Block).at(0);
+		if (found === undefined) throw new Error('expected a block');
 		const pyAccessorOf = await loadSlotAccessorOf('python');
-		const block = materializeDetached(suite.block(), pyAccessorOf);
+		const block = materializeDetached(found, pyAccessorOf);
 		expect(renderPy(block).startsWith('# one\n# two\n  # three\nb')).toBe(true);
 		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy, pyAccessorOf)).toBe('# one\n# two\n  # three\n'.length);
 	});

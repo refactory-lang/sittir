@@ -7,6 +7,10 @@ import type { Held, Received } from '@sittir/common/utils';
 import {
 	currentHandle,
 	admitChildren,
+	hoistedWith,
+	hoistRead,
+	storedHop,
+	wrapHoisted,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -240,7 +244,7 @@ export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion
 export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.LookaheadAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookaheadAssertion, [config]);
 	const _operator = kindIdStorage<NonNullable<T.LookaheadAssertion['_operator']>>(config.operator);
-	const _pattern = config.pattern;
+	const _pattern = wrapHoisted(config.pattern, (v: never) => buildPattern(v), TSKindId.Pattern);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { operator: _operator, pattern: _pattern });
 	const node = {
@@ -250,7 +254,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		operator: () => _operator,
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -279,8 +283,22 @@ function buildLookaheadAssertion$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, operator: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.LookaheadAssertion.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`lookahead_assertion has no $with.${setter}`);
@@ -298,7 +316,7 @@ export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAsserti
 export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): T.LookbehindAssertion.Bound {
 	currentHandle()?.admit(TSKindId.LookbehindAssertion, [config]);
 	const _operator = kindIdStorage<NonNullable<T.LookbehindAssertion['_operator']>>(config.operator);
-	const _pattern = config.pattern;
+	const _pattern = wrapHoisted(config.pattern, (v: never) => buildPattern(v), TSKindId.Pattern);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { operator: _operator, pattern: _pattern });
 	const node = {
@@ -308,7 +326,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		operator: () => _operator,
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -337,8 +355,22 @@ function buildLookbehindAssertion$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, operator: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.LookbehindAssertion.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`lookbehind_assertion has no $with.${setter}`);
@@ -646,7 +678,7 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 		_pattern,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -665,8 +697,22 @@ function buildAnonymousCapturingGroup$with(node: Held, setter: string, args: rea
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.Pattern>>) =>
+						rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`anonymous_capturing_group has no $with.${setter}`);
@@ -685,7 +731,7 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [config]);
 	const _operator = kindIdStorage<NonNullable<T.NamedCapturingGroup['_operator']>>(config.operator);
 	const _group_name = config.groupName;
-	const _pattern = config.pattern;
+	const _pattern = wrapHoisted(config.pattern, (v: never) => buildPattern(v), TSKindId.Pattern);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'named_capturing_group', { operator: _operator, groupName: _group_name, pattern: _pattern });
@@ -698,7 +744,7 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 		$with: undefined as unknown as object,
 		operator: () => _operator,
 		groupName: () => hydrateStoredSlot(node, '_group_name'),
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -732,8 +778,22 @@ function buildNamedCapturingGroup$with(node: Held, setter: string, args: readonl
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, groupName: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`named_capturing_group has no $with.${setter}`);
@@ -778,7 +838,7 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 		_pattern,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -797,8 +857,22 @@ function buildNonCapturingGroup$with(node: Held, setter: string, args: readonly 
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'pattern':
-			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => _buildNonCapturingGroup(value))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.Pattern>>) =>
+						rebuilt(node, handle, () => _buildNonCapturingGroup(value))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`non_capturing_group has no $with.${setter}`);
@@ -1804,7 +1878,7 @@ export function buildInlineFlagsGroupEnable<
 export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Config): T.InlineFlagsGroupEnable.Bound {
 	currentHandle()?.admit(TSKindId.InlineFlagsGroupEnable, [config]);
 	const _enabled = config.enabled;
-	const _pattern = config.pattern;
+	const _pattern = wrapHoisted(config.pattern, (v: never) => buildPattern(v), TSKindId.Pattern);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'inline_flags_group_enable', { enabled: _enabled, pattern: _pattern });
@@ -1815,7 +1889,7 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		enabled: () => hydrateStoredSlot(node, '_enabled'),
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1844,8 +1918,22 @@ function buildInlineFlagsGroupEnable$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, enabled: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InlineFlagsGroupEnable.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_enable has no $with.${setter}`);
@@ -1871,7 +1959,7 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 	currentHandle()?.admit(TSKindId.InlineFlagsGroupToggle, [config]);
 	const _enabled = config.enabled;
 	const _disabled = config.disabled;
-	const _pattern = config.pattern;
+	const _pattern = wrapHoisted(config.pattern, (v: never) => buildPattern(v), TSKindId.Pattern);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'inline_flags_group_toggle', { enabled: _enabled, disabled: _disabled, pattern: _pattern });
@@ -1884,7 +1972,7 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 		$with: undefined as unknown as object,
 		enabled: () => hydrateStoredSlot(node, '_enabled'),
 		disabled: () => hydrateStoredSlot(node, '_disabled'),
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1918,8 +2006,22 @@ function buildInlineFlagsGroupToggle$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, disabled: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InlineFlagsGroupToggle.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_toggle has no $with.${setter}`);
@@ -1945,7 +2047,7 @@ export function buildInlineFlagsGroupDisable(
 ): T.InlineFlagsGroupDisable.Bound {
 	currentHandle()?.admit(TSKindId.InlineFlagsGroupDisable, [config]);
 	const _disabled = config.disabled;
-	const _pattern = config.pattern;
+	const _pattern = wrapHoisted(config.pattern, (v: never) => buildPattern(v), TSKindId.Pattern);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'inline_flags_group_disable', { disabled: _disabled, pattern: _pattern });
@@ -1956,7 +2058,7 @@ export function buildInlineFlagsGroupDisable(
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		disabled: () => hydrateStoredSlot(node, '_disabled'),
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		pattern: () => hoistRead(hydrateStoredSlot(node, '_pattern'), [storedHop('content', '_content', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1985,8 +2087,22 @@ function buildInlineFlagsGroupDisable$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, disabled: value }))
 			);
 		case 'pattern':
-			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
+			return hoistedWith(
+				node,
+				'pattern',
+				'_pattern',
+				'content',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.InlineFlagsGroupDisable.Config>['pattern']>) =>
+						rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
+					),
+				undefined,
+				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				TSKindId.Pattern
 			);
 	}
 	throw new Error(`inline_flags_group_disable has no $with.${setter}`);

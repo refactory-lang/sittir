@@ -17,10 +17,11 @@ describe('what lies between the tokens of a unit', () => {
 				using rs = (await createEngine(rust, { nodeStorage })) as unknown as { build: Record<string, (...args: unknown[]) => Node>; parse(source: string): Node; render(node: unknown): { toString(): string }; kinds: Record<string, number>; [Symbol.dispose](): void };
 				const root = rs.parse(source);
 				const args = [...(root.$query as () => { $descendants: Iterable<Node> })().$descendants].find((node) => typeof node === 'object' && node !== null && node.$type === rs.kinds.Arguments)!;
-				const items = [...(args.elements as () => Iterable<unknown>)()];
+				const items = [...(args as unknown as Iterable<unknown>)];
+				const elements = (args.$query as () => { $descendants: { ofType(kind: number): { at(index: number): unknown } } })().$descendants.ofType(rs.kinds.ArgumentsElements!).at(0);
 				expect(items).toEqual([rs.kinds.UnitExpression]);
 				expect(rs.render(root).toString()).toBe(source);
-				expect(args.$with.elements!((args.elements as () => unknown)()).$render()).toBe(`(${unit})`);
+				expect(args.$with.elements!(elements).$render()).toBe(`(${unit})`);
 				expect(args.$with.elements!(...items).$render()).toBe('(())');
 				expect(rs.build.arguments!(...items).$render()).toBe('(())');
 				expect(rs.render(root.$snapshot()).toString()).toBe('fn f() {\n    g(());\n}');

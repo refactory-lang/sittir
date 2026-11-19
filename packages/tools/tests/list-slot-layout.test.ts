@@ -18,7 +18,7 @@ function rustArray(source: string, at = 0) {
 
 /** The items of a rust array. */
 function elementsOf(array: ReturnType<typeof rustArray>) {
-	return array.elements()?.items() ?? [];
+	return array.elements() ?? [];
 }
 
 /** The object type a typescript type alias names, in the source's statement `at`. */
@@ -32,7 +32,7 @@ function objectType(source: string, at = 0) {
 
 /** The members of a typescript object type. */
 function membersOf(type: ReturnType<typeof objectType>) {
-	return type.members()?.items() ?? [];
+	return type.members() ?? [];
 }
 
 /** The item at `index`, which the test's source holds. */

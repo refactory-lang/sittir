@@ -91,12 +91,6 @@ const COMPARED: Readonly<Record<StorageCheck, string>> = {
 
 export const ACCEPTED_DIFFERENCES: readonly AcceptedDifference[] = [
 	{
-		name: 'object storage throws rebuilding a rust list whose item is a hidden group read as a bare unit (issue 1261)',
-		ceilings: { rust: 11 },
-		matches: (difference) =>
-			difference.check === 'rebuilds' && difference.object.startsWith(THROWS) && !difference.arena.startsWith(THROWS)
-	},
-	{
 		name: "a written-back side holding an ERROR takes the ERROR's in-line whitespace from the render options",
 		ceilings: { python: 1, typescript: 1 },
 		matches: (difference) => difference.check === 'writeBacks' && difference.holdsError === true

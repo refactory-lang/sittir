@@ -3,9 +3,11 @@ import { tsname } from '../../../bindings/names.ts';
 import { textValued } from '../../../bindings/vocabulary.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
-import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, portableClaims, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
+import { storageKeyOf } from '../../../compiler/model/node-map.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactSlots, type ValueRead } from './exact.ts';
 import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
@@ -81,7 +83,7 @@ const PRELUDE = [
 	'',
 	'type Present<N, G> = [keyof G] extends [never] ? N : [keyof G & keyof N] extends [never] ? (N extends { readonly $type: unknown } ? N : N extends readonly [infer H, ...infer T] ? readonly [Present<H, G>, ...{ [I in keyof T]: Present<T[I], G> }] : N extends readonly (infer E)[] ? readonly Present<E, G>[] : N) : Omit<N, keyof G> & { readonly [P in keyof G & keyof N]: () => G[P] extends readonly [infer Id, infer Sub] ? Present<Narrow<Ret<N[P]>, Id>, Sub> : never };',
 	'',
-	'type Of<N, K> =N extends { readonly $type: infer T } ? (K extends T ? N : undefined) : N extends readonly (infer E)[] ? readonly Of<E, K>[] : undefined;',
+	'type Of<N, K> =N extends { readonly $type: infer T } ? (K extends T ? N : undefined) : N extends readonly (infer E)[] ? ([E] extends [never] ? undefined : readonly Of<E, K>[]) : undefined;',
 	'',
 	'type Without<N, K> = N extends { readonly $type: K } ? never : N extends { readonly $type: unknown } ? N : N extends readonly (infer E)[] ? readonly Without<E, K>[] : N;',
 	'',
@@ -113,6 +115,7 @@ const PRELUDE = [
 	'',
 	'declare function read<N>(node: N): ViewOf<N>;',
 	'declare function readEnum<N>(node: N): ViewEnumOf<N>;',
+	'declare function stored<W>(node: unknown, key: string): W;',
 	'declare function of<N, K extends TSKindId>(node: N, kind: K): Of<N, K>;',
 	'declare function without<N, K extends TSKindId>(node: N, ...kinds: K[]): Without<N, K>;',
 	'declare function kindOf(node: { readonly $type: TSKindId } | TSKindId): TSKindId;',
@@ -176,6 +179,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	const lowOf = (kind: string): string | undefined => (token(kind) ? 'TSKindId' : typeNameOf(kind) === undefined ? undefined : `T.${typeNameOf(kind)}.Parsed`);
 	const aliasOf = (kind: string): string => `VK_${kindIdMemberName(nodeMap, kind)}`;
 
+	const claims = portableClaims(routes, model);
 	const slotOf = (step: SlotStep): ModelSlot | undefined => nodeOf(step.owner)?.slots.find((s) => s.name === step.slot);
 	const concrete = [...model.values()].filter((n) => n.subtypes.length === 0 && idOf(n.kind) !== undefined);
 	const typed = new Set(concrete.map((n) => n.kind));
@@ -275,6 +279,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		readonly accessor: string;
 		readonly ids: string;
 		readonly tested: boolean;
+		readonly root?: number;
 	}
 	interface Chain {
 		readonly expr: string;
@@ -290,9 +295,14 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		let held: readonly string[] = [kind];
 		let pinned: readonly string[] | undefined = [kind];
 		const present: PresentStep[] = [];
+		const roots = new Map<number, string>();
+		const wrapperMark = (at: number): string => `\u0000${at}\u0000`;
+		let root: number | undefined;
 		for (const [i, step] of path.entries()) {
 			const slot = slotOf(step);
 			if (slot === undefined) return `${step.owner} has no slot ${step.slot}`;
+			const next = path[i + 1];
+			const enters = wrapperChainFor(nodeMap, step.owner, step.slot)?.storage.some((wrapper) => (next === undefined ? claims(wrapper, slot.multiple) : wrapper === next.owner)) === true;
 			if (!concreteKinds(model, held).includes(step.owner) && !held.includes(step.owner)) return `steps through ${step.owner}, which ${i === 0 ? 'the read kind is not' : 'its slot does not hold'}`;
 			if (held.length !== 1 || held[0] !== step.owner) {
 				const owner = idOf(step.owner);
@@ -302,26 +312,39 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 				optional ||= pinned === undefined || pinned.some((k) => k !== step.owner);
 			}
 			held = concreteKinds(model, slot.kinds);
-			expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
-			const tested: readonly string[] | undefined = optional ? undefined : sure.present(path.slice(0, i + 1));
-			if (!optional) {
+			const inside = enters && path.slice(i + 1).some((_, d) => sure.present(path.slice(0, i + 2 + d)) !== undefined) ? [] : undefined;
+			const tested: readonly string[] | undefined = optional ? undefined : (sure.present(path.slice(0, i + 1)) ?? inside);
+			if (enters) {
+				const union = held.flatMap((k) => lowOf(k) ?? []).join(' | ') || 'never';
+				const wrapper = slot.multiple ? `readonly (${union})[]` : union;
+				roots.set(i, wrapper);
+				expr = `stored<${wrapperMark(i)}${optional || (tested === undefined && !slot.required) ? ' | undefined' : ''}>(${expr}, ${q(storageKeyOf(slot.name))})`;
+				root = i;
+			} else expr = `${expr}${optional ? '?.' : '.'}${slot.propertyName}()`;
+			if (!optional && !enters) {
 				const narrowed = tested !== undefined && tested.length > 0 && held.some((k) => !tested.includes(k)) ? tested.flatMap((k) => idOf(k) ?? []) : [];
-				present.push({ accessor: slot.propertyName, ids: narrowed.length > 0 ? [...new Set(narrowed)].join(' | ') : 'never', tested: tested !== undefined });
+				present.push({ accessor: slot.propertyName, ids: narrowed.length > 0 ? [...new Set(narrowed)].join(' | ') : 'never', tested: tested !== undefined, ...(root === undefined ? {} : { root }) });
 			}
-			optional ||= !slot.required && !slot.multiple && tested === undefined;
-			pinned = tested !== undefined && tested.length > 0 ? tested : slot.required || tested !== undefined ? held : undefined;
+			const required = slot.required;
+			optional ||= !required && !slot.multiple && tested === undefined;
+			pinned = tested !== undefined && tested.length > 0 ? tested : required || tested !== undefined ? held : undefined;
 			const final = i === path.length - 1;
-			const one = step.anchor !== undefined || (final && single);
+			const anchor = step.anchor;
+			const one = anchor !== undefined || (final && single);
 			if (slot.multiple && (!final || one)) {
 				if (!one) return `steps into one of ${step.owner}'s ${step.slot} with no anchor`;
-				expr = step.anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
+				expr = anchor === 'last' ? `${expr}${optional ? '?.' : '.'}at(-1)` : `${expr}${optional ? '?.' : ''}[0]`;
 				optional = !final || tested === undefined;
 				pinned = final ? pinned : undefined;
 			}
 			last = final && one ? { ...slot, multiple: false } : slot;
 		}
-		const through = present.findLastIndex((s) => s.tested) + 1;
-		return last === undefined ? 'an empty path' : { expr, last, optional, present: present.slice(0, through), pinned };
+		const reaching = (steps: readonly PresentStep[]): readonly PresentStep[] => steps.slice(0, steps.findLastIndex((s) => s.tested) + 1);
+		for (const [at, wrapper] of roots) {
+			const tree = presentTreeOf([reaching(present.filter((s) => s.root === at))]);
+			expr = expr.replace(wrapperMark(at), () => (tree.size === 0 ? wrapper : `Present<${wrapper}, ${presentTypeOf(tree)}>`));
+		}
+		return last === undefined ? 'an empty path' : { expr, last, optional, present: reaching(present.filter((s) => s.root === undefined)), pinned };
 	};
 	interface RouteRead {
 		readonly body: string;

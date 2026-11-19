@@ -12,16 +12,18 @@ type Block = ReturnType<typeof bodyAt>;
 function bodyAt(root: Root, at: number) {
 	const fn = root.statements()[at];
 	if (fn === undefined || !engine.is.functionDefinition(fn)) throw new Error('expected a function');
-	const suite = fn.body();
-	if (!engine.is.suiteBlock(suite)) throw new Error('expected an indented block');
-	return suite.block();
+	return blockOf(fn);
+}
+
+function blockOf(owner: ReturnType<Root['statements']>[number]) {
+	const block = owner.$query().$descendants.ofType(engine.kinds.Block).at(0);
+	if (block === undefined) throw new Error('expected an indented block');
+	return block;
 }
 
 function ifBlock(statement: ReturnType<Root['statements']>[number] | undefined) {
 	if (statement === undefined || !engine.is.ifStatement(statement)) throw new Error('expected an if statement');
-	const suite = statement.consequence();
-	if (!engine.is.suiteBlock(suite)) throw new Error('expected an indented block');
-	return suite.block();
+	return blockOf(statement);
 }
 
 const viaAccessors = (root: Root) => ifBlock(root.statements()[0]);

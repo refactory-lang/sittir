@@ -52,7 +52,7 @@ export function narrowing(): void {
 	const wrong: T.Call.Parsed | undefined = defs.where((c) => c.name.eq('main')).find();
 	void wrong;
 	const fn = found!;
-	expectTrue<Equals<ItemOf<ReturnType<typeof fn.$query>['parameters']>, T.Parameters.Parsed>>();
+	expectTrue<Equals<ItemOf<ReturnType<typeof fn.$query>['parameters']>, T.Parameter.Parsed>>();
 	expectTrue<
 		Equals<ItemOf<ReturnType<typeof engine.query<typeof fn>>['name']>, ItemOf<ReturnType<typeof fn.$query>['name']>>
 	>();

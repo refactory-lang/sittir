@@ -20,9 +20,8 @@ function caseBlock(source: string): AnyUntypedNode {
 	const root = py.parse(source);
 	const clause = root.$query().$descendants.ofType(py.kinds.CaseClause).at(0);
 	if (clause === undefined || !py.is.caseClause(clause)) throw new Error('expected a case clause');
-	const suite = clause.body();
-	if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
-	const block = suite.block();
+	const block = clause.$query().$descendants.ofType(py.kinds.Block).at(0);
+	if (block === undefined) throw new Error('expected a block');
 	const tree = treeOf(block);
 	if (tree === undefined) throw new Error('expected a parsed block');
 	const data = materializeDetached(block, accessorOf) as AnyUntypedNode & { $_layout?: object };

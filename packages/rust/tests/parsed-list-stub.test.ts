@@ -10,7 +10,7 @@ const rsStrict = await createEngine(rust, { api: 'strict', nodeStorage: 'object'
 const shallowList = (engine = rs) => {
 	const item = engine.parse('fn f(a: u8, b: u16) {}').statements()[0];
 	if (item === undefined || !engine.is.functionItem(item)) throw new Error('expected function item');
-	const list = item.parameters().elements();
+	const list = item.parameters();
 	if (list === undefined) throw new Error('expected parameter list');
 	const stored = (list as unknown as { readonly _item: readonly unknown[] })._item;
 	if (stored.length !== 2 || stored.some(isCoordinate)) throw new Error('expected the items the list read');

@@ -27,7 +27,7 @@ import rust from '@sittir/rust';
 using strict = await rust.createEngine({ api: 'strict' });
 const fn = strict.build.statement.function({
 	name: strict.build.identifier('main'),
-	parameters: strict.build.parameters(),
+	parameters: undefined,
 	body: strict.build.block()
 });
 fn.$render(); // "fn main() {}"
@@ -114,7 +114,7 @@ import rust from '@sittir/rust';
 using rs = await rust.createEngine();
 const fn = rs.build.statement.function({
 	name: 'main',
-	parameters: rs.build.parameters(),
+	parameters: [],
 	body: rs.build.block()
 });
 fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}"

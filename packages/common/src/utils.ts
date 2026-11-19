@@ -9,6 +9,7 @@ import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
 import { undoIfFillFails } from './list-fills.ts';
+import { hydrateSlotBy, hydrateSlotsBy, storedSlotRead } from './stored-slot.ts';
 import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
@@ -23,6 +24,8 @@ export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
 export { refuseJSON } from './json-refusal.ts';
 export { spelledMember } from './spelled.ts';
+import { EMPTY as NO_HOISTED_ITEMS, type HoistHop } from './hoist-read.ts';
+export { hoistRead, type HoistHop } from './hoist-read.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };
@@ -490,15 +493,22 @@ function textEntryOf(text: string, facts: TriviaFacts): TriviaEntry {
 	return spelled === undefined ? facts.comment(text) : spelled.build(text);
 }
 
+interface StoredDecoration {
+	readonly accessor: string;
+	readonly storage: string;
+	readonly many: boolean;
+}
+
 interface ListViewWrapper {
 	readonly kind: number;
 	readonly content: string;
-	readonly decorations: readonly string[];
+	readonly decorations: readonly (string | StoredDecoration)[];
 }
 
 interface ElementConfig {
-	readonly keys: readonly string[];
+	readonly keys?: readonly string[];
 	readonly make: (config: never) => unknown;
+	readonly wrapper?: { readonly kind: number; readonly content: string };
 }
 
 interface ListSlotSpec {
@@ -507,6 +517,7 @@ interface ListSlotSpec {
 	readonly optional: boolean;
 	readonly make: (...args: never[]) => unknown;
 	readonly element?: ElementConfig;
+	readonly forms?: readonly number[];
 }
 
 type Members = Record<string, (...args: unknown[]) => unknown>;
@@ -557,7 +568,7 @@ const collapseWrapper = (item: unknown, wrapper: ListViewWrapper | undefined): u
 	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
 	const node = item as Members & Record<string, unknown>;
 	if ((node as { $type?: unknown }).$type !== wrapper.kind) return item;
-	if (wrapper.decorations.some((accessor) => holdsDecoration(node[accessor]!.call(node)))) return item;
+	if (wrapper.decorations.some((decoration) => holdsDecoration(typeof decoration === 'string' ? node[decoration]!.call(node) : storedSlotRead(node, decoration.accessor, decoration.storage, decoration.many)))) return item;
 	return node[wrapper.content]!.call(node);
 };
 
@@ -625,8 +636,16 @@ export function storedElements(stored: unknown): readonly unknown[] {
 /** The elements a list reads through its own reader, none for an absent list. */
 export function ownerElements(list: unknown, reader: string): readonly unknown[] {
 	if (list == null) return [];
+	if (Array.isArray(list)) return list;
 	const read = (list as Record<string, unknown>)[reader] as ((this: object) => readonly unknown[] | undefined) | undefined;
 	return read?.call(list) ?? [];
+}
+
+export function listElementsHop(owner: string | undefined, reader: string): HoistHop {
+	return function (this: never) {
+		const elements = ownerElements(owner === undefined ? this : (this as Record<string, () => unknown>)[owner]!.call(this), reader);
+		return elements.length === 0 ? NO_HOISTED_ITEMS : Object.freeze([...elements]);
+	};
 }
 
 /** A list option the owner reads from its list, or the option's default. */
@@ -655,10 +674,16 @@ export const isGroupConfig = (value: unknown, keys: readonly string[]): boolean 
 	Object.keys(value).length > 0 &&
 	Object.keys(value).every((key) => keys.includes(key));
 
+export function toElement(item: unknown, element: ElementConfig): unknown {
+	const make = element.make as (config: unknown) => unknown;
+	if (element.keys !== undefined && isGroupConfig(item, element.keys)) return make(item);
+	const wrapper = element.wrapper;
+	return wrapper === undefined || isNodeOfKind(item, wrapper.kind) ? item : make({ [wrapper.content]: item });
+}
+
 const convertElements = (args: readonly unknown[], element: ElementConfig | undefined): readonly unknown[] => {
 	if (element === undefined) return args;
-	const make = element.make as (config: unknown) => unknown;
-	const convert = (item: unknown): unknown => (isGroupConfig(item, element.keys) ? make(item) : item);
+	const convert = (item: unknown): unknown => toElement(item, element);
 	return args.length === 1 && Array.isArray(args[0]) ? [args[0].map(convert)] : args.map(convert);
 };
 
@@ -672,11 +697,15 @@ export function listSlotWith(
 	spec: Omit<ListSlotSpec, 'slot'>,
 	set: (...args: never[]) => unknown
 ): unknown {
-	const make = spec.make as (...args: unknown[]) => unknown;
 	const run = set as (...args: unknown[]) => unknown;
-	if (args.length === 0) return spec.optional ? run() : run(make());
-	const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
-	return run(whole ? args[0] : make(...convertElements(args, spec.element)));
+	return args.length === 0 && spec.optional ? run() : run(listSlotValue(args, spec));
+}
+
+function listSlotValue(args: readonly unknown[], spec: Omit<ListSlotSpec, 'slot'>): unknown {
+	const make = spec.make as (...args: unknown[]) => unknown;
+	if (args.length === 0) return make();
+	const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind || spec.forms?.includes((args[0] as { $type?: number } | null)?.$type as number) === true);
+	return whole ? args[0] : make(...convertElements(args, spec.element));
 }
 
 interface ElementsSeatSpec extends ElementConfig {
@@ -864,36 +893,6 @@ export function contentRole(envelope: object, content: () => unknown): Role {
 	return value !== null && typeof value === 'object' && own === indexOf(value) ? 'aliasContent' : 'node';
 }
 
-/** How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree, or `hydrateStored` for a built node. */
-type HydrateOne = (value: unknown) => unknown;
-
-/** The list slots already hydrated: each holds the frozen items an accessor returns. */
-const hydratedLists = new WeakSet<readonly unknown[]>();
-
-/** The value of slot `key` of `node`, hydrated by `hydrateOne` and written back into the slot. */
-function hydrateSlotBy(node: object, key: string, hydrateOne: HydrateOne): unknown {
-	const slots = node as Record<string, unknown>;
-	const child = hydrateOne(slots[key]);
-	if (child !== slots[key]) {
-		undoIfFillFails(slots, key, slots[key]);
-		slots[key] = child;
-	}
-	return child;
-}
-
-/** `hydrateSlotBy` for a list slot: every item hydrated once, the slot then holding the frozen items. */
-function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): readonly unknown[] {
-	const slots = node as Record<string, unknown>;
-	const stored = slots[key];
-	if (!Array.isArray(stored)) return [hydrateSlotBy(node, key, hydrateOne)];
-	if (hydratedLists.has(stored)) return stored;
-	const children = Object.freeze(stored.map((entry) => hydrateOne(entry)));
-	hydratedLists.add(children);
-	undoIfFillFails(slots, key, stored);
-	slots[key] = children;
-	return children;
-}
-
 /** The value of slot `key` of a wrapped node, hydrated by `hydrateWith` in `role` and written back into the slot. */
 export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode, role: Role = 'node'): unknown {
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
@@ -922,16 +921,75 @@ export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wr
 	return hydrateSlotsBy(node, key, (value) => hydrateWith(value, tree, wrap));
 }
 
-/** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot. */
-export function hydrateStoredSlot(node: object, key: string): unknown {
-	return hydrateSlotBy(node, key, hydrateStored);
+export function hoistedWith(
+	node: object,
+	accessor: string,
+	storage: string,
+	slot: string,
+	optional: boolean,
+	list: Omit<ListSlotSpec, 'slot'> | undefined,
+	handle: EngineHandle | undefined,
+	args: readonly unknown[],
+	apply: (args: readonly unknown[]) => unknown,
+	place: ((value: unknown) => unknown) | undefined = undefined,
+	wrap: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined,
+	kind: number | undefined = undefined,
+	inner: ((args: readonly never[]) => readonly unknown[]) | undefined = undefined
+): unknown {
+	try {
+		return hoistedWithUnchecked(node, accessor, storage, slot, optional, list, handle, args, apply, place, wrap, kind, inner);
+	} catch (error) {
+		throw new TypeError(`$with.${accessor} takes the items of the slot, its list node or a wrapper on its chain; this value was refused: ${(error as Error).message}`, { cause: error });
+	}
 }
 
-/** `hydrateStoredSlot` for a list slot. */
-export function hydrateStoredSlots(node: object, key: string): readonly unknown[] {
-	return hydrateSlotsBy(node, key, hydrateStored);
+function hoistedWithUnchecked(
+	node: object,
+	accessor: string,
+	storage: string,
+	slot: string,
+	optional: boolean,
+	list: Omit<ListSlotSpec, 'slot'> | undefined,
+	handle: EngineHandle | undefined,
+	args: readonly unknown[],
+	apply: (args: readonly unknown[]) => unknown,
+	place: ((value: unknown) => unknown) | undefined,
+	wrap: ((args: readonly never[]) => readonly unknown[]) | undefined,
+	kind: number | undefined,
+	inner: ((args: readonly never[]) => readonly unknown[]) | undefined
+): unknown {
+	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
+	if (!clears) handle?.admitHoisted?.((node as { readonly $type: number }).$type, accessor, args);
+	if (!clears && args.length === 1 && kind !== undefined && isKindNode(args[0], kind)) return (place ?? ((placed: unknown) => apply([placed])))(args[0]);
+	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
+	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
+	const through = inner !== undefined && list === undefined && !clears && args.length > 0 && !(kind !== undefined && args.length === 1 && isKindNode(args[0], kind));
+	const value = through ? (handle === undefined ? inner(args as readonly never[]) : inEngine(handle, () => inner(args as readonly never[]))) : list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
+	if (set?.[slot] !== undefined) return (place ?? ((placed: unknown) => apply([placed])))(set[slot](...value));
+	if (wrap === undefined || clears || (kind !== undefined && value.length === 1 && isKindNode(value[0], kind))) return apply(value);
+	return apply(handle === undefined ? wrap(value as readonly never[]) : inEngine(handle, () => wrap(value as readonly never[])));
 }
 
+export function wrapHoisted<R>(value: unknown, wrap: (value: never) => R, kind: number): R | undefined {
+	return value === undefined ? undefined : isKindNode(value, kind) ? (value as R) : wrap(value as never);
+}
+
+export function wrapHoistedEach<R>(value: unknown, wrap: (value: never) => R, kind: number): R[] | undefined {
+	if (value === undefined) return undefined;
+	return (Array.isArray(value) ? value : [value]).map((item) => wrapHoisted(item, wrap, kind) as R);
+}
+
+function isKindNode(value: unknown, kind: number): boolean {
+	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
+}
+
+export function storedHop(accessor: string, storage: string, many: boolean): HoistHop {
+	return function (this: never) {
+		return storedSlotRead(this, accessor, storage, many);
+	};
+}
+
+export { hydrateStoredSlot, hydrateStoredSlots } from './stored-slot.ts';
 export { numberRefusal, numberText, type NumberBase } from './number.ts';
 export {
 	decodeIndex,

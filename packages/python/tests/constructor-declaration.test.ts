@@ -12,7 +12,7 @@ const functionsIn = (source: string) => Array.from(py.parse(source).$query().$de
 describe('a python constructor declaration', () => {
 	it('reads __init__ in a class body as the constructor, decorated or not, in every function form', () => {
 		const [annotated] = constructorsIn('class A:\n    def __init__(self) -> None:\n        pass\n');
-		expect(annotated?.returnType()?.$render().toString()).toBe('None');
+		expect(annotated?.returnType()).toBe(kinds.None);
 		const [generic] = constructorsIn('class A:\n    async def __init__[T](self):\n        pass\n');
 		expect(generic?.async()).toBe(true);
 		expect(generic?.typeParameters()).toBeDefined();

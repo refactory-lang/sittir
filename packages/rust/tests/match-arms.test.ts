@@ -67,10 +67,10 @@ describe('a portable match', () => {
 		const runtime = await runtimeOf();
 		const built = runtime.build({ $path: 'statement.match', subject: 'x', body: [caseOf('a', 1), caseOf('b', 2)] } as never) as unknown as {
 			$render(): string;
-			body(): { matchBlockArms(): { arms(): readonly { $type: number }[] } | undefined };
+			body(): readonly { $type: number }[] | undefined;
 		};
 		expect(built.$render()).toBe('match x {\n    a => 1,\n    b => 2\n}');
-		const arms = built.body().matchBlockArms()!.arms();
+		const arms = built.body()!;
 		expect(arms.map((a) => a.$type)).toEqual([rs.kinds.MatchArmWithComma, rs.kinds.LastMatchArm]);
 		expect(runtime.read(built as never)).toEqual({ $path: 'statement.match', subject: 'x', body: [caseOf('a', 1), caseOf('b', 2)] });
 	});

@@ -2105,7 +2105,7 @@ The grammars to compare (none named: every stable grammar, as `bench-storage` re
 
 ### `packages/tools/src/validate/storage-parity.ts::ACCEPTED_DIFFERENCES`
 
-The differences between the storages the gate accepts, each at the count measured where it occurs. Object storage throws rebuilding a rust list whose item is a hidden group it reads as a bare unit, where arena storage rebuilds it: an open defect, rust 11. A written-back side holding an ERROR takes the ERROR's in-line whitespace from the render options (python 1, typescript 1), and a root's written-back inner side takes its gaps from the render options (rust 6): both are intentional, since a written-back side takes its gaps from the render options. A ceiling only falls: a count under its ceiling is reported so the ceiling can be lowered, and a count above it fails.
+The differences between the storages the gate accepts, each at the count measured where it occurs. A written-back side holding an ERROR takes the ERROR's in-line whitespace from the render options (python 1, typescript 1), and a root's written-back inner side takes its gaps from the render options (rust 6): both are intentional, since a written-back side takes its gaps from the render options. A ceiling only falls: a count under its ceiling is reported so the ceiling can be lowered, and a count above it fails.
 
 ### `packages/tools/src/validate/storage-parity.ts::storageFactsOf`
 

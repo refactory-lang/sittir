@@ -103,31 +103,27 @@ describe('storage parity', () => {
 		expect(verdictOf(report([runs])).passes).toBe(false);
 	});
 
+	const rootInner = ACCEPTED_DIFFERENCES.find((accepted) => accepted.ceilings.rust !== undefined)!;
+
 	it('accepts an accepted shape up to its ceiling in each grammar, and fails one past it', () => {
-		const throwing = rebuild('rust', 'throws: Missing field `_content`', '(a)');
-		expect(verdictOf(report(Array.from({ length: 11 }, () => throwing))).passes).toBe(true);
-		const over = verdictOf(report(Array.from({ length: 12 }, () => throwing)));
+		const inner = writeBack('rust', 0, 'inner', false);
+		expect(verdictOf(report(Array.from({ length: 6 }, () => inner))).passes).toBe(true);
+		const over = verdictOf(report(Array.from({ length: 7 }, () => inner)));
 		expect(over.passes).toBe(false);
 		expect(over.unaccepted).toEqual([]);
-		expect(over.accepted).toContainEqual({
-			name: ACCEPTED_DIFFERENCES[0]!.name,
-			grammar: 'rust',
-			count: 12,
-			ceiling: 11
-		});
-		expect(verdictOf(report([rebuild('typescript', 'throws: Missing field', '(a)')])).passes).toBe(false);
+		expect(over.accepted).toContainEqual({ name: rootInner.name, grammar: 'rust', count: 7, ceiling: 6 });
+		expect(verdictOf(report([writeBack('typescript', 0, 'inner', false)])).passes).toBe(false);
+	});
+
+	it('refuses a rebuild that throws in either storage alone', () => {
+		expect(verdictOf(report([rebuild('rust', 'throws: Missing field `_content`', '(a)')])).unaccepted).toHaveLength(1);
 		expect(verdictOf(report([rebuild('rust', '(a)', 'throws: Missing field')])).unaccepted).toHaveLength(1);
 	});
 
 	it('reports an accepted count under its ceiling and passes', () => {
 		const verdict = verdictOf(report([]));
 		expect(verdict.passes).toBe(true);
-		expect(verdict.accepted).toContainEqual({
-			name: ACCEPTED_DIFFERENCES[0]!.name,
-			grammar: 'rust',
-			count: 0,
-			ceiling: 11
-		});
+		expect(verdict.accepted).toContainEqual({ name: rootInner.name, grammar: 'rust', count: 0, ceiling: 6 });
 	});
 
 	it("accepts a written-back side holding an ERROR in python and typescript, and a root's inner side in rust", () => {

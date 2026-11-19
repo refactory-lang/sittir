@@ -78,7 +78,7 @@ describe.each(['arena', 'object'] as const)('a whitespace entry written beside a
 		if (declaration === undefined || !engine.is.letDeclaration(declaration)) throw new Error('expected a let declaration');
 		const array = declaration.value();
 		if (array === undefined || !engine.is.arrayExpressionList(array)) throw new Error('expected an array of items');
-		return array.elements()?.items() ?? [];
+		return array.elements() ?? [];
 	};
 
 	it.each([

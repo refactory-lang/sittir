@@ -87,7 +87,8 @@ describe('a class method defaults to no terminator', () => {
 
 	it('a rebuilt class body keeps a parsed method bare or terminated', () => {
 		const rebuilt = (source: string) => {
-			const body = (ts.parse(source) as never as { statements(): { body(): T.ClassBody.Parsed }[] }).statements()[0]!.body();
+			const declaration = (ts.parse(source) as never as { statements(): { $query(): { $descendants: { ofType(kind: number): { at(index: number): T.ClassBody.Parsed } } } }[] }).statements()[0]!;
+			const body = declaration.$query().$descendants.ofType(ts.kinds.ClassBody).at(0);
 			return ts.render(body.$with.members(...body.members())).toString();
 		};
 		expect(rebuilt('class A { foo() {} }\n')).toBe('{\n  foo() {}\n}');

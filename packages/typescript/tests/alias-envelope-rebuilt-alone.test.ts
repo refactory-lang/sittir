@@ -16,8 +16,8 @@ describe('a flat alias display rebuilt around its read slots, rendered alone', (
 		const body = declaration.body();
 		const members = body.members();
 		if (members === undefined) throw new Error('expected members');
-		expect(ts.render(body.$with.members(members)).toString()).toBe('{\n  x(): number\n}');
-		expect(ts.render(declaration.$with.body(body.$with.members(members))).toString()).toBe('interface I {\n  x(): number\n}');
+		expect(ts.render(body.$with.members(...members)).toString()).toBe('{\n  x(): number\n}');
+		expect(ts.render(declaration.$with.body(body.$with.members(...members))).toString()).toBe('interface I {\n  x(): number\n}');
 	});
 });
 
@@ -27,7 +27,7 @@ describe('an alias envelope rebuilt around its read content, rendered alone', ()
 		if (declaration === undefined || !ts.is.typeAliasDeclaration(declaration)) throw new Error('expected a type alias');
 		const value = declaration.value();
 		if (!ts.is.genericType(value)) throw new Error('expected a generic type');
-		const second = value.typeArguments().types().items()[1];
+		const second = value.typeArguments()[1];
 		if (second === undefined || !ts.is.typeIdentifier(second)) throw new Error('expected a type identifier');
 		expect(ts.render(second.$with.content(second.content())).toString()).toBe('Y');
 	});
@@ -37,7 +37,7 @@ describe('an alias envelope rebuilt around its read content, rendered alone', ()
 		if (declaration === undefined || !ts.is.typeAliasDeclaration(declaration)) throw new Error('expected a type alias');
 		const value = declaration.value();
 		if (!ts.is.genericType(value)) throw new Error('expected a generic type');
-		const second = value.typeArguments().types().items()[1];
+		const second = value.typeArguments()[1];
 		if (second === undefined || !ts.is.typeIdentifier(second)) throw new Error('expected a type identifier');
 		expect(ts.render(second.$with.content(second.content())).toString()).toBe('// c\nY');
 	});

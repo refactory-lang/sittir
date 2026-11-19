@@ -18,15 +18,14 @@ export function draftsIntoBuilders(): string[] {
 	if (!py.is.functionDefinition(fn)) return [];
 	const body = fn.body();
 	if (body.$type !== py.kinds.SuiteBlock) return [];
-	const block = body.block();
-	const draftBody = body.$with.block(block.$with.statements(...block.statements()));
-	const params = fn.parameters();
-	const draftParams = params.$with.elements(...params);
+	const statements = body.block();
+	const draftBody = body.$with.block(py.build.block(...statements));
+	const draftParams = fn.parameters();
 	return [
 		py.build.functionDefinition({ name: 'g', parameters: py.build.parameters(), body: draftBody }).$render(),
 		py.build.functionDefinition({ name: 'g', parameters: draftParams, body: py.build.block(py.build.passStatement) }).$render(),
 		pyStrict.build.functionDefinition({ name: py.build.identifier('g'), parameters: draftParams, body: draftBody }).$render(),
-		py.build.block(block.statements()[0]!).$render()
+		py.build.block(statements[0]!).$render()
 	];
 }
 

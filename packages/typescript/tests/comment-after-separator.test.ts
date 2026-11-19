@@ -43,29 +43,29 @@ describe.each(Object.entries(storages))('a comment after an item`s separator, re
 		const source = `interface I {\n  a: string${separator} // c\n  b: number\n}\n`;
 
 		it('gives the comment to the member after it', () => {
-			const [a, b] = interfaceMembers(ts.parse(source)).members.items();
+			const [a, b] = interfaceMembers(ts.parse(source)).members;
 			leadsTheNext(a, b);
 		});
 
 		it('renders the list rebuilt with its own members as the source', () => {
 			const root = ts.parse(source);
 			const { declaration, body, members } = interfaceMembers(root);
-			rendersAs(root.$with.statements(declaration.$with.body(body.$with.members(members.$with.items(...members.items())))), source);
+			rendersAs(root.$with.statements(declaration.$with.body(body.$with.members(...members))), source);
 		});
 	});
 
 	it('loses the comment when the member after it is replaced, a known gap', () => {
 		const root = ts.parse('interface I {\n  a: string; // c\n  b: number\n}\n');
 		const { declaration, body, members } = interfaceMembers(root);
-		const [a] = members.items();
-		const [z] = interfaceMembers(ts.parse('interface J {\n  z: boolean\n}\n')).members.items();
-		rendersAs(root.$with.statements(declaration.$with.body(body.$with.members(members.$with.items(a!, z!)))), 'interface I {\n  a: string;\n  z: boolean\n}\n');
+		const [a] = members;
+		const [z] = interfaceMembers(ts.parse('interface J {\n  z: boolean\n}\n')).members;
+		rendersAs(root.$with.statements(declaration.$with.body(body.$with.members(a!, z!))), 'interface I {\n  a: string;\n  z: boolean\n}\n');
 	});
 
 	it('gives the comment after an enum member`s comma to the member after it', () => {
 		const [declaration] = ts.parse('enum E {\n  A, // c\n  B\n}\n').statements();
 		if (declaration === undefined || !ts.is.enumDeclaration(declaration)) throw new Error('expected an enum');
-		const [a, b] = declaration.body().elements() ?? [];
+		const [a, b] = declaration.body();
 		leadsTheNext(a, b);
 	});
 
@@ -78,12 +78,12 @@ describe.each(Object.entries(storages))('a comment after an item`s separator, re
 	}
 
 	it('gives the comment after an argument`s comma to the argument after it', () => {
-		const [a, b] = callOf(ts.parse('f(a, // c\n  b)\n')).args.elements();
+		const [a, b] = callOf(ts.parse('f(a, // c\n  b)\n')).args;
 		leadsTheNext(a, b);
 	});
 
 	it('gives the comment after an array item`s comma to the item after it', () => {
-		const [array] = callOf(ts.parse('x([a, // c\n  b])\n')).args.elements();
+		const [array] = callOf(ts.parse('x([a, // c\n  b])\n')).args;
 		if (array === undefined || array === null || !ts.is.array(array)) throw new Error('expected an array');
 		const [a, b] = array.elements();
 		leadsTheNext(a, b);
@@ -91,14 +91,14 @@ describe.each(Object.entries(storages))('a comment after an item`s separator, re
 
 	it('leaves a comment the next item follows on its row leading that item', () => {
 		const { args } = callOf(ts.parse('f(a, /* c */ b)\n'));
-		const [a, b] = args.elements();
+		const [a, b] = args;
 		expect(owns(a)).toEqual({ leading: [], trailing: [] });
 		expect(owns(b)).toEqual({ leading: ['/* c */'], trailing: [] });
 	});
 
 	it('leaves a comment before an array item on its row leading that item', () => {
 		const { args } = callOf(ts.parse('x([/* A */ a, /* B */ b])\n'));
-		const [array] = args.elements();
+		const [array] = args;
 		if (array === undefined || array === null || !ts.is.array(array)) throw new Error('expected an array');
 		const [a, b] = array.elements();
 		expect(owns(a)).toEqual({ leading: ['/* A */'], trailing: [] });

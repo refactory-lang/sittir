@@ -11,7 +11,7 @@ for (const nodeStorage of ['object', 'arena'] as const) {
 		if (!ts.is.typeAliasDeclaration(alias)) throw new Error('not a type alias');
 		const value = alias.value();
 		if (!ts.is.objectType(value)) throw new Error('not an object type');
-		const content = value.members();
+		const content = value.$query().$descendants.ofType(ts.kinds.ObjectTypeContent).at(0);
 		if (content === undefined) throw new Error('no members');
 		return content;
 	};

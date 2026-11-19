@@ -17,7 +17,7 @@ describe.each(['object', 'arena'] as const)('a comment added after an untouched 
 	it('after the statement it ends in, under a rebuilt root', async () => {
 		using engine = await createEngine(python, { nodeStorage });
 		const root = engine.parse(source) as any;
-		const last = root.statements()[0].body().block().statements().at(-1);
+		const last = root.statements()[0].body().block().at(-1);
 		last.$trivia.trailing(...last.$trivia.trailing(), '# five');
 		expect(root.$with.statements(...root.statements()).$render()).toBe('def a():\n    if b:\n        b # comment\n    b # comment\n    # five\n');
 	});
