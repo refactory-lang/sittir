@@ -7,7 +7,7 @@ import { rustStringLiteral as q } from '../util/string-literal.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/delimiter';
 import { AssembledLeaf } from '../compiler/model/node-map.ts';
-import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
+import { LAYOUT_KIND_BITS, leafEdgesOf, terminatorOnlyKinds } from '../compiler/model/layout-kinds.ts';
 import {
 	BLANK_ARM,
 	type PreferenceArm,
@@ -130,6 +130,7 @@ const KIND_LINE_TERMINATED = 2;
 const KIND_LINE_BREAK_TERMINATED = 4;
 const KIND_ROOT = 8;
 const KIND_JOINS_NEXT = 16;
+const KIND_TERMINATOR_ONLY = 32;
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = Object.fromEntries(
 	Object.entries(Delimiter).map(([member, bits]) => [`Delimiter.${member}`, bits])
@@ -168,7 +169,8 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap, joins: J
 			(lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0) |
 			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0) |
 			(nodeMap.nodes.get(entry.kind)?.grammarRoot === true ? KIND_ROOT : 0) |
-			([entry.kind, entry.symbolName, entry.parseName].some((name) => name !== undefined && joins.joinsNextKinds.has(name)) ? KIND_JOINS_NEXT : 0);
+			([entry.kind, entry.symbolName, entry.parseName].some((name) => name !== undefined && joins.joinsNextKinds.has(name)) ? KIND_JOINS_NEXT : 0) |
+			(terminatorOnlyKinds(nodeMap).has(entry.kind) ? KIND_TERMINATOR_ONLY : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);

@@ -79,7 +79,7 @@ pub struct ResolvedOptions {
     pub edge_rows: &'static [Option<EdgeRow>],
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
-    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`, `KindFlags::JOINS_NEXT`).
+    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`, `KindFlags::JOINS_NEXT`, `KindFlags::TERMINATOR_ONLY`).
     pub kind_flags: &'static [KindFlags],
     /// Per kind id of a wrapper, the way its seat passes through to the node
     /// it holds; none for any other kind (`prepare::SeatSlot`).
@@ -142,6 +142,10 @@ impl KindFlags {
     /// derived `next` bit (`render::JoinArm::next`). A slice of the kind
     /// arms its right edge from this flag.
     pub const JOINS_NEXT: Self = Self(1 << 4);
+    /// A list item kind that spells nothing but the fixed token another item
+    /// of its list ends with (an empty statement): no line break goes
+    /// before it, whatever the options' arm for the list's gaps.
+    pub const TERMINATOR_ONLY: Self = Self(1 << 5);
 
     /// Whether the set holds any flag of `other`.
     #[must_use]

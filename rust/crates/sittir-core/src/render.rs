@@ -887,6 +887,21 @@ pub trait RenderSink {
             self.hold_line_end(LineHold::Break);
         }
     }
+    /// A node of `kind` is about to be written: when the kind spells nothing
+    /// but the token its list's items end with
+    /// (`options::KindFlags::TERMINATOR_ONLY`), the gap before it breaks no
+    /// line (`drop_held_breaks`).
+    fn stay_on_line(&mut self, kind: KindId) {
+        if self.kind_has(kind, crate::options::KindFlags::TERMINATOR_ONLY) {
+            self.drop_held_breaks();
+        }
+    }
+    /// The seam held for the next write keeps only its kinds that do not
+    /// break the line, none leaving it tight. It keeps its breaks where a
+    /// line end is held, where the output stands at a line start or a block
+    /// body's start, and where it is a list's flank. A sink that holds no
+    /// seam does nothing.
+    fn drop_held_breaks(&mut self) {}
     /// Render trailing trivia that shares its owner's row, held until the
     /// anonymous tokens after the owner are written: the sink seats it before
     /// the next owner, coordinate or line break, or at the end of the render.

@@ -115,6 +115,12 @@ impl LayoutKinds {
         }
     }
 
+    /// The kinds of the set that do not break the line.
+    #[must_use]
+    pub const fn without_breaks(self) -> Self {
+        Self(self.0 & !Self::BREAKING.0)
+    }
+
     /// The text of one kind when a writer holds no whitespace table.
     #[must_use]
     pub fn default_text(self) -> &'static str {

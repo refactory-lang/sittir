@@ -126287,7 +126287,7 @@
     "wrappedText": "f();"
   },
   {
-    "expectedOutput": "\nconst {\n    1 + 3\n}\n;\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
+    "expectedOutput": "\nconst {\n    1 + 3\n};\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -126464,13 +126464,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal_decimal) right: (integer_literal_decimal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression argument: (identifier)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression_bare argument: (call_expression function: (field_expression object: (integer_literal_decimal) property: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (argument (integer_literal_decimal)))))))))) alternative: (else_clause body: (block trailing_expression: (identifier))))) statements: (let_declaration name: (identifier) value: (array_expression_semi element: (const_block body: (block trailing_expression: (call_expression function: (field_expression object: (parenthesized_expression expression: (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal))) property: (field_identifier)) arguments: (arguments)))) length: (integer_literal_decimal))))",
-    "expectedSourceOut": "\nconst {\n    1 + 3\n}\n;\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
+    "expectedSourceOut": "\nconst {\n    1 + 3\n};\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\nconst { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nconst {\n    1 + 3\n}\n;\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n"
+    "wrappedText": "\nconst {\n    1 + 3\n};\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n"
   },
   {
     "expectedOutput": "const {\n    1 + 3\n}",

@@ -4282,6 +4282,20 @@ The grammar's declared render indent unit, checked against `indentChars`. A gram
 
 The kinds of the layout tokens in the node map, as a set.
 
+### `packages/codegen/src/compiler/model/layout-kinds.ts::terminatorOnlyKinds`
+
+The list item kinds that spell nothing but their list's terminator: a fixed-text leaf (`isFixedTextLeaf`) that is an item of some list slot, whose text is a fixed token another item of the same slot ends with as its own (`ownEndTextsOf`). A list slot is a compound's slot with an `array` value; its items are that value's kinds with each supertype expanded to its subtypes (`itemKindsOf`). rust has `empty_statement` (its `source_file`, `block` and declaration lists, where `const_item` and `expression_statement_with_semi` end with `;`); typescript has `empty_statement` (statement lists and switch bodies, where statements end with `semi`) and `empty_member` (class bodies); python, scm and regex have none. Memoised per node map.
+
+The emitter stamps the kinds as `KIND_TERMINATOR_ONLY` (`kindFlagsOf`). At render time no line break goes before such a kind, whatever the options' arm for the list's gaps (`RenderSink::stay_on_line`). The writer keeps the gap's kinds that do not break the line and writes it tight when none remains. It keeps the break where a line end is held, so a `;` after a line comment still starts the next line; at a line start or a block body's start; and at a list's flank, so a block's first item is unaffected.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::itemKindsOf`
+
+The kinds a list slot's item of `kind` can be: the kind itself, or for a supertype each of its subtypes, expanded again where a subtype is a supertype. `seen` stops a cycle; a kind the node map lacks gives nothing. `terminatorOnlyKinds` compares one item against the others of the same slot through it.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::ownEndTextsOf`
+
+The fixed tokens a kind ends with as its own: each literal at its end edge (`endTerminals`), and the text of each fixed-text leaf named there, such as typescript's `semi` or the empty `_automatic_semicolon`. Content named at the end edge is not followed, so a kind whose last slot can hold an expression does not end with that expression's tokens: rust `()` ends a `type_cast_expression` only as its type, and is no terminator of `_let_chain`.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveLabels`
 
 Each site's arm, with the narrowest address that reaches it winning.

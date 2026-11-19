@@ -1601,6 +1601,15 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.line_end_held = self.line_end_held.max(Some(hold));
     }
 
+    fn drop_held_breaks(&mut self) {
+        if !self.held_breaks() || self.line_end_held.is_some() || self.seam_is_flank || self.at_line_start() || self.at_body_start() {
+            return;
+        }
+        let set = self.seam_set.without_breaks();
+        let set = if set.is_empty() { LayoutKinds::TIGHT } else { set };
+        self.set_payload(Payload { set, pick: set.narrowest() });
+    }
+
     fn take_seam(&mut self) -> Option<crate::render::HeldSeam> {
         self.seam.take()?;
         let payload = self.take_payload();

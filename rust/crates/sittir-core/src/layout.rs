@@ -630,6 +630,9 @@ impl<T: Render + TriviaSeam> NodeLayout<T> {
 /// base edges (`RenderSink::unsited_edge`), which writes a stamp only where
 /// the kind has no edge site of its own, so a list gap's source class or a
 /// seat on a leaf item renders although no template writes that edge.
+/// Before its leading side the sink is told the kind is about to be written
+/// (`RenderSink::stay_on_line`), so a kind that spells only its list's
+/// terminator takes no line break before it.
 /// After the body the sink is told the kind was written
 /// (`RenderSink::end_line_after`), so a line-terminated kind holds its line
 /// end before any trailing entry renders, and an owner seats what its
@@ -650,6 +653,7 @@ pub fn render_framed<F: Framing + ?Sized>(
     }
     if let Some(kind) = kind {
         w.unsited_edge(kind, Side::Before, edges.before);
+        w.stay_on_line(kind);
     }
     if let Some(trivia) = trivia {
         trivia.frame_leading(w)?;
