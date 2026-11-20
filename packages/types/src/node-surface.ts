@@ -286,15 +286,29 @@ export type RefuseUndeclared<V, Declared = never, Signed extends boolean = false
 
 /**
  * A builder's row call: it takes its kind's row, an argument list that may hold a seated group's config in place of
- * the group, and refuses what {@link RefuseUndeclared} refuses against the row.
+ * the group, and refuses what {@link RefuseUndeclared} refuses against the row. A single argument that is an empty
+ * array is the item list of a list builder, as the coercer reads it, so a row that takes items but never none refuses
+ * it; an empty array inside that list (`[[]]`) or beside another argument stays one item.
  *
  * @typeParam Args - the kind's row: `BuildArgs` in the strict table, `LooseArgs` in the default engine's.
  * @typeParam R - the node the builder returns.
  * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
 export type Seat<Args extends readonly unknown[], R, Signed extends boolean = false> = <const A extends Args>(
-	...args: A & RefuseUndeclared<A, Args, Signed>
+	...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args>
 ) => R;
+
+type RefuseLoneEmptyList<A extends readonly unknown[], Args extends readonly unknown[]> = A extends readonly [infer Only]
+	? [Only] extends [never]
+		? unknown
+		: [Only] extends [readonly []]
+			? [] extends Args
+				? unknown
+				: number extends Args['length']
+					? { readonly refused: 'an empty array alone is the item list, and the list holds at least one item' }
+					: unknown
+			: unknown
+	: unknown;
 
 /**
  * A loose builder's config call: it takes one value of its kind's loose input, and refuses what

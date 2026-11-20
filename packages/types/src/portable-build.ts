@@ -100,8 +100,8 @@ export interface PortableSeat {
 /**
  * The route of a slot in a build arm: the steps to the grammar slot that holds it, whether that grammar slot holds a list, and the seats a
  * value finds in it, its own first. `list` is the slot's arity as the vocabulary declares it: a list slot reads and builds as a list whatever
- * its grammar slot holds, and a slot of one value reads one value from a grammar slot that holds many. It is absent for a slot the vocabulary does
- * not declare. A route that enters a kind the arm does not make `requires` other slots to fill that kind's required grammar slots: each group
+ * its grammar slot holds, and a slot of one value reads one value from a grammar slot that holds many. It is absent for a slot the vocabulary
+ * takes as one value or a list, or does not declare: such a slot builds a list only through a seat that holds many, and refuses one elsewhere. A route that enters a kind the arm does not make `requires` other slots to fill that kind's required grammar slots: each group
  * names the slots any one of which fills one grammar slot, so the route is taken only when every group has a slot present. `reads` lists
  * the kinds the route reads from its grammar slot where its binding captures only some of what that slot holds; a read keeps only values of those
  * kinds. A `nonEmpty` route's grammar slot holds at least one element, so an empty list neither builds through it nor fills a slot it `requires`;

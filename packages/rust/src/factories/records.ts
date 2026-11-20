@@ -1876,7 +1876,8 @@ function withUnionItem(node: object, setter: string, args: readonly unknown[]): 
 						rebuilt(node, handle, () => buildUnionItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -2228,7 +2229,8 @@ function withEnumItem(node: object, setter: string, args: readonly unknown[]): u
 						rebuilt(node, handle, () => buildEnumItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -2589,7 +2591,8 @@ function withEnumVariant(node: object, setter: string, args: readonly unknown[])
 						rebuilt(node, handle, () => buildEnumVariant$set(node, 'visibilityModifier', { visibilityModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -2865,7 +2868,8 @@ function withFieldDeclaration(node: object, setter: string, args: readonly unkno
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -3140,7 +3144,8 @@ function withExternCrateDeclaration(node: object, setter: string, args: readonly
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -3327,7 +3332,8 @@ function withConstItem(node: object, setter: string, args: readonly unknown[]): 
 						rebuilt(node, handle, () => buildConstItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -3572,7 +3578,8 @@ function withStaticItem(node: object, setter: string, args: readonly unknown[]):
 						rebuilt(node, handle, () => buildStaticItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'byReference':
@@ -3860,7 +3867,8 @@ function withTypeItem(node: object, setter: string, args: readonly unknown[]): u
 						rebuilt(node, handle, () => buildTypeItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -4254,7 +4262,8 @@ function withFunctionItem(node: object, setter: string, args: readonly unknown[]
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':
@@ -4663,7 +4672,8 @@ function withFunctionSignatureItem(node: object, setter: string, args: readonly 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':
@@ -5399,7 +5409,8 @@ function withTraitItem(node: object, setter: string, args: readonly unknown[]): 
 						rebuilt(node, handle, () => buildTraitItem$set(node, 'visibilityModifier', { visibilityModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'unsafe':
@@ -6882,7 +6893,8 @@ function withUseDeclaration(node: object, setter: string, args: readonly unknown
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'argument':
@@ -11865,7 +11877,8 @@ function withShorthandFieldInitializer(node: object, setter: string, args: reado
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'name':
@@ -12015,7 +12028,8 @@ function withFieldInitializer(node: object, setter: string, args: readonly unkno
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'name':
@@ -12209,7 +12223,8 @@ function withIfExpression(node: object, setter: string, args: readonly unknown[]
 						rebuilt(node, handle, () => buildIfExpression$set(node, 'alternative', { alternative: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -18584,7 +18599,8 @@ function withAttributedElement(node: object, setter: string, args: readonly unkn
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'expression':
@@ -21978,7 +21994,10 @@ function withVisibilityModifierPub(node: object, setter: string, args: readonly 
 						rebuilt(node, handle, () => _buildVisibilityModifierPub$patch(node, value))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifierPubScope(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) =>
+						wrapHoisted(v, (v: never) => buildVisibilityModifierPubScope(v), TSKindId.VisibilityModifierPubScope)
+					),
 				TSKindId.VisibilityModifierPubScope
 			);
 	}
@@ -22221,7 +22240,8 @@ function withModItemExternal(node: object, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -22398,7 +22418,8 @@ function withModItemInline(node: object, setter: string, args: readonly unknown[
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -23043,7 +23064,8 @@ function withForeignModItemSemi(node: object, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildForeignModItemSemi$set(node, 'externModifier', { externModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildExternModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildExternModifier(v), TSKindId.ExternModifier)),
 				TSKindId.ExternModifier
 			);
 	}
@@ -23214,7 +23236,8 @@ function withForeignModItemBody(node: object, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildForeignModItemBody$set(node, 'externModifier', { externModifier: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildExternModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildExternModifier(v), TSKindId.ExternModifier)),
 				TSKindId.ExternModifier
 			);
 		case 'body':
@@ -25641,7 +25664,8 @@ function withStructItemBrace(node: object, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -26011,7 +26035,8 @@ function withStructItemTuple(node: object, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -26285,7 +26310,8 @@ function withStructItemUnit(node: object, setter: string, args: readonly unknown
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'name':
@@ -26471,7 +26497,8 @@ function withAttributedFieldDeclaration(node: object, setter: string, args: read
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'fieldDeclaration':
@@ -26612,7 +26639,8 @@ function withAttributedEnumVariant(node: object, setter: string, args: readonly 
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'enumVariant':
@@ -26747,7 +26775,8 @@ function withAttributedParameter(node: object, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildAttributedParameter$set(node, 'attributeItem', { attributeItem: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'content':
@@ -26885,7 +26914,8 @@ function withAttributedTypeParameter(node: object, setter: string, args: readonl
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'content':
@@ -27010,7 +27040,8 @@ function withArgument(node: object, setter: string, args: readonly unknown[]): u
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'expression':
@@ -27197,7 +27228,8 @@ function withAttributedOrderedField(node: object, setter: string, args: readonly
 							)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'visibilityModifier':
@@ -27217,7 +27249,8 @@ function withAttributedOrderedField(node: object, setter: string, args: readonly
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'type':
@@ -28319,7 +28352,8 @@ function withAttributedParameterReceiver(node: object, setter: string, args: rea
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildAttributeItem(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildAttributeItem(v), TSKindId.AttributeItem)),
 				TSKindId.AttributeItem
 			);
 		case 'content':
@@ -29149,7 +29183,8 @@ function withMethodDeclaration(node: object, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':
@@ -29560,7 +29595,8 @@ function withSignatureMethodDeclaration(node: object, setter: string, args: read
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildVisibilityModifier(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildVisibilityModifier(v), TSKindId.VisibilityModifier)),
 				TSKindId.VisibilityModifier
 			);
 		case 'functionModifiers':

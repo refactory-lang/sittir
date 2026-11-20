@@ -17,6 +17,7 @@ import {
 	listSlotWith,
 	hoistedWith,
 	listElementsHop,
+	wrapHoisted,
 	seatWith,
 	groupField,
 	LIST_METHODS,
@@ -1397,7 +1398,8 @@ function wrapIfStatement$with(node: Held, setter: string, args: readonly unknown
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildElseClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildElseClause(v), TSKindId.ElseClause)),
 				TSKindId.ElseClause
 			);
 	}
@@ -1893,7 +1895,8 @@ function wrapTryStatement$with(node: Held, setter: string, args: readonly unknow
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildFinallyClause(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildFinallyClause(v), TSKindId.FinallyClause)),
 				TSKindId.FinallyClause
 			);
 	}
@@ -3213,7 +3216,8 @@ function wrapClass$with(node: Held, setter: string, args: readonly unknown[]): u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'name':
@@ -3272,7 +3276,8 @@ function wrapClass$with(node: Held, setter: string, args: readonly unknown[]): u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildClassHeritage(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildClassHeritage(v), TSKindId.ClassHeritage)),
 				TSKindId.ClassHeritage
 			);
 		case 'body':
@@ -3450,7 +3455,8 @@ function wrapClassDeclaration$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'name':
@@ -3514,7 +3520,8 @@ function wrapClassDeclaration$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildClassHeritage(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildClassHeritage(v), TSKindId.ClassHeritage)),
 				TSKindId.ClassHeritage
 			);
 		case 'body':
@@ -7588,7 +7595,8 @@ function wrapAbstractClassDeclaration$with(node: Held, setter: string, args: rea
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'name':
@@ -7658,7 +7666,8 @@ function wrapAbstractClassDeclaration$with(node: Held, setter: string, args: rea
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildClassHeritage(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildClassHeritage(v), TSKindId.ClassHeritage)),
 				TSKindId.ClassHeritage
 			);
 		case 'body':
@@ -8739,7 +8748,8 @@ function wrapRequiredParameter$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -8798,7 +8808,8 @@ function wrapRequiredParameter$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -8945,7 +8956,8 @@ function wrapOptionalParameter$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -9004,7 +9016,8 @@ function wrapOptionalParameter$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -9548,7 +9561,8 @@ function wrapAssertsAnnotation$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildAsserts(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildAsserts(v), TSKindId.Asserts)),
 				TSKindId.Asserts
 			);
 	}
@@ -9629,7 +9643,8 @@ function wrapTupleParameter$with(node: Held, setter: string, args: readonly unkn
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -9726,7 +9741,8 @@ function wrapOptionalTupleParameter$with(node: Held, setter: string, args: reado
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -11761,7 +11777,8 @@ function wrapPropertySignature$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -12021,7 +12038,8 @@ function wrapTypeParameter$with(node: Held, setter: string, args: readonly unkno
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDefaultType(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDefaultType(v), TSKindId.DefaultType)),
 				TSKindId.DefaultType
 			);
 	}
@@ -12331,7 +12349,8 @@ function wrapConstructSignature$with(node: Held, setter: string, args: readonly 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -13740,7 +13759,8 @@ function wrapCatchClauseGroup$with(node: Held, setter: string, args: readonly un
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -15113,7 +15133,8 @@ function wrapClassBodyMemberMethod$with(node: Held, setter: string, args: readon
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'methodDefinition':
@@ -15943,7 +15964,8 @@ function wrapParenthesizedExpressionTyped$with(node: Held, setter: string, args:
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -17330,7 +17352,8 @@ function wrapExportStatementDefaultDeclaration$with(node: Held, setter: string, 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'content':
@@ -17830,7 +17853,8 @@ function wrapVariableDeclaratorPlain$with(node: Held, setter: string, args: read
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -17939,7 +17963,8 @@ function wrapVariableDeclaratorDefinite$with(node: Held, setter: string, args: r
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -18558,7 +18583,8 @@ function wrapSetterParameter$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -18614,7 +18640,8 @@ function wrapSetterParameter$with(node: Held, setter: string, args: readonly unk
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 	}
@@ -19259,14 +19286,22 @@ function wrapMethodDefinitionSetter$with(node: Held, setter: string, args: reado
 				undefined,
 				(args: readonly never[]) =>
 					args.map((v) =>
-						((v: never) =>
-							RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)))(
-							v as never
+						wrapHoisted(
+							v,
+							(v: never) =>
+								RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)),
+							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
 				TSKindId.FormalParametersSetAccessorSignature,
 				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v))(v as never))
+					args.map((v) =>
+						wrapHoisted(
+							v,
+							(v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v),
+							TSKindId.FormalParametersElementsSetAccessorSignature
+						)
+					)
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.MethodDefinitionSetter['_body']>) =>
@@ -19878,14 +19913,22 @@ function wrapMethodSignatureSetter$with(node: Held, setter: string, args: readon
 				undefined,
 				(args: readonly never[]) =>
 					args.map((v) =>
-						((v: never) =>
-							RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)))(
-							v as never
+						wrapHoisted(
+							v,
+							(v: never) =>
+								RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)),
+							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
 				TSKindId.FormalParametersSetAccessorSignature,
 				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v))(v as never))
+					args.map((v) =>
+						wrapHoisted(
+							v,
+							(v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v),
+							TSKindId.FormalParametersElementsSetAccessorSignature
+						)
+					)
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -20430,14 +20473,22 @@ function wrapAbstractMethodSignatureSetter$with(node: Held, setter: string, args
 				undefined,
 				(args: readonly never[]) =>
 					args.map((v) =>
-						((v: never) =>
-							RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)))(
-							v as never
+						wrapHoisted(
+							v,
+							(v: never) =>
+								RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)),
+							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
 				TSKindId.FormalParametersSetAccessorSignature,
 				(args: readonly never[]) =>
-					args.map((v) => ((v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v))(v as never))
+					args.map((v) =>
+						wrapHoisted(
+							v,
+							(v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v),
+							TSKindId.FormalParametersElementsSetAccessorSignature
+						)
+					)
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -20596,7 +20647,8 @@ function wrapPublicFieldDefinitionPlain$with(node: Held, setter: string, args: r
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'declare':
@@ -20694,7 +20746,8 @@ function wrapPublicFieldDefinitionPlain$with(node: Held, setter: string, args: r
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -20874,7 +20927,8 @@ function wrapPublicFieldDefinitionAccessor$with(node: Held, setter: string, args
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -20945,7 +20999,8 @@ function wrapPublicFieldDefinitionAccessor$with(node: Held, setter: string, args
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':
@@ -21256,7 +21311,8 @@ function wrapReceiverParameterDeclaration$with(node: Held, setter: string, args:
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildDecorator(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildDecorator(v), TSKindId.Decorator)),
 				TSKindId.Decorator
 			);
 		case 'accessibilityModifier':
@@ -21309,7 +21365,8 @@ function wrapReceiverParameterDeclaration$with(node: Held, setter: string, args:
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildTypeAnnotation(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildTypeAnnotation(v), TSKindId.TypeAnnotation)),
 				TSKindId.TypeAnnotation
 			);
 		case 'value':

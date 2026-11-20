@@ -17,6 +17,9 @@ const unbuilt = (
 const missing = (owner: string): never => {
 	throw new Error(owner + ' is required');
 };
+const unlisted = (owner: string): never => {
+	throw new Error(owner + ' holds one value, not a list');
+};
 const unrouted = (owner: string, slot: string): never => {
 	throw new Error(owner + ' has no slot ' + slot);
 };
@@ -48822,7 +48825,7 @@ const declaration_class$179 = (
 								...bases$rest.map(declaration_class$179_bases$item)
 							)
 						),
-			body: declaration_class$179_body(input.body)
+			body: listed(input.body) ? unlisted('declaration.class.body') : declaration_class$179_body(input.body)
 		});
 	if (input.body === undefined)
 		return b.classDefinition({
