@@ -1507,19 +1507,6 @@
               "slot": "right"
             }
           ]
-        },
-        {
-          "name": "disposable",
-          "route": "presence",
-          "via": [],
-          "token": "using",
-          "path": [
-            {
-              "owner": "assignment_expression",
-              "slot": "disposable"
-            }
-          ],
-          "flag": true
         }
       ]
     },

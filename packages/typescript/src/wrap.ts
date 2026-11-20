@@ -1523,7 +1523,12 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		$type: TSKindId.ForStatement as const,
 		initializer() {
 			return hydrateSlot<
-				T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+				| T.LexicalDeclaration
+				| T.VariableDeclaration
+				| T.UsingDeclaration
+				| T.Expression
+				| T.SequenceExpression
+				| TSKindId.EmptyStatement
 			>(this, '_initializer', tree);
 		},
 		condition() {
@@ -5067,9 +5072,6 @@ export function wrapAssignmentExpression(
 	const node = {
 		...data,
 		$type: TSKindId.AssignmentExpression as const,
-		disposable() {
-			return this._disposable;
-		},
 		left() {
 			return hydrateSlot<T.ParenthesizedExpression | T.LhsExpression>(this, '_left', tree);
 		},
@@ -5092,7 +5094,6 @@ export function wrapAssignmentExpression(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		disposable: wrapAssignmentExpression$with$disposable,
 		left: wrapAssignmentExpression$with$left,
 		right: wrapAssignmentExpression$with$right,
 		[RECEIVER]: node
@@ -5105,15 +5106,6 @@ function wrapAssignmentExpression$with(node: Held, setter: string, args: readonl
 	const data = node[INPUT] as T.AssignmentExpression;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'disposable':
-			return applySetter(args, (v: NonNullable<T.AssignmentExpression['_disposable']>) =>
-				rebuilt(node, handle, () =>
-					wrapAssignmentExpression(
-						{ ...$edited(data), _disposable: admitSlot(handle, 'assignment_expression', 'disposable', v) },
-						tree
-					)
-				)
-			);
 		case 'left':
 			return applySetter(args, (v: NonNullable<T.AssignmentExpression['_left']>) =>
 				rebuilt(node, handle, () =>
@@ -5134,9 +5126,6 @@ function wrapAssignmentExpression$with(node: Held, setter: string, args: readonl
 			);
 	}
 	throw new Error(`assignment_expression has no $with.${setter}`);
-}
-function wrapAssignmentExpression$with$disposable(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssignmentExpression$with(receiverOf(this, '$with.disposable'), 'disposable', args);
 }
 function wrapAssignmentExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAssignmentExpression$with(receiverOf(this, '$with.left'), 'left', args);
@@ -22839,7 +22828,12 @@ function viewSwitchStatement(data: RecordPosition, tree: TreeHandle): T.SwitchSt
 
 function viewForStatement$initializer(this: RecordHandle) {
 	return viewSlot<
-		T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+		| T.LexicalDeclaration
+		| T.VariableDeclaration
+		| T.UsingDeclaration
+		| T.Expression
+		| T.SequenceExpression
+		| TSKindId.EmptyStatement
 	>(this, 2, 4, 3, 2);
 }
 function viewForStatement$condition(this: RecordHandle) {
@@ -24369,14 +24363,11 @@ function viewLhsExpression(data: RecordPosition, tree: TreeHandle): T.LhsExpress
 	return node as unknown as T.LhsExpression.Parsed;
 }
 
-function viewAssignmentExpression$disposable(this: RecordHandle) {
-	return recordFlag(this, 2, 0);
-}
 function viewAssignmentExpression$left(this: RecordHandle) {
-	return viewSlot<T.ParenthesizedExpression | T.LhsExpression>(this, 3, 3, 1, 3);
+	return viewSlot<T.ParenthesizedExpression | T.LhsExpression>(this, 2, 3, 1, 2);
 }
 function viewAssignmentExpression$right(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 6, 4, 3, 4);
+	return viewSlot<T.Expression>(this, 5, 4, 3, 3);
 }
 function viewAssignmentExpression(data: RecordPosition, tree: TreeHandle): T.AssignmentExpression.Parsed {
 	const node = {
@@ -24386,7 +24377,6 @@ function viewAssignmentExpression(data: RecordPosition, tree: TreeHandle): T.Ass
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		disposable: viewAssignmentExpression$disposable,
 		left: viewAssignmentExpression$left,
 		right: viewAssignmentExpression$right,
 		$with: undefined as unknown as object,
@@ -24399,7 +24389,7 @@ function viewAssignmentExpression(data: RecordPosition, tree: TreeHandle): T.Ass
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { disposable: $with$disposable, left: $with$left, right: $with$right, [RECEIVER]: node };
+	node.$with = { left: $with$left, right: $with$right, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AssignmentExpression.Parsed;
 }
@@ -32255,9 +32245,6 @@ function $with$default(this: Received<RecordPosition>, ...args: unknown[]): unkn
 }
 function $with$delimiter(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.delimiter'), _wrap, 'delimiter', args);
-}
-function $with$disposable(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.disposable'), _wrap, 'disposable', args);
 }
 function $with$elements(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.elements'), _wrap, 'elements', args);

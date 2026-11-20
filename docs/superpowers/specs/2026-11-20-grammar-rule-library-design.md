@@ -1,6 +1,6 @@
 # A shared grammar rule library
 
-**Status:** in design, from the maintainer's direction of 2026-11-20. Not yet approved for a plan.
+**Status:** approved by the maintainer, 2026-11-20 ("Approved, write the plan"). A peer of its own builds it, on `feat/rule-library`, stacked on the body PR ("Stacked on the body PR").
 
 ## Why
 
@@ -23,7 +23,7 @@ Rulings this builds on, from the same day: a portable path is defined by its slo
 
 ## Goals
 
-- Each library rule lexes and parses its construct as the language's specification says: what it accepts, what it refuses, and how the tree is shaped. "Correct" is drawn where the grammar-acceptance plan draws it: the language's grammar productions, lexical and syntactic. Early errors (strict mode, duplicate names, a label's context) stay out of the parser, as that plan rules. (My reading of "correct"; the maintainer may draw it wider.)
+- Each library rule lexes and parses its construct as the language's specification says: what it accepts, what it refuses, and how the tree is shaped. "Correct" is drawn where the grammar-acceptance plan draws it: the language's grammar productions, lexical and syntactic. Early errors (strict mode, duplicate names, a label's context) stay out of the parser, as that plan rules. (The maintainer, 2026-11-20: "Grammar rules only".)
 - One rule per construct that two or more of the seven grammars spell alike, written once.
 - A library rule carries the portable path it binds, so a grammar that adopts it gets that binding without writing it.
 - A rule that holds one language's fact (an ECMAScript `_semicolon` with its automatic semicolon) is a library rule like any other, with its witnesses and the production it cites, and only that language's grammars adopt it. Where the shape settles a fact, no rule holds it: the counted `for` loop, with the header's own declaration kinds and the loop owning its `;`, admits no automatic semicolon in any grammar.
@@ -67,6 +67,15 @@ The counted `for` loop, as an example: one rule for typescript, javascript, C, C
 - which of today's reauthorings and edits the path covers.
 
 **Kind renames reach the parser first.** Before any library rule moves, the generated grammar bindings write each derived kind rename as a `rename` entry, so every grammar's parser, node model and low-level API use the converged kind names. This is one mechanical change per grammar, and every low-level kind name it changes is listed with its public changes. The bindings inventory and regeneration agree in one pass: today a capture that renames a field fails the inventory until regeneration has renamed it, and kind renames would widen that.
+
+**The bindings generator keeps its job and changes role in places** (design's review, 2026-11-20; the maintainer's view: nothing is thrown away). It still binds every rule a grammar doesn't adopt. With library rules adopted as written and kind renames reaching the parser:
+
+- The derived kind renames become `rename` entries in the generated bindings' wire block, replacing the separate `renames` export `printBindingsModule` prints today and nothing wires. `GrammarBindings.renames` stays the derivation's output.
+- Derivation skips an adopted kind, and refuses any fact that targets one (a patch, rename, field wrap or split), since an adopted rule is used as written. A split is unnecessary where the library rule already has a kind per position.
+- An adopted rule's path is the claim for its kind. The inventory merges it with `bindings.scm`'s claims, and refuses a `bindings.scm` claim or member capture on an adopted kind: its fields already carry the vocabulary's slot names.
+- `renamedFrom`, `boundNameOf` and `baseNamesOf` carry every base-to-bound mapping once every claimed kind is renamed. An adoption that replaces an upstream rule under another name (upstream `for_statement` becomes `counted_loop_statement`) records that in `renamedFrom` too, so the conflict derivation and the fixture translation keep the chain.
+- `boundKindName` is the naming contract library rules are written to; the library's check verifies each rule's kind names against it, so it stays the one source.
+- The inventory checks captures against the derivation's own result, not the last generated grammar, so a renaming capture passes in one pass.
 
 **What moves in the first version.** Every typescript, rust or python reauthoring or edit whose construct the seed report finds two or more of the seven grammars spelling alike moves into the library, and its grammar adopts the library rule in its place. A shared path alone isn't enough: numeric literals share a path in every grammar but are spelled differently in each. The rest stay in their layers. The seed report gives the list, and the maintainer sees it, before any rule moves.
 

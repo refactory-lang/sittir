@@ -5495,7 +5495,6 @@ export function buildAssignmentExpression<
 ): T.AssignmentExpression.Bound;
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Bound {
 	currentHandle()?.admit(TSKindId.AssignmentExpression, [config]);
-	const _disposable = strictBooleanStorage(config.disposable);
 	const _left = config.left;
 	const _right = rejectReservedText(
 		kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right),
@@ -5504,16 +5503,13 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'assignment_expression', { disposable: _disposable, left: _left, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'assignment_expression', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.AssignmentExpression as const,
-		_disposable,
 		_left,
 		_right,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		disposable: () => _disposable,
 		left: () => hydrateStoredSlot(node, '_left'),
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
@@ -5527,7 +5523,6 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		disposable: buildAssignmentExpression$with$disposable,
 		left: buildAssignmentExpression$with$left,
 		right: buildAssignmentExpression$with$right,
 		[RECEIVER]: node
@@ -5540,10 +5535,6 @@ function buildAssignmentExpression$with(node: Held, setter: string, args: readon
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.AssignmentExpression.Config;
 	switch (setter) {
-		case 'disposable':
-			return applySetter(args, (value?: Admit<NonNullable<T.AssignmentExpression.Config>['disposable']>) =>
-				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, disposable: value }))
-			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.ParenthesizedExpression | T.LhsExpression>) =>
 				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value }))
@@ -5554,9 +5545,6 @@ function buildAssignmentExpression$with(node: Held, setter: string, args: readon
 			);
 	}
 	throw new Error(`assignment_expression has no $with.${setter}`);
-}
-function buildAssignmentExpression$with$disposable(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildAssignmentExpression$with(receiverOf(this, '$with.disposable'), 'disposable', args);
 }
 function buildAssignmentExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildAssignmentExpression$with(receiverOf(this, '$with.left'), 'left', args);
