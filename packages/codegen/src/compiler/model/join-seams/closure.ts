@@ -97,7 +97,9 @@ export class SeamClosure {
 	private readonly words: number;
 	private readonly lexComponent = new Map<number, number>();
 	private readonly lexBits: Int32Array[] = [];
-	private readonly prevSets = new Map<number, Set<number>>();
+	private readonly localPrev = new Map<number, Set<number>>();
+	private readonly entryPrev = new Map<number, Set<number>>();
+	private readonly prevSets = new Map<number, ReadonlySet<number>>();
 	private readonly entryBits = new Map<number, Int32Array>();
 	private readonly refsInto = new Map<number, { readonly scope: number; readonly base: number }[]>();
 	private readonly throughsInto = new Map<
@@ -107,7 +109,6 @@ export class SeamClosure {
 	private lexSteps: Map<number, Map<number, Step>> | undefined;
 	private readonly prevSteps = new Map<number, Map<number, Step>>();
 	private readonly producers = new Map<number, Set<number>>();
-	private readonly entryPairs = new Map<number, number[]>();
 	private readonly prevIndex = new Map<number, Map<number, [number, number][]>>();
 	private readonly resolved = new Map<Entries, Map<number, number[]>>();
 
@@ -131,7 +132,7 @@ export class SeamClosure {
 			const summary = walk.summaries.get(scope)!;
 			for (const pair of summary.prev.keys()) add(walk.symbolOfPair(pair), scope);
 			for (const key of summary.through.keys()) {
-				for (const pair of this.entryPairs.get(walk.throughs[key]!.callee) ?? []) add(walk.symbolOfPair(pair), scope);
+				for (const pair of this.entryPrev.get(walk.throughs[key]!.callee) ?? EMPTY_SET) add(walk.symbolOfPair(pair), scope);
 			}
 		}
 	}
@@ -145,7 +146,29 @@ export class SeamClosure {
 	}
 
 	endPrev(scope: number): ReadonlySet<number> {
-		return this.prevSets.get(scope) ?? EMPTY_SET;
+		const known = this.prevSets.get(scope);
+		if (known !== undefined) return known;
+		const pairs = new Set(this.entryPrev.get(scope));
+		this.reachedPrev([scope], pairs);
+		this.prevSets.set(scope, pairs);
+		return pairs;
+	}
+
+	private reachedPrev(scopes: Iterable<number>, pairs: Set<number>): void {
+		const { walk } = this;
+		const seen = new Set<number>();
+		const stack = [...scopes];
+		while (stack.length > 0) {
+			const at = stack.pop()!;
+			if (seen.has(at)) continue;
+			seen.add(at);
+			for (const pair of this.localPrev.get(at) ?? EMPTY_SET) pairs.add(pair);
+			for (const key of walk.summaries.get(at)?.through.keys() ?? []) stack.push(walk.throughs[key]!.callee);
+		}
+	}
+
+	private hasEntryPrev(scope: number, pair: number): boolean {
+		return this.entryPrev.get(scope)?.has(pair) === true;
 	}
 
 	entryLex(scope: number): Int32Array | undefined {
@@ -233,12 +256,11 @@ export class SeamClosure {
 		const { walk } = this;
 		const queue: number[] = [];
 		const add = (scope: number, pair: number): void => {
-			let set = this.prevSets.get(scope);
-			if (set === undefined) this.prevSets.set(scope, (set = new Set()));
-			if (set.has(pair)) return;
-			set.add(pair);
-			if (walk.sourceOfPair(pair) === ENTRY) push(this.entryPairs, scope, pair);
-			queue.push(scope, pair);
+			if (walk.sourceOfPair(pair) !== ENTRY) {
+				addTo(this.localPrev, scope, pair);
+				return;
+			}
+			if (addTo(this.entryPrev, scope, pair)) queue.push(scope, pair);
 		};
 		for (const scope of walk.walked) {
 			for (const pair of walk.summaries.get(scope)!.prev.keys()) {
@@ -249,12 +271,9 @@ export class SeamClosure {
 		}
 		for (let head = 0; head < queue.length; head += 2) {
 			const callee = queue[head]!;
-			const pair = queue[head + 1]!;
-			const entry = walk.sourceOfPair(pair) === ENTRY;
-			for (const edge of this.throughsInto.get(callee) ?? []) {
-				if (!entry) add(edge.scope, pair);
-				else for (const resolved of this.resolveEntry(edge.context, walk.symbolOfPair(pair))) add(edge.scope, resolved);
-			}
+			const symbol = walk.symbolOfPair(queue[head + 1]!);
+			for (const edge of this.throughsInto.get(callee) ?? [])
+				for (const resolved of this.resolveEntry(edge.context, symbol)) add(edge.scope, resolved);
 		}
 	}
 
@@ -363,7 +382,7 @@ export class SeamClosure {
 			if (source === ENTRY || !tables.isValid(source, symbol)) continue;
 			for (const key of walk.summaries.get(scope)!.through.keys()) {
 				const { callee, context } = walk.throughs[key]!;
-				if (!this.endPrev(callee).has(entryPair)) continue;
+				if (!this.hasEntryPrev(callee, entryPair)) continue;
 				const head = this.contextLead(context, source);
 				const tail = head === undefined ? undefined : this.prevLead(callee, entryPair);
 				if (head !== undefined && tail !== undefined)
@@ -434,13 +453,13 @@ export class SeamClosure {
 			else pairs.add(pair);
 		}
 		for (const [slot, from] of seam.entry) entered(from, slot % walk.symbolCount);
+		this.reachedPrev(
+			[...seam.through.keys()].map((through) => walk.throughs[through]!.callee),
+			pairs
+		);
 		for (const [through, from] of seam.through) {
 			const { callee, context } = walk.throughs[through]!;
-			for (const pair of this.endPrev(callee)) {
-				if (walk.sourceOfPair(pair) !== ENTRY) {
-					pairs.add(pair);
-					continue;
-				}
+			for (const pair of this.entryPrev.get(callee) ?? EMPTY_SET) {
 				for (const resolved of this.resolveEntry(context, walk.symbolOfPair(pair))) {
 					if (walk.sourceOfPair(resolved) === ENTRY) entered(from, walk.symbolOfPair(pair));
 					else pairs.add(resolved);
@@ -543,6 +562,14 @@ function push(map: Map<number, number[]>, key: number, value: number): void {
 	const list = map.get(key);
 	if (list === undefined) map.set(key, [value]);
 	else list.push(value);
+}
+
+function addTo(map: Map<number, Set<number>>, key: number, value: number): boolean {
+	let set = map.get(key);
+	if (set === undefined) map.set(key, (set = new Set()));
+	if (set.has(value)) return false;
+	set.add(value);
+	return true;
 }
 
 function prepend(walk: SeamWalk, base: number, inner: number): number {
