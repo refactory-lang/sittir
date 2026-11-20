@@ -1160,6 +1160,8 @@ function withFieldOnCarriers(rule: RenderRule, fieldName: string): RenderRule {
 	}
 }
 
+const withoutSlotJoins = (body: Body): Body => body.map((n) => (n.kind === 'slot' ? { kind: 'slot', name: n.name } : n));
+
 const isLiteralOnly = (body: Body): boolean =>
 	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
 
@@ -1199,6 +1201,14 @@ function emitKindGatedLiterals(
 		const body = emitRule(arm, ctx);
 		restoreEmittedSlotNames(ctx, beforeSlots);
 		const at = body.findIndex((n) => n.kind === 'slot');
+		const unit = kinds.length === 1 ? ctx.nodeMap.nodes.get(kinds[0]!) : undefined;
+		if (at >= 0 && unit !== undefined && isFixedTextLeaf(unit) && body.every((n) => n.kind === 'slot' || n.kind === 'seam')) {
+			const slotName = (body[at] as { name: string }).name;
+			if (key !== undefined && slotName !== key) return bail(`slot ${slotName} differs from ${key}`);
+			key = slotName;
+			arms.push({ prefix: undefined, residual: EMPTY, kinds });
+			continue;
+		}
 		if (at < 0) {
 			if (kinds.length !== 1 || !isLiteralOnly(body))
 				return bail(`slotless arm not a lone literal kind: ${JSON.stringify(body).slice(0, 160)}`);
@@ -1214,8 +1224,8 @@ function emitKindGatedLiterals(
 		arms.push({ prefix: body.slice(0, at + 1), residual, kinds });
 	}
 	if (key === undefined) return bail('no arm carries the slot');
-	const prefix = arms.find((a) => a.prefix !== undefined)!.prefix!;
-	if (!arms.every((a) => a.prefix === undefined || equalBodies(a.prefix, prefix)))
+	const prefix = (arms.find((a) => a.prefix !== undefined && a.residual.length > 0) ?? arms.find((a) => a.prefix !== undefined)!).prefix!;
+	if (!arms.every((a) => a.prefix === undefined || equalBodies(withoutSlotJoins(a.prefix), withoutSlotJoins(prefix))))
 		return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
 	const gated: { kinds: string[]; body: Body }[] = [];
 	for (const arm of arms) {

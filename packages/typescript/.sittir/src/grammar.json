@@ -1201,42 +1201,63 @@
           "value": "("
         },
         {
-          "type": "FIELD",
-          "name": "initializer",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "_for_initializer"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_expressions"
-                      }
-                    ]
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "initializer",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_for_initializer"
                   },
-                  {
-                    "type": "STRING",
-                    "value": ";"
+                  "metadata": {
+                    "fieldSource": "override"
                   }
-                ]
-              },
-              {
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                }
+              ],
+              "annotations": {
+                "variantOf": "for_statement"
+              }
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "initializer",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_expressions"
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                }
+              ],
+              "annotations": {
+                "variantOf": "for_statement"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "initializer",
+              "content": {
                 "type": "SYMBOL",
                 "name": "empty_statement"
+              },
+              "annotations": {
+                "variantOf": "for_statement"
               }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
+            }
+          ]
         },
         {
           "type": "FIELD",

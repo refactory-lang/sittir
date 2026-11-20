@@ -4426,1050 +4426,1050 @@ static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
   [634] = {.index = 2285, .length = 4},
   [635] = {.index = 2289, .length = 4},
   [636] = {.index = 2293, .length = 4},
-  [637] = {.index = 2297, .length = 4},
-  [638] = {.index = 2301, .length = 2},
-  [639] = {.index = 2303, .length = 3},
-  [640] = {.index = 2306, .length = 8},
-  [641] = {.index = 2314, .length = 5},
-  [642] = {.index = 2319, .length = 5},
-  [643] = {.index = 2324, .length = 5},
-  [644] = {.index = 2329, .length = 5},
-  [645] = {.index = 2334, .length = 5},
-  [646] = {.index = 2339, .length = 5},
-  [647] = {.index = 2344, .length = 5},
-  [648] = {.index = 2349, .length = 5},
-  [649] = {.index = 2354, .length = 5},
-  [650] = {.index = 2359, .length = 5},
-  [651] = {.index = 2364, .length = 5},
-  [652] = {.index = 2369, .length = 5},
-  [653] = {.index = 2374, .length = 5},
-  [654] = {.index = 2379, .length = 5},
-  [655] = {.index = 2384, .length = 5},
-  [656] = {.index = 2389, .length = 5},
-  [657] = {.index = 2394, .length = 5},
-  [658] = {.index = 2399, .length = 5},
-  [659] = {.index = 2404, .length = 5},
-  [660] = {.index = 2409, .length = 5},
-  [661] = {.index = 2414, .length = 5},
-  [662] = {.index = 2419, .length = 5},
-  [663] = {.index = 2424, .length = 5},
-  [664] = {.index = 2429, .length = 5},
-  [665] = {.index = 2434, .length = 5},
-  [666] = {.index = 2439, .length = 5},
-  [667] = {.index = 2444, .length = 5},
-  [668] = {.index = 2449, .length = 5},
-  [669] = {.index = 2454, .length = 5},
-  [670] = {.index = 2459, .length = 5},
-  [671] = {.index = 2464, .length = 5},
-  [672] = {.index = 2469, .length = 5},
-  [673] = {.index = 2474, .length = 5},
-  [674] = {.index = 2479, .length = 5},
-  [675] = {.index = 2484, .length = 5},
-  [676] = {.index = 2489, .length = 5},
-  [677] = {.index = 2494, .length = 5},
-  [678] = {.index = 2499, .length = 5},
-  [679] = {.index = 2504, .length = 5},
-  [680] = {.index = 2509, .length = 5},
-  [681] = {.index = 2514, .length = 5},
-  [682] = {.index = 2519, .length = 5},
-  [683] = {.index = 2524, .length = 5},
-  [684] = {.index = 2529, .length = 5},
-  [685] = {.index = 2534, .length = 5},
-  [686] = {.index = 2539, .length = 5},
-  [687] = {.index = 2544, .length = 5},
-  [688] = {.index = 2549, .length = 5},
-  [689] = {.index = 2554, .length = 5},
-  [690] = {.index = 2559, .length = 7},
-  [691] = {.index = 2566, .length = 7},
-  [692] = {.index = 2573, .length = 7},
-  [693] = {.index = 2580, .length = 3},
-  [694] = {.index = 2583, .length = 5},
-  [695] = {.index = 2588, .length = 5},
-  [696] = {.index = 2593, .length = 5},
-  [697] = {.index = 2598, .length = 5},
-  [698] = {.index = 2603, .length = 7},
-  [699] = {.index = 2610, .length = 7},
-  [700] = {.index = 2617, .length = 7},
-  [701] = {.index = 2624, .length = 7},
-  [702] = {.index = 2631, .length = 5},
-  [703] = {.index = 2636, .length = 5},
-  [704] = {.index = 2641, .length = 7},
-  [705] = {.index = 2648, .length = 5},
-  [706] = {.index = 2653, .length = 7},
-  [707] = {.index = 2660, .length = 7},
-  [708] = {.index = 2667, .length = 5},
-  [709] = {.index = 2672, .length = 5},
-  [710] = {.index = 2677, .length = 5},
-  [711] = {.index = 2682, .length = 5},
-  [712] = {.index = 2687, .length = 5},
-  [713] = {.index = 2692, .length = 7},
-  [714] = {.index = 2699, .length = 5},
-  [715] = {.index = 2704, .length = 7},
-  [716] = {.index = 2711, .length = 5},
-  [717] = {.index = 2716, .length = 5},
-  [718] = {.index = 2721, .length = 6},
-  [719] = {.index = 2727, .length = 5},
-  [720] = {.index = 2732, .length = 7},
-  [721] = {.index = 2739, .length = 5},
-  [722] = {.index = 2744, .length = 5},
-  [723] = {.index = 2749, .length = 5},
-  [724] = {.index = 2754, .length = 5},
-  [725] = {.index = 2759, .length = 7},
-  [726] = {.index = 2766, .length = 5},
-  [727] = {.index = 2771, .length = 6},
-  [728] = {.index = 2777, .length = 5},
-  [729] = {.index = 2782, .length = 5},
-  [730] = {.index = 2787, .length = 5},
-  [731] = {.index = 2792, .length = 5},
-  [732] = {.index = 2797, .length = 5},
-  [733] = {.index = 2802, .length = 6},
-  [734] = {.index = 2808, .length = 5},
-  [735] = {.index = 2813, .length = 4},
-  [736] = {.index = 2817, .length = 5},
-  [737] = {.index = 2822, .length = 5},
-  [738] = {.index = 2827, .length = 6},
-  [739] = {.index = 2833, .length = 7},
-  [740] = {.index = 2840, .length = 5},
-  [741] = {.index = 2845, .length = 5},
-  [742] = {.index = 2850, .length = 5},
-  [743] = {.index = 2855, .length = 5},
-  [744] = {.index = 2860, .length = 5},
-  [745] = {.index = 2865, .length = 5},
-  [746] = {.index = 2870, .length = 5},
-  [747] = {.index = 2875, .length = 5},
-  [748] = {.index = 2880, .length = 5},
-  [749] = {.index = 2885, .length = 5},
-  [750] = {.index = 2890, .length = 5},
-  [751] = {.index = 2895, .length = 5},
-  [752] = {.index = 2900, .length = 5},
-  [753] = {.index = 2905, .length = 5},
-  [754] = {.index = 2910, .length = 5},
-  [755] = {.index = 2915, .length = 5},
-  [756] = {.index = 2920, .length = 5},
-  [757] = {.index = 2925, .length = 5},
-  [758] = {.index = 2930, .length = 5},
-  [759] = {.index = 2935, .length = 5},
-  [760] = {.index = 2940, .length = 7},
-  [761] = {.index = 2947, .length = 7},
-  [762] = {.index = 2954, .length = 5},
-  [763] = {.index = 2959, .length = 5},
-  [764] = {.index = 2964, .length = 5},
-  [765] = {.index = 2969, .length = 5},
-  [766] = {.index = 2974, .length = 5},
-  [767] = {.index = 2979, .length = 7},
-  [768] = {.index = 2986, .length = 5},
-  [769] = {.index = 2991, .length = 7},
-  [770] = {.index = 2998, .length = 7},
-  [771] = {.index = 3005, .length = 7},
-  [772] = {.index = 3012, .length = 5},
-  [773] = {.index = 3017, .length = 7},
-  [774] = {.index = 3024, .length = 5},
-  [775] = {.index = 3029, .length = 5},
-  [776] = {.index = 3034, .length = 6},
-  [777] = {.index = 3040, .length = 5},
-  [778] = {.index = 3045, .length = 7},
-  [779] = {.index = 3052, .length = 5},
-  [780] = {.index = 3057, .length = 5},
-  [781] = {.index = 3062, .length = 5},
-  [782] = {.index = 3067, .length = 5},
-  [783] = {.index = 3072, .length = 5},
-  [784] = {.index = 3077, .length = 7},
-  [785] = {.index = 3084, .length = 5},
-  [786] = {.index = 3089, .length = 5},
-  [787] = {.index = 3094, .length = 5},
-  [788] = {.index = 3099, .length = 5},
-  [789] = {.index = 3104, .length = 7},
-  [790] = {.index = 3111, .length = 5},
-  [791] = {.index = 3116, .length = 5},
-  [792] = {.index = 3121, .length = 6},
-  [793] = {.index = 3127, .length = 5},
-  [794] = {.index = 3132, .length = 5},
-  [795] = {.index = 3137, .length = 5},
-  [796] = {.index = 3142, .length = 5},
-  [797] = {.index = 3147, .length = 4},
-  [798] = {.index = 3151, .length = 5},
-  [799] = {.index = 3156, .length = 5},
-  [800] = {.index = 3161, .length = 5},
-  [801] = {.index = 3166, .length = 5},
-  [802] = {.index = 3171, .length = 6},
-  [803] = {.index = 3177, .length = 5},
-  [804] = {.index = 3182, .length = 5},
-  [805] = {.index = 3187, .length = 6},
-  [806] = {.index = 3193, .length = 5},
-  [807] = {.index = 3198, .length = 5},
-  [808] = {.index = 3203, .length = 7},
-  [809] = {.index = 3210, .length = 5},
-  [810] = {.index = 3215, .length = 7},
-  [811] = {.index = 3222, .length = 5},
-  [812] = {.index = 3227, .length = 5},
-  [813] = {.index = 3232, .length = 6},
-  [814] = {.index = 3238, .length = 5},
-  [815] = {.index = 3243, .length = 7},
-  [816] = {.index = 3250, .length = 5},
-  [817] = {.index = 3255, .length = 5},
-  [818] = {.index = 3260, .length = 5},
-  [819] = {.index = 3265, .length = 5},
-  [820] = {.index = 3270, .length = 7},
-  [821] = {.index = 3277, .length = 5},
-  [822] = {.index = 3282, .length = 7},
-  [823] = {.index = 3289, .length = 7},
-  [824] = {.index = 3296, .length = 7},
-  [825] = {.index = 3303, .length = 5},
-  [826] = {.index = 3308, .length = 5},
-  [827] = {.index = 3313, .length = 7},
-  [828] = {.index = 3320, .length = 5},
-  [829] = {.index = 3325, .length = 7},
-  [830] = {.index = 3332, .length = 7},
-  [831] = {.index = 3339, .length = 5},
-  [832] = {.index = 3344, .length = 5},
-  [833] = {.index = 3349, .length = 5},
-  [834] = {.index = 3354, .length = 5},
-  [835] = {.index = 3359, .length = 5},
-  [836] = {.index = 3364, .length = 5},
-  [837] = {.index = 3369, .length = 5},
-  [838] = {.index = 3374, .length = 5},
-  [839] = {.index = 3379, .length = 5},
-  [840] = {.index = 3384, .length = 5},
-  [841] = {.index = 3389, .length = 5},
-  [842] = {.index = 3394, .length = 5},
-  [843] = {.index = 3399, .length = 5},
-  [844] = {.index = 3404, .length = 5},
-  [845] = {.index = 3409, .length = 5},
-  [846] = {.index = 3414, .length = 5},
-  [847] = {.index = 3419, .length = 5},
-  [848] = {.index = 3424, .length = 5},
-  [849] = {.index = 3429, .length = 5},
-  [850] = {.index = 3434, .length = 5},
-  [851] = {.index = 3439, .length = 5},
-  [852] = {.index = 3444, .length = 5},
-  [853] = {.index = 3449, .length = 5},
-  [854] = {.index = 3454, .length = 5},
-  [855] = {.index = 3459, .length = 5},
-  [856] = {.index = 3464, .length = 5},
-  [857] = {.index = 3469, .length = 5},
-  [858] = {.index = 3474, .length = 5},
-  [859] = {.index = 3479, .length = 5},
-  [860] = {.index = 3484, .length = 5},
-  [861] = {.index = 3489, .length = 5},
-  [862] = {.index = 3494, .length = 5},
-  [863] = {.index = 3499, .length = 5},
-  [864] = {.index = 3504, .length = 5},
-  [865] = {.index = 3509, .length = 5},
-  [866] = {.index = 3514, .length = 5},
-  [867] = {.index = 3519, .length = 5},
-  [868] = {.index = 3524, .length = 5},
-  [869] = {.index = 3529, .length = 5},
-  [870] = {.index = 3534, .length = 5},
-  [871] = {.index = 3539, .length = 5},
-  [872] = {.index = 3544, .length = 5},
-  [873] = {.index = 3549, .length = 5},
-  [874] = {.index = 3554, .length = 5},
-  [875] = {.index = 3559, .length = 5},
-  [876] = {.index = 3564, .length = 5},
-  [877] = {.index = 3569, .length = 5},
-  [878] = {.index = 3574, .length = 5},
-  [879] = {.index = 3579, .length = 5},
-  [880] = {.index = 3584, .length = 5},
-  [881] = {.index = 3589, .length = 5},
-  [882] = {.index = 3594, .length = 5},
-  [883] = {.index = 3599, .length = 5},
-  [884] = {.index = 3604, .length = 5},
-  [885] = {.index = 3609, .length = 5},
-  [886] = {.index = 3614, .length = 5},
-  [887] = {.index = 3619, .length = 5},
-  [888] = {.index = 3624, .length = 5},
-  [889] = {.index = 3629, .length = 5},
-  [890] = {.index = 3634, .length = 5},
-  [891] = {.index = 3639, .length = 5},
-  [892] = {.index = 3644, .length = 5},
-  [893] = {.index = 3649, .length = 5},
-  [894] = {.index = 3654, .length = 5},
-  [895] = {.index = 3659, .length = 5},
-  [896] = {.index = 3664, .length = 5},
-  [897] = {.index = 3669, .length = 5},
-  [898] = {.index = 3674, .length = 5},
-  [899] = {.index = 3679, .length = 5},
-  [900] = {.index = 3684, .length = 5},
-  [901] = {.index = 3689, .length = 5},
-  [902] = {.index = 3694, .length = 5},
-  [903] = {.index = 3699, .length = 5},
-  [904] = {.index = 3704, .length = 5},
-  [905] = {.index = 3709, .length = 5},
-  [906] = {.index = 3714, .length = 5},
-  [907] = {.index = 3719, .length = 5},
-  [908] = {.index = 3724, .length = 5},
-  [909] = {.index = 3729, .length = 5},
-  [910] = {.index = 3734, .length = 5},
-  [911] = {.index = 3739, .length = 5},
-  [912] = {.index = 3744, .length = 5},
-  [913] = {.index = 3749, .length = 5},
-  [914] = {.index = 3754, .length = 5},
-  [915] = {.index = 3759, .length = 5},
-  [916] = {.index = 3764, .length = 5},
-  [917] = {.index = 3769, .length = 5},
-  [918] = {.index = 3774, .length = 5},
-  [919] = {.index = 3779, .length = 5},
-  [920] = {.index = 3784, .length = 5},
-  [921] = {.index = 3789, .length = 5},
-  [922] = {.index = 3794, .length = 5},
-  [923] = {.index = 3799, .length = 5},
-  [924] = {.index = 3804, .length = 5},
-  [925] = {.index = 3809, .length = 5},
-  [926] = {.index = 3814, .length = 5},
-  [927] = {.index = 3819, .length = 5},
-  [928] = {.index = 3824, .length = 5},
-  [929] = {.index = 3829, .length = 5},
-  [930] = {.index = 3834, .length = 5},
-  [931] = {.index = 3839, .length = 5},
-  [932] = {.index = 3844, .length = 5},
-  [933] = {.index = 3849, .length = 5},
-  [934] = {.index = 3854, .length = 4},
-  [935] = {.index = 3858, .length = 5},
-  [936] = {.index = 3863, .length = 5},
-  [937] = {.index = 3868, .length = 5},
-  [938] = {.index = 3873, .length = 5},
-  [939] = {.index = 3878, .length = 5},
-  [940] = {.index = 3883, .length = 5},
-  [941] = {.index = 3888, .length = 5},
-  [942] = {.index = 3893, .length = 5},
-  [943] = {.index = 3898, .length = 6},
-  [944] = {.index = 3904, .length = 5},
-  [945] = {.index = 3909, .length = 4},
-  [946] = {.index = 3913, .length = 6},
-  [947] = {.index = 3919, .length = 6},
-  [948] = {.index = 3925, .length = 9},
-  [949] = {.index = 3934, .length = 3},
-  [950] = {.index = 3937, .length = 3},
-  [951] = {.index = 3940, .length = 3},
-  [952] = {.index = 3943, .length = 4},
-  [953] = {.index = 3947, .length = 9},
-  [954] = {.index = 3956, .length = 9},
-  [955] = {.index = 3965, .length = 9},
-  [956] = {.index = 3974, .length = 9},
-  [957] = {.index = 3983, .length = 9},
-  [958] = {.index = 3992, .length = 9},
-  [959] = {.index = 4001, .length = 9},
-  [960] = {.index = 4010, .length = 9},
-  [961] = {.index = 4019, .length = 9},
-  [962] = {.index = 4028, .length = 9},
-  [963] = {.index = 4037, .length = 9},
-  [964] = {.index = 4046, .length = 9},
-  [965] = {.index = 4055, .length = 9},
-  [966] = {.index = 4064, .length = 9},
-  [967] = {.index = 4073, .length = 9},
-  [968] = {.index = 4082, .length = 9},
-  [969] = {.index = 4091, .length = 9},
-  [970] = {.index = 4100, .length = 9},
-  [971] = {.index = 4109, .length = 9},
-  [972] = {.index = 4118, .length = 9},
-  [973] = {.index = 4127, .length = 9},
-  [974] = {.index = 4136, .length = 9},
-  [975] = {.index = 4145, .length = 8},
-  [976] = {.index = 4153, .length = 7},
-  [977] = {.index = 4160, .length = 9},
-  [978] = {.index = 4169, .length = 9},
-  [979] = {.index = 4178, .length = 9},
-  [980] = {.index = 4187, .length = 9},
-  [981] = {.index = 4196, .length = 9},
-  [982] = {.index = 4205, .length = 9},
-  [983] = {.index = 4214, .length = 9},
-  [984] = {.index = 4223, .length = 9},
-  [985] = {.index = 4232, .length = 9},
-  [986] = {.index = 4241, .length = 9},
-  [987] = {.index = 4250, .length = 9},
-  [988] = {.index = 4259, .length = 9},
-  [989] = {.index = 4268, .length = 5},
-  [990] = {.index = 4268, .length = 5},
-  [991] = {.index = 4273, .length = 5},
-  [992] = {.index = 4273, .length = 5},
-  [993] = {.index = 4278, .length = 5},
-  [994] = {.index = 4283, .length = 5},
-  [995] = {.index = 4288, .length = 5},
-  [996] = {.index = 4293, .length = 6},
-  [997] = {.index = 4299, .length = 6},
-  [998] = {.index = 4305, .length = 6},
-  [999] = {.index = 4311, .length = 6},
-  [1000] = {.index = 4317, .length = 6},
-  [1001] = {.index = 4323, .length = 6},
-  [1002] = {.index = 4329, .length = 6},
-  [1003] = {.index = 4335, .length = 6},
-  [1004] = {.index = 4341, .length = 6},
-  [1005] = {.index = 4347, .length = 6},
-  [1006] = {.index = 4353, .length = 6},
-  [1007] = {.index = 4359, .length = 6},
-  [1008] = {.index = 4365, .length = 6},
-  [1009] = {.index = 4371, .length = 6},
-  [1010] = {.index = 4377, .length = 6},
-  [1011] = {.index = 4383, .length = 6},
-  [1012] = {.index = 4389, .length = 6},
-  [1013] = {.index = 4395, .length = 6},
-  [1014] = {.index = 4401, .length = 6},
-  [1015] = {.index = 4407, .length = 6},
-  [1016] = {.index = 4413, .length = 6},
-  [1017] = {.index = 4419, .length = 6},
-  [1018] = {.index = 4425, .length = 6},
-  [1019] = {.index = 4431, .length = 6},
-  [1020] = {.index = 4437, .length = 6},
-  [1021] = {.index = 4443, .length = 6},
-  [1022] = {.index = 4449, .length = 6},
-  [1023] = {.index = 4455, .length = 6},
-  [1024] = {.index = 4461, .length = 6},
-  [1025] = {.index = 4467, .length = 6},
-  [1026] = {.index = 4473, .length = 6},
-  [1027] = {.index = 4479, .length = 6},
-  [1028] = {.index = 4485, .length = 6},
-  [1029] = {.index = 4491, .length = 6},
-  [1030] = {.index = 4497, .length = 6},
-  [1031] = {.index = 4503, .length = 6},
-  [1032] = {.index = 4509, .length = 6},
-  [1033] = {.index = 4515, .length = 6},
-  [1034] = {.index = 4521, .length = 6},
-  [1035] = {.index = 4527, .length = 6},
-  [1036] = {.index = 4533, .length = 6},
-  [1037] = {.index = 4539, .length = 6},
-  [1038] = {.index = 4545, .length = 6},
-  [1039] = {.index = 4551, .length = 6},
-  [1040] = {.index = 4557, .length = 6},
-  [1041] = {.index = 4563, .length = 6},
-  [1042] = {.index = 4569, .length = 6},
-  [1043] = {.index = 4575, .length = 6},
-  [1044] = {.index = 4581, .length = 6},
-  [1045] = {.index = 4587, .length = 6},
-  [1046] = {.index = 4593, .length = 6},
-  [1047] = {.index = 4599, .length = 8},
-  [1048] = {.index = 4607, .length = 6},
-  [1049] = {.index = 4613, .length = 8},
-  [1050] = {.index = 4621, .length = 8},
-  [1051] = {.index = 4629, .length = 8},
-  [1052] = {.index = 4637, .length = 6},
-  [1053] = {.index = 4643, .length = 8},
-  [1054] = {.index = 4651, .length = 6},
-  [1055] = {.index = 4657, .length = 6},
-  [1056] = {.index = 4663, .length = 6},
-  [1057] = {.index = 4669, .length = 8},
-  [1058] = {.index = 4677, .length = 8},
-  [1059] = {.index = 4685, .length = 8},
-  [1060] = {.index = 4693, .length = 6},
-  [1061] = {.index = 4699, .length = 6},
-  [1062] = {.index = 4705, .length = 8},
-  [1063] = {.index = 4713, .length = 6},
-  [1064] = {.index = 4719, .length = 8},
-  [1065] = {.index = 4727, .length = 8},
-  [1066] = {.index = 4735, .length = 6},
-  [1067] = {.index = 4741, .length = 6},
-  [1068] = {.index = 4747, .length = 3},
-  [1069] = {.index = 4747, .length = 3},
-  [1070] = {.index = 4750, .length = 3},
-  [1071] = {.index = 4753, .length = 4},
-  [1072] = {.index = 4757, .length = 6},
-  [1073] = {.index = 4763, .length = 7},
-  [1074] = {.index = 4770, .length = 6},
-  [1075] = {.index = 4776, .length = 6},
-  [1076] = {.index = 4782, .length = 6},
-  [1077] = {.index = 4788, .length = 6},
-  [1078] = {.index = 4794, .length = 6},
-  [1079] = {.index = 4800, .length = 6},
-  [1080] = {.index = 4806, .length = 6},
-  [1081] = {.index = 4812, .length = 6},
-  [1082] = {.index = 4818, .length = 6},
-  [1083] = {.index = 4824, .length = 6},
-  [1084] = {.index = 4830, .length = 6},
-  [1085] = {.index = 4836, .length = 6},
-  [1086] = {.index = 4842, .length = 6},
-  [1087] = {.index = 4848, .length = 6},
-  [1088] = {.index = 4854, .length = 6},
-  [1089] = {.index = 4860, .length = 6},
-  [1090] = {.index = 4866, .length = 6},
-  [1091] = {.index = 4872, .length = 6},
-  [1092] = {.index = 4878, .length = 6},
-  [1093] = {.index = 4884, .length = 6},
-  [1094] = {.index = 4890, .length = 6},
-  [1095] = {.index = 4896, .length = 6},
-  [1096] = {.index = 4902, .length = 6},
-  [1097] = {.index = 4908, .length = 6},
-  [1098] = {.index = 4914, .length = 6},
-  [1099] = {.index = 4920, .length = 6},
-  [1100] = {.index = 4926, .length = 6},
-  [1101] = {.index = 4932, .length = 6},
-  [1102] = {.index = 4938, .length = 6},
-  [1103] = {.index = 4944, .length = 6},
-  [1104] = {.index = 4950, .length = 8},
-  [1105] = {.index = 4958, .length = 8},
-  [1106] = {.index = 4966, .length = 8},
-  [1107] = {.index = 4974, .length = 6},
-  [1108] = {.index = 4980, .length = 6},
-  [1109] = {.index = 4986, .length = 6},
-  [1110] = {.index = 4992, .length = 6},
-  [1111] = {.index = 4998, .length = 8},
-  [1112] = {.index = 5006, .length = 8},
-  [1113] = {.index = 5014, .length = 8},
-  [1114] = {.index = 5022, .length = 8},
-  [1115] = {.index = 5030, .length = 6},
-  [1116] = {.index = 5036, .length = 6},
-  [1117] = {.index = 5042, .length = 8},
-  [1118] = {.index = 5050, .length = 6},
-  [1119] = {.index = 5056, .length = 8},
-  [1120] = {.index = 5064, .length = 8},
-  [1121] = {.index = 5072, .length = 6},
-  [1122] = {.index = 5078, .length = 6},
-  [1123] = {.index = 5084, .length = 6},
-  [1124] = {.index = 5090, .length = 6},
-  [1125] = {.index = 5096, .length = 6},
-  [1126] = {.index = 5102, .length = 8},
-  [1127] = {.index = 5110, .length = 6},
-  [1128] = {.index = 5116, .length = 8},
-  [1129] = {.index = 5124, .length = 6},
-  [1130] = {.index = 5130, .length = 6},
-  [1131] = {.index = 5136, .length = 7},
-  [1132] = {.index = 5143, .length = 6},
-  [1133] = {.index = 5149, .length = 8},
-  [1134] = {.index = 5157, .length = 6},
-  [1135] = {.index = 5163, .length = 6},
-  [1136] = {.index = 5169, .length = 6},
-  [1137] = {.index = 5175, .length = 6},
-  [1138] = {.index = 5181, .length = 8},
-  [1139] = {.index = 5189, .length = 6},
-  [1140] = {.index = 5195, .length = 7},
-  [1141] = {.index = 5202, .length = 6},
-  [1142] = {.index = 5208, .length = 6},
-  [1143] = {.index = 5214, .length = 6},
-  [1144] = {.index = 5220, .length = 6},
-  [1145] = {.index = 5226, .length = 6},
-  [1146] = {.index = 5232, .length = 7},
-  [1147] = {.index = 5239, .length = 6},
-  [1148] = {.index = 5245, .length = 5},
-  [1149] = {.index = 5250, .length = 6},
-  [1150] = {.index = 5256, .length = 6},
-  [1151] = {.index = 5262, .length = 7},
-  [1152] = {.index = 5269, .length = 8},
-  [1153] = {.index = 5277, .length = 8},
-  [1154] = {.index = 5285, .length = 8},
-  [1155] = {.index = 5293, .length = 6},
-  [1156] = {.index = 5299, .length = 6},
-  [1157] = {.index = 5305, .length = 8},
-  [1158] = {.index = 5313, .length = 6},
-  [1159] = {.index = 5319, .length = 8},
-  [1160] = {.index = 5327, .length = 8},
-  [1161] = {.index = 5335, .length = 6},
-  [1162] = {.index = 5341, .length = 6},
-  [1163] = {.index = 5347, .length = 8},
-  [1164] = {.index = 5355, .length = 8},
-  [1165] = {.index = 5363, .length = 8},
-  [1166] = {.index = 5371, .length = 6},
-  [1167] = {.index = 5377, .length = 8},
-  [1168] = {.index = 5385, .length = 6},
-  [1169] = {.index = 5391, .length = 6},
-  [1170] = {.index = 5397, .length = 6},
-  [1171] = {.index = 5403, .length = 6},
-  [1172] = {.index = 5409, .length = 6},
-  [1173] = {.index = 5415, .length = 6},
-  [1174] = {.index = 5421, .length = 6},
-  [1175] = {.index = 5427, .length = 6},
-  [1176] = {.index = 5433, .length = 6},
-  [1177] = {.index = 5439, .length = 6},
-  [1178] = {.index = 5445, .length = 6},
-  [1179] = {.index = 5451, .length = 6},
-  [1180] = {.index = 5457, .length = 6},
-  [1181] = {.index = 5463, .length = 6},
-  [1182] = {.index = 5469, .length = 6},
-  [1183] = {.index = 5475, .length = 6},
-  [1184] = {.index = 5481, .length = 6},
-  [1185] = {.index = 5487, .length = 6},
-  [1186] = {.index = 5493, .length = 6},
-  [1187] = {.index = 5499, .length = 6},
-  [1188] = {.index = 5505, .length = 6},
-  [1189] = {.index = 5511, .length = 6},
-  [1190] = {.index = 5517, .length = 6},
-  [1191] = {.index = 5523, .length = 6},
-  [1192] = {.index = 5529, .length = 6},
-  [1193] = {.index = 5535, .length = 6},
-  [1194] = {.index = 5541, .length = 6},
-  [1195] = {.index = 5547, .length = 6},
-  [1196] = {.index = 5553, .length = 6},
-  [1197] = {.index = 5559, .length = 6},
-  [1198] = {.index = 5565, .length = 6},
-  [1199] = {.index = 5571, .length = 6},
-  [1200] = {.index = 5577, .length = 6},
-  [1201] = {.index = 5583, .length = 6},
-  [1202] = {.index = 5589, .length = 6},
-  [1203] = {.index = 5595, .length = 6},
-  [1204] = {.index = 5601, .length = 6},
-  [1205] = {.index = 5607, .length = 6},
-  [1206] = {.index = 5613, .length = 6},
-  [1207] = {.index = 5619, .length = 6},
-  [1208] = {.index = 5625, .length = 6},
-  [1209] = {.index = 5631, .length = 6},
-  [1210] = {.index = 5637, .length = 6},
-  [1211] = {.index = 5643, .length = 6},
-  [1212] = {.index = 5649, .length = 6},
-  [1213] = {.index = 5655, .length = 6},
-  [1214] = {.index = 5661, .length = 6},
-  [1215] = {.index = 5667, .length = 6},
-  [1216] = {.index = 5673, .length = 6},
-  [1217] = {.index = 5679, .length = 6},
-  [1218] = {.index = 5685, .length = 6},
-  [1219] = {.index = 5691, .length = 6},
-  [1220] = {.index = 5697, .length = 6},
-  [1221] = {.index = 5703, .length = 6},
-  [1222] = {.index = 5709, .length = 6},
-  [1223] = {.index = 5715, .length = 6},
-  [1224] = {.index = 5721, .length = 6},
-  [1225] = {.index = 5727, .length = 6},
-  [1226] = {.index = 5733, .length = 6},
-  [1227] = {.index = 5739, .length = 6},
-  [1228] = {.index = 5745, .length = 6},
-  [1229] = {.index = 5751, .length = 6},
-  [1230] = {.index = 5757, .length = 6},
-  [1231] = {.index = 5763, .length = 6},
-  [1232] = {.index = 5769, .length = 6},
-  [1233] = {.index = 5775, .length = 6},
-  [1234] = {.index = 5781, .length = 6},
-  [1235] = {.index = 5787, .length = 6},
-  [1236] = {.index = 5793, .length = 6},
-  [1237] = {.index = 5799, .length = 6},
-  [1238] = {.index = 5805, .length = 6},
-  [1239] = {.index = 5811, .length = 6},
-  [1240] = {.index = 5817, .length = 6},
-  [1241] = {.index = 5823, .length = 6},
-  [1242] = {.index = 5829, .length = 6},
-  [1243] = {.index = 5835, .length = 6},
-  [1244] = {.index = 5841, .length = 6},
-  [1245] = {.index = 5847, .length = 6},
-  [1246] = {.index = 5853, .length = 6},
-  [1247] = {.index = 5859, .length = 6},
-  [1248] = {.index = 5865, .length = 6},
-  [1249] = {.index = 5871, .length = 6},
-  [1250] = {.index = 5877, .length = 6},
-  [1251] = {.index = 5883, .length = 6},
-  [1252] = {.index = 5889, .length = 6},
-  [1253] = {.index = 5895, .length = 6},
-  [1254] = {.index = 5901, .length = 6},
-  [1255] = {.index = 5907, .length = 6},
-  [1256] = {.index = 5913, .length = 6},
-  [1257] = {.index = 5919, .length = 6},
-  [1258] = {.index = 5925, .length = 6},
-  [1259] = {.index = 5931, .length = 6},
-  [1260] = {.index = 5937, .length = 6},
-  [1261] = {.index = 5943, .length = 6},
-  [1262] = {.index = 5949, .length = 6},
-  [1263] = {.index = 5955, .length = 6},
-  [1264] = {.index = 5961, .length = 6},
-  [1265] = {.index = 5967, .length = 6},
-  [1266] = {.index = 5973, .length = 6},
-  [1267] = {.index = 5979, .length = 6},
-  [1268] = {.index = 5985, .length = 6},
-  [1269] = {.index = 5991, .length = 6},
-  [1270] = {.index = 5997, .length = 6},
-  [1271] = {.index = 6003, .length = 6},
-  [1272] = {.index = 6009, .length = 6},
-  [1273] = {.index = 6015, .length = 6},
-  [1274] = {.index = 6021, .length = 6},
-  [1275] = {.index = 6027, .length = 6},
-  [1276] = {.index = 6033, .length = 6},
-  [1277] = {.index = 6039, .length = 6},
-  [1278] = {.index = 6045, .length = 6},
-  [1279] = {.index = 6051, .length = 6},
-  [1280] = {.index = 6057, .length = 6},
-  [1281] = {.index = 6063, .length = 6},
-  [1282] = {.index = 6069, .length = 6},
-  [1283] = {.index = 6075, .length = 6},
-  [1284] = {.index = 6081, .length = 6},
-  [1285] = {.index = 6087, .length = 6},
-  [1286] = {.index = 6093, .length = 6},
-  [1287] = {.index = 6099, .length = 6},
-  [1288] = {.index = 6105, .length = 6},
-  [1289] = {.index = 6111, .length = 6},
-  [1290] = {.index = 6117, .length = 6},
-  [1291] = {.index = 6123, .length = 6},
-  [1292] = {.index = 6129, .length = 6},
-  [1293] = {.index = 6135, .length = 6},
-  [1294] = {.index = 6141, .length = 6},
-  [1295] = {.index = 6147, .length = 6},
-  [1296] = {.index = 6153, .length = 6},
-  [1297] = {.index = 6159, .length = 6},
-  [1298] = {.index = 6165, .length = 6},
-  [1299] = {.index = 6171, .length = 6},
-  [1300] = {.index = 6177, .length = 6},
-  [1301] = {.index = 6183, .length = 6},
-  [1302] = {.index = 6189, .length = 6},
-  [1303] = {.index = 6195, .length = 6},
-  [1304] = {.index = 6201, .length = 6},
-  [1305] = {.index = 6207, .length = 6},
-  [1306] = {.index = 6213, .length = 6},
-  [1307] = {.index = 6219, .length = 6},
-  [1308] = {.index = 6225, .length = 6},
-  [1309] = {.index = 6231, .length = 6},
-  [1310] = {.index = 6237, .length = 6},
-  [1311] = {.index = 6243, .length = 6},
-  [1312] = {.index = 6249, .length = 6},
-  [1313] = {.index = 6255, .length = 4},
-  [1314] = {.index = 6259, .length = 4},
-  [1315] = {.index = 6263, .length = 10},
-  [1316] = {.index = 6273, .length = 10},
-  [1317] = {.index = 6283, .length = 10},
-  [1318] = {.index = 6293, .length = 10},
-  [1319] = {.index = 6303, .length = 10},
-  [1320] = {.index = 6313, .length = 10},
-  [1321] = {.index = 6323, .length = 10},
-  [1322] = {.index = 6333, .length = 10},
-  [1323] = {.index = 6343, .length = 10},
-  [1324] = {.index = 6353, .length = 10},
-  [1325] = {.index = 6363, .length = 10},
-  [1326] = {.index = 6373, .length = 10},
-  [1327] = {.index = 6383, .length = 10},
-  [1328] = {.index = 6393, .length = 10},
-  [1329] = {.index = 6403, .length = 10},
-  [1330] = {.index = 6413, .length = 10},
-  [1331] = {.index = 6423, .length = 10},
-  [1332] = {.index = 6433, .length = 10},
-  [1333] = {.index = 6443, .length = 10},
-  [1334] = {.index = 6453, .length = 10},
-  [1335] = {.index = 6463, .length = 10},
-  [1336] = {.index = 6473, .length = 6},
-  [1337] = {.index = 6479, .length = 7},
-  [1338] = {.index = 6486, .length = 7},
-  [1339] = {.index = 6493, .length = 7},
-  [1340] = {.index = 6500, .length = 7},
-  [1341] = {.index = 6507, .length = 7},
-  [1342] = {.index = 6514, .length = 7},
-  [1343] = {.index = 6521, .length = 7},
-  [1344] = {.index = 6528, .length = 7},
-  [1345] = {.index = 6535, .length = 7},
-  [1346] = {.index = 6542, .length = 7},
-  [1347] = {.index = 6549, .length = 7},
-  [1348] = {.index = 6556, .length = 7},
-  [1349] = {.index = 6563, .length = 7},
-  [1350] = {.index = 6570, .length = 7},
-  [1351] = {.index = 6577, .length = 7},
-  [1352] = {.index = 6584, .length = 7},
-  [1353] = {.index = 6591, .length = 7},
-  [1354] = {.index = 6598, .length = 7},
-  [1355] = {.index = 6605, .length = 7},
-  [1356] = {.index = 6612, .length = 7},
-  [1357] = {.index = 6619, .length = 7},
-  [1358] = {.index = 6626, .length = 7},
-  [1359] = {.index = 6633, .length = 7},
-  [1360] = {.index = 6640, .length = 7},
-  [1361] = {.index = 6647, .length = 7},
-  [1362] = {.index = 6654, .length = 7},
-  [1363] = {.index = 6661, .length = 7},
-  [1364] = {.index = 6668, .length = 7},
-  [1365] = {.index = 6675, .length = 7},
-  [1366] = {.index = 6682, .length = 7},
-  [1367] = {.index = 6689, .length = 4},
-  [1368] = {.index = 6689, .length = 4},
-  [1369] = {.index = 6693, .length = 9},
-  [1370] = {.index = 6702, .length = 7},
-  [1371] = {.index = 6709, .length = 9},
-  [1372] = {.index = 6718, .length = 9},
-  [1373] = {.index = 6727, .length = 9},
-  [1374] = {.index = 6736, .length = 7},
-  [1375] = {.index = 6743, .length = 9},
-  [1376] = {.index = 6752, .length = 7},
-  [1377] = {.index = 6759, .length = 7},
-  [1378] = {.index = 6766, .length = 7},
-  [1379] = {.index = 6773, .length = 7},
-  [1380] = {.index = 6780, .length = 7},
-  [1381] = {.index = 6787, .length = 7},
-  [1382] = {.index = 6794, .length = 7},
-  [1383] = {.index = 6801, .length = 7},
-  [1384] = {.index = 6808, .length = 7},
-  [1385] = {.index = 6815, .length = 7},
-  [1386] = {.index = 6822, .length = 7},
-  [1387] = {.index = 6829, .length = 7},
-  [1388] = {.index = 6836, .length = 7},
-  [1389] = {.index = 6843, .length = 7},
-  [1390] = {.index = 6850, .length = 7},
-  [1391] = {.index = 6857, .length = 7},
-  [1392] = {.index = 6864, .length = 7},
-  [1393] = {.index = 6871, .length = 7},
-  [1394] = {.index = 6878, .length = 7},
-  [1395] = {.index = 6885, .length = 7},
-  [1396] = {.index = 6892, .length = 7},
-  [1397] = {.index = 6899, .length = 7},
-  [1398] = {.index = 6906, .length = 9},
-  [1399] = {.index = 6915, .length = 7},
-  [1400] = {.index = 6922, .length = 9},
-  [1401] = {.index = 6931, .length = 9},
-  [1402] = {.index = 6940, .length = 9},
-  [1403] = {.index = 6949, .length = 7},
-  [1404] = {.index = 6956, .length = 9},
-  [1405] = {.index = 6965, .length = 7},
-  [1406] = {.index = 6972, .length = 7},
-  [1407] = {.index = 6979, .length = 7},
-  [1408] = {.index = 6986, .length = 9},
-  [1409] = {.index = 6995, .length = 9},
-  [1410] = {.index = 7004, .length = 9},
-  [1411] = {.index = 7013, .length = 7},
-  [1412] = {.index = 7020, .length = 7},
-  [1413] = {.index = 7027, .length = 9},
-  [1414] = {.index = 7036, .length = 7},
-  [1415] = {.index = 7043, .length = 9},
-  [1416] = {.index = 7052, .length = 9},
-  [1417] = {.index = 7061, .length = 7},
-  [1418] = {.index = 7068, .length = 7},
-  [1419] = {.index = 7075, .length = 7},
-  [1420] = {.index = 7082, .length = 8},
-  [1421] = {.index = 7090, .length = 7},
-  [1422] = {.index = 7097, .length = 9},
-  [1423] = {.index = 7106, .length = 9},
-  [1424] = {.index = 7115, .length = 9},
-  [1425] = {.index = 7124, .length = 7},
-  [1426] = {.index = 7131, .length = 9},
-  [1427] = {.index = 7140, .length = 9},
-  [1428] = {.index = 7149, .length = 7},
-  [1429] = {.index = 7156, .length = 7},
-  [1430] = {.index = 7163, .length = 7},
-  [1431] = {.index = 7170, .length = 7},
-  [1432] = {.index = 7177, .length = 7},
-  [1433] = {.index = 7184, .length = 7},
-  [1434] = {.index = 7191, .length = 7},
-  [1435] = {.index = 7198, .length = 7},
-  [1436] = {.index = 7205, .length = 7},
-  [1437] = {.index = 7212, .length = 7},
-  [1438] = {.index = 7219, .length = 7},
-  [1439] = {.index = 7226, .length = 7},
-  [1440] = {.index = 7233, .length = 7},
-  [1441] = {.index = 7240, .length = 7},
-  [1442] = {.index = 7247, .length = 7},
-  [1443] = {.index = 7254, .length = 7},
-  [1444] = {.index = 7261, .length = 7},
-  [1445] = {.index = 7268, .length = 7},
-  [1446] = {.index = 7275, .length = 7},
-  [1447] = {.index = 7282, .length = 7},
-  [1448] = {.index = 7289, .length = 7},
-  [1449] = {.index = 7296, .length = 7},
-  [1450] = {.index = 7303, .length = 7},
-  [1451] = {.index = 7310, .length = 7},
-  [1452] = {.index = 7317, .length = 7},
-  [1453] = {.index = 7324, .length = 7},
-  [1454] = {.index = 7331, .length = 7},
-  [1455] = {.index = 7338, .length = 7},
-  [1456] = {.index = 7345, .length = 7},
-  [1457] = {.index = 7352, .length = 7},
-  [1458] = {.index = 7359, .length = 7},
-  [1459] = {.index = 7366, .length = 7},
-  [1460] = {.index = 7373, .length = 7},
-  [1461] = {.index = 7380, .length = 7},
-  [1462] = {.index = 7387, .length = 7},
-  [1463] = {.index = 7394, .length = 7},
-  [1464] = {.index = 7401, .length = 7},
-  [1465] = {.index = 7408, .length = 7},
-  [1466] = {.index = 7415, .length = 7},
-  [1467] = {.index = 7422, .length = 7},
-  [1468] = {.index = 7429, .length = 7},
-  [1469] = {.index = 7436, .length = 7},
-  [1470] = {.index = 7443, .length = 7},
-  [1471] = {.index = 7450, .length = 7},
-  [1472] = {.index = 7457, .length = 7},
-  [1473] = {.index = 7464, .length = 7},
-  [1474] = {.index = 7471, .length = 7},
-  [1475] = {.index = 7478, .length = 7},
-  [1476] = {.index = 7485, .length = 7},
-  [1477] = {.index = 7492, .length = 7},
-  [1478] = {.index = 7499, .length = 7},
-  [1479] = {.index = 7506, .length = 7},
-  [1480] = {.index = 7513, .length = 7},
-  [1481] = {.index = 7520, .length = 7},
-  [1482] = {.index = 7527, .length = 7},
-  [1483] = {.index = 7534, .length = 7},
-  [1484] = {.index = 7541, .length = 7},
-  [1485] = {.index = 7548, .length = 7},
-  [1486] = {.index = 7555, .length = 7},
-  [1487] = {.index = 7562, .length = 7},
-  [1488] = {.index = 7569, .length = 7},
-  [1489] = {.index = 7576, .length = 7},
-  [1490] = {.index = 7583, .length = 7},
-  [1491] = {.index = 7590, .length = 7},
-  [1492] = {.index = 7597, .length = 7},
-  [1493] = {.index = 7604, .length = 7},
-  [1494] = {.index = 7611, .length = 7},
-  [1495] = {.index = 7618, .length = 7},
-  [1496] = {.index = 7625, .length = 7},
-  [1497] = {.index = 7632, .length = 7},
-  [1498] = {.index = 7639, .length = 7},
-  [1499] = {.index = 7646, .length = 7},
-  [1500] = {.index = 7653, .length = 7},
-  [1501] = {.index = 7660, .length = 7},
-  [1502] = {.index = 7667, .length = 7},
-  [1503] = {.index = 7674, .length = 7},
-  [1504] = {.index = 7681, .length = 7},
-  [1505] = {.index = 7688, .length = 7},
-  [1506] = {.index = 7695, .length = 7},
-  [1507] = {.index = 7702, .length = 7},
-  [1508] = {.index = 7709, .length = 7},
-  [1509] = {.index = 7716, .length = 7},
-  [1510] = {.index = 7723, .length = 7},
-  [1511] = {.index = 7730, .length = 7},
-  [1512] = {.index = 7737, .length = 7},
-  [1513] = {.index = 7744, .length = 7},
-  [1514] = {.index = 7751, .length = 7},
-  [1515] = {.index = 7758, .length = 7},
-  [1516] = {.index = 7765, .length = 7},
-  [1517] = {.index = 7772, .length = 7},
-  [1518] = {.index = 7779, .length = 7},
-  [1519] = {.index = 7786, .length = 7},
-  [1520] = {.index = 7793, .length = 7},
-  [1521] = {.index = 7800, .length = 7},
-  [1522] = {.index = 7807, .length = 7},
-  [1523] = {.index = 7814, .length = 7},
-  [1524] = {.index = 7821, .length = 7},
-  [1525] = {.index = 7828, .length = 7},
-  [1526] = {.index = 7835, .length = 7},
-  [1527] = {.index = 7842, .length = 7},
-  [1528] = {.index = 7849, .length = 7},
-  [1529] = {.index = 7856, .length = 7},
-  [1530] = {.index = 7863, .length = 7},
-  [1531] = {.index = 7870, .length = 7},
-  [1532] = {.index = 7877, .length = 7},
-  [1533] = {.index = 7884, .length = 7},
-  [1534] = {.index = 7891, .length = 7},
-  [1535] = {.index = 7898, .length = 7},
-  [1536] = {.index = 7905, .length = 7},
-  [1537] = {.index = 7912, .length = 7},
-  [1538] = {.index = 7919, .length = 7},
-  [1539] = {.index = 7926, .length = 7},
-  [1540] = {.index = 7933, .length = 7},
-  [1541] = {.index = 7940, .length = 7},
-  [1542] = {.index = 7947, .length = 7},
-  [1543] = {.index = 7954, .length = 7},
-  [1544] = {.index = 7961, .length = 7},
-  [1545] = {.index = 7968, .length = 7},
-  [1546] = {.index = 7975, .length = 7},
-  [1547] = {.index = 7982, .length = 7},
-  [1548] = {.index = 7989, .length = 7},
-  [1549] = {.index = 7996, .length = 7},
-  [1550] = {.index = 8003, .length = 7},
-  [1551] = {.index = 8010, .length = 7},
-  [1552] = {.index = 8017, .length = 7},
-  [1553] = {.index = 8024, .length = 7},
-  [1554] = {.index = 8031, .length = 11},
-  [1555] = {.index = 8042, .length = 11},
-  [1556] = {.index = 8053, .length = 11},
-  [1557] = {.index = 8064, .length = 11},
-  [1558] = {.index = 8075, .length = 11},
-  [1559] = {.index = 8086, .length = 11},
-  [1560] = {.index = 8097, .length = 11},
-  [1561] = {.index = 8108, .length = 8},
-  [1562] = {.index = 8116, .length = 8},
-  [1563] = {.index = 8124, .length = 8},
-  [1564] = {.index = 8132, .length = 8},
-  [1565] = {.index = 8140, .length = 8},
-  [1566] = {.index = 8148, .length = 8},
-  [1567] = {.index = 8156, .length = 8},
-  [1568] = {.index = 8164, .length = 8},
-  [1569] = {.index = 8172, .length = 8},
-  [1570] = {.index = 8180, .length = 10},
-  [1571] = {.index = 8190, .length = 5},
-  [1572] = {.index = 8190, .length = 5},
-  [1573] = {.index = 8195, .length = 8},
-  [1574] = {.index = 8203, .length = 8},
-  [1575] = {.index = 8211, .length = 8},
-  [1576] = {.index = 8219, .length = 8},
-  [1577] = {.index = 8227, .length = 8},
-  [1578] = {.index = 8235, .length = 8},
-  [1579] = {.index = 8243, .length = 8},
-  [1580] = {.index = 8251, .length = 8},
-  [1581] = {.index = 8259, .length = 10},
-  [1582] = {.index = 8269, .length = 8},
-  [1583] = {.index = 8277, .length = 10},
-  [1584] = {.index = 8287, .length = 10},
-  [1585] = {.index = 8297, .length = 10},
-  [1586] = {.index = 8307, .length = 8},
-  [1587] = {.index = 8315, .length = 10},
-  [1588] = {.index = 8325, .length = 10},
-  [1589] = {.index = 8335, .length = 8},
-  [1590] = {.index = 8343, .length = 8},
-  [1591] = {.index = 8351, .length = 8},
-  [1592] = {.index = 8359, .length = 8},
-  [1593] = {.index = 8367, .length = 8},
-  [1594] = {.index = 8375, .length = 8},
-  [1595] = {.index = 8383, .length = 8},
-  [1596] = {.index = 8391, .length = 8},
-  [1597] = {.index = 8399, .length = 8},
-  [1598] = {.index = 8407, .length = 8},
-  [1599] = {.index = 8415, .length = 8},
-  [1600] = {.index = 8423, .length = 8},
-  [1601] = {.index = 8431, .length = 8},
-  [1602] = {.index = 8439, .length = 8},
-  [1603] = {.index = 8447, .length = 8},
-  [1604] = {.index = 8455, .length = 8},
-  [1605] = {.index = 8463, .length = 8},
-  [1606] = {.index = 8471, .length = 8},
-  [1607] = {.index = 8479, .length = 8},
-  [1608] = {.index = 8487, .length = 8},
-  [1609] = {.index = 8495, .length = 8},
-  [1610] = {.index = 8503, .length = 8},
-  [1611] = {.index = 8511, .length = 8},
-  [1612] = {.index = 8519, .length = 8},
-  [1613] = {.index = 8527, .length = 8},
-  [1614] = {.index = 8535, .length = 8},
-  [1615] = {.index = 8543, .length = 8},
-  [1616] = {.index = 8551, .length = 8},
-  [1617] = {.index = 8559, .length = 8},
-  [1618] = {.index = 8567, .length = 8},
-  [1619] = {.index = 8575, .length = 8},
-  [1620] = {.index = 8583, .length = 8},
-  [1621] = {.index = 8591, .length = 8},
-  [1622] = {.index = 8599, .length = 8},
-  [1623] = {.index = 8607, .length = 8},
-  [1624] = {.index = 8615, .length = 8},
-  [1625] = {.index = 8623, .length = 8},
-  [1626] = {.index = 8631, .length = 8},
-  [1627] = {.index = 8639, .length = 8},
-  [1628] = {.index = 8647, .length = 8},
-  [1629] = {.index = 8655, .length = 8},
-  [1630] = {.index = 8663, .length = 8},
-  [1631] = {.index = 8671, .length = 8},
-  [1632] = {.index = 8679, .length = 8},
-  [1633] = {.index = 8687, .length = 8},
-  [1634] = {.index = 8695, .length = 8},
-  [1635] = {.index = 8703, .length = 8},
-  [1636] = {.index = 8711, .length = 8},
-  [1637] = {.index = 8719, .length = 8},
-  [1638] = {.index = 8727, .length = 8},
-  [1639] = {.index = 8735, .length = 8},
-  [1640] = {.index = 8743, .length = 8},
-  [1641] = {.index = 8751, .length = 8},
-  [1642] = {.index = 8759, .length = 8},
-  [1643] = {.index = 8767, .length = 8},
-  [1644] = {.index = 8775, .length = 8},
-  [1645] = {.index = 8783, .length = 8},
-  [1646] = {.index = 8791, .length = 8},
-  [1647] = {.index = 8799, .length = 8},
-  [1648] = {.index = 8807, .length = 8},
-  [1649] = {.index = 8815, .length = 8},
-  [1650] = {.index = 8823, .length = 8},
-  [1651] = {.index = 8831, .length = 8},
-  [1652] = {.index = 8839, .length = 8},
-  [1653] = {.index = 8847, .length = 8},
-  [1654] = {.index = 8855, .length = 8},
-  [1655] = {.index = 8863, .length = 8},
-  [1656] = {.index = 8871, .length = 12},
-  [1657] = {.index = 8883, .length = 9},
-  [1658] = {.index = 8892, .length = 9},
-  [1659] = {.index = 8901, .length = 11},
-  [1660] = {.index = 8912, .length = 9},
-  [1661] = {.index = 8921, .length = 9},
-  [1662] = {.index = 8930, .length = 9},
-  [1663] = {.index = 8939, .length = 9},
-  [1664] = {.index = 8948, .length = 9},
-  [1665] = {.index = 8957, .length = 9},
-  [1666] = {.index = 8966, .length = 9},
-  [1667] = {.index = 8975, .length = 9},
-  [1668] = {.index = 8984, .length = 9},
-  [1669] = {.index = 8993, .length = 9},
-  [1670] = {.index = 9002, .length = 9},
-  [1671] = {.index = 9011, .length = 9},
-  [1672] = {.index = 9020, .length = 9},
-  [1673] = {.index = 9029, .length = 9},
-  [1674] = {.index = 9038, .length = 9},
-  [1675] = {.index = 9047, .length = 9},
-  [1676] = {.index = 9056, .length = 9},
-  [1677] = {.index = 9065, .length = 9},
-  [1678] = {.index = 9074, .length = 9},
-  [1679] = {.index = 9083, .length = 10},
-  [1680] = {.index = 9093, .length = 10},
+  [637] = {.index = 2297, .length = 3},
+  [638] = {.index = 2300, .length = 2},
+  [639] = {.index = 2302, .length = 3},
+  [640] = {.index = 2305, .length = 8},
+  [641] = {.index = 2313, .length = 5},
+  [642] = {.index = 2318, .length = 5},
+  [643] = {.index = 2323, .length = 5},
+  [644] = {.index = 2328, .length = 5},
+  [645] = {.index = 2333, .length = 5},
+  [646] = {.index = 2338, .length = 5},
+  [647] = {.index = 2343, .length = 5},
+  [648] = {.index = 2348, .length = 5},
+  [649] = {.index = 2353, .length = 5},
+  [650] = {.index = 2358, .length = 5},
+  [651] = {.index = 2363, .length = 5},
+  [652] = {.index = 2368, .length = 5},
+  [653] = {.index = 2373, .length = 5},
+  [654] = {.index = 2378, .length = 5},
+  [655] = {.index = 2383, .length = 5},
+  [656] = {.index = 2388, .length = 5},
+  [657] = {.index = 2393, .length = 5},
+  [658] = {.index = 2398, .length = 5},
+  [659] = {.index = 2403, .length = 5},
+  [660] = {.index = 2408, .length = 5},
+  [661] = {.index = 2413, .length = 5},
+  [662] = {.index = 2418, .length = 5},
+  [663] = {.index = 2423, .length = 5},
+  [664] = {.index = 2428, .length = 5},
+  [665] = {.index = 2433, .length = 5},
+  [666] = {.index = 2438, .length = 5},
+  [667] = {.index = 2443, .length = 5},
+  [668] = {.index = 2448, .length = 5},
+  [669] = {.index = 2453, .length = 5},
+  [670] = {.index = 2458, .length = 5},
+  [671] = {.index = 2463, .length = 5},
+  [672] = {.index = 2468, .length = 5},
+  [673] = {.index = 2473, .length = 5},
+  [674] = {.index = 2478, .length = 5},
+  [675] = {.index = 2483, .length = 5},
+  [676] = {.index = 2488, .length = 5},
+  [677] = {.index = 2493, .length = 5},
+  [678] = {.index = 2498, .length = 5},
+  [679] = {.index = 2503, .length = 5},
+  [680] = {.index = 2508, .length = 5},
+  [681] = {.index = 2513, .length = 5},
+  [682] = {.index = 2518, .length = 5},
+  [683] = {.index = 2523, .length = 5},
+  [684] = {.index = 2528, .length = 5},
+  [685] = {.index = 2533, .length = 5},
+  [686] = {.index = 2538, .length = 5},
+  [687] = {.index = 2543, .length = 5},
+  [688] = {.index = 2548, .length = 5},
+  [689] = {.index = 2553, .length = 5},
+  [690] = {.index = 2558, .length = 7},
+  [691] = {.index = 2565, .length = 7},
+  [692] = {.index = 2572, .length = 7},
+  [693] = {.index = 2579, .length = 3},
+  [694] = {.index = 2582, .length = 5},
+  [695] = {.index = 2587, .length = 5},
+  [696] = {.index = 2592, .length = 5},
+  [697] = {.index = 2597, .length = 5},
+  [698] = {.index = 2602, .length = 7},
+  [699] = {.index = 2609, .length = 7},
+  [700] = {.index = 2616, .length = 7},
+  [701] = {.index = 2623, .length = 7},
+  [702] = {.index = 2630, .length = 5},
+  [703] = {.index = 2635, .length = 5},
+  [704] = {.index = 2640, .length = 7},
+  [705] = {.index = 2647, .length = 5},
+  [706] = {.index = 2652, .length = 7},
+  [707] = {.index = 2659, .length = 7},
+  [708] = {.index = 2666, .length = 5},
+  [709] = {.index = 2671, .length = 5},
+  [710] = {.index = 2676, .length = 5},
+  [711] = {.index = 2681, .length = 5},
+  [712] = {.index = 2686, .length = 5},
+  [713] = {.index = 2691, .length = 7},
+  [714] = {.index = 2698, .length = 5},
+  [715] = {.index = 2703, .length = 7},
+  [716] = {.index = 2710, .length = 5},
+  [717] = {.index = 2715, .length = 5},
+  [718] = {.index = 2720, .length = 6},
+  [719] = {.index = 2726, .length = 5},
+  [720] = {.index = 2731, .length = 7},
+  [721] = {.index = 2738, .length = 5},
+  [722] = {.index = 2743, .length = 5},
+  [723] = {.index = 2748, .length = 5},
+  [724] = {.index = 2753, .length = 5},
+  [725] = {.index = 2758, .length = 7},
+  [726] = {.index = 2765, .length = 5},
+  [727] = {.index = 2770, .length = 6},
+  [728] = {.index = 2776, .length = 5},
+  [729] = {.index = 2781, .length = 5},
+  [730] = {.index = 2786, .length = 5},
+  [731] = {.index = 2791, .length = 5},
+  [732] = {.index = 2796, .length = 5},
+  [733] = {.index = 2801, .length = 6},
+  [734] = {.index = 2807, .length = 5},
+  [735] = {.index = 2812, .length = 4},
+  [736] = {.index = 2816, .length = 5},
+  [737] = {.index = 2821, .length = 5},
+  [738] = {.index = 2826, .length = 6},
+  [739] = {.index = 2832, .length = 7},
+  [740] = {.index = 2839, .length = 5},
+  [741] = {.index = 2844, .length = 5},
+  [742] = {.index = 2849, .length = 5},
+  [743] = {.index = 2854, .length = 5},
+  [744] = {.index = 2859, .length = 5},
+  [745] = {.index = 2864, .length = 5},
+  [746] = {.index = 2869, .length = 5},
+  [747] = {.index = 2874, .length = 5},
+  [748] = {.index = 2879, .length = 5},
+  [749] = {.index = 2884, .length = 5},
+  [750] = {.index = 2889, .length = 5},
+  [751] = {.index = 2894, .length = 5},
+  [752] = {.index = 2899, .length = 5},
+  [753] = {.index = 2904, .length = 5},
+  [754] = {.index = 2909, .length = 5},
+  [755] = {.index = 2914, .length = 5},
+  [756] = {.index = 2919, .length = 5},
+  [757] = {.index = 2924, .length = 5},
+  [758] = {.index = 2929, .length = 5},
+  [759] = {.index = 2934, .length = 5},
+  [760] = {.index = 2939, .length = 7},
+  [761] = {.index = 2946, .length = 7},
+  [762] = {.index = 2953, .length = 5},
+  [763] = {.index = 2958, .length = 5},
+  [764] = {.index = 2963, .length = 5},
+  [765] = {.index = 2968, .length = 5},
+  [766] = {.index = 2973, .length = 5},
+  [767] = {.index = 2978, .length = 7},
+  [768] = {.index = 2985, .length = 5},
+  [769] = {.index = 2990, .length = 7},
+  [770] = {.index = 2997, .length = 7},
+  [771] = {.index = 3004, .length = 7},
+  [772] = {.index = 3011, .length = 5},
+  [773] = {.index = 3016, .length = 7},
+  [774] = {.index = 3023, .length = 5},
+  [775] = {.index = 3028, .length = 5},
+  [776] = {.index = 3033, .length = 6},
+  [777] = {.index = 3039, .length = 5},
+  [778] = {.index = 3044, .length = 7},
+  [779] = {.index = 3051, .length = 5},
+  [780] = {.index = 3056, .length = 5},
+  [781] = {.index = 3061, .length = 5},
+  [782] = {.index = 3066, .length = 5},
+  [783] = {.index = 3071, .length = 5},
+  [784] = {.index = 3076, .length = 7},
+  [785] = {.index = 3083, .length = 5},
+  [786] = {.index = 3088, .length = 5},
+  [787] = {.index = 3093, .length = 5},
+  [788] = {.index = 3098, .length = 5},
+  [789] = {.index = 3103, .length = 7},
+  [790] = {.index = 3110, .length = 5},
+  [791] = {.index = 3115, .length = 5},
+  [792] = {.index = 3120, .length = 6},
+  [793] = {.index = 3126, .length = 5},
+  [794] = {.index = 3131, .length = 5},
+  [795] = {.index = 3136, .length = 5},
+  [796] = {.index = 3141, .length = 5},
+  [797] = {.index = 3146, .length = 4},
+  [798] = {.index = 3150, .length = 5},
+  [799] = {.index = 3155, .length = 5},
+  [800] = {.index = 3160, .length = 5},
+  [801] = {.index = 3165, .length = 5},
+  [802] = {.index = 3170, .length = 6},
+  [803] = {.index = 3176, .length = 5},
+  [804] = {.index = 3181, .length = 5},
+  [805] = {.index = 3186, .length = 6},
+  [806] = {.index = 3192, .length = 5},
+  [807] = {.index = 3197, .length = 5},
+  [808] = {.index = 3202, .length = 7},
+  [809] = {.index = 3209, .length = 5},
+  [810] = {.index = 3214, .length = 7},
+  [811] = {.index = 3221, .length = 5},
+  [812] = {.index = 3226, .length = 5},
+  [813] = {.index = 3231, .length = 6},
+  [814] = {.index = 3237, .length = 5},
+  [815] = {.index = 3242, .length = 7},
+  [816] = {.index = 3249, .length = 5},
+  [817] = {.index = 3254, .length = 5},
+  [818] = {.index = 3259, .length = 5},
+  [819] = {.index = 3264, .length = 5},
+  [820] = {.index = 3269, .length = 7},
+  [821] = {.index = 3276, .length = 5},
+  [822] = {.index = 3281, .length = 7},
+  [823] = {.index = 3288, .length = 7},
+  [824] = {.index = 3295, .length = 7},
+  [825] = {.index = 3302, .length = 5},
+  [826] = {.index = 3307, .length = 5},
+  [827] = {.index = 3312, .length = 7},
+  [828] = {.index = 3319, .length = 5},
+  [829] = {.index = 3324, .length = 7},
+  [830] = {.index = 3331, .length = 7},
+  [831] = {.index = 3338, .length = 5},
+  [832] = {.index = 3343, .length = 5},
+  [833] = {.index = 3348, .length = 5},
+  [834] = {.index = 3353, .length = 5},
+  [835] = {.index = 3358, .length = 5},
+  [836] = {.index = 3363, .length = 5},
+  [837] = {.index = 3368, .length = 5},
+  [838] = {.index = 3373, .length = 5},
+  [839] = {.index = 3378, .length = 5},
+  [840] = {.index = 3383, .length = 5},
+  [841] = {.index = 3388, .length = 5},
+  [842] = {.index = 3393, .length = 5},
+  [843] = {.index = 3398, .length = 5},
+  [844] = {.index = 3403, .length = 5},
+  [845] = {.index = 3408, .length = 5},
+  [846] = {.index = 3413, .length = 5},
+  [847] = {.index = 3418, .length = 5},
+  [848] = {.index = 3423, .length = 5},
+  [849] = {.index = 3428, .length = 5},
+  [850] = {.index = 3433, .length = 5},
+  [851] = {.index = 3438, .length = 5},
+  [852] = {.index = 3443, .length = 5},
+  [853] = {.index = 3448, .length = 5},
+  [854] = {.index = 3453, .length = 5},
+  [855] = {.index = 3458, .length = 5},
+  [856] = {.index = 3463, .length = 5},
+  [857] = {.index = 3468, .length = 5},
+  [858] = {.index = 3473, .length = 5},
+  [859] = {.index = 3478, .length = 5},
+  [860] = {.index = 3483, .length = 5},
+  [861] = {.index = 3488, .length = 5},
+  [862] = {.index = 3493, .length = 5},
+  [863] = {.index = 3498, .length = 5},
+  [864] = {.index = 3503, .length = 5},
+  [865] = {.index = 3508, .length = 5},
+  [866] = {.index = 3513, .length = 5},
+  [867] = {.index = 3518, .length = 5},
+  [868] = {.index = 3523, .length = 5},
+  [869] = {.index = 3528, .length = 5},
+  [870] = {.index = 3533, .length = 5},
+  [871] = {.index = 3538, .length = 5},
+  [872] = {.index = 3543, .length = 5},
+  [873] = {.index = 3548, .length = 5},
+  [874] = {.index = 3553, .length = 5},
+  [875] = {.index = 3558, .length = 5},
+  [876] = {.index = 3563, .length = 5},
+  [877] = {.index = 3568, .length = 5},
+  [878] = {.index = 3573, .length = 5},
+  [879] = {.index = 3578, .length = 5},
+  [880] = {.index = 3583, .length = 5},
+  [881] = {.index = 3588, .length = 5},
+  [882] = {.index = 3593, .length = 5},
+  [883] = {.index = 3598, .length = 5},
+  [884] = {.index = 3603, .length = 5},
+  [885] = {.index = 3608, .length = 5},
+  [886] = {.index = 3613, .length = 5},
+  [887] = {.index = 3618, .length = 5},
+  [888] = {.index = 3623, .length = 5},
+  [889] = {.index = 3628, .length = 5},
+  [890] = {.index = 3633, .length = 5},
+  [891] = {.index = 3638, .length = 5},
+  [892] = {.index = 3643, .length = 5},
+  [893] = {.index = 3648, .length = 5},
+  [894] = {.index = 3653, .length = 5},
+  [895] = {.index = 3658, .length = 5},
+  [896] = {.index = 3663, .length = 5},
+  [897] = {.index = 3668, .length = 5},
+  [898] = {.index = 3673, .length = 5},
+  [899] = {.index = 3678, .length = 5},
+  [900] = {.index = 3683, .length = 5},
+  [901] = {.index = 3688, .length = 5},
+  [902] = {.index = 3693, .length = 5},
+  [903] = {.index = 3698, .length = 5},
+  [904] = {.index = 3703, .length = 5},
+  [905] = {.index = 3708, .length = 5},
+  [906] = {.index = 3713, .length = 5},
+  [907] = {.index = 3718, .length = 5},
+  [908] = {.index = 3723, .length = 5},
+  [909] = {.index = 3728, .length = 5},
+  [910] = {.index = 3733, .length = 5},
+  [911] = {.index = 3738, .length = 5},
+  [912] = {.index = 3743, .length = 5},
+  [913] = {.index = 3748, .length = 5},
+  [914] = {.index = 3753, .length = 5},
+  [915] = {.index = 3758, .length = 5},
+  [916] = {.index = 3763, .length = 5},
+  [917] = {.index = 3768, .length = 5},
+  [918] = {.index = 3773, .length = 5},
+  [919] = {.index = 3778, .length = 5},
+  [920] = {.index = 3783, .length = 5},
+  [921] = {.index = 3788, .length = 5},
+  [922] = {.index = 3793, .length = 5},
+  [923] = {.index = 3798, .length = 5},
+  [924] = {.index = 3803, .length = 5},
+  [925] = {.index = 3808, .length = 5},
+  [926] = {.index = 3813, .length = 5},
+  [927] = {.index = 3818, .length = 5},
+  [928] = {.index = 3823, .length = 5},
+  [929] = {.index = 3828, .length = 5},
+  [930] = {.index = 3833, .length = 5},
+  [931] = {.index = 3838, .length = 5},
+  [932] = {.index = 3843, .length = 5},
+  [933] = {.index = 3848, .length = 5},
+  [934] = {.index = 3853, .length = 4},
+  [935] = {.index = 3857, .length = 5},
+  [936] = {.index = 3862, .length = 5},
+  [937] = {.index = 3867, .length = 5},
+  [938] = {.index = 3872, .length = 5},
+  [939] = {.index = 3877, .length = 5},
+  [940] = {.index = 3882, .length = 5},
+  [941] = {.index = 3887, .length = 5},
+  [942] = {.index = 3892, .length = 5},
+  [943] = {.index = 3897, .length = 6},
+  [944] = {.index = 3903, .length = 5},
+  [945] = {.index = 3908, .length = 4},
+  [946] = {.index = 3912, .length = 6},
+  [947] = {.index = 3918, .length = 6},
+  [948] = {.index = 3924, .length = 9},
+  [949] = {.index = 3933, .length = 3},
+  [950] = {.index = 3936, .length = 3},
+  [951] = {.index = 3939, .length = 3},
+  [952] = {.index = 3942, .length = 4},
+  [953] = {.index = 3946, .length = 9},
+  [954] = {.index = 3955, .length = 9},
+  [955] = {.index = 3964, .length = 9},
+  [956] = {.index = 3973, .length = 9},
+  [957] = {.index = 3982, .length = 9},
+  [958] = {.index = 3991, .length = 9},
+  [959] = {.index = 4000, .length = 9},
+  [960] = {.index = 4009, .length = 9},
+  [961] = {.index = 4018, .length = 9},
+  [962] = {.index = 4027, .length = 9},
+  [963] = {.index = 4036, .length = 9},
+  [964] = {.index = 4045, .length = 9},
+  [965] = {.index = 4054, .length = 9},
+  [966] = {.index = 4063, .length = 9},
+  [967] = {.index = 4072, .length = 9},
+  [968] = {.index = 4081, .length = 9},
+  [969] = {.index = 4090, .length = 9},
+  [970] = {.index = 4099, .length = 9},
+  [971] = {.index = 4108, .length = 9},
+  [972] = {.index = 4117, .length = 9},
+  [973] = {.index = 4126, .length = 9},
+  [974] = {.index = 4135, .length = 9},
+  [975] = {.index = 4144, .length = 8},
+  [976] = {.index = 4152, .length = 7},
+  [977] = {.index = 4159, .length = 9},
+  [978] = {.index = 4168, .length = 9},
+  [979] = {.index = 4177, .length = 9},
+  [980] = {.index = 4186, .length = 9},
+  [981] = {.index = 4195, .length = 9},
+  [982] = {.index = 4204, .length = 9},
+  [983] = {.index = 4213, .length = 9},
+  [984] = {.index = 4222, .length = 9},
+  [985] = {.index = 4231, .length = 9},
+  [986] = {.index = 4240, .length = 9},
+  [987] = {.index = 4249, .length = 9},
+  [988] = {.index = 4258, .length = 9},
+  [989] = {.index = 4267, .length = 5},
+  [990] = {.index = 4267, .length = 5},
+  [991] = {.index = 4272, .length = 5},
+  [992] = {.index = 4272, .length = 5},
+  [993] = {.index = 4277, .length = 5},
+  [994] = {.index = 4282, .length = 4},
+  [995] = {.index = 4286, .length = 4},
+  [996] = {.index = 4290, .length = 6},
+  [997] = {.index = 4296, .length = 6},
+  [998] = {.index = 4302, .length = 6},
+  [999] = {.index = 4308, .length = 6},
+  [1000] = {.index = 4314, .length = 6},
+  [1001] = {.index = 4320, .length = 6},
+  [1002] = {.index = 4326, .length = 6},
+  [1003] = {.index = 4332, .length = 6},
+  [1004] = {.index = 4338, .length = 6},
+  [1005] = {.index = 4344, .length = 6},
+  [1006] = {.index = 4350, .length = 6},
+  [1007] = {.index = 4356, .length = 6},
+  [1008] = {.index = 4362, .length = 6},
+  [1009] = {.index = 4368, .length = 6},
+  [1010] = {.index = 4374, .length = 6},
+  [1011] = {.index = 4380, .length = 6},
+  [1012] = {.index = 4386, .length = 6},
+  [1013] = {.index = 4392, .length = 6},
+  [1014] = {.index = 4398, .length = 6},
+  [1015] = {.index = 4404, .length = 6},
+  [1016] = {.index = 4410, .length = 6},
+  [1017] = {.index = 4416, .length = 6},
+  [1018] = {.index = 4422, .length = 6},
+  [1019] = {.index = 4428, .length = 6},
+  [1020] = {.index = 4434, .length = 6},
+  [1021] = {.index = 4440, .length = 6},
+  [1022] = {.index = 4446, .length = 6},
+  [1023] = {.index = 4452, .length = 6},
+  [1024] = {.index = 4458, .length = 6},
+  [1025] = {.index = 4464, .length = 6},
+  [1026] = {.index = 4470, .length = 6},
+  [1027] = {.index = 4476, .length = 6},
+  [1028] = {.index = 4482, .length = 6},
+  [1029] = {.index = 4488, .length = 6},
+  [1030] = {.index = 4494, .length = 6},
+  [1031] = {.index = 4500, .length = 6},
+  [1032] = {.index = 4506, .length = 6},
+  [1033] = {.index = 4512, .length = 6},
+  [1034] = {.index = 4518, .length = 6},
+  [1035] = {.index = 4524, .length = 6},
+  [1036] = {.index = 4530, .length = 6},
+  [1037] = {.index = 4536, .length = 6},
+  [1038] = {.index = 4542, .length = 6},
+  [1039] = {.index = 4548, .length = 6},
+  [1040] = {.index = 4554, .length = 6},
+  [1041] = {.index = 4560, .length = 6},
+  [1042] = {.index = 4566, .length = 6},
+  [1043] = {.index = 4572, .length = 6},
+  [1044] = {.index = 4578, .length = 6},
+  [1045] = {.index = 4584, .length = 6},
+  [1046] = {.index = 4590, .length = 6},
+  [1047] = {.index = 4596, .length = 8},
+  [1048] = {.index = 4604, .length = 6},
+  [1049] = {.index = 4610, .length = 8},
+  [1050] = {.index = 4618, .length = 8},
+  [1051] = {.index = 4626, .length = 8},
+  [1052] = {.index = 4634, .length = 6},
+  [1053] = {.index = 4640, .length = 8},
+  [1054] = {.index = 4648, .length = 6},
+  [1055] = {.index = 4654, .length = 6},
+  [1056] = {.index = 4660, .length = 6},
+  [1057] = {.index = 4666, .length = 8},
+  [1058] = {.index = 4674, .length = 8},
+  [1059] = {.index = 4682, .length = 8},
+  [1060] = {.index = 4690, .length = 6},
+  [1061] = {.index = 4696, .length = 6},
+  [1062] = {.index = 4702, .length = 8},
+  [1063] = {.index = 4710, .length = 6},
+  [1064] = {.index = 4716, .length = 8},
+  [1065] = {.index = 4724, .length = 8},
+  [1066] = {.index = 4732, .length = 6},
+  [1067] = {.index = 4738, .length = 6},
+  [1068] = {.index = 4744, .length = 3},
+  [1069] = {.index = 4744, .length = 3},
+  [1070] = {.index = 4747, .length = 3},
+  [1071] = {.index = 4750, .length = 4},
+  [1072] = {.index = 4754, .length = 6},
+  [1073] = {.index = 4760, .length = 7},
+  [1074] = {.index = 4767, .length = 6},
+  [1075] = {.index = 4773, .length = 6},
+  [1076] = {.index = 4779, .length = 6},
+  [1077] = {.index = 4785, .length = 6},
+  [1078] = {.index = 4791, .length = 6},
+  [1079] = {.index = 4797, .length = 6},
+  [1080] = {.index = 4803, .length = 6},
+  [1081] = {.index = 4809, .length = 6},
+  [1082] = {.index = 4815, .length = 6},
+  [1083] = {.index = 4821, .length = 6},
+  [1084] = {.index = 4827, .length = 6},
+  [1085] = {.index = 4833, .length = 6},
+  [1086] = {.index = 4839, .length = 6},
+  [1087] = {.index = 4845, .length = 6},
+  [1088] = {.index = 4851, .length = 6},
+  [1089] = {.index = 4857, .length = 6},
+  [1090] = {.index = 4863, .length = 6},
+  [1091] = {.index = 4869, .length = 6},
+  [1092] = {.index = 4875, .length = 6},
+  [1093] = {.index = 4881, .length = 6},
+  [1094] = {.index = 4887, .length = 6},
+  [1095] = {.index = 4893, .length = 6},
+  [1096] = {.index = 4899, .length = 6},
+  [1097] = {.index = 4905, .length = 6},
+  [1098] = {.index = 4911, .length = 6},
+  [1099] = {.index = 4917, .length = 6},
+  [1100] = {.index = 4923, .length = 6},
+  [1101] = {.index = 4929, .length = 6},
+  [1102] = {.index = 4935, .length = 6},
+  [1103] = {.index = 4941, .length = 6},
+  [1104] = {.index = 4947, .length = 8},
+  [1105] = {.index = 4955, .length = 8},
+  [1106] = {.index = 4963, .length = 8},
+  [1107] = {.index = 4971, .length = 6},
+  [1108] = {.index = 4977, .length = 6},
+  [1109] = {.index = 4983, .length = 6},
+  [1110] = {.index = 4989, .length = 6},
+  [1111] = {.index = 4995, .length = 8},
+  [1112] = {.index = 5003, .length = 8},
+  [1113] = {.index = 5011, .length = 8},
+  [1114] = {.index = 5019, .length = 8},
+  [1115] = {.index = 5027, .length = 6},
+  [1116] = {.index = 5033, .length = 6},
+  [1117] = {.index = 5039, .length = 8},
+  [1118] = {.index = 5047, .length = 6},
+  [1119] = {.index = 5053, .length = 8},
+  [1120] = {.index = 5061, .length = 8},
+  [1121] = {.index = 5069, .length = 6},
+  [1122] = {.index = 5075, .length = 6},
+  [1123] = {.index = 5081, .length = 6},
+  [1124] = {.index = 5087, .length = 6},
+  [1125] = {.index = 5093, .length = 6},
+  [1126] = {.index = 5099, .length = 8},
+  [1127] = {.index = 5107, .length = 6},
+  [1128] = {.index = 5113, .length = 8},
+  [1129] = {.index = 5121, .length = 6},
+  [1130] = {.index = 5127, .length = 6},
+  [1131] = {.index = 5133, .length = 7},
+  [1132] = {.index = 5140, .length = 6},
+  [1133] = {.index = 5146, .length = 8},
+  [1134] = {.index = 5154, .length = 6},
+  [1135] = {.index = 5160, .length = 6},
+  [1136] = {.index = 5166, .length = 6},
+  [1137] = {.index = 5172, .length = 6},
+  [1138] = {.index = 5178, .length = 8},
+  [1139] = {.index = 5186, .length = 6},
+  [1140] = {.index = 5192, .length = 7},
+  [1141] = {.index = 5199, .length = 6},
+  [1142] = {.index = 5205, .length = 6},
+  [1143] = {.index = 5211, .length = 6},
+  [1144] = {.index = 5217, .length = 6},
+  [1145] = {.index = 5223, .length = 6},
+  [1146] = {.index = 5229, .length = 7},
+  [1147] = {.index = 5236, .length = 6},
+  [1148] = {.index = 5242, .length = 5},
+  [1149] = {.index = 5247, .length = 6},
+  [1150] = {.index = 5253, .length = 6},
+  [1151] = {.index = 5259, .length = 7},
+  [1152] = {.index = 5266, .length = 8},
+  [1153] = {.index = 5274, .length = 8},
+  [1154] = {.index = 5282, .length = 8},
+  [1155] = {.index = 5290, .length = 6},
+  [1156] = {.index = 5296, .length = 6},
+  [1157] = {.index = 5302, .length = 8},
+  [1158] = {.index = 5310, .length = 6},
+  [1159] = {.index = 5316, .length = 8},
+  [1160] = {.index = 5324, .length = 8},
+  [1161] = {.index = 5332, .length = 6},
+  [1162] = {.index = 5338, .length = 6},
+  [1163] = {.index = 5344, .length = 8},
+  [1164] = {.index = 5352, .length = 8},
+  [1165] = {.index = 5360, .length = 8},
+  [1166] = {.index = 5368, .length = 6},
+  [1167] = {.index = 5374, .length = 8},
+  [1168] = {.index = 5382, .length = 6},
+  [1169] = {.index = 5388, .length = 6},
+  [1170] = {.index = 5394, .length = 6},
+  [1171] = {.index = 5400, .length = 6},
+  [1172] = {.index = 5406, .length = 6},
+  [1173] = {.index = 5412, .length = 6},
+  [1174] = {.index = 5418, .length = 6},
+  [1175] = {.index = 5424, .length = 6},
+  [1176] = {.index = 5430, .length = 6},
+  [1177] = {.index = 5436, .length = 6},
+  [1178] = {.index = 5442, .length = 6},
+  [1179] = {.index = 5448, .length = 6},
+  [1180] = {.index = 5454, .length = 6},
+  [1181] = {.index = 5460, .length = 6},
+  [1182] = {.index = 5466, .length = 6},
+  [1183] = {.index = 5472, .length = 6},
+  [1184] = {.index = 5478, .length = 6},
+  [1185] = {.index = 5484, .length = 6},
+  [1186] = {.index = 5490, .length = 6},
+  [1187] = {.index = 5496, .length = 6},
+  [1188] = {.index = 5502, .length = 6},
+  [1189] = {.index = 5508, .length = 6},
+  [1190] = {.index = 5514, .length = 6},
+  [1191] = {.index = 5520, .length = 6},
+  [1192] = {.index = 5526, .length = 6},
+  [1193] = {.index = 5532, .length = 6},
+  [1194] = {.index = 5538, .length = 6},
+  [1195] = {.index = 5544, .length = 6},
+  [1196] = {.index = 5550, .length = 6},
+  [1197] = {.index = 5556, .length = 6},
+  [1198] = {.index = 5562, .length = 6},
+  [1199] = {.index = 5568, .length = 6},
+  [1200] = {.index = 5574, .length = 6},
+  [1201] = {.index = 5580, .length = 6},
+  [1202] = {.index = 5586, .length = 6},
+  [1203] = {.index = 5592, .length = 6},
+  [1204] = {.index = 5598, .length = 6},
+  [1205] = {.index = 5604, .length = 6},
+  [1206] = {.index = 5610, .length = 6},
+  [1207] = {.index = 5616, .length = 6},
+  [1208] = {.index = 5622, .length = 6},
+  [1209] = {.index = 5628, .length = 6},
+  [1210] = {.index = 5634, .length = 6},
+  [1211] = {.index = 5640, .length = 6},
+  [1212] = {.index = 5646, .length = 6},
+  [1213] = {.index = 5652, .length = 6},
+  [1214] = {.index = 5658, .length = 6},
+  [1215] = {.index = 5664, .length = 6},
+  [1216] = {.index = 5670, .length = 6},
+  [1217] = {.index = 5676, .length = 6},
+  [1218] = {.index = 5682, .length = 6},
+  [1219] = {.index = 5688, .length = 6},
+  [1220] = {.index = 5694, .length = 6},
+  [1221] = {.index = 5700, .length = 6},
+  [1222] = {.index = 5706, .length = 6},
+  [1223] = {.index = 5712, .length = 6},
+  [1224] = {.index = 5718, .length = 6},
+  [1225] = {.index = 5724, .length = 6},
+  [1226] = {.index = 5730, .length = 6},
+  [1227] = {.index = 5736, .length = 6},
+  [1228] = {.index = 5742, .length = 6},
+  [1229] = {.index = 5748, .length = 6},
+  [1230] = {.index = 5754, .length = 6},
+  [1231] = {.index = 5760, .length = 6},
+  [1232] = {.index = 5766, .length = 6},
+  [1233] = {.index = 5772, .length = 6},
+  [1234] = {.index = 5778, .length = 6},
+  [1235] = {.index = 5784, .length = 6},
+  [1236] = {.index = 5790, .length = 6},
+  [1237] = {.index = 5796, .length = 6},
+  [1238] = {.index = 5802, .length = 6},
+  [1239] = {.index = 5808, .length = 6},
+  [1240] = {.index = 5814, .length = 6},
+  [1241] = {.index = 5820, .length = 6},
+  [1242] = {.index = 5826, .length = 6},
+  [1243] = {.index = 5832, .length = 6},
+  [1244] = {.index = 5838, .length = 6},
+  [1245] = {.index = 5844, .length = 6},
+  [1246] = {.index = 5850, .length = 6},
+  [1247] = {.index = 5856, .length = 6},
+  [1248] = {.index = 5862, .length = 6},
+  [1249] = {.index = 5868, .length = 6},
+  [1250] = {.index = 5874, .length = 6},
+  [1251] = {.index = 5880, .length = 6},
+  [1252] = {.index = 5886, .length = 6},
+  [1253] = {.index = 5892, .length = 6},
+  [1254] = {.index = 5898, .length = 6},
+  [1255] = {.index = 5904, .length = 6},
+  [1256] = {.index = 5910, .length = 6},
+  [1257] = {.index = 5916, .length = 6},
+  [1258] = {.index = 5922, .length = 6},
+  [1259] = {.index = 5928, .length = 6},
+  [1260] = {.index = 5934, .length = 6},
+  [1261] = {.index = 5940, .length = 6},
+  [1262] = {.index = 5946, .length = 6},
+  [1263] = {.index = 5952, .length = 6},
+  [1264] = {.index = 5958, .length = 6},
+  [1265] = {.index = 5964, .length = 6},
+  [1266] = {.index = 5970, .length = 6},
+  [1267] = {.index = 5976, .length = 6},
+  [1268] = {.index = 5982, .length = 6},
+  [1269] = {.index = 5988, .length = 6},
+  [1270] = {.index = 5994, .length = 6},
+  [1271] = {.index = 6000, .length = 6},
+  [1272] = {.index = 6006, .length = 6},
+  [1273] = {.index = 6012, .length = 6},
+  [1274] = {.index = 6018, .length = 6},
+  [1275] = {.index = 6024, .length = 6},
+  [1276] = {.index = 6030, .length = 6},
+  [1277] = {.index = 6036, .length = 6},
+  [1278] = {.index = 6042, .length = 6},
+  [1279] = {.index = 6048, .length = 6},
+  [1280] = {.index = 6054, .length = 6},
+  [1281] = {.index = 6060, .length = 6},
+  [1282] = {.index = 6066, .length = 6},
+  [1283] = {.index = 6072, .length = 6},
+  [1284] = {.index = 6078, .length = 6},
+  [1285] = {.index = 6084, .length = 6},
+  [1286] = {.index = 6090, .length = 6},
+  [1287] = {.index = 6096, .length = 6},
+  [1288] = {.index = 6102, .length = 6},
+  [1289] = {.index = 6108, .length = 6},
+  [1290] = {.index = 6114, .length = 6},
+  [1291] = {.index = 6120, .length = 6},
+  [1292] = {.index = 6126, .length = 6},
+  [1293] = {.index = 6132, .length = 6},
+  [1294] = {.index = 6138, .length = 6},
+  [1295] = {.index = 6144, .length = 6},
+  [1296] = {.index = 6150, .length = 6},
+  [1297] = {.index = 6156, .length = 6},
+  [1298] = {.index = 6162, .length = 6},
+  [1299] = {.index = 6168, .length = 6},
+  [1300] = {.index = 6174, .length = 6},
+  [1301] = {.index = 6180, .length = 6},
+  [1302] = {.index = 6186, .length = 6},
+  [1303] = {.index = 6192, .length = 6},
+  [1304] = {.index = 6198, .length = 6},
+  [1305] = {.index = 6204, .length = 6},
+  [1306] = {.index = 6210, .length = 6},
+  [1307] = {.index = 6216, .length = 6},
+  [1308] = {.index = 6222, .length = 6},
+  [1309] = {.index = 6228, .length = 6},
+  [1310] = {.index = 6234, .length = 6},
+  [1311] = {.index = 6240, .length = 6},
+  [1312] = {.index = 6246, .length = 6},
+  [1313] = {.index = 6252, .length = 4},
+  [1314] = {.index = 6256, .length = 4},
+  [1315] = {.index = 6260, .length = 10},
+  [1316] = {.index = 6270, .length = 10},
+  [1317] = {.index = 6280, .length = 10},
+  [1318] = {.index = 6290, .length = 10},
+  [1319] = {.index = 6300, .length = 10},
+  [1320] = {.index = 6310, .length = 10},
+  [1321] = {.index = 6320, .length = 10},
+  [1322] = {.index = 6330, .length = 10},
+  [1323] = {.index = 6340, .length = 10},
+  [1324] = {.index = 6350, .length = 10},
+  [1325] = {.index = 6360, .length = 10},
+  [1326] = {.index = 6370, .length = 10},
+  [1327] = {.index = 6380, .length = 10},
+  [1328] = {.index = 6390, .length = 10},
+  [1329] = {.index = 6400, .length = 10},
+  [1330] = {.index = 6410, .length = 10},
+  [1331] = {.index = 6420, .length = 10},
+  [1332] = {.index = 6430, .length = 10},
+  [1333] = {.index = 6440, .length = 10},
+  [1334] = {.index = 6450, .length = 10},
+  [1335] = {.index = 6460, .length = 10},
+  [1336] = {.index = 6470, .length = 5},
+  [1337] = {.index = 6475, .length = 7},
+  [1338] = {.index = 6482, .length = 7},
+  [1339] = {.index = 6489, .length = 7},
+  [1340] = {.index = 6496, .length = 7},
+  [1341] = {.index = 6503, .length = 7},
+  [1342] = {.index = 6510, .length = 7},
+  [1343] = {.index = 6517, .length = 7},
+  [1344] = {.index = 6524, .length = 7},
+  [1345] = {.index = 6531, .length = 7},
+  [1346] = {.index = 6538, .length = 7},
+  [1347] = {.index = 6545, .length = 7},
+  [1348] = {.index = 6552, .length = 7},
+  [1349] = {.index = 6559, .length = 7},
+  [1350] = {.index = 6566, .length = 7},
+  [1351] = {.index = 6573, .length = 7},
+  [1352] = {.index = 6580, .length = 7},
+  [1353] = {.index = 6587, .length = 7},
+  [1354] = {.index = 6594, .length = 7},
+  [1355] = {.index = 6601, .length = 7},
+  [1356] = {.index = 6608, .length = 7},
+  [1357] = {.index = 6615, .length = 7},
+  [1358] = {.index = 6622, .length = 7},
+  [1359] = {.index = 6629, .length = 7},
+  [1360] = {.index = 6636, .length = 7},
+  [1361] = {.index = 6643, .length = 7},
+  [1362] = {.index = 6650, .length = 7},
+  [1363] = {.index = 6657, .length = 7},
+  [1364] = {.index = 6664, .length = 7},
+  [1365] = {.index = 6671, .length = 7},
+  [1366] = {.index = 6678, .length = 7},
+  [1367] = {.index = 6685, .length = 4},
+  [1368] = {.index = 6685, .length = 4},
+  [1369] = {.index = 6689, .length = 9},
+  [1370] = {.index = 6698, .length = 7},
+  [1371] = {.index = 6705, .length = 9},
+  [1372] = {.index = 6714, .length = 9},
+  [1373] = {.index = 6723, .length = 9},
+  [1374] = {.index = 6732, .length = 7},
+  [1375] = {.index = 6739, .length = 9},
+  [1376] = {.index = 6748, .length = 7},
+  [1377] = {.index = 6755, .length = 7},
+  [1378] = {.index = 6762, .length = 7},
+  [1379] = {.index = 6769, .length = 7},
+  [1380] = {.index = 6776, .length = 7},
+  [1381] = {.index = 6783, .length = 7},
+  [1382] = {.index = 6790, .length = 7},
+  [1383] = {.index = 6797, .length = 7},
+  [1384] = {.index = 6804, .length = 7},
+  [1385] = {.index = 6811, .length = 7},
+  [1386] = {.index = 6818, .length = 7},
+  [1387] = {.index = 6825, .length = 7},
+  [1388] = {.index = 6832, .length = 7},
+  [1389] = {.index = 6839, .length = 7},
+  [1390] = {.index = 6846, .length = 7},
+  [1391] = {.index = 6853, .length = 7},
+  [1392] = {.index = 6860, .length = 7},
+  [1393] = {.index = 6867, .length = 7},
+  [1394] = {.index = 6874, .length = 7},
+  [1395] = {.index = 6881, .length = 7},
+  [1396] = {.index = 6888, .length = 7},
+  [1397] = {.index = 6895, .length = 7},
+  [1398] = {.index = 6902, .length = 9},
+  [1399] = {.index = 6911, .length = 7},
+  [1400] = {.index = 6918, .length = 9},
+  [1401] = {.index = 6927, .length = 9},
+  [1402] = {.index = 6936, .length = 9},
+  [1403] = {.index = 6945, .length = 7},
+  [1404] = {.index = 6952, .length = 9},
+  [1405] = {.index = 6961, .length = 7},
+  [1406] = {.index = 6968, .length = 7},
+  [1407] = {.index = 6975, .length = 7},
+  [1408] = {.index = 6982, .length = 9},
+  [1409] = {.index = 6991, .length = 9},
+  [1410] = {.index = 7000, .length = 9},
+  [1411] = {.index = 7009, .length = 7},
+  [1412] = {.index = 7016, .length = 7},
+  [1413] = {.index = 7023, .length = 9},
+  [1414] = {.index = 7032, .length = 7},
+  [1415] = {.index = 7039, .length = 9},
+  [1416] = {.index = 7048, .length = 9},
+  [1417] = {.index = 7057, .length = 7},
+  [1418] = {.index = 7064, .length = 7},
+  [1419] = {.index = 7071, .length = 7},
+  [1420] = {.index = 7078, .length = 8},
+  [1421] = {.index = 7086, .length = 7},
+  [1422] = {.index = 7093, .length = 9},
+  [1423] = {.index = 7102, .length = 9},
+  [1424] = {.index = 7111, .length = 9},
+  [1425] = {.index = 7120, .length = 7},
+  [1426] = {.index = 7127, .length = 9},
+  [1427] = {.index = 7136, .length = 9},
+  [1428] = {.index = 7145, .length = 7},
+  [1429] = {.index = 7152, .length = 7},
+  [1430] = {.index = 7159, .length = 7},
+  [1431] = {.index = 7166, .length = 7},
+  [1432] = {.index = 7173, .length = 7},
+  [1433] = {.index = 7180, .length = 7},
+  [1434] = {.index = 7187, .length = 7},
+  [1435] = {.index = 7194, .length = 7},
+  [1436] = {.index = 7201, .length = 7},
+  [1437] = {.index = 7208, .length = 7},
+  [1438] = {.index = 7215, .length = 7},
+  [1439] = {.index = 7222, .length = 7},
+  [1440] = {.index = 7229, .length = 7},
+  [1441] = {.index = 7236, .length = 7},
+  [1442] = {.index = 7243, .length = 7},
+  [1443] = {.index = 7250, .length = 7},
+  [1444] = {.index = 7257, .length = 7},
+  [1445] = {.index = 7264, .length = 7},
+  [1446] = {.index = 7271, .length = 7},
+  [1447] = {.index = 7278, .length = 7},
+  [1448] = {.index = 7285, .length = 7},
+  [1449] = {.index = 7292, .length = 7},
+  [1450] = {.index = 7299, .length = 7},
+  [1451] = {.index = 7306, .length = 7},
+  [1452] = {.index = 7313, .length = 7},
+  [1453] = {.index = 7320, .length = 7},
+  [1454] = {.index = 7327, .length = 7},
+  [1455] = {.index = 7334, .length = 7},
+  [1456] = {.index = 7341, .length = 7},
+  [1457] = {.index = 7348, .length = 7},
+  [1458] = {.index = 7355, .length = 7},
+  [1459] = {.index = 7362, .length = 7},
+  [1460] = {.index = 7369, .length = 7},
+  [1461] = {.index = 7376, .length = 7},
+  [1462] = {.index = 7383, .length = 7},
+  [1463] = {.index = 7390, .length = 7},
+  [1464] = {.index = 7397, .length = 7},
+  [1465] = {.index = 7404, .length = 7},
+  [1466] = {.index = 7411, .length = 7},
+  [1467] = {.index = 7418, .length = 7},
+  [1468] = {.index = 7425, .length = 7},
+  [1469] = {.index = 7432, .length = 7},
+  [1470] = {.index = 7439, .length = 7},
+  [1471] = {.index = 7446, .length = 7},
+  [1472] = {.index = 7453, .length = 7},
+  [1473] = {.index = 7460, .length = 7},
+  [1474] = {.index = 7467, .length = 7},
+  [1475] = {.index = 7474, .length = 7},
+  [1476] = {.index = 7481, .length = 7},
+  [1477] = {.index = 7488, .length = 7},
+  [1478] = {.index = 7495, .length = 7},
+  [1479] = {.index = 7502, .length = 7},
+  [1480] = {.index = 7509, .length = 7},
+  [1481] = {.index = 7516, .length = 7},
+  [1482] = {.index = 7523, .length = 7},
+  [1483] = {.index = 7530, .length = 7},
+  [1484] = {.index = 7537, .length = 7},
+  [1485] = {.index = 7544, .length = 7},
+  [1486] = {.index = 7551, .length = 7},
+  [1487] = {.index = 7558, .length = 7},
+  [1488] = {.index = 7565, .length = 7},
+  [1489] = {.index = 7572, .length = 7},
+  [1490] = {.index = 7579, .length = 7},
+  [1491] = {.index = 7586, .length = 7},
+  [1492] = {.index = 7593, .length = 7},
+  [1493] = {.index = 7600, .length = 7},
+  [1494] = {.index = 7607, .length = 7},
+  [1495] = {.index = 7614, .length = 7},
+  [1496] = {.index = 7621, .length = 7},
+  [1497] = {.index = 7628, .length = 7},
+  [1498] = {.index = 7635, .length = 7},
+  [1499] = {.index = 7642, .length = 7},
+  [1500] = {.index = 7649, .length = 7},
+  [1501] = {.index = 7656, .length = 7},
+  [1502] = {.index = 7663, .length = 7},
+  [1503] = {.index = 7670, .length = 7},
+  [1504] = {.index = 7677, .length = 7},
+  [1505] = {.index = 7684, .length = 7},
+  [1506] = {.index = 7691, .length = 7},
+  [1507] = {.index = 7698, .length = 7},
+  [1508] = {.index = 7705, .length = 7},
+  [1509] = {.index = 7712, .length = 7},
+  [1510] = {.index = 7719, .length = 7},
+  [1511] = {.index = 7726, .length = 7},
+  [1512] = {.index = 7733, .length = 7},
+  [1513] = {.index = 7740, .length = 7},
+  [1514] = {.index = 7747, .length = 7},
+  [1515] = {.index = 7754, .length = 7},
+  [1516] = {.index = 7761, .length = 7},
+  [1517] = {.index = 7768, .length = 7},
+  [1518] = {.index = 7775, .length = 7},
+  [1519] = {.index = 7782, .length = 7},
+  [1520] = {.index = 7789, .length = 7},
+  [1521] = {.index = 7796, .length = 7},
+  [1522] = {.index = 7803, .length = 7},
+  [1523] = {.index = 7810, .length = 7},
+  [1524] = {.index = 7817, .length = 7},
+  [1525] = {.index = 7824, .length = 7},
+  [1526] = {.index = 7831, .length = 7},
+  [1527] = {.index = 7838, .length = 7},
+  [1528] = {.index = 7845, .length = 7},
+  [1529] = {.index = 7852, .length = 7},
+  [1530] = {.index = 7859, .length = 7},
+  [1531] = {.index = 7866, .length = 7},
+  [1532] = {.index = 7873, .length = 7},
+  [1533] = {.index = 7880, .length = 7},
+  [1534] = {.index = 7887, .length = 7},
+  [1535] = {.index = 7894, .length = 7},
+  [1536] = {.index = 7901, .length = 7},
+  [1537] = {.index = 7908, .length = 7},
+  [1538] = {.index = 7915, .length = 7},
+  [1539] = {.index = 7922, .length = 7},
+  [1540] = {.index = 7929, .length = 7},
+  [1541] = {.index = 7936, .length = 7},
+  [1542] = {.index = 7943, .length = 7},
+  [1543] = {.index = 7950, .length = 7},
+  [1544] = {.index = 7957, .length = 7},
+  [1545] = {.index = 7964, .length = 7},
+  [1546] = {.index = 7971, .length = 7},
+  [1547] = {.index = 7978, .length = 7},
+  [1548] = {.index = 7985, .length = 7},
+  [1549] = {.index = 7992, .length = 7},
+  [1550] = {.index = 7999, .length = 7},
+  [1551] = {.index = 8006, .length = 7},
+  [1552] = {.index = 8013, .length = 7},
+  [1553] = {.index = 8020, .length = 7},
+  [1554] = {.index = 8027, .length = 11},
+  [1555] = {.index = 8038, .length = 11},
+  [1556] = {.index = 8049, .length = 11},
+  [1557] = {.index = 8060, .length = 11},
+  [1558] = {.index = 8071, .length = 11},
+  [1559] = {.index = 8082, .length = 11},
+  [1560] = {.index = 8093, .length = 11},
+  [1561] = {.index = 8104, .length = 8},
+  [1562] = {.index = 8112, .length = 8},
+  [1563] = {.index = 8120, .length = 8},
+  [1564] = {.index = 8128, .length = 8},
+  [1565] = {.index = 8136, .length = 8},
+  [1566] = {.index = 8144, .length = 8},
+  [1567] = {.index = 8152, .length = 8},
+  [1568] = {.index = 8160, .length = 8},
+  [1569] = {.index = 8168, .length = 8},
+  [1570] = {.index = 8176, .length = 10},
+  [1571] = {.index = 8186, .length = 5},
+  [1572] = {.index = 8186, .length = 5},
+  [1573] = {.index = 8191, .length = 8},
+  [1574] = {.index = 8199, .length = 8},
+  [1575] = {.index = 8207, .length = 8},
+  [1576] = {.index = 8215, .length = 8},
+  [1577] = {.index = 8223, .length = 8},
+  [1578] = {.index = 8231, .length = 8},
+  [1579] = {.index = 8239, .length = 8},
+  [1580] = {.index = 8247, .length = 8},
+  [1581] = {.index = 8255, .length = 10},
+  [1582] = {.index = 8265, .length = 8},
+  [1583] = {.index = 8273, .length = 10},
+  [1584] = {.index = 8283, .length = 10},
+  [1585] = {.index = 8293, .length = 10},
+  [1586] = {.index = 8303, .length = 8},
+  [1587] = {.index = 8311, .length = 10},
+  [1588] = {.index = 8321, .length = 10},
+  [1589] = {.index = 8331, .length = 8},
+  [1590] = {.index = 8339, .length = 8},
+  [1591] = {.index = 8347, .length = 8},
+  [1592] = {.index = 8355, .length = 8},
+  [1593] = {.index = 8363, .length = 8},
+  [1594] = {.index = 8371, .length = 8},
+  [1595] = {.index = 8379, .length = 8},
+  [1596] = {.index = 8387, .length = 8},
+  [1597] = {.index = 8395, .length = 8},
+  [1598] = {.index = 8403, .length = 8},
+  [1599] = {.index = 8411, .length = 8},
+  [1600] = {.index = 8419, .length = 8},
+  [1601] = {.index = 8427, .length = 8},
+  [1602] = {.index = 8435, .length = 8},
+  [1603] = {.index = 8443, .length = 8},
+  [1604] = {.index = 8451, .length = 8},
+  [1605] = {.index = 8459, .length = 8},
+  [1606] = {.index = 8467, .length = 8},
+  [1607] = {.index = 8475, .length = 8},
+  [1608] = {.index = 8483, .length = 8},
+  [1609] = {.index = 8491, .length = 8},
+  [1610] = {.index = 8499, .length = 8},
+  [1611] = {.index = 8507, .length = 8},
+  [1612] = {.index = 8515, .length = 8},
+  [1613] = {.index = 8523, .length = 8},
+  [1614] = {.index = 8531, .length = 8},
+  [1615] = {.index = 8539, .length = 8},
+  [1616] = {.index = 8547, .length = 8},
+  [1617] = {.index = 8555, .length = 8},
+  [1618] = {.index = 8563, .length = 8},
+  [1619] = {.index = 8571, .length = 8},
+  [1620] = {.index = 8579, .length = 8},
+  [1621] = {.index = 8587, .length = 8},
+  [1622] = {.index = 8595, .length = 8},
+  [1623] = {.index = 8603, .length = 8},
+  [1624] = {.index = 8611, .length = 8},
+  [1625] = {.index = 8619, .length = 8},
+  [1626] = {.index = 8627, .length = 8},
+  [1627] = {.index = 8635, .length = 8},
+  [1628] = {.index = 8643, .length = 8},
+  [1629] = {.index = 8651, .length = 8},
+  [1630] = {.index = 8659, .length = 8},
+  [1631] = {.index = 8667, .length = 8},
+  [1632] = {.index = 8675, .length = 8},
+  [1633] = {.index = 8683, .length = 8},
+  [1634] = {.index = 8691, .length = 8},
+  [1635] = {.index = 8699, .length = 8},
+  [1636] = {.index = 8707, .length = 8},
+  [1637] = {.index = 8715, .length = 8},
+  [1638] = {.index = 8723, .length = 8},
+  [1639] = {.index = 8731, .length = 8},
+  [1640] = {.index = 8739, .length = 8},
+  [1641] = {.index = 8747, .length = 8},
+  [1642] = {.index = 8755, .length = 8},
+  [1643] = {.index = 8763, .length = 8},
+  [1644] = {.index = 8771, .length = 8},
+  [1645] = {.index = 8779, .length = 8},
+  [1646] = {.index = 8787, .length = 8},
+  [1647] = {.index = 8795, .length = 8},
+  [1648] = {.index = 8803, .length = 8},
+  [1649] = {.index = 8811, .length = 8},
+  [1650] = {.index = 8819, .length = 8},
+  [1651] = {.index = 8827, .length = 8},
+  [1652] = {.index = 8835, .length = 8},
+  [1653] = {.index = 8843, .length = 8},
+  [1654] = {.index = 8851, .length = 8},
+  [1655] = {.index = 8859, .length = 8},
+  [1656] = {.index = 8867, .length = 12},
+  [1657] = {.index = 8879, .length = 9},
+  [1658] = {.index = 8888, .length = 9},
+  [1659] = {.index = 8897, .length = 11},
+  [1660] = {.index = 8908, .length = 9},
+  [1661] = {.index = 8917, .length = 9},
+  [1662] = {.index = 8926, .length = 9},
+  [1663] = {.index = 8935, .length = 9},
+  [1664] = {.index = 8944, .length = 9},
+  [1665] = {.index = 8953, .length = 9},
+  [1666] = {.index = 8962, .length = 9},
+  [1667] = {.index = 8971, .length = 9},
+  [1668] = {.index = 8980, .length = 9},
+  [1669] = {.index = 8989, .length = 9},
+  [1670] = {.index = 8998, .length = 9},
+  [1671] = {.index = 9007, .length = 9},
+  [1672] = {.index = 9016, .length = 9},
+  [1673] = {.index = 9025, .length = 9},
+  [1674] = {.index = 9034, .length = 9},
+  [1675] = {.index = 9043, .length = 9},
+  [1676] = {.index = 9052, .length = 9},
+  [1677] = {.index = 9061, .length = 9},
+  [1678] = {.index = 9070, .length = 9},
+  [1679] = {.index = 9079, .length = 10},
+  [1680] = {.index = 9089, .length = 10},
 };
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
@@ -8375,15 +8375,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_body, 6},
     {field_condition, 4},
     {field_initializer, 2},
-    {field_initializer, 3},
-  [2301] =
+  [2300] =
     {field_parameter, 1},
     {field_type, 2},
-  [2303] =
+  [2302] =
     {field_name, 2},
     {field_terminator, 5},
     {field_type, 4},
-  [2306] =
+  [2305] =
     {field_async, 0},
     {field_body, 5},
     {field_generator, 2},
@@ -8392,301 +8391,301 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_terminator, 6},
     {field_type_parameters, 4, .inherited = true},
-  [2314] =
+  [2313] =
     {field_abstract, 2},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
-  [2319] =
+  [2318] =
     {field_abstract, 2},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [2324] =
+  [2323] =
     {field_abstract, 2},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [2329] =
+  [2328] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [2334] =
+  [2333] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [2339] =
+  [2338] =
     {field_declare, 0},
     {field_name, 2},
     {field_readonly, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2344] =
+  [2343] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
-  [2349] =
+  [2348] =
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [2354] =
+  [2353] =
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 4},
-  [2359] =
+  [2358] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [2364] =
+  [2363] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_type, 4},
-  [2369] =
+  [2368] =
     {field_declare, 0},
     {field_name, 2},
     {field_static, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2374] =
+  [2373] =
     {field_declare, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
-  [2379] =
+  [2378] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
-  [2384] =
+  [2383] =
     {field_declare, 0},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [2389] =
+  [2388] =
     {field_declare, 0},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_type, 4},
-  [2394] =
+  [2393] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
-  [2399] =
+  [2398] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [2404] =
+  [2403] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
-  [2409] =
+  [2408] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_value, 4, .inherited = true},
-  [2414] =
+  [2413] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
-  [2419] =
+  [2418] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2424] =
+  [2423] =
     {field_declare, 0},
     {field_name, 1},
     {field_optionality, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2429] =
+  [2428] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 2},
-  [2434] =
+  [2433] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
-  [2439] =
+  [2438] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [2444] =
+  [2443] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
-  [2449] =
+  [2448] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
-  [2454] =
+  [2453] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
-  [2459] =
+  [2458] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_static, 2},
     {field_value, 4, .inherited = true},
-  [2464] =
+  [2463] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
-  [2469] =
+  [2468] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
-  [2474] =
+  [2473] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 3},
-  [2479] =
+  [2478] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
-  [2484] =
+  [2483] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [2489] =
+  [2488] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_type, 4},
-  [2494] =
+  [2493] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_value, 4, .inherited = true},
-  [2499] =
+  [2498] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
-  [2504] =
+  [2503] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2509] =
+  [2508] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
-  [2514] =
+  [2513] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
-  [2519] =
+  [2518] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_override, 2},
     {field_value, 4, .inherited = true},
-  [2524] =
+  [2523] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
-  [2529] =
+  [2528] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
-  [2534] =
+  [2533] =
     {field_declare, 0},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [2539] =
+  [2538] =
     {field_declare, 0},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 4},
-  [2544] =
+  [2543] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_value, 4, .inherited = true},
-  [2549] =
+  [2548] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_type, 4},
-  [2554] =
+  [2553] =
     {field_declare, 0},
     {field_name, 2},
     {field_override, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2559] =
+  [2558] =
     {field_generator, 1},
     {field_name, 2},
     {field_optional, 3},
@@ -8694,7 +8693,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 0},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2566] =
+  [2565] =
     {field_async, 1},
     {field_generator, 2},
     {field_name, 3},
@@ -8702,7 +8701,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 0},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2573] =
+  [2572] =
     {field_async, 1},
     {field_name, 2},
     {field_optional, 3},
@@ -8710,35 +8709,35 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 0},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2580] =
+  [2579] =
     {field_mapped_type_clause, 2},
     {field_readonly, 0},
     {field_type, 4},
-  [2583] =
+  [2582] =
     {field_abstract, 1},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 0},
     {field_value, 4, .inherited = true},
-  [2588] =
+  [2587] =
     {field_abstract, 1},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 0},
     {field_type, 4},
-  [2593] =
+  [2592] =
     {field_abstract, 1},
     {field_name, 2},
     {field_readonly, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2598] =
+  [2597] =
     {field_name, 1},
     {field_optionality, 2},
     {field_readonly, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2603] =
+  [2602] =
     {field_async, 0},
     {field_generator, 1},
     {field_name, 2},
@@ -8746,7 +8745,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2610] =
+  [2609] =
     {field_generator, 1},
     {field_name, 2},
     {field_optional, 3},
@@ -8754,7 +8753,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2617] =
+  [2616] =
     {field_generator, 2},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
@@ -8762,7 +8761,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2624] =
+  [2623] =
     {field_async, 2},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
@@ -8770,19 +8769,19 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2631] =
+  [2630] =
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_static, 0},
     {field_value, 4, .inherited = true},
-  [2636] =
+  [2635] =
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_static, 0},
     {field_type, 4},
-  [2641] =
+  [2640] =
     {field_name, 2},
     {field_optional, 3},
     {field_parameters, 4, .inherited = true},
@@ -8790,13 +8789,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2648] =
+  [2647] =
     {field_name, 2},
     {field_readonly, 1},
     {field_static, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2653] =
+  [2652] =
     {field_async, 1},
     {field_generator, 2},
     {field_name, 3},
@@ -8804,7 +8803,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2660] =
+  [2659] =
     {field_async, 1},
     {field_name, 2},
     {field_optional, 3},
@@ -8812,37 +8811,37 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2667] =
+  [2666] =
     {field_abstract, 1},
     {field_accessor, 2},
     {field_name, 3},
     {field_static, 0},
     {field_value, 4, .inherited = true},
-  [2672] =
+  [2671] =
     {field_abstract, 1},
     {field_accessor, 2},
     {field_name, 3},
     {field_static, 0},
     {field_type, 4},
-  [2677] =
+  [2676] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_static, 0},
-  [2682] =
+  [2681] =
     {field_accessor, 1},
     {field_name, 2},
     {field_static, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2687] =
+  [2686] =
     {field_name, 1},
     {field_optionality, 2},
     {field_static, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2692] =
+  [2691] =
     {field_generator, 2},
     {field_name, 3},
     {field_override, 1},
@@ -8850,13 +8849,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2699] =
+  [2698] =
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
-  [2704] =
+  [2703] =
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
@@ -8864,32 +8863,32 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2711] =
+  [2710] =
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
     {field_value, 4, .inherited = true},
-  [2716] =
+  [2715] =
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
     {field_type, 4},
-  [2721] =
+  [2720] =
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
     {field_static, 0},
     {field_type, 4, .inherited = true},
-  [2727] =
+  [2726] =
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
     {field_static, 0},
-  [2732] =
+  [2731] =
     {field_async, 2},
     {field_name, 3},
     {field_override, 1},
@@ -8897,31 +8896,31 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2739] =
+  [2738] =
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_static, 0},
     {field_value, 4, .inherited = true},
-  [2744] =
+  [2743] =
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_static, 0},
     {field_type, 4},
-  [2749] =
+  [2748] =
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_static, 0},
     {field_value, 4, .inherited = true},
-  [2754] =
+  [2753] =
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_static, 0},
     {field_type, 4},
-  [2759] =
+  [2758] =
     {field_name, 2},
     {field_optional, 3},
     {field_override, 1},
@@ -8929,87 +8928,87 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 4, .inherited = true},
-  [2766] =
+  [2765] =
     {field_name, 2},
     {field_override, 1},
     {field_static, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2771] =
+  [2770] =
     {field_generator, 1},
     {field_name, 2},
     {field_optional, 3},
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2777] =
+  [2776] =
     {field_abstract, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [2782] =
+  [2781] =
     {field_abstract, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [2787] =
+  [2786] =
     {field_abstract, 0},
     {field_name, 2},
     {field_readonly, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2792] =
+  [2791] =
     {field_abstract, 0},
     {field_accessor, 1},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2797] =
+  [2796] =
     {field_abstract, 0},
     {field_name, 1},
     {field_optionality, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2802] =
+  [2801] =
     {field_generator, 2},
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2808] =
+  [2807] =
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
     {field_type, 4, .inherited = true},
-  [2813] =
+  [2812] =
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
-  [2817] =
+  [2816] =
     {field_abstract, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_value, 4, .inherited = true},
-  [2822] =
+  [2821] =
     {field_abstract, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_type, 4},
-  [2827] =
+  [2826] =
     {field_name, 2},
     {field_optional, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2833] =
+  [2832] =
     {field_accessibility_modifier, 0},
     {field_generator, 1},
     {field_name, 2},
@@ -9017,127 +9016,127 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2840] =
+  [2839] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 2},
-  [2845] =
+  [2844] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
-  [2850] =
+  [2849] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [2855] =
+  [2854] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
-  [2860] =
+  [2859] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
-  [2865] =
+  [2864] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
-  [2870] =
+  [2869] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_static, 2},
     {field_value, 4, .inherited = true},
-  [2875] =
+  [2874] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
-  [2880] =
+  [2879] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
-  [2885] =
+  [2884] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 3},
-  [2890] =
+  [2889] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
-  [2895] =
+  [2894] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [2900] =
+  [2899] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_type, 4},
-  [2905] =
+  [2904] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 2},
     {field_optionality, 3},
     {field_value, 4, .inherited = true},
-  [2910] =
+  [2909] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
-  [2915] =
+  [2914] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2920] =
+  [2919] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
-  [2925] =
+  [2924] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
-  [2930] =
+  [2929] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_override, 2},
     {field_value, 4, .inherited = true},
-  [2935] =
+  [2934] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
-  [2940] =
+  [2939] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
@@ -9145,7 +9144,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2947] =
+  [2946] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_name, 3},
@@ -9153,37 +9152,37 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2954] =
+  [2953] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
-  [2959] =
+  [2958] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [2964] =
+  [2963] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [2969] =
+  [2968] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [2974] =
+  [2973] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [2979] =
+  [2978] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optional, 3},
@@ -9191,13 +9190,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2986] =
+  [2985] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_readonly, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [2991] =
+  [2990] =
     {field_accessibility_modifier, 0},
     {field_async, 1},
     {field_generator, 2},
@@ -9205,7 +9204,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [2998] =
+  [2997] =
     {field_accessibility_modifier, 0},
     {field_async, 1},
     {field_name, 2},
@@ -9213,7 +9212,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3005] =
+  [3004] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
@@ -9221,13 +9220,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 4, .inherited = true},
-  [3012] =
+  [3011] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
-  [3017] =
+  [3016] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
@@ -9235,32 +9234,32 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 4, .inherited = true},
-  [3024] =
+  [3023] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3029] =
+  [3028] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 4},
-  [3034] =
+  [3033] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
     {field_static, 1},
     {field_type, 4, .inherited = true},
-  [3040] =
+  [3039] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
     {field_static, 1},
-  [3045] =
+  [3044] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_name, 3},
@@ -9268,37 +9267,37 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 4, .inherited = true},
-  [3052] =
+  [3051] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_static, 1},
-  [3057] =
+  [3056] =
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3062] =
+  [3061] =
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_static, 1},
     {field_type, 4},
-  [3067] =
+  [3066] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3072] =
+  [3071] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_type, 4},
-  [3077] =
+  [3076] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optional, 3},
@@ -9306,31 +9305,31 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 4, .inherited = true},
-  [3084] =
+  [3083] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_static, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3089] =
+  [3088] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
-  [3094] =
+  [3093] =
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_static, 1},
-  [3099] =
+  [3098] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
-  [3104] =
+  [3103] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 2},
@@ -9338,117 +9337,117 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 4, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 4, .inherited = true},
-  [3111] =
+  [3110] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3116] =
+  [3115] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_type, 4},
-  [3121] =
+  [3120] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3127] =
+  [3126] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
-  [3132] =
+  [3131] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [3137] =
+  [3136] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
-  [3142] =
+  [3141] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
     {field_type, 4, .inherited = true},
-  [3147] =
+  [3146] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_parameters, 4, .inherited = true},
-  [3151] =
+  [3150] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [3156] =
+  [3155] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_type, 4},
-  [3161] =
+  [3160] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_value, 4, .inherited = true},
-  [3166] =
+  [3165] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
-  [3171] =
+  [3170] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optional, 3},
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3177] =
+  [3176] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3182] =
+  [3181] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
-  [3187] =
+  [3186] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 2},
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3193] =
+  [3192] =
     {field_accessibility_modifier, 0},
     {field_accessor, 1},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3198] =
+  [3197] =
     {field_accessibility_modifier, 0},
     {field_name, 1},
     {field_optionality, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3203] =
+  [3202] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
@@ -9456,13 +9455,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3210] =
+  [3209] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
-  [3215] =
+  [3214] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 1},
@@ -9470,32 +9469,32 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3222] =
+  [3221] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [3227] =
+  [3226] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 4},
-  [3232] =
+  [3231] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
     {field_type, 4, .inherited = true},
-  [3238] =
+  [3237] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 2},
     {field_name, 3},
     {field_override, 1},
     {field_parameters, 4, .inherited = true},
-  [3243] =
+  [3242] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_name, 3},
@@ -9503,31 +9502,31 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3250] =
+  [3249] =
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_value, 4, .inherited = true},
-  [3255] =
+  [3254] =
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_type, 4},
-  [3260] =
+  [3259] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_value, 4, .inherited = true},
-  [3265] =
+  [3264] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_type, 4},
-  [3270] =
+  [3269] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optional, 3},
@@ -9535,13 +9534,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3277] =
+  [3276] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_override, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3282] =
+  [3281] =
     {field_generator, 1},
     {field_name, 2},
     {field_optional, 3},
@@ -9549,7 +9548,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3289] =
+  [3288] =
     {field_generator, 2},
     {field_name, 3},
     {field_override, 0},
@@ -9557,7 +9556,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3296] =
+  [3295] =
     {field_async, 2},
     {field_name, 3},
     {field_override, 0},
@@ -9565,19 +9564,19 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3303] =
+  [3302] =
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 0},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [3308] =
+  [3307] =
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 0},
     {field_readonly, 1},
     {field_type, 4},
-  [3313] =
+  [3312] =
     {field_name, 2},
     {field_optional, 3},
     {field_override, 0},
@@ -9585,13 +9584,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3320] =
+  [3319] =
     {field_name, 2},
     {field_override, 0},
     {field_readonly, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3325] =
+  [3324] =
     {field_async, 1},
     {field_generator, 2},
     {field_name, 3},
@@ -9599,7 +9598,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3332] =
+  [3331] =
     {field_async, 1},
     {field_name, 2},
     {field_optional, 3},
@@ -9607,710 +9606,710 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 4, .inherited = true},
     {field_return_type, 4, .inherited = true},
     {field_type_parameters, 4, .inherited = true},
-  [3339] =
+  [3338] =
     {field_accessor, 1},
     {field_name, 2},
     {field_override, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3344] =
+  [3343] =
     {field_name, 1},
     {field_optionality, 2},
     {field_override, 0},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3349] =
+  [3348] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 2},
-  [3354] =
+  [3353] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
-  [3359] =
+  [3358] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [3364] =
+  [3363] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
-  [3369] =
+  [3368] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
-  [3374] =
+  [3373] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
-  [3379] =
+  [3378] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 2},
     {field_value, 4, .inherited = true},
-  [3384] =
+  [3383] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
-  [3389] =
+  [3388] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
-  [3394] =
+  [3393] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
-  [3399] =
+  [3398] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
-  [3404] =
+  [3403] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [3409] =
+  [3408] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
-  [3414] =
+  [3413] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_value, 4, .inherited = true},
-  [3419] =
+  [3418] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
-  [3424] =
+  [3423] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3429] =
+  [3428] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
-  [3434] =
+  [3433] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 3},
-  [3439] =
+  [3438] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
-  [3444] =
+  [3443] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
-  [3449] =
+  [3448] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [3454] =
+  [3453] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
-  [3459] =
+  [3458] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
-  [3464] =
+  [3463] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
-  [3469] =
+  [3468] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
-  [3474] =
+  [3473] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_value, 4, .inherited = true},
-  [3479] =
+  [3478] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
-  [3484] =
+  [3483] =
     {field_abstract, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
-  [3489] =
+  [3488] =
     {field_abstract, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [3494] =
+  [3493] =
     {field_abstract, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [3499] =
+  [3498] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_value, 4, .inherited = true},
-  [3504] =
+  [3503] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [3509] =
+  [3508] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_readonly, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3514] =
+  [3513] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
-  [3519] =
+  [3518] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3524] =
+  [3523] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 4},
-  [3529] =
+  [3528] =
     {field_abstract, 2},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 1},
-  [3534] =
+  [3533] =
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3539] =
+  [3538] =
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 1},
     {field_type, 4},
-  [3544] =
+  [3543] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3549] =
+  [3548] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_type, 4},
-  [3554] =
+  [3553] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_static, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3559] =
+  [3558] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
-  [3564] =
+  [3563] =
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_static, 1},
-  [3569] =
+  [3568] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
-  [3574] =
+  [3573] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_value, 4, .inherited = true},
-  [3579] =
+  [3578] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_type, 4},
-  [3584] =
+  [3583] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
-  [3589] =
+  [3588] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [3594] =
+  [3593] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
-  [3599] =
+  [3598] =
     {field_abstract, 1},
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [3604] =
+  [3603] =
     {field_abstract, 1},
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
-  [3609] =
+  [3608] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_value, 4, .inherited = true},
-  [3614] =
+  [3613] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
-  [3619] =
+  [3618] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3624] =
+  [3623] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
-  [3629] =
+  [3628] =
     {field_accessor, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3634] =
+  [3633] =
     {field_decorator, 0, .inherited = true},
     {field_name, 1},
     {field_optionality, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3639] =
+  [3638] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
-  [3644] =
+  [3643] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 3},
-  [3649] =
+  [3648] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
-  [3654] =
+  [3653] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
-  [3659] =
+  [3658] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [3664] =
+  [3663] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
-  [3669] =
+  [3668] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
-  [3674] =
+  [3673] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 2},
-  [3679] =
+  [3678] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
-  [3684] =
+  [3683] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [3689] =
+  [3688] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
-  [3694] =
+  [3693] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
-  [3699] =
+  [3698] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 2},
-  [3704] =
+  [3703] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
-  [3709] =
+  [3708] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 2},
     {field_value, 4, .inherited = true},
-  [3714] =
+  [3713] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
-  [3719] =
+  [3718] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
-  [3724] =
+  [3723] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
-  [3729] =
+  [3728] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
-  [3734] =
+  [3733] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
-  [3739] =
+  [3738] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [3744] =
+  [3743] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
-  [3749] =
+  [3748] =
     {field_accessibility_modifier, 1},
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_value, 4, .inherited = true},
-  [3754] =
+  [3753] =
     {field_accessibility_modifier, 1},
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
-  [3759] =
+  [3758] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_value, 4, .inherited = true},
-  [3764] =
+  [3763] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
-  [3769] =
+  [3768] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3774] =
+  [3773] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
-  [3779] =
+  [3778] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
-  [3784] =
+  [3783] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
-  [3789] =
+  [3788] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_value, 4, .inherited = true},
-  [3794] =
+  [3793] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
-  [3799] =
+  [3798] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
-  [3804] =
+  [3803] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_value, 4, .inherited = true},
-  [3809] =
+  [3808] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 4},
-  [3814] =
+  [3813] =
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 1},
     {field_value, 4, .inherited = true},
-  [3819] =
+  [3818] =
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 1},
     {field_type, 4},
-  [3824] =
+  [3823] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_value, 4, .inherited = true},
-  [3829] =
+  [3828] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_type, 4},
-  [3834] =
+  [3833] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_override, 1},
     {field_type, 3},
     {field_value, 4, .inherited = true},
-  [3839] =
+  [3838] =
     {field_name, 2},
     {field_optional, 3},
     {field_readonly, 1},
     {field_static, 0},
     {field_type, 4},
-  [3844] =
+  [3843] =
     {field_name, 3},
     {field_optional, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
-  [3849] =
+  [3848] =
     {field_name, 2},
     {field_optional, 3},
     {field_override, 1},
     {field_static, 0},
     {field_type, 4},
-  [3854] =
+  [3853] =
     {field_abstract, 0},
     {field_parameters, 3},
     {field_type, 4},
     {field_type_parameters, 2},
-  [3858] =
+  [3857] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optional, 3},
     {field_readonly, 1},
     {field_type, 4},
-  [3863] =
+  [3862] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
     {field_readonly, 2},
     {field_static, 1},
-  [3868] =
+  [3867] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optional, 3},
     {field_static, 1},
     {field_type, 4},
-  [3873] =
+  [3872] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
     {field_override, 2},
     {field_static, 1},
-  [3878] =
+  [3877] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
     {field_override, 1},
     {field_readonly, 2},
-  [3883] =
+  [3882] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optional, 3},
     {field_override, 1},
     {field_type, 4},
-  [3888] =
+  [3887] =
     {field_name, 2},
     {field_optional, 3},
     {field_override, 0},
     {field_readonly, 1},
     {field_type, 4},
-  [3893] =
+  [3892] =
     {field_index, 3},
     {field_object, 0},
     {field_object, 0, .inherited = true},
     {field_optional_chain, 1},
     {field_property, 0, .inherited = true},
-  [3898] =
+  [3897] =
     {field_index, 0, .inherited = true},
     {field_index, 3},
     {field_object, 0},
     {field_object, 0, .inherited = true},
     {field_optional_chain, 0, .inherited = true},
     {field_optional_chain, 1},
-  [3904] =
+  [3903] =
     {field_arguments, 0, .inherited = true},
     {field_function, 0, .inherited = true},
     {field_index, 3},
     {field_object, 0},
     {field_optional_chain, 1},
-  [3909] =
+  [3908] =
     {field_abstract, 0},
     {field_parameters, 3},
     {field_type, 5},
     {field_type_parameters, 2},
-  [3913] =
+  [3912] =
     {field_body, 5},
     {field_decorator, 0, .inherited = true},
     {field_heritage, 4},
     {field_name, 2},
     {field_terminator, 6},
     {field_type_parameters, 3},
-  [3919] =
+  [3918] =
     {field_abstract, 1},
     {field_body, 6},
     {field_decorator, 0, .inherited = true},
     {field_heritage, 5},
     {field_name, 3},
     {field_type_parameters, 4},
-  [3925] =
+  [3924] =
     {field_async, 1},
     {field_body, 6},
     {field_generator, 2},
@@ -10320,24 +10319,24 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 0},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [3934] =
+  [3933] =
     {field_override, 1},
     {field_pattern, 3},
     {field_readonly, 2},
-  [3937] =
+  [3936] =
     {field_decorator, 0, .inherited = true},
     {field_pattern, 3},
     {field_readonly, 2},
-  [3940] =
+  [3939] =
     {field_decorator, 0, .inherited = true},
     {field_override, 2},
     {field_pattern, 3},
-  [3943] =
+  [3942] =
     {field_decorator, 0, .inherited = true},
     {field_override, 1},
     {field_pattern, 3},
     {field_readonly, 2},
-  [3947] =
+  [3946] =
     {field_body, 6},
     {field_generator, 2},
     {field_name, 3},
@@ -10347,7 +10346,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [3956] =
+  [3955] =
     {field_async, 2},
     {field_body, 6},
     {field_generator, 3},
@@ -10357,7 +10356,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [3965] =
+  [3964] =
     {field_async, 2},
     {field_body, 6},
     {field_name, 3},
@@ -10367,7 +10366,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [3974] =
+  [3973] =
     {field_async, 1},
     {field_body, 6},
     {field_generator, 2},
@@ -10377,7 +10376,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [3983] =
+  [3982] =
     {field_body, 6},
     {field_generator, 2},
     {field_name, 3},
@@ -10387,7 +10386,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [3992] =
+  [3991] =
     {field_body, 6},
     {field_generator, 3},
     {field_name, 4},
@@ -10397,7 +10396,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4001] =
+  [4000] =
     {field_async, 3},
     {field_body, 6},
     {field_name, 4},
@@ -10407,7 +10406,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4010] =
+  [4009] =
     {field_body, 6},
     {field_name, 3},
     {field_optional, 4},
@@ -10417,7 +10416,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4019] =
+  [4018] =
     {field_async, 2},
     {field_body, 6},
     {field_generator, 3},
@@ -10427,7 +10426,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4028] =
+  [4027] =
     {field_async, 2},
     {field_body, 6},
     {field_name, 3},
@@ -10437,7 +10436,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4037] =
+  [4036] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_generator, 2},
@@ -10447,7 +10446,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4046] =
+  [4045] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 6},
@@ -10457,7 +10456,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4055] =
+  [4054] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 6},
@@ -10467,7 +10466,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4064] =
+  [4063] =
     {field_accessibility_modifier, 0},
     {field_async, 1},
     {field_body, 6},
@@ -10477,7 +10476,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4073] =
+  [4072] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_generator, 2},
@@ -10487,7 +10486,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4082] =
+  [4081] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_generator, 3},
@@ -10497,7 +10496,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4091] =
+  [4090] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 6},
@@ -10507,7 +10506,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4100] =
+  [4099] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_name, 3},
@@ -10517,7 +10516,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4109] =
+  [4108] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 6},
@@ -10527,7 +10526,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4118] =
+  [4117] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 6},
@@ -10537,7 +10536,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4127] =
+  [4126] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_generator, 3},
@@ -10547,7 +10546,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4136] =
+  [4135] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_name, 4},
@@ -10557,7 +10556,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4145] =
+  [4144] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 3},
     {field_body, 6},
@@ -10566,7 +10565,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_static, 1},
     {field_type, 5, .inherited = true},
-  [4153] =
+  [4152] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 3},
     {field_body, 6},
@@ -10574,7 +10573,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_parameters, 5, .inherited = true},
     {field_static, 1},
-  [4160] =
+  [4159] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 6},
@@ -10584,7 +10583,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4169] =
+  [4168] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_name, 3},
@@ -10594,7 +10593,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [4178] =
+  [4177] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_generator, 2},
@@ -10604,7 +10603,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4187] =
+  [4186] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_generator, 3},
@@ -10614,7 +10613,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4196] =
+  [4195] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 6},
@@ -10624,7 +10623,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4205] =
+  [4204] =
     {field_accessibility_modifier, 0},
     {field_body, 6},
     {field_name, 3},
@@ -10634,7 +10633,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4214] =
+  [4213] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 6},
@@ -10644,7 +10643,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4223] =
+  [4222] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 6},
@@ -10654,7 +10653,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4232] =
+  [4231] =
     {field_body, 6},
     {field_generator, 2},
     {field_name, 3},
@@ -10664,7 +10663,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4241] =
+  [4240] =
     {field_async, 2},
     {field_body, 6},
     {field_generator, 3},
@@ -10674,7 +10673,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4250] =
+  [4249] =
     {field_async, 2},
     {field_body, 6},
     {field_name, 3},
@@ -10684,7 +10683,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4259] =
+  [4258] =
     {field_async, 1},
     {field_body, 6},
     {field_generator, 2},
@@ -10694,394 +10693,392 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4268] =
+  [4267] =
     {field_kind, 1},
     {field_left, 2},
     {field_operator, 4},
     {field_right, 5},
     {field_value, 3, .inherited = true},
-  [4273] =
+  [4272] =
     {field_kind, 1},
     {field_left, 2},
     {field_operator, 4},
     {field_right, 5},
     {field_terminator, 3},
-  [4278] =
+  [4277] =
     {field_body, 7},
     {field_condition, 3},
     {field_condition, 4},
     {field_increment, 5},
     {field_initializer, 2},
-  [4283] =
+  [4282] =
     {field_body, 7},
     {field_condition, 4},
     {field_increment, 5},
     {field_initializer, 2},
-    {field_initializer, 3},
-  [4288] =
+  [4286] =
     {field_body, 7},
     {field_condition, 4},
     {field_condition, 5},
     {field_initializer, 2},
-    {field_initializer, 3},
-  [4293] =
+  [4290] =
     {field_abstract, 2},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
     {field_value, 5, .inherited = true},
-  [4299] =
+  [4296] =
     {field_abstract, 2},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
     {field_type, 5},
-  [4305] =
+  [4302] =
     {field_abstract, 2},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4311] =
+  [4308] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4317] =
+  [4314] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [4323] =
+  [4320] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 5},
-  [4329] =
+  [4326] =
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4335] =
+  [4332] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4341] =
+  [4338] =
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
-  [4347] =
+  [4344] =
     {field_declare, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [4353] =
+  [4350] =
     {field_declare, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
     {field_type, 5},
-  [4359] =
+  [4356] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [4365] =
+  [4362] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
     {field_type, 5},
-  [4371] =
+  [4368] =
     {field_declare, 0},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4377] =
+  [4374] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [4383] =
+  [4380] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [4389] =
+  [4386] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4395] =
+  [4392] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4401] =
+  [4398] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 2},
-  [4407] =
+  [4404] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [4413] =
+  [4410] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [4419] =
+  [4416] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [4425] =
+  [4422] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [4431] =
+  [4428] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4437] =
+  [4434] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
     {field_static, 2},
-  [4443] =
+  [4440] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [4449] =
+  [4446] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 5},
-  [4455] =
+  [4452] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [4461] =
+  [4458] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_type, 5},
-  [4467] =
+  [4464] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4473] =
+  [4470] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [4479] =
+  [4476] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 3},
     {field_static, 2},
-  [4485] =
+  [4482] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [4491] =
+  [4488] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_type, 5},
-  [4497] =
+  [4494] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
-  [4503] =
+  [4500] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [4509] =
+  [4506] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_readonly, 3},
     {field_type, 5},
-  [4515] =
+  [4512] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_value, 5, .inherited = true},
-  [4521] =
+  [4518] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_type, 5},
-  [4527] =
+  [4524] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4533] =
+  [4530] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4539] =
+  [4536] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 2},
     {field_readonly, 3},
-  [4545] =
+  [4542] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [4551] =
+  [4548] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 5},
-  [4557] =
+  [4554] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_value, 5, .inherited = true},
-  [4563] =
+  [4560] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_type, 5},
-  [4569] =
+  [4566] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4575] =
+  [4572] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [4581] =
+  [4578] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 5},
-  [4587] =
+  [4584] =
     {field_declare, 0},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4593] =
+  [4590] =
     {field_declare, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4599] =
+  [4596] =
     {field_async, 1},
     {field_generator, 2},
     {field_name, 3},
@@ -11090,14 +11087,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 0},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4607] =
+  [4604] =
     {field_abstract, 1},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 0},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4613] =
+  [4610] =
     {field_generator, 2},
     {field_name, 3},
     {field_optional, 4},
@@ -11106,7 +11103,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4621] =
+  [4618] =
     {field_async, 2},
     {field_generator, 3},
     {field_name, 4},
@@ -11115,7 +11112,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4629] =
+  [4626] =
     {field_async, 2},
     {field_name, 3},
     {field_optional, 4},
@@ -11124,14 +11121,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4637] =
+  [4634] =
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_static, 0},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4643] =
+  [4640] =
     {field_async, 1},
     {field_generator, 2},
     {field_name, 3},
@@ -11140,28 +11137,28 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4651] =
+  [4648] =
     {field_abstract, 1},
     {field_accessor, 2},
     {field_name, 3},
     {field_static, 0},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4657] =
+  [4654] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_static, 0},
     {field_value, 5, .inherited = true},
-  [4663] =
+  [4660] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_static, 0},
     {field_type, 5},
-  [4669] =
+  [4666] =
     {field_generator, 2},
     {field_name, 3},
     {field_optional, 4},
@@ -11170,7 +11167,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4677] =
+  [4674] =
     {field_generator, 3},
     {field_name, 4},
     {field_override, 1},
@@ -11179,7 +11176,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4685] =
+  [4682] =
     {field_async, 3},
     {field_name, 4},
     {field_override, 1},
@@ -11188,21 +11185,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4693] =
+  [4690] =
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
     {field_value, 5, .inherited = true},
-  [4699] =
+  [4696] =
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
     {field_type, 5},
-  [4705] =
+  [4702] =
     {field_name, 3},
     {field_optional, 4},
     {field_override, 1},
@@ -11211,14 +11208,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4713] =
+  [4710] =
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4719] =
+  [4716] =
     {field_async, 2},
     {field_generator, 3},
     {field_name, 4},
@@ -11227,7 +11224,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4727] =
+  [4724] =
     {field_async, 2},
     {field_name, 3},
     {field_optional, 4},
@@ -11236,41 +11233,41 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 5, .inherited = true},
-  [4735] =
+  [4732] =
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_static, 0},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4741] =
+  [4738] =
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_static, 0},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4747] =
+  [4744] =
     {field_index_type, 3},
     {field_name, 1},
     {field_type, 5},
-  [4750] =
+  [4747] =
     {field_alias, 4},
     {field_name, 0},
     {field_type, 2},
-  [4753] =
+  [4750] =
     {field_mapped_type_clause, 3},
     {field_readonly, 1},
     {field_sign, 0},
     {field_type, 5},
-  [4757] =
+  [4754] =
     {field_abstract, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4763] =
+  [4760] =
     {field_generator, 2},
     {field_name, 3},
     {field_optional, 4},
@@ -11278,217 +11275,217 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4770] =
+  [4767] =
     {field_abstract, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4776] =
+  [4773] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 2},
-  [4782] =
+  [4779] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [4788] =
+  [4785] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [4794] =
+  [4791] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [4800] =
+  [4797] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [4806] =
+  [4803] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4812] =
+  [4809] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
     {field_static, 2},
-  [4818] =
+  [4815] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [4824] =
+  [4821] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 5},
-  [4830] =
+  [4827] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [4836] =
+  [4833] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_type, 5},
-  [4842] =
+  [4839] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4848] =
+  [4845] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [4854] =
+  [4851] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 3},
     {field_static, 2},
-  [4860] =
+  [4857] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [4866] =
+  [4863] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_type, 5},
-  [4872] =
+  [4869] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
-  [4878] =
+  [4875] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [4884] =
+  [4881] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_readonly, 3},
     {field_type, 5},
-  [4890] =
+  [4887] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_value, 5, .inherited = true},
-  [4896] =
+  [4893] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_type, 5},
-  [4902] =
+  [4899] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4908] =
+  [4905] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4914] =
+  [4911] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 2},
     {field_readonly, 3},
-  [4920] =
+  [4917] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [4926] =
+  [4923] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 5},
-  [4932] =
+  [4929] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_value, 5, .inherited = true},
-  [4938] =
+  [4935] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_type, 5},
-  [4944] =
+  [4941] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4950] =
+  [4947] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
@@ -11497,7 +11494,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4958] =
+  [4955] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_generator, 3},
@@ -11506,7 +11503,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4966] =
+  [4963] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_name, 3},
@@ -11515,35 +11512,35 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [4974] =
+  [4971] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
     {field_value, 5, .inherited = true},
-  [4980] =
+  [4977] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
     {field_type, 5},
-  [4986] =
+  [4983] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4992] =
+  [4989] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [4998] =
+  [4995] =
     {field_accessibility_modifier, 0},
     {field_async, 1},
     {field_generator, 2},
@@ -11552,7 +11549,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5006] =
+  [5003] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
@@ -11561,7 +11558,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5014] =
+  [5011] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -11570,7 +11567,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5022] =
+  [5019] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_name, 4},
@@ -11579,21 +11576,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5030] =
+  [5027] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5036] =
+  [5033] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 5},
-  [5042] =
+  [5039] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
@@ -11602,14 +11599,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5050] =
+  [5047] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5056] =
+  [5053] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_generator, 3},
@@ -11618,7 +11615,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5064] =
+  [5061] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_name, 3},
@@ -11627,42 +11624,42 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5072] =
+  [5069] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5078] =
+  [5075] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_static, 1},
     {field_type, 5},
-  [5084] =
+  [5081] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 4},
     {field_name, 5},
     {field_override, 3},
     {field_static, 1},
-  [5090] =
+  [5087] =
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5096] =
+  [5093] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5102] =
+  [5099] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -11671,14 +11668,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5110] =
+  [5107] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
-  [5116] =
+  [5113] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_override, 2},
@@ -11687,21 +11684,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5124] =
+  [5121] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5130] =
+  [5127] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
     {field_type, 5},
-  [5136] =
+  [5133] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 3},
     {field_name, 4},
@@ -11709,14 +11706,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_static, 1},
     {field_type, 5, .inherited = true},
-  [5143] =
+  [5140] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 3},
     {field_name, 4},
     {field_override, 2},
     {field_parameters, 5, .inherited = true},
     {field_static, 1},
-  [5149] =
+  [5146] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_name, 4},
@@ -11725,35 +11722,35 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5157] =
+  [5154] =
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5163] =
+  [5160] =
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_static, 1},
     {field_type, 5},
-  [5169] =
+  [5166] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5175] =
+  [5172] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
     {field_type, 5},
-  [5181] =
+  [5178] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
@@ -11762,14 +11759,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 5, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 5, .inherited = true},
-  [5189] =
+  [5186] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5195] =
+  [5192] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
@@ -11777,42 +11774,42 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5202] =
+  [5199] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [5208] =
+  [5205] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [5214] =
+  [5211] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5220] =
+  [5217] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5226] =
+  [5223] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5232] =
+  [5229] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -11820,34 +11817,34 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5239] =
+  [5236] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 3},
     {field_name, 4},
     {field_override, 2},
     {field_parameters, 5, .inherited = true},
     {field_type, 5, .inherited = true},
-  [5245] =
+  [5242] =
     {field_accessibility_modifier, 0},
     {field_accessor_kind, 3},
     {field_name, 4},
     {field_override, 2},
     {field_parameters, 5, .inherited = true},
-  [5250] =
+  [5247] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_value, 5, .inherited = true},
-  [5256] =
+  [5253] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
     {field_override, 2},
     {field_type, 5},
-  [5262] =
+  [5259] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
@@ -11855,7 +11852,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5269] =
+  [5266] =
     {field_accessibility_modifier, 0},
     {field_generator, 2},
     {field_name, 3},
@@ -11864,7 +11861,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5277] =
+  [5274] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -11873,7 +11870,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5285] =
+  [5282] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_name, 4},
@@ -11882,21 +11879,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5293] =
+  [5290] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [5299] =
+  [5296] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 5},
-  [5305] =
+  [5302] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
@@ -11905,14 +11902,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5313] =
+  [5310] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5319] =
+  [5316] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_generator, 3},
@@ -11921,7 +11918,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5327] =
+  [5324] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_name, 3},
@@ -11930,21 +11927,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5335] =
+  [5332] =
     {field_accessibility_modifier, 0},
     {field_accessor, 2},
     {field_name, 3},
     {field_override, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5341] =
+  [5338] =
     {field_accessibility_modifier, 0},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5347] =
+  [5344] =
     {field_generator, 2},
     {field_name, 3},
     {field_optional, 4},
@@ -11953,7 +11950,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5355] =
+  [5352] =
     {field_async, 2},
     {field_generator, 3},
     {field_name, 4},
@@ -11962,7 +11959,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5363] =
+  [5360] =
     {field_async, 2},
     {field_name, 3},
     {field_optional, 4},
@@ -11971,14 +11968,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5371] =
+  [5368] =
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 0},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5377] =
+  [5374] =
     {field_async, 1},
     {field_generator, 2},
     {field_name, 3},
@@ -11987,1032 +11984,1032 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 5, .inherited = true},
     {field_return_type, 5, .inherited = true},
     {field_type_parameters, 5, .inherited = true},
-  [5385] =
+  [5382] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 2},
-  [5391] =
+  [5388] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [5397] =
+  [5394] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [5403] =
+  [5400] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [5409] =
+  [5406] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [5415] =
+  [5412] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5421] =
+  [5418] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
     {field_static, 2},
-  [5427] =
+  [5424] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [5433] =
+  [5430] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 5},
-  [5439] =
+  [5436] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [5445] =
+  [5442] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_type, 5},
-  [5451] =
+  [5448] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5457] =
+  [5454] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [5463] =
+  [5460] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 3},
     {field_static, 2},
-  [5469] =
+  [5466] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [5475] =
+  [5472] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_type, 5},
-  [5481] =
+  [5478] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
-  [5487] =
+  [5484] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [5493] =
+  [5490] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_type, 5},
-  [5499] =
+  [5496] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_value, 5, .inherited = true},
-  [5505] =
+  [5502] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_type, 5},
-  [5511] =
+  [5508] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5517] =
+  [5514] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5523] =
+  [5520] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_readonly, 3},
-  [5529] =
+  [5526] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
-  [5535] =
+  [5532] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [5541] =
+  [5538] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_type, 5},
-  [5547] =
+  [5544] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_readonly, 4},
     {field_static, 3},
-  [5553] =
+  [5550] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_static, 3},
-  [5559] =
+  [5556] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 3},
     {field_value, 5, .inherited = true},
-  [5565] =
+  [5562] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 3},
     {field_type, 5},
-  [5571] =
+  [5568] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 4},
     {field_static, 3},
-  [5577] =
+  [5574] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_readonly, 4},
-  [5583] =
+  [5580] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
-  [5589] =
+  [5586] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_value, 5, .inherited = true},
-  [5595] =
+  [5592] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_type, 5},
-  [5601] =
+  [5598] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_value, 5, .inherited = true},
-  [5607] =
+  [5604] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_type, 5},
-  [5613] =
+  [5610] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5619] =
+  [5616] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 3},
     {field_readonly, 4},
-  [5625] =
+  [5622] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 3},
-  [5631] =
+  [5628] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_value, 5, .inherited = true},
-  [5637] =
+  [5634] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_type, 5},
-  [5643] =
+  [5640] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 2},
     {field_readonly, 3},
-  [5649] =
+  [5646] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [5655] =
+  [5652] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 5},
-  [5661] =
+  [5658] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_value, 5, .inherited = true},
-  [5667] =
+  [5664] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_type, 5},
-  [5673] =
+  [5670] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5679] =
+  [5676] =
     {field_abstract, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
     {field_value, 5, .inherited = true},
-  [5685] =
+  [5682] =
     {field_abstract, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 1},
     {field_type, 5},
-  [5691] =
+  [5688] =
     {field_abstract, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5697] =
+  [5694] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_readonly, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5703] =
+  [5700] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5709] =
+  [5706] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 5},
-  [5715] =
+  [5712] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5721] =
+  [5718] =
     {field_abstract, 2},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5727] =
+  [5724] =
     {field_abstract, 2},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 1},
     {field_type, 5},
-  [5733] =
+  [5730] =
     {field_abstract, 2},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 3},
     {field_static, 1},
-  [5739] =
+  [5736] =
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5745] =
+  [5742] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5751] =
+  [5748] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
-  [5757] =
+  [5754] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5763] =
+  [5760] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
     {field_type, 5},
-  [5769] =
+  [5766] =
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5775] =
+  [5772] =
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_static, 1},
     {field_type, 5},
-  [5781] =
+  [5778] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
     {field_value, 5, .inherited = true},
-  [5787] =
+  [5784] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_static, 1},
     {field_type, 5},
-  [5793] =
+  [5790] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_static, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5799] =
+  [5796] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [5805] =
+  [5802] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [5811] =
+  [5808] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5817] =
+  [5814] =
     {field_abstract, 1},
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5823] =
+  [5820] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5829] =
+  [5826] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_value, 5, .inherited = true},
-  [5835] =
+  [5832] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_type, 5},
-  [5841] =
+  [5838] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_readonly, 3},
-  [5847] =
+  [5844] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
-  [5853] =
+  [5850] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [5859] =
+  [5856] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_type, 5},
-  [5865] =
+  [5862] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_readonly, 4},
     {field_static, 3},
-  [5871] =
+  [5868] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_static, 3},
-  [5877] =
+  [5874] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 3},
     {field_value, 5, .inherited = true},
-  [5883] =
+  [5880] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 3},
     {field_type, 5},
-  [5889] =
+  [5886] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 4},
     {field_static, 3},
-  [5895] =
+  [5892] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_readonly, 4},
-  [5901] =
+  [5898] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
-  [5907] =
+  [5904] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_value, 5, .inherited = true},
-  [5913] =
+  [5910] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_type, 5},
-  [5919] =
+  [5916] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_value, 5, .inherited = true},
-  [5925] =
+  [5922] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_type, 5},
-  [5931] =
+  [5928] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5937] =
+  [5934] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 3},
     {field_readonly, 4},
-  [5943] =
+  [5940] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 3},
-  [5949] =
+  [5946] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_value, 5, .inherited = true},
-  [5955] =
+  [5952] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_type, 5},
-  [5961] =
+  [5958] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 2},
-  [5967] =
+  [5964] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [5973] =
+  [5970] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [5979] =
+  [5976] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [5985] =
+  [5982] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_readonly, 2},
     {field_type, 5},
-  [5991] =
+  [5988] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [5997] =
+  [5994] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
     {field_static, 2},
-  [6003] =
+  [6000] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [6009] =
+  [6006] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 5},
-  [6015] =
+  [6012] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_static, 2},
-  [6021] =
+  [6018] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [6027] =
+  [6024] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_static, 2},
     {field_type, 5},
-  [6033] =
+  [6030] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [6039] =
+  [6036] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_static, 2},
     {field_type, 5},
-  [6045] =
+  [6042] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_static, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6051] =
+  [6048] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [6057] =
+  [6054] =
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 3},
     {field_static, 2},
-  [6063] =
+  [6060] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 3},
     {field_static, 2},
-  [6069] =
+  [6066] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_value, 5, .inherited = true},
-  [6075] =
+  [6072] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 3},
     {field_static, 2},
     {field_type, 5},
-  [6081] =
+  [6078] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_readonly, 3},
-  [6087] =
+  [6084] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [6093] =
+  [6090] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_readonly, 3},
     {field_type, 5},
-  [6099] =
+  [6096] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_value, 5, .inherited = true},
-  [6105] =
+  [6102] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_type, 5},
-  [6111] =
+  [6108] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_value, 5, .inherited = true},
-  [6117] =
+  [6114] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_type, 5},
-  [6123] =
+  [6120] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6129] =
+  [6126] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
     {field_override, 3},
-  [6135] =
+  [6132] =
     {field_accessibility_modifier, 1},
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6141] =
+  [6138] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6147] =
+  [6144] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
     {field_override, 2},
     {field_readonly, 3},
-  [6153] =
+  [6150] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 5, .inherited = true},
-  [6159] =
+  [6156] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 5},
-  [6165] =
+  [6162] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_value, 5, .inherited = true},
-  [6171] =
+  [6168] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
     {field_type, 5},
-  [6177] =
+  [6174] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_value, 5, .inherited = true},
-  [6183] =
+  [6180] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 2},
     {field_type, 5},
-  [6189] =
+  [6186] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6195] =
+  [6192] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_value, 5, .inherited = true},
-  [6201] =
+  [6198] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 5},
-  [6207] =
+  [6204] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6213] =
+  [6210] =
     {field_accessor, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_override, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6219] =
+  [6216] =
     {field_decorator, 0, .inherited = true},
     {field_name, 2},
     {field_optionality, 3},
     {field_override, 1},
     {field_type, 4},
     {field_value, 5, .inherited = true},
-  [6225] =
+  [6222] =
     {field_name, 3},
     {field_optional, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_static, 0},
     {field_type, 5},
-  [6231] =
+  [6228] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
     {field_readonly, 2},
     {field_static, 1},
     {field_type, 5},
-  [6237] =
+  [6234] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_optional, 5},
     {field_override, 2},
     {field_readonly, 3},
     {field_static, 1},
-  [6243] =
+  [6240] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
     {field_override, 2},
     {field_static, 1},
     {field_type, 5},
-  [6249] =
+  [6246] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optional, 4},
     {field_override, 1},
     {field_readonly, 2},
     {field_type, 5},
-  [6255] =
+  [6252] =
     {field_alternative, 6},
     {field_consequence, 4},
     {field_left, 0},
     {field_right, 2},
-  [6259] =
+  [6256] =
     {field_decorator, 0, .inherited = true},
     {field_override, 2},
     {field_pattern, 4},
     {field_readonly, 3},
-  [6263] =
+  [6260] =
     {field_async, 2},
     {field_body, 7},
     {field_generator, 3},
@@ -13023,7 +13020,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6273] =
+  [6270] =
     {field_body, 7},
     {field_generator, 3},
     {field_name, 4},
@@ -13034,7 +13031,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6283] =
+  [6280] =
     {field_async, 3},
     {field_body, 7},
     {field_generator, 4},
@@ -13045,7 +13042,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6293] =
+  [6290] =
     {field_async, 3},
     {field_body, 7},
     {field_name, 4},
@@ -13056,7 +13053,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6303] =
+  [6300] =
     {field_async, 2},
     {field_body, 7},
     {field_generator, 3},
@@ -13067,7 +13064,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6313] =
+  [6310] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 7},
@@ -13078,7 +13075,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [6323] =
+  [6320] =
     {field_accessibility_modifier, 0},
     {field_body, 7},
     {field_generator, 3},
@@ -13089,7 +13086,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6333] =
+  [6330] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 7},
@@ -13100,7 +13097,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6343] =
+  [6340] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 7},
@@ -13111,7 +13108,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6353] =
+  [6350] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 7},
@@ -13122,7 +13119,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6363] =
+  [6360] =
     {field_accessibility_modifier, 0},
     {field_body, 7},
     {field_generator, 3},
@@ -13133,7 +13130,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6373] =
+  [6370] =
     {field_accessibility_modifier, 0},
     {field_body, 7},
     {field_generator, 4},
@@ -13144,7 +13141,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6383] =
+  [6380] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_body, 7},
@@ -13155,7 +13152,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6393] =
+  [6390] =
     {field_accessibility_modifier, 0},
     {field_body, 7},
     {field_name, 4},
@@ -13166,7 +13163,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6403] =
+  [6400] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 7},
@@ -13177,7 +13174,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6413] =
+  [6410] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 7},
@@ -13188,7 +13185,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6423] =
+  [6420] =
     {field_accessibility_modifier, 0},
     {field_body, 7},
     {field_generator, 3},
@@ -13199,7 +13196,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [6433] =
+  [6430] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 7},
@@ -13210,7 +13207,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [6443] =
+  [6440] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 7},
@@ -13221,7 +13218,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [6453] =
+  [6450] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_body, 7},
@@ -13232,7 +13229,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 6, .inherited = true},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [6463] =
+  [6460] =
     {field_async, 2},
     {field_body, 7},
     {field_generator, 3},
@@ -13243,14 +13240,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [6473] =
+  [6470] =
     {field_body, 8},
     {field_condition, 4},
     {field_condition, 5},
     {field_increment, 6},
     {field_initializer, 2},
-    {field_initializer, 3},
-  [6479] =
+  [6475] =
     {field_abstract, 2},
     {field_declare, 0},
     {field_name, 3},
@@ -13258,7 +13254,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6486] =
+  [6482] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
@@ -13266,7 +13262,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6493] =
+  [6489] =
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
@@ -13274,7 +13270,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 1},
     {field_value, 6, .inherited = true},
-  [6500] =
+  [6496] =
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
@@ -13282,7 +13278,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 1},
     {field_type, 6},
-  [6507] =
+  [6503] =
     {field_declare, 0},
     {field_name, 4},
     {field_override, 2},
@@ -13290,7 +13286,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6514] =
+  [6510] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
@@ -13298,7 +13294,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6521] =
+  [6517] =
     {field_abstract, 1},
     {field_declare, 0},
     {field_name, 3},
@@ -13306,7 +13302,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6528] =
+  [6524] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -13314,7 +13310,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_value, 6, .inherited = true},
-  [6535] =
+  [6531] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -13322,7 +13318,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_type, 6},
-  [6542] =
+  [6538] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -13330,7 +13326,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6549] =
+  [6545] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
@@ -13338,7 +13334,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6556] =
+  [6552] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13346,7 +13342,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [6563] =
+  [6559] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13354,7 +13350,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 6},
-  [6570] =
+  [6566] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13362,7 +13358,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6577] =
+  [6573] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
@@ -13370,7 +13366,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6584] =
+  [6580] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
@@ -13378,7 +13374,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [6591] =
+  [6587] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
@@ -13386,7 +13382,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [6598] =
+  [6594] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
@@ -13394,7 +13390,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 6},
-  [6605] =
+  [6601] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13402,7 +13398,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [6612] =
+  [6608] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13410,7 +13406,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_type, 6},
-  [6619] =
+  [6615] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13418,7 +13414,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6626] =
+  [6622] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -13426,7 +13422,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [6633] =
+  [6629] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -13434,7 +13430,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [6640] =
+  [6636] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -13442,7 +13438,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6647] =
+  [6643] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -13450,7 +13446,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6654] =
+  [6650] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13458,7 +13454,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [6661] =
+  [6657] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13466,7 +13462,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 6},
-  [6668] =
+  [6664] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -13474,7 +13470,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6675] =
+  [6671] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 3},
@@ -13482,7 +13478,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6682] =
+  [6678] =
     {field_declare, 0},
     {field_name, 3},
     {field_optionality, 4},
@@ -13490,12 +13486,12 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6689] =
+  [6685] =
     {field_index_type, 4},
     {field_name, 2},
     {field_readonly, 0},
     {field_type, 6},
-  [6693] =
+  [6689] =
     {field_async, 2},
     {field_generator, 3},
     {field_name, 4},
@@ -13505,7 +13501,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6702] =
+  [6698] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_name, 4},
@@ -13513,7 +13509,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 0},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6709] =
+  [6705] =
     {field_generator, 3},
     {field_name, 4},
     {field_optional, 5},
@@ -13523,7 +13519,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6718] =
+  [6714] =
     {field_async, 3},
     {field_generator, 4},
     {field_name, 5},
@@ -13533,7 +13529,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6727] =
+  [6723] =
     {field_async, 3},
     {field_name, 4},
     {field_optional, 5},
@@ -13543,7 +13539,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6736] =
+  [6732] =
     {field_name, 3},
     {field_optionality, 4},
     {field_override, 1},
@@ -13551,7 +13547,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 0},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6743] =
+  [6739] =
     {field_async, 2},
     {field_generator, 3},
     {field_name, 4},
@@ -13561,7 +13557,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 6, .inherited = true},
-  [6752] =
+  [6748] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -13569,7 +13565,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_value, 6, .inherited = true},
-  [6759] =
+  [6755] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -13577,7 +13573,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_type, 6},
-  [6766] =
+  [6762] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -13585,7 +13581,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6773] =
+  [6769] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
@@ -13593,7 +13589,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6780] =
+  [6776] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13601,7 +13597,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [6787] =
+  [6783] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13609,7 +13605,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 6},
-  [6794] =
+  [6790] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13617,7 +13613,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6801] =
+  [6797] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
@@ -13625,7 +13621,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6808] =
+  [6804] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
@@ -13633,7 +13629,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [6815] =
+  [6811] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
@@ -13641,7 +13637,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [6822] =
+  [6818] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
@@ -13649,7 +13645,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 6},
-  [6829] =
+  [6825] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13657,7 +13653,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [6836] =
+  [6832] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13665,7 +13661,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_type, 6},
-  [6843] =
+  [6839] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13673,7 +13669,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6850] =
+  [6846] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -13681,7 +13677,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [6857] =
+  [6853] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -13689,7 +13685,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [6864] =
+  [6860] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -13697,7 +13693,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6871] =
+  [6867] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -13705,7 +13701,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6878] =
+  [6874] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13713,7 +13709,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [6885] =
+  [6881] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13721,7 +13717,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 6},
-  [6892] =
+  [6888] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -13729,7 +13725,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6899] =
+  [6895] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 3},
@@ -13737,7 +13733,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6906] =
+  [6902] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_generator, 3},
@@ -13747,7 +13743,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [6915] =
+  [6911] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_name, 3},
@@ -13755,7 +13751,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6922] =
+  [6918] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -13765,7 +13761,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6931] =
+  [6927] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_generator, 4},
@@ -13775,7 +13771,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6940] =
+  [6936] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_name, 4},
@@ -13785,7 +13781,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6949] =
+  [6945] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
@@ -13793,7 +13789,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6956] =
+  [6952] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_generator, 3},
@@ -13803,7 +13799,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6965] =
+  [6961] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
@@ -13811,7 +13807,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [6972] =
+  [6968] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 4},
@@ -13819,7 +13815,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 1},
     {field_value, 6, .inherited = true},
-  [6979] =
+  [6975] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 4},
@@ -13827,7 +13823,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 1},
     {field_type, 6},
-  [6986] =
+  [6982] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -13837,7 +13833,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [6995] =
+  [6991] =
     {field_accessibility_modifier, 0},
     {field_generator, 4},
     {field_name, 5},
@@ -13847,7 +13843,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [7004] =
+  [7000] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_name, 5},
@@ -13857,7 +13853,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [7013] =
+  [7009] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_optionality, 5},
@@ -13865,7 +13861,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 1},
     {field_value, 6, .inherited = true},
-  [7020] =
+  [7016] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_optionality, 5},
@@ -13873,7 +13869,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 1},
     {field_type, 6},
-  [7027] =
+  [7023] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_optional, 5},
@@ -13883,7 +13879,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [7036] =
+  [7032] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_override, 2},
@@ -13891,7 +13887,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7043] =
+  [7039] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_generator, 4},
@@ -13901,7 +13897,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [7052] =
+  [7048] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_name, 4},
@@ -13911,7 +13907,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 6, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 6, .inherited = true},
-  [7061] =
+  [7057] =
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
     {field_name, 4},
@@ -13919,7 +13915,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7068] =
+  [7064] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
@@ -13927,7 +13923,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7075] =
+  [7071] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_name, 3},
@@ -13935,7 +13931,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7082] =
+  [7078] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -13944,7 +13940,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 6, .inherited = true},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [7090] =
+  [7086] =
     {field_abstract, 1},
     {field_accessibility_modifier, 0},
     {field_accessor, 3},
@@ -13952,7 +13948,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7097] =
+  [7093] =
     {field_accessibility_modifier, 0},
     {field_generator, 3},
     {field_name, 4},
@@ -13962,7 +13958,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [7106] =
+  [7102] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_generator, 4},
@@ -13972,7 +13968,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [7115] =
+  [7111] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_name, 4},
@@ -13982,7 +13978,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [7124] =
+  [7120] =
     {field_accessibility_modifier, 0},
     {field_name, 3},
     {field_optionality, 4},
@@ -13990,7 +13986,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7131] =
+  [7127] =
     {field_accessibility_modifier, 0},
     {field_async, 2},
     {field_generator, 3},
@@ -14000,7 +13996,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_parameters, 6, .inherited = true},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [7140] =
+  [7136] =
     {field_async, 2},
     {field_generator, 3},
     {field_name, 4},
@@ -14010,7 +14006,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_return_type, 6, .inherited = true},
     {field_type_parameters, 6, .inherited = true},
-  [7149] =
+  [7145] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14018,7 +14014,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_value, 6, .inherited = true},
-  [7156] =
+  [7152] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14026,7 +14022,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_type, 6},
-  [7163] =
+  [7159] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14034,7 +14030,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7170] =
+  [7166] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -14042,7 +14038,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7177] =
+  [7173] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14050,7 +14046,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7184] =
+  [7180] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14058,7 +14054,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 6},
-  [7191] =
+  [7187] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14066,7 +14062,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7198] =
+  [7194] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -14074,7 +14070,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7205] =
+  [7201] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -14082,7 +14078,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [7212] =
+  [7208] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -14090,7 +14086,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7219] =
+  [7215] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -14098,7 +14094,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 6},
-  [7226] =
+  [7222] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14106,7 +14102,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7233] =
+  [7229] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14114,7 +14110,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_type, 6},
-  [7240] =
+  [7236] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14122,7 +14118,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7247] =
+  [7243] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14130,7 +14126,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7254] =
+  [7250] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14138,7 +14134,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [7261] =
+  [7257] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14146,7 +14142,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7268] =
+  [7264] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14154,7 +14150,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7275] =
+  [7271] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14162,7 +14158,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_optionality, 6},
     {field_readonly, 3},
-  [7282] =
+  [7278] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14170,7 +14166,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7289] =
+  [7285] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14178,7 +14174,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [7296] =
+  [7292] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14186,7 +14182,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7303] =
+  [7299] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14194,7 +14190,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [7310] =
+  [7306] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14202,7 +14198,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7317] =
+  [7313] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14210,7 +14206,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 4},
     {field_static, 3},
-  [7324] =
+  [7320] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14218,7 +14214,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_value, 6, .inherited = true},
-  [7331] =
+  [7327] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14226,7 +14222,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_type, 6},
-  [7338] =
+  [7334] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14234,7 +14230,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_static, 3},
     {field_value, 6, .inherited = true},
-  [7345] =
+  [7341] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14242,7 +14238,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_static, 3},
     {field_type, 6},
-  [7352] =
+  [7348] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14250,7 +14246,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7359] =
+  [7355] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14258,7 +14254,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_readonly, 5},
     {field_static, 3},
-  [7366] =
+  [7362] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14266,7 +14262,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_override, 4},
     {field_static, 3},
-  [7373] =
+  [7369] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14274,7 +14270,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_value, 6, .inherited = true},
-  [7380] =
+  [7376] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14282,7 +14278,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_type, 6},
-  [7387] =
+  [7383] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14290,7 +14286,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_optionality, 6},
     {field_readonly, 4},
-  [7394] =
+  [7390] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14298,7 +14294,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 4},
     {field_value, 6, .inherited = true},
-  [7401] =
+  [7397] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14306,7 +14302,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 4},
     {field_type, 6},
-  [7408] =
+  [7404] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14314,7 +14310,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 4},
     {field_optionality, 5},
     {field_value, 6, .inherited = true},
-  [7415] =
+  [7411] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14322,7 +14318,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 4},
     {field_optionality, 5},
     {field_type, 6},
-  [7422] =
+  [7418] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -14330,7 +14326,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7429] =
+  [7425] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14338,7 +14334,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7436] =
+  [7432] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14346,7 +14342,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_override, 3},
     {field_readonly, 4},
-  [7443] =
+  [7439] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14354,7 +14350,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_value, 6, .inherited = true},
-  [7450] =
+  [7446] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14362,7 +14358,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_type, 6},
-  [7457] =
+  [7453] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14370,7 +14366,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_override, 3},
     {field_value, 6, .inherited = true},
-  [7464] =
+  [7460] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14378,7 +14374,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_override, 3},
     {field_type, 6},
-  [7471] =
+  [7467] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -14386,7 +14382,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7478] =
+  [7474] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14394,7 +14390,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7485] =
+  [7481] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14402,7 +14398,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 6},
-  [7492] =
+  [7488] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14410,7 +14406,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7499] =
+  [7495] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -14418,7 +14414,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7506] =
+  [7502] =
     {field_abstract, 2},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -14426,7 +14422,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7513] =
+  [7509] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
@@ -14434,7 +14430,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7520] =
+  [7516] =
     {field_abstract, 2},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
@@ -14442,7 +14438,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7527] =
+  [7523] =
     {field_abstract, 2},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
@@ -14450,7 +14446,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 1},
     {field_value, 6, .inherited = true},
-  [7534] =
+  [7530] =
     {field_abstract, 2},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
@@ -14458,7 +14454,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 1},
     {field_type, 6},
-  [7541] =
+  [7537] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
@@ -14466,7 +14462,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 1},
     {field_value, 6, .inherited = true},
-  [7548] =
+  [7544] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
@@ -14474,7 +14470,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 1},
     {field_type, 6},
-  [7555] =
+  [7551] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_override, 2},
@@ -14482,7 +14478,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7562] =
+  [7558] =
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14490,7 +14486,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7569] =
+  [7565] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
@@ -14498,7 +14494,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7576] =
+  [7572] =
     {field_abstract, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -14506,7 +14502,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7583] =
+  [7579] =
     {field_abstract, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
@@ -14514,7 +14510,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7590] =
+  [7586] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14522,7 +14518,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_optionality, 6},
     {field_readonly, 3},
-  [7597] =
+  [7593] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14530,7 +14526,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7604] =
+  [7600] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14538,7 +14534,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [7611] =
+  [7607] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14546,7 +14542,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7618] =
+  [7614] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14554,7 +14550,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [7625] =
+  [7621] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14562,7 +14558,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7632] =
+  [7628] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14570,7 +14566,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 4},
     {field_static, 3},
-  [7639] =
+  [7635] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14578,7 +14574,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_value, 6, .inherited = true},
-  [7646] =
+  [7642] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14586,7 +14582,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_type, 6},
-  [7653] =
+  [7649] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14594,7 +14590,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_static, 3},
     {field_value, 6, .inherited = true},
-  [7660] =
+  [7656] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14602,7 +14598,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_static, 3},
     {field_type, 6},
-  [7667] =
+  [7663] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14610,7 +14606,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7674] =
+  [7670] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14618,7 +14614,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_readonly, 5},
     {field_static, 3},
-  [7681] =
+  [7677] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14626,7 +14622,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_override, 4},
     {field_static, 3},
-  [7688] =
+  [7684] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14634,7 +14630,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_value, 6, .inherited = true},
-  [7695] =
+  [7691] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14642,7 +14638,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_type, 6},
-  [7702] =
+  [7698] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14650,7 +14646,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_optionality, 6},
     {field_readonly, 4},
-  [7709] =
+  [7705] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14658,7 +14654,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 4},
     {field_value, 6, .inherited = true},
-  [7716] =
+  [7712] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14666,7 +14662,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_readonly, 4},
     {field_type, 6},
-  [7723] =
+  [7719] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14674,7 +14670,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 4},
     {field_optionality, 5},
     {field_value, 6, .inherited = true},
-  [7730] =
+  [7726] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14682,7 +14678,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 4},
     {field_optionality, 5},
     {field_type, 6},
-  [7737] =
+  [7733] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -14690,7 +14686,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7744] =
+  [7740] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14698,7 +14694,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7751] =
+  [7747] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14706,7 +14702,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_override, 3},
     {field_readonly, 4},
-  [7758] =
+  [7754] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14714,7 +14710,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_value, 6, .inherited = true},
-  [7765] =
+  [7761] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14722,7 +14718,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_type, 6},
-  [7772] =
+  [7768] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14730,7 +14726,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_override, 3},
     {field_value, 6, .inherited = true},
-  [7779] =
+  [7775] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14738,7 +14734,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_override, 3},
     {field_type, 6},
-  [7786] =
+  [7782] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -14746,7 +14742,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7793] =
+  [7789] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -14754,7 +14750,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_value, 6, .inherited = true},
-  [7800] =
+  [7796] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -14762,7 +14758,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 2},
     {field_type, 6},
-  [7807] =
+  [7803] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -14770,7 +14766,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7814] =
+  [7810] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -14778,7 +14774,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7821] =
+  [7817] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14786,7 +14782,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7828] =
+  [7824] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14794,7 +14790,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 2},
     {field_type, 6},
-  [7835] =
+  [7831] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14802,7 +14798,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7842] =
+  [7838] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
@@ -14810,7 +14806,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7849] =
+  [7845] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
@@ -14818,7 +14814,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_static, 2},
     {field_type, 6},
-  [7856] =
+  [7852] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 5},
@@ -14826,7 +14822,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 6},
     {field_override, 4},
     {field_static, 2},
-  [7863] =
+  [7859] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
@@ -14834,7 +14830,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7870] =
+  [7866] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -14842,7 +14838,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7877] =
+  [7873] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -14850,7 +14846,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_static, 2},
-  [7884] =
+  [7880] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -14858,7 +14854,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7891] =
+  [7887] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -14866,7 +14862,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 6},
-  [7898] =
+  [7894] =
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
@@ -14874,7 +14870,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7905] =
+  [7901] =
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
@@ -14882,7 +14878,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_type, 6},
-  [7912] =
+  [7908] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14890,7 +14886,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_value, 6, .inherited = true},
-  [7919] =
+  [7915] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14898,7 +14894,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_static, 2},
     {field_type, 6},
-  [7926] =
+  [7922] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14906,7 +14902,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7933] =
+  [7929] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -14914,7 +14910,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7940] =
+  [7936] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -14922,7 +14918,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_readonly, 3},
     {field_type, 6},
-  [7947] =
+  [7943] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -14930,7 +14926,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7954] =
+  [7950] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
@@ -14938,7 +14934,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7961] =
+  [7957] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -14946,7 +14942,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 4},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [7968] =
+  [7964] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
@@ -14954,7 +14950,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_override, 3},
     {field_value, 6, .inherited = true},
-  [7975] =
+  [7971] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
@@ -14962,7 +14958,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 5},
     {field_override, 3},
     {field_type, 6},
-  [7982] =
+  [7978] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14970,7 +14966,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_value, 6, .inherited = true},
-  [7989] =
+  [7985] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14978,7 +14974,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_readonly, 3},
     {field_type, 6},
-  [7996] =
+  [7992] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -14986,7 +14982,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [8003] =
+  [7999] =
     {field_accessibility_modifier, 1},
     {field_accessor, 3},
     {field_decorator, 0, .inherited = true},
@@ -14994,7 +14990,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [8010] =
+  [8006] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
@@ -15002,7 +14998,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [8017] =
+  [8013] =
     {field_decorator, 0, .inherited = true},
     {field_name, 3},
     {field_optionality, 4},
@@ -15010,7 +15006,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 5},
     {field_value, 6, .inherited = true},
-  [8024] =
+  [8020] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_optional, 5},
@@ -15018,7 +15014,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_static, 1},
     {field_type, 6},
-  [8031] =
+  [8027] =
     {field_async, 3},
     {field_body, 8},
     {field_generator, 4},
@@ -15030,7 +15026,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 7, .inherited = true},
-  [8042] =
+  [8038] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 8},
@@ -15042,7 +15038,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8053] =
+  [8049] =
     {field_accessibility_modifier, 0},
     {field_body, 8},
     {field_generator, 4},
@@ -15054,7 +15050,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8064] =
+  [8060] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_body, 8},
@@ -15066,7 +15062,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8075] =
+  [8071] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_body, 8},
@@ -15078,7 +15074,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8086] =
+  [8082] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 8},
@@ -15090,7 +15086,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8097] =
+  [8093] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_body, 8},
@@ -15102,7 +15098,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 7, .inherited = true},
     {field_type_parameters, 7, .inherited = true},
-  [8108] =
+  [8104] =
     {field_declare, 0},
     {field_name, 4},
     {field_optionality, 5},
@@ -15111,7 +15107,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8116] =
+  [8112] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -15120,7 +15116,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8124] =
+  [8120] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -15129,7 +15125,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8132] =
+  [8128] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
@@ -15138,7 +15134,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 7, .inherited = true},
-  [8140] =
+  [8136] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
@@ -15147,7 +15143,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 7},
-  [8148] =
+  [8144] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
@@ -15156,7 +15152,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8156] =
+  [8152] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -15165,7 +15161,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8164] =
+  [8160] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_declare, 0},
@@ -15174,7 +15170,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8172] =
+  [8168] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 4},
@@ -15183,7 +15179,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8180] =
+  [8176] =
     {field_async, 3},
     {field_generator, 4},
     {field_name, 5},
@@ -15194,13 +15190,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 0},
     {field_type_parameters, 7, .inherited = true},
-  [8190] =
+  [8186] =
     {field_index_type, 5},
     {field_name, 3},
     {field_readonly, 1},
     {field_sign, 0},
     {field_type, 7},
-  [8195] =
+  [8191] =
     {field_abstract, 3},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -15209,7 +15205,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8203] =
+  [8199] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -15218,7 +15214,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8211] =
+  [8207] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
@@ -15227,7 +15223,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 7, .inherited = true},
-  [8219] =
+  [8215] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
@@ -15236,7 +15232,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 7},
-  [8227] =
+  [8223] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
@@ -15245,7 +15241,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8235] =
+  [8231] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -15254,7 +15250,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8243] =
+  [8239] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_declare, 1},
@@ -15263,7 +15259,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8251] =
+  [8247] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 4},
@@ -15272,7 +15268,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8259] =
+  [8255] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_generator, 4},
@@ -15283,7 +15279,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8269] =
+  [8265] =
     {field_abstract, 2},
     {field_accessibility_modifier, 0},
     {field_accessor, 4},
@@ -15292,7 +15288,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8277] =
+  [8273] =
     {field_accessibility_modifier, 0},
     {field_generator, 4},
     {field_name, 5},
@@ -15303,7 +15299,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8287] =
+  [8283] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_generator, 5},
@@ -15314,7 +15310,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8297] =
+  [8293] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_name, 5},
@@ -15325,7 +15321,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8307] =
+  [8303] =
     {field_accessibility_modifier, 0},
     {field_name, 4},
     {field_optionality, 5},
@@ -15334,7 +15330,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8315] =
+  [8311] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_generator, 4},
@@ -15345,7 +15341,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 7, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 7, .inherited = true},
-  [8325] =
+  [8321] =
     {field_accessibility_modifier, 0},
     {field_async, 3},
     {field_generator, 4},
@@ -15356,7 +15352,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_return_type, 7, .inherited = true},
     {field_type_parameters, 7, .inherited = true},
-  [8335] =
+  [8331] =
     {field_abstract, 3},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15365,7 +15361,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8343] =
+  [8339] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -15374,7 +15370,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8351] =
+  [8347] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -15383,7 +15379,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 7, .inherited = true},
-  [8359] =
+  [8355] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -15392,7 +15388,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 7},
-  [8367] =
+  [8363] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -15401,7 +15397,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8375] =
+  [8371] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -15410,7 +15406,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8383] =
+  [8379] =
     {field_abstract, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15419,7 +15415,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8391] =
+  [8387] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -15428,7 +15424,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 3},
     {field_value, 7, .inherited = true},
-  [8399] =
+  [8395] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -15437,7 +15433,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 3},
     {field_type, 7},
-  [8407] =
+  [8403] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -15446,7 +15442,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8415] =
+  [8411] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15455,7 +15451,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8423] =
+  [8419] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15464,7 +15460,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_value, 7, .inherited = true},
-  [8431] =
+  [8427] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15473,7 +15469,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_type, 7},
-  [8439] =
+  [8435] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15482,7 +15478,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8447] =
+  [8443] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15491,7 +15487,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8455] =
+  [8451] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15500,7 +15496,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_readonly, 5},
     {field_static, 3},
-  [8463] =
+  [8459] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15509,7 +15505,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_value, 7, .inherited = true},
-  [8471] =
+  [8467] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15518,7 +15514,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_type, 7},
-  [8479] =
+  [8475] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15527,7 +15523,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_value, 7, .inherited = true},
-  [8487] =
+  [8483] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15536,7 +15532,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_type, 7},
-  [8495] =
+  [8491] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15545,7 +15541,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8503] =
+  [8499] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -15554,7 +15550,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 4},
     {field_value, 7, .inherited = true},
-  [8511] =
+  [8507] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -15563,7 +15559,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 4},
     {field_type, 7},
-  [8519] =
+  [8515] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -15572,7 +15568,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8527] =
+  [8523] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -15581,7 +15577,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8535] =
+  [8531] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15590,7 +15586,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_value, 7, .inherited = true},
-  [8543] =
+  [8539] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15599,7 +15595,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_type, 7},
-  [8551] =
+  [8547] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15608,7 +15604,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8559] =
+  [8555] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -15617,7 +15613,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8567] =
+  [8563] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -15626,7 +15622,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8575] =
+  [8571] =
     {field_abstract, 2},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
@@ -15635,7 +15631,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8583] =
+  [8579] =
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
     {field_optionality, 5},
@@ -15644,7 +15640,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 1},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8591] =
+  [8587] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -15653,7 +15649,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 3},
     {field_value, 7, .inherited = true},
-  [8599] =
+  [8595] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -15662,7 +15658,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 3},
     {field_type, 7},
-  [8607] =
+  [8603] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -15671,7 +15667,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8615] =
+  [8611] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15680,7 +15676,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8623] =
+  [8619] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15689,7 +15685,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_value, 7, .inherited = true},
-  [8631] =
+  [8627] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15698,7 +15694,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 3},
     {field_type, 7},
-  [8639] =
+  [8635] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15707,7 +15703,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8647] =
+  [8643] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15716,7 +15712,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8655] =
+  [8651] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15725,7 +15721,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_readonly, 5},
     {field_static, 3},
-  [8663] =
+  [8659] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15734,7 +15730,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_value, 7, .inherited = true},
-  [8671] =
+  [8667] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15743,7 +15739,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_type, 7},
-  [8679] =
+  [8675] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15752,7 +15748,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_value, 7, .inherited = true},
-  [8687] =
+  [8683] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15761,7 +15757,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 3},
     {field_type, 7},
-  [8695] =
+  [8691] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15770,7 +15766,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8703] =
+  [8699] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -15779,7 +15775,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 4},
     {field_value, 7, .inherited = true},
-  [8711] =
+  [8707] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -15788,7 +15784,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 6},
     {field_readonly, 4},
     {field_type, 7},
-  [8719] =
+  [8715] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -15797,7 +15793,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8727] =
+  [8723] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -15806,7 +15802,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_optionality, 5},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8735] =
+  [8731] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15815,7 +15811,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_value, 7, .inherited = true},
-  [8743] =
+  [8739] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15824,7 +15820,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_readonly, 4},
     {field_type, 7},
-  [8751] =
+  [8747] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15833,7 +15829,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8759] =
+  [8755] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -15842,7 +15838,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8767] =
+  [8763] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -15851,7 +15847,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8775] =
+  [8771] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -15860,7 +15856,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8783] =
+  [8779] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
@@ -15869,7 +15865,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8791] =
+  [8787] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 5},
@@ -15878,7 +15874,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 2},
     {field_value, 7, .inherited = true},
-  [8799] =
+  [8795] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 5},
@@ -15887,7 +15883,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 4},
     {field_static, 2},
     {field_type, 7},
-  [8807] =
+  [8803] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -15896,7 +15892,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_value, 7, .inherited = true},
-  [8815] =
+  [8811] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -15905,7 +15901,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_static, 2},
     {field_type, 7},
-  [8823] =
+  [8819] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -15914,7 +15910,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8831] =
+  [8827] =
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
     {field_decorator, 0, .inherited = true},
@@ -15923,7 +15919,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8839] =
+  [8835] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -15932,7 +15928,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8847] =
+  [8843] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
@@ -15941,7 +15937,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8855] =
+  [8851] =
     {field_abstract, 2},
     {field_accessibility_modifier, 1},
     {field_accessor, 4},
@@ -15950,7 +15946,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_override, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8863] =
+  [8859] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 4},
@@ -15959,7 +15955,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 6},
     {field_value, 7, .inherited = true},
-  [8871] =
+  [8867] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_body, 9},
@@ -15972,7 +15968,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 8, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 8, .inherited = true},
-  [8883] =
+  [8879] =
     {field_accessibility_modifier, 1},
     {field_declare, 0},
     {field_name, 5},
@@ -15982,7 +15978,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8892] =
+  [8888] =
     {field_accessibility_modifier, 0},
     {field_declare, 1},
     {field_name, 5},
@@ -15992,7 +15988,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8901] =
+  [8897] =
     {field_accessibility_modifier, 0},
     {field_async, 4},
     {field_generator, 5},
@@ -16004,7 +16000,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_return_type, 8, .inherited = true},
     {field_static, 1},
     {field_type_parameters, 8, .inherited = true},
-  [8912] =
+  [8908] =
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -16014,7 +16010,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8921] =
+  [8917] =
     {field_abstract, 4},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -16024,7 +16020,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8930] =
+  [8926] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -16034,7 +16030,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8939] =
+  [8935] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -16044,7 +16040,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_value, 8, .inherited = true},
-  [8948] =
+  [8944] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -16054,7 +16050,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_type, 8},
-  [8957] =
+  [8953] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -16064,7 +16060,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8966] =
+  [8962] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -16074,7 +16070,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8975] =
+  [8971] =
     {field_abstract, 3},
     {field_accessibility_modifier, 2},
     {field_declare, 1},
@@ -16084,7 +16080,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8984] =
+  [8980] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -16094,7 +16090,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [8993] =
+  [8989] =
     {field_abstract, 4},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -16104,7 +16100,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9002] =
+  [8998] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -16114,7 +16110,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9011] =
+  [9007] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -16124,7 +16120,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_value, 8, .inherited = true},
-  [9020] =
+  [9016] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -16134,7 +16130,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 5},
     {field_static, 3},
     {field_type, 8},
-  [9029] =
+  [9025] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -16144,7 +16140,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9038] =
+  [9034] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -16154,7 +16150,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9047] =
+  [9043] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_declare, 2},
@@ -16164,7 +16160,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9056] =
+  [9052] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},
@@ -16174,7 +16170,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_readonly, 4},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9065] =
+  [9061] =
     {field_abstract, 3},
     {field_accessibility_modifier, 1},
     {field_accessor, 5},
@@ -16184,7 +16180,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9074] =
+  [9070] =
     {field_accessibility_modifier, 1},
     {field_decorator, 0, .inherited = true},
     {field_name, 5},
@@ -16194,7 +16190,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 2},
     {field_type, 7},
     {field_value, 8, .inherited = true},
-  [9083] =
+  [9079] =
     {field_accessibility_modifier, 2},
     {field_declare, 1},
     {field_decorator, 0, .inherited = true},
@@ -16205,7 +16201,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_static, 3},
     {field_type, 8},
     {field_value, 9, .inherited = true},
-  [9093] =
+  [9089] =
     {field_accessibility_modifier, 1},
     {field_declare, 2},
     {field_decorator, 0, .inherited = true},

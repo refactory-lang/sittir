@@ -23448,7 +23448,7 @@ fn prepare_switch_statement<N: SwitchStatementPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::LPAREN, kind::RPAREN], words = 18, built_words = 6, fields = ForStatementFields, prepare = ForStatementPrepare, view = ForStatementNodeRecord, prepare_fn = prepare_for_statement)]
+#[node(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::LPAREN, kind::SEMI, kind::RPAREN], words = 18, built_words = 6, fields = ForStatementFields, prepare = ForStatementPrepare, view = ForStatementNodeRecord, prepare_fn = prepare_for_statement)]
 pub struct ForStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23456,7 +23456,7 @@ pub struct ForStatementNode {
     #[height]
     height: u16,
     #[wire(key = "_initializer")]
-    #[slot(field = field::INITIALIZER, separator = kind::SEMI, word = 2, width = 4, forms = 3, built = 2)]
+    #[slot(field = field::INITIALIZER, word = 2, width = 4, forms = 3, built = 2)]
     pub initializer: ::sittir_core::SlotValue<ForStatementInitializerNodeSlot>,
     #[wire(key = "_condition")]
     #[slot(field = field::CONDITION, separator = kind::SEMI, word = 6, width = 4, forms = 3, built = 3)]
@@ -51939,6 +51939,7 @@ fn render_for_statement<N: ForStatementFields + ?Sized>(node: &N, w: &mut dyn ::
     let increment = View::new(node.increment(), "{}");
     let initializer = node.initializer();
     w.edge(::sittir_core::types::KindId(215), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("for")?;
     w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER);
     w.site_at(options::SITE_FOR_STATEMENT_LPAREN_BEFORE);

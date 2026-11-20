@@ -9061,7 +9061,14 @@ two, a residual that is not literal-only, or arms whose text before the slot
 differs all leave the choice to the other resolutions. An arm that is a
 literal kind alone (`empty_statement`, whose whole rendering is `;`) has no
 slot in its body; it counts as the slot with nothing beside it, since the
-slot renders that value as itself. Tried first in `emitChoice`, before the
+slot renders that value as itself; so is an arm whose one admitted kind is a
+fixed-text leaf and whose body is only the slot and its seams, which is how a
+field-wrapped `empty_statement` emits (the leaf's own seams are not written
+around the slot). Arms compare their text before the slot without the slot's
+join, which records adjacency to a literal the arm itself puts after the slot
+and so differs between an arm that has one and an arm that has none; the
+shared prefix is taken from an arm that has a gated literal, so the slot keeps
+its join to it. Tried first in `emitChoice`, before the
 slot lookup, on both the fielded choice (`field(x, choice(...))`) and the
 plain one, so the weight-based arm merge never gets to keep one arm's
 literal for every value. `SITTIR_TRACE_GATED=<kind>` prints why a choice of

@@ -99,6 +99,13 @@ describe('a classic for header declaration keeps the loop\'s `;` under either te
 		});
 	});
 
+	it.each(engines)('an expression initializer keeps the loop\'s `;` when built and when edited through $with (%s)', (_, engine) => {
+		const initializer = engine.build.assignmentExpression({ left: engine.build.lhsExpression(engine.build.identifier('i')), right: engine.build.number('0') });
+		expect(engine.render(forWith(engine, initializer as never)).toString()).toBe('for (i = 0; i < 3; i++) {}\n');
+		const loop = engine.parse('for (i = 0; i < 3; i++) {}\n').statements()[0] as unknown as { $with: { increment(v: unknown): { $render(): string } } };
+		expect(loop.$with.increment(engine.build.updateExpression.postfix({ argument: engine.build.identifier('i'), operator: ts.kinds.PlusPlus })).$render()).toBe('for (i = 0; i < 3; i++) {}');
+	});
+
 	it('a statement-level declaration still takes the terminator option', () => {
 		const statement = (e: typeof tsStrict) =>
 			e.build.program({ statements: [e.build.lexicalDeclaration({ kind: ts.kinds.LetKeyword, declarators: [declarator(e)] })] });

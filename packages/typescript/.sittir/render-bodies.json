@@ -3533,7 +3533,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "for"
+			"text": "for",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",

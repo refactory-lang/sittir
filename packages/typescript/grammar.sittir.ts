@@ -710,7 +710,7 @@ export default grammar(enrich(base), wire({
 			prec.right('assign', seq(field('left', choice($.parenthesized_expression, alias($._lhs_expression, $.lhs_expression))), '=', field('right', $.expression)))
 		),
 		for_statement: reauthored('accepts-invalid-syntax', FOR_INITIALIZER_WITNESSES, ($, original) =>
-			edit(original, { 2: field('initializer', choice(seq(choice($._for_initializer, $._expressions), ';'), $.empty_statement)) })
+			edit(original, { '2/0': seq(field('initializer', $._for_initializer), ';') })
 		),
 		_for_initializer: vocabulary(($) => {
 			const declarators = () => seq(field('declarators', $.variable_declarator), repeat(seq(',', field('declarators', $.variable_declarator))));

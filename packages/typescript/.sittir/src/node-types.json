@@ -3931,13 +3931,9 @@
         ]
       },
       "initializer": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": ";",
-            "named": false
-          },
           {
             "type": "_for_initializer",
             "named": true
