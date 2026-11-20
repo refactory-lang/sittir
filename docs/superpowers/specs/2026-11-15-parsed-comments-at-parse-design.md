@@ -10,6 +10,7 @@
 - **How a placed side is stored: "it would be whatever matches built nodes"** (2026-11-16). Where this design leaves a form open, the form a built node already uses decides it.
 - **Blank lines: "Yes, on list items only"** (2026-11-15). One fact, kept only for items of a list slot.
 - **A blank-line run is held as the layout kind that matches it** (2026-11-20, "Double_blankline is a layout kind", then "Both follow the run"). One blank line is `blankline`; two or more are `double_blankline`, the largest layout kind, so a run of three or more renders as two. This holds for every blank-line fact: a list item's, and the member a comment holds after it. It replaces the 2026-11-15 reading that a rebuilt list writes one blank line whatever the run's length.
+- **The run before a comment on its own row is kept on every side** (2026-11-20, "Keep it"). A trailing or inner side's first entry on its own row holds the blank-line run before it as its layout kind, as a leading side's entry does. So a same-value rebuild of a list whose last item is followed by `⏎⏎# five` keeps the blank line, as it already did when the comment led another item (python's `x = 1⏎⏎# five⏎` renders unchanged; a run of three or more renders as two).
 - **A list broken across lines: "Accept: options decide"** (2026-11-15).
 - **Indentation: "We need a generic way to enforce this"**, with nothing specific to one grammar (2026-11-15).
 - **"there should be no 'parse' side channel of data not captured within the materialized nodes"** (2026-11-12) stands, and this design applies it to placement.
