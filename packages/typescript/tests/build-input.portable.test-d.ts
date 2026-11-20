@@ -47,3 +47,6 @@ export const caseConstant: CaseStatements = [constantRead];
 // @ts-expect-error a lexical declaration always reads as a constant or a reassignable declaration, so no statement slot holds a bare variable declaration
 export const caseVariable: CaseStatements = [variableRead];
 export const caseReadsNoVariable: [Extract<CaseStatementRead, { readonly $path: 'declaration.variable' }>] extends [never] ? true : false = true;
+
+export const bodilessModule: V.Read<TypeScriptMap, 'declaration.module.external'> = { $path: 'declaration.module.external', name: 'm' };
+export const emptyModule: V.BuildInput<TypeScriptMap, 'declaration.module'> = { $path: 'declaration.module', name: 'M', statements: [] };

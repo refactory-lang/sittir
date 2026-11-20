@@ -203,6 +203,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const kept = (item: unknown): boolean => slot.reads === undefined || slot.reads.includes(kindOfValue(item) ?? -1);
 		const walked = walk(node, stepHops(slot.steps));
 		const slotted = Array.isArray(walked) ? walked.filter(kept) : kept(walked) ? walked : undefined;
+		if (slot.emptyContainer === true && Array.isArray(slotted) && slotted.length === 0) return { value: [], fitted: true };
 		if (!present(slotted)) return undefined;
 		const { found, many, fitted } = seatedIn(slotted, slot);
 		if (found === undefined) return undefined;
@@ -394,7 +395,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			return indices.size === 0 || !Array.isArray(items) ? items : items.filter((_, i) => !indices.has(i));
 		};
 		for (const { slot: route, value } of held.get(node) ?? []) if (!(route.name in structure)) structure[route.name] = read(taken(route, value), carried, route.seats);
-		for (const route of readArms.flatMap((arm) => arm.slots)) if ((route.list ?? route.multiple) && !(route.name in structure)) structure[route.name] = [];
+		for (const route of readArms.flatMap((arm) => arm.slots)) if ((route.list ?? route.multiple) && route.emptyContainer !== true && !(route.name in structure)) structure[route.name] = [];
 		for (const test of readArms.flatMap((arm) => arm.when)) if ('empty' in test) for (const name of test.empty) if (!(name in structure)) structure[name] = [];
 		closerContent(node, readArms, structure);
 		for (const flag of flags) {

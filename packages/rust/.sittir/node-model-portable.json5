@@ -7949,7 +7949,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
           "path": [
@@ -13547,7 +13547,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
           "path": [

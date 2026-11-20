@@ -3254,859 +3254,6 @@ const declaration_module$384_name = (value: declaration_module$384_name$Item) =>
 			return unbuilt('declaration.module.name', value);
 	}
 };
-type declaration_module$385_body$Item =
-	| ';'
-	| Text<RustMap, 'statement.empty'>
-	| BuildInput<RustMap, 'attribute'>
-	| RustMap['nodes']['attribute']
-	| BuildInput<RustMap, 'declaration.constant'>
-	| RustMap['nodes']['declaration.constant']
-	| BuildInput<RustMap, 'declaration.constant.private'>
-	| RustMap['nodes']['declaration.constant.private']
-	| BuildInput<RustMap, 'declaration.constant.public'>
-	| RustMap['nodes']['declaration.constant.public']
-	| BuildInput<RustMap, 'declaration.constant.public.internal'>
-	| RustMap['nodes']['declaration.constant.public.internal']
-	| BuildInput<RustMap, 'declaration.constant.public.parent'>
-	| RustMap['nodes']['declaration.constant.public.parent']
-	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
-	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
-	| BuildInput<RustMap, 'declaration.extension'>
-	| RustMap['nodes']['declaration.extension']
-	| BuildInput<RustMap, 'declaration.extension.conformance'>
-	| RustMap['nodes']['declaration.extension.conformance']
-	| BuildInput<RustMap, 'declaration.function'>
-	| RustMap['nodes']['declaration.function']
-	| BuildInput<RustMap, 'declaration.function.private'>
-	| RustMap['nodes']['declaration.function.private']
-	| BuildInput<RustMap, 'declaration.function.public'>
-	| RustMap['nodes']['declaration.function.public']
-	| BuildInput<RustMap, 'declaration.function.public.internal'>
-	| RustMap['nodes']['declaration.function.public.internal']
-	| BuildInput<RustMap, 'declaration.function.public.parent'>
-	| RustMap['nodes']['declaration.function.public.parent']
-	| BuildInput<RustMap, 'declaration.function.public.restricted'>
-	| RustMap['nodes']['declaration.function.public.restricted']
-	| BuildInput<RustMap, 'declaration.function.signature'>
-	| RustMap['nodes']['declaration.function.signature']
-	| BuildInput<RustMap, 'declaration.function.signature.private'>
-	| RustMap['nodes']['declaration.function.signature.private']
-	| BuildInput<RustMap, 'declaration.function.signature.public'>
-	| RustMap['nodes']['declaration.function.signature.public']
-	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
-	| RustMap['nodes']['declaration.function.signature.public.internal']
-	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
-	| RustMap['nodes']['declaration.function.signature.public.parent']
-	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
-	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
-	| BuildInput<RustMap, 'declaration.macro.brace'>
-	| RustMap['nodes']['declaration.macro.brace']
-	| BuildInput<RustMap, 'declaration.macro.bracket'>
-	| RustMap['nodes']['declaration.macro.bracket']
-	| BuildInput<RustMap, 'declaration.macro.paren'>
-	| RustMap['nodes']['declaration.macro.paren']
-	| BuildInput<RustMap, 'declaration.module'>
-	| RustMap['nodes']['declaration.module']
-	| BuildInput<RustMap, 'declaration.module.foreign'>
-	| RustMap['nodes']['declaration.module.foreign']
-	| BuildInput<RustMap, 'declaration.module.private'>
-	| RustMap['nodes']['declaration.module.private']
-	| BuildInput<RustMap, 'declaration.module.public'>
-	| RustMap['nodes']['declaration.module.public']
-	| BuildInput<RustMap, 'declaration.module.public.internal'>
-	| RustMap['nodes']['declaration.module.public.internal']
-	| BuildInput<RustMap, 'declaration.module.public.parent'>
-	| RustMap['nodes']['declaration.module.public.parent']
-	| BuildInput<RustMap, 'declaration.module.public.restricted'>
-	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
-	| BuildInput<RustMap, 'declaration.variable'>
-	| RustMap['nodes']['declaration.variable']
-	| BuildInput<RustMap, 'declaration.variable.private'>
-	| RustMap['nodes']['declaration.variable.private']
-	| BuildInput<RustMap, 'declaration.variable.public'>
-	| RustMap['nodes']['declaration.variable.public']
-	| BuildInput<RustMap, 'declaration.variable.public.internal'>
-	| RustMap['nodes']['declaration.variable.public.internal']
-	| BuildInput<RustMap, 'declaration.variable.public.parent'>
-	| RustMap['nodes']['declaration.variable.public.parent']
-	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
-	| RustMap['nodes']['declaration.variable.public.restricted']
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'statement.import'>
-	| RustMap['nodes']['statement.import']
-	| BuildInput<RustMap, 'statement.import.package'>
-	| RustMap['nodes']['statement.import.package']
-	| BuildInput<RustMap, 'statement.import.package.private'>
-	| RustMap['nodes']['statement.import.package.private']
-	| BuildInput<RustMap, 'statement.import.package.public'>
-	| RustMap['nodes']['statement.import.package.public']
-	| BuildInput<RustMap, 'statement.import.package.public.internal'>
-	| RustMap['nodes']['statement.import.package.public.internal']
-	| BuildInput<RustMap, 'statement.import.package.public.parent'>
-	| RustMap['nodes']['statement.import.package.public.parent']
-	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
-	| RustMap['nodes']['statement.import.package.public.restricted']
-	| BuildInput<RustMap, 'statement.import.private'>
-	| RustMap['nodes']['statement.import.private']
-	| BuildInput<RustMap, 'statement.import.public'>
-	| RustMap['nodes']['statement.import.public']
-	| BuildInput<RustMap, 'statement.import.public.internal'>
-	| RustMap['nodes']['statement.import.public.internal']
-	| BuildInput<RustMap, 'statement.import.public.parent'>
-	| RustMap['nodes']['statement.import.public.parent']
-	| BuildInput<RustMap, 'statement.import.public.restricted'>
-	| RustMap['nodes']['statement.import.public.restricted'];
-const declaration_module$385_body = (value: declaration_module$385_body$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return b.declarationList(178);
-			default:
-				return untexted('declaration.module.body', value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return b.declarationList(value);
-		if (seated(value, [192])) return b.declarationList(b.attributeItem(value));
-		return unseated('declaration.module.body', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return b.declarationList(value);
-		if (seated(value, [192])) return b.declarationList(b.attributeItem(value));
-		return unseated('declaration.module.body', value);
-	}
-	switch (value.$path) {
-		case 'attribute':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant':
-			return b.declarationList(declaration_constant$205(value));
-		case 'declaration.constant.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.extension':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.extension.conformance':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.macro.brace':
-			return b.declarationList(declaration_macro_brace$418(value));
-		case 'declaration.macro.bracket':
-			return b.declarationList(declaration_macro_bracket$417(value));
-		case 'declaration.macro.paren':
-			return b.declarationList(declaration_macro_paren$416(value));
-		case 'declaration.module':
-			if (value.name !== undefined && value.body === undefined) return b.declarationList(declaration_module$384(value));
-			return b.declarationList(declaration_module$385(value));
-		case 'declaration.module.foreign':
-			if (value.extern !== undefined && value.body === undefined)
-				return b.declarationList(declaration_module_foreign$395(value));
-			return b.declarationList(declaration_module_foreign$396(value));
-		case 'declaration.module.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.associated':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable':
-			if (
-				(value.$flags ?? []).includes('static') &&
-				value.name !== undefined &&
-				value.type !== undefined &&
-				value.alternative === undefined
-			)
-				return b.declarationList(declaration_variable$206(value));
-			return b.declarationList(declaration_variable$223(value));
-		case 'declaration.variable.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'expression.call.macro':
-			return b.declarationList(expression_call_macro$259(value));
-		case 'statement.import':
-			return b.declarationList(statement_import$224(value));
-		case 'statement.import.package':
-			return b.declarationList(statement_import_package$204(value));
-		case 'statement.import.package.private':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.private':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		default:
-			return unbuilt('declaration.module.body', value);
-	}
-};
-type declaration_module$385_body$item$Item =
-	| ';'
-	| Text<RustMap, 'statement.empty'>
-	| BuildInput<RustMap, 'attribute'>
-	| RustMap['nodes']['attribute']
-	| BuildInput<RustMap, 'declaration.constant'>
-	| RustMap['nodes']['declaration.constant']
-	| BuildInput<RustMap, 'declaration.constant.private'>
-	| RustMap['nodes']['declaration.constant.private']
-	| BuildInput<RustMap, 'declaration.constant.public'>
-	| RustMap['nodes']['declaration.constant.public']
-	| BuildInput<RustMap, 'declaration.constant.public.internal'>
-	| RustMap['nodes']['declaration.constant.public.internal']
-	| BuildInput<RustMap, 'declaration.constant.public.parent'>
-	| RustMap['nodes']['declaration.constant.public.parent']
-	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
-	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
-	| BuildInput<RustMap, 'declaration.extension'>
-	| RustMap['nodes']['declaration.extension']
-	| BuildInput<RustMap, 'declaration.extension.conformance'>
-	| RustMap['nodes']['declaration.extension.conformance']
-	| BuildInput<RustMap, 'declaration.function'>
-	| RustMap['nodes']['declaration.function']
-	| BuildInput<RustMap, 'declaration.function.private'>
-	| RustMap['nodes']['declaration.function.private']
-	| BuildInput<RustMap, 'declaration.function.public'>
-	| RustMap['nodes']['declaration.function.public']
-	| BuildInput<RustMap, 'declaration.function.public.internal'>
-	| RustMap['nodes']['declaration.function.public.internal']
-	| BuildInput<RustMap, 'declaration.function.public.parent'>
-	| RustMap['nodes']['declaration.function.public.parent']
-	| BuildInput<RustMap, 'declaration.function.public.restricted'>
-	| RustMap['nodes']['declaration.function.public.restricted']
-	| BuildInput<RustMap, 'declaration.function.signature'>
-	| RustMap['nodes']['declaration.function.signature']
-	| BuildInput<RustMap, 'declaration.function.signature.private'>
-	| RustMap['nodes']['declaration.function.signature.private']
-	| BuildInput<RustMap, 'declaration.function.signature.public'>
-	| RustMap['nodes']['declaration.function.signature.public']
-	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
-	| RustMap['nodes']['declaration.function.signature.public.internal']
-	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
-	| RustMap['nodes']['declaration.function.signature.public.parent']
-	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
-	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
-	| BuildInput<RustMap, 'declaration.macro.brace'>
-	| RustMap['nodes']['declaration.macro.brace']
-	| BuildInput<RustMap, 'declaration.macro.bracket'>
-	| RustMap['nodes']['declaration.macro.bracket']
-	| BuildInput<RustMap, 'declaration.macro.paren'>
-	| RustMap['nodes']['declaration.macro.paren']
-	| BuildInput<RustMap, 'declaration.module'>
-	| RustMap['nodes']['declaration.module']
-	| BuildInput<RustMap, 'declaration.module.foreign'>
-	| RustMap['nodes']['declaration.module.foreign']
-	| BuildInput<RustMap, 'declaration.module.private'>
-	| RustMap['nodes']['declaration.module.private']
-	| BuildInput<RustMap, 'declaration.module.public'>
-	| RustMap['nodes']['declaration.module.public']
-	| BuildInput<RustMap, 'declaration.module.public.internal'>
-	| RustMap['nodes']['declaration.module.public.internal']
-	| BuildInput<RustMap, 'declaration.module.public.parent'>
-	| RustMap['nodes']['declaration.module.public.parent']
-	| BuildInput<RustMap, 'declaration.module.public.restricted'>
-	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
-	| BuildInput<RustMap, 'declaration.variable'>
-	| RustMap['nodes']['declaration.variable']
-	| BuildInput<RustMap, 'declaration.variable.private'>
-	| RustMap['nodes']['declaration.variable.private']
-	| BuildInput<RustMap, 'declaration.variable.public'>
-	| RustMap['nodes']['declaration.variable.public']
-	| BuildInput<RustMap, 'declaration.variable.public.internal'>
-	| RustMap['nodes']['declaration.variable.public.internal']
-	| BuildInput<RustMap, 'declaration.variable.public.parent'>
-	| RustMap['nodes']['declaration.variable.public.parent']
-	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
-	| RustMap['nodes']['declaration.variable.public.restricted']
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'statement.import'>
-	| RustMap['nodes']['statement.import']
-	| BuildInput<RustMap, 'statement.import.package'>
-	| RustMap['nodes']['statement.import.package']
-	| BuildInput<RustMap, 'statement.import.package.private'>
-	| RustMap['nodes']['statement.import.package.private']
-	| BuildInput<RustMap, 'statement.import.package.public'>
-	| RustMap['nodes']['statement.import.package.public']
-	| BuildInput<RustMap, 'statement.import.package.public.internal'>
-	| RustMap['nodes']['statement.import.package.public.internal']
-	| BuildInput<RustMap, 'statement.import.package.public.parent'>
-	| RustMap['nodes']['statement.import.package.public.parent']
-	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
-	| RustMap['nodes']['statement.import.package.public.restricted']
-	| BuildInput<RustMap, 'statement.import.private'>
-	| RustMap['nodes']['statement.import.private']
-	| BuildInput<RustMap, 'statement.import.public'>
-	| RustMap['nodes']['statement.import.public']
-	| BuildInput<RustMap, 'statement.import.public.internal'>
-	| RustMap['nodes']['statement.import.public.internal']
-	| BuildInput<RustMap, 'statement.import.public.parent'>
-	| RustMap['nodes']['statement.import.public.parent']
-	| BuildInput<RustMap, 'statement.import.public.restricted'>
-	| RustMap['nodes']['statement.import.public.restricted'];
-const declaration_module$385_body$item = (value: declaration_module$385_body$item$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return 178;
-			default:
-				return untexted('declaration.module.body', value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return value;
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('declaration.module.body', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return value;
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('declaration.module.body', value);
-	}
-	switch (value.$path) {
-		case 'attribute':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant':
-			return declaration_constant$205(value);
-		case 'declaration.constant.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.constant.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.extension':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.extension.conformance':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.function.signature.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.macro.brace':
-			return declaration_macro_brace$418(value);
-		case 'declaration.macro.bracket':
-			return declaration_macro_bracket$417(value);
-		case 'declaration.macro.paren':
-			return declaration_macro_paren$416(value);
-		case 'declaration.module':
-			if (value.name !== undefined && value.body === undefined) return declaration_module$384(value);
-			return declaration_module$385(value);
-		case 'declaration.module.foreign':
-			if (value.extern !== undefined && value.body === undefined) return declaration_module_foreign$395(value);
-			return declaration_module_foreign$396(value);
-		case 'declaration.module.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.module.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.tuple.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.struct.unit.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.associated':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.type_alias.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.union.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable':
-			if (
-				(value.$flags ?? []).includes('static') &&
-				value.name !== undefined &&
-				value.type !== undefined &&
-				value.alternative === undefined
-			)
-				return declaration_variable$206(value);
-			return declaration_variable$223(value);
-		case 'declaration.variable.private':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'declaration.variable.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'expression.call.macro':
-			return expression_call_macro$259(value);
-		case 'statement.import':
-			return statement_import$224(value);
-		case 'statement.import.package':
-			return statement_import_package$204(value);
-		case 'statement.import.package.private':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.package.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.private':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public.internal':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public.parent':
-			return unbuilt('declaration.module.body', value);
-		case 'statement.import.public.restricted':
-			return unbuilt('declaration.module.body', value);
-		default:
-			return unbuilt('declaration.module.body', value);
-	}
-};
 type declaration_module$385_name$Item =
 	| Text<RustMap, 'identifier'>
 	| BuildInput<RustMap, 'identifier'>
@@ -4131,6 +3278,432 @@ const declaration_module$385_name = (value: declaration_module$385_name$Item) =>
 			return unbuilt('declaration.module.name', value);
 	}
 };
+type declaration_module$385_statements$item$Item =
+	| ';'
+	| Text<RustMap, 'statement.empty'>
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.enum'>
+	| RustMap['nodes']['declaration.enum']
+	| BuildInput<RustMap, 'declaration.enum.private'>
+	| RustMap['nodes']['declaration.enum.private']
+	| BuildInput<RustMap, 'declaration.enum.public'>
+	| RustMap['nodes']['declaration.enum.public']
+	| BuildInput<RustMap, 'declaration.enum.public.internal'>
+	| RustMap['nodes']['declaration.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.enum.public.parent'>
+	| RustMap['nodes']['declaration.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
+	| RustMap['nodes']['declaration.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.interface.trait'>
+	| RustMap['nodes']['declaration.interface.trait']
+	| BuildInput<RustMap, 'declaration.interface.trait.private'>
+	| RustMap['nodes']['declaration.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.interface.trait.public'>
+	| RustMap['nodes']['declaration.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct'>
+	| RustMap['nodes']['declaration.struct']
+	| BuildInput<RustMap, 'declaration.struct.private'>
+	| RustMap['nodes']['declaration.struct.private']
+	| BuildInput<RustMap, 'declaration.struct.public'>
+	| RustMap['nodes']['declaration.struct.public']
+	| BuildInput<RustMap, 'declaration.struct.public.internal'>
+	| RustMap['nodes']['declaration.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.public.parent'>
+	| RustMap['nodes']['declaration.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
+	| RustMap['nodes']['declaration.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.tuple'>
+	| RustMap['nodes']['declaration.struct.tuple']
+	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
+	| RustMap['nodes']['declaration.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
+	| RustMap['nodes']['declaration.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.unit'>
+	| RustMap['nodes']['declaration.struct.unit']
+	| BuildInput<RustMap, 'declaration.struct.unit.private'>
+	| RustMap['nodes']['declaration.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.struct.unit.public'>
+	| RustMap['nodes']['declaration.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type_alias'>
+	| RustMap['nodes']['declaration.type_alias']
+	| BuildInput<RustMap, 'declaration.type_alias.associated'>
+	| RustMap['nodes']['declaration.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type_alias.private'>
+	| RustMap['nodes']['declaration.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type_alias.public'>
+	| RustMap['nodes']['declaration.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.union'>
+	| RustMap['nodes']['declaration.union']
+	| BuildInput<RustMap, 'declaration.union.private'>
+	| RustMap['nodes']['declaration.union.private']
+	| BuildInput<RustMap, 'declaration.union.public'>
+	| RustMap['nodes']['declaration.union.public']
+	| BuildInput<RustMap, 'declaration.union.public.internal'>
+	| RustMap['nodes']['declaration.union.public.internal']
+	| BuildInput<RustMap, 'declaration.union.public.parent'>
+	| RustMap['nodes']['declaration.union.public.parent']
+	| BuildInput<RustMap, 'declaration.union.public.restricted'>
+	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted'];
+const declaration_module$385_statements$item = (value: declaration_module$385_statements$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			default:
+				return untexted('declaration.module.statements', value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
+					395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('declaration.module.statements', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+					385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('declaration.module.statements', value);
+	}
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.enum':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.enum.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.enum.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.enum.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.enum.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.enum.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.extension':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.interface.trait':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.interface.trait.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.interface.trait.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.interface.trait.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.interface.trait.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.interface.trait.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.tuple':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.tuple.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.tuple.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.tuple.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.tuple.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.tuple.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.unit':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.unit.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.unit.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.unit.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.unit.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.struct.unit.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type_alias':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type_alias.associated':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type_alias.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type_alias.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type_alias.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type_alias.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type_alias.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.union':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.union.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.union.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.union.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.union.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.union.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		default:
+			return unbuilt('declaration.module.statements', value);
+	}
+};
 type declaration_module_foreign$395_extern$Item =
 	| PathInput<RustMap, 'modifier.extern'>
 	| RustMap['nodes']['modifier.extern'];
@@ -4145,859 +3718,6 @@ const declaration_module_foreign$395_extern = (value: declaration_module_foreign
 	}
 	return modifier_extern$234(value);
 };
-type declaration_module_foreign$396_body$Item =
-	| ';'
-	| Text<RustMap, 'statement.empty'>
-	| BuildInput<RustMap, 'attribute'>
-	| RustMap['nodes']['attribute']
-	| BuildInput<RustMap, 'declaration.constant'>
-	| RustMap['nodes']['declaration.constant']
-	| BuildInput<RustMap, 'declaration.constant.private'>
-	| RustMap['nodes']['declaration.constant.private']
-	| BuildInput<RustMap, 'declaration.constant.public'>
-	| RustMap['nodes']['declaration.constant.public']
-	| BuildInput<RustMap, 'declaration.constant.public.internal'>
-	| RustMap['nodes']['declaration.constant.public.internal']
-	| BuildInput<RustMap, 'declaration.constant.public.parent'>
-	| RustMap['nodes']['declaration.constant.public.parent']
-	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
-	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
-	| BuildInput<RustMap, 'declaration.extension'>
-	| RustMap['nodes']['declaration.extension']
-	| BuildInput<RustMap, 'declaration.extension.conformance'>
-	| RustMap['nodes']['declaration.extension.conformance']
-	| BuildInput<RustMap, 'declaration.function'>
-	| RustMap['nodes']['declaration.function']
-	| BuildInput<RustMap, 'declaration.function.private'>
-	| RustMap['nodes']['declaration.function.private']
-	| BuildInput<RustMap, 'declaration.function.public'>
-	| RustMap['nodes']['declaration.function.public']
-	| BuildInput<RustMap, 'declaration.function.public.internal'>
-	| RustMap['nodes']['declaration.function.public.internal']
-	| BuildInput<RustMap, 'declaration.function.public.parent'>
-	| RustMap['nodes']['declaration.function.public.parent']
-	| BuildInput<RustMap, 'declaration.function.public.restricted'>
-	| RustMap['nodes']['declaration.function.public.restricted']
-	| BuildInput<RustMap, 'declaration.function.signature'>
-	| RustMap['nodes']['declaration.function.signature']
-	| BuildInput<RustMap, 'declaration.function.signature.private'>
-	| RustMap['nodes']['declaration.function.signature.private']
-	| BuildInput<RustMap, 'declaration.function.signature.public'>
-	| RustMap['nodes']['declaration.function.signature.public']
-	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
-	| RustMap['nodes']['declaration.function.signature.public.internal']
-	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
-	| RustMap['nodes']['declaration.function.signature.public.parent']
-	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
-	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
-	| BuildInput<RustMap, 'declaration.macro.brace'>
-	| RustMap['nodes']['declaration.macro.brace']
-	| BuildInput<RustMap, 'declaration.macro.bracket'>
-	| RustMap['nodes']['declaration.macro.bracket']
-	| BuildInput<RustMap, 'declaration.macro.paren'>
-	| RustMap['nodes']['declaration.macro.paren']
-	| BuildInput<RustMap, 'declaration.module'>
-	| RustMap['nodes']['declaration.module']
-	| BuildInput<RustMap, 'declaration.module.foreign'>
-	| RustMap['nodes']['declaration.module.foreign']
-	| BuildInput<RustMap, 'declaration.module.private'>
-	| RustMap['nodes']['declaration.module.private']
-	| BuildInput<RustMap, 'declaration.module.public'>
-	| RustMap['nodes']['declaration.module.public']
-	| BuildInput<RustMap, 'declaration.module.public.internal'>
-	| RustMap['nodes']['declaration.module.public.internal']
-	| BuildInput<RustMap, 'declaration.module.public.parent'>
-	| RustMap['nodes']['declaration.module.public.parent']
-	| BuildInput<RustMap, 'declaration.module.public.restricted'>
-	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
-	| BuildInput<RustMap, 'declaration.variable'>
-	| RustMap['nodes']['declaration.variable']
-	| BuildInput<RustMap, 'declaration.variable.private'>
-	| RustMap['nodes']['declaration.variable.private']
-	| BuildInput<RustMap, 'declaration.variable.public'>
-	| RustMap['nodes']['declaration.variable.public']
-	| BuildInput<RustMap, 'declaration.variable.public.internal'>
-	| RustMap['nodes']['declaration.variable.public.internal']
-	| BuildInput<RustMap, 'declaration.variable.public.parent'>
-	| RustMap['nodes']['declaration.variable.public.parent']
-	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
-	| RustMap['nodes']['declaration.variable.public.restricted']
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'statement.import'>
-	| RustMap['nodes']['statement.import']
-	| BuildInput<RustMap, 'statement.import.package'>
-	| RustMap['nodes']['statement.import.package']
-	| BuildInput<RustMap, 'statement.import.package.private'>
-	| RustMap['nodes']['statement.import.package.private']
-	| BuildInput<RustMap, 'statement.import.package.public'>
-	| RustMap['nodes']['statement.import.package.public']
-	| BuildInput<RustMap, 'statement.import.package.public.internal'>
-	| RustMap['nodes']['statement.import.package.public.internal']
-	| BuildInput<RustMap, 'statement.import.package.public.parent'>
-	| RustMap['nodes']['statement.import.package.public.parent']
-	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
-	| RustMap['nodes']['statement.import.package.public.restricted']
-	| BuildInput<RustMap, 'statement.import.private'>
-	| RustMap['nodes']['statement.import.private']
-	| BuildInput<RustMap, 'statement.import.public'>
-	| RustMap['nodes']['statement.import.public']
-	| BuildInput<RustMap, 'statement.import.public.internal'>
-	| RustMap['nodes']['statement.import.public.internal']
-	| BuildInput<RustMap, 'statement.import.public.parent'>
-	| RustMap['nodes']['statement.import.public.parent']
-	| BuildInput<RustMap, 'statement.import.public.restricted'>
-	| RustMap['nodes']['statement.import.public.restricted'];
-const declaration_module_foreign$396_body = (value: declaration_module_foreign$396_body$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return b.declarationList(178);
-			default:
-				return untexted('declaration.module.foreign.body', value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return b.declarationList(value);
-		if (seated(value, [192])) return b.declarationList(b.attributeItem(value));
-		return unseated('declaration.module.foreign.body', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return b.declarationList(value);
-		if (seated(value, [192])) return b.declarationList(b.attributeItem(value));
-		return unseated('declaration.module.foreign.body', value);
-	}
-	switch (value.$path) {
-		case 'attribute':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant':
-			return b.declarationList(declaration_constant$205(value));
-		case 'declaration.constant.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.extension':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.extension.conformance':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.macro.brace':
-			return b.declarationList(declaration_macro_brace$418(value));
-		case 'declaration.macro.bracket':
-			return b.declarationList(declaration_macro_bracket$417(value));
-		case 'declaration.macro.paren':
-			return b.declarationList(declaration_macro_paren$416(value));
-		case 'declaration.module':
-			if (value.name !== undefined && value.body === undefined) return b.declarationList(declaration_module$384(value));
-			return b.declarationList(declaration_module$385(value));
-		case 'declaration.module.foreign':
-			if (value.extern !== undefined && value.body === undefined)
-				return b.declarationList(declaration_module_foreign$395(value));
-			return b.declarationList(declaration_module_foreign$396(value));
-		case 'declaration.module.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.associated':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable':
-			if (
-				(value.$flags ?? []).includes('static') &&
-				value.name !== undefined &&
-				value.type !== undefined &&
-				value.alternative === undefined
-			)
-				return b.declarationList(declaration_variable$206(value));
-			return b.declarationList(declaration_variable$223(value));
-		case 'declaration.variable.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'expression.call.macro':
-			return b.declarationList(expression_call_macro$259(value));
-		case 'statement.import':
-			return b.declarationList(statement_import$224(value));
-		case 'statement.import.package':
-			return b.declarationList(statement_import_package$204(value));
-		case 'statement.import.package.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		default:
-			return unbuilt('declaration.module.foreign.body', value);
-	}
-};
-type declaration_module_foreign$396_body$item$Item =
-	| ';'
-	| Text<RustMap, 'statement.empty'>
-	| BuildInput<RustMap, 'attribute'>
-	| RustMap['nodes']['attribute']
-	| BuildInput<RustMap, 'declaration.constant'>
-	| RustMap['nodes']['declaration.constant']
-	| BuildInput<RustMap, 'declaration.constant.private'>
-	| RustMap['nodes']['declaration.constant.private']
-	| BuildInput<RustMap, 'declaration.constant.public'>
-	| RustMap['nodes']['declaration.constant.public']
-	| BuildInput<RustMap, 'declaration.constant.public.internal'>
-	| RustMap['nodes']['declaration.constant.public.internal']
-	| BuildInput<RustMap, 'declaration.constant.public.parent'>
-	| RustMap['nodes']['declaration.constant.public.parent']
-	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
-	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
-	| BuildInput<RustMap, 'declaration.extension'>
-	| RustMap['nodes']['declaration.extension']
-	| BuildInput<RustMap, 'declaration.extension.conformance'>
-	| RustMap['nodes']['declaration.extension.conformance']
-	| BuildInput<RustMap, 'declaration.function'>
-	| RustMap['nodes']['declaration.function']
-	| BuildInput<RustMap, 'declaration.function.private'>
-	| RustMap['nodes']['declaration.function.private']
-	| BuildInput<RustMap, 'declaration.function.public'>
-	| RustMap['nodes']['declaration.function.public']
-	| BuildInput<RustMap, 'declaration.function.public.internal'>
-	| RustMap['nodes']['declaration.function.public.internal']
-	| BuildInput<RustMap, 'declaration.function.public.parent'>
-	| RustMap['nodes']['declaration.function.public.parent']
-	| BuildInput<RustMap, 'declaration.function.public.restricted'>
-	| RustMap['nodes']['declaration.function.public.restricted']
-	| BuildInput<RustMap, 'declaration.function.signature'>
-	| RustMap['nodes']['declaration.function.signature']
-	| BuildInput<RustMap, 'declaration.function.signature.private'>
-	| RustMap['nodes']['declaration.function.signature.private']
-	| BuildInput<RustMap, 'declaration.function.signature.public'>
-	| RustMap['nodes']['declaration.function.signature.public']
-	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
-	| RustMap['nodes']['declaration.function.signature.public.internal']
-	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
-	| RustMap['nodes']['declaration.function.signature.public.parent']
-	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
-	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
-	| BuildInput<RustMap, 'declaration.macro.brace'>
-	| RustMap['nodes']['declaration.macro.brace']
-	| BuildInput<RustMap, 'declaration.macro.bracket'>
-	| RustMap['nodes']['declaration.macro.bracket']
-	| BuildInput<RustMap, 'declaration.macro.paren'>
-	| RustMap['nodes']['declaration.macro.paren']
-	| BuildInput<RustMap, 'declaration.module'>
-	| RustMap['nodes']['declaration.module']
-	| BuildInput<RustMap, 'declaration.module.foreign'>
-	| RustMap['nodes']['declaration.module.foreign']
-	| BuildInput<RustMap, 'declaration.module.private'>
-	| RustMap['nodes']['declaration.module.private']
-	| BuildInput<RustMap, 'declaration.module.public'>
-	| RustMap['nodes']['declaration.module.public']
-	| BuildInput<RustMap, 'declaration.module.public.internal'>
-	| RustMap['nodes']['declaration.module.public.internal']
-	| BuildInput<RustMap, 'declaration.module.public.parent'>
-	| RustMap['nodes']['declaration.module.public.parent']
-	| BuildInput<RustMap, 'declaration.module.public.restricted'>
-	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
-	| BuildInput<RustMap, 'declaration.variable'>
-	| RustMap['nodes']['declaration.variable']
-	| BuildInput<RustMap, 'declaration.variable.private'>
-	| RustMap['nodes']['declaration.variable.private']
-	| BuildInput<RustMap, 'declaration.variable.public'>
-	| RustMap['nodes']['declaration.variable.public']
-	| BuildInput<RustMap, 'declaration.variable.public.internal'>
-	| RustMap['nodes']['declaration.variable.public.internal']
-	| BuildInput<RustMap, 'declaration.variable.public.parent'>
-	| RustMap['nodes']['declaration.variable.public.parent']
-	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
-	| RustMap['nodes']['declaration.variable.public.restricted']
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'statement.import'>
-	| RustMap['nodes']['statement.import']
-	| BuildInput<RustMap, 'statement.import.package'>
-	| RustMap['nodes']['statement.import.package']
-	| BuildInput<RustMap, 'statement.import.package.private'>
-	| RustMap['nodes']['statement.import.package.private']
-	| BuildInput<RustMap, 'statement.import.package.public'>
-	| RustMap['nodes']['statement.import.package.public']
-	| BuildInput<RustMap, 'statement.import.package.public.internal'>
-	| RustMap['nodes']['statement.import.package.public.internal']
-	| BuildInput<RustMap, 'statement.import.package.public.parent'>
-	| RustMap['nodes']['statement.import.package.public.parent']
-	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
-	| RustMap['nodes']['statement.import.package.public.restricted']
-	| BuildInput<RustMap, 'statement.import.private'>
-	| RustMap['nodes']['statement.import.private']
-	| BuildInput<RustMap, 'statement.import.public'>
-	| RustMap['nodes']['statement.import.public']
-	| BuildInput<RustMap, 'statement.import.public.internal'>
-	| RustMap['nodes']['statement.import.public.internal']
-	| BuildInput<RustMap, 'statement.import.public.parent'>
-	| RustMap['nodes']['statement.import.public.parent']
-	| BuildInput<RustMap, 'statement.import.public.restricted'>
-	| RustMap['nodes']['statement.import.public.restricted'];
-const declaration_module_foreign$396_body$item = (value: declaration_module_foreign$396_body$item$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return 178;
-			default:
-				return untexted('declaration.module.foreign.body', value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return value;
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('declaration.module.foreign.body', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
-				]
-			)
-		)
-			return value;
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('declaration.module.foreign.body', value);
-	}
-	switch (value.$path) {
-		case 'attribute':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant':
-			return declaration_constant$205(value);
-		case 'declaration.constant.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.constant.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.extension':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.extension.conformance':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.function.signature.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.macro.brace':
-			return declaration_macro_brace$418(value);
-		case 'declaration.macro.bracket':
-			return declaration_macro_bracket$417(value);
-		case 'declaration.macro.paren':
-			return declaration_macro_paren$416(value);
-		case 'declaration.module':
-			if (value.name !== undefined && value.body === undefined) return declaration_module$384(value);
-			return declaration_module$385(value);
-		case 'declaration.module.foreign':
-			if (value.extern !== undefined && value.body === undefined) return declaration_module_foreign$395(value);
-			return declaration_module_foreign$396(value);
-		case 'declaration.module.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.module.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.tuple.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.struct.unit.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.associated':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.type_alias.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.union.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable':
-			if (
-				(value.$flags ?? []).includes('static') &&
-				value.name !== undefined &&
-				value.type !== undefined &&
-				value.alternative === undefined
-			)
-				return declaration_variable$206(value);
-			return declaration_variable$223(value);
-		case 'declaration.variable.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'declaration.variable.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'expression.call.macro':
-			return expression_call_macro$259(value);
-		case 'statement.import':
-			return statement_import$224(value);
-		case 'statement.import.package':
-			return statement_import_package$204(value);
-		case 'statement.import.package.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.package.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.private':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public.internal':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public.parent':
-			return unbuilt('declaration.module.foreign.body', value);
-		case 'statement.import.public.restricted':
-			return unbuilt('declaration.module.foreign.body', value);
-		default:
-			return unbuilt('declaration.module.foreign.body', value);
-	}
-};
 type declaration_module_foreign$396_extern$Item =
 	| PathInput<RustMap, 'modifier.extern'>
 	| RustMap['nodes']['modifier.extern'];
@@ -5011,6 +3731,432 @@ const declaration_module_foreign$396_extern = (value: declaration_module_foreign
 		return unseated('declaration.module.foreign.extern', value);
 	}
 	return modifier_extern$234(value);
+};
+type declaration_module_foreign$396_statements$item$Item =
+	| ';'
+	| Text<RustMap, 'statement.empty'>
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.enum'>
+	| RustMap['nodes']['declaration.enum']
+	| BuildInput<RustMap, 'declaration.enum.private'>
+	| RustMap['nodes']['declaration.enum.private']
+	| BuildInput<RustMap, 'declaration.enum.public'>
+	| RustMap['nodes']['declaration.enum.public']
+	| BuildInput<RustMap, 'declaration.enum.public.internal'>
+	| RustMap['nodes']['declaration.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.enum.public.parent'>
+	| RustMap['nodes']['declaration.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
+	| RustMap['nodes']['declaration.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.interface.trait'>
+	| RustMap['nodes']['declaration.interface.trait']
+	| BuildInput<RustMap, 'declaration.interface.trait.private'>
+	| RustMap['nodes']['declaration.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.interface.trait.public'>
+	| RustMap['nodes']['declaration.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct'>
+	| RustMap['nodes']['declaration.struct']
+	| BuildInput<RustMap, 'declaration.struct.private'>
+	| RustMap['nodes']['declaration.struct.private']
+	| BuildInput<RustMap, 'declaration.struct.public'>
+	| RustMap['nodes']['declaration.struct.public']
+	| BuildInput<RustMap, 'declaration.struct.public.internal'>
+	| RustMap['nodes']['declaration.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.public.parent'>
+	| RustMap['nodes']['declaration.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
+	| RustMap['nodes']['declaration.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.tuple'>
+	| RustMap['nodes']['declaration.struct.tuple']
+	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
+	| RustMap['nodes']['declaration.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
+	| RustMap['nodes']['declaration.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.unit'>
+	| RustMap['nodes']['declaration.struct.unit']
+	| BuildInput<RustMap, 'declaration.struct.unit.private'>
+	| RustMap['nodes']['declaration.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.struct.unit.public'>
+	| RustMap['nodes']['declaration.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type_alias'>
+	| RustMap['nodes']['declaration.type_alias']
+	| BuildInput<RustMap, 'declaration.type_alias.associated'>
+	| RustMap['nodes']['declaration.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type_alias.private'>
+	| RustMap['nodes']['declaration.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type_alias.public'>
+	| RustMap['nodes']['declaration.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.union'>
+	| RustMap['nodes']['declaration.union']
+	| BuildInput<RustMap, 'declaration.union.private'>
+	| RustMap['nodes']['declaration.union.private']
+	| BuildInput<RustMap, 'declaration.union.public'>
+	| RustMap['nodes']['declaration.union.public']
+	| BuildInput<RustMap, 'declaration.union.public.internal'>
+	| RustMap['nodes']['declaration.union.public.internal']
+	| BuildInput<RustMap, 'declaration.union.public.parent'>
+	| RustMap['nodes']['declaration.union.public.parent']
+	| BuildInput<RustMap, 'declaration.union.public.restricted'>
+	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted'];
+const declaration_module_foreign$396_statements$item = (value: declaration_module_foreign$396_statements$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			default:
+				return untexted('declaration.module.foreign.statements', value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
+					395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('declaration.module.foreign.statements', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+					385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('declaration.module.foreign.statements', value);
+	}
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.enum':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.enum.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.enum.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.enum.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.enum.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.enum.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.extension':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.interface.trait':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.interface.trait.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.interface.trait.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.interface.trait.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.interface.trait.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.interface.trait.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.tuple':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.tuple.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.tuple.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.tuple.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.tuple.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.tuple.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.unit':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.unit.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.unit.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.unit.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.unit.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.struct.unit.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type_alias':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type_alias.associated':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type_alias.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type_alias.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type_alias.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type_alias.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type_alias.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.union':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.union.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.union.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.union.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.union.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.union.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		default:
+			return unbuilt('declaration.module.foreign.statements', value);
+	}
 };
 type declaration_parameter_receiver$231_lifetime$Item =
 	| PathInput<RustMap, 'identifier.lifetime'>
@@ -61637,10 +60783,10 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 		case 'declaration.macro.paren':
 			return declaration_macro_paren$416(value);
 		case 'declaration.module':
-			if (value.name !== undefined && value.body === undefined) return declaration_module$384(value);
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
 			return declaration_module$385(value);
 		case 'declaration.module.foreign':
-			if (value.extern !== undefined && value.body === undefined) return declaration_module_foreign$395(value);
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
 			return declaration_module_foreign$396(value);
 		case 'declaration.module.private':
 			return unbuilt('statement.block.statements', value);
@@ -67481,22 +66627,19 @@ const declaration_module$384 = (
 const declaration_module$385 = (
 	input: PathInput<RustMap, 'declaration.module'>
 ): ReturnType<typeof b.modItemInline> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'name']);
+	const unroutedSlot = unroutedIn(input, ['name', 'statements']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.module', unroutedSlot);
-	const body$first = (listed(input.body) ? input.body : [])[0];
-	const body$rest = (listed(input.body) ? input.body : []).slice(1);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
 	return b.modItemInline({
 		name: input.name === undefined ? missing('declaration.module.name') : declaration_module$385_name(input.name),
-		body: listed(input.body)
-			? body$first === undefined
+		body:
+			statements$first === undefined
 				? b.declarationList()
 				: b.declarationList(
-						declaration_module$385_body$item(body$first),
-						...body$rest.map(declaration_module$385_body$item)
+						declaration_module$385_statements$item(statements$first),
+						...statements$rest.map(declaration_module$385_statements$item)
 					)
-			: input.body === undefined
-				? missing('declaration.module.body')
-				: declaration_module$385_body(input.body)
 	});
 };
 const declaration_module_foreign$395 = (
@@ -67512,22 +66655,19 @@ const declaration_module_foreign$395 = (
 const declaration_module_foreign$396 = (
 	input: PathInput<RustMap, 'declaration.module.foreign'>
 ): ReturnType<typeof b.foreignModItemBody> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'extern']);
+	const unroutedSlot = unroutedIn(input, ['extern', 'statements']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.module.foreign', unroutedSlot);
-	const body$first = (listed(input.body) ? input.body : [])[0];
-	const body$rest = (listed(input.body) ? input.body : []).slice(1);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
 	return b.foreignModItemBody({
 		externModifier: declaration_module_foreign$396_extern(input.extern),
-		body: listed(input.body)
-			? body$first === undefined
+		body:
+			statements$first === undefined
 				? b.declarationList()
 				: b.declarationList(
-						declaration_module_foreign$396_body$item(body$first),
-						...body$rest.map(declaration_module_foreign$396_body$item)
-					)
-			: input.body === undefined
-				? missing('declaration.module.foreign.body')
-				: declaration_module_foreign$396_body(input.body),
+						declaration_module_foreign$396_statements$item(statements$first),
+						...statements$rest.map(declaration_module_foreign$396_statements$item)
+					),
 		unsafe: (input.$flags ?? []).includes('unsafe')
 	});
 };
@@ -69245,11 +68385,11 @@ const declaration_macro_paren = (input: PathInput<RustMap, 'declaration.macro.pa
 	return declaration_macro_paren$416(input);
 };
 const declaration_module = (input: PathInput<RustMap, 'declaration.module'>) => {
-	if (input.name !== undefined && input.body === undefined) return declaration_module$384(input);
+	if (input.name !== undefined && input.statements === undefined) return declaration_module$384(input);
 	return declaration_module$385(input);
 };
 const declaration_module_foreign = (input: PathInput<RustMap, 'declaration.module.foreign'>) => {
-	if (input.extern !== undefined && input.body === undefined) return declaration_module_foreign$395(input);
+	if (input.extern !== undefined && input.statements === undefined) return declaration_module_foreign$395(input);
 	return declaration_module_foreign$396(input);
 };
 const declaration_parameter_receiver = (input: PathInput<RustMap, 'declaration.parameter.receiver'>) => {

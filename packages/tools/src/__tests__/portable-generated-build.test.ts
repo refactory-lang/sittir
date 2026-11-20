@@ -145,16 +145,42 @@ describe.each(GRAMMARS)('the portable builds of %s, given an empty list where ev
 });
 
 describe('the generated portable build, given a list for a slot the vocabulary takes as one value or a list', () => {
-	it.each([
-		['python', { $path: 'declaration.class', name: 'C', body: [{ $path: 'statement.block', statements: ['pass'] }] }],
-		['typescript', { $path: 'declaration.module', name: 'M', body: [{ $path: 'statement.block', statements: [] }] }]
-	] as const)('refuses it in %s, whose grammar holds one value there, as the interpreter does', async (grammar, structure) => {
+	it.each([['python', { $path: 'declaration.class', name: 'C', body: [{ $path: 'statement.block', statements: ['pass'] }] }]] as const)('refuses it in %s, whose grammar holds one value there, as the interpreter does', async (grammar, structure) => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
 		const portableBuild = (await generatedBuild(grammar)) as object;
 		const built = functionAt(scopeBuilders(engine, portableBuild), structure.$path) as PathFunction;
 		expect(() => runtime.build(structure)).toThrow(`${structure.$path}'s body holds one value, not a list`);
 		expect(() => built(structure)).toThrow(`${structure.$path}.body holds one value, not a list`);
+	});
+});
+
+describe('a list read through a container that may be left out, where the list may be empty', () => {
+	it.each([
+		['namespace M {}\n', 'declaration.module', 'statements', [], 'namespace M {}'],
+		['declare module "m";\n', 'declaration.module.external', 'statements', undefined, 'module "m"'],
+		['declare module "m" {}\n', 'declaration.module.external', 'statements', [], 'module "m" {}'],
+		['new Foo();\n', 'expression.call.construct', 'arguments', [], 'new Foo()']
+	] as const)('typescript: %j reads its %s %s as %j, and both builds render it back to a text that rereads the same', async (source, path, slot, read, rendered) => {
+		using engine = await createEngine(await languageByName('typescript'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('typescript')) as object);
+		const readAt = (text: string) => [...structuresIn(runtime.read(engine.parse(text)))].find((candidate) => candidate.$path === path)!;
+		const structure = readAt(source);
+		expect(slot in structure).toBe(read !== undefined);
+		expect((structure as Readonly<Record<string, unknown>>)[slot]).toEqual(read);
+		expect(engine.render(runtime.build(structure) as never).toString()).toBe(rendered);
+		expect(engine.render((functionAt(generated, path) as PathFunction)(structure) as never).toString()).toBe(rendered);
+		expect(readAt(`${rendered}\n`)).toEqual(structure);
+	});
+
+	it('rust: a list the grammar requires non-empty inside a container that may be left out still reads [] when the container is absent', async () => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const { build: table } = (await import('../../../rust/src/portable/table.ts')) as { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly slots: readonly { readonly name: string; readonly emptyContainer?: true }[] }[] }>> } };
+		expect(table.paths['declaration.type_parameter']!.arms.flatMap((arm) => arm.slots.filter((route) => route.name === 'bounds' && route.emptyContainer === true))).toEqual([]);
+		const parameter = [...structuresIn(runtime.read(engine.parse('fn f<T>() {}\n')))].find((candidate) => candidate.$path === 'declaration.type_parameter')!;
+		expect(parameter).toEqual({ $path: 'declaration.type_parameter', name: 'T', bounds: [] });
 	});
 });
 

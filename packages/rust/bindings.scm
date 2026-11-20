@@ -129,6 +129,7 @@
 (associated_type) @declaration.type_alias.associated
 (associated_type bounds: (trait_bounds bounds: (_) @bounds))
 (mod_item) @declaration.mod
+(mod_item_inline body: (declaration_list declarations: (_) @statements))
 (mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @declaration.mod.private
 (mod_item_external (visibility_modifier (visibility_modifier_pub))) @declaration.mod.public
 (mod_item_external (visibility_modifier (crate_visibility_modifier))) @declaration.mod.public.crate
@@ -142,6 +143,7 @@
 (mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @declaration.mod.public.parent
 (mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @declaration.mod.public.restricted
 (foreign_mod_item) @declaration.mod.foreign
+(foreign_mod_item_body body: (declaration_list declarations: (_) @statements))
 (foreign_mod_item_body "unsafe" @unsafe)
 (foreign_mod_item_semi "unsafe" @unsafe)
 (extern_crate_declaration) @statement.import.crate

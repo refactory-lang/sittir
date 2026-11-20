@@ -142,7 +142,9 @@
 (ambient_declaration (_) @body)
 (ambient_declaration_module) @declaration.module_property
 (internal_module) @declaration.module
+(internal_module body: (statement_block statements: (_) @statements))
 (module) @declaration.module.external
+(module body: (statement_block statements: (_) @statements))
 (class_static_block) @statement.block.static
 (class_static_block body: (statement_block statements: (_) @statements))
 (function_signature) @declaration.function.signature

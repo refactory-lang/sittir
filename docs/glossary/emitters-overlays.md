@@ -411,7 +411,7 @@ An arm picked by the kinds a slot builds (typescript's `(a, b)` against `(a)`) t
 
 A structure whose path builds from a scalar (`builds`) takes its arm by its `$value`, in a slot as at the root: a bigint the bigint arm or else the integer arm, a safe integer the integer arm, any other number the float arm, each among the scalar arms the slot's seats fit. A float arm refuses a bigint. A path the vocabulary declares a text kind (go's `type.primitive.boolean`, claimed through `type_identifier`) gets no structure case, since its input is only its text; the slot's item type keeps its text and its node types.
 
-A slot whose route is `nonEmpty` builds its items through `nonEmpty`, which refuses an empty list as `<path>.<slot> requires at least one element`. A list slot that also seats a text outside its list container (python's wildcard import `*`) is left out, since its items are all built inside the container.
+A slot whose route is `nonEmpty` builds its items through `nonEmpty`, which refuses an empty list as `<path>.<slot> requires at least one element`. A list through a container that may be left out is left out when its first item is `undefined`, except on an `emptyContainer` route, where only an absent slot leaves the container out and `[]` builds it empty. A list slot that also seats a text outside its list container (python's wildcard import `*`) is left out, since its items are all built inside the container.
 
 ### `packages/codegen/src/emitters/overlays/portable/covered.ts::FamilyCoverage`
 
