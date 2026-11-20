@@ -981,8 +981,6 @@ type clause_case_default$231_statements$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -1296,8 +1294,6 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('clause.case.default.statements', value);
-		case 'declaration.variable':
 			return unbuilt('clause.case.default.statements', value);
 		case 'declaration.variable.constant':
 			return unbuilt('clause.case.default.statements', value);
@@ -1623,8 +1619,6 @@ type clause_case_switch$230_statements$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -1938,8 +1932,6 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('clause.case.switch.statements', value);
-		case 'declaration.variable':
 			return unbuilt('clause.case.switch.statements', value);
 		case 'declaration.variable.constant':
 			return unbuilt('clause.case.switch.statements', value);
@@ -2980,8 +2972,6 @@ type clause_else$212_body$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -3295,8 +3285,6 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('clause.else.body', value);
-		case 'declaration.variable':
 			return unbuilt('clause.else.body', value);
 		case 'declaration.variable.constant':
 			return unbuilt('clause.else.body', value);
@@ -4811,8 +4799,6 @@ type declaration_ambient$313_body$Item =
 	| TypeScriptMap['nodes']['declaration.module_property']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -4857,8 +4843,6 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 		case 'declaration.module_property':
 			return unbuilt('declaration.ambient.body', value);
 		case 'declaration.type_alias':
-			return unbuilt('declaration.ambient.body', value);
-		case 'declaration.variable':
 			return unbuilt('declaration.ambient.body', value);
 		case 'declaration.variable.constant':
 			return unbuilt('declaration.ambient.body', value);
@@ -71582,8 +71566,6 @@ type statement_if$213_consequence$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -71897,8 +71879,6 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.variable':
 			return unbuilt('statement.if.consequence', value);
 		case 'declaration.variable.constant':
 			return unbuilt('statement.if.consequence', value);
@@ -72224,8 +72204,6 @@ type statement_labeled$228_body$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -72539,8 +72517,6 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.labeled.body', value);
-		case 'declaration.variable':
 			return unbuilt('statement.labeled.body', value);
 		case 'declaration.variable.constant':
 			return unbuilt('statement.labeled.body', value);
@@ -72890,8 +72866,6 @@ type statement_loop_counted$215_body$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -73205,8 +73179,6 @@ const statement_loop_counted$215_body = (value: statement_loop_counted$215_body$
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.loop.counted.body', value);
-		case 'declaration.variable':
 			return unbuilt('statement.loop.counted.body', value);
 		case 'declaration.variable.constant':
 			return unbuilt('statement.loop.counted.body', value);
@@ -74452,8 +74424,6 @@ type statement_loop_counted$215_initializer$Item =
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -74699,8 +74669,6 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 		return unseated('statement.loop.counted.initializer', value);
 	}
 	switch (value.$path) {
-		case 'declaration.variable':
-			return unbuilt('statement.loop.counted.initializer', value);
 		case 'declaration.variable.constant':
 			return unbuilt('statement.loop.counted.initializer', value);
 		case 'declaration.variable.reassignable':
@@ -74983,8 +74951,6 @@ type statement_loop_for_each$216_body$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -75298,8 +75264,6 @@ const statement_loop_for_each$216_body = (value: statement_loop_for_each$216_bod
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.loop.for_each.body', value);
-		case 'declaration.variable':
 			return unbuilt('statement.loop.for_each.body', value);
 		case 'declaration.variable.constant':
 			return unbuilt('statement.loop.for_each.body', value);
@@ -75665,8 +75629,6 @@ type statement_loop_while$218_body$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -75980,8 +75942,6 @@ const statement_loop_while$218_body = (value: statement_loop_while$218_body$Item
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.variable':
 			return unbuilt('statement.loop.while.body', value);
 		case 'declaration.variable.constant':
 			return unbuilt('statement.loop.while.body', value);
@@ -76352,8 +76312,6 @@ type statement_scope$221_body$Item =
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
 	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable'>
-	| TypeScriptMap['nodes']['declaration.variable']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -76667,8 +76625,6 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.scope.body', value);
-		case 'declaration.variable':
 			return unbuilt('statement.scope.body', value);
 		case 'declaration.variable.constant':
 			return unbuilt('statement.scope.body', value);

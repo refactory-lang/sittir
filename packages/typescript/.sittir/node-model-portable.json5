@@ -7928,6 +7928,16 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "declaration.variable",
+          "cases": 2,
+          "refinements": [
+            "declaration.variable.constant",
+            "declaration.variable.reassignable"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "declarators",

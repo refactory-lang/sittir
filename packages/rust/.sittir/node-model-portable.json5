@@ -14179,6 +14179,17 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "expression.range",
+          "cases": 3,
+          "refinements": [
+            "expression.range.exclusive",
+            "expression.range.inclusive",
+            "expression.range.inclusive.legacy"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "start",

@@ -815,8 +815,6 @@ type clause_let$288_value$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -1025,10 +1023,6 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -1257,8 +1251,6 @@ type clause_let_chain$289_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -1471,10 +1463,6 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -1701,8 +1689,6 @@ type clause_let_chain$289_rights$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -1913,10 +1899,6 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -2697,8 +2679,6 @@ type declaration_constant$205_value$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -2907,10 +2887,6 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -6689,8 +6665,6 @@ type declaration_variable$206_value$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -6899,10 +6873,6 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -7502,8 +7472,6 @@ type declaration_variable$223_value$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -7712,10 +7680,6 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -7952,8 +7916,6 @@ type element_attributed$363_value$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -8162,10 +8124,6 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -17367,8 +17325,6 @@ type element_struct_base$286_value$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -17577,10 +17533,6 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -17913,8 +17865,6 @@ type element_struct_field$285_value$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -18123,10 +18073,6 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -18549,8 +18495,6 @@ type expression_assignment$271_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -18759,10 +18703,6 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -18987,8 +18927,6 @@ type expression_assignment$271_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -19197,10 +19135,6 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -19425,8 +19359,6 @@ type expression_assignment_compound_add$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -19635,10 +19567,6 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -19863,8 +19791,6 @@ type expression_assignment_compound_add$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -20073,10 +19999,6 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -20301,8 +20223,6 @@ type expression_assignment_compound_bitwise_and$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -20513,10 +20433,6 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -20741,8 +20657,6 @@ type expression_assignment_compound_bitwise_and$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -20953,10 +20867,6 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -21181,8 +21091,6 @@ type expression_assignment_compound_bitwise_or$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -21393,10 +21301,6 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -21621,8 +21525,6 @@ type expression_assignment_compound_bitwise_or$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -21833,10 +21735,6 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -22061,8 +21959,6 @@ type expression_assignment_compound_bitwise_xor$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -22273,10 +22169,6 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -22501,8 +22393,6 @@ type expression_assignment_compound_bitwise_xor$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -22713,10 +22603,6 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -22941,8 +22827,6 @@ type expression_assignment_compound_divide$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -23151,10 +23035,6 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -23379,8 +23259,6 @@ type expression_assignment_compound_divide$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -23591,10 +23469,6 @@ const expression_assignment_compound_divide$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -23819,8 +23693,6 @@ type expression_assignment_compound_modulo$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -24029,10 +23901,6 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -24257,8 +24125,6 @@ type expression_assignment_compound_modulo$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -24469,10 +24335,6 @@ const expression_assignment_compound_modulo$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -24697,8 +24559,6 @@ type expression_assignment_compound_multiply$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -24909,10 +24769,6 @@ const expression_assignment_compound_multiply$272_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -25137,8 +24993,6 @@ type expression_assignment_compound_multiply$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -25349,10 +25203,6 @@ const expression_assignment_compound_multiply$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -25577,8 +25427,6 @@ type expression_assignment_compound_shift_left$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -25789,10 +25637,6 @@ const expression_assignment_compound_shift_left$272_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -26017,8 +25861,6 @@ type expression_assignment_compound_shift_left$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -26229,10 +26071,6 @@ const expression_assignment_compound_shift_left$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -26457,8 +26295,6 @@ type expression_assignment_compound_shift_right$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -26669,10 +26505,6 @@ const expression_assignment_compound_shift_right$272_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -26897,8 +26729,6 @@ type expression_assignment_compound_shift_right$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -27109,10 +26939,6 @@ const expression_assignment_compound_shift_right$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -27337,8 +27163,6 @@ type expression_assignment_compound_subtract$272_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -27549,10 +27373,6 @@ const expression_assignment_compound_subtract$272_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -27777,8 +27597,6 @@ type expression_assignment_compound_subtract$272_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -27989,10 +27807,6 @@ const expression_assignment_compound_subtract$272_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -28217,8 +28031,6 @@ type expression_await$307_expression$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -28427,10 +28239,6 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -28655,8 +28463,6 @@ type expression_binary_arithmetic_add$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -28865,10 +28671,6 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -29093,8 +28895,6 @@ type expression_binary_arithmetic_add$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -29303,10 +29103,6 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -29531,8 +29327,6 @@ type expression_binary_arithmetic_divide$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -29741,10 +29535,6 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -29969,8 +29759,6 @@ type expression_binary_arithmetic_divide$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -30179,10 +29967,6 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -30407,8 +30191,6 @@ type expression_binary_arithmetic_modulo$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -30617,10 +30399,6 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -30845,8 +30623,6 @@ type expression_binary_arithmetic_modulo$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -31055,10 +30831,6 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -31283,8 +31055,6 @@ type expression_binary_arithmetic_multiply$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -31493,10 +31263,6 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -31721,8 +31487,6 @@ type expression_binary_arithmetic_multiply$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -31933,10 +31697,6 @@ const expression_binary_arithmetic_multiply$270_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -32161,8 +31921,6 @@ type expression_binary_arithmetic_subtract$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -32371,10 +32129,6 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -32599,8 +32353,6 @@ type expression_binary_arithmetic_subtract$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -32811,10 +32563,6 @@ const expression_binary_arithmetic_subtract$270_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -33039,8 +32787,6 @@ type expression_binary_bitwise_and$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -33249,10 +32995,6 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -33477,8 +33219,6 @@ type expression_binary_bitwise_and$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -33687,10 +33427,6 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -33915,8 +33651,6 @@ type expression_binary_bitwise_or$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -34125,10 +33859,6 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -34353,8 +34083,6 @@ type expression_binary_bitwise_or$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -34563,10 +34291,6 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -34791,8 +34515,6 @@ type expression_binary_bitwise_xor$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -35001,10 +34723,6 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -35229,8 +34947,6 @@ type expression_binary_bitwise_xor$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -35439,10 +35155,6 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -35667,8 +35379,6 @@ type expression_binary_comparison_equal$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -35877,10 +35587,6 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -36105,8 +35811,6 @@ type expression_binary_comparison_equal$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -36315,10 +36019,6 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -36543,8 +36243,6 @@ type expression_binary_comparison_greater$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -36753,10 +36451,6 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -36981,8 +36675,6 @@ type expression_binary_comparison_greater$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -37191,10 +36883,6 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -37419,8 +37107,6 @@ type expression_binary_comparison_greater_equal$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -37631,10 +37317,6 @@ const expression_binary_comparison_greater_equal$270_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -37859,8 +37541,6 @@ type expression_binary_comparison_greater_equal$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -38071,10 +37751,6 @@ const expression_binary_comparison_greater_equal$270_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -38299,8 +37975,6 @@ type expression_binary_comparison_less$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -38509,10 +38183,6 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -38737,8 +38407,6 @@ type expression_binary_comparison_less$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -38947,10 +38615,6 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -39175,8 +38839,6 @@ type expression_binary_comparison_less_equal$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -39387,10 +39049,6 @@ const expression_binary_comparison_less_equal$270_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -39615,8 +39273,6 @@ type expression_binary_comparison_less_equal$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -39827,10 +39483,6 @@ const expression_binary_comparison_less_equal$270_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -40055,8 +39707,6 @@ type expression_binary_comparison_not_equal$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -40267,10 +39917,6 @@ const expression_binary_comparison_not_equal$270_left = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -40495,8 +40141,6 @@ type expression_binary_comparison_not_equal$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -40707,10 +40351,6 @@ const expression_binary_comparison_not_equal$270_right = (
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -40935,8 +40575,6 @@ type expression_binary_logical_and$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -41145,10 +40783,6 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -41373,8 +41007,6 @@ type expression_binary_logical_and$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -41583,10 +41215,6 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -41811,8 +41439,6 @@ type expression_binary_logical_or$270_left$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -42021,10 +41647,6 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -42249,8 +41871,6 @@ type expression_binary_logical_or$270_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -42459,10 +42079,6 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -42687,8 +42303,6 @@ type expression_binary_shift_left$270_count$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -42897,10 +42511,6 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -43125,8 +42735,6 @@ type expression_binary_shift_left$270_operand$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -43335,10 +42943,6 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -43563,8 +43167,6 @@ type expression_binary_shift_right$270_count$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -43773,10 +43375,6 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -44001,8 +43599,6 @@ type expression_binary_shift_right$270_operand$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -44211,10 +43807,6 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -44559,8 +44151,6 @@ type expression_cast_conversion$273_expression$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -44769,10 +44359,6 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -45159,8 +44745,6 @@ type expression_collection_list$436_elements$item$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -45371,10 +44955,6 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -45599,8 +45179,6 @@ type expression_collection_list_repeat$435_element$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -45809,10 +45387,6 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -46037,8 +45611,6 @@ type expression_collection_list_repeat$435_length$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -46247,10 +45819,6 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -46533,8 +46101,6 @@ type expression_collection_tuple$280_elements$item$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -46745,10 +46311,6 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -47022,8 +46584,6 @@ type expression_lambda$369_body$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -47204,8 +46764,6 @@ const expression_lambda$369_body = (value: expression_lambda$369_body$Item) => {
 		case 'expression.parenthesized':
 			return unbuilt('expression.lambda.body', value);
 		case 'expression.propagate':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.range':
 			return unbuilt('expression.lambda.body', value);
 		case 'expression.range.exclusive':
 			return unbuilt('expression.lambda.body', value);
@@ -47391,8 +46949,6 @@ type expression_lambda$369_body$kind$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -47805,8 +47361,6 @@ type expression_lambda$370_body$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -48017,10 +47571,6 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -48302,8 +47852,6 @@ type expression_member$308_object$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -48512,10 +48060,6 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -48783,8 +48327,6 @@ type expression_parenthesized$279_expression$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -48993,10 +48535,6 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -49221,8 +48759,6 @@ type expression_propagate$268_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -49431,10 +48967,6 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -49659,8 +49191,6 @@ type expression_range$391_start$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -49869,10 +49399,6 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -50097,8 +49623,6 @@ type expression_range$392_end$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -50307,10 +49831,6 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -50535,8 +50055,6 @@ type expression_range_exclusive$390_end$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -50745,10 +50263,6 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -50973,8 +50487,6 @@ type expression_range_exclusive$390_start$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -51183,10 +50695,6 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -51411,8 +50919,6 @@ type expression_range_exclusive$391_start$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -51621,10 +51127,6 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -51849,8 +51351,6 @@ type expression_range_exclusive$392_end$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -52059,10 +51559,6 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -52287,8 +51783,6 @@ type expression_range_inclusive$390_end$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -52497,10 +51991,6 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -52725,8 +52215,6 @@ type expression_range_inclusive$390_start$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -52935,10 +52423,6 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -53163,8 +52647,6 @@ type expression_range_inclusive_legacy$390_end$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -53373,10 +52855,6 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -53601,8 +53079,6 @@ type expression_range_inclusive_legacy$390_start$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -53811,10 +53287,6 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -54039,8 +53511,6 @@ type expression_reference$371_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -54249,10 +53719,6 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -54477,8 +53943,6 @@ type expression_reference$372_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -54687,10 +54151,6 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -54915,8 +54375,6 @@ type expression_reference$373_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -55125,10 +54583,6 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -55353,8 +54807,6 @@ type expression_reference$374_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -55563,10 +55015,6 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -55791,8 +55239,6 @@ type expression_subscript$306_index$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -56001,10 +55447,6 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -56229,8 +55671,6 @@ type expression_subscript$306_object$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -56439,10 +55879,6 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -56667,8 +56103,6 @@ type expression_unary_deref$267_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -56877,10 +56311,6 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -57105,8 +56535,6 @@ type expression_unary_negation$267_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -57315,10 +56743,6 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -57543,8 +56967,6 @@ type expression_unary_not$267_argument$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -57753,10 +57175,6 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -57981,8 +57399,6 @@ type expression_yield$275_expression$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -58191,10 +57607,6 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -62008,8 +61420,6 @@ type statement_block$313_statements$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -62431,12 +61841,6 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
 		case 'expression.propagate':
 			return b.expressionStatement.withSemi(expression_propagate$268(value));
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined)
-				return b.expressionStatement.withSemi(expression_range$393(value));
-			if (value.start !== undefined && value.end === undefined)
-				return b.expressionStatement.withSemi(expression_range$391(value));
-			return b.expressionStatement.withSemi(expression_range$392(value));
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined)
 				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
@@ -62688,8 +62092,6 @@ type statement_block$313_trailingExpression$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -62898,10 +62300,6 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -63126,8 +62524,6 @@ type statement_break$304_expression$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -63336,10 +62732,6 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -63604,8 +62996,6 @@ type statement_if$287_condition$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -63818,10 +63208,6 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -64419,8 +63805,6 @@ type statement_loop_for_each$299_right$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -64629,10 +64013,6 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -64873,8 +64253,6 @@ type statement_loop_while$297_condition$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -65087,10 +64465,6 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -65329,8 +64703,6 @@ type statement_return$274_expression$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -65539,10 +64911,6 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
@@ -65927,8 +65295,6 @@ type type_array$240_length$Item =
 	| RustMap['nodes']['expression.parenthesized']
 	| BuildInput<RustMap, 'expression.propagate'>
 	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range'>
-	| RustMap['nodes']['expression.range']
 	| BuildInput<RustMap, 'expression.range.exclusive'>
 	| RustMap['nodes']['expression.range.exclusive']
 	| BuildInput<RustMap, 'expression.range.inclusive'>
@@ -66137,10 +65503,6 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			return expression_parenthesized$279(value);
 		case 'expression.propagate':
 			return expression_propagate$268(value);
-		case 'expression.range':
-			if (value.end === undefined && value.start === undefined) return expression_range$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range$391(value);
-			return expression_range$392(value);
 		case 'expression.range.exclusive':
 			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
 			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);

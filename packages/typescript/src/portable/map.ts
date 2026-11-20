@@ -225,7 +225,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -400,7 +399,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -818,7 +816,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -1272,7 +1269,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.module_property'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -26061,7 +26057,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -29341,7 +29336,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -30137,7 +30131,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -30313,7 +30306,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -30497,7 +30489,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -30668,7 +30659,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -30827,7 +30817,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -31035,7 +31024,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -31212,7 +31200,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -31642,7 +31629,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly initializer:
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -31794,7 +31780,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -31972,7 +31957,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -32154,7 +32138,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -32466,7 +32449,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.module.external'>
 				| V.Read<TypeScriptMap, 'declaration.type_alias'>
-				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
@@ -34259,10 +34241,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly 'declaration.signature.index.mapped': TSKindId.IndexSignatureMappedTypeClause;
 			readonly 'declaration.type_alias': TSKindId.TypeAliasDeclaration;
 			readonly 'declaration.type_parameter': TSKindId.TypeParameter;
-			readonly 'declaration.variable':
-				| TSKindId.LexicalDeclaration
-				| TSKindId.VariableDeclaratorDefinite
-				| TSKindId.VariableDeclaratorPlain;
+			readonly 'declaration.variable': TSKindId.VariableDeclaratorDefinite | TSKindId.VariableDeclaratorPlain;
 			readonly 'declaration.variable.constant': TSKindId.LexicalDeclaration;
 			readonly 'declaration.variable.pattern': TSKindId.VariableDeclaratorPlain;
 			readonly 'declaration.variable.reassignable': TSKindId.LexicalDeclaration;
